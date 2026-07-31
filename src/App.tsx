@@ -21,6 +21,7 @@ import Merit from './pages/Merit'
 import CashFlow from './pages/CashFlow'
 import Chat from './pages/Chat'
 import Knowledge from './pages/Knowledge'
+import Automations from './pages/Automations'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -63,6 +64,7 @@ function AppRoutes() {
         <Route path="cashflow" element={<CashFlow />} />
         <Route path="chat" element={<Chat />} />
         <Route path="knowledge" element={<Knowledge />} />
+        <Route path="automations" element={<Automations />} />
       </Route>
     </Routes>
   )

@@ -1,0 +1,563 @@
+import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
+import { useToast } from '../components/Toast'
+import {
+  Zap, Plus, Play, Pause, Trash2, Settings, ChevronRight, CheckCircle2,
+  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X
+} from 'lucide-react'
+
+type Automation = {
+  id: string
+  name: string
+  description: string | null
+  trigger_type: string
+  trigger_config: any
+  action_type: string
+  action_config: any
+  enabled: boolean
+  run_count: number
+  last_run_at: string | null
+  created_at: string
+}
+
+type Trigger = {
+  type: string
+  name: string
+  description: string
+  icon: string
+}
+
+type Action = {
+  type: string
+  name: string
+  description: string
+  icon: string
+}
+
+type Run = {
+  id: string
+  automation_id: string
+  trigger_event: any
+  status: 'success' | 'failed' | 'skipped'
+  error_message: string | null
+  executed_at: string
+}
+
+const TRIGGERS: Trigger[] = [
+  { type: 'deal_won', name: 'Deal won', description: 'When a deal is marked as won', icon: '🎉' },
+  { type: 'deal_lost', name: 'Deal lost', description: 'When a deal is marked as lost', icon: '😔' },
+  { type: 'deal_created', name: 'Deal created', description: 'When a new deal is added', icon: '📋' },
+  { type: 'deal_stage_changed', name: 'Stage changed', description: 'When deal moves to a new stage', icon: '🔄' },
+  { type: 'invoice_paid', name: 'Invoice paid', description: 'When an invoice is marked as paid', icon: '💰' },
+  { type: 'invoice_created', name: 'Invoice created', description: 'When a new invoice is created', icon: '📄' },
+  { type: 'task_completed', name: 'Task completed', description: 'When a task is marked done', icon: '✅' },
+  { type: 'task_created', name: 'Task created', description: 'When a new task is added', icon: '✨' },
+  { type: 'task_due_soon', name: 'Task due soon', description: 'When a task is due within 24 hours', icon: '⏰' },
+  { type: 'staff_joined', name: 'Staff joined', description: 'When a new team member joins', icon: '👋' },
+  { type: 'leave_approved', name: 'Leave approved', description: 'When a leave request is approved', icon: '🏖️' },
+  { type: 'product_low_stock', name: 'Low stock', description: 'When a product falls below threshold', icon: '⚠️' },
+]
+
+const ACTIONS: Action[] = [
+  { type: 'create_task', name: 'Create task', description: 'Create a new task', icon: '📝' },
+  { type: 'send_notification', name: 'Notify', description: 'Send in-app notification', icon: '🔔' },
+  { type: 'add_to_cashflow', name: 'Record cashflow', description: 'Add income or expense', icon: '💵' },
+  { type: 'award_merit', name: 'Award merit', description: 'Give recognition points', icon: '⭐' },
+  { type: 'post_to_chat', name: 'Post to chat', description: 'Send message to channel', icon: '💬' },
+  { type: 'update_deal', name: 'Update deal', description: 'Change deal fields', icon: '✏️' },
+]
+
+export default function Automations() {
+  const { staff } = useAuth()
+  const { showToast } = useToast()
+  const [automations, setAutomations] = useState<Automation[]>([])
+  const [runs, setRuns] = useState<Run[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showBuilder, setShowBuilder] = useState(false)
+  const [selectedAutomation, setSelectedAutomation] = useState<Automation | null>(null)
+  const [showRuns, setShowRuns] = useState(false)
+
+  // Builder state
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [triggerType, setTriggerType] = useState('')
+  const [actionType, setActionType] = useState('')
+  const [triggerConfig, setTriggerConfig] = useState<Record<string, string>>({})
+  const [actionConfig, setActionConfig] = useState<Record<string, string>>({})
+
+  const load = async () => {
+    setLoading(true)
+    const [{ data: autoData }, { data: runsData }] = await Promise.all([
+      supabase.from('automations').select('*').order('created_at', { ascending: false }),
+      supabase.from('automation_runs').select('*').order('executed_at', { ascending: false }).limit(50),
+    ])
+    setAutomations((autoData as Automation[]) ?? [])
+    setRuns((runsData as Run[]) ?? [])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const createAutomation = async () => {
+    if (!name.trim() || !triggerType || !actionType) {
+      showToast('Fill in name, trigger, and action', 'error')
+      return
+    }
+
+    const { error } = await supabase.from('automations').insert({
+      name,
+      description,
+      trigger_type: triggerType,
+      trigger_config,
+      action_type: actionType,
+      action_config: actionConfig,
+      created_by: staff?.id,
+    })
+
+    if (error) {
+      showToast('Failed to create automation', 'error')
+    } else {
+      showToast('Automation created!', 'success')
+      resetBuilder()
+      load()
+    }
+  }
+
+  const toggleAutomation = async (automation: Automation) => {
+    const { error } = await supabase
+      .from('automations')
+      .update({ enabled: !automation.enabled })
+      .eq('id', automation.id)
+
+    if (!error) {
+      showToast(automation.enabled ? 'Automation paused' : 'Automation enabled', 'success')
+      load()
+    }
+  }
+
+  const deleteAutomation = async (id: string) => {
+    if (!confirm('Delete this automation?')) return
+    await supabase.from('automations').delete().eq('id', id)
+    showToast('Automation deleted', 'info')
+    load()
+  }
+
+  const resetBuilder = () => {
+    setShowBuilder(false)
+    setName('')
+    setDescription('')
+    setTriggerType('')
+    setActionType('')
+    setTriggerConfig({})
+    setActionConfig({})
+    setSelectedAutomation(null)
+  }
+
+  const getTriggerIcon = (type: string) => TRIGGERS.find((t) => t.type === type)?.icon ?? '⚡'
+  const getActionIcon = (type: string) => ACTIONS.find((a) => a.type === type)?.icon ?? '⚡'
+
+  const getRecentRunsForAutomation = (autoId: string) => {
+    return runs.filter((r) => r.automation_id === autoId).slice(0, 5)
+  }
+
+  return (
+    <div className="pb-20">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Automations</h1>
+          <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
+        </div>
+        <button
+          onClick={() => setShowBuilder(true)}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90 transition"
+        >
+          <Plus size={16} />
+          New automation
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Activity size={14} className="text-green-500" />
+            <span className="text-xs text-black/50 uppercase tracking-wide">Active</span>
+          </div>
+          <p className="text-2xl font-bold text-[var(--avenize-black)]">
+            {automations.filter((a) => a.enabled).length}
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Zap size={14} className="text-[var(--avenize-accent-end)]" />
+            <span className="text-xs text-black/50 uppercase tracking-wide">Total runs</span>
+          </div>
+          <p className="text-2xl font-bold text-[var(--avenize-black)]">
+            {automations.reduce((sum, a) => sum + a.run_count, 0)}
+          </p>
+        </div>
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Clock size={14} className="text-black/30" />
+            <span className="text-xs text-black/50 uppercase tracking-wide">Last run</span>
+          </div>
+          <p className="text-sm font-medium text-[var(--avenize-black)]">
+            {automations.filter((a) => a.last_run_at).length > 0
+              ? new Date(Math.max(...automations.filter((a) => a.last_run_at).map((a) => new Date(a.last_run_at!).getTime()))).toLocaleDateString()
+              : 'Never'}
+          </p>
+        </div>
+      </div>
+
+      {/* Automations List */}
+      {loading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
+              <div className="h-4 bg-black/5 rounded w-32 mb-2" />
+              <div className="h-3 bg-black/5 rounded w-48" />
+            </div>
+          ))}
+        </div>
+      ) : automations.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
+          <div className="w-16 h-16 rounded-2xl fabric-gradient flex items-center justify-center text-white text-2xl mx-auto mb-4">
+            🤖
+          </div>
+          <h3 className="text-lg font-medium text-[var(--avenize-black)] mb-2">No automations yet</h3>
+          <p className="text-sm text-black/50 mb-4 max-w-sm mx-auto">
+            Create your first automation to streamline your workflow. For example: when a deal is won, create a task to follow up.
+          </p>
+          <button
+            onClick={() => setShowBuilder(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+          >
+            <Plus size={16} />
+            Create first automation
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {automations.map((auto) => (
+            <div
+              key={auto.id}
+              className={`bg-white rounded-2xl border border-black/[0.06] p-4 transition ${
+                !auto.enabled ? 'opacity-60' : ''
+              }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-lg">{getTriggerIcon(auto.trigger_type)}</span>
+                    <ArrowRight size={14} className="text-black/20" />
+                    <span className="text-lg">{getActionIcon(auto.action_type)}</span>
+                    <h3 className="text-sm font-medium text-[var(--avenize-black)]">{auto.name}</h3>
+                    {!auto.enabled && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>
+                    )}
+                  </div>
+                  <p className="text-xs text-black/40">
+                    {TRIGGERS.find((t) => t.type === auto.trigger_type)?.name} → {ACTIONS.find((a) => a.type === auto.action_type)?.name}
+                  </p>
+                  {auto.description && (
+                    <p className="text-xs text-black/50 mt-1">{auto.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedAutomation(auto)
+                      setShowRuns(true)
+                    }}
+                    className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
+                    title="View runs"
+                  >
+                    <Activity size={16} />
+                  </button>
+                  <button
+                    onClick={() => toggleAutomation(auto)}
+                    className={`p-2 rounded-lg ${auto.enabled ? 'text-green-500 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                    title={auto.enabled ? 'Pause' : 'Enable'}
+                  >
+                    {auto.enabled ? <Pause size={16} /> : <Play size={16} />}
+                  </button>
+                  <button
+                    onClick={() => deleteAutomation(auto.id)}
+                    className="p-2 hover:bg-red-50 rounded-lg text-red-400"
+                    title="Delete"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/[0.06]">
+                <span className="text-xs text-black/30">
+                  {auto.run_count} runs
+                </span>
+                {auto.last_run_at && (
+                  <span className="text-xs text-black/30">
+                    Last: {new Date(auto.last_run_at).toLocaleString()}
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Builder Modal */}
+      {showBuilder && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
+            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
+              <h2 className="text-lg font-semibold">New Automation</h2>
+              <button onClick={resetBuilder} className="p-2 hover:bg-black/[0.05] rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              {/* Name */}
+              <div>
+                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-1">Name</label>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Won deal → Create follow-up task"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                />
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-1">Description (optional)</label>
+                <input
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="What does this automation do?"
+                  className="w-full px-4 py-2 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                />
+              </div>
+
+              {/* Trigger */}
+              <div>
+                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-2">
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg">⚡</span> When this happens...
+                  </span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {TRIGGERS.map((trigger) => (
+                    <button
+                      key={trigger.type}
+                      onClick={() => {
+                        setTriggerType(trigger.type)
+                        setTriggerConfig({})
+                      }}
+                      className={`p-3 rounded-xl border text-left transition ${
+                        triggerType === trigger.type
+                          ? 'border-[var(--avenize-accent-end)] bg-[var(--avenize-accent-end)]/5'
+                          : 'border-black/[0.08] hover:border-black/[0.15]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span>{trigger.icon}</span>
+                        <span className="text-sm font-medium">{trigger.name}</span>
+                      </div>
+                      <p className="text-xs text-black/40">{trigger.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action */}
+              <div>
+                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-2">
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg">➡️</span> Do this...
+                  </span>
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {ACTIONS.map((action) => (
+                    <button
+                      key={action.type}
+                      onClick={() => {
+                        setActionType(action.type)
+                        setActionConfig({})
+                      }}
+                      className={`p-3 rounded-xl border text-left transition ${
+                        actionType === action.type
+                          ? 'border-[var(--avenize-accent-end)] bg-[var(--avenize-accent-end)]/5'
+                          : 'border-black/[0.08] hover:border-black/[0.15]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span>{action.icon}</span>
+                        <span className="text-sm font-medium">{action.name}</span>
+                      </div>
+                      <p className="text-xs text-black/40">{action.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Config */}
+              {actionType && (
+                <div className="bg-black/[0.02] rounded-xl p-4">
+                  <p className="text-sm font-medium mb-3">Action settings</p>
+                  {actionType === 'create_task' && (
+                    <>
+                      <input
+                        value={actionConfig.title || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, title: e.target.value })}
+                        placeholder="Task title (use {{deal_title}} for dynamic)"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 mb-2 text-sm"
+                      />
+                      <textarea
+                        value={actionConfig.description || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, description: e.target.value })}
+                        placeholder="Description (optional)"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
+                        rows={2}
+                      />
+                    </>
+                  )}
+                  {actionType === 'add_to_cashflow' && (
+                    <>
+                      <select
+                        value={actionConfig.type || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, type: e.target.value })}
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 mb-2 text-sm"
+                      >
+                        <option value="">Select type...</option>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                      </select>
+                      <input
+                        value={actionConfig.category || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, category: e.target.value })}
+                        placeholder="Category (e.g., Sales, Marketing)"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 mb-2 text-sm"
+                      />
+                      <input
+                        value={actionConfig.amount || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, amount: e.target.value })}
+                        placeholder="Amount (use {{value}} for dynamic)"
+                        type="number"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
+                      />
+                    </>
+                  )}
+                  {actionType === 'award_merit' && (
+                    <>
+                      <input
+                        value={actionConfig.points || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, points: e.target.value })}
+                        placeholder="Points to award"
+                        type="number"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 mb-2 text-sm"
+                      />
+                      <input
+                        value={actionConfig.reason || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, reason: e.target.value })}
+                        placeholder="Reason (use {{deal_title}} for dynamic)"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
+                      />
+                    </>
+                  )}
+                  {actionType === 'post_to_chat' && (
+                    <>
+                      <input
+                        value={actionConfig.message || ''}
+                        onChange={(e) => setActionConfig({ ...actionConfig, message: e.target.value })}
+                        placeholder="Message (use {{deal_title}} for dynamic)"
+                        className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
+                        rows={2}
+                      />
+                    </>
+                  )}
+                  {actionType === 'send_notification' && (
+                    <input
+                      value={actionConfig.message || ''}
+                      onChange={(e) => setActionConfig({ ...actionConfig, message: e.target.value })}
+                      placeholder="Notification message"
+                      className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
+                    />
+                  )}
+                  <p className="text-xs text-black/30 mt-2">
+                    Use {"{{variable}}"} for dynamic values (deal_title, value, contact_name)
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
+              <button
+                onClick={resetBuilder}
+                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={createAutomation}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+              >
+                <Zap size={16} />
+                Create automation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Runs Panel */}
+      {showRuns && selectedAutomation && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-50">
+          <div className="bg-white h-full w-full max-w-lg shadow-xl flex flex-col">
+            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
+              <div>
+                <h2 className="font-semibold">Automation Runs</h2>
+                <p className="text-sm text-black/50">{selectedAutomation.name}</p>
+              </div>
+              <button onClick={() => { setShowRuns(false); setSelectedAutomation(null) }} className="p-2 hover:bg-black/[0.05] rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              {getRecentRunsForAutomation(selectedAutomation.id).length === 0 ? (
+                <div className="text-center py-12 text-black/40">
+                  <Activity size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No runs yet</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {getRecentRunsForAutomation(selectedAutomation.id).map((run) => (
+                    <div key={run.id} className="p-3 rounded-xl bg-black/[0.02]">
+                      <div className="flex items-center gap-2 mb-1">
+                        {run.status === 'success' ? (
+                          <CheckCircle2 size={14} className="text-green-500" />
+                        ) : (
+                          <XCircle size={14} className="text-red-500" />
+                        )}
+                        <span className="text-sm font-medium capitalize">{run.status}</span>
+                        <span className="text-xs text-black/30">
+                          {new Date(run.executed_at).toLocaleString()}
+                        </span>
+                      </div>
+                      {run.error_message && (
+                        <p className="text-xs text-red-500">{run.error_message}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
