@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import AvenizeMark from './AvenizeMark'
 
@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true, icon: Home },
   { to: '/chat', label: 'Chat', icon: MessageSquare },
   { to: '/knowledge', label: 'Docs', icon: Book },
+  { to: '/tickets', label: 'Support', icon: Headphones },
   { to: '/crm', label: 'CRM', icon: Users2 },
   { to: '/social', label: 'Social', icon: Share2 },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare },
