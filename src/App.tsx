@@ -31,6 +31,8 @@ import Accounting from './pages/Accounting'
 import BrandingSettings from './pages/BrandingSettings'
 import SecuritySettings from './pages/SecuritySettings'
 import SSOSettings from './pages/SSOSettings'
+import APISettings from './pages/APISettings'
+import CustomerPortal from './pages/CustomerPortal'
 import Calendar from './pages/Calendar'
 import NotificationBell from './components/NotificationBell'
 
@@ -82,6 +84,8 @@ function AppRoutes() {
         <Route path="branding" element={<BrandingSettings />} />
         <Route path="security" element={<SecuritySettings />} />
         <Route path="sso" element={<SSOSettings />} />
+        <Route path="api" element={<APISettings />} />
+        <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
       </Route>
     </Routes>

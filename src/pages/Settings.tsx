@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { Shield, Palette, Globe, Key, ChevronRight, User, Building } from 'lucide-react'
+import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug } from 'lucide-react'
 
 export default function Settings() {
   const { staff } = useAuth()
@@ -10,6 +10,8 @@ export default function Settings() {
     { to: '/branding', icon: Palette, label: 'Branding', desc: 'Colors, logo, theme', color: 'bg-pink-50 text-pink-500' },
     { to: '/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-red-50 text-red-500' },
     { to: '/sso', icon: Key, label: 'Single Sign-On', desc: 'SAML, OIDC, Okta, Azure', color: 'bg-blue-50 text-blue-500' },
+    { to: '/api', icon: Zap, label: 'API & Webhooks', desc: 'REST API, integrations', color: 'bg-orange-50 text-orange-500' },
+    { to: '/portal', icon: Users, label: 'Customer Portal', desc: 'Client self-service', color: 'bg-indigo-50 text-indigo-500' },
     { to: '/settings?lang', icon: Globe, label: 'Language', desc: 'i18n, timezone', color: 'bg-green-50 text-green-500' },
   ]
 
