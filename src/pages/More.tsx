@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
-import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones } from 'lucide-react'
+import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail } from 'lucide-react'
 
 const ITEMS = [
   { to: '/chat', label: 'Chat', icon: MessageSquare, tint: 'bg-[#4F46E5]/10 text-[#4F46E5]', desc: 'Team messaging' },
   { to: '/knowledge', label: 'Docs', icon: Book, tint: 'bg-orange-500/10 text-orange-500', desc: 'Knowledge base' },
   { to: '/tickets', label: 'Support', icon: Headphones, tint: 'bg-teal-500/10 text-teal-500', desc: 'Help desk' },
   { to: '/automations', label: 'Automations', icon: Zap, tint: 'bg-violet-500/10 text-violet-500', desc: 'Workflow rules' },
+  { to: '/campaigns', label: 'Email', icon: Mail, tint: 'bg-blue-500/10 text-blue-500', desc: 'Email marketing' },
   { to: '/crm', label: 'CRM', icon: Users2, tint: 'bg-purple-500/10 text-purple-500', desc: 'Contacts & deals' },
   { to: '/social', label: 'Social', icon: Share2, tint: 'bg-pink-500/10 text-pink-500', desc: 'Posts & branding' },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare, tint: 'bg-cyan-500/10 text-cyan-500', desc: 'Assign & track' },
