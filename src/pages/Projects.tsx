@@ -30,7 +30,7 @@ export default function Projects() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">Projects</h1>
+      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Projects</h1>
 
       <div className="flex gap-2 mb-6">
         <input
@@ -41,7 +41,7 @@ export default function Projects() {
         />
         <button
           onClick={addProject}
-          className="rounded-lg fabric-gradient text-white px-4 py-2 text-sm font-medium"
+          className="rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium"
         >
           Add project
         </button>
@@ -50,7 +50,7 @@ export default function Projects() {
       <div className="bg-white rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
         {projects.map((p) => (
           <div key={p.id} className="px-4 py-3 flex items-center justify-between text-sm">
-            <span className="text-[var(--fabric-black)]">{p.name}</span>
+            <span className="text-[var(--avenize-black)]">{p.name}</span>
             <span className="text-xs text-black/40 capitalize">{p.status.replace('_', ' ')}</span>
           </div>
         ))}

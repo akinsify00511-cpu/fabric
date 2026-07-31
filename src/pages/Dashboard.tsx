@@ -56,7 +56,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-[var(--fabric-black)]">
+      <h1 className="text-xl font-semibold text-[var(--avenize-black)]">
         Good morning{staff?.full_name ? `, ${staff.full_name.split(' ')[0]}` : ''}
       </h1>
       <p className="text-sm text-black/50 mt-1 mb-6">Here's what's happening in your business.</p>
@@ -68,20 +68,20 @@ export default function Dashboard() {
               <c.icon size={16} strokeWidth={2} />
             </div>
             <p className="text-xs text-black/50">{c.label}</p>
-            <p className="text-xl font-semibold text-[var(--fabric-black)] mt-0.5">{c.value}</p>
+            <p className="text-xl font-semibold text-[var(--avenize-black)] mt-0.5">{c.value}</p>
           </div>
         ))}
       </div>
 
       <div className="bg-white rounded-2xl border border-black/[0.06]">
-        <p className="px-4 py-3 text-sm font-medium text-[var(--fabric-black)] border-b border-black/[0.06]">
+        <p className="px-4 py-3 text-sm font-medium text-[var(--avenize-black)] border-b border-black/[0.06]">
           Recent activity
         </p>
         <div className="divide-y divide-black/[0.06]">
           {activity.map((a) => (
             <div key={a.id} className="px-4 py-3 flex items-center justify-between text-sm">
               <div>
-                <p className="text-[var(--fabric-black)]">{a.label}</p>
+                <p className="text-[var(--avenize-black)]">{a.label}</p>
                 <p className="text-black/40 text-xs mt-0.5">{a.detail}</p>
               </div>
               <span className="text-xs text-black/30">{new Date(a.at).toLocaleDateString()}</span>

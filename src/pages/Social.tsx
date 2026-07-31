@@ -176,7 +176,7 @@ export default function Social() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--fabric-black)]">Social Media</h1>
+          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Social Media</h1>
           <p className="text-sm text-black/50 mt-0.5">Manage posts, track metrics, and build your brand</p>
         </div>
       </div>
@@ -191,7 +191,7 @@ export default function Social() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'fabric-gradient text-white'
+                  ? 'avenize-gradient text-white'
                   : 'text-black/50 hover:text-black'
               }`}
             >
@@ -245,7 +245,7 @@ export default function Social() {
               <div className="flex gap-2">
                 <button
                   onClick={createPost}
-                  className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                  className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                 >
                   {isScheduled ? 'Schedule' : 'Save Draft'}
                 </button>
@@ -257,7 +257,7 @@ export default function Social() {
                         await publishPost(posts[0].id)
                       }
                     }}
-                    className="rounded-lg fabric-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                    className="rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                   >
                     Post Now
                   </button>
@@ -278,7 +278,7 @@ export default function Social() {
                       <span className={`w-8 h-8 rounded-full ${PLATFORMS.find(p => p.id === post.platform)?.color} flex items-center justify-center text-white`}>
                         <PlatformIcon platform={post.platform} />
                       </span>
-                      <span className="text-sm font-medium text-[var(--fabric-black)] capitalize">{post.platform}</span>
+                      <span className="text-sm font-medium text-[var(--avenize-black)] capitalize">{post.platform}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         post.status === 'published' ? 'bg-green-100 text-green-700' :
                         post.status === 'scheduled' ? 'bg-blue-100 text-blue-700' :
@@ -369,28 +369,28 @@ export default function Social() {
 
               {/* Quick Stats */}
               <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-                <p className="text-sm font-medium text-[var(--fabric-black)] mb-3">Total Performance</p>
+                <p className="text-sm font-medium text-[var(--avenize-black)] mb-3">Total Performance</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
-                    <p className="text-2xl font-semibold text-[var(--fabric-black)]">
+                    <p className="text-2xl font-semibold text-[var(--avenize-black)]">
                       {metrics.reduce((sum, m) => sum + m.followers_count, 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-black/50 mt-1">Total Followers</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
-                    <p className="text-2xl font-semibold text-[var(--fabric-black)]">
+                    <p className="text-2xl font-semibold text-[var(--avenize-black)]">
                       {metrics.reduce((sum, m) => sum + m.engagement_count, 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-black/50 mt-1">Engagements</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
-                    <p className="text-2xl font-semibold text-[var(--fabric-black)]">
+                    <p className="text-2xl font-semibold text-[var(--avenize-black)]">
                       {metrics.reduce((sum, m) => sum + m.impressions_count, 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-black/50 mt-1">Impressions</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
-                    <p className="text-2xl font-semibold text-[var(--fabric-black)]">
+                    <p className="text-2xl font-semibold text-[var(--avenize-black)]">
                       {metrics.reduce((sum, m) => sum + m.reach_count, 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-black/50 mt-1">Reach</p>
@@ -412,7 +412,7 @@ export default function Social() {
         <div className="space-y-6">
           {/* Brand Identity */}
           <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-[var(--fabric-black)] mb-4">Brand Identity</p>
+            <p className="text-sm font-medium text-[var(--avenize-black)] mb-4">Brand Identity</p>
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-black/50 block mb-1">Brand Name</label>
@@ -434,7 +434,7 @@ export default function Social() {
               </div>
               <button
                 onClick={saveBranding}
-                className="rounded-lg fabric-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                className="rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
               >
                 Save Branding
               </button>
@@ -443,7 +443,7 @@ export default function Social() {
 
           {/* Brand Colors */}
           <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-[var(--fabric-black)] mb-4">Brand Colors</p>
+            <p className="text-sm font-medium text-[var(--avenize-black)] mb-4">Brand Colors</p>
             <div className="flex items-center gap-4">
               <div>
                 <label className="text-xs text-black/50 block mb-1">Primary</label>
@@ -488,14 +488,14 @@ export default function Social() {
                 style={{ backgroundColor: secondaryColor }}
               />
               <div
-                className="w-20 h-20 rounded-xl fabric-gradient"
+                className="w-20 h-20 rounded-xl avenize-gradient"
               />
             </div>
           </div>
 
           {/* Brand Assets */}
           <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-[var(--fabric-black)] mb-4">Brand Assets</p>
+            <p className="text-sm font-medium text-[var(--avenize-black)] mb-4">Brand Assets</p>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {['logo', 'banner', 'avatar', 'template'].map((type) => (
                 <button

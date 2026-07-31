@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import FabricMark from '../components/FabricMark'
+import AvenizeMark from '../components/AvenizeMark'
 
 const PENDING_INVITE_KEY = 'fabric_pending_invite'
 
@@ -79,10 +79,10 @@ export default function Join() {
 
   if (!info?.valid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--fabric-offwhite)] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-3">
-          <FabricMark size={26} />
-          <p className="text-sm text-[var(--fabric-black)] font-medium">This invite isn't valid</p>
+          <AvenizeMark size={26} />
+          <p className="text-sm text-[var(--avenize-black)] font-medium">This invite isn't valid</p>
           <p className="text-sm text-black/50">It may have expired or already been used.</p>
           <Link to="/login" className="text-sm text-[#4F46E5] hover:underline">
             Back to sign in
@@ -94,10 +94,10 @@ export default function Join() {
 
   if (checkEmail) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--fabric-offwhite)] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-3">
-          <FabricMark size={26} />
-          <p className="text-sm text-[var(--fabric-black)] font-medium">Check your email</p>
+          <AvenizeMark size={26} />
+          <p className="text-sm text-[var(--avenize-black)] font-medium">Check your email</p>
           <p className="text-sm text-black/50">
             Confirm your address, then sign in — we'll finish joining {info.business_name} automatically.
           </p>
@@ -110,17 +110,17 @@ export default function Join() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--fabric-offwhite)] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <FabricMark size={26} />
-          <span className="text-xl font-semibold tracking-tight text-[var(--fabric-black)]">Fabric</span>
+          <AvenizeMark size={26} />
+          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">
-          You're invited to join <span className="text-[var(--fabric-black)] font-medium">{info.business_name}</span> as{' '}
+          You're invited to join <span className="text-[var(--avenize-black)] font-medium">{info.business_name}</span> as{' '}
           {info.role}
         </p>
 
@@ -156,7 +156,7 @@ export default function Join() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-lg fabric-gradient text-white py-2 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+          className="w-full rounded-lg avenize-gradient text-white py-2 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
         >
           {submitting ? 'Joining…' : 'Join'}
         </button>

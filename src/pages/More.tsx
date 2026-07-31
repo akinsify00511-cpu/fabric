@@ -18,7 +18,7 @@ const ITEMS = [
 export default function More() {
   return (
     <div>
-      <h1 className="text-xl font-semibold text-[var(--fabric-black)] mb-1">All modules</h1>
+      <h1 className="text-xl font-semibold text-[var(--avenize-black)] mb-1">All modules</h1>
       <p className="text-sm text-black/50 mb-6">Your complete business operating system</p>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {ITEMS.map((item) => (
@@ -31,7 +31,7 @@ export default function More() {
               <item.icon size={18} strokeWidth={2} />
             </div>
             <div>
-              <span className="text-sm font-medium text-[var(--fabric-black)]">{item.label}</span>
+              <span className="text-sm font-medium text-[var(--avenize-black)]">{item.label}</span>
               <p className="text-xs text-black/40">{item.desc}</p>
             </div>
           </Link>

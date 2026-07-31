@@ -119,7 +119,7 @@ export default function Tasks() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--fabric-black)]">Tasks</h1>
+          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Tasks</h1>
           <p className="text-sm text-black/50 mt-0.5">Assign and track team work</p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function Tasks() {
           />
           <button
             onClick={addTask}
-            className="ml-auto rounded-lg fabric-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-1.5"
+            className="ml-auto rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-1.5"
           >
             <Plus size={14} />
             Add Task
@@ -181,7 +181,7 @@ export default function Tasks() {
             key={f.id}
             onClick={() => setFilter(f.id as typeof filter)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-              filter === f.id ? 'fabric-gradient text-white' : 'bg-white text-black/50 border border-black/[0.06]'
+              filter === f.id ? 'avenize-gradient text-white' : 'bg-white text-black/50 border border-black/[0.06]'
             }`}
           >
             {f.label}
@@ -217,7 +217,7 @@ export default function Tasks() {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm text-[var(--fabric-black)] ${task.status === 'done' ? 'line-through opacity-50' : ''}`}>
+                            <p className={`text-sm text-[var(--avenize-black)] ${task.status === 'done' ? 'line-through opacity-50' : ''}`}>
                               {task.title}
                             </p>
                             <div className="flex items-center gap-2 mt-1.5">

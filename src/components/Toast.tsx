@@ -37,7 +37,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 ? 'bg-green-600 text-white'
                 : toast.type === 'error'
                 ? 'bg-red-600 text-white'
-                : 'bg-[var(--fabric-black)] text-white'
+                : 'bg-[var(--avenize-black)] text-white'
             }`}
           >
             {toast.message}

@@ -107,7 +107,7 @@ export default function Merit() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--fabric-black)]">Merit Points</h1>
+          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Merit Points</h1>
           <p className="text-sm text-black/50 mt-0.5">Recognize and reward great work</p>
         </div>
         <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full">
@@ -132,7 +132,7 @@ export default function Merit() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'fabric-gradient text-white'
+                  ? 'avenize-gradient text-white'
                   : 'text-black/50 hover:text-black'
               }`}
             >
@@ -147,7 +147,7 @@ export default function Merit() {
       {activeTab === 'give' && (
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-[var(--fabric-black)] mb-4">Recognize a teammate</p>
+            <p className="text-sm font-medium text-[var(--avenize-black)] mb-4">Recognize a teammate</p>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3">
                 <select
@@ -167,7 +167,7 @@ export default function Merit() {
                       onClick={() => setPoints(p.toString())}
                       className={`w-10 h-10 rounded-lg font-medium text-sm transition ${
                         points === p.toString()
-                          ? 'fabric-gradient text-white'
+                          ? 'avenize-gradient text-white'
                           : 'bg-black/[0.04] text-black/60 hover:bg-black/[0.08]'
                       }`}
                     >
@@ -185,7 +185,7 @@ export default function Merit() {
               <button
                 onClick={awardPoints}
                 disabled={!canAward}
-                className="w-full rounded-lg fabric-gradient text-white py-2.5 text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full rounded-lg avenize-gradient text-white py-2.5 text-sm font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <Award size={16} />
                 Award {points} Merit Points
@@ -200,17 +200,17 @@ export default function Merit() {
 
           {/* Recent Awards */}
           <div className="bg-white rounded-2xl border border-black/[0.06]">
-            <p className="px-4 py-3 text-sm font-medium text-[var(--fabric-black)] border-b border-black/[0.06]">
+            <p className="px-4 py-3 text-sm font-medium text-[var(--avenize-black)] border-b border-black/[0.06]">
               Recent Recognition
             </p>
             <div className="divide-y divide-black/[0.06]">
               {entries.slice(0, 5).map((e) => (
                 <div key={e.id} className="px-4 py-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full fabric-gradient flex items-center justify-center text-white text-xs font-medium">
+                  <div className="w-8 h-8 rounded-full avenize-gradient flex items-center justify-center text-white text-xs font-medium">
                     {e.points}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-[var(--fabric-black)]">
+                    <p className="text-sm text-[var(--avenize-black)]">
                       <span className="font-medium">{e.staff_name}</span>
                       <span className="text-black/40"> earned </span>
                       <span className="font-medium text-yellow-600">{e.points} pts</span>
@@ -236,11 +236,11 @@ export default function Merit() {
               {entries.map((e) => (
                 <div key={e.id} className="px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full fabric-gradient flex items-center justify-center text-white font-semibold">
+                    <div className="w-10 h-10 rounded-full avenize-gradient flex items-center justify-center text-white font-semibold">
                       {e.points}
                     </div>
                     <div>
-                      <p className="text-sm text-[var(--fabric-black)] font-medium">{e.staff_name}</p>
+                      <p className="text-sm text-[var(--avenize-black)] font-medium">{e.staff_name}</p>
                       <p className="text-xs text-black/40">{e.reason || 'Merit recognition'}</p>
                     </div>
                   </div>
@@ -265,7 +265,7 @@ export default function Merit() {
             {leaderboard.map((entry, index) => (
               <div key={entry.staff_id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                  index === 0 ? 'fabric-gradient text-white' :
+                  index === 0 ? 'avenize-gradient text-white' :
                   index === 1 ? 'bg-gray-200 text-gray-600' :
                   index === 2 ? 'bg-amber-100 text-amber-700' :
                   'bg-black/[0.05] text-black/40'
@@ -273,7 +273,7 @@ export default function Merit() {
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-[var(--fabric-black)]">{entry.staff_name}</p>
+                  <p className="text-sm font-medium text-[var(--avenize-black)]">{entry.staff_name}</p>
                   <p className="text-xs text-black/40">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="text-right">

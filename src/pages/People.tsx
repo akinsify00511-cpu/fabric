@@ -83,7 +83,7 @@ export default function People() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">People</h1>
+      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">People</h1>
 
       {canInvite && (
         <>
@@ -105,7 +105,7 @@ export default function People() {
                 <option value="staff">Staff</option>
                 <option value="manager">Manager</option>
               </select>
-              <button onClick={createInvite} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+              <button onClick={createInvite} className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm">
                 Generate link
               </button>
             </div>
@@ -130,7 +130,7 @@ export default function People() {
       <div className="bg-white rounded-2xl border border-black/5 divide-y divide-black/5 mb-10">
         {staffList.map((s) => (
           <div key={s.id} className="px-4 py-3 flex justify-between text-sm">
-            <span className="text-[var(--fabric-black)]">{s.full_name}</span>
+            <span className="text-[var(--avenize-black)]">{s.full_name}</span>
             <span className="text-black/40">
               {s.job_title ?? s.role} {!s.active && '· inactive'}
             </span>
@@ -149,7 +149,7 @@ export default function People() {
           placeholder="Reason"
           className="flex-1 min-w-40 rounded-lg border border-black/10 px-3 py-2 text-sm"
         />
-        <button onClick={requestLeave} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+        <button onClick={requestLeave} className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm">
           Submit
         </button>
       </div>
@@ -158,7 +158,7 @@ export default function People() {
       <div className="bg-white rounded-2xl border border-black/5 divide-y divide-black/5">
         {leave.map((l) => (
           <div key={l.id} className="px-4 py-3 flex items-center justify-between text-sm">
-            <span className="text-[var(--fabric-black)]">
+            <span className="text-[var(--avenize-black)]">
               {l.start_date} → {l.end_date} {l.reason && `· ${l.reason}`}
             </span>
             {canApprove && l.status === 'pending' ? (

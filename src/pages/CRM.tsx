@@ -36,7 +36,7 @@ export default function CRM() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">CRM</h1>
+      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">CRM</h1>
 
       <div className="flex gap-2 mb-6">
         <input
@@ -45,7 +45,7 @@ export default function CRM() {
           placeholder="New deal title"
           className="flex-1 rounded-lg border border-black/10 px-3 py-2 text-sm"
         />
-        <button onClick={addDeal} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+        <button onClick={addDeal} className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm">
           Add deal
         </button>
       </div>
@@ -58,8 +58,8 @@ export default function CRM() {
               {deals
                 .filter((d) => d.stage === stage)
                 .map((d) => (
-                  <div key={d.id} className="rounded-lg bg-[var(--fabric-offwhite)] p-2 text-sm">
-                    <p className="text-[var(--fabric-black)]">{d.title}</p>
+                  <div key={d.id} className="rounded-lg bg-[var(--avenize-offwhite)] p-2 text-sm">
+                    <p className="text-[var(--avenize-black)]">{d.title}</p>
                     <select
                       value={d.stage}
                       onChange={(e) => moveStage(d.id, e.target.value as Deal['stage'])}
@@ -82,7 +82,7 @@ export default function CRM() {
       <div className="bg-white rounded-2xl border border-black/5 divide-y divide-black/5">
         {contacts.map((c) => (
           <div key={c.id} className="px-4 py-3 text-sm flex justify-between">
-            <span className="text-[var(--fabric-black)]">{c.name}</span>
+            <span className="text-[var(--avenize-black)]">{c.name}</span>
             <span className="text-black/40">{c.company ?? c.email ?? ''}</span>
           </div>
         ))}

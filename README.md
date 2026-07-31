@@ -1,11 +1,11 @@
-# FABRIC — Layer 1
+# AVENIZE — Layer 1
 
 Self-configuring business OS. Layer 1 covers CRM, Projects, Finance (invoicing), Inventory, and People (HR tracking only — no statutory payroll processing).
 
 ## Brand
 - Colors: black #111111, off-white #F7F7F8, gray #E9ECEF, gradient accent #FF7A59 → #4F46E5
 - Font: Inter
-- Logo: four interlocking rounded squares — `src/components/FabricMark.tsx`
+- Logo: four interlocking rounded squares — `src/components/AvenizeMark.tsx`
 
 ## Stack
 - Vite + React + TypeScript
@@ -15,7 +15,7 @@ Self-configuring business OS. Layer 1 covers CRM, Projects, Finance (invoicing),
 ## Setup
 
 1. `npm install`
-2. Copy `.env.example` to `.env` (pre-filled with the FABRIC Supabase project's URL and public key)
+2. Copy `.env.example` to `.env` (pre-filled with the Avenize Supabase project's URL and public key)
 3. `npm run dev`
 
 ## Signup & onboarding
@@ -31,7 +31,7 @@ Fully self-serve, no manual database work needed:
 - `src/lib/supabase.ts` — Supabase client
 - `src/lib/AuthContext.tsx` — session + staff profile, with `refreshStaff()`
 - `src/lib/types.ts` — shared types matching the DB schema
-- `src/components/FabricMark.tsx` — logo mark
+- `src/components/AvenizeMark.tsx` — logo mark
 - `src/components/Shell.tsx` — responsive layout: sidebar on desktop, floating bottom pill nav + top header on mobile
 - `src/pages/` — Login, Signup, Onboarding, Join, Dashboard, CRM, Projects, Finance, People, Inventory, Reports, Settings, More
 

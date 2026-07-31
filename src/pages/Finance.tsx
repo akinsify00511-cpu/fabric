@@ -46,10 +46,10 @@ export default function Finance() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">Finance</h1>
+      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Finance</h1>
 
       <div className="bg-white rounded-2xl border border-black/5 p-4 mb-6 space-y-3">
-        <p className="text-sm font-medium text-[var(--fabric-black)]">Create invoice</p>
+        <p className="text-sm font-medium text-[var(--avenize-black)]">Create invoice</p>
         <div className="flex flex-wrap gap-2">
           <input
             value={clientName}
@@ -76,7 +76,7 @@ export default function Finance() {
             type="number"
             className="w-32 rounded-lg border border-black/10 px-3 py-2 text-sm"
           />
-          <button onClick={addInvoice} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+          <button onClick={addInvoice} className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm">
             Create
           </button>
         </div>
@@ -86,7 +86,7 @@ export default function Finance() {
         {invoices.map((inv) => (
           <div key={inv.id} className="px-4 py-3 flex items-center justify-between text-sm">
             <div>
-              <span className="text-[var(--fabric-black)]">{inv.client_name}</span>
+              <span className="text-[var(--avenize-black)]">{inv.client_name}</span>
               <span className="text-black/40 ml-2">${inv.total?.toLocaleString() ?? 0}</span>
             </div>
             <select

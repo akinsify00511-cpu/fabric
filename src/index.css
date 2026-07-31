@@ -2,25 +2,25 @@
 @import "tailwindcss";
 
 :root {
-  --fabric-black: #111111;
-  --fabric-offwhite: #F7F7F8;
-  --fabric-gray: #E9ECEF;
-  --fabric-accent-start: #FF7A59;
-  --fabric-accent-end: #4F46E5;
+  --avenize-black: #111111;
+  --avenize-offwhite: #F7F7F8;
+  --avenize-gray: #E9ECEF;
+  --avenize-accent-start: #FF7A59;
+  --avenize-accent-end: #4F46E5;
 }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--fabric-offwhite);
-  color: var(--fabric-black);
+  background-color: var(--avenize-offwhite);
+  color: var(--avenize-black);
 }
 
-.fabric-gradient {
-  background: linear-gradient(135deg, var(--fabric-accent-start), var(--fabric-accent-end));
+.avenize-gradient {
+  background: linear-gradient(135deg, var(--avenize-accent-start), var(--avenize-accent-end));
 }
 
-.fabric-gradient-text {
-  background: linear-gradient(135deg, var(--fabric-accent-start), var(--fabric-accent-end));
+.avenize-gradient-text {
+  background: linear-gradient(135deg, var(--avenize-accent-start), var(--avenize-accent-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

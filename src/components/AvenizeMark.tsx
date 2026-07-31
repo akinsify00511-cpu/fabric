@@ -3,7 +3,7 @@ type LogoProps = {
   mono?: boolean // true = single-color (for dark backgrounds), false = gradient piece
 }
 
-export default function FabricMark({ size = 32, mono = false }: LogoProps) {
+export default function AvenizeMark({ size = 32, mono = false }: LogoProps) {
   const dark = '#111111'
   const light = '#F7F7F8'
 

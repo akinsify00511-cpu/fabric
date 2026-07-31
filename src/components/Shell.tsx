@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import FabricMark from './FabricMark'
+import AvenizeMark from './AvenizeMark'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true, icon: Home },
@@ -27,12 +27,12 @@ export default function Shell() {
   const { staff, signOut } = useAuth()
 
   return (
-    <div className="min-h-screen bg-[var(--fabric-offwhite)]">
+    <div className="min-h-screen bg-[var(--avenize-offwhite)]">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black/[0.06] flex-col fixed inset-y-0 left-0">
         <div className="px-5 py-6 flex items-center gap-2">
-          <FabricMark size={22} />
-          <span className="text-base font-semibold tracking-tight text-[var(--fabric-black)]">Fabric</span>
+          <AvenizeMark size={22} />
+          <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {
@@ -45,7 +45,7 @@ export default function Shell() {
                 className={({ isActive }) =>
                   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
                     isActive
-                      ? 'bg-black/[0.04] text-[var(--fabric-black)] font-medium'
+                      ? 'bg-black/[0.04] text-[var(--avenize-black)] font-medium'
                       : 'text-black/50 hover:bg-black/[0.03] hover:text-black/80'
                   }`
                 }
@@ -67,8 +67,8 @@ export default function Shell() {
       {/* Mobile top header */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-black/[0.06] sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <FabricMark size={20} />
-          <span className="text-sm font-semibold tracking-tight text-[var(--fabric-black)]">Fabric</span>
+          <AvenizeMark size={20} />
+          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <button className="w-8 h-8 rounded-full bg-black/[0.04] flex items-center justify-center text-black/50">
           <Search size={15} strokeWidth={2} />
@@ -81,7 +81,7 @@ export default function Shell() {
       </main>
 
       {/* Mobile floating bottom pill nav */}
-      <nav className="md:hidden fixed bottom-4 left-4 right-4 bg-[var(--fabric-black)] rounded-full px-6 py-3 flex items-center justify-between shadow-lg">
+      <nav className="md:hidden fixed bottom-4 left-4 right-4 bg-[var(--avenize-black)] rounded-full px-6 py-3 flex items-center justify-between shadow-lg">
         {MOBILE_NAV_ITEMS.map((item) => {
           const Icon = item.icon
           return (
@@ -91,7 +91,7 @@ export default function Shell() {
               end={item.end}
               className={({ isActive }) =>
                 `w-9 h-9 rounded-full flex items-center justify-center transition ${
-                  isActive ? 'fabric-gradient text-white' : 'text-white/50'
+                  isActive ? 'avenize-gradient text-white' : 'text-white/50'
                 }`
               }
             >

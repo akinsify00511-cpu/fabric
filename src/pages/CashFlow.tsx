@@ -119,7 +119,7 @@ export default function CashFlow() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-xl font-medium text-[var(--fabric-black)]">Cash Flow</h1>
+        <h1 className="text-xl font-medium text-[var(--avenize-black)]">Cash Flow</h1>
         <p className="text-sm text-black/50 mt-0.5">Track income and expenses</p>
       </div>
 
@@ -152,12 +152,12 @@ export default function CashFlow() {
 
       {/* Add Entry */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-6">
-        <p className="text-sm font-medium text-[var(--fabric-black)] mb-4">Add Entry</p>
+        <p className="text-sm font-medium text-[var(--avenize-black)] mb-4">Add Entry</p>
         <div className="flex flex-wrap gap-2 mb-3">
           <div className="flex rounded-lg overflow-hidden border border-black/10">
             <button
               onClick={() => { setType('income'); setCategory('') }}
-              className={`px-4 py-2 text-sm font-medium transition ${type === 'income' ? 'fabric-gradient text-white' : 'bg-white text-black/60'}`}
+              className={`px-4 py-2 text-sm font-medium transition ${type === 'income' ? 'avenize-gradient text-white' : 'bg-white text-black/60'}`}
             >
               Income
             </button>
@@ -194,7 +194,7 @@ export default function CashFlow() {
           <button
             onClick={addEntry}
             className={`rounded-lg text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-1.5 ${
-              type === 'income' ? 'fabric-gradient' : 'bg-red-500'
+              type === 'income' ? 'avenize-gradient' : 'bg-red-500'
             }`}
           >
             <Plus size={14} />
@@ -220,7 +220,7 @@ export default function CashFlow() {
             key={f.id}
             onClick={() => setFilter(f.id as typeof filter)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-              filter === f.id ? 'fabric-gradient text-white' : 'bg-white text-black/50 border border-black/[0.06]'
+              filter === f.id ? 'avenize-gradient text-white' : 'bg-white text-black/50 border border-black/[0.06]'
             }`}
           >
             {f.label}
@@ -242,7 +242,7 @@ export default function CashFlow() {
                   {entry.type === 'income' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                 </div>
                 <div>
-                  <p className="text-sm text-[var(--fabric-black)] font-medium">{entry.category}</p>
+                  <p className="text-sm text-[var(--avenize-black)] font-medium">{entry.category}</p>
                   <p className="text-xs text-black/40">{entry.description || '—'}</p>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export default function CashFlow() {
       {/* Monthly Breakdown */}
       {monthlyData.length > 0 && (
         <div className="mt-6">
-          <p className="text-sm font-medium text-[var(--fabric-black)] mb-3">Monthly Breakdown</p>
+          <p className="text-sm font-medium text-[var(--avenize-black)] mb-3">Monthly Breakdown</p>
           <div className="bg-white rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
             {monthlyData.map((m) => (
               <div key={m.month} className="px-4 py-3 flex items-center justify-between text-sm">

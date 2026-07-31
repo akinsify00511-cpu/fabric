@@ -43,10 +43,10 @@ export default function Inventory() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">Inventory</h1>
+      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Inventory</h1>
 
       <div className="bg-white rounded-2xl border border-black/5 p-4 mb-6 space-y-3">
-        <p className="text-sm font-medium text-[var(--fabric-black)]">Add product</p>
+        <p className="text-sm font-medium text-[var(--avenize-black)]">Add product</p>
         <div className="flex flex-wrap gap-2">
           <input
             value={name}
@@ -68,7 +68,7 @@ export default function Inventory() {
             type="number"
             className="w-20 rounded-lg border border-black/10 px-3 py-2 text-sm"
           />
-          <button onClick={addProduct} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+          <button onClick={addProduct} className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm">
             Add
           </button>
         </div>
@@ -80,7 +80,7 @@ export default function Inventory() {
           return (
             <div key={p.id} className="px-4 py-3 flex items-center justify-between text-sm">
               <div>
-                <p className="text-[var(--fabric-black)]">{p.name}</p>
+                <p className="text-[var(--avenize-black)]">{p.name}</p>
                 <p className="text-xs text-black/40">${p.price}</p>
                 {low && <p className="text-xs text-red-600 mt-0.5">Low stock</p>}
               </div>

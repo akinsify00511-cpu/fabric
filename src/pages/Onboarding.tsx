@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import FabricMark from '../components/FabricMark'
+import AvenizeMark from '../components/AvenizeMark'
 
 const PENDING_INVITE_KEY = 'fabric_pending_invite'
 
@@ -52,14 +52,14 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--fabric-offwhite)] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <FabricMark size={26} />
-          <span className="text-xl font-semibold tracking-tight text-[var(--fabric-black)]">Fabric</span>
+          <AvenizeMark size={26} />
+          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">
           {pendingInvite ? "One more step — you're joining a team" : 'One more step — set up your business'}
@@ -89,7 +89,7 @@ export default function Onboarding() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg fabric-gradient text-white py-2 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+          className="w-full rounded-lg avenize-gradient text-white py-2 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
         >
           {loading ? 'Setting up…' : 'Finish setup'}
         </button>
