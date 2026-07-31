@@ -1,17 +1,19 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import AvenizeMark from './AvenizeMark'
 import GamificationBar from './GamificationBar'
+import NotificationBell from './NotificationBell'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true, icon: Home },
   { to: '/chat', label: 'Chat', icon: MessageSquare },
+  { to: '/tasks', label: 'Tasks', icon: CheckSquare },
+  { to: '/calendar', label: 'Calendar', icon: CalendarIcon },
   { to: '/knowledge', label: 'Docs', icon: Book },
   { to: '/tickets', label: 'Support', icon: Headphones },
   { to: '/crm', label: 'CRM', icon: Users2 },
   { to: '/social', label: 'Social', icon: Share2 },
-  { to: '/tasks', label: 'Tasks', icon: CheckSquare },
   { to: '/projects', label: 'Projects', icon: FolderKanban },
   { to: '/finance', label: 'Finance', icon: Wallet },
   { to: '/people', label: 'People', icon: Contact },
@@ -77,9 +79,12 @@ export default function Shell() {
           <AvenizeMark size={20} />
           <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
-        <button className="w-8 h-8 rounded-full bg-black/[0.04] flex items-center justify-center text-black/50">
-          <Search size={15} strokeWidth={2} />
-        </button>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <button className="w-8 h-8 rounded-full bg-black/[0.04] flex items-center justify-center text-black/50">
+            <Search size={15} strokeWidth={2} />
+          </button>
+        </div>
       </header>
 
       {/* Content */}

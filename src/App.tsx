@@ -30,6 +30,8 @@ import Campaigns from './pages/Campaigns'
 import Accounting from './pages/Accounting'
 import BrandingSettings from './pages/BrandingSettings'
 import SecuritySettings from './pages/SecuritySettings'
+import Calendar from './pages/Calendar'
+import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -78,6 +80,7 @@ function AppRoutes() {
         <Route path="accounting" element={<Accounting />} />
         <Route path="branding" element={<BrandingSettings />} />
         <Route path="security" element={<SecuritySettings />} />
+        <Route path="calendar" element={<Calendar />} />
       </Route>
     </Routes>
   )
