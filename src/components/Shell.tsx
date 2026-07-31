@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import AvenizeMark from './AvenizeMark'
+import GamificationBar from './GamificationBar'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true, icon: Home },
@@ -27,15 +28,18 @@ const MOBILE_NAV_ITEMS = [
 ]
 
 export default function Shell() {
-  const { staff, signOut } = useAuth()
+  const { staff, signOut, user } = useAuth()
 
   return (
     <div className="min-h-screen bg-[var(--avenize-offwhite)]">
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black/[0.06] flex-col fixed inset-y-0 left-0">
-        <div className="px-5 py-6 flex items-center gap-2">
-          <AvenizeMark size={22} />
-          <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+        <div className="px-5 py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AvenizeMark size={22} />
+            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+          </div>
+          {user && <GamificationBar userId={user.id} />}
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
+import { GamificationProvider } from './lib/GamificationContext'
 import Shell from './components/Shell'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -80,9 +81,11 @@ export default function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <GamificationProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </GamificationProvider>
       </ToastProvider>
     </AuthProvider>
   )
