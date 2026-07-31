@@ -1,44 +1,92 @@
-# AVENIZE — Layer 1
+# Avenize - Business Operating System
 
-Self-configuring business OS. Layer 1 covers CRM, Projects, Finance (invoicing), Inventory, and People (HR tracking only — no statutory payroll processing).
+A complete, enterprise-ready business management platform.
 
-## Brand
-- Colors: black #111111, off-white #F7F7F8, gray #E9ECEF, gradient accent #FF7A59 → #4F46E5
-- Font: Inter
-- Logo: four interlocking rounded squares — `src/components/AvenizeMark.tsx`
+## Features
+
+### Core Modules
+- **CRM** - Deals pipeline, contacts management
+- **Tasks** - Task management with assignees and due dates
+- **Projects** - Project tracking and milestones
+- **Finance** - Invoices, payments, expense tracking
+- **Inventory** - Product catalog, stock management
+- **Accounting** - Double-entry bookkeeping, balance sheets
+- **People** - Team management, invites, roles
+
+### Communication
+- **Chat** - Real-time team messaging with channels
+- **Knowledge Base** - Internal wiki and documentation
+- **Notifications** - Real-time in-app notifications
+
+### Automation
+- **Automations** - Visual workflow builder
+- **Webhooks** - Event-driven integrations (17+ events)
+- **API** - Full REST API with API keys
+
+### Marketing & Sales
+- **Social Media** - Post scheduling and branding
+- **Email Campaigns** - Drip sequences and analytics
+- **Customer Portal** - Client self-service portal
+
+### Enterprise Features
+- **SSO/SAML** - Okta, Azure AD, Google Workspace
+- **2FA** - Two-factor authentication
+- **Custom Branding** - White-label with colors and logo
+- **Multi-language** - 10 languages including RTL
+- **Audit Logging** - Complete activity tracking
+- **PWA** - Installable as mobile app
 
 ## Stack
 - Vite + React + TypeScript
 - Tailwind CSS v4
 - Supabase (Postgres + Row-Level Security, Auth)
+- Vercel deployment
 
 ## Setup
 
 1. `npm install`
-2. Copy `.env.example` to `.env` (pre-filled with the Avenize Supabase project's URL and public key)
-3. `npm run dev`
-
-## Signup & onboarding
-
-Fully self-serve, no manual database work needed:
-
-- **First user (owner):** go to `/signup` — enter business name, your name, email, password. Powered by a `bootstrap_business()` Postgres function (SECURITY DEFINER) that atomically creates the business and your owner `staff` row.
-- **Everyone after that:** owner/manager goes to People → "Invite a teammate", enters an email + role (staff or manager), and gets a shareable link (`/join/<invite-id>`) to copy and send however they like — WhatsApp, email, etc. **No email is sent automatically yet** — that needs an email provider wired in, which is a later-layer task. The invitee opens the link, sees which business and role they're joining, signs up, and is added to the same business automatically. Invites expire after 7 days and can only be used once.
-- Both flows correctly handle Supabase's "confirm email" setting being on or off — if confirmation is required, the invitee/owner lands on `/onboarding` after confirming, which finishes the same setup step.
-
-## Structure
-
-- `src/lib/supabase.ts` — Supabase client
-- `src/lib/AuthContext.tsx` — session + staff profile, with `refreshStaff()`
-- `src/lib/types.ts` — shared types matching the DB schema
-- `src/components/AvenizeMark.tsx` — logo mark
-- `src/components/Shell.tsx` — responsive layout: sidebar on desktop, floating bottom pill nav + top header on mobile
-- `src/pages/` — Login, Signup, Onboarding, Join, Dashboard, CRM, Projects, Finance, People, Inventory, Reports, Settings, More
+2. Copy `.env.example` to `.env` with your Supabase credentials
+3. Run migrations in `supabase/migrations/`
+4. `npm run dev`
 
 ## Deploying
 
-Push to GitHub, import the repo in Vercel, add the two `VITE_SUPABASE_*` env vars from `.env`.
+See [DEPLOY.md](DEPLOY.md) for detailed instructions.
 
-## Next layers (not built yet)
+Quick deploy:
+```bash
+vercel --prod
+```
 
-Real email delivery for invites (currently link-copy only), cross-module automations, approvals, chat/tasks, the AI context engine — see the FABRIC PRD for full sequencing.
+## Pages
+
+| Module | URL | Description |
+|--------|-----|-------------|
+| Dashboard | `/` | Home screen |
+| CRM | `/crm` | Deals & contacts |
+| Chat | `/chat` | Team messaging |
+| Tasks | `/tasks` | Task management |
+| Calendar | `/calendar` | Events & meetings |
+| Projects | `/projects` | Project tracking |
+| Finance | `/finance` | Invoices & billing |
+| Accounting | `/accounting` | Double-entry bookkeeping |
+| Inventory | `/inventory` | Stock & products |
+| People | `/people` | Team & invites |
+| Knowledge | `/knowledge` | Docs & wiki |
+| Automations | `/automations` | Workflow builder |
+| Tickets | `/tickets` | Support desk |
+| Campaigns | `/campaigns` | Email marketing |
+| Reports | `/reports` | Analytics |
+| Branding | `/branding` | Colors, logo, theme |
+| Security | `/security` | 2FA, audit log |
+| SSO | `/sso` | SAML/OIDC setup |
+| API | `/api` | API keys, webhooks |
+| Portal | `/portal` | Client access |
+
+## Database
+
+**19 migration files** with **60+ tables** covering all modules.
+
+## License
+
+Private - All rights reserved
