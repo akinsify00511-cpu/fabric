@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
+import { BrandingProvider } from './lib/BrandingContext'
+import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -26,6 +28,8 @@ import Automations from './pages/Automations'
 import Tickets from './pages/Tickets'
 import Campaigns from './pages/Campaigns'
 import Accounting from './pages/Accounting'
+import BrandingSettings from './pages/BrandingSettings'
+import SecuritySettings from './pages/SecuritySettings'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -72,6 +76,8 @@ function AppRoutes() {
         <Route path="tickets" element={<Tickets />} />
         <Route path="campaigns" element={<Campaigns />} />
         <Route path="accounting" element={<Accounting />} />
+        <Route path="branding" element={<BrandingSettings />} />
+        <Route path="security" element={<SecuritySettings />} />
       </Route>
     </Routes>
   )
@@ -82,9 +88,13 @@ export default function App() {
     <AuthProvider>
       <ToastProvider>
         <GamificationProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <BrandingProvider>
+            <LocaleProvider>
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </LocaleProvider>
+          </BrandingProvider>
         </GamificationProvider>
       </ToastProvider>
     </AuthProvider>
