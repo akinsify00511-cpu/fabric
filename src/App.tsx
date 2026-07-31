@@ -16,6 +16,9 @@ import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
 import Social from './pages/Social'
+import Tasks from './pages/Tasks'
+import Merit from './pages/Merit'
+import CashFlow from './pages/CashFlow'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -53,6 +56,9 @@ function AppRoutes() {
         <Route path="settings" element={<Settings />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
+        <Route path="tasks" element={<Tasks />} />
+        <Route path="merit" element={<Merit />} />
+        <Route path="cashflow" element={<CashFlow />} />
       </Route>
     </Routes>
   )
