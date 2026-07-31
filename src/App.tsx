@@ -24,6 +24,7 @@ import Knowledge from './pages/Knowledge'
 import Automations from './pages/Automations'
 import Tickets from './pages/Tickets'
 import Campaigns from './pages/Campaigns'
+import Accounting from './pages/Accounting'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -69,6 +70,7 @@ function AppRoutes() {
         <Route path="automations" element={<Automations />} />
         <Route path="tickets" element={<Tickets />} />
         <Route path="campaigns" element={<Campaigns />} />
+        <Route path="accounting" element={<Accounting />} />
       </Route>
     </Routes>
   )
