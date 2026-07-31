@@ -14,9 +14,8 @@ export type Deal = {
   contact_id: string | null
   owner_id: string | null
   title: string
-  stage: 'new' | 'qualified' | 'proposal' | 'won' | 'lost'
+  stage: 'prospect' | 'qualified' | 'proposal' | 'negotiation' | 'won' | 'lost'
   value: number
-  currency: string
   created_at: string
 }
 
@@ -25,19 +24,23 @@ export type Product = {
   business_id: string
   name: string
   sku: string | null
-  unit_price: number
-  currency: string
-  stock_qty: number
+  price: number  // matches schema
+  cost: number
+  stock: number  // matches schema
   low_stock_threshold: number
+  created_at: string
 }
 
 export type Invoice = {
   id: string
   business_id: string
   deal_id: string | null
-  contact_id: string | null
-  amount: number
-  currency: string
+  client_name: string
+  client_email: string | null
+  invoice_number: string | null
+  subtotal: number
+  tax: number
+  total: number  // matches schema (was 'amount')
   status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
   due_date: string | null
   created_at: string
@@ -51,4 +54,29 @@ export type LeaveRequest = {
   end_date: string
   reason: string | null
   status: 'pending' | 'approved' | 'rejected'
+  approved_by: string | null
+  created_at: string
+}
+
+export type Project = {
+  id: string
+  business_id: string
+  name: string
+  description: string | null
+  status: 'active' | 'done' | 'on_hold' | 'cancelled'
+  owner_id: string | null
+  due_date: string | null
+  created_at: string
+}
+
+export type Staff = {
+  id: string
+  business_id: string
+  user_id: string
+  name: string
+  email: string
+  role: 'owner' | 'manager' | 'staff'
+  full_name: string | null
+  job_title: string | null
+  active: boolean
 }

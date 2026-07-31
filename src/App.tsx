@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
+import { ToastProvider } from './components/Toast'
 import Shell from './components/Shell'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -14,6 +15,7 @@ import Inventory from './pages/Inventory'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
+import Social from './pages/Social'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -50,6 +52,7 @@ function AppRoutes() {
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
         <Route path="more" element={<More />} />
+        <Route path="social" element={<Social />} />
       </Route>
     </Routes>
   )
@@ -58,9 +61,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   )
 }

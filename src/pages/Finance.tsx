@@ -8,7 +8,8 @@ export default function Finance() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [deals, setDeals] = useState<Deal[]>([])
   const [dealId, setDealId] = useState('')
-  const [amount, setAmount] = useState('')
+  const [clientName, setClientName] = useState('')
+  const [total, setTotal] = useState('')
 
   const load = async () => {
     const [{ data: inv }, { data: d }] = await Promise.all([
@@ -24,22 +25,22 @@ export default function Finance() {
   }, [])
 
   const addInvoice = async () => {
-    if (!amount) return
+    if (!total || !clientName) return
     await supabase.from('invoices').insert({
       deal_id: dealId || null,
-      amount: Number(amount),
+      client_name: clientName,
+      total: Number(total),
+      subtotal: Number(total),
       status: 'draft',
     })
-    setAmount('')
+    setTotal('')
+    setClientName('')
     setDealId('')
     load()
   }
 
   const setStatus = async (id: string, status: Invoice['status']) => {
-    await supabase
-      .from('invoices')
-      .update({ status, paid_at: status === 'paid' ? new Date().toISOString() : null })
-      .eq('id', id)
+    await supabase.from('invoices').update({ status }).eq('id', id)
     load()
   }
 
@@ -47,37 +48,47 @@ export default function Finance() {
     <div>
       <h1 className="text-xl font-medium text-[var(--fabric-black)] mb-6">Finance</h1>
 
-      <div className="flex gap-2 mb-6">
-        <select
-          value={dealId}
-          onChange={(e) => setDealId(e.target.value)}
-          className="rounded-lg border border-black/10 px-3 py-2 text-sm"
-        >
-          <option value="">No linked deal</option>
-          {deals.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.title}
-            </option>
-          ))}
-        </select>
-        <input
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Amount"
-          type="number"
-          className="w-32 rounded-lg border border-black/10 px-3 py-2 text-sm"
-        />
-        <button onClick={addInvoice} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
-          Create invoice
-        </button>
+      <div className="bg-white rounded-2xl border border-black/5 p-4 mb-6 space-y-3">
+        <p className="text-sm font-medium text-[var(--fabric-black)]">Create invoice</p>
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            placeholder="Client name"
+            className="flex-1 min-w-40 rounded-lg border border-black/10 px-3 py-2 text-sm"
+          />
+          <select
+            value={dealId}
+            onChange={(e) => setDealId(e.target.value)}
+            className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+          >
+            <option value="">No linked deal</option>
+            {deals.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.title}
+              </option>
+            ))}
+          </select>
+          <input
+            value={total}
+            onChange={(e) => setTotal(e.target.value)}
+            placeholder="Amount"
+            type="number"
+            className="w-32 rounded-lg border border-black/10 px-3 py-2 text-sm"
+          />
+          <button onClick={addInvoice} className="rounded-lg bg-[var(--fabric-black)] text-white px-4 py-2 text-sm">
+            Create
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-black/5 divide-y divide-black/5">
         {invoices.map((inv) => (
           <div key={inv.id} className="px-4 py-3 flex items-center justify-between text-sm">
-            <span className="text-[var(--fabric-black)]">
-              {inv.currency} {inv.amount.toLocaleString()}
-            </span>
+            <div>
+              <span className="text-[var(--fabric-black)]">{inv.client_name}</span>
+              <span className="text-black/40 ml-2">${inv.total?.toLocaleString() ?? 0}</span>
+            </div>
             <select
               value={inv.status}
               onChange={(e) => setStatus(inv.id, e.target.value as Invoice['status'])}

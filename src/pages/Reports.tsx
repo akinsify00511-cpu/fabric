@@ -13,14 +13,14 @@ export default function Reports() {
     const load = async () => {
       const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }] = await Promise.all([
         supabase.from('deals').select('value').eq('stage', 'won'),
-        supabase.from('invoices').select('amount').eq('status', 'paid'),
-        supabase.from('invoices').select('amount').in('status', ['sent', 'overdue']),
+        supabase.from('invoices').select('total').eq('status', 'paid'),
+        supabase.from('invoices').select('total').in('status', ['sent', 'overdue']),
       ])
       setStats({
         dealsWon: wonDeals?.length ?? 0,
         revenueClosed: (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0),
-        invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.amount ?? 0), 0),
-        invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.amount ?? 0), 0),
+        invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
+        invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
       })
     }
     load()

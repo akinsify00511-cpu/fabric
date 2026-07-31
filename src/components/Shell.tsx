@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import FabricMark from './FabricMark'
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true, icon: Home },
   { to: '/crm', label: 'CRM', icon: Users2 },
+  { to: '/social', label: 'Social', icon: Share2 },
   { to: '/projects', label: 'Projects', icon: FolderKanban },
   { to: '/finance', label: 'Finance', icon: Wallet },
   { to: '/people', label: 'People', icon: Contact },
@@ -55,7 +56,7 @@ export default function Shell() {
           })}
         </nav>
         <div className="px-5 py-4 border-t border-black/[0.06] text-xs text-black/40">
-          <p className="text-black/60">{staff?.full_name ?? '…'}</p>
+          <p className="text-black/60">{staff?.full_name ?? staff?.name ?? '…'}</p>
           <button onClick={signOut} className="mt-1 hover:text-black/70">
             Sign out
           </button>

@@ -48,8 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const { data } = await supabase
       .from('staff')
-      .select('id, business_id, full_name, role, job_title')
-      .eq('id', session.user.id)
+      .select('id, business_id, name, email, role, job_title, full_name')
+      .eq('user_id', session.user.id)
       .maybeSingle()
     setStaff(data as Staff | null)
     setStaffChecked(true)

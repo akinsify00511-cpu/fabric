@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Deal, Contact } from '../lib/types'
 
-const STAGES: Deal['stage'][] = ['new', 'qualified', 'proposal', 'won', 'lost']
+const STAGES: Deal['stage'][] = ['prospect', 'qualified', 'proposal', 'negotiation', 'won', 'lost']
 
 export default function CRM() {
   const [deals, setDeals] = useState<Deal[]>([])
@@ -24,7 +24,7 @@ export default function CRM() {
 
   const addDeal = async () => {
     if (!title.trim()) return
-    await supabase.from('deals').insert({ title, stage: 'new', value: 0 })
+    await supabase.from('deals').insert({ title, stage: 'prospect', value: 0 })
     setTitle('')
     load()
   }

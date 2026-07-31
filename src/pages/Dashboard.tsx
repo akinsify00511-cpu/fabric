@@ -20,7 +20,7 @@ export default function Dashboard() {
           supabase.from('deals').select('*', { count: 'exact', head: true }).neq('stage', 'lost').neq('stage', 'won'),
           supabase.from('projects').select('*', { count: 'exact', head: true }).neq('status', 'done'),
           supabase.from('deals').select('title, stage, created_at').eq('stage', 'won').order('created_at', { ascending: false }).limit(3),
-          supabase.from('invoices').select('amount, status, created_at').eq('status', 'paid').order('created_at', { ascending: false }).limit(3),
+          supabase.from('invoices').select('total, status, created_at').eq('status', 'paid').order('created_at', { ascending: false }).limit(3),
         ])
 
       setRevenue((wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0))
@@ -36,7 +36,7 @@ export default function Dashboard() {
       const invoiceActivity: Activity[] = (recentInvoices ?? []).map((inv, i) => ({
         id: `inv-${i}`,
         label: 'Invoice paid',
-        detail: `${inv.amount.toLocaleString()}`,
+        detail: `${inv.total?.toLocaleString() ?? 0}`,
         at: inv.created_at,
       }))
       setActivity(
