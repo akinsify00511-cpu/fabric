@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --fabric-black: #111111;
+  --fabric-offwhite: #F7F7F8;
+  --fabric-gray: #E9ECEF;
+  --fabric-accent-start: #FF7A59;
+  --fabric-accent-end: #4F46E5;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--fabric-offwhite);
+  color: var(--fabric-black);
+}
+
+.fabric-gradient {
+  background: linear-gradient(135deg, var(--fabric-accent-start), var(--fabric-accent-end));
+}
+
+.fabric-gradient-text {
+  background: linear-gradient(135deg, var(--fabric-accent-start), var(--fabric-accent-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

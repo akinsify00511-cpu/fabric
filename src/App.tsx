@@ -1,0 +1,66 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './lib/AuthContext'
+import Shell from './components/Shell'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Onboarding from './pages/Onboarding'
+import Join from './pages/Join'
+import Dashboard from './pages/Dashboard'
+import CRM from './pages/CRM'
+import Projects from './pages/Projects'
+import Finance from './pages/Finance'
+import People from './pages/People'
+import Inventory from './pages/Inventory'
+import Reports from './pages/Reports'
+import Settings from './pages/Settings'
+import More from './pages/More'
+
+function RequireAuth({ children }: { children: React.ReactNode }) {
+  const { session, loading, staff, staffChecked } = useAuth()
+
+  if (loading || (session && !staffChecked)) {
+    return <div className="min-h-screen flex items-center justify-center text-black/40 text-sm">Loading…</div>
+  }
+  if (!session) return <Navigate to="/login" replace />
+  if (!staff) return <Navigate to="/onboarding" replace />
+  return <>{children}</>
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/join/:inviteId" element={<Join />} />
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <Shell />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<Dashboard />} />
+        <Route path="crm" element={<CRM />} />
+        <Route path="projects" element={<Projects />} />
+        <Route path="finance" element={<Finance />} />
+        <Route path="people" element={<People />} />
+        <Route path="inventory" element={<Inventory />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="more" element={<More />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </AuthProvider>
+  )
+}
