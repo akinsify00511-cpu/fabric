@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import FabricMark from './FabricMark'
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { to: '/chat', label: 'Chat', icon: MessageSquare },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare },
   { to: '/calendar', label: 'Calendar', icon: CalendarIcon },
+  { to: '/time', label: 'Time', icon: Clock },
   { to: '/knowledge', label: 'Docs', icon: Book },
   { to: '/tickets', label: 'Support', icon: Headphones },
   { to: '/crm', label: 'CRM', icon: Users2 },
@@ -19,6 +20,7 @@ const NAV_ITEMS = [
   { to: '/finance', label: 'Finance', icon: Wallet },
   { to: '/people', label: 'People', icon: Contact },
   { to: '/inventory', label: 'Inventory', icon: Boxes },
+  { to: '/requisitions', label: 'Requests', icon: FileText },
   { to: '/reports', label: 'Reports', icon: BarChart3 },
   { to: '/settings', label: 'Settings', icon: SettingsIcon },
 ]

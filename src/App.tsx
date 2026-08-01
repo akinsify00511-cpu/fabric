@@ -34,6 +34,8 @@ import SSOSettings from './pages/SSOSettings'
 import APISettings from './pages/APISettings'
 import CustomerPortal from './pages/CustomerPortal'
 import Calendar from './pages/Calendar'
+import Requisitions from './pages/Requisitions'
+import TimeTracking from './pages/TimeTracking'
 import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -87,6 +89,8 @@ function AppRoutes() {
         <Route path="api" element={<APISettings />} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
+        <Route path="requisitions" element={<Requisitions />} />
+        <Route path="time" element={<TimeTracking />} />
       </Route>
     </Routes>
   )
