@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { ListSkeleton } from '../components/Skeleton'
-import { Instagram, Linkedin, Facebook, Twitter, Calendar, BarChart3, Palette, Send, Image, Eye, Heart, MessageCircle, Share2 } from 'lucide-react'
+import { Globe, Camera, Calendar, BarChart3, Palette, Send, Image, Eye, Heart, MessageCircle, Share2 } from 'lucide-react'
 
 type SocialPost = {
   id: string
@@ -38,10 +38,10 @@ type BrandAsset = {
 }
 
 const PLATFORMS = [
-  { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'bg-pink-500' },
-  { id: 'linkedin', name: 'LinkedIn', icon: Linkedin, color: 'bg-blue-600' },
-  { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'bg-blue-500' },
-  { id: 'twitter', name: 'X/Twitter', icon: Twitter, color: 'bg-black' },
+  { id: 'instagram', name: 'Instagram', icon: Camera, color: 'bg-pink-500' },
+  { id: 'linkedin', name: 'LinkedIn', icon: Globe, color: 'bg-blue-600' },
+  { id: 'facebook', name: 'Facebook', icon: Globe, color: 'bg-blue-500' },
+  { id: 'twitter', name: 'X/Twitter', icon: Globe, color: 'bg-black' },
   { id: 'tiktok', name: 'TikTok', icon: () => <span className="text-lg">🎵</span>, color: 'bg-pink-600' },
 ]
 

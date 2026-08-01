@@ -24,7 +24,7 @@ type AuditLog = {
 }
 
 export default function SecuritySettings() {
-  const { user } = useAuth()
+  // user from auth context not used
   const { showToast } = useToast()
   const [mfa, setMfa] = useState<MFAStatus | null>(null)
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])

@@ -30,7 +30,6 @@ const TYPE_CONFIG: Record<string, { icon: any; color: string; bg: string }> = {
 }
 
 export default function NotificationBell() {
-  const { user } = useAuth()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [showDropdown, setShowDropdown] = useState(false)
@@ -38,6 +37,7 @@ export default function NotificationBell() {
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const loadNotifications = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     const { data } = await supabase
@@ -55,24 +55,21 @@ export default function NotificationBell() {
     loadNotifications()
 
     // Subscribe to new notifications
-    if (user) {
-      const channel = supabase
-        .channel('notifications')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`,
-        }, () => {
-          loadNotifications()
-        })
-        .subscribe()
+    const channel = supabase
+      .channel('notifications')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+      }, () => {
+        loadNotifications()
+      })
+      .subscribe()
 
-      return () => {
-        supabase.removeChannel(channel)
-      }
+    return () => {
+      supabase.removeChannel(channel)
     }
-  }, [user])
+  }, [])
 
   // Close dropdown on outside click
   useEffect(() => {

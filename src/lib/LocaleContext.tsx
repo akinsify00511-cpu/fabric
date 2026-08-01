@@ -286,7 +286,7 @@ const DEFAULT_LOCALE: Locale = {
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined)
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth()
+  // user from auth context not used
   const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE)
   const [loading, setLoading] = useState(true)
 

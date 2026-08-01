@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
+import { supabase } from '../lib/supabase'
 import FabricMark from './FabricMark'
 import GamificationBar from './GamificationBar'
 import NotificationBell from './NotificationBell'
@@ -30,7 +31,7 @@ const MOBILE_NAV_ITEMS = [
 ]
 
 export default function Shell() {
-  const { staff, signOut, user } = useAuth()
+  const { staff, signOut } = useAuth()
 
   return (
     <div className="min-h-screen bg-[var(--avenize-offwhite)]">
@@ -41,7 +42,7 @@ export default function Shell() {
             <FabricMark size={22} />
             <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
           </div>
-          {user && <GamificationBar userId={user.id} />}
+          <GamificationBar />
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {
