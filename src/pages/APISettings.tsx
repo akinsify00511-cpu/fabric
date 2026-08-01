@@ -203,7 +203,7 @@ export default function APISettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-[var(--avenize-black)]">API & Integrations</h1>
-          <p className="text-sm text-black/50 mt-0.5">Connect Avenize to your tools</p>
+          <p className="text-sm text-black/50 mt-0.5">Connect Fabric to your tools</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -239,7 +239,7 @@ export default function APISettings() {
               <div>
                 <h3 className="font-medium text-blue-900">API Access</h3>
                 <p className="text-sm text-blue-700 mt-1">
-                  Use API keys to connect Avenize to your apps via REST API or Zapier/Make.
+                  Use API keys to connect Fabric to your apps via REST API or Zapier/Make.
                   Keep your keys secure - they provide full access to your data.
                 </p>
               </div>
@@ -322,7 +322,7 @@ export default function APISettings() {
               <div>
                 <h3 className="font-medium text-purple-900">Webhooks</h3>
                 <p className="text-sm text-purple-700 mt-1">
-                  Receive real-time notifications when events happen in Avenize.
+                  Receive real-time notifications when events happen in Fabric.
                   Perfect for automation and connecting to other services.
                 </p>
               </div>

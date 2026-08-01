@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import AvenizeMark from './AvenizeMark'
+import FabricMark from './FabricMark'
 import GamificationBar from './GamificationBar'
 import NotificationBell from './NotificationBell'
 
@@ -38,8 +38,8 @@ export default function Shell() {
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black/[0.06] flex-col fixed inset-y-0 left-0">
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <AvenizeMark size={22} />
-            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+            <FabricMark size={22} />
+            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
           </div>
           {user && <GamificationBar userId={user.id} />}
         </div>
@@ -76,8 +76,8 @@ export default function Shell() {
       {/* Mobile top header */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-black/[0.06] sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <AvenizeMark size={20} />
-          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+          <FabricMark size={20} />
+          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />

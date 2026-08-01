@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 
 const PRESET_THEMES = [
-  { name: 'Avenize Default', primary: '#4F46E5', accent: '#FF7A59', label: 'Modern Purple' },
+  { name: 'Fabric Default', primary: '#4F46E5', accent: '#FF7A59', label: 'Modern Purple' },
   { name: 'Ocean Blue', primary: '#0EA5E9', accent: '#06B6D4', label: 'Ocean' },
   { name: 'Forest Green', primary: '#10B981', accent: '#34D399', label: 'Nature' },
   { name: 'Sunset Orange', primary: '#F97316', accent: '#FBBF24', label: 'Warm' },
@@ -287,7 +287,7 @@ export default function BrandingSettings() {
                   </div>
                   <div>
                     <p className="font-medium" style={{ color: branding.text_color }}>
-                      {branding.custom_name || 'Avenize'}
+                      {branding.custom_name || 'Fabric'}
                     </p>
                     <p className="text-sm opacity-50" style={{ color: branding.text_color }}>
                       {branding.custom_tagline || 'Your Business OS'}
@@ -368,10 +368,10 @@ export default function BrandingSettings() {
                 <input
                   value={branding.custom_name || ''}
                   onChange={(e) => updateBranding({ custom_name: e.target.value || null })}
-                  placeholder="Avenize"
+                  placeholder="Fabric"
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                 />
-                <p className="text-xs text-black/30 mt-1">Replace "Avenize" in the sidebar</p>
+                <p className="text-xs text-black/30 mt-1">Replace "Fabric" in the sidebar</p>
               </div>
               <div>
                 <label className="text-xs text-black/50 block mb-1">Tagline</label>

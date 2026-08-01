@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import AvenizeMark from '../components/AvenizeMark'
+import FabricMark from '../components/FabricMark'
 
 const PENDING_INVITE_KEY = 'fabric_pending_invite'
 
@@ -81,7 +81,7 @@ export default function Join() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-3">
-          <AvenizeMark size={26} />
+          <FabricMark size={26} />
           <p className="text-sm text-[var(--avenize-black)] font-medium">This invite isn't valid</p>
           <p className="text-sm text-black/50">It may have expired or already been used.</p>
           <Link to="/login" className="text-sm text-[#4F46E5] hover:underline">
@@ -96,7 +96,7 @@ export default function Join() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-3">
-          <AvenizeMark size={26} />
+          <FabricMark size={26} />
           <p className="text-sm text-[var(--avenize-black)] font-medium">Check your email</p>
           <p className="text-sm text-black/50">
             Confirm your address, then sign in — we'll finish joining {info.business_name} automatically.
@@ -116,8 +116,8 @@ export default function Join() {
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <AvenizeMark size={26} />
-          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+          <FabricMark size={26} />
+          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">
           You're invited to join <span className="text-[var(--avenize-black)] font-medium">{info.business_name}</span> as{' '}
