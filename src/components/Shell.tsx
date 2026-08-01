@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import FabricMark from './FabricMark'
@@ -22,8 +22,10 @@ const NAV_ITEMS = [
   { to: '/people', label: 'People', icon: Contact },
   { to: '/inventory', label: 'Inventory', icon: Boxes },
   { to: '/requisitions', label: 'Requests', icon: FileText },
+  { to: '/organogram', label: 'Org Chart', icon: Network },
   { to: '/reports', label: 'Reports', icon: BarChart3 },
   { to: '/monitoring', label: 'Monitoring', icon: Activity },
+  { to: '/branding', label: 'Branding', icon: Palette },
   { to: '/settings', label: 'Settings', icon: SettingsIcon },
 ]
 

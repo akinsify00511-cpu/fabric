@@ -1,0 +1,485 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
+import { useToast } from '../components/Toast'
+import {
+  Network, Users, ChevronDown, ChevronRight, Mail, MessageSquare,
+  Phone, MoreVertical, Plus, Settings, RefreshCw, Search,
+  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2
+} from 'lucide-react'
+
+type OrgNode = {
+  staff_id: string
+  full_name: string
+  email: string
+  avatar_url: string
+  position_title: string
+  department: string
+  level: number
+  manager_id: string
+  direct_report_count: number
+}
+
+type ReportingChannel = {
+  id: string
+  channel_type: string
+  name: string
+  description: string
+  frequency: string
+  auto_generate: boolean
+  is_active: boolean
+}
+
+export default function Organogram() {
+  const { staff } = useAuth()
+  const { showToast } = useToast()
+  const [loading, setLoading] = useState(true)
+  const [orgChart, setOrgChart] = useState<OrgNode[]>([])
+  const [channels, setChannels] = useState<ReportingChannel[]>([])
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
+  const [selectedNode, setSelectedNode] = useState<OrgNode | null>(null)
+  const [view, setView] = useState<'org' | 'channels' | 'departments'>('org')
+  const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    loadData()
+  }, [staff?.business_id])
+
+  async function loadData() {
+    setLoading(true)
+
+    // Load org chart
+    const { data: orgData } = await supabase.rpc('get_org_chart')
+
+    if (orgData && orgData.length > 0) {
+      setOrgChart(orgData)
+      // Expand first two levels by default
+      const initialExpanded = new Set<string>()
+      orgData.filter((n: OrgNode) => n.level <= 1).forEach((n: OrgNode) => initialExpanded.add(n.staff_id))
+      setExpandedNodes(initialExpanded)
+    } else {
+      // Demo data
+      setOrgChart([
+        { staff_id: '1', full_name: 'Sarah Chen', email: 'sarah@company.com', avatar_url: '', position_title: 'CEO', department: 'Executive', level: 0, manager_id: '', direct_report_count: 3 },
+        { staff_id: '2', full_name: 'Michael Park', email: 'michael@company.com', avatar_url: '', position_title: 'CTO', department: 'Engineering', level: 1, manager_id: '1', direct_report_count: 5 },
+        { staff_id: '3', full_name: 'Emily Davis', email: 'emily@company.com', avatar_url: '', position_title: 'VP Sales', department: 'Sales', level: 1, manager_id: '1', direct_report_count: 4 },
+        { staff_id: '4', full_name: 'David Kim', email: 'david@company.com', avatar_url: '', position_title: 'VP Marketing', department: 'Marketing', level: 1, manager_id: '1', direct_report_count: 3 },
+        { staff_id: '5', full_name: 'James Wilson', email: 'james@company.com', avatar_url: '', position_title: 'Tech Lead', department: 'Engineering', level: 2, manager_id: '2', direct_report_count: 3 },
+        { staff_id: '6', full_name: 'Lisa Brown', email: 'lisa@company.com', avatar_url: '', position_title: 'Senior Dev', department: 'Engineering', level: 3, manager_id: '5', direct_report_count: 0 },
+        { staff_id: '7', full_name: 'Tom Anderson', email: 'tom@company.com', avatar_url: '', position_title: 'Sales Manager', department: 'Sales', level: 2, manager_id: '3', direct_report_count: 2 },
+        { staff_id: '8', full_name: 'Anna Smith', email: 'anna@company.com', avatar_url: '', position_title: 'Account Executive', department: 'Sales', level: 3, manager_id: '7', direct_report_count: 0 },
+      ])
+    }
+
+    // Load reporting channels
+    const { data: channelData } = await supabase
+      .from('reporting_channels')
+      .select('*')
+      .eq('business_id', staff?.business_id)
+      .eq('is_active', true)
+
+    if (channelData && channelData.length > 0) {
+      setChannels(channelData as ReportingChannel[])
+    } else {
+      setChannels([
+        { id: '1', channel_type: 'daily_standup', name: 'Daily Standup', description: 'Quick team sync', frequency: 'daily', auto_generate: true, is_active: true },
+        { id: '2', channel_type: 'weekly_update', name: 'Weekly Status', description: 'Weekly progress report', frequency: 'weekly', auto_generate: true, is_active: true },
+        { id: '3', channel_type: 'one_on_one', name: '1:1 with Manager', description: 'Personal check-in', frequency: 'weekly', auto_generate: false, is_active: true },
+      ])
+    }
+
+    setLoading(false)
+  }
+
+  const toggleNode = (staffId: string) => {
+    const newExpanded = new Set(expandedNodes)
+    if (newExpanded.has(staffId)) {
+      newExpanded.delete(staffId)
+    } else {
+      newExpanded.add(staffId)
+    }
+    setExpandedNodes(newExpanded)
+  }
+
+  const getDirectReports = (managerId: string) => {
+    return orgChart.filter((n) => n.manager_id === managerId)
+  }
+
+  const getRootNodes = () => {
+    return orgChart.filter((n) => !n.manager_id || n.manager_id === '')
+  }
+
+  const getChildren = (parentId: string) => {
+    return orgChart.filter((n) => n.manager_id === parentId)
+  }
+
+  const filteredChart = filter
+    ? orgChart.filter((n) =>
+        n.full_name.toLowerCase().includes(filter.toLowerCase()) ||
+        n.position_title.toLowerCase().includes(filter.toLowerCase()) ||
+        n.department.toLowerCase().includes(filter.toLowerCase())
+      )
+    : orgChart
+
+  const getNodeStyle = (level: number) => {
+    const colors = [
+      { bg: 'from-indigo-500 to-purple-600', border: 'border-indigo-500' },
+      { bg: 'from-blue-500 to-cyan-600', border: 'border-blue-500' },
+      { bg: 'from-green-500 to-emerald-600', border: 'border-green-500' },
+      { bg: 'from-gray-500 to-gray-600', border: 'border-gray-500' },
+    ]
+    return colors[Math.min(level, colors.length - 1)]
+  }
+
+  const renderNode = (node: OrgNode, isLast: boolean = false) => {
+    const children = getChildren(node.staff_id)
+    const isExpanded = expandedNodes.has(node.staff_id)
+    const style = getNodeStyle(node.level)
+    const hasChildren = children.length > 0
+
+    return (
+      <div key={node.staff_id} className="relative">
+        <div className="flex items-start">
+          {/* Connecting line to parent */}
+          <div className="flex flex-col items-center">
+            {hasChildren && (
+              <button
+                onClick={() => toggleNode(node.staff_id)}
+                className="w-6 h-6 rounded-full bg-white border border-black/20 flex items-center justify-center hover:bg-black/[0.05]"
+              >
+                {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              </button>
+            )}
+          </div>
+
+          {/* Node card */}
+          <div
+            onClick={() => setSelectedNode(node)}
+            className={`ml-2 mb-3 p-4 rounded-xl bg-white border-2 cursor-pointer hover:shadow-lg transition-all ${
+              style.border
+            } ${selectedNode?.staff_id === node.staff_id ? 'ring-2 ring-indigo-500' : ''}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${style.bg} flex items-center justify-center text-white font-bold text-sm`}>
+                {node.avatar_url ? (
+                  <img src={node.avatar_url} alt={node.full_name} className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  node.full_name.split(' ').map((n) => n[0]).join('')
+                )}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-sm">{node.full_name}</p>
+                  {node.level === 0 && <Crown size={14} className="text-yellow-500" />}
+                </div>
+                <p className="text-xs text-black/50">{node.position_title}</p>
+                <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-black/[0.05] rounded-full">
+                  {node.department}
+                </span>
+              </div>
+            </div>
+
+            {hasChildren && (
+              <div className="mt-2 pt-2 border-t border-black/5 flex items-center justify-between text-xs text-black/40">
+                <span>{children.length} direct reports</span>
+                <div className="flex items-center gap-1">
+                  <Mail size={12} />
+                  <MessageSquare size={12} />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Children */}
+        {isExpanded && hasChildren && (
+          <div className="ml-6 border-l-2 border-black/10 pl-4">
+            {children.map((child, idx) => renderNode(child, idx === children.length - 1))}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="pb-20">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Organogram</h1>
+          <p className="text-sm text-black/50 mt-0.5">Organization structure & reporting channels</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={loadData}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-black/10 text-sm"
+          >
+            <RefreshCw size={14} />
+            Refresh
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+            <UserPlus size={16} />
+            Add Member
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { key: 'org', label: 'Organization Chart', icon: Network },
+          { key: 'channels', label: 'Reporting Channels', icon: MessageSquare },
+          { key: 'departments', label: 'Departments', icon: Building2 },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setView(tab.key as typeof view)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
+              view === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+            }`}
+          >
+            <tab.icon size={16} />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Organization Chart View */}
+      {view === 'org' && (
+        <>
+          {/* Search & Controls */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="relative flex-1 max-w-md">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+              <input
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Search by name, title, or department..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-black/10 bg-white"
+              />
+            </div>
+            <div className="flex items-center gap-2 text-sm text-black/50">
+              <span>{orgChart.length} members</span>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {[
+              { label: 'Total Members', value: orgChart.length, icon: Users },
+              { label: 'Managers', value: orgChart.filter((n) => n.direct_report_count > 0).length, icon: Briefcase },
+              { label: 'Departments', value: [...new Set(orgChart.map((n) => n.department))].length, icon: Building2 },
+              { label: 'Avg Reports', value: (orgChart.reduce((sum, n) => sum + n.direct_report_count, 0) / Math.max(orgChart.filter((n) => n.direct_report_count > 0).length, 1)).toFixed(1), icon: Network },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4">
+                <div className="flex items-center gap-2 text-black/50 mb-1">
+                  <stat.icon size={14} />
+                  <span className="text-xs">{stat.label}</span>
+                </div>
+                <p className="text-2xl font-bold">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Org Chart */}
+          <div className="bg-white rounded-2xl border border-black/[0.06] p-6 overflow-x-auto">
+            <div className="min-w-max">
+              {loading ? (
+                <div className="animate-pulse space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-20 bg-black/5 rounded-xl" />
+                  ))}
+                </div>
+              ) : filteredChart.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="w-12 h-12 mx-auto text-black/20 mb-3" />
+                  <p className="text-black/50">No team members found</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  {getRootNodes().map((node, idx) => renderNode(node, idx === getRootNodes().length - 1))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Reporting Channels View */}
+      {view === 'channels' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-black/50">Automated reporting and sync channels</p>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+              <Plus size={16} />
+              New Channel
+            </button>
+          </div>
+
+          {channels.map((channel) => (
+            <div key={channel.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <MessageSquare size={24} className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{channel.name}</h3>
+                    <p className="text-sm text-black/50">{channel.description}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full capitalize">
+                        {channel.frequency}
+                      </span>
+                      {channel.auto_generate && (
+                        <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
+                          <RefreshCw size={10} />
+                          Auto-generated
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button className="p-2 hover:bg-black/[0.05] rounded-lg">
+                    <Settings size={16} />
+                  </button>
+                  <button className="p-2 hover:bg-black/[0.05] rounded-lg">
+                    <MoreVertical size={16} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-black/[0.06] flex items-center justify-between text-sm">
+                <div className="flex items-center gap-4">
+                  <span className="text-black/50">Last generated:</span>
+                  <span>Today at 9:00 AM</span>
+                </div>
+                <button className="text-indigo-600 font-medium">
+                  View Reports →
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Add channel card */}
+          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/[0.02]">
+            <PlusCircle size={32} className="text-black/30 mb-2" />
+            <p className="text-sm text-black/50">Create new reporting channel</p>
+          </div>
+        </div>
+      )}
+
+      {/* Departments View */}
+      {view === 'departments' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...new Set(orgChart.map((n) => n.department))].map((dept) => {
+            const members = orgChart.filter((n) => n.department === dept)
+            const head = members.find((n) => n.level === Math.min(...members.map((m) => m.level)))
+
+            return (
+              <div key={dept} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <Building2 size={20} className="text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{dept}</h3>
+                    <p className="text-xs text-black/50">{members.length} members</p>
+                  </div>
+                </div>
+
+                {/* Department head */}
+                {head && (
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-black/[0.02] mb-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                      {head.full_name.split(' ').map((n) => n[0]).join('')}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{head.full_name}</p>
+                      <p className="text-xs text-black/50">{head.position_title}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Team members */}
+                <div className="space-y-2">
+                  {members.filter((m) => m.staff_id !== head?.staff_id).slice(0, 3).map((member) => (
+                    <div key={member.staff_id} className="flex items-center gap-2 text-sm">
+                      <div className="w-6 h-6 rounded-full bg-black/[0.1] flex items-center justify-center text-xs">
+                        {member.full_name[0]}
+                      </div>
+                      <span>{member.full_name}</span>
+                    </div>
+                  ))}
+                  {members.length > 4 && (
+                    <p className="text-xs text-black/40">+{members.length - 4} more</p>
+                  )}
+                </div>
+
+                <button className="w-full mt-4 py-2 rounded-lg border border-black/10 text-sm">
+                  View Department
+                </button>
+              </div>
+            )
+          })}
+
+          {/* Add department card */}
+          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/[0.02] h-fit">
+            <PlusCircle size={32} className="text-black/30 mb-2" />
+            <p className="text-sm text-black/50">Add Department</p>
+          </div>
+        </div>
+      )}
+
+      {/* Selected Node Detail Modal */}
+      {selectedNode && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+              <h2 className="font-semibold">Team Member</h2>
+              <button onClick={() => setSelectedNode(null)} className="p-2 hover:bg-black/[0.05] rounded-lg">✕</button>
+            </div>
+            <div className="p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                  {selectedNode.full_name.split(' ').map((n) => n[0]).join('')}
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">{selectedNode.full_name}</h3>
+                  <p className="text-black/50">{selectedNode.position_title}</p>
+                  <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full">{selectedNode.department}</span>
+                </div>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center gap-3 text-sm">
+                  <Mail size={16} className="text-black/30" />
+                  <span>{selectedNode.email}</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <Network size={16} className="text-black/30" />
+                  <span>{selectedNode.direct_report_count} direct reports</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <ArrowUpRight size={16} className="text-black/30" />
+                  <span>Reports to: CEO</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button className="flex-1 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+                  View Full Profile
+                </button>
+                <button className="px-4 py-2 rounded-lg border border-black/10">
+                  <MessageSquare size={16} />
+                </button>
+                <button className="px-4 py-2 rounded-lg border border-black/10">
+                  <Mail size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

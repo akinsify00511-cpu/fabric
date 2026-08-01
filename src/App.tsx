@@ -38,6 +38,8 @@ import Requisitions from './pages/Requisitions'
 import TimeTracking from './pages/TimeTracking'
 import Events from './pages/Events'
 import Monitoring from './pages/Monitoring'
+import Branding from './pages/Branding'
+import Organogram from './pages/Organogram'
 import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -95,6 +97,8 @@ function AppRoutes() {
         <Route path="time" element={<TimeTracking />} />
         <Route path="events" element={<Events />} />
         <Route path="monitoring" element={<Monitoring />} />
+        <Route path="branding" element={<Branding />} />
+        <Route path="organogram" element={<Organogram />} />
       </Route>
     </Routes>
   )
