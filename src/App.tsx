@@ -36,6 +36,8 @@ import CustomerPortal from './pages/CustomerPortal'
 import Calendar from './pages/Calendar'
 import Requisitions from './pages/Requisitions'
 import TimeTracking from './pages/TimeTracking'
+import Events from './pages/Events'
+import Monitoring from './pages/Monitoring'
 import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -91,6 +93,8 @@ function AppRoutes() {
         <Route path="calendar" element={<Calendar />} />
         <Route path="requisitions" element={<Requisitions />} />
         <Route path="time" element={<TimeTracking />} />
+        <Route path="events" element={<Events />} />
+        <Route path="monitoring" element={<Monitoring />} />
       </Route>
     </Routes>
   )
