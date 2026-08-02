@@ -24,7 +24,7 @@ type AuditLog = {
 }
 
 export default function SecuritySettings() {
-  // user from auth context not used
+  const { session } = useAuth()
   const { showToast } = useToast()
   const [mfa, setMfa] = useState<MFAStatus | null>(null)
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
@@ -37,6 +37,7 @@ export default function SecuritySettings() {
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'security' | 'audit'>('security')
 
+  const user = session?.user
   const loadSecurity = async () => {
     if (!user) return
     setLoading(true)

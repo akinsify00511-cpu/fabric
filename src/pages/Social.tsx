@@ -27,6 +27,7 @@ type SocialMetrics = {
   engagement_count: number
   posts_count: number
   impressions_count: number
+  reach_count: number
 }
 
 type BrandAsset = {

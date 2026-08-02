@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
   Users, Plus, Trash2, Copy, Mail, ExternalLink, Check, X,
-  Eye, EyeOff, Link, Shield, FileText, MessageSquare, FolderKanban
+  Eye, EyeOff, Link, Shield, FileText, MessageSquare, FolderKanban, CheckCircle2
 } from 'lucide-react'
 
 type Invitation = {

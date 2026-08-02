@@ -6,6 +6,8 @@ type Staff = {
   id: string
   business_id: string
   full_name: string
+  name?: string
+  email?: string
   role: 'owner' | 'manager' | 'staff'
   job_title: string | null
 }

@@ -2,6 +2,11 @@ import { createContext, useContext, useState, useEffect, useCallback, ReactNode 
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 
+function useUserId() {
+  const { session } = useAuth()
+  return session?.user?.id
+}
+
 export type Language = {
   code: string
   name: string
@@ -286,7 +291,7 @@ const DEFAULT_LOCALE: Locale = {
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined)
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  // user from auth context not used
+  const userId = useUserId()
   const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE)
   const [loading, setLoading] = useState(true)
 
@@ -300,14 +305,14 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   // Load user locale
   useEffect(() => {
-    if (!user) return
+    if (!userId) return
 
     const loadLocale = async () => {
       setLoading(true)
       const { data } = await supabase
         .from('user_locale')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .single()
 
       if (data) {
@@ -315,7 +320,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       } else {
         // Create default locale
         await supabase.from('user_locale').insert({
-          user_id: user.id,
+          user_id: userId,
           ...DEFAULT_LOCALE,
         })
       }
@@ -323,10 +328,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     }
 
     loadLocale()
-  }, [user])
+  }, [userId])
 
   const updateLocale = useCallback(async (updates: Partial<Locale>) => {
-    if (!user) return
+    if (!userId) return
 
     const newLocale = { ...locale, ...updates }
     setLocale(newLocale)
@@ -334,7 +339,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     const { error } = await supabase
       .from('user_locale')
       .upsert({
-        user_id: user.id,
+        user_id: userId,
         ...newLocale,
       })
 
@@ -342,7 +347,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
       console.error('Failed to update locale:', error)
       setLocale(locale)
     }
-  }, [user, locale])
+  }, [userId, locale])
 
   const setLanguage = useCallback(async (code: string) => {
     await updateLocale({ language: code })

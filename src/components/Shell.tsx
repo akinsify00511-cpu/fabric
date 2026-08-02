@@ -37,7 +37,8 @@ const MOBILE_NAV_ITEMS = [
 ]
 
 export default function Shell() {
-  const { staff, signOut } = useAuth()
+  const { staff, session, signOut } = useAuth()
+  const userId = session?.user?.id
 
   return (
     <div className="min-h-screen bg-[var(--avenize-offwhite)]">
@@ -48,7 +49,7 @@ export default function Shell() {
             <FabricMark size={22} />
             <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
           </div>
-          <GamificationBar />
+          {userId && <GamificationBar userId={userId} />}
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {

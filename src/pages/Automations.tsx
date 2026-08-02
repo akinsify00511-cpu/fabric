@@ -111,7 +111,7 @@ export default function Automations() {
       name,
       description,
       trigger_type: triggerType,
-      trigger_config,
+      trigger_config: triggerConfig,
       action_type: actionType,
       action_config: actionConfig,
       created_by: staff?.id,
@@ -470,7 +470,7 @@ export default function Automations() {
                   )}
                   {actionType === 'post_to_chat' && (
                     <>
-                      <input
+                      <textarea
                         value={actionConfig.message || ''}
                         onChange={(e) => setActionConfig({ ...actionConfig, message: e.target.value })}
                         placeholder="Message (use {{deal_title}} for dynamic)"

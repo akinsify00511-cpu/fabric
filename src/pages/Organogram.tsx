@@ -5,7 +5,7 @@ import { useToast } from '../components/Toast'
 import {
   Network, Users, ChevronDown, ChevronRight, Mail, MessageSquare,
   Phone, MoreVertical, Plus, Settings, RefreshCw, Search,
-  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2
+  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2, PlusCircle
 } from 'lucide-react'
 
 type OrgNode = {

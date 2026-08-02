@@ -60,7 +60,7 @@ export default function Events() {
     startTime: '09:00',
     endDate: '',
     endTime: '17:00',
-    locationType: 'physical' as const,
+    locationType: 'physical' as 'physical' | 'virtual',
     locationName: '',
     locationUrl: '',
     maxCapacity: '',

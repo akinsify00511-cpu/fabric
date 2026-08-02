@@ -80,8 +80,8 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   return (
     <GamificationContext.Provider value={{ xp, isOnboardingComplete, showOnboarding, completeOnboarding, startOnboarding, awardXP, checkAchievements, toasts, dismissToast }}>
       {children}
-      <AchievementToast />
-      {showOnboarding && !isOnboardingComplete && <OnboardingTour onComplete={completeOnboarding} />}
+      <AchievementToast toasts={toasts} onDismiss={dismissToast} />
+      {showOnboarding && !isOnboardingComplete && <OnboardingTour isOpen={showOnboarding} onClose={() => setShowOnboarding(false)} onComplete={completeOnboarding} />}
     </GamificationContext.Provider>
   )
 }

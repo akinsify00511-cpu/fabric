@@ -63,7 +63,7 @@ export default function Merit() {
     const totals: Record<string, LeaderboardEntry> = {}
     enrichedEntries.forEach((e: MeritEntry) => {
       if (!totals[e.staff_id]) {
-        totals[e.staff_id] = { staff_id: e.staff_id, staff_name: e.staff_name, total_points: 0, entry_count: 0 }
+        totals[e.staff_id] = { staff_id: e.staff_id, staff_name: e.staff_name ?? 'Unknown', total_points: 0, entry_count: 0 }
       }
       totals[e.staff_id].total_points += e.points
       totals[e.staff_id].entry_count += 1
