@@ -1,4 +1,4 @@
-# Deploying Fabric
+# Deploying Avenize
 
 ## Prerequisites
 

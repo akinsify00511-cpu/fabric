@@ -1,4 +1,4 @@
-// Fabric Service Worker - Offline Support & Caching
+// Avenize Service Worker - Offline Support & Caching
 const CACHE_NAME = 'avenize-v1'
 const STATIC_ASSETS = [
   '/',
@@ -112,7 +112,7 @@ self.addEventListener('push', (event) => {
   }
 
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Fabric', options)
+    self.registration.showNotification(data.title || 'Avenize', options)
   )
 })
 

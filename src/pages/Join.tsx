@@ -117,7 +117,7 @@ export default function Join() {
       >
         <div className="flex items-center gap-2">
           <FabricMark size={26} />
-          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
+          <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">
           You're invited to join <span className="text-[var(--avenize-black)] font-medium">{info.business_name}</span> as{' '}
