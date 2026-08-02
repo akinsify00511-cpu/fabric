@@ -47,7 +47,7 @@ export default function Shell() {
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <FabricMark size={22} />
-            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
+            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
           </div>
           {userId && <GamificationBar userId={userId} />}
         </div>
@@ -85,7 +85,7 @@ export default function Shell() {
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-black/[0.06] sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <FabricMark size={20} />
-          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Fabric</span>
+          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />

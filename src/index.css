@@ -2,26 +2,69 @@
 @import "tailwindcss";
 
 :root {
+  /* Primary Colors */
   --avenize-black: #111111;
-  --avenize-offwhite: #F7F7F8;
-  --avenize-gray: #E9ECEF;
-  --avenize-accent-start: #FF7A59;
-  --avenize-accent-end: #4F46E5;
+  --avenize-white: #FFFFFF;
+  --avenize-stone: #F7F7F5;
+  --avenize-gray: #E8E8E8;
+  
+  /* Legacy alias for backwards compatibility */
+  --avenize-offwhite: var(--avenize-stone);
+  
+  /* Signature Gradient - Intelligence flowing through business */
+  --avenize-gradient-start: #2563EB;
+  --avenize-gradient-mid: #4F46E5;
+  --avenize-gradient-end: #8B5CF6;
+  
+  /* Workspace Accent Colors */
+  --avenize-sales: #3B82F6;
+  --avenize-finance: #10B981;
+  --avenize-projects: #F59E0B;
+  --avenize-hr: #8B5CF6;
+  --avenize-communication: #EC4899;
+  --avenize-ai: #06B6D4;
+  --avenize-automation: #F97316;
+  --avenize-analytics: #6366F1;
+  
+  /* Legacy alias */
+  --avenize-accent-start: var(--avenize-gradient-start);
+  --avenize-accent-end: var(--avenize-gradient-end);
 }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--avenize-offwhite);
+  background-color: var(--avenize-stone);
   color: var(--avenize-black);
 }
 
+/* Signature Gradient - Used for premium moments only */
 .avenize-gradient {
-  background: linear-gradient(135deg, var(--avenize-accent-start), var(--avenize-accent-end));
+  background: linear-gradient(135deg, var(--avenize-gradient-start), var(--avenize-gradient-mid), var(--avenize-gradient-end));
 }
 
+/* Gradient text effect */
 .avenize-gradient-text {
-  background: linear-gradient(135deg, var(--avenize-accent-start), var(--avenize-accent-end));
+  background: linear-gradient(135deg, var(--avenize-gradient-start), var(--avenize-gradient-mid), var(--avenize-gradient-end));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+
+/* Workspace accent utilities */
+.accent-sales { color: var(--avenize-sales); }
+.accent-finance { color: var(--avenize-finance); }
+.accent-projects { color: var(--avenize-projects); }
+.accent-hr { color: var(--avenize-hr); }
+.accent-communication { color: var(--avenize-communication); }
+.accent-ai { color: var(--avenize-ai); }
+.accent-automation { color: var(--avenize-automation); }
+.accent-analytics { color: var(--avenize-analytics); }
+
+.bg-accent-sales { background-color: var(--avenize-sales); }
+.bg-accent-finance { background-color: var(--avenize-finance); }
+.bg-accent-projects { background-color: var(--avenize-projects); }
+.bg-accent-hr { background-color: var(--avenize-hr); }
+.bg-accent-communication { background-color: var(--avenize-communication); }
+.bg-accent-ai { background-color: var(--avenize-ai); }
+.bg-accent-automation { background-color: var(--avenize-automation); }
+.bg-accent-analytics { background-color: var(--avenize-analytics); }

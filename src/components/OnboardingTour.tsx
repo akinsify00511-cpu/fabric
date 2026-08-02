@@ -14,7 +14,7 @@ export type OnboardingStep = {
 const DEFAULT_STEPS: OnboardingStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to Fabric! 👋',
+    title: 'Welcome to Avenize! 👋',
     description: "You're all set up! Let's take a quick tour to help you get the most out of your business OS.",
     icon: <span className="text-4xl">🚀</span>,
   },

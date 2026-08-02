@@ -1,10 +1,10 @@
 {
-  "name": "Fabric Business OS",
-  "short_name": "Fabric",
-  "description": "Your all-in-one business management platform",
+  "name": "Avenize - The Business Operating System",
+  "short_name": "Avenize",
+  "description": "Everything. Together. The Business Operating System for modern teams.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAFAFA",
+  "background_color": "#F7F7F5",
   "theme_color": "#4F46E5",
   "orientation": "portrait-primary",
   "icons": [

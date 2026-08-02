@@ -410,7 +410,7 @@ export default function Chat() {
         <div className="flex-1 flex items-center justify-center bg-[var(--avenize-offwhite)]">
           <div className="text-center">
             <Hash size={64} className="mx-auto mb-4 text-black/10" />
-            <h2 className="text-lg font-medium text-[var(--avenize-black)]">Welcome to Fabric Chat</h2>
+            <h2 className="text-lg font-medium text-[var(--avenize-black)]">Welcome to Avenize Chat</h2>
             <p className="text-sm text-black/40 mt-1">Select a channel or create a new one</p>
             <button
               onClick={() => setCreatingChannel(true)}

@@ -1,6 +1,6 @@
-# Fabric - Business Operating System
+# Avenize - The Business Operating System
 
-A complete, enterprise-ready business management platform.
+Everything. Together. A unified platform for modern business management.
 
 ## Features
 
