@@ -83,10 +83,10 @@ export default function Monitoring() {
     } else {
       // Demo data
       setMonitors([
-        { id: '1', name: 'Main Website', monitor_type: 'http', target_url: 'https://fabric.io', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 145, uptime_percent: 99.98, is_active: true },
-        { id: '2', name: 'API Server', monitor_type: 'http', target_url: 'https://api.fabric.io', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 89, uptime_percent: 99.95, is_active: true },
+        { id: '1', name: 'Main Website', monitor_type: 'http', target_url: 'https://avenize.riverwayse.com', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 145, uptime_percent: 99.98, is_active: true },
+        { id: '2', name: 'API Server', monitor_type: 'http', target_url: 'https://api.avenize.riverwayse.com', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 89, uptime_percent: 99.95, is_active: true },
         { id: '3', name: 'Database', monitor_type: 'tcp', target_url: '', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 12, uptime_percent: 100, is_active: true },
-        { id: '4', name: 'Auth Service', monitor_type: 'http', target_url: 'https://auth.fabric.io', status: 'degraded', last_check_at: new Date().toISOString(), response_time_ms: 450, uptime_percent: 98.5, is_active: true },
+        { id: '4', name: 'Auth Service', monitor_type: 'http', target_url: 'https://auth.avenize.riverwayse.com', status: 'degraded', last_check_at: new Date().toISOString(), response_time_ms: 450, uptime_percent: 98.5, is_active: true },
       ])
     }
 

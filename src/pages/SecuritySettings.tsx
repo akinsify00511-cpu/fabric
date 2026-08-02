@@ -88,7 +88,7 @@ export default function SecuritySettings() {
 
     // Generate secret
     const secret = generateTotpSecret()
-    const issuer = encodeURIComponent('Fabric')
+    const issuer = encodeURIComponent('Avenize')
     const account = encodeURIComponent(user.email || 'user')
 
     // Create TOTP URL (for authenticator apps)

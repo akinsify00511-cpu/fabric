@@ -77,7 +77,7 @@ export default function Chat() {
 
     const enrichedMessages = (messagesData ?? []).map((m: any) => ({
       ...m,
-      sender_name: m.sender_id ? staffMap.get(m.sender_id) : 'Fabric',
+      sender_name: m.sender_id ? staffMap.get(m.sender_id) : 'Avenize',
     }))
 
     setMessages(enrichedMessages as Message[])

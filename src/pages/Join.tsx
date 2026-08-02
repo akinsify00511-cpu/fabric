@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import FabricMark from '../components/FabricMark'
 
-const PENDING_INVITE_KEY = 'fabric_pending_invite'
+const PENDING_INVITE_KEY = 'avenize_pending_invite'
 
 type InviteInfo = { business_name: string; role: string; email: string; valid: boolean }
 

@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FabricMark from '../components/FabricMark'
 
-const PENDING_INVITE_KEY = 'fabric_pending_invite'
+const PENDING_INVITE_KEY = 'avenize_pending_invite'
 
 export default function Onboarding() {
   const { session, refreshStaff, signOut } = useAuth()
