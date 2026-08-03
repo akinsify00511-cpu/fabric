@@ -18,6 +18,7 @@ import People from './pages/People'
 // Inventory imported as InventoryNigeria
 import Payments from './pages/Payments'
 import Pricing from './pages/Pricing'
+import PricingIndustrial from './pages/PricingIndustrial'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
