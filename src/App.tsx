@@ -40,6 +40,7 @@ import Events from './pages/Events'
 import Monitoring from './pages/Monitoring'
 import Branding from './pages/Branding'
 import Organogram from './pages/Organogram'
+import Meetings from './pages/Meetings'
 import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -99,6 +100,7 @@ function AppRoutes() {
         <Route path="monitoring" element={<Monitoring />} />
         <Route path="branding" element={<Branding />} />
         <Route path="organogram" element={<Organogram />} />
+	        <Route path="meetings" element={<Meetings />} />
       </Route>
     </Routes>
   )
