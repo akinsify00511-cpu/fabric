@@ -1,3 +1,4 @@
+console.log("HomePage loaded")
 // ============================================
 // AVENIZE MARKETING LANDING PAGE
 // CRO-Optimized, SEO, GSAP Animated, AEO/AGEO Ready
