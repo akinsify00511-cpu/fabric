@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Onboarding from './pages/Onboarding'
 import Join from './pages/Join'
+import AuthCallback from './pages/AuthCallback'
 import Dashboard from './pages/Dashboard'
 import CRM from './pages/CRM'
 // Projects imported as ProjectsNigeria
@@ -66,6 +67,7 @@ function AppRoutes() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/join/:inviteId" element={<Join />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route
         path="/app"
         element={
