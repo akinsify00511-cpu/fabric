@@ -5,7 +5,7 @@
 //
 // Deploy: supabase functions deploy send-welcome-email --no-verify-jwt
 
-import { Resend } from 'resend';
+import { Resend } from "https://esm.sh/resend@3.2.0";
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!;
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Avenize <noreply@avenize.com>';
