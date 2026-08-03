@@ -172,59 +172,51 @@ const DASHBOARDS = [
 const PROBLEMS = [
   {
     num: "01",
-    emoji: "😰",
-    problem: "Your factory just stopped.",
-    story: "Resin didn't arrive. Or it did, but nobody told the mixing team. You're paying workers to wait, losing production hours, and your delivery date is now at risk.",
-    cost: "Lost production hours. Delayed deliveries. Angry clients."
+    problem: "Your operations just stopped.",
+    story: "Materials didn't arrive. Or they did, but nobody told the team. You're paying workers to wait, losing hours, and your delivery date is now at risk.",
+    cost: "Lost time. Delayed deliveries. Unhappy clients."
   },
   {
     num: "02",
-    emoji: "😤",
     problem: "The client knows before you do.",
-    story: "The crew finished the job yesterday. But you found out from the person paying you — not from your own supervisor. You're always the last to know what's happening.",
-    cost: "No control. No visibility. No respect."
+    story: "The job finished yesterday. But you found out from the person paying you — not from your own team. You're always the last to know.",
+    cost: "No control. No visibility. Lost trust."
   },
   {
     num: "03",
-    emoji: "😔",
-    problem: "You quoted the same job twice.",
-    story: "Two of your agents chased the same enquiry. Different prices. The client saw both quotes. They know your team isn't coordinated. That deal? Probably gone.",
-    cost: "Lost deals. Damaged reputation. Wasted time."
+    problem: "Your team quoted the same job twice.",
+    story: "Two agents chased the same enquiry. Different prices. The client noticed. They know your team isn't coordinated. That deal? Probably gone.",
+    cost: "Lost deals. Damaged reputation. Wasted effort."
   },
   {
     num: "04",
-    emoji: "😓",
     problem: "You think you made profit. You're not sure.",
-    story: "Invoice sent. Follow-up became awkward. Payment... somewhere in transit? You won't know until your accountant finishes reconciling — which is never when you need it.",
-    cost: "Cash flow gaps. Surprise losses. No early warning."
+    story: "Invoice sent. Follow-up became awkward. Payment... somewhere in transit? You won't know until reconciliation — which is never when you need it.",
+    cost: "Cash flow gaps. Surprise losses. No warning."
   },
   {
     num: "05",
-    emoji: "😩",
-    problem: "Your team lives on WhatsApp.",
-    story: "Updates get lost in chat. Photos disappear. Nobody knows the real status of anything. You spend half your day asking 'what's happening with Job X?'",
-    cost: "Miscommunication. Duplicated effort. 9pm panic calls."
+    problem: "Your team lives on scattered messaging apps.",
+    story: "Updates get lost in chat. Photos disappear. Nobody knows the real status. You spend half your day asking 'what's happening?'",
+    cost: "Miscommunication. Duplicated effort. Late nights."
   },
   {
     num: "06",
-    emoji: "😱",
     problem: "Stock ran out. Again.",
-    story: "You didn't know resin was at 50 liters. Now production is paused while you wait for emergency delivery — at emergency prices. This keeps happening.",
-    cost: "Emergency orders. Premium freight. Missed deadlines."
+    story: "You didn't know supplies were low. Now operations are paused while you wait for emergency delivery — at emergency prices. This keeps happening.",
+    cost: "Emergency orders. Premium costs. Missed deadlines."
   },
   {
     num: "07",
-    emoji: "🤯",
     problem: "Three apps. Zero clarity.",
-    story: "Your jobs are in one place. Your inventory in another. Your money somewhere else. You spend hours stitching together reports that should take seconds.",
+    story: "Your work is in one place. Your inventory in another. Your money somewhere else. You spend hours stitching together reports that should take seconds.",
     cost: "Hours wasted. Decisions delayed. Burnout incoming."
   },
   {
     num: "08",
-    emoji: "😞",
-    problem: "You built this. But you can't escape it.",
-    story: "You started this business to have freedom. Now you're working 14-hour days and can't leave for a weekend without everything falling apart.",
-    cost: "Your health. Your family. Your sanity."
+    problem: "You built this. But you can't leave it.",
+    story: "You started this business for freedom. Now you're working long days and can't step away without everything falling apart.",
+    cost: "Your energy. Your family time. Your sanity."
   }
 ]
 
@@ -398,144 +390,132 @@ function Navbar() {
 // ============================================
 function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-20 overflow-hidden">
-      {/* Animated Background Gradient Orbs */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-3xl" />
+    <section className="relative min-h-screen bg-slate-900 text-white pt-16 md:pt-20 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950" />
       
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-        backgroundSize: '60px 60px'
-      }} />
-
-      <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content */}
           <div>
             {/* Eyebrow */}
-            <div className="hero-badge inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 border border-orange-500/40 text-orange-400 text-sm font-bold uppercase tracking-wider mb-8">
+            <div className="hero-badge inline-flex items-center gap-3 px-4 py-2 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-6">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
               </span>
               Built for Nigerian Businesses
             </div>
 
             {/* Headline */}
-            <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight mb-8">
+            <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               <span className="text-white">You didn't build this business to</span>
               <br />
-              <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="text-indigo-400">
                 work 14-hour days.
               </span>
             </h1>
 
-            {/* Subheadline - Emotional Hook */}
-            <p className="hero-cta text-xl md:text-2xl text-slate-300 mb-8 max-w-xl leading-relaxed font-medium">
-              Every morning you wake up wondering: <span className="text-white font-bold">"What broke while I was sleeping?"</span> Resin ran out. Invoice went unpaid. Client is angry.
+            {/* Subheadline */}
+            <p className="hero-cta text-lg md:text-xl text-slate-300 mb-6 max-w-xl leading-relaxed">
+              Every morning you wake up wondering: <span className="text-white font-semibold">"What broke while I was sleeping?"</span> Supplies ran low. Invoice went unpaid. Client is frustrated.
             </p>
             
-            <p className="text-lg text-slate-400 mb-12 max-w-xl">
-              Avenize is the business system that tells you first — before production stops, before clients complain, before the emergency call at 9pm.
+            <p className="text-base text-slate-400 mb-8 max-w-xl">
+              Avenize is the business system that tells you first — before operations stop, before clients complain.
             </p>
 
             {/* CTAs */}
-            <div className="hero-cta flex flex-wrap gap-4 mb-12">
+            <div className="hero-cta flex flex-wrap gap-3 mb-8">
               <Link
                 to="/signup"
-                className="group inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white font-bold text-lg hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 hover:scale-105"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition-colors"
               >
                 Stop the chaos
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
                 href="#product"
-                className="inline-flex items-center gap-2 px-6 py-4 rounded-xl border-2 border-slate-600 text-white font-semibold hover:bg-slate-800 hover:border-slate-500 transition-all"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-800 transition-colors"
               >
                 See how it works
               </a>
             </div>
 
             {/* Trust Bar */}
-            <div className="flex flex-wrap gap-6 text-sm">
+            <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
               <span className="flex items-center gap-2 text-emerald-400">
-                <Check size={18} />
-                <span className="text-slate-300">₦ Naira • VAT • WHT built in</span>
+                <Check size={16} />
+                <span className="text-slate-300">Naira, VAT, WHT built in</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
-                <Check size={18} />
+                <Check size={16} />
                 <span className="text-slate-300">Works on low-end Android</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
-                <Check size={18} />
+                <Check size={16} />
                 <span className="text-slate-300">Live in 30 minutes</span>
               </span>
             </div>
           </div>
 
           {/* Right Content - Dashboard Preview */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/20 to-pink-500/20 rounded-3xl blur-xl" />
-            
-            <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl">
+          <div className="relative mt-8 lg:mt-0">
+            <div className="relative bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-5 shadow-2xl">
               {/* Device Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
+              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
                 </div>
-                <span className="text-xs text-slate-500 font-mono uppercase tracking-wider">Your Morning • 6:45 AM</span>
+                <span className="text-xs text-slate-500 uppercase tracking-wider">6:45 AM</span>
               </div>
 
               {/* Alert Cards */}
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/30 rounded-xl p-4">
+              <div className="space-y-3">
+                <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-xs font-bold text-orange-400 uppercase tracking-wider">🚨 Stock Alert</span>
-                    <span className="text-xs text-red-400 font-mono">NOW</span>
+                    <span className="text-xs font-bold text-orange-400 uppercase">Stock Alert</span>
+                    <span className="text-xs text-red-400 font-mono">Now</span>
                   </div>
-                  <p className="text-white text-sm font-medium mb-3">Resin at 180L. Last order ₦4,200/L. Production stops tomorrow without reorder.</p>
-                  <button className="w-full py-2 rounded-lg bg-orange-500 text-white text-sm font-bold hover:bg-orange-600 transition-colors">
-                    Create Purchase Order →
+                  <p className="text-white text-sm mb-2">Supplies at 180L. Last order N4,200/L. Order needed today.</p>
+                  <button className="w-full py-2 rounded-lg bg-orange-500 text-white text-xs font-medium hover:bg-orange-600 transition-colors">
+                    Create Order
                   </button>
                 </div>
                 
-                <div className="bg-gradient-to-r from-red-500/10 to-pink-500/10 border border-red-500/30 rounded-xl p-4">
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">💸 7 Days Overdue</span>
-                    <span className="text-xs text-red-400 font-mono font-bold">₦680,000</span>
+                    <span className="text-xs font-bold text-red-400 uppercase">7 Days Overdue</span>
+                    <span className="text-xs text-red-400 font-mono font-bold">N680,000</span>
                   </div>
-                  <p className="text-white text-sm font-medium mb-3">Alhaji Saka • Lekki Villa. Called twice. No answer.</p>
-                  <button className="w-full py-2 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors">
-                    Send Payment Reminder →
+                  <p className="text-white text-sm mb-2">Client: ABC Company. Called twice. No answer.</p>
+                  <button className="w-full py-2 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors">
+                    Send Reminder
                   </button>
                 </div>
                 
-                <div className="bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 rounded-xl p-4">
+                <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">✅ Site Complete</span>
-                    <span className="text-xs text-slate-400 font-mono">Just now</span>
+                    <span className="text-xs font-bold text-emerald-400 uppercase">Job Complete</span>
+                    <span className="text-xs text-slate-400 font-mono">Now</span>
                   </div>
-                  <p className="text-white text-sm font-medium mb-3">IKM Project roof done. Inspector photo uploaded. Awaiting your sign-off.</p>
-                  <button className="w-full py-2 rounded-lg bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors">
-                    Review & Approve →
+                  <p className="text-white text-sm mb-2">Project finished. Awaiting your approval.</p>
+                  <button className="w-full py-2 rounded-lg bg-emerald-500 text-white text-xs font-medium hover:bg-emerald-600 transition-colors">
+                    Review & Approve
                   </button>
                 </div>
               </div>
               
               {/* Bottom Status */}
-              <div className="mt-4 pt-4 border-t border-slate-700 flex items-center justify-between">
-                <span className="text-xs text-slate-500">3 alerts need your attention</span>
+              <div className="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between">
+                <span className="text-xs text-slate-500">3 alerts need attention</span>
                 <span className="flex items-center gap-2 text-xs text-emerald-400">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  System Live
+                  Live
                 </span>
               </div>
             </div>
@@ -566,31 +546,26 @@ function AlertCard({ tag, message, action }: { tag: string; message: string; act
 // ============================================
 function MarqueeStrip() {
   const items = [
-    "Paint & Coatings Manufacturers",
-    "Roofing & Waterproofing Contractors", 
-    "Real Estate Agencies",
-    "Construction Companies",
-    "Logistics & Haulage",
-    "Field Service Businesses",
-    "Event Management Companies",
-    "Catering & Food Production",
-    "Interior Design Studios",
-    "Electrical Contracting",
-    "Printing & Signage",
-    "Auto Repair Workshops",
-    "Laundry & Dry Cleaning",
-    "Cold Room & Refrigeration",
-    "Furniture Manufacturers",
-    "Plastic & Polymer Factories"
+    "Manufacturing",
+    "Logistics",
+    "Retail & E-Commerce",
+    "Professional Services",
+    "Healthcare",
+    "Education",
+    "Media & Advertising",
+    "Technology",
+    "Agriculture",
+    "Food & Beverage",
+    "Fashion & Textiles",
+    "Automotive"
   ]
   
   return (
-    <div className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 py-4 overflow-hidden border-y border-white/20 shadow-lg shadow-orange-500/20">
+    <div className="bg-slate-900 py-4 overflow-hidden border-y border-slate-800">
       <div className="flex whitespace-nowrap animate-marquee">
         {[...items, ...items, ...items].map((item, i) => (
-          <span key={i} className="mx-10 text-sm font-bold text-white uppercase tracking-widest flex items-center gap-10">
+          <span key={i} className="mx-8 text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-8">
             {item}
-            <span className="text-white/60">✦</span>
           </span>
         ))}
       </div>
@@ -603,53 +578,49 @@ function MarqueeStrip() {
 // ============================================
 function ProblemsSection() {
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-slate-900 to-slate-800 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5" style={{
-        backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
-        backgroundSize: '40px 40px'
-      }} />
-      
-      <div className="max-w-7xl mx-auto px-6 relative">
+    <section className="py-16 md:py-24 bg-white relative">
+      <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
-        <div className="mb-16 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 border border-orange-500/30 text-orange-400 text-sm font-bold uppercase tracking-wider mb-6">
-            <span>😢</span> The Hidden Cost of Chaos
+        <div className="mb-12 md:mb-16 animate-on-scroll text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-6">
+            The Problem
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            You're losing money<br />
-            <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">and you don't even know it.</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+            Running a business is hard.<br className="hidden md:block" />
+            <span className="text-slate-500"> Managing it shouldn't be this chaotic.</span>
           </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            Every one of these is money leaving your business. You know these moments. You're probably living one right now.
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            Every day, these silent problems drain your time, money, and energy. You know them. You're probably living with them right now.
           </p>
         </div>
 
         {/* Problem Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {PROBLEMS.map((problem, i) => (
             <div 
               key={i} 
-              className="problem-card group relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 rounded-2xl p-6 hover:border-orange-500/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:shadow-orange-500/10 opacity-0 translate-y-8"
-              style={{ animationDelay: `${i * 100}ms` }}
+              className="problem-card group bg-white border border-slate-200 rounded-xl p-5 hover:border-slate-400 hover:shadow-lg transition-all duration-300 opacity-0 translate-y-4"
+              style={{ animationDelay: `${i * 50}ms` }}
             >
-              {/* Emoji Badge */}
-              <div className="text-5xl mb-4">{problem.emoji}</div>
+              {/* Number Badge */}
+              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center mb-4">
+                <span className="text-lg font-bold text-slate-400">{problem.num}</span>
+              </div>
               
               {/* Problem Title */}
-              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-orange-400 transition-colors">
+              <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
                 {problem.problem}
               </h3>
               
               {/* Story */}
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+              <p className="text-sm text-slate-500 leading-relaxed mb-4">
                 {problem.story}
               </p>
               
               {/* Cost Tag */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-red-500/10 to-transparent rounded-b-2xl border-t border-red-500/20">
-                <p className="text-xs font-bold text-red-400 uppercase tracking-wider">
-                  💸 {problem.cost}
+              <div className="pt-3 border-t border-slate-100">
+                <p className="text-xs font-medium text-rose-600">
+                  {problem.cost}
                 </p>
               </div>
             </div>
@@ -657,16 +628,14 @@ function ProblemsSection() {
         </div>
 
         {/* Transformation CTA */}
-        <div className="mt-16 text-center animate-on-scroll">
-          <div className="inline-block bg-gradient-to-r from-orange-500 to-pink-500 p-1 rounded-2xl">
-            <div className="bg-slate-900 rounded-xl px-8 py-6">
-              <p className="text-2xl md:text-3xl font-bold text-white mb-2">
-                It doesn't have to be this way.
-              </p>
-              <p className="text-slate-400">
-                Avenize was built for exactly these moments. See how below.
-              </p>
-            </div>
+        <div className="mt-12 md:mt-16 text-center animate-on-scroll">
+          <div className="inline-block bg-indigo-600 rounded-2xl px-8 py-6">
+            <p className="text-xl md:text-2xl font-bold text-white mb-2">
+              It doesn't have to be this way.
+            </p>
+            <p className="text-indigo-200">
+              Avenize was built for exactly these moments. See how below.
+            </p>
           </div>
         </div>
       </div>
@@ -683,53 +652,53 @@ function FeaturesSection() {
       num: "01",
       problem: "You're constantly chasing updates.",
       solution: "See everything in one place.",
-      description: "Stop asking 'what's happening?' Every job, every stock item, every payment — linked together. You see the whole picture without calling anyone.",
+      description: "Stop asking 'what's happening?' Every job, every item, every payment — linked together. You see the whole picture without calling anyone.",
       items: [
-        "📋 Job pipeline: enquiry → quote → materials → site → invoice → payment",
-        "📦 Stock linked to jobs. Reorder point hit? You know immediately.",
-        "🏭 Multi-location: factory, warehouse, site — all in one view"
+        "Job pipeline: enquiry, quote, materials, work, invoice, payment",
+        "Stock linked to jobs. Reorder point hit? You know immediately.",
+        "Multi-location: all your operations in one view"
       ],
       visual: "pipeline"
     },
     {
       num: "02",
       problem: "You find out about problems too late.",
-      solution: "Get alerts before it becomes an emergency.",
-      description: "Avenize watches your business 24/7. When resin drops to 200L, you get the alert. When Alhaji's invoice is 7 days overdue, you know. Before production stops. Before the 9pm call.",
+      solution: "Get alerts before it becomes urgent.",
+      description: "Avenize watches your business 24/7. When supplies drop low, you get the alert. When invoices go overdue, you know. Before it becomes a crisis.",
       items: [
-        "🚨 Stock alerts: reorder before you run out, not after",
-        "💸 Payment alerts: flag overdue invoices at 7 days, not 60",
-        "👷 Site alerts: crew finishes, you know first — not the client"
+        "Stock alerts: reorder before you run out",
+        "Payment alerts: flag overdue invoices early",
+        "Update alerts: team finishes, you know first"
       ],
       visual: "alerts"
     },
     {
       num: "03",
-      problem: "Your team lives on WhatsApp. Work gets lost.",
+      problem: "Your team uses scattered messaging apps. Work gets lost.",
       solution: "Same speed. Better tracking.",
-      description: "WhatsApp is fine for chat. But site updates, stock requests, and payment confirmations should link to real jobs and invoices. Avenize is WhatsApp-speed with proper business tracking.",
+      description: "Messaging apps are fine for chat. But updates, requests, and confirmations should link to real work. Avenize is fast with proper business tracking.",
       items: [
-        "📸 Photo updates from site, even offline — syncs when signal returns",
-        "📥 Stock requests go straight to warehouse queue",
-        "📊 Your morning digest: what finished, what's waiting, what's overdue"
+        "Photo updates from anywhere, syncs when signal returns",
+        "Requests go straight to the right person",
+        "Your daily digest: what finished, what's waiting"
       ],
       visual: "chat"
     }
   ]
 
   return (
-    <section id="product" className="py-20 md:py-28 bg-gradient-to-b from-white to-slate-50">
+    <section id="product" className="py-16 md:py-24 bg-slate-50">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
-        <div className="mb-16 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/20 text-orange-600 text-sm font-bold uppercase tracking-wider mb-6">
-            <span>✨</span> The Solution
+        <div className="mb-12 md:mb-16 animate-on-scroll text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold uppercase tracking-wider mb-6">
+            The Solution
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
             Three things that fix everything.
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            No complicated dashboards. No modules nobody uses. Just the three things that run your business — connected.
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            No complicated dashboards. No features nobody uses. Just the essentials — connected.
           </p>
         </div>
 
@@ -737,32 +706,34 @@ function FeaturesSection() {
         {features.map((feature, i) => (
           <div
             key={i}
-            className={`feature-row grid lg:grid-cols-2 gap-12 lg:gap-20 py-16 border-t border-slate-200 ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+            className={`feature-row grid lg:grid-cols-2 gap-8 lg:gap-16 py-12 md:py-16 border-t border-slate-200 ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
           >
             {/* Copy */}
             <div className="feature-copy">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs font-bold uppercase tracking-wider mb-4">
-                {feature.num === "01" ? "🎯 The View" : feature.num === "02" ? "🔔 The Alert" : "💬 The Channel"}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider mb-4">
+                {feature.num === "01" ? "01 The View" : feature.num === "02" ? "02 The Alert" : "03 The Channel"}
               </div>
               
               {/* Problem */}
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                <p className="text-sm text-red-600 font-medium">😔 {feature.problem}</p>
+              <div className="mb-4 p-4 bg-rose-50 border border-rose-100 rounded-xl">
+                <p className="text-sm text-rose-700 font-medium">{feature.problem}</p>
               </div>
               
               {/* Solution */}
-              <h3 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 leading-tight">
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight">
                 {feature.solution}
               </h3>
               
-              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+              <p className="text-base text-slate-600 mb-6 leading-relaxed">
                 {feature.description}
               </p>
               
-              <ul className="space-y-4">
+              <ul className="space-y-3">
                 {feature.items.map((item, j) => (
-                  <li key={j} className="flex items-start gap-4 text-base text-slate-700">
-                    <span className="text-emerald-500 text-xl mt-0.5">✓</span>
+                  <li key={j} className="flex items-start gap-3 text-sm md:text-base text-slate-700">
+                    <span className="text-emerald-500 text-lg mt-0.5 flex-shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </span>
                     {item}
                   </li>
                 ))}
@@ -772,8 +743,8 @@ function FeaturesSection() {
             {/* Visual */}
             <div className="feature-visual">
               <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-orange-500/10 to-pink-500/10 rounded-3xl blur-xl" />
-                <div className="relative bg-white border border-slate-200 rounded-2xl p-6 shadow-xl">
+                <div className="absolute -inset-4 bg-indigo-500/5 rounded-3xl blur-xl" />
+                <div className="relative bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-lg">
                   {feature.visual === 'pipeline' && <PipelineMockup />}
                   {feature.visual === 'alerts' && <AlertsMockup />}
                   {feature.visual === 'chat' && <ChatMockup />}
@@ -977,47 +948,45 @@ function DashboardsSection() {
 // ============================================
 function PricingSection() {
   return (
-    <section id="pricing" className="py-20 md:py-28 bg-[#111111] text-white">
+    <section id="pricing" className="py-16 md:py-24 bg-slate-900 text-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 border border-orange-500/30 text-orange-400 text-sm font-bold uppercase tracking-wider mb-6">
-            <span>💰</span> Founding Rate — Locked In
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-6">
+            Founding Rate - Locked In
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             Less than your data bundle.<br />
-            <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Runs your whole business.</span>
+            <span className="text-indigo-400">Runs your whole business.</span>
           </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
             Five tiers, no sales calls, no consultants — from one person to 100 seats.
           </p>
-          <div className="inline-block bg-gradient-to-r from-orange-500 to-pink-500 p-1 rounded-2xl">
-            <div className="bg-slate-900 rounded-xl px-8 py-5">
-              <p className="text-lg font-bold text-white mb-1">
-                🎁 Founding rate locked for 12 months.
-              </p>
-              <p className="text-slate-400">
-                Your price stays yours — even when list price goes up. Pay annually, get 2 months free.
-              </p>
-            </div>
+          <div className="inline-block bg-indigo-600 rounded-2xl px-8 py-5">
+            <p className="text-lg font-bold text-white mb-1">
+              Founding rate locked for 12 months.
+            </p>
+            <p className="text-indigo-200">
+              Your price stays yours — even when list price goes up. Pay annually, get 2 months free.
+            </p>
           </div>
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
           {PRICING_SNAPSHOT.map((plan, i) => (
             <div
               key={i}
-              className={`snap-card rounded-xl p-5 border opacity-0 translate-y-6 transition-all hover:border-indigo-500/50 ${
+              className={`snap-card rounded-xl p-4 md:p-5 border opacity-0 translate-y-6 transition-all hover:border-indigo-500/50 ${
                 plan.featured
                   ? 'bg-indigo-500/10 border-indigo-500'
                   : 'bg-white/5 border-white/10'
               }`}
             >
-              <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-3 min-h-[24px]">
+              <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-3 min-h-[20px]">
                 {plan.plan}
               </div>
-              <div className="text-2xl font-bold font-mono mb-1">
+              <div className="text-xl md:text-2xl font-bold font-mono mb-1">
                 {plan.price}
                 <small className="block text-xs font-normal text-white/50 mt-1">{plan.sub}</small>
               </div>
@@ -1031,7 +1000,7 @@ function PricingSection() {
         </div>
 
         {/* View All Plans Link */}
-        <div className="mt-10 text-center">
+        <div className="mt-8 text-center">
           <Link
             to="/pricing"
             className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium"
@@ -1052,14 +1021,14 @@ function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-20 md:py-28 bg-[#F7F7F5]">
+    <section id="faq" className="py-16 md:py-24 bg-slate-50">
       <div className="max-w-3xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/20 text-orange-600 text-sm font-bold uppercase tracking-wider mb-6">
-            <span>❓</span> Real Questions
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 border border-slate-300 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-6">
+            Real Questions
           </div>
-          <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
             What operators always ask before they start.
           </h2>
           <p className="text-lg text-slate-600 max-w-xl mx-auto">
@@ -1070,22 +1039,22 @@ function FAQSection() {
         {/* FAQ List */}
         <div className="space-y-0">
           {FAQ_DATA.map((item, i) => (
-            <div key={i} className="border-t border-[#E8E8E8]">
+            <div key={i} className="border-t border-slate-200">
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left"
               >
-                <span className="font-semibold text-[#111111] pr-4">{item.q}</span>
-                <span className={`text-violet-600 text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+                <span className="font-semibold text-slate-900 pr-4">{item.q}</span>
+                <span className={`text-indigo-600 text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && (
-                <div className="pb-5 text-[#6B6B6B] leading-relaxed">
+                <div className="pb-5 text-slate-600 leading-relaxed">
                   {item.a}
                 </div>
               )}
             </div>
           ))}
-          <div className="border-b border-[#E8E8E8]" />
+          <div className="border-b border-slate-200" />
         </div>
       </div>
     </section>
@@ -1098,31 +1067,27 @@ function FAQSection() {
 function StatsSection() {
   const stats = [
     { 
-      value: "₦2.4M/yr", 
-      label: "What one admin on ₦200k/month costs you annually. Avenize automates the tracking — you redeploy that person to execution, not chasing WhatsApp.",
-      icon: "💸"
+      value: "N2.4M/yr", 
+      label: "What one admin on N200k/month costs you annually. Avenize automates the tracking - you redeploy that person to execution.",
     },
     { 
-      value: "3 months", 
-      label: "What a local ERP vendor will quote you before they even start building. Avenize is live in 30 minutes.",
-      icon: "📅"
+      value: "30 mins", 
+      label: "Time to get live. No consultants, no lengthy implementations. Just sign up and start.",
     },
     { 
-      value: "60 days", 
-      label: "Average Nigerian B2B payment cycle. Avenize flags overdue invoices automatically — so your follow-up isn't 'if' but 'when.'",
-      icon: "⏰"
+      value: "24/7", 
+      label: "Automated monitoring. Flags issues early - so your follow-up isn't 'if' but 'when.'",
     }
   ]
 
   return (
-    <section className="py-16 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500">
+    <section className="py-12 md:py-16 bg-slate-100">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center animate-on-scroll">
-              <div className="text-5xl mb-3">{stat.icon}</div>
-              <span className="block text-4xl font-black text-white mb-2">{stat.value}</span>
-              <p className="text-white/90 text-sm leading-relaxed max-w-xs mx-auto">{stat.label}</p>
+              <span className="block text-3xl md:text-4xl font-bold text-indigo-600 mb-2">{stat.value}</span>
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-xs mx-auto">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -1136,42 +1101,36 @@ function StatsSection() {
 // ============================================
 function CTASection() {
   return (
-    <section className="relative py-24 md:py-32 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white text-center overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
-
+    <section className="relative py-16 md:py-24 bg-slate-900 text-white text-center">
       <div className="relative max-w-4xl mx-auto px-6">
         <div className="mb-8">
-          <p className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight mb-6">
-            <span className="text-white">Your factory floor stopped at 9am.</span>
+          <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6">
+            <span className="text-white">Your operations stopped at 9am.</span>
             <br />
-            <span className="text-slate-500">Your supervisor only told you now.</span>
+            <span className="text-slate-500">Your team only told you now.</span>
           </p>
           
-          <p className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight">
-            <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+          <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+            <span className="text-indigo-400">
               Tomorrow doesn't have to be like today.
             </span>
           </p>
         </div>
 
         {/* Emotional Hook */}
-        <div className="mb-10 p-6 bg-gradient-to-r from-orange-500/10 to-pink-500/10 border border-orange-500/20 rounded-2xl">
-          <p className="text-lg text-slate-300">
-            <span className="text-white font-bold">Avenize was built for exactly this moment.</span><br />
-            The moment before it becomes an emergency. The moment you wish you'd known sooner.
+        <div className="mb-8 p-6 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
+          <p className="text-base md:text-lg text-slate-300">
+            <span className="text-white font-semibold">Avenize was built for exactly this moment.</span><br />
+            The moment before it becomes urgent. The moment you wish you'd known sooner.
           </p>
         </div>
 
         <Link
           to="/signup"
-          className="group inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white font-bold text-xl hover:shadow-2xl hover:shadow-orange-500/30 transition-all duration-300 hover:scale-105"
+          className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-indigo-600 text-white font-semibold text-lg hover:bg-indigo-700 transition-colors"
         >
           Stop the chaos. Start Avenize.
-          <ArrowRight size={24} className="group-hover:translate-x-1 transition-transform" />
+          <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </Link>
 
         <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-400">
