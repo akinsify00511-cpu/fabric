@@ -1,423 +1,584 @@
 // ============================================
 // PRICING PAGE - AVENIZE
-// Online payment with Paystack/Flutterwave
+// Updated Design with Paystack Payment Links
 // ============================================
 
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../lib/AuthContext'
-import { supabase } from '../lib/supabase'
-import { useToast } from '../components/Toast'
-import { SUBSCRIPTION_PAGES } from '../lib/paystack'
-import {
-  Check, CreditCard, Building2, Zap, Users, TrendingUp,
-  Phone, Mail, MessageSquare, Package, BarChart3, Bell,
-  Shield, Clock, ArrowRight, Sparkles, Gift
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { 
+  Check, ArrowRight, Sparkles, Users, Zap, Shield,
+  CreditCard, Building2, Phone, MessageSquare
 } from 'lucide-react'
 
-const PLANS = [
+// ============================================
+// PLAN DATA WITH PAYSTACK LINKS
+// ============================================
+const MONTHLY_PLANS = [
   {
-    id: 'starter',
+    id: 'starter-monthly',
     name: 'Starter',
+    tier: '01 — Solo',
     description: 'Perfect for solo operators and small teams getting started',
     price: 15000,
     priceLabel: '₦15,000',
-    period: 'month',
-    maxUsers: 5,
+    period: 'flat / month',
+    seats: '1–5 seats',
     features: [
-      'Job & Project Tracking',
-      'Basic Invoicing',
-      'Simple Inventory',
-      'Payment Tracking',
-      'Email Support',
+      'Core job & project tracking',
+      'Invoicing with VAT & WHT tracking',
+      'Basic inventory (single location)',
+      'Payment tracking',
+      'Self-serve setup'
     ],
     notIncluded: [
       'AI Alerts',
-      'Team Chat',
-      'Advanced Reporting',
-      'API Access',
+      'Team Chat'
     ],
-    color: 'gray',
+    paystackLink: 'https://paystack.shop/pay/starter-avenize',
+    popular: false
   },
   {
-    id: 'business',
-    name: 'Business',
+    id: 'team-monthly',
+    name: 'Team',
+    tier: '02 — Small Team',
     description: 'For growing teams that need full operational control',
-    price: 8000,
-    priceLabel: '₦8,000',
-    period: 'user/month',
-    maxUsers: 25,
-    popular: true,
+    price: 48000,
+    priceLabel: '₦48,000',
+    period: 'starting / month · 6 seats',
+    seats: '6–15 seats',
     features: [
       'Everything in Starter',
-      'AI Operational Alerts',
-      'Team Chat & Tasks',
-      'Advanced Reporting',
-      'Multiple Bank Accounts',
-      'VAT & WHT Tracking',
-      'Priority Support',
-    ],
-    notIncluded: [
-      'API Access',
-      'Custom Integrations',
-    ],
-    color: 'primary',
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    description: 'For established businesses with complex operations',
-    price: 6500,
-    priceLabel: '₦6,500',
-    period: 'user/month',
-    maxUsers: 75,
-    features: [
-      'Everything in Business',
-      'API Access',
-      'Multi-location Support',
-      'Approval Workflows',
-      'Custom Reports',
-      'Dedicated Support',
+      'AI operational alerts (rules engine)',
+      'Department groups & task management',
+      'Offline field sync',
+      'Multi-location inventory'
     ],
     notIncluded: [],
-    color: 'accent',
+    paystackLink: 'https://paystack.shop/pay/team-avenize',
+    popular: false
   },
+  {
+    id: 'business-monthly',
+    name: 'Business',
+    tier: '03 — Growing Team',
+    description: 'For established businesses scaling operations',
+    price: 112000,
+    priceLabel: '₦112,000',
+    period: 'starting / month · 16 seats',
+    seats: '16–30 seats',
+    features: [
+      'Everything in Team',
+      'Multi-location inventory',
+      'Client communication log per job',
+      'Variation order tracking',
+      'Approval workflows'
+    ],
+    notIncluded: [],
+    paystackLink: 'https://paystack.shop/pay/business-avenize',
+    popular: false
+  },
+  {
+    id: 'pro-monthly',
+    name: 'Pro',
+    tier: '04 — Mid-Size',
+    description: 'For businesses with complex operations — 50-staff sweet spot',
+    price: 186000,
+    priceLabel: '₦186,000',
+    period: 'starting / month · 31 seats',
+    seats: '31–75 seats',
+    features: [
+      'Everything in Business',
+      'Advanced reporting & multi-location',
+      'Full API access',
+      'Free onboarding walkthrough',
+      'Priority support'
+    ],
+    notIncluded: [],
+    paystackLink: 'https://paystack.shop/pay/pro-avenize',
+    popular: true
+  },
+  {
+    id: 'scale-monthly',
+    name: 'Scale',
+    tier: '05 — Large',
+    description: 'For large organizations with unlimited growth',
+    price: 380000,
+    priceLabel: '₦380,000',
+    period: 'starting / month · 76 seats',
+    seats: '76+ seats · uncapped',
+    features: [
+      'Everything in Pro',
+      'SSO & data residency',
+      'Priority support',
+      'Uncapped seats — add anytime',
+      'Dedicated onboarding'
+    ],
+    notIncluded: [],
+    paystackLink: 'https://paystack.shop/pay/scale-avenize',
+    popular: false
+  }
 ]
 
-const PAYMENT_METHODS = [
-  { id: 'card', name: 'Debit/Credit Card', icon: CreditCard, partner: 'Paystack' },
-  { id: 'bank', name: 'Bank Transfer', icon: Building2, partner: 'Instant confirmation' },
-  { id: 'ussd', name: 'USSD', icon: Phone, partner: 'All Nigerian banks' },
-  { id: 'mobile', name: 'Mobile Money', icon: MessageSquare, partner: 'MTN, Airtel, 9mobile' },
+const YEARLY_PLANS = [
+  {
+    id: 'starter-yearly',
+    name: 'Starter',
+    priceLabel: '₦150,000',
+    period: '/year — 2 months free',
+    seats: '1–5 seats',
+    paystackLink: 'https://paystack.shop/pay/starteryearly'
+  },
+  {
+    id: 'team-yearly',
+    name: 'Team',
+    priceLabel: '₦480,000',
+    period: '/year — 2 months free',
+    seats: '6–15 seats',
+    paystackLink: 'https://paystack.shop/pay/teamyearly'
+  },
+  {
+    id: 'business-yearly',
+    name: 'Business',
+    priceLabel: '₦1,120,000',
+    period: '/year — 2 months free',
+    seats: '16–30 seats',
+    paystackLink: 'https://paystack.shop/pay/business-yearly'
+  },
+  {
+    id: 'pro-yearly',
+    name: 'Pro',
+    priceLabel: '₦1,860,000',
+    period: '/year — 2 months free',
+    seats: '31–75 seats',
+    paystackLink: 'https://paystack.shop/pay/pro-yearly'
+  },
+  {
+    id: 'scale-yearly',
+    name: 'Scale',
+    priceLabel: '₦3,800,000',
+    period: '/year — 2 months free',
+    seats: '76+ seats · uncapped',
+    paystackLink: 'https://paystack.shop/pay/scale-yearly'
+  }
 ]
 
-interface Subscription {
-  id: string
-  plan_id: string
-  status: 'active' | 'trial' | 'past_due' | 'cancelled'
-  current_period_end: string
-  seats: number
-}
-
-export default function Pricing() {
-  const { staff } = useAuth()
-  const { showToast } = useToast()
-  const navigate = useNavigate()
-  
-  const [loading, setLoading] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
-  const [seats, setSeats] = useState(5)
-  const [showCheckout, setShowCheckout] = useState(false)
-  const [subscription, setSubscription] = useState<Subscription | null>(null)
-
-  useEffect(() => {
-    loadSubscription()
-  }, [staff])
-
-  const loadSubscription = async () => {
-    if (!staff?.business_id) return
-    
-    const { data } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('business_id', staff.business_id)
-      .maybeSingle()
-    
-    if (data) {
-      setSubscription(data as Subscription)
-    }
+// ============================================
+// FAQ DATA
+// ============================================
+const FAQ_DATA = [
+  {
+    q: "Do I need an IT person to set this up?",
+    a: "No. Setup is a 30-minute conversational flow — tell us what you do, how many staff, what you sell, and it's ready. No configuration, no consultants, unlike the ERPs that need three months to stand up."
+  },
+  {
+    q: "What if my field staff have bad internet on site?",
+    a: "Job updates and photos are captured offline and sync automatically once signal returns. Critical alerts can fall back to SMS. It's built for the network you actually have, not the one a demo assumes."
+  },
+  {
+    q: "Does this replace my accountant?",
+    a: "No — and it won't pretend to. We track invoicing, payments, VAT and WHT, and export cleanly to your accounting software. Your accountant still files; we just make sure they're working from real numbers."
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "We accept all Nigerian payment methods: Debit/Credit Card, Bank Transfer, USSD, and Mobile Money through Paystack. All payments are processed securely."
+  },
+  {
+    q: "What happens to my price after the first year?",
+    a: "Nothing, if you stay subscribed. Founding-rate customers keep their rate for as long as they remain active — list price only applies to new signups after the founding period ends."
   }
+]
 
-  const handleSubscribe = async (planId: string) => {
-    if (!staff) {
-      navigate('/signup')
-      return
-    }
-    
-    setSelectedPlan(planId)
-    setShowCheckout(true)
+// ============================================
+// WHY PRICING WORKS DATA
+// ============================================
+const WHY_PRICING = [
+  {
+    value: '₦150k–300k',
+    label: 'Monthly cost of one admin/operations hire. Avenize is priced to replace 1–2 of those roles and makes the rest of your team more effective.'
+  },
+  {
+    value: '₦1M+',
+    label: 'Typical upfront cost of a comparable local ERP quote, plus 20% annual maintenance. We\'re cheaper, and live in 30 minutes, not 3 months.'
+  },
+  {
+    value: '21 → 14 days',
+    label: 'Our target reduction in "days to cash" — from job completion to money in the bank. That alone pays for the subscription.'
   }
+]
 
-  const handlePayment = async (method: string) => {
-    if (!selectedPlan || !staff) return
-    
-    setLoading(true)
-    
-    try {
-      const plan = PLANS.find(p => p.id === selectedPlan)
-      if (!plan) throw new Error('Plan not found')
-      
-      // Get Paystack subscription page URL
-      const pageUrl = SUBSCRIPTION_PAGES[selectedPlan as keyof typeof SUBSCRIPTION_PAGES]
-      
-      if (!pageUrl || pageUrl.includes('xxx')) {
-        throw new Error('Payment page not configured. Please contact support.')
-      }
-      
-      // Open Paystack subscription page in new tab
-      showToast('Redirecting to payment...', 'info')
-      window.open(pageUrl, '_blank')
-      
-      // Simulate payment success for demo (remove in production)
-      setTimeout(() => {
-        handlePaymentSuccess('', plan.id)
-      }, 3000)
-      
-    } catch (err: any) {
-      console.error('Payment error:', err)
-      showToast(err.message || 'Payment failed. Please try again.', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handlePaymentSuccess = async (paymentId: string, planId: string) => {
-    try {
-      // Update payment status
-      await supabase
-        .from('payments')
-        .update({ reference: `PAY-${Date.now()}` })
-        .eq('id', paymentId)
-      
-      // Create or update subscription
-      const plan = PLANS.find(p => p.id === planId)
-      if (!plan) return
-      
-      const periodEnd = new Date()
-      periodEnd.setMonth(periodEnd.getMonth() + 1)
-      
-      if (subscription) {
-        await supabase
-          .from('subscriptions')
-          .update({
-            plan_id: planId,
-            status: 'active',
-            current_period_end: periodEnd.toISOString(),
-            seats,
-          })
-          .eq('id', subscription.id)
-      } else {
-        await supabase
-          .from('subscriptions')
-          .insert({
-            plan_id: planId,
-            status: 'active',
-            current_period_end: periodEnd.toISOString(),
-            seats,
-            business_id: staff?.business_id,
-          })
-      }
-      
-      showToast('Payment successful! Welcome to ' + plan.name, 'success')
-      setShowCheckout(false)
-      loadSubscription()
-      
-    } catch (err) {
-      console.error('Subscription error:', err)
-      showToast('Payment received but subscription setup failed', 'error')
-    }
-  }
-
-  const currentPlan = subscription ? PLANS.find(p => p.id === subscription.plan_id) : null
+// ============================================
+// COMPONENT: PRICING TICKET CARD
+// ============================================
+function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[0] | typeof YEARLY_PLANS[0]; isYearly?: boolean }) {
+  const monthlyPlan = plan as typeof MONTHLY_PLANS[0]
+  const yearlyPlan = plan as typeof YEARLY_PLANS[0]
+  const paystackLink = isYearly ? yearlyPlan.paystackLink : monthlyPlan.paystackLink
+  const isMonthly = !isYearly && 'features' in plan
 
   return (
-    <div className="min-h-screen bg-[var(--avenize-offwhite)]">
-      {/* Header */}
-      <div className="bg-white border-b border-black/5">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">Pricing</h1>
-              <p className="text-black/60 mt-1">Choose the plan that fits your business</p>
-            </div>
-            {currentPlan && (
-              <div className="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm font-medium">
-                Current: {currentPlan.name} Plan
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Pricing Cards */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-6">
-          {PLANS.map((plan) => {
-            const isCurrentPlan = subscription?.plan_id === plan.id
-            const isPopular = plan.popular
-            
-            return (
-              <div
-                key={plan.id}
-                className={`relative bg-white rounded-2xl border-2 transition-all ${
-                  isPopular 
-                    ? 'border-[var(--avenize-primary)] shadow-xl shadow-[var(--avenize-primary)]/10' 
-                    : 'border-black/5'
-                }`}
-              >
-                {isPopular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="bg-[var(--avenize-primary)] text-white text-xs font-semibold px-3 py-1 rounded-full">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-                
-                <div className="p-6">
-                  <h3 className="text-lg font-bold">{plan.name}</h3>
-                  <p className="text-sm text-black/60 mt-1">{plan.description}</p>
-                  
-                  <div className="mt-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold">{plan.priceLabel}</span>
-                      <span className="text-black/50 text-sm">/{plan.period}</span>
-                    </div>
-                    {plan.id !== 'starter' && (
-                      <p className="text-xs text-black/40 mt-1">
-                        Billed per user • Min {plan.maxUsers} seats
-                      </p>
-                    )}
-                  </div>
-
-                  <ul className="mt-6 space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm">
-                        <Check size={16} className="text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                    {plan.notIncluded.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-black/30">
-                        <span className="w-4 h-4 rounded-full border border-black/20 mt-0.5 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <button
-                    onClick={() => handleSubscribe(plan.id)}
-                    disabled={isCurrentPlan}
-                    className={`w-full mt-6 py-3 rounded-xl font-medium transition-all ${
-                      isCurrentPlan
-                        ? 'bg-green-100 text-green-700 cursor-default'
-                        : isPopular
-                        ? 'avenize-gradient text-white hover:opacity-90'
-                        : 'bg-black/5 hover:bg-black/10'
-                    }`}
-                  >
-                    {isCurrentPlan ? 'Current Plan' : plan.id === 'starter' ? 'Get Started' : 'Subscribe'}
-                  </button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* FAQ */}
-        <div className="mt-16 text-center">
-          <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
-          <div className="grid md:grid-cols-3 gap-6 text-left mt-8">
-            <div className="bg-white rounded-xl p-5">
-              <h3 className="font-semibold mb-2">Can I change plans?</h3>
-              <p className="text-sm text-black/60">Yes, you can upgrade or downgrade at any time. Changes take effect on your next billing cycle.</p>
-            </div>
-            <div className="bg-white rounded-xl p-5">
-              <h3 className="font-semibold mb-2">What payment methods?</h3>
-              <p className="text-sm text-black/60">We accept all Nigerian payment methods: Card, Bank Transfer, USSD, and Mobile Money.</p>
-            </div>
-            <div className="bg-white rounded-xl p-5">
-              <h3 className="font-semibold mb-2">Is there a free trial?</h3>
-              <p className="text-sm text-black/60">Starter plan is free forever for up to 5 users. No credit card required.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Checkout Modal */}
-      {showCheckout && selectedPlan && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-black/5">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold">Complete Your Purchase</h2>
-                <button 
-                  onClick={() => setShowCheckout(false)}
-                  className="p-2 hover:bg-black/5 rounded-lg"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-6">
-              {/* Order Summary */}
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex justify-between mb-2">
-                  <span className="font-medium">{PLANS.find(p => p.id === selectedPlan)?.name} Plan</span>
-                  <span className="font-semibold">{PLANS.find(p => p.id === selectedPlan)?.priceLabel}/user</span>
-                </div>
-                
-                {selectedPlan !== 'starter' && (
-                  <div className="flex items-center gap-3 mt-4">
-                    <label className="text-sm">Number of users:</label>
-                    <select
-                      value={seats}
-                      onChange={(e) => setSeats(Number(e.target.value))}
-                      className="px-3 py-1.5 rounded-lg border border-black/10 text-sm"
-                    >
-                      {[...Array(25)].map((_, i) => i + 1).map(n => (
-                        <option key={n} value={n}>{n} users</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                
-                <div className="border-t border-black/10 mt-4 pt-4 flex justify-between">
-                  <span className="font-semibold">Total per month</span>
-                  <span className="font-bold text-xl">
-                    ₦{((PLANS.find(p => p.id === selectedPlan)?.price || 0) * seats).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Payment Methods */}
-              <div>
-                <h3 className="font-semibold mb-3">Select Payment Method</h3>
-                <div className="space-y-2">
-                  {PAYMENT_METHODS.map((method) => (
-                    <button
-                      key={method.id}
-                      onClick={() => handlePayment(method.id)}
-                      disabled={loading}
-                      className="w-full flex items-center gap-4 p-4 rounded-xl border border-black/10 hover:border-[var(--avenize-primary)] hover:bg-[var(--avenize-primary)]/5 transition-all text-left"
-                    >
-                      <div className="w-12 h-12 rounded-xl bg-[var(--avenize-primary)]/10 flex items-center justify-center">
-                        <method.icon size={24} className="text-[var(--avenize-primary)]" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium">{method.name}</p>
-                        <p className="text-xs text-black/50">{method.partner}</p>
-                      </div>
-                      <ArrowRight size={20} className="text-black/30" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {loading && (
-                <div className="text-center py-4">
-                  <div className="w-8 h-8 border-2 border-[var(--avenize-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
-                  <p className="text-sm text-black/60 mt-2">Processing payment...</p>
-                </div>
-              )}
-
-              <p className="text-xs text-center text-black/40">
-                By subscribing, you agree to our Terms of Service. Cancel anytime.
-              </p>
-            </div>
-          </div>
+    <div className={`relative bg-white border-2 rounded-2xl overflow-hidden transition-all hover:shadow-xl ${
+      isMonthly && monthlyPlan.popular 
+        ? 'border-indigo-500 shadow-indigo-500/10' 
+        : 'border-[#E8E8E8]'
+    }`}>
+      {/* Popular Badge */}
+      {isMonthly && monthlyPlan.popular && (
+        <div className="absolute -top-0 left-1/2 -translate-x-1/2">
+          <span className="inline-block px-4 py-1.5 rounded-b-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold">
+            50-Staff Sweet Spot
+          </span>
         </div>
       )}
+
+      <div className="p-6">
+        {/* Header */}
+        <div className="mb-6">
+          {/* Founding Tag */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono uppercase tracking-wider mb-3">
+            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+            Founding rate
+          </div>
+
+          {/* Plan Code */}
+          {isMonthly && (
+            <div className="text-xs font-mono text-[#9B9B9B] uppercase tracking-wider mb-2">
+              Tier / {monthlyPlan.tier}
+            </div>
+          )}
+
+          {/* Plan Name */}
+          <h3 className={`text-2xl font-bold mb-2 ${isMonthly ? 'text-[#111111]' : 'text-[#111111]'}`}>
+            {isMonthly ? monthlyPlan.name : yearlyPlan.name}
+          </h3>
+
+          {/* Price */}
+          <div className="mb-2">
+            <span className={`text-3xl font-bold font-mono ${isMonthly && monthlyPlan.popular ? 'text-indigo-600' : 'text-[#111111]'}`}>
+              {isMonthly ? monthlyPlan.priceLabel : yearlyPlan.priceLabel}
+            </span>
+            <small className="block text-sm text-[#6B6B6B] mt-1">
+              {isMonthly ? monthlyPlan.period : yearlyPlan.period}
+            </small>
+          </div>
+        </div>
+
+        {/* Features */}
+        {isMonthly && (
+          <ul className="space-y-3 mb-6">
+            {monthlyPlan.features.map((feature, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-[#4A4A4A]">
+                <Check size={16} className="text-indigo-500 mt-0.5 flex-shrink-0" />
+                {feature}
+              </li>
+            ))}
+            {monthlyPlan.notIncluded.map((feature, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-[#BBBBBB]">
+                <span className="w-4 h-4 rounded-full border border-[#DDDDDD] mt-0.5 flex-shrink-0 flex items-center justify-center text-[10px]">–</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Seats Info */}
+        <div className="text-xs font-mono text-[#9B9B9B] mb-4">
+          {isMonthly ? monthlyPlan.seats : yearlyPlan.seats}
+        </div>
+
+        {/* CTA Button */}
+        <a
+          href={paystackLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
+            isMonthly && monthlyPlan.popular
+              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
+              : 'bg-[#111111] text-white hover:bg-[#222222]'
+          }`}
+        >
+          Start free setup
+        </a>
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// COMPONENT: SAMPLE INVOICE
+// ============================================
+function SampleInvoice() {
+  return (
+    <div className="mt-10 bg-[#111111] rounded-2xl p-6 text-white">
+      <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-4">
+        Sample invoice — 100-seat company on Scale (founding rate)
+      </div>
+      <div className="space-y-3 text-sm">
+        <div className="flex justify-between py-2 border-b border-white/10">
+          <span className="text-white/60">80 office seats × ₦5,000 + 20 field seats × ₦2,500</span>
+          <span className="font-mono">₦450,000</span>
+        </div>
+        <div className="flex justify-between py-2 border-b border-white/10">
+          <span className="text-white/60">Billing cycle</span>
+          <span>Monthly</span>
+        </div>
+        <div className="flex justify-between py-2 border-b border-white/10">
+          <span className="text-white/60">Paid annually instead (2 months free)</span>
+          <span className="font-mono">₦4,500,000/yr</span>
+        </div>
+        <div className="flex justify-between py-2 border-b border-white/10">
+          <span className="text-white/60">Rate locked</span>
+          <span className="text-indigo-400">12 months, then grandfathered</span>
+        </div>
+        <div className="flex justify-between py-2">
+          <span className="text-white/60">Setup required to start</span>
+          <span className="text-emerald-400">None — self-serve checkout</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// COMPONENT: WHY PRICING SECTION
+// ============================================
+function WhyPricingSection() {
+  return (
+    <section className="py-16 bg-[#F7F7F5] border-t border-[#E8E8E8]">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+            <span>§</span> Why this price works
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#111111] mb-4">
+            Compared to what you're already paying for chaos.
+          </h2>
+          <p className="text-[#6B6B6B] max-w-lg">
+            WhatsApp, Excel, and memory aren't free — they cost you in errors, missed payments, and material waste.
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid md:grid-cols-3 gap-8">
+          {WHY_PRICING.map((item, i) => (
+            <div key={i} className="border-t-2 border-violet-600 pt-6">
+              <span className="block text-3xl font-bold font-mono text-violet-600 mb-3">{item.value}</span>
+              <p className="text-sm text-[#6B6B6B] leading-relaxed">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================
+// COMPONENT: FAQ SECTION
+// ============================================
+function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <section className="py-16 bg-white border-t border-[#E8E8E8]">
+      <div className="max-w-3xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-12">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+            <span>§</span> Before You Ask
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-[#111111]">
+            The questions every operator asks first.
+          </h2>
+        </div>
+
+        {/* FAQ List */}
+        <div className="space-y-0">
+          {FAQ_DATA.map((item, i) => (
+            <div key={i} className="border-t border-[#E8E8E8]">
+              <button
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                className="w-full flex items-center justify-between py-5 text-left"
+              >
+                <span className="font-semibold text-[#111111] pr-4">{item.q}</span>
+                <span className={`text-violet-600 text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+              </button>
+              {openIndex === i && (
+                <div className="pb-5 text-[#6B6B6B] leading-relaxed">
+                  {item.a}
+                </div>
+              )}
+            </div>
+          ))}
+          <div className="border-b border-[#E8E8E8]" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================
+// COMPONENT: CTA SECTION
+// ============================================
+function CTASection() {
+  return (
+    <section className="relative py-20 bg-[#111111] text-white text-center overflow-hidden">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 opacity-20" style={{
+        background: 'radial-gradient(ellipse at 50% 100%, #4F46E5 0%, transparent 60%)'
+      }} />
+
+      <div className="relative max-w-3xl mx-auto px-6">
+        <blockquote className="text-xl md:text-2xl font-bold leading-tight mb-8">
+          Your crews are on sites you can't visit daily. Your factory runs out of resin without warning.{' '}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">
+            Find out before it's an emergency.
+          </span>
+        </blockquote>
+
+        <a
+          href="https://app.avenize.com/signup"
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-indigo-500/25"
+        >
+          Start free setup
+        </a>
+
+        <p className="mt-6 text-sm text-white/50 font-mono uppercase tracking-wider">
+          Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in
+        </p>
+      </div>
+    </section>
+  )
+}
+
+// ============================================
+// COMPONENT: FOOTER
+// ============================================
+function Footer() {
+  return (
+    <footer className="bg-[#0a0a0a] text-white/50 py-8 border-t border-white/10">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">A</span>
+            </div>
+            <span className="font-semibold text-white">Avenize</span>
+          </div>
+          <p className="text-sm font-mono uppercase tracking-wider">
+            The Business Operating System — Lagos, Nigeria
+          </p>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
+export default function Pricing() {
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+
+  return (
+    <div className="min-h-screen bg-[#F7F7F5]">
+      {/* Hero Section */}
+      <section className="bg-[#111111] text-white pt-24 pb-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/40 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-6">
+            <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
+            Pricing — Job Ticket AV-2026
+          </div>
+
+          {/* Headline */}
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            Stop running your business from memory.
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-lg text-white/60 max-w-2xl mb-8">
+            One system for your jobs, your inventory, and your money — priced the way your business already thinks: per seat, per month, no IT department required.
+          </p>
+
+          {/* Billing Toggle */}
+          <div className="inline-flex bg-white/10 rounded-lg p-1">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                billingCycle === 'monthly'
+                  ? 'bg-white text-[#111111]'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                billingCycle === 'yearly'
+                  ? 'bg-white text-[#111111]'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              Yearly <span className="text-emerald-400 ml-1">Save 2 months</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Plans Section */}
+      <section id="plans" className="py-16 bg-[#F7F7F5]">
+        <div className="max-w-6xl mx-auto px-6">
+          {/* Section Header */}
+          <div className="mb-12">
+            <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+              <span>§</span> Rate Card
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-[#111111] mb-4">
+              Five tiers. No sales calls, at any size.
+            </h2>
+            <p className="text-[#6B6B6B] max-w-xl mb-6">
+              Every tier tracks jobs, inventory, and invoicing in Naira, with VAT and WHT handled automatically. Pick your seat count, pay, start working — even at 100 seats.
+            </p>
+
+            {/* Founding Banner */}
+            <div className="inline-block bg-indigo-100 border border-indigo-200 rounded-lg p-4 text-sm">
+              <strong className="text-indigo-700">Founding rate:</strong>{' '}
+              <span className="text-indigo-600">
+                every price below is locked for your first 12 months — and stays locked for as long as you keep your subscription active, even after list price rises for new signups.
+              </span>
+            </div>
+          </div>
+
+          {/* Pricing Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {billingCycle === 'monthly' ? (
+              MONTHLY_PLANS.map((plan) => (
+                <PricingTicket key={plan.id} plan={plan} isYearly={false} />
+              ))
+            ) : (
+              YEARLY_PLANS.map((plan) => (
+                <PricingTicket key={plan.id} plan={plan} isYearly={true} />
+              ))
+            )}
+          </div>
+
+          {/* Sample Invoice */}
+          <SampleInvoice />
+        </div>
+      </section>
+
+      {/* Why Pricing Section */}
+      <WhyPricingSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
+
+      {/* CTA Section */}
+      <CTASection />
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }

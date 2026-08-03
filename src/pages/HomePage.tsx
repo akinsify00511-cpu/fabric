@@ -1,152 +1,80 @@
 console.log("HomePage loaded")
 // ============================================
-// AVENIZE MARKETING LANDING PAGE
-// CRO-Optimized, SEO, GSAP Animated, AEO/AGEO Ready
+// AVENIZE MARKETING LANDING PAGE v2
+// New Design with GSAP Animations
 // ============================================
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { 
-  ArrowRight, Check, Star, Zap, Shield, Users, BarChart3, 
-  Clock, Globe, ChevronDown, Play, Layers, Workflow,
-  Headphones, TrendingUp, Database, Puzzle, CreditCard,
-  Bot, Sparkles, Mic, FileText, Calendar, Settings,
-  ChevronRight, Menu, X
+  ArrowRight, Check, ChevronDown, Menu, X,
+  AlertCircle, Package, TrendingUp, Users,
+  MessageSquare, CreditCard, Bell, Zap, Building2,
+  BarChart3, Shield, Clock
 } from 'lucide-react'
 
 // GSAP Plugin Registration
 gsap.registerPlugin(ScrollTrigger)
 
 // ============================================
-// FAQ DATA FOR AEO (Answer Engine Optimization)
+// FAQ DATA
 // ============================================
 const FAQ_DATA = [
   {
-    q: "What is Avenize?",
-    a: "Avenize is the Business Operating System—a unified platform connecting CRM, projects, finance, HR, and AI tools. Everything works together in one beautifully designed system."
+    q: "Do I need an IT person to set this up?",
+    a: "No. Setup is a 30-minute conversational flow — tell us what you do, how many staff, what you sell, and it's ready. No configuration, no consultants, unlike the ERPs that need three months to stand up."
   },
   {
-    q: "How does Avenize save time?",
-    a: "By eliminating app-switching and data duplication. Teams work from one source of truth, with automated workflows saving an average of 12 hours per week per employee."
+    q: "What if my field staff have bad internet on site?",
+    a: "Job updates and photos are captured offline and sync automatically once signal returns. Critical alerts can fall back to SMS. It's built for the network you actually have, not the one a demo assumes."
   },
   {
-    q: "Is my data secure?",
-    a: "Enterprise-grade security with SOC 2 Type II certification, GDPR compliance, 256-bit encryption, SSO, and 2FA. Your data is protected at every level."
+    q: "Does this replace my accountant?",
+    a: "No — and it won't pretend to. We track invoicing, payments, VAT and WHT, and export cleanly to your accounting software. Your accountant still files; we just make sure they're working from real numbers."
   },
   {
-    q: "Can I start with just one feature?",
-    a: "Absolutely. Start with CRM, projects, or any module you need. Add more as you grow—no migration, no new accounts."
+    q: "My team lives on WhatsApp. Won't they just ignore this?",
+    a: "Department groups, photo sharing, and one-tap task creation are designed to feel as fast as WhatsApp — but every message links back to a real job, invoice, or stock item instead of disappearing into a chat history nobody can search."
   },
   {
-    q: "How much does Avenize cost?",
-    a: "Start free with Core plan. Professional is $29/user/month. Enterprise is $49/user/month with dedicated support."
-  },
-  {
-    q: "What makes Avenize different?",
-    a: "Unlike disconnected tools, Avenize flows data between modules. Insights compound, collaboration increases, and your business operates as one unified system."
+    q: "What happens to my price after the first year?",
+    a: "Nothing, if you stay subscribed. Founding-rate customers keep their rate for as long as they remain active — list price only applies to new signups after the founding period ends."
   }
 ]
 
 // ============================================
-// FEATURES DATA
+// PROBLEMS DATA
 // ============================================
-const FEATURES = [
+const PROBLEMS = [
   {
-    icon: Database,
-    title: "Unified CRM",
-    description: "Track leads, deals, and customers in one place. No more copying data between systems.",
-    tag: "Sales"
+    num: "01",
+    text: "\"I don't know what's happening on my sites.\" Crews finish jobs, reporting is late or lost, and clients call before your supervisor does."
   },
   {
-    icon: Workflow,
-    title: "Project Management",
-    description: "From simple tasks to complex portfolios. Visualize progress, automate workflows.",
-    tag: "Operations"
+    num: "02",
+    text: "\"We ran out of raw materials again.\" Production stops because resin or pigment wasn't reordered — or cash sits tied up in over-ordered stock."
   },
   {
-    icon: CreditCard,
-    title: "Smart Finance",
-    description: "Invoicing, expenses, and cash flow in real-time. Always know where you stand.",
-    tag: "Finance"
+    num: "03",
+    text: "\"My sales team is chasing the same lead twice.\" Enquiries land in different WhatsApp groups. Deals die quietly in DMs."
   },
   {
-    icon: Users,
-    title: "People & HR",
-    description: "Onboarding, time tracking, leave management. Empower your team to self-serve.",
-    tag: "HR"
-  },
-  {
-    icon: Calendar,
-    title: "Team Calendar",
-    description: "Shared calendars, event scheduling, and availability visibility for the whole team.",
-    tag: "Scheduling"
-  },
-  {
-    icon: FileText,
-    title: "Knowledge Base",
-    description: "Documentation, wikis, and shared resources. Company knowledge in one searchable place.",
-    tag: "Knowledge"
-  },
-  {
-    icon: Settings,
-    title: "Automations",
-    description: "Workflow automation without code. Connect apps, automate tasks, save time.",
-    tag: "Automation"
-  },
-  {
-    icon: Headphones,
-    title: "Support Tickets",
-    description: "Customer support management with queues, assignments, and SLA tracking.",
-    tag: "Support"
+    num: "04",
+    text: "\"I don't know if we made money on that job.\" Invoicing is manual, follow-ups are awkward, and some balances just don't get paid."
   }
 ]
 
 // ============================================
-// TESTIMONIALS DATA
+// PRICING SNAPSHOT DATA
 // ============================================
-const TESTIMONIALS = [
-  {
-    quote: "We replaced four tools with Avenize. Our team finally works in one place.",
-    author: "Sarah Chen",
-    role: "COO",
-    company: "TechScale Inc.",
-    rating: 5
-  },
-  {
-    quote: "The meeting notes feature alone saved us 10 hours a week. It's a game changer.",
-    author: "Marcus Johnson",
-    role: "VP Operations",
-    company: "GrowthLab",
-    rating: 5
-  },
-  {
-    quote: "Onboarding new hires used to take days. Now it takes hours with all our processes in Avenize.",
-    author: "Emily Rodriguez",
-    role: "Head of People",
-    company: "RemoteFirst",
-    rating: 5
-  }
-]
-
-// ============================================
-// SOCIAL PROOF STATS
-// ============================================
-const STATS = [
-  { value: "10,000+", label: "Active Teams" },
-  { value: "4.8/5", label: "G2 Rating" },
-  { value: "99.9%", label: "Uptime SLA" },
-  { value: "12hrs", label: "Saved Weekly" }
-]
-
-// ============================================
-// COMING SOON FEATURES
-// ============================================
-const COMING_SOON = [
-  { icon: Mic, title: "AI Meeting Notes", description: "Automatic transcription and summarization" },
-  { icon: Bot, title: "AI Assistant", description: "Intelligent automation suggestions" },
-  { icon: Sparkles, title: "AI Predictions", description: "Business intelligence powered by AI" }
+const PRICING_SNAPSHOT = [
+  { plan: "Starter", price: "₦15,000", sub: "flat / month", features: ["Core job tracking", "Basic inventory", "1–5 seats"] },
+  { plan: "Team", price: "₦48,000", sub: "starting / month", features: ["Multi-location", "Office ₦8k · Field ₦4k", "6–15 seats"] },
+  { plan: "Business", price: "₦112,000", sub: "starting / month", features: ["AI alerts", "Approvals", "16–30 seats"] },
+  { plan: "Pro", price: "₦186,000", sub: "starting / month", features: ["Full API", "Advanced reports", "31–75 seats"], featured: true },
+  { plan: "Scale", price: "₦380,000", sub: "starting / month", features: ["SSO", "Priority support", "76+ seats"] }
 ]
 
 // ============================================
@@ -178,7 +106,7 @@ function useScrollAnimations() {
       // Scroll-triggered animations
       gsap.utils.toArray('.animate-on-scroll').forEach((element: any) => {
         gsap.fromTo(element,
-          { opacity: 0, y: 60 },
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
@@ -192,34 +120,46 @@ function useScrollAnimations() {
         )
       })
 
-      // Stagger animations for feature cards
-      gsap.utils.toArray('.feature-card').forEach((card: any, i: number) => {
-        gsap.fromTo(card,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.6,
-            delay: i * 0.1,
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%'
-            }
-          }
-        )
+      // Problem cards
+      gsap.to(".problem-card", {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.12,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ".problem-grid", start: "top 82%" }
       })
 
-      // Parallax effect for hero background
-      gsap.to('.hero-bg', {
-        y: 100,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.hero-section',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true
-        }
+      // Pricing cards
+      gsap.to(".snap-card", {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: { trigger: ".snapshot-grid", start: "top 85%" }
       })
+
+      // Feature rows
+      document.querySelectorAll(".feature-row").forEach((row) => {
+        const fromLeft = !row.classList.contains("reverse")
+        gsap.from(row.querySelector(".feature-copy"), {
+          opacity: 0,
+          x: fromLeft ? -30 : 30,
+          duration: 0.7,
+          ease: "power2.out",
+          scrollTrigger: { trigger: row, start: "top 75%" }
+        })
+        gsap.from(row.querySelector(".feature-visual"), {
+          opacity: 0,
+          x: fromLeft ? 30 : -30,
+          duration: 0.7,
+          ease: "power2.out",
+          delay: 0.1,
+          scrollTrigger: { trigger: row, start: "top 75%" }
+        })
+      })
+
     }, containerRef)
 
     return () => ctx.revert()
@@ -235,62 +175,58 @@ function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-black/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#111111]/90 backdrop-blur-xl border-b border-white/10">
+      <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
             </div>
-            <span className="font-bold text-xl text-gray-900">Avenize</span>
+            <span className="font-semibold text-white text-lg">Avenize</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-            <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-            <a href="#testimonials" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Reviews</a>
-            <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">FAQ</a>
+            <a href="#product" className="text-white/70 hover:text-white text-sm font-medium transition-colors">Product</a>
+            <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium transition-colors">Pricing</a>
+            <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium transition-colors">FAQ</a>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 px-4 py-2">
-              Sign In
-            </Link>
-            <Link to="/signup" className="text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-2.5 rounded-lg hover:opacity-90 transition-opacity">
-              Start Free
-            </Link>
-          </div>
+          {/* CTA */}
+          <Link
+            to="/signup"
+            className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#111111] text-sm font-semibold hover:bg-white/90 transition-colors"
+          >
+            Start free setup
+          </Link>
 
           {/* Mobile Menu Button */}
           <button
+            className="md:hidden p-2 text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-black/5 py-4">
-          <div className="px-4 space-y-3">
-            <a href="#features" className="block text-gray-600 hover:text-gray-900 py-2">Features</a>
-            <a href="#pricing" className="block text-gray-600 hover:text-gray-900 py-2">Pricing</a>
-            <a href="#testimonials" className="block text-gray-600 hover:text-gray-900 py-2">Reviews</a>
-            <a href="#faq" className="block text-gray-600 hover:text-gray-900 py-2">FAQ</a>
-            <div className="pt-3 border-t border-black/5 flex flex-col gap-2">
-              <Link to="/login" className="text-center py-2 text-gray-600">Sign In</Link>
-              <Link to="/signup" className="text-center py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg">
-                Start Free
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-white/10">
+            <div className="flex flex-col gap-4">
+              <a href="#product" className="text-white/70 hover:text-white text-sm font-medium">Product</a>
+              <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium">Pricing</a>
+              <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium">FAQ</a>
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#111111] text-sm font-semibold"
+              >
+                Start free setup
               </Link>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   )
 }
@@ -300,59 +236,104 @@ function Navbar() {
 // ============================================
 function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background */}
-      <div className="hero-bg absolute inset-0 bg-gradient-to-br from-violet-50 via-indigo-50 to-white" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.1),transparent_50%)]" />
+    <section className="relative min-h-screen bg-[#111111] text-white pt-20 overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-[0.03]" style={{
+        backgroundImage: `repeating-linear-gradient(135deg, rgba(255,255,255,0.1) 0 1px, transparent 1px 20px)`
+      }} />
       
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        {/* Badge */}
-        <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 text-sm font-medium mb-8">
-          <Sparkles size={16} />
-          <span>Now with AI-Powered Features Coming Soon</span>
-        </div>
+      {/* Gradient Accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full opacity-10" style={{
+        background: 'radial-gradient(circle, #4F46E5 0%, transparent 70%)'
+      }} />
 
-        {/* Title */}
-        <h1 className="hero-title text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6">
-          The Business<br />
-          <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-            Operating System
-          </span>
-        </h1>
+      <div className="relative max-w-6xl mx-auto px-6 py-20 lg:py-28">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Content */}
+          <div>
+            {/* Eyebrow */}
+            <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/40 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-6">
+              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
+              Built for Nigerian job sites, factories & agents
+            </div>
 
-        {/* Subtitle */}
-        <p className="hero-badge text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-10">
-          Everything. Together. CRM, Projects, Finance, HR, and more—all in one platform.
-          <br className="hidden md:block" />
-          No more switching apps. No more lost data. Just work.
-        </p>
+            {/* Headline */}
+            <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-6">
+              Stop running your business{' '}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">from memory.</span>
+            </h1>
 
-        {/* CTA Buttons */}
-        <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-          <Link
-            to="/signup"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg shadow-violet-500/25"
-          >
-            Start Free
-            <ArrowRight size={20} />
-          </Link>
-          <a
-            href="#demo"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl border-2 border-gray-200 font-semibold text-lg hover:border-gray-300 hover:bg-gray-50 transition-all"
-          >
-            <Play size={20} />
-            Watch Demo
-          </a>
-        </div>
+            {/* Subheadline */}
+            <p className="hero-cta text-lg text-white/60 mb-8 max-w-lg leading-relaxed">
+              One system for your jobs, your inventory, and your money — that tells you what needs attention before it becomes a fire.
+            </p>
 
-        {/* Trust Badge */}
-        <p className="hero-badge text-sm text-gray-500">
-          Free forever • No credit card • Setup in 2 minutes
-        </p>
+            {/* CTAs */}
+            <div className="hero-cta flex flex-wrap gap-4 mb-10">
+              <Link
+                to="/signup"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] text-white font-semibold hover:opacity-90 transition-opacity shadow-lg shadow-indigo-500/25"
+              >
+                Start free setup
+                <ArrowRight size={18} />
+              </Link>
+              <a
+                href="#product"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg border border-white/20 text-white font-medium hover:bg-white/5 transition-colors"
+              >
+                See how it works
+              </a>
+            </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <ChevronDown size={32} className="text-gray-400" />
+            {/* Trust Bar */}
+            <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-white/50 font-mono">
+              <span className="flex items-center gap-2">
+                <Check size={14} className="text-emerald-400" />
+                Naira, VAT & WHT built in
+              </span>
+              <span className="flex items-center gap-2">
+                <Check size={14} className="text-emerald-400" />
+                Works on low-end Android
+              </span>
+              <span className="flex items-center gap-2">
+                <Check size={14} className="text-emerald-400" />
+                Setup in 30 minutes
+              </span>
+            </div>
+          </div>
+
+          {/* Right Content - Dashboard Preview */}
+          <div className="relative">
+            <div className="bg-[#1a1a1a] border border-white/10 rounded-xl p-5 shadow-2xl shadow-black/50">
+              {/* Device Header */}
+              <div className="flex items-center justify-between pb-4 border-b border-white/10 mb-4">
+                <span className="text-xs text-white/50 font-mono uppercase tracking-wider">Morning Digest — Today</span>
+                <span className="flex items-center gap-1.5 text-xs text-emerald-400 font-mono">
+                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                  Live
+                </span>
+              </div>
+
+              {/* Alert Cards */}
+              <div className="space-y-3">
+                <AlertCard
+                  tag="Materials"
+                  message="Job #124 needs 50 sheets. Only 30 in stock. Order 20 now or the crew sits idle Tuesday."
+                  action="Create purchase order"
+                />
+                <AlertCard
+                  tag="Overdue"
+                  message="Client ABC owes ₦450,000 for Job #118 — 7 days overdue, 2nd occurrence."
+                  action="Draft follow-up"
+                />
+                <AlertCard
+                  tag="Leads"
+                  message="3 enquiries came in this week for Lekki listings. Agent A hasn't followed up."
+                  action="Reassign lead"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -360,19 +341,64 @@ function HeroSection() {
 }
 
 // ============================================
-// COMPONENT: STATS BAR
+// COMPONENT: ALERT CARD
 // ============================================
-function StatsBar() {
+function AlertCard({ tag, message, action }: { tag: string; message: string; action: string }) {
   return (
-    <section className="py-12 bg-white border-y border-black/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {STATS.map((stat) => (
-            <div key={stat.label} className="text-center animate-on-scroll">
-              <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                {stat.value}
-              </p>
-              <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+    <div className="bg-[#222] border border-white/10 rounded-lg p-4">
+      <span className="block text-xs font-mono text-indigo-400 uppercase tracking-wider mb-2">{tag}</span>
+      <p className="text-sm text-white/80 leading-relaxed mb-3">{message}</p>
+      <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-indigo-500 text-white">
+        {action}
+      </span>
+    </div>
+  )
+}
+
+// ============================================
+// COMPONENT: MARQUEE STRIP
+// ============================================
+function MarqueeStrip() {
+  const items = ["Roofing & Restoration", "Paint & Coatings", "Real Estate Agencies", "Construction", "Logistics & Haulage", "Field Services"]
+  
+  return (
+    <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 py-3 overflow-hidden border-y border-white/10">
+      <div className="flex whitespace-nowrap animate-marquee">
+        {[...items, ...items, ...items].map((item, i) => (
+          <span key={i} className="mx-8 text-sm font-mono text-white/90 uppercase tracking-widest flex items-center gap-8">
+            {item}
+            <span className="text-white/40">◆</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// COMPONENT: PROBLEMS SECTION
+// ============================================
+function ProblemsSection() {
+  return (
+    <section className="py-20 md:py-28 bg-[#F7F7F5]">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-12 animate-on-scroll">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+            <span>§</span> The 2am List
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-4">Sound familiar?</h2>
+          <p className="text-[#6B6B6B] max-w-lg text-lg">
+            Every one of these is a business you can already run — the problem is you can't see it while it's happening.
+          </p>
+        </div>
+
+        {/* Problem Cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PROBLEMS.map((problem, i) => (
+            <div key={i} className="problem-card bg-white border border-[#E8E8E8] rounded-xl p-6 opacity-0 translate-y-6">
+              <div className="text-4xl font-bold text-[#E8E8E8] mb-4">{problem.num}</div>
+              <p className="text-sm text-[#4A4A4A] leading-relaxed">{problem.text}</p>
             </div>
           ))}
         </div>
@@ -382,198 +408,185 @@ function StatsBar() {
 }
 
 // ============================================
-// COMPONENT: FEATURES GRID
+// COMPONENT: PRODUCT FEATURES SECTION
 // ============================================
 function FeaturesSection() {
+  const features = [
+    {
+      num: "01",
+      title: "Where is my money and my materials?",
+      description: "Every roofing job, paint batch, and property deal moves through one pipeline — linked to the inventory it consumes and the payment it's waiting on.",
+      items: [
+        "Job pipeline from enquiry to paid, with materials linked to inventory",
+        "Bill-of-materials for production: resin + pigment → finished paint",
+        "Market-run and partial-delivery tracking, the Nigerian way"
+      ],
+      visual: "pipeline"
+    },
+    {
+      num: "02",
+      title: "Tell me what I need to know before I ask.",
+      description: "One AI use case, done properly: a rules engine that reads the data you already have and posts alerts before small problems become emergencies.",
+      items: [
+        "Stock, jobs and finance cross-checked continuously",
+        "Every alert is one tap from becoming a purchase order, message, or task",
+        "Mute any alert type — it's tuned to your business, not generic"
+      ],
+      visual: "alerts"
+    },
+    {
+      num: "03",
+      title: "Your team actually talks to each other.",
+      description: "Mobile-first, works on bad internet, built to replace WhatsApp chaos without killing the familiarity your field staff already have with it.",
+      items: [
+        "Field crews post photo updates from site — offline, syncs later",
+        "Warehouse sees stock requests from every department in one queue",
+        "Owners get a morning digest instead of ten separate phone calls"
+      ],
+      visual: "chat"
+    }
+  ]
+
   return (
-    <section id="features" className="py-20 md:py-32 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="product" className="py-20 md:py-28 bg-white border-t border-[#E8E8E8]">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-on-scroll">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            One platform. Every team.
+        <div className="mb-16 animate-on-scroll">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+            <span>§</span> The Three-Thing Philosophy
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#111111] mb-4">
+            Not an all-in-one platform. Three things that actually get used daily.
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Stop juggling apps. Start working together. Avenize brings your entire business into one intelligent system.
+          <p className="text-[#6B6B6B] max-w-lg text-lg">
+            Everything else — the extra modules, the integrations, the dashboards nobody opens — is deliberately Phase 2.
           </p>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURES.map((feature, index) => (
-            <div
-              key={feature.title}
-              className="feature-card group bg-white rounded-2xl p-6 border border-black/5 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-500/10 transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <feature.icon size={24} className="text-violet-600" />
-              </div>
-              <span className="text-xs font-medium text-violet-600 bg-violet-50 px-2 py-1 rounded-full">
-                {feature.tag}
-              </span>
-              <h3 className="text-lg font-semibold text-gray-900 mt-3 mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-600">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ============================================
-// COMPONENT: COMING SOON (AI FEATURES)
-// ============================================
-function ComingSoonSection() {
-  return (
-    <section className="py-20 bg-gradient-to-br from-violet-900 to-indigo-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 animate-on-scroll">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-sm font-medium mb-4">
-            <Sparkles size={16} />
-            Coming Soon
-          </span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            AI-Powered Intelligence
-          </h2>
-          <p className="text-xl text-white/70 max-w-2xl mx-auto">
-            We're building the future of business software. AI features are coming that will transform how you work.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {COMING_SOON.map((feature) => (
-            <div
-              key={feature.title}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center animate-on-scroll"
-            >
-              <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
-                <feature.icon size={28} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-white/70">{feature.description}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-12 animate-on-scroll">
-          <p className="text-white/60 mb-4">Want early access to AI features?</p>
-          <Link
-            to="/signup"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-violet-900 font-semibold hover:bg-white/90 transition-colors"
+        {/* Feature Rows */}
+        {features.map((feature, i) => (
+          <div
+            key={i}
+            className={`feature-row grid lg:grid-cols-2 gap-12 lg:gap-16 py-16 border-t border-[#E8E8E8] ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
           >
-            Join Waitlist
-            <ArrowRight size={18} />
-          </Link>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ============================================
-// COMPONENT: TESTIMONIALS
-// ============================================
-function TestimonialsSection() {
-  return (
-    <section id="testimonials" className="py-20 md:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-on-scroll">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Loved by teams everywhere
-          </h2>
-          <p className="text-xl text-gray-600">
-            See why businesses choose Avenize
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((testimonial) => (
-            <div
-              key={testimonial.author}
-              className="bg-gray-50 rounded-2xl p-8 animate-on-scroll"
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
+            {/* Copy */}
+            <div className="feature-copy">
+              <div className="text-xs font-mono text-violet-600 uppercase tracking-wider mb-4">
+                Thing {feature.num}
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold text-[#111111] mb-4 leading-tight">
+                {feature.title}
+              </h3>
+              <p className="text-[#6B6B6B] mb-6 leading-relaxed">
+                {feature.description}
+              </p>
+              <ul className="space-y-3">
+                {feature.items.map((item, j) => (
+                  <li key={j} className="flex items-start gap-3 text-sm text-[#4A4A4A]">
+                    <span className="text-violet-600 font-mono mt-0.5">→</span>
+                    {item}
+                  </li>
                 ))}
-              </div>
-              
-              {/* Quote */}
-              <p className="text-gray-700 mb-6">"{testimonial.quote}"</p>
-              
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center text-white font-semibold">
-                  {testimonial.author.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900">{testimonial.author}</p>
-                  <p className="text-sm text-gray-500">{testimonial.role}, {testimonial.company}</p>
-                </div>
+              </ul>
+            </div>
+
+            {/* Visual */}
+            <div className="feature-visual">
+              <div className="bg-[#F7F7F5] border border-[#E8E8E8] rounded-xl p-6">
+                {feature.visual === 'pipeline' && <PipelineMockup />}
+                {feature.visual === 'alerts' && <AlertsMockup />}
+                {feature.visual === 'chat' && <ChatMockup />}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   )
 }
 
 // ============================================
-// COMPONENT: FAQ SECTION (AEO Optimized)
+// COMPONENT: PIPELINE MOCKUP
 // ============================================
-function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+function PipelineMockup() {
+  const stages = [
+    { name: "Enquiry", done: true, badge: "✓ Aug 1" },
+    { name: "Quoted", done: true, badge: "✓ Aug 2" },
+    { name: "Materials Allocated", done: true, badge: "✓ Aug 4" },
+    { name: "In Progress", active: true, badge: "crew on site" },
+    { name: "Inspection", done: false },
+    { name: "Invoiced", done: false },
+    { name: "Paid", done: false }
+  ]
 
   return (
-    <section id="faq" className="py-20 md:py-32 bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 animate-on-scroll">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Questions? Answered.
-          </h2>
-          <p className="text-xl text-gray-600">
-            Everything you need to know
-          </p>
+    <div className="space-y-2">
+      {stages.map((stage, i) => (
+        <div
+          key={i}
+          className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-mono ${
+            stage.active
+              ? 'bg-[#4F46E5] text-white'
+              : stage.done
+              ? 'bg-emerald-100 text-emerald-700'
+              : 'bg-[#E8E8E8] text-[#6B6B6B]'
+          }`}
+        >
+          <span>{stage.name}</span>
+          {stage.badge && <span className="text-xs opacity-70">{stage.badge}</span>}
         </div>
+      ))}
+    </div>
+  )
+}
 
-        <div className="bg-white rounded-2xl shadow-xl">
-          {FAQ_DATA.map((faq, index) => (
-            <div
-              key={index}
-              className={`border-b border-gray-100 last:border-0 ${index === 0 ? 'rounded-t-2xl' : ''} ${index === FAQ_DATA.length - 1 ? 'rounded-b-2xl' : ''}`}
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-6 text-left"
-              >
-                <span className="font-semibold text-gray-900 pr-4">{faq.q}</span>
-                <ChevronRight
-                  size={20}
-                  className={`text-gray-400 shrink-0 transition-transform ${openIndex === index ? 'rotate-90' : ''}`}
-                />
-              </button>
-              {openIndex === index && (
-                <div className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">{faq.a}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-8 animate-on-scroll">
-          <p className="text-gray-600">
-            Still have questions?{' '}
-            <Link to="/signup" className="text-violet-600 font-medium hover:underline">
-              Talk to our team
-            </Link>
-          </p>
-        </div>
+// ============================================
+// COMPONENT: ALERTS MOCKUP
+// ============================================
+function AlertsMockup() {
+  return (
+    <div className="space-y-3">
+      <div className="bg-[#222] border border-white/10 rounded-lg p-4">
+        <span className="block text-xs font-mono text-indigo-400 uppercase tracking-wider mb-2">Stock</span>
+        <p className="text-sm text-white/80 mb-3">Resin running low. Last order was Supplier X at ₦4,200/liter. Reorder now?</p>
+        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-indigo-500 text-white">Create purchase order</span>
       </div>
-    </section>
+      <div className="bg-[#222] border border-white/10 rounded-lg p-4">
+        <span className="block text-xs font-mono text-indigo-400 uppercase tracking-wider mb-2">Milestone</span>
+        <p className="text-sm text-white/80 mb-3">Job #120 inspection was due yesterday. No update from site.</p>
+        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-indigo-500 text-white">Notify supervisor</span>
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// COMPONENT: CHAT MOCKUP
+// ============================================
+function ChatMockup() {
+  const messages = [
+    { initials: "SC", name: "Site Crew", role: "Roofing", message: "Job #124 done, 3rd inspection photo attached. Waiting on client sign-off.", color: "#4F46E5" },
+    { initials: "WH", name: "Warehouse", role: "", message: "2 stock requests pending — Factory (resin) and Roofing (aluminium sheets).", color: "#EC4899" },
+    { initials: "FN", name: "Finance", role: "", message: "₦300,000 received from Client XYZ. Matches Invoice #204 — balance ₦150,000.", color: "#10B981" }
+  ]
+
+  return (
+    <div className="space-y-4">
+      {messages.map((msg, i) => (
+        <div key={i} className="flex gap-3">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+            style={{ backgroundColor: msg.color }}
+          >
+            {msg.initials}
+          </div>
+          <div className="bg-[#E8E8E8] rounded-xl rounded-tl-none p-3 flex-1">
+            {msg.name && <span className="block text-xs text-[#6B6B6B] mb-1">{msg.name}{msg.role && ` · ${msg.role}`}</span>}
+            <p className="text-sm text-[#4A4A4A] leading-relaxed">{msg.message}</p>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -582,92 +595,130 @@ function FAQSection() {
 // ============================================
 function PricingSection() {
   return (
-    <section id="pricing" className="py-20 md:py-32 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 animate-on-scroll">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Simple, transparent pricing
+    <section id="pricing" className="py-20 md:py-28 bg-[#111111] text-white">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-12 animate-on-scroll">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-indigo-400 mb-4">
+            <span>§</span> Founding Rate
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Priced for how your business actually grows.
           </h2>
-          <p className="text-xl text-gray-600">
-            Start free, scale as you grow. No hidden fees.
+          <p className="text-white/60 max-w-lg text-lg mb-6">
+            Five self-serve tiers, no sales calls at any size — from a solo operator to a 100-seat crew.
           </p>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-sm font-mono text-white/60 max-w-2xl">
+            <strong className="text-indigo-400">Founding rate:</strong> every price below is locked for your first 12 months — and stays locked for as long as you keep your subscription active, even after list price rises for new signups. Pay annually and get 2 months free.
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Free Plan */}
-          <div className="bg-gray-50 rounded-2xl p-8 animate-on-scroll">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Core</h3>
-            <p className="text-gray-600 text-sm mb-6">Perfect for getting started</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold text-gray-900">$0</span>
-              <span className="text-gray-500">/month</span>
-            </div>
-            <ul className="space-y-3 mb-8">
-              {['CRM Basics', 'Project Management', '5 Team Members', '1GB Storage', 'Community Support'].map((feature) => (
-                <li key={feature} className="flex items-center gap-2 text-sm text-gray-600">
-                  <Check size={16} className="text-green-500" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/signup"
-              className="block text-center py-3 rounded-xl border-2 border-gray-200 font-semibold hover:border-gray-300 hover:bg-gray-100 transition-all"
+        {/* Pricing Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {PRICING_SNAPSHOT.map((plan, i) => (
+            <div
+              key={i}
+              className={`snap-card rounded-xl p-5 border opacity-0 translate-y-6 transition-all hover:border-indigo-500/50 ${
+                plan.featured
+                  ? 'bg-indigo-500/10 border-indigo-500'
+                  : 'bg-white/5 border-white/10'
+              }`}
             >
-              Get Started
-            </Link>
-          </div>
+              <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-3 min-h-[24px]">
+                {plan.plan}
+              </div>
+              <div className="text-2xl font-bold font-mono mb-1">
+                {plan.price}
+                <small className="block text-xs font-normal text-white/50 mt-1">{plan.sub}</small>
+              </div>
+              <ul className="mt-4 space-y-2">
+                {plan.features.map((feature, j) => (
+                  <li key={j} className="text-xs text-white/70">{feature}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
 
-          {/* Pro Plan */}
-          <div className="bg-gradient-to-br from-violet-600 to-indigo-600 rounded-2xl p-8 text-white relative animate-on-scroll">
-            <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 bg-amber-400 text-amber-900 text-xs font-bold rounded-full">
-              MOST POPULAR
-            </span>
-            <h3 className="text-lg font-semibold mb-2">Professional</h3>
-            <p className="text-white/70 text-sm mb-6">For growing teams</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">$29</span>
-              <span className="text-white/70">/user/month</span>
-            </div>
-            <ul className="space-y-3 mb-8">
-              {['Everything in Core', 'Advanced Automations', 'Unlimited Team Members', '100GB Storage', 'Priority Support', 'API Access'].map((feature) => (
-                <li key={feature} className="flex items-center gap-2 text-sm text-white/90">
-                  <Check size={16} />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/signup"
-              className="block text-center py-3 rounded-xl bg-white text-violet-600 font-semibold hover:bg-white/90 transition-colors"
-            >
-              Start Free Trial
-            </Link>
-          </div>
+        {/* View All Plans Link */}
+        <div className="mt-10 text-center">
+          <Link
+            to="/pricing"
+            className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium"
+          >
+            View all plans and pricing details
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}
 
-          {/* Enterprise Plan */}
-          <div className="bg-gray-50 rounded-2xl p-8 animate-on-scroll">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Enterprise</h3>
-            <p className="text-gray-600 text-sm mb-6">For large organizations</p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold text-gray-900">$49</span>
-              <span className="text-gray-500">/user/month</span>
-            </div>
-            <ul className="space-y-3 mb-8">
-              {['Everything in Professional', 'SSO & SAML', 'Dedicated Account Manager', 'Unlimited Storage', 'Custom Integrations', 'SLA Guarantee'].map((feature) => (
-                <li key={feature} className="flex items-center gap-2 text-sm text-gray-600">
-                  <Check size={16} className="text-green-500" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/signup"
-              className="block text-center py-3 rounded-xl border-2 border-gray-200 font-semibold hover:border-gray-300 hover:bg-gray-100 transition-all"
-            >
-              Contact Sales
-            </Link>
+// ============================================
+// COMPONENT: FAQ SECTION
+// ============================================
+function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <section id="faq" className="py-20 md:py-28 bg-[#F7F7F5]">
+      <div className="max-w-3xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="mb-12 animate-on-scroll">
+          <div className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-violet-600 mb-4">
+            <span>§</span> Before You Ask
           </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#111111]">
+            The questions every operator asks first.
+          </h2>
+        </div>
+
+        {/* FAQ List */}
+        <div className="space-y-0">
+          {FAQ_DATA.map((item, i) => (
+            <div key={i} className="border-t border-[#E8E8E8]">
+              <button
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                className="w-full flex items-center justify-between py-5 text-left"
+              >
+                <span className="font-semibold text-[#111111] pr-4">{item.q}</span>
+                <span className={`text-violet-600 text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+              </button>
+              {openIndex === i && (
+                <div className="pb-5 text-[#6B6B6B] leading-relaxed">
+                  {item.a}
+                </div>
+              )}
+            </div>
+          ))}
+          <div className="border-b border-[#E8E8E8]" />
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================
+// COMPONENT: STATS SECTION
+// ============================================
+function StatsSection() {
+  const stats = [
+    { value: "₦150k–300k", label: "Monthly cost of one admin hire — Avenize is priced to replace 1–2 of those roles, not add another one." },
+    { value: "₦1M+", label: "Typical upfront cost of a local ERP quote, plus 20% annual maintenance. Avenize is self-serve from day one." },
+    { value: "21 → 14", label: "Target reduction in \"days to cash\" — from job completion to money in the bank. The number that actually pays for the subscription." }
+  ]
+
+  return (
+    <section className="py-16 bg-white border-t border-[#E8E8E8]">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid md:grid-cols-3 gap-8">
+          {stats.map((stat, i) => (
+            <div key={i} className="border-t-2 border-violet-600 pt-6 animate-on-scroll">
+              <span className="block text-3xl font-bold font-mono text-violet-600 mb-3">{stat.value}</span>
+              <p className="text-sm text-[#6B6B6B] leading-relaxed">{stat.label}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -679,31 +730,30 @@ function PricingSection() {
 // ============================================
 function CTASection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-violet-600 to-indigo-600 text-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 animate-on-scroll">
-          Ready to unify your business?
-        </h2>
-        <p className="text-xl text-white/80 mb-10 animate-on-scroll">
-          Join 10,000+ companies working smarter with Avenize.
-          <br />
-          Start free, upgrade when you're ready.
+    <section className="relative py-24 md:py-32 bg-[#111111] text-white text-center overflow-hidden">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 opacity-20" style={{
+        background: 'radial-gradient(ellipse at 50% 100%, #4F46E5 0%, transparent 60%)'
+      }} />
+
+      <div className="relative max-w-3xl mx-auto px-6">
+        <blockquote className="text-2xl md:text-4xl font-bold leading-tight mb-8">
+          Your crews are on sites you can't visit daily. Your factory runs out of resin without warning.{' '}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">
+            Find out before it's an emergency.
+          </span>
+        </blockquote>
+
+        <Link
+          to="/signup"
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-indigo-500/25"
+        >
+          Start free setup
+        </Link>
+
+        <p className="mt-6 text-sm text-white/50 font-mono uppercase tracking-wider">
+          Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-on-scroll">
-          <Link
-            to="/signup"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white text-violet-600 font-semibold text-lg hover:bg-white/90 transition-colors shadow-xl"
-          >
-            Get Started Free
-            <ArrowRight size={20} />
-          </Link>
-          <Link
-            to="/login"
-            className="w-full sm:w-auto px-8 py-4 rounded-xl border-2 border-white/30 font-semibold text-lg hover:bg-white/10 transition-colors"
-          >
-            Sign In
-          </Link>
-        </div>
       </div>
     </section>
   )
@@ -713,68 +763,19 @@ function CTASection() {
 // COMPONENT: FOOTER
 // ============================================
 function Footer() {
-  const currentYear = new Date().getFullYear()
-  
   return (
-    <footer className="bg-gray-900 text-gray-400 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-          {/* Brand */}
-          <div className="col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">A</span>
-              </div>
-              <span className="font-bold text-xl text-white">Avenize</span>
-            </Link>
-            <p className="text-sm text-gray-500 max-w-xs">
-              The Business Operating System. Everything. Together.
-            </p>
+    <footer className="bg-[#0a0a0a] text-white/50 py-10 border-t border-white/10">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">A</span>
+            </div>
+            <span className="font-semibold text-white">Avenize</span>
           </div>
-
-          {/* Product */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Product</h4>
-            <ul className="space-y-2 text-sm">
-              <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-              <li><Link to="/changelog" className="hover:text-white transition-colors">Changelog</Link></li>
-              <li><Link to="/roadmap" className="hover:text-white transition-colors">Roadmap</Link></li>
-            </ul>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-              <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
-              <li><Link to="/terms" className="hover:text-white transition-colors">Terms</Link></li>
-              <li><Link to="/security" className="hover:text-white transition-colors">Security</Link></li>
-              <li><Link to="/cookies" className="hover:text-white transition-colors">Cookies</Link></li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500">
-            © {currentYear} Avenize, Inc. All rights reserved.
+          <p className="text-sm font-mono uppercase tracking-wider">
+            The Business Operating System — Lagos, Nigeria
           </p>
-          <div className="flex items-center gap-4">
-            <a href="https://twitter.com/avenize" className="hover:text-white transition-colors">Twitter</a>
-            <a href="https://linkedin.com/company/avenize" className="hover:text-white transition-colors">LinkedIn</a>
-            <a href="https://github.com/avenize" className="hover:text-white transition-colors">GitHub</a>
-          </div>
         </div>
       </div>
     </footer>
@@ -788,22 +789,28 @@ export default function HomePage() {
   const containerRef = useScrollAnimations()
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-white">
+    <div ref={containerRef} className="min-h-screen bg-[#F7F7F5]">
       <Navbar />
       <HeroSection />
-      <StatsBar />
+      <MarqueeStrip />
+      <ProblemsSection />
       <FeaturesSection />
-      <ComingSoonSection />
-      <TestimonialsSection />
       <PricingSection />
       <FAQSection />
+      <StatsSection />
       <CTASection />
       <Footer />
+
+      {/* Marquee Animation Style */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-33.333%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </div>
   )
 }
-
-// ============================================
-// REACT HOOKS IMPORT
-// ============================================
-import { useState } from 'react'
