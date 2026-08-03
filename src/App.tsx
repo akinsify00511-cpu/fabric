@@ -110,7 +110,6 @@ function AppRoutes() {
         <Route path="time" element={<TimeTracking />} />
         <Route path="events" element={<Events />} />
         <Route path="monitoring" element={<Monitoring />} />
-        <Route path="branding" element={<Branding />} />
         <Route path="organogram" element={<Organogram />} />
 	        <Route path="meetings" element={<Meetings />} />
       </Route>

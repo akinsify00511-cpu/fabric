@@ -1,4 +1,5 @@
 // Avenize Service Worker - Offline Support & Caching
+// Note: Push notifications require VAPID keys and server-side implementation
 const CACHE_NAME = 'avenize-v1'
 const STATIC_ASSETS = [
   '/',
@@ -6,7 +7,6 @@ const STATIC_ASSETS = [
   '/manifest.json',
 ]
 
-// Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,7 +16,6 @@ self.addEventListener('install', (event) => {
   self.skipWaiting()
 })
 
-// Activate event - clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -30,18 +29,13 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
-// Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Skip non-GET requests
   if (request.method !== 'GET') return
-
-  // Skip external requests
   if (url.origin !== location.origin) return
 
-  // API requests - network only
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request).catch(() => {
@@ -54,7 +48,6 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Static assets - cache first
   if (
     request.destination === 'style' ||
     request.destination === 'script' ||
@@ -76,7 +69,6 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // HTML pages - network first, fallback to cache
   event.respondWith(
     fetch(request)
       .then((response) => {
@@ -95,14 +87,15 @@ self.addEventListener('fetch', (event) => {
 })
 
 // Push notifications
+// TODO: Requires server-side VAPID key setup for real push notifications
 self.addEventListener('push', (event) => {
   if (!event.data) return
 
   const data = event.data.json()
   const options = {
     body: data.body || 'You have a new notification',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/badge.png',
+    icon: '/icons/icon-192x192.svg',
+    badge: '/favicon.svg',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/',
@@ -116,7 +109,6 @@ self.addEventListener('push', (event) => {
   )
 })
 
-// Notification click
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
 
@@ -124,13 +116,11 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
-      // Focus existing window if open
       for (const client of clients) {
         if (client.url === url && 'focus' in client) {
           return client.focus()
         }
       }
-      // Open new window
       if (self.clients.openWindow) {
         return self.clients.openWindow(url)
       }
@@ -138,20 +128,14 @@ self.addEventListener('notificationclick', (event) => {
   )
 })
 
-// Background sync for offline actions
+// Background sync - stub implementation
+// TODO: Full implementation requires IndexedDB for offline queue
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-notifications') {
-    event.waitUntil(syncNotifications())
+    console.log('[SW] Background sync triggered - implement IndexedDB queue for full support')
   }
 })
 
-async function syncNotifications() {
-  // Get pending notifications from IndexedDB and send them
-  // This would require IndexedDB setup
-  console.log('Syncing notifications...')
-}
-
-// Message handling
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting()

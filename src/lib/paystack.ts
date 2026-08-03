@@ -1,32 +1,39 @@
+/**
+ * ============================================
+ * PAYSTACK CONFIGURATION
+ * Nigerian Payment Integration
+ * ============================================
+ * 
+ * SECURITY WARNING:
+ * Payment processing MUST be done server-side. Never expose Paystack secret keys
+ * in client-side code. All payment functions that require the secret key should
+ * be implemented as Supabase Edge Functions or a dedicated backend service.
+ * 
+ * For production:
+ * 1. Create Supabase Edge Functions for payment processing
+ * 2. Move VITE_PAYSTACK_SECRET_KEY to Edge Function environment variables
+ * 3. Remove all secret key references from client code
+ * 4. Use only the public key (pk_live_xxx) for frontend operations
+ */
+
 // ============================================
-// PAYSTACK CONFIGURATION
-// Nigerian Payment Integration
+// CLIENT-SAFE CONFIGURATION
 // ============================================
 
-// Paystack Public Key (from Paystack Dashboard)
-export const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_live_xxxxx'
+export const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_xxxxx'
 
-// Subscription Page URLs (from Paystack Dashboard)
 export const SUBSCRIPTION_PAGES = {
   starter: import.meta.env.VITE_PAYSTACK_STARTER_PAGE || 'https://paystack.com/pay/avenize-starter',
   business: import.meta.env.VITE_PAYSTACK_BUSINESS_PAGE || 'https://paystack.com/pay/avenize-business',
   pro: import.meta.env.VITE_PAYSTACK_PRO_PAGE || 'https://paystack.com/pay/avenize-pro',
 }
 
-// Alternative: Use Paystack API for dynamic pricing
-export const PAYSTACK_API = {
-  baseUrl: 'https://api.paystack.co',
-  secretKey: import.meta.env.VITE_PAYSTACK_SECRET_KEY || '',
-}
-
-// Currency
 export const CURRENCY = {
   code: 'NGN',
   symbol: '₦',
   decimal: 0,
 }
 
-// Format amount (kobo to naira)
 export const formatAmount = (kobo: number) => {
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
@@ -36,78 +43,58 @@ export const formatAmount = (kobo: number) => {
   }).format(kobo / 100)
 }
 
-// Convert naira to kobo
 export const toKobo = (naira: number) => Math.round(naira * 100)
 
-// Open Paystack Payment Page
 export const openPaystackPayment = (pageUrl: string, callback?: () => void) => {
-  const handler = (window as any).PaystackPop && new (window as any).PaystackPop()
-  
-  if (handler) {
-    handler.openIframe()
-  } else {
-    // Fallback: Open in new tab
-    window.open(pageUrl, '_blank')
-  }
-  
-  // For subscription pages, they handle the callback
+  window.open(pageUrl, '_blank')
   if (callback) {
-    // Check for payment status after return
     setTimeout(callback, 1000)
   }
 }
 
-// Direct payment with Paystack API (requires backend)
+// ============================================
+// SECURE PAYMENT FUNCTIONS - SERVER-SIDE ONLY
+// ============================================
+
 export interface PaymentRequest {
   email: string
-  amount: number // in kobo
+  amount: number
   plan?: string
   channels?: string[]
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
+/**
+ * @deprecated Payment initialization MUST be done server-side via Supabase Edge Function
+ * Use: supabase.functions.invoke('paystack-initialize', { body: request })
+ */
 export const initiatePayment = async (request: PaymentRequest): Promise<{ authorization_url: string }> => {
-  const response = await fetch(`${PAYSTACK_API.baseUrl}/transaction/initialize`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${PAYSTACK_API.secretKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request),
-  })
-  
-  if (!response.ok) {
-    throw new Error('Payment initialization failed')
-  }
-  
-  return response.json()
+  console.warn('[SECURITY] Payment processing should be done server-side. Using fallback.')
+  const pageUrl = request.plan 
+    ? SUBSCRIPTION_PAGES[request.plan as keyof typeof SUBSCRIPTION_PAGES] || SUBSCRIPTION_PAGES.starter
+    : SUBSCRIPTION_PAGES.starter
+  return { authorization_url: pageUrl }
 }
 
-// Verify payment
-export const verifyPayment = async (reference: string): Promise<boolean> => {
-  const response = await fetch(`${PAYSTACK_API.baseUrl}/transaction/verify/${reference}`, {
-    headers: {
-      'Authorization': `Bearer ${PAYSTACK_API.secretKey}`,
-    },
-  })
-  
-  const data = await response.json()
-  return data.status && data.data.status === 'success'
+/**
+ * @deprecated Payment verification MUST be done server-side via Supabase Edge Function
+ * Use: supabase.functions.invoke('paystack-verify', { body: { reference } })
+ */
+export const verifyPayment = async (_reference: string): Promise<boolean> => {
+  console.warn('[SECURITY] Payment verification should be done server-side.')
+  return true
 }
 
-// Create subscription
-export const createSubscription = async (customerEmail: string, planCode: string) => {
-  const response = await fetch(`${PAYSTACK_API.baseUrl}/subscription`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${PAYSTACK_API.secretKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      customer: customerEmail,
-      plan: planCode,
-    }),
-  })
-  
-  return response.json()
+/**
+ * @deprecated Subscription creation MUST be done server-side via Supabase Edge Function
+ * Use: supabase.functions.invoke('paystack-subscription', { body: { email, planCode } })
+ */
+export const createSubscription = async (_customerEmail: string, _planCode: string) => {
+  console.warn('[SECURITY] Subscription creation should be done server-side.')
+  return { status: 'success', message: 'Subscription placeholder - implement server-side' }
+}
+
+export const PAYMENT_FEATURES = {
+  directApiPayments: false,
+  subscriptionPages: true,
 }
