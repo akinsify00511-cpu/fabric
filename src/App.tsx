@@ -48,6 +48,7 @@ import Monitoring from './pages/Monitoring'
 import Branding from './pages/Branding'
 import Organogram from './pages/Organogram'
 import Landing from './pages/Landing'
+import LandingEnhanced from './pages/LandingEnhanced'
 import Meetings from './pages/Meetings'
 import ProjectsNigeria from './pages/ProjectsNigeria'
 import InventoryNigeria from './pages/InventoryNigeria'
@@ -68,7 +69,8 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<LandingEnhanced />} />
+      <Route path="/v1" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
