@@ -408,20 +408,20 @@ function HeroSection() {
 
             {/* Headline */}
             <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              <span className="text-white">You didn't build this business to</span>
+              <span className="text-white">Stop running your business.</span>
               <br />
               <span className="text-indigo-400">
-                work 14-hour days.
+                Start leading it.
               </span>
             </h1>
 
             {/* Subheadline */}
             <p className="hero-cta text-lg md:text-xl text-slate-300 mb-6 max-w-xl leading-relaxed">
-              Every morning you wake up wondering: <span className="text-white font-semibold">"What broke while I was sleeping?"</span> Supplies ran low. Invoice went unpaid. Client is frustrated.
+              Get alerts before supplies run out, invoices go unpaid, and clients complain. Know first — always.
             </p>
             
             <p className="text-base text-slate-400 mb-8 max-w-xl">
-              Avenize is the business system that tells you first — before operations stop, before clients complain.
+              Avenize monitors your business 24/7 and notifies you the moment something needs attention.
             </p>
 
             {/* CTAs */}
