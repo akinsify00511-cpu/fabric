@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import { SUBSCRIPTION_PAGES } from '../lib/paystack'
 import {
   Check, CreditCard, Building2, Zap, Users, TrendingUp,
   Phone, Mail, MessageSquare, Package, BarChart3, Bell,
@@ -146,42 +147,25 @@ export default function Pricing() {
       const plan = PLANS.find(p => p.id === selectedPlan)
       if (!plan) throw new Error('Plan not found')
       
-      const amount = plan.price * seats * 100 // Convert to kobo
-      const email = (await supabase.auth.getUser()).data.user?.email
+      // Get Paystack subscription page URL
+      const pageUrl = SUBSCRIPTION_PAGES[selectedPlan as keyof typeof SUBSCRIPTION_PAGES]
       
-      // Create payment record
-      const { data: payment, error: paymentError } = await supabase
-        .from('payments')
-        .insert({
-          type: 'expense',
-          amount: plan.price * seats,
-          method: 'bank_transfer', // Will update after payment
-          description: `Avenize ${plan.name} Plan - ${seats} seats`,
-          category: 'Software Subscription',
-          business_id: staff.business_id,
-          staff_id: staff.id,
-          date: new Date().toISOString(),
-        })
-        .select()
-        .single()
+      if (!pageUrl || pageUrl.includes('xxx')) {
+        throw new Error('Payment page not configured. Please contact support.')
+      }
       
-      if (paymentError) throw paymentError
-      
-      // In production, integrate with Paystack/Flutterwave here
-      // For now, simulate successful payment
-      const paymentUrl = `https://paystack.com/pay/avenize-${plan.id}-${Date.now()}`
-      
-      // Show payment modal (in production, redirect to payment provider)
+      // Open Paystack subscription page in new tab
       showToast('Redirecting to payment...', 'info')
+      window.open(pageUrl, '_blank')
       
-      // Simulate payment success for demo
+      // Simulate payment success for demo (remove in production)
       setTimeout(() => {
-        handlePaymentSuccess(payment.id, plan.id)
-      }, 2000)
+        handlePaymentSuccess('', plan.id)
+      }, 3000)
       
-    } catch (err) {
+    } catch (err: any) {
       console.error('Payment error:', err)
-      showToast('Payment failed. Please try again.', 'error')
+      showToast(err.message || 'Payment failed. Please try again.', 'error')
     } finally {
       setLoading(false)
     }
