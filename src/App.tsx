@@ -11,10 +11,10 @@ import Onboarding from './pages/Onboarding'
 import Join from './pages/Join'
 import Dashboard from './pages/Dashboard'
 import CRM from './pages/CRM'
-import Projects from './pages/Projects'
-import Finance from './pages/Finance'
+// Projects imported as ProjectsNigeria
+// Finance imported as FinanceNigeria
 import People from './pages/People'
-import Inventory from './pages/Inventory'
+// Inventory imported as InventoryNigeria
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
@@ -42,6 +42,9 @@ import Branding from './pages/Branding'
 import Organogram from './pages/Organogram'
 import Landing from './pages/Landing'
 import Meetings from './pages/Meetings'
+import ProjectsNigeria from './pages/ProjectsNigeria'
+import InventoryNigeria from './pages/InventoryNigeria'
+import FinanceNigeria from './pages/FinanceNigeria'
 import NotificationBell from './components/NotificationBell'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -73,10 +76,10 @@ function AppRoutes() {
       >
         <Route index element={<Dashboard />} />
         <Route path="crm" element={<CRM />} />
-        <Route path="projects" element={<Projects />} />
-        <Route path="finance" element={<Finance />} />
+        <Route path="projects" element={<ProjectsNigeria />} />
+        <Route path="finance" element={<FinanceNigeria />} />
         <Route path="people" element={<People />} />
-        <Route path="inventory" element={<Inventory />} />
+        <Route path="inventory" element={<InventoryNigeria />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
         <Route path="more" element={<More />} />
