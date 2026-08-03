@@ -1,7 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import AvenizeMark from '../components/AvenizeMark'
 
 type InviteInfo = {
   business_id: string
@@ -15,7 +14,6 @@ type InviteInfo = {
 
 export default function Join() {
   const { inviteId } = useParams()
-  const navigate = useNavigate()
   const [info, setInfo] = useState<InviteInfo | null>(null)
   const [loadingInfo, setLoadingInfo] = useState(true)
   const [fullName, setFullName] = useState('')
@@ -23,7 +21,6 @@ export default function Join() {
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [step, setStep] = useState<'review' | 'account' | 'success'>('review')
-  const [hasAccount, setHasAccount] = useState(false)
 
   useEffect(() => {
     if (!inviteId) return
@@ -50,12 +47,13 @@ export default function Join() {
     setSubmitting(true)
     setError(null)
 
+    // Sign up new user
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email: info.email,
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`
+        emailRedirectTo: `${window.location.origin}/auth/callback?token=${inviteId}`
       },
     })
 
@@ -66,12 +64,18 @@ export default function Join() {
     }
 
     if (!authData.session) {
+      // Email confirmation required - store invite token
+      localStorage.setItem('avenize_pending_invite', JSON.stringify({
+        token: inviteId,
+        businessName: info.business_name,
+        role: info.role,
+      }))
       setStep('success')
       setSubmitting(false)
       return
     }
 
-    // Accept invite after signup
+    // No email confirmation - accept invite immediately
     const { error: rpcError } = await supabase.rpc('accept_invite', {
       p_token: inviteId,
       p_staff_name: fullName,
@@ -83,27 +87,19 @@ export default function Join() {
       return
     }
 
-    navigate('/app')
-  }
-
-  const handleSignIn = async (e: FormEvent) => {
-    e.preventDefault()
-    if (!inviteId || !info) return
-    setSubmitting(true)
-    setError(null)
-
-    // For existing users, they just need to sign in and we'll accept invite
-    // This flow would typically be handled by the auth callback
-    setError('Please sign in first, then return to this page to accept the invite.')
-    setSubmitting(false)
+    // Redirect to dashboard
+    window.location.href = '/app'
   }
 
   if (loadingInfo) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 border-2 border-[var(--avenize-primary)] border-t-transparent rounded-full animate-spin" />
-          <span className="text-black/50">Loading...</span>
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-2xl">A</span>
+          </div>
+          <div className="w-8 h-8 border-2 border-[var(--avenize-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-black/50 mt-4">Loading invitation...</p>
         </div>
       </div>
     )
@@ -112,25 +108,29 @@ export default function Join() {
   if (!info?.valid) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
-        <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-4">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold">Invalid Invitation</h2>
-          <p className="text-black/60">
-            This invitation link has expired or has already been used.
-          </p>
-          <Link 
-            to="/signup" 
-            className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
-          >
-            Sign up instead
-          </Link>
-          <Link to="/login" className="block text-sm text-[var(--avenize-primary)] hover:underline">
-            Already have an account? Sign in
-          </Link>
+          <div>
+            <h2 className="text-2xl font-bold">Invalid Invitation</h2>
+            <p className="text-black/60 mt-2">
+              This invitation link has expired or has already been used.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <Link 
+              to="/signup" 
+              className="block w-full px-6 py-3 rounded-xl avenize-gradient text-white font-medium text-center"
+            >
+              Sign up for a new account
+            </Link>
+            <Link to="/login" className="block text-sm text-[var(--avenize-primary)] hover:underline">
+              Already have an account? Sign in
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -139,24 +139,37 @@ export default function Join() {
   if (step === 'success') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
-        <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
           <div>
-            <h2 className="text-xl font-semibold">Check your email</h2>
-            <p className="text-sm text-black/60 mt-2">
-              We sent a confirmation link to <span className="font-medium">{info.email}</span>
+            <h2 className="text-2xl font-bold">Check your email</h2>
+            <p className="text-black/60 mt-2">
+              We sent a confirmation link to
             </p>
+            <p className="font-semibold text-[var(--avenize-primary)] mt-1">{info.email}</p>
           </div>
-          <div className="bg-gray-50 rounded-xl p-4 text-left">
-            <p className="text-sm text-black/60">
-              Click the confirmation link, then you'll be able to join <strong>{info.business_name}</strong> as a <strong>{info.role}</strong>.
+          
+          <div className="bg-gradient-to-br from-[var(--avenize-primary)]/5 to-[var(--avenize-accent)]/5 rounded-2xl p-5 text-left">
+            <p className="text-sm text-black/70">
+              <strong>Next steps:</strong>
             </p>
+            <ol className="text-sm text-black/60 mt-3 space-y-2">
+              <li className="flex gap-2">
+                <span className="w-5 h-5 rounded-full bg-[var(--avenize-primary)] text-white text-xs flex items-center justify-center flex-shrink-0">1</span>
+                Click the confirmation link in your email
+              </li>
+              <li className="flex gap-2">
+                <span className="w-5 h-5 rounded-full bg-[var(--avenize-primary)] text-white text-xs flex items-center justify-center flex-shrink-0">2</span>
+                You'll automatically join <strong>{info.business_name}</strong>
+              </li>
+            </ol>
           </div>
-          <div className="pt-2">
+
+          <div className="pt-4 border-t border-black/5">
             <Link to="/login" className="text-sm text-[var(--avenize-primary)] hover:underline font-medium">
               ← Back to sign in
             </Link>
@@ -171,12 +184,12 @@ export default function Join() {
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4 py-8">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 space-y-6">
           <div className="text-center">
-            <div className="w-14 h-14 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-2xl">A</span>
+            <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
+              <span className="text-white font-bold text-3xl">A</span>
             </div>
-            <h2 className="text-lg font-semibold">Create your account</h2>
+            <h2 className="text-xl font-bold">Create your account</h2>
             <p className="text-sm text-black/50 mt-1">
-              Join <span className="font-medium">{info.business_name}</span> as <span className="font-medium capitalize">{info.role}</span>
+              Join <span className="font-semibold">{info.business_name}</span> as <span className="font-semibold capitalize">{info.role}</span>
             </p>
           </div>
 
@@ -188,7 +201,7 @@ export default function Join() {
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-black/70 mb-1.5">Full Name</label>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">Full Name *</label>
               <input
                 required
                 placeholder="Your full name"
@@ -207,7 +220,7 @@ export default function Join() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-black/70 mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">Password *</label>
               <input
                 type="password"
                 required
@@ -223,16 +236,35 @@ export default function Join() {
               disabled={submitting || !fullName || !password}
               className="w-full rounded-xl avenize-gradient text-white py-3.5 text-sm font-semibold disabled:opacity-50"
             >
-              {submitting ? 'Creating account...' : 'Create account & join'}
+              {submitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  Creating account...
+                </span>
+              ) : 'Create account & join'}
             </button>
           </form>
 
-          <button 
-            onClick={() => setStep('review')}
-            className="w-full text-sm text-black/50 hover:text-black"
-          >
-            ← Back
-          </button>
+          <div className="text-center">
+            <button 
+              onClick={() => setStep('review')}
+              className="text-sm text-black/50 hover:text-black"
+            >
+              ← Back to invitation
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-black/5 text-center">
+            <p className="text-sm text-black/50">
+              Already have an account?{' '}
+              <Link to="/login" className="text-[var(--avenize-primary)] font-medium hover:underline">
+                Sign in
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     )
@@ -244,14 +276,14 @@ export default function Join() {
       <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 space-y-6">
         {/* Header */}
         <div className="text-center">
-          <div className="w-14 h-14 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">A</span>
+          <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-3xl">A</span>
           </div>
           <h1 className="text-2xl font-bold">Avenize</h1>
           <p className="text-sm text-black/50 mt-1">You're invited!</p>
         </div>
 
-        {/* Invitation Details */}
+        {/* Invitation Card */}
         <div className="bg-gradient-to-br from-[var(--avenize-primary)]/5 to-[var(--avenize-accent)]/5 rounded-2xl p-6 space-y-4">
           <div className="text-center">
             <p className="text-sm text-black/60 mb-2">You've been invited to join</p>
@@ -273,7 +305,7 @@ export default function Join() {
 
           {info.expires_at && (
             <p className="text-xs text-center text-black/40">
-              This invitation expires on {new Date(info.expires_at).toLocaleDateString()}
+              Expires {new Date(info.expires_at).toLocaleDateString()}
             </p>
           )}
         </div>
@@ -291,7 +323,7 @@ export default function Join() {
             onClick={() => setStep('account')}
             className="w-full rounded-xl avenize-gradient text-white py-3.5 text-sm font-semibold"
           >
-            Accept & Create Account
+            Accept Invitation
           </button>
           
           <div className="text-center">
