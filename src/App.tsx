@@ -16,6 +16,7 @@ import CRM from './pages/CRM'
 // Finance imported as FinanceNigeria
 import People from './pages/People'
 // Inventory imported as InventoryNigeria
+import Payments from './pages/Payments'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
@@ -80,6 +81,7 @@ function AppRoutes() {
         <Route path="crm" element={<CRM />} />
         <Route path="projects" element={<ProjectsNigeria />} />
         <Route path="finance" element={<FinanceNigeria />} />
+          <Route path="payments" element={<Payments />} />
         <Route path="people" element={<People />} />
         <Route path="inventory" element={<InventoryNigeria />} />
         <Route path="reports" element={<Reports />} />
