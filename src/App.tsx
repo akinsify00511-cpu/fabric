@@ -17,6 +17,7 @@ import CRM from './pages/CRM'
 import People from './pages/People'
 // Inventory imported as InventoryNigeria
 import Payments from './pages/Payments'
+import Pricing from './pages/Pricing'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import More from './pages/More'
@@ -68,6 +69,7 @@ function AppRoutes() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/join/:inviteId" element={<Join />} />
+          <Route path="/pricing" element={<Pricing />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route
         path="/app"
