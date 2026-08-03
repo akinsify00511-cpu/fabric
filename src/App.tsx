@@ -40,6 +40,7 @@ import Events from './pages/Events'
 import Monitoring from './pages/Monitoring'
 import Branding from './pages/Branding'
 import Organogram from './pages/Organogram'
+import HomePage from './pages/HomePage'
 import Meetings from './pages/Meetings'
 import NotificationBell from './components/NotificationBell'
 
@@ -57,12 +58,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/join/:inviteId" element={<Join />} />
       <Route
-        path="/"
+        path="/app"
         element={
           <RequireAuth>
             <Shell />
