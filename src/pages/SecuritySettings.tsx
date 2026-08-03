@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { isFeatureEnabled } from '../lib/features'
 import {
-  Shield, Smartphone, Key, Clock, CheckCircle2, XCircle, Download,
-  Trash2, AlertTriangle, Eye, EyeOff, Copy, RefreshCw, QrCode
+  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4
 } from 'lucide-react'
+import { TOTP, Secret } from 'otpauth'
 
 type MFAStatus = {
   enabled: boolean
@@ -23,6 +24,23 @@ type AuditLog = {
   ip_address: string
 }
 
+// Secure random string using crypto API
+function generateSecureRandom(length: number): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+  const randomValues = new Uint32Array(length)
+  crypto.getRandomValues(randomValues)
+  return Array.from(randomValues, v => chars[v % chars.length]).join('')
+}
+
+// Generate backup codes with secure random
+function generateBackupCodes(count: number): string[] {
+  return Array.from({ length: count }, () => {
+    const part1 = generateSecureRandom(4)
+    const part2 = generateSecureRandom(4)
+    return `${part1}-${part2}`
+  })
+}
+
 export default function SecuritySettings() {
   const { session } = useAuth()
   const { showToast } = useToast()
@@ -30,19 +48,20 @@ export default function SecuritySettings() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
   const [showSetup2FA, setShowSetup2FA] = useState(false)
-  const [setupStep, setSetupStep] = useState<'qr' | 'verify' | 'backup'>('qr')
+  const [setupStep, setSetupStep] = useState<'verify' | 'backup'>('verify')
   const [totpSecret, setTotpSecret] = useState('')
   const [totpUrl, setTotpUrl] = useState('')
   const [verifyCode, setVerifyCode] = useState('')
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'security' | 'audit'>('security')
 
+  const twoFactorAvailable = isFeatureEnabled('twoFactor')
   const user = session?.user
+
   const loadSecurity = async () => {
     if (!user) return
     setLoading(true)
 
-    // Load MFA status
     const { data: mfaData } = await supabase
       .from('user_mfa')
       .select('*')
@@ -58,7 +77,6 @@ export default function SecuritySettings() {
       })
     }
 
-    // Load audit logs
     const { data: logsData } = await supabase
       .from('audit_logs')
       .select('*')
@@ -73,33 +91,31 @@ export default function SecuritySettings() {
     loadSecurity()
   }, [user])
 
-  const generateTotpSecret = () => {
-    // In production, use a proper TOTP library like otpauth
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
-    let secret = ''
-    for (let i = 0; i < 32; i++) {
-      secret += chars[Math.floor(Math.random() * chars.length)]
-    }
-    return secret
-  }
-
   const setup2FA = async () => {
     if (!user) return
 
-    // Generate secret
-    const secret = generateTotpSecret()
-    const issuer = encodeURIComponent('Avenize')
-    const account = encodeURIComponent(user.email || 'user')
+    // Generate secure TOTP secret
+    const secret = new Secret()
+    const issuer = 'Avenize'
+    const account = user.email || 'user'
 
-    // Create TOTP URL (for authenticator apps)
-    const url = `otpauth://totp/${issuer}:${account}?secret=${secret}&issuer=${issuer}`
+    // Create proper TOTP
+    const totp = new TOTP({
+      issuer,
+      label: account,
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: secret,
+    })
 
-    setTotpSecret(secret)
+    const url = totp.toString()
+    const secretValue = secret.bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '').toUpperCase()
+
+    setTotpSecret(secretValue)
     setTotpUrl(url)
     setShowSetup2FA(true)
-    setSetupStep('qr')
-
-    // In production, generate QR code here
+    setSetupStep('verify')
   }
 
   const verifyAndEnable2FA = async () => {
@@ -108,28 +124,40 @@ export default function SecuritySettings() {
       return
     }
 
-    // In production, verify the code using otpauth
-    // For demo, accept any 6 digits
-    if (verifyCode.length === 6) {
-      // Generate backup codes
-      const codes = Array.from({ length: 10 }, () =>
-        `${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
-      )
+    // Verify TOTP using otpauth
+    const totp = new TOTP({
+      issuer: 'Avenize',
+      label: user.email || 'user',
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: Secret.fromBase32(totpSecret.replace(/[^A-Z2-7]/g, '').toUpperCase()),
+    })
 
-      await supabase.from('user_mfa').upsert({
-        user_id: user.id,
-        enabled: true,
-        method: 'totp',
-        totp_secret: totpSecret,
-        totp_confirmed_at: new Date().toISOString(),
-        backup_codes: codes.join(','),
-        backup_codes_used: 0,
-      })
+    const delta = totp.validate({ token: verifyCode, window: 1 })
 
-      setBackupCodes(codes)
-      setSetupStep('backup')
-      showToast('2FA enabled successfully!', 'success')
+    if (delta === null) {
+      showToast('Invalid code. Please check your authenticator app and try again.', 'error')
+      return
     }
+
+    // Generate backup codes with secure random
+    const codes = generateBackupCodes(10)
+
+    await supabase.from('user_mfa').upsert({
+      user_id: user.id,
+      enabled: true,
+      method: 'totp',
+      totp_secret: totpSecret,
+      totp_confirmed_at: new Date().toISOString(),
+      backup_codes: codes.join(','),
+      backup_codes_used: 0,
+    })
+
+    setBackupCodes(codes)
+    setSetupStep('backup')
+    loadSecurity()
+    showToast('2FA enabled successfully!', 'success')
   }
 
   const disable2FA = async () => {
@@ -138,13 +166,12 @@ export default function SecuritySettings() {
 
     await supabase.from('user_mfa').delete().eq('user_id', user.id)
     setMfa(null)
+    setShowSetup2FA(false)
     showToast('2FA has been disabled', 'info')
   }
 
   const downloadBackupCodes = () => {
-    const content = `YOUR BACKUP CODES - Store this securely!
-    
-These codes can be used to access your account if you lose your phone.
+    const content = `AVENIZE BACKUP CODES - Store this securely!
 
 ${backupCodes.map((code, i) => `${i + 1}. ${code}`).join('\n')}
 
@@ -167,7 +194,6 @@ Each code can only be used once!`
       update: 'Updated',
       delete: 'Deleted',
       export: 'Exported',
-      invite: 'Invited',
     }
     return labels[action] || action
   }
@@ -190,30 +216,31 @@ Each code can only be used once!`
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 bg-white rounded-xl p-1 border border-black/[0.06] mb-6 w-fit">
-        {[
-          { id: 'security', label: 'Security' },
-          { id: 'audit', label: 'Audit Log' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              activeTab === tab.id
-                ? 'avenize-gradient text-white'
-                : 'text-black/50 hover:text-black'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <button
+          onClick={() => setActiveTab('security')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            activeTab === 'security'
+              ? 'avenize-gradient text-white'
+              : 'text-black/50 hover:text-black'
+          }`}
+        >
+          Security
+        </button>
+        <button
+          onClick={() => setActiveTab('audit')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            activeTab === 'audit'
+              ? 'avenize-gradient text-white'
+              : 'text-black/50 hover:text-black'
+          }`}
+        >
+          Audit Log
+        </button>
       </div>
 
-      {/* SECURITY TAB */}
       {activeTab === 'security' && (
         <div className="space-y-6">
-          {/* 2FA Card */}
           <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
             <div className="p-6 border-b border-black/[0.06]">
               <div className="flex items-center gap-3">
@@ -284,35 +311,50 @@ Each code can only be used once!`
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <div className="flex gap-4">
-                    <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
-                      <Smartphone className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
-                      <h3 className="text-sm font-medium mb-1">Authenticator App</h3>
-                      <p className="text-xs text-black/50">
-                        Use Google Authenticator, Authy, or any TOTP app
-                      </p>
+                  {!twoFactorAvailable ? (
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                      <div className="flex items-start gap-3">
+                        <Clock4 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-amber-800">Coming Soon</p>
+                          <p className="text-xs text-amber-700 mt-1">
+                            2FA is being prepared for production. Contact sales for early access.
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
-                      <Key className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
-                      <h3 className="text-sm font-medium mb-1">Backup Codes</h3>
-                      <p className="text-xs text-black/50">
-                        10 one-time use codes for emergency access
-                      </p>
-                    </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex gap-4">
+                        <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
+                          <Smartphone className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
+                          <h3 className="text-sm font-medium mb-1">Authenticator App</h3>
+                          <p className="text-xs text-black/50">
+                            Use Google Authenticator, Authy, or any TOTP app
+                          </p>
+                        </div>
+                        <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
+                          <Key className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
+                          <h3 className="text-sm font-medium mb-1">Backup Codes</h3>
+                          <p className="text-xs text-black/50">
+                            10 one-time use codes for emergency access
+                          </p>
+                        </div>
+                      </div>
 
-                  <button
-                    onClick={setup2FA}
-                    className="w-full px-4 py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
-                  >
-                    Set Up 2FA
-                  </button>
+                      <button
+                        onClick={setup2FA}
+                        className="w-full px-4 py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
+                      >
+                        Set Up 2FA
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
             </div>
           </div>
 
-          {/* Password */}
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
             <h2 className="text-sm font-medium mb-4">Password</h2>
             <div className="flex items-center justify-between">
@@ -326,7 +368,6 @@ Each code can only be used once!`
             </div>
           </div>
 
-          {/* Active Sessions */}
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-medium">Active Sessions</h2>
@@ -350,7 +391,6 @@ Each code can only be used once!`
         </div>
       )}
 
-      {/* AUDIT LOG TAB */}
       {activeTab === 'audit' && (
         <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
           <div className="p-4 border-b border-black/[0.06]">
@@ -398,40 +438,27 @@ Each code can only be used once!`
         </div>
       )}
 
-      {/* 2FA Setup Modal */}
       {showSetup2FA && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-semibold">Set Up 2FA</h2>
               <p className="text-sm text-black/50">
-                {setupStep === 'qr' && 'Scan this QR code with your authenticator app'}
-                {setupStep === 'verify' && 'Enter the 6-digit code from your app'}
+                {setupStep === 'verify' && 'Enter the 6-digit code from your authenticator app'}
                 {setupStep === 'backup' && 'Save your backup codes'}
               </p>
             </div>
 
             <div className="p-6">
-              {setupStep === 'qr' && (
-                <div className="text-center">
-                  {/* QR Code placeholder */}
-                  <div className="w-48 h-48 mx-auto bg-black/5 rounded-xl flex items-center justify-center mb-4">
-                    <QrCode className="w-24 h-24 text-black/20" />
-                  </div>
-                  <p className="text-xs text-black/50 mb-4">
-                    Manual code: <code className="bg-black/5 px-2 py-1 rounded">{totpSecret}</code>
-                  </p>
-                  <button
-                    onClick={() => setSetupStep('verify')}
-                    className="w-full py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
-                  >
-                    Continue
-                  </button>
-                </div>
-              )}
-
               {setupStep === 'verify' && (
                 <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-slate-50">
+                    <p className="text-sm font-medium mb-2">Manual entry code:</p>
+                    <code className="text-xs font-mono break-all bg-white px-3 py-2 rounded block">
+                      {totpSecret.match(/.{1,4}/g)?.join(' ') || totpSecret}
+                    </code>
+                  </div>
+                  
                   <div>
                     <label className="text-sm font-medium block mb-2">Verification Code</label>
                     <input
@@ -441,6 +468,7 @@ Each code can only be used once!`
                       placeholder="000000"
                       className="w-full px-4 py-3 rounded-xl border border-black/10 text-center text-2xl tracking-widest"
                       maxLength={6}
+                      autoFocus
                     />
                     <p className="text-xs text-black/40 mt-2 text-center">
                       Enter the 6-digit code from your authenticator app
@@ -458,6 +486,16 @@ Each code can only be used once!`
 
               {setupStep === 'backup' && (
                 <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                      <p className="text-sm font-medium text-green-800">2FA Enabled!</p>
+                    </div>
+                    <p className="text-xs text-green-700">
+                      Your account is now more secure.
+                    </p>
+                  </div>
+
                   <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200">
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
@@ -493,7 +531,10 @@ Each code can only be used once!`
 
             <div className="px-6 py-4 border-t border-black/[0.06]">
               <button
-                onClick={() => setShowSetup2FA(false)}
+                onClick={() => {
+                  setShowSetup2FA(false)
+                  setVerifyCode('')
+                }}
                 className="w-full text-center text-sm text-black/50 hover:text-black"
               >
                 Cancel
