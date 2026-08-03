@@ -7,6 +7,8 @@ import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import ForgotPassword from './pages/ForgotPassword'
+import UpdatePassword from './pages/UpdatePassword'
 import Onboarding from './pages/Onboarding'
 import Join from './pages/Join'
 import AuthCallback from './pages/AuthCallback'
@@ -21,6 +23,7 @@ import Pricing from './pages/Pricing'
 import PricingIndustrial from './pages/PricingIndustrial'
 import Reports from './pages/Reports'
 import Settings from './pages/Settings'
+import Profile from './pages/Profile'
 import More from './pages/More'
 import Social from './pages/Social'
 import Tasks from './pages/Tasks'
@@ -68,6 +71,8 @@ function AppRoutes() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/update-password" element={<UpdatePassword />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/join/:inviteId" element={<Join />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -89,6 +94,7 @@ function AppRoutes() {
         <Route path="inventory" element={<InventoryNigeria />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="settings/profile" element={<Profile />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="tasks" element={<Tasks />} />

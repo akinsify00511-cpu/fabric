@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+
 export default function AuthCallback() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -47,6 +50,12 @@ export default function AuthCallback() {
           return
         }
 
+        // Handle password recovery separately
+        if (type === 'recovery') {
+          navigate('/update-password', { replace: true })
+          return
+        }
+
         // Check if user already has a business
         const { data: staffData } = await supabase
           .from('staff')
@@ -59,67 +68,85 @@ export default function AuthCallback() {
           setMessage('Welcome back! Redirecting to your dashboard...')
           setTimeout(() => navigate('/app', { replace: true }), 1500)
         } else {
-          // Check for pending business signup
-          const pendingBusiness = localStorage.getItem('avenize_pending_business')
+          // New OAuth user - check if they have metadata from OAuth provider
+          const oauthMetadata = session.user.user_metadata
           
-          if (pendingBusiness) {
-            try {
-              const { businessName, industry, fullName } = JSON.parse(pendingBusiness)
-              
-              setMessage(`Setting up ${businessName}...`)
-              
-              // Create the business
-              const { error: bizError } = await supabase.rpc('create_business_and_owner', {
-                p_business_name: businessName,
-                p_industry: industry || null,
-                p_staff_name: fullName,
-              })
-              
-              if (bizError) {
-                console.error('Failed to create business:', bizError)
-                setError('Failed to set up your business. Please contact support.')
-                setLoading(false)
-                return
-              }
-              
-              localStorage.removeItem('avenize_pending_business')
-              setMessage('Business created! Redirecting...')
-              setTimeout(() => navigate('/app', { replace: true }), 1500)
-            } catch (err) {
-              console.error('Error parsing pending business:', err)
-              navigate('/onboarding', { replace: true })
-            }
-          } 
-          // Check for pending invite
-          else if (token) {
-            const pendingInvite = localStorage.getItem('avenize_pending_invite')
-            
-            if (pendingInvite) {
-              setMessage('Joining your team...')
-              
-              const { error: inviteError } = await supabase.rpc('accept_invite', {
-                p_token: token,
-                p_staff_name: session.user.user_metadata?.full_name || null,
-              })
-              
-              if (inviteError) {
-                console.error('Failed to accept invite:', inviteError)
-                setError(inviteError.message)
-                setLoading(false)
-                return
-              }
-              
-              localStorage.removeItem('avenize_pending_invite')
-              setMessage('Joined! Redirecting...')
-              setTimeout(() => navigate('/app', { replace: true }), 1500)
-            } else {
-              // No pending invite, go to onboarding
-              navigate('/onboarding', { replace: true })
-            }
-          }
-          else {
-            // New user, go to onboarding
+          if (oauthMetadata?.full_name || oauthMetadata?.name) {
+            // OAuth user - store their info and send to onboarding
+            localStorage.setItem('avenize_oauth_pending', JSON.stringify({
+              fullName: oauthMetadata.full_name || oauthMetadata.name,
+              email: oauthMetadata.email,
+              avatarUrl: oauthMetadata.avatar_url,
+              provider: oauthMetadata.provider,
+            }))
             navigate('/onboarding', { replace: true })
+          } else {
+            // Check for pending business signup (email/password signup)
+            const pendingBusiness = localStorage.getItem('avenize_pending_business')
+          
+            if (pendingBusiness) {
+              try {
+                const { businessName, industry, fullName, email } = JSON.parse(pendingBusiness)
+                
+                setMessage(`Setting up ${businessName}...`)
+                
+                // Create the business
+                const { error: bizError } = await supabase.rpc('create_business_and_owner', {
+                  p_business_name: businessName,
+                  p_industry: industry || null,
+                  p_staff_name: fullName,
+                })
+                
+                if (bizError) {
+                  console.error('Failed to create business:', bizError)
+                  setError('Failed to set up your business. Please contact support.')
+                  setLoading(false)
+                  return
+                }
+                
+                localStorage.removeItem('avenize_pending_business')
+                
+                // Send welcome email (non-blocking)
+                sendWelcomeEmail(email, fullName, businessName)
+                
+                setMessage('Business created! Redirecting...')
+                setTimeout(() => navigate('/app', { replace: true }), 1500)
+              } catch (err) {
+                console.error('Error parsing pending business:', err)
+                navigate('/onboarding', { replace: true })
+              }
+            } 
+            // Check for pending invite
+            else if (token) {
+              const pendingInvite = localStorage.getItem('avenize_pending_invite')
+              
+              if (pendingInvite) {
+                setMessage('Joining your team...')
+                
+                const { error: inviteError } = await supabase.rpc('accept_invite', {
+                  p_token: token,
+                  p_staff_name: session.user.user_metadata?.full_name || null,
+                })
+                
+                if (inviteError) {
+                  console.error('Failed to accept invite:', inviteError)
+                  setError(inviteError.message)
+                  setLoading(false)
+                  return
+                }
+                
+                localStorage.removeItem('avenize_pending_invite')
+                setMessage('Joined! Redirecting...')
+                setTimeout(() => navigate('/app', { replace: true }), 1500)
+              } else {
+                // No pending invite, go to onboarding
+                navigate('/onboarding', { replace: true })
+              }
+            }
+            else {
+              // New user with no pending data, go to onboarding
+              navigate('/onboarding', { replace: true })
+            }
           }
         }
       } else {
@@ -185,4 +212,25 @@ export default function AuthCallback() {
       </div>
     </div>
   )
+}
+
+// Send welcome email via Edge Function
+async function sendWelcomeEmail(email: string, fullName: string, businessName?: string) {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ email, fullName, businessName }),
+    })
+    
+    if (!response.ok) {
+      console.error('Failed to send welcome email:', response.statusText)
+    }
+  } catch (err) {
+    // Non-blocking - don't show error to user
+    console.error('Error sending welcome email:', err)
+  }
 }

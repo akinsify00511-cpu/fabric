@@ -6,7 +6,7 @@ export default function Settings() {
   const { staff } = useAuth()
 
   const SETTINGS_ITEMS = [
-    { to: '/settings', icon: User, label: 'Profile', desc: 'Your account details', color: 'bg-purple-50 text-purple-500' },
+    { to: '/app/settings/profile', icon: User, label: 'Profile', desc: 'Your account details', color: 'bg-purple-50 text-purple-500' },
     { to: '/branding', icon: Palette, label: 'Branding', desc: 'Colors, logo, theme', color: 'bg-pink-50 text-pink-500' },
     { to: '/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-red-50 text-red-500' },
     { to: '/sso', icon: Key, label: 'Single Sign-On', desc: 'SAML, OIDC, Okta, Azure', color: 'bg-blue-50 text-blue-500' },
