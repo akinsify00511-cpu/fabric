@@ -359,7 +359,7 @@ function AlertCard({ tag, message, action }: { tag: string; message: string; act
 // COMPONENT: MARQUEE STRIP
 // ============================================
 function MarqueeStrip() {
-  const items = ["Roofing & Restoration", "Paint & Coatings", "Real Estate Agencies", "Construction", "Logistics & Haulage", "Field Services"]
+  const items = ["Paint & Coatings", "Real Estate Agencies", "Construction", "Logistics & Haulage", "Field Services", "Manufacturing"]
   
   return (
     <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 py-3 overflow-hidden border-y border-white/10">
@@ -415,7 +415,7 @@ function FeaturesSection() {
     {
       num: "01",
       title: "Where is my money and my materials?",
-      description: "Every roofing job, paint batch, and property deal moves through one pipeline — linked to the inventory it consumes and the payment it's waiting on.",
+      description: "Every paint batch and property deal moves through one pipeline — linked to the inventory it consumes and the payment it's waiting on.",
       items: [
         "Job pipeline from enquiry to paid, with materials linked to inventory",
         "Bill-of-materials for production: resin + pigment → finished paint",
@@ -565,8 +565,8 @@ function AlertsMockup() {
 // ============================================
 function ChatMockup() {
   const messages = [
-    { initials: "SC", name: "Site Crew", role: "Roofing", message: "Job #124 done, 3rd inspection photo attached. Waiting on client sign-off.", color: "#4F46E5" },
-    { initials: "WH", name: "Warehouse", role: "", message: "2 stock requests pending — Factory (resin) and Roofing (aluminium sheets).", color: "#EC4899" },
+    { initials: "SC", name: "Site Crew", role: "Paint Production", message: "Batch #89 ready, quality check passed. Awaiting your approval to move to warehouse.", color: "#4F46E5" },
+    { initials: "WH", name: "Warehouse", role: "", message: "2 stock requests pending — Factory (resin) and Production (pigment).", color: "#EC4899" },
     { initials: "FN", name: "Finance", role: "", message: "₦300,000 received from Client XYZ. Matches Invoice #204 — balance ₦150,000.", color: "#10B981" }
   ]
 
