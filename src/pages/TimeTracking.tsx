@@ -268,7 +268,7 @@ export default function TimeTracking() {
               <button
                 onClick={handleStart}
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl fabric-gradient text-white font-medium disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl avenize-gradient text-white font-medium disabled:opacity-50"
               >
                 <Play size={18} />
                 Start Timer
@@ -309,7 +309,7 @@ export default function TimeTracking() {
           <div
             key={date.toISOString()}
             className={`p-3 rounded-xl text-center ${
-              isToday ? 'fabric-gradient text-white' : 'bg-white border border-black/[0.06]'
+              isToday ? 'avenize-gradient text-white' : 'bg-white border border-black/[0.06]'
             }`}
           >
             <p className={`text-xs ${isToday ? 'text-white/80' : 'text-black/40'}`}>
@@ -454,7 +454,7 @@ export default function TimeTracking() {
               <button onClick={() => setShowManualModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
                 Cancel
               </button>
-              <button onClick={handleAddManual} disabled={saving} className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50">
+              <button onClick={handleAddManual} disabled={saving} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50">
                 {saving ? 'Adding...' : 'Add Entry'}
               </button>
             </div>
@@ -527,7 +527,7 @@ export default function TimeTracking() {
               <button onClick={() => setShowTimeOffModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
                 Cancel
               </button>
-              <button onClick={handleRequestTimeOff} disabled={saving} className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50">
+              <button onClick={handleRequestTimeOff} disabled={saving} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50">
                 {saving ? 'Submitting...' : 'Submit Request'}
               </button>
             </div>

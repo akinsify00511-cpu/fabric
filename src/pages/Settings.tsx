@@ -22,7 +22,7 @@ export default function Settings() {
       {/* User Info */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-xl fabric-gradient flex items-center justify-center text-white text-xl font-bold">
+          <div className="w-14 h-14 rounded-xl avenize-gradient flex items-center justify-center text-white text-xl font-bold">
             {staff?.full_name?.charAt(0) || staff?.name?.charAt(0) || '?'}
           </div>
           <div>

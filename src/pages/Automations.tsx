@@ -172,7 +172,7 @@ export default function Automations() {
         </div>
         <button
           onClick={() => setShowBuilder(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90 transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90 transition"
         >
           <Plus size={16} />
           New automation
@@ -224,7 +224,7 @@ export default function Automations() {
         </div>
       ) : automations.length === 0 ? (
         <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl fabric-gradient flex items-center justify-center text-white text-2xl mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center text-white text-2xl mx-auto mb-4">
             🤖
           </div>
           <h3 className="text-lg font-medium text-[var(--avenize-black)] mb-2">No automations yet</h3>
@@ -233,7 +233,7 @@ export default function Automations() {
           </p>
           <button
             onClick={() => setShowBuilder(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
           >
             <Plus size={16} />
             Create first automation
@@ -503,7 +503,7 @@ export default function Automations() {
               </button>
               <button
                 onClick={createAutomation}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
               >
                 <Zap size={16} />
                 Create automation

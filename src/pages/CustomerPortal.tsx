@@ -169,7 +169,7 @@ export default function CustomerPortal() {
             resetForm()
             setShowInviteModal(true)
           }}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
         >
           <Plus size={16} />
           Invite Client
@@ -361,7 +361,7 @@ export default function CustomerPortal() {
                             onClick={() => selectContact(contact)}
                             className={`px-3 py-1.5 rounded-full text-sm border transition ${
                               email === contact.email
-                                ? 'fabric-gradient text-white border-transparent'
+                                ? 'avenize-gradient text-white border-transparent'
                                 : 'border-black/10 hover:bg-black/[0.02]'
                             }`}
                           >
@@ -465,7 +465,7 @@ export default function CustomerPortal() {
                 <button
                   onClick={createInvitation}
                   disabled={saving || !email}
-                  className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
                 >
                   {saving ? 'Creating...' : 'Create Invitation'}
                 </button>

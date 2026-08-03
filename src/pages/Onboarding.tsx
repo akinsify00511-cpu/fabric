@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import FabricMark from '../components/FabricMark'
+import AvenizeMark from '../components/AvenizeMark'
 
 const PENDING_INVITE_KEY = 'avenize_pending_invite'
 
@@ -58,7 +58,7 @@ export default function Onboarding() {
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <FabricMark size={26} />
+          <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">

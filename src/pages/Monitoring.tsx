@@ -154,7 +154,7 @@ export default function Monitoring() {
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
           >
             <Plus size={16} />
             Add Monitor
@@ -202,7 +202,7 @@ export default function Monitoring() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
             }`}
           >
             {tab.label}
@@ -500,7 +500,7 @@ export default function Monitoring() {
               <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
                 Cancel
               </button>
-              <button onClick={() => { setShowCreateModal(false); showToast('Monitor added!', 'success'); }} className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium">
+              <button onClick={() => { setShowCreateModal(false); showToast('Monitor added!', 'success'); }} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">
                 Add Monitor
               </button>
             </div>

@@ -204,7 +204,7 @@ export default function Tickets() {
             <h2 className="text-sm font-semibold text-[var(--avenize-black)]">Tickets</h2>
             <button
               onClick={() => setShowNewTicket(true)}
-              className="p-2 rounded-lg fabric-gradient text-white"
+              className="p-2 rounded-lg avenize-gradient text-white"
             >
               <Plus size={16} />
             </button>
@@ -231,7 +231,7 @@ export default function Tickets() {
                 onClick={() => setStatusFilter(f.id)}
                 className={`px-2 py-1 rounded text-xs font-medium transition ${
                   statusFilter === f.id
-                    ? 'fabric-gradient text-white'
+                    ? 'avenize-gradient text-white'
                     : 'bg-black/[0.04] text-black/60'
                 }`}
               >
@@ -349,7 +349,7 @@ export default function Tickets() {
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    reply.sender_type === 'staff' ? 'fabric-gradient text-white' : 'bg-black/10'
+                    reply.sender_type === 'staff' ? 'avenize-gradient text-white' : 'bg-black/10'
                   }`}>
                     {reply.sender_name?.charAt(0) ?? '?'}
                   </div>
@@ -398,7 +398,7 @@ export default function Tickets() {
               <button
                 onClick={sendReply}
                 disabled={!newReply.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium disabled:opacity-50"
               >
                 <Send size={14} />
                 Send
@@ -487,7 +487,7 @@ export default function Tickets() {
               </button>
               <button
                 onClick={createTicket}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
               >
                 <Plus size={16} />
                 Create Ticket

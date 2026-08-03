@@ -68,3 +68,12 @@ body {
 .bg-accent-ai { background-color: var(--avenize-ai); }
 .bg-accent-automation { background-color: var(--avenize-automation); }
 .bg-accent-analytics { background-color: var(--avenize-analytics); }
+
+/* Avenize Brand Gradient */
+.avenize-gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #8B5CF6 100%);
+}
+
+.avenize-gradient:hover {
+  background: linear-gradient(135deg, #1D4ED8 0%, #4338CA 50%, #7C3AED 100%);
+}

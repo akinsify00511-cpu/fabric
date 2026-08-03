@@ -200,7 +200,7 @@ export default function Campaigns() {
         </div>
         <button
           onClick={() => setShowBuilder(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90 transition"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90 transition"
         >
           <Plus size={16} />
           New Campaign
@@ -220,7 +220,7 @@ export default function Campaigns() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'fabric-gradient text-white'
+                  ? 'avenize-gradient text-white'
                   : 'text-black/50 hover:text-black'
               }`}
             >
@@ -283,7 +283,7 @@ export default function Campaigns() {
               <p className="text-sm text-black/50 mb-4">Create your first email campaign to connect with your audience</p>
               <button
                 onClick={() => setShowBuilder(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
               >
                 <Plus size={16} />
                 Create Campaign
@@ -307,7 +307,7 @@ export default function Campaigns() {
                       {campaign.status === 'draft' && (
                         <button
                           onClick={() => sendCampaign(campaign.id)}
-                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg fabric-gradient text-white text-xs font-medium"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg avenize-gradient text-white text-xs font-medium"
                         >
                           <Play size={12} />
                           Send
@@ -472,7 +472,7 @@ export default function Campaigns() {
               </button>
               <button
                 onClick={createCampaign}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
               >
                 <Mail size={16} />
                 Create Campaign

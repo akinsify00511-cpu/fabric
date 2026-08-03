@@ -6,7 +6,7 @@ type LogoProps = {
   // gradient: signature gradient version (premium moments only)
 }
 
-export default function FabricMark({ size = 32, variant = 'default' }: LogoProps) {
+export default function AvenizeMark({ size = 32, variant = 'default' }: LogoProps) {
   const dark = '#111111'
   const light = '#FFFFFF'
   const stone = '#F7F7F5'

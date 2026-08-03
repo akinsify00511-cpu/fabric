@@ -209,7 +209,7 @@ export default function Accounting() {
           </button>
           <button
             onClick={() => setShowNewEntry(true)}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+            className="flex items-center gap-1 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
           >
             <Plus size={14} />
             New Entry
@@ -231,7 +231,7 @@ export default function Accounting() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'fabric-gradient text-white'
+                  ? 'avenize-gradient text-white'
                   : 'text-black/50 hover:text-black'
               }`}
             >
@@ -314,7 +314,7 @@ export default function Accounting() {
             <button
               onClick={() => setReportType('balance')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'balance' ? 'fabric-gradient text-white' : 'text-black/50'
+                reportType === 'balance' ? 'avenize-gradient text-white' : 'text-black/50'
               }`}
             >
               Balance Sheet
@@ -322,7 +322,7 @@ export default function Accounting() {
             <button
               onClick={() => setReportType('income')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'income' ? 'fabric-gradient text-white' : 'text-black/50'
+                reportType === 'income' ? 'avenize-gradient text-white' : 'text-black/50'
               }`}
             >
               Income Statement
@@ -487,7 +487,7 @@ export default function Accounting() {
             </div>
             <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
               <button onClick={() => setShowNewAccount(false)} className="px-4 py-2 rounded-lg border border-black/10">Cancel</button>
-              <button onClick={createAccount} className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium">Create</button>
+              <button onClick={createAccount} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">Create</button>
             </div>
           </div>
         </div>
@@ -589,7 +589,7 @@ export default function Accounting() {
               <button
                 onClick={createEntry}
                 disabled={Math.abs(totalDebit - totalCredit) > 0.01}
-                className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50"
+                className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
               >
                 Create Entry
               </button>

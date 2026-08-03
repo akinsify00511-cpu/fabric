@@ -175,7 +175,7 @@ export default function Branding() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium disabled:opacity-50"
           >
             <Save size={16} />
             {saving ? 'Saving...' : 'Save Changes'}
@@ -195,7 +195,7 @@ export default function Branding() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
             }`}
           >
             {tab.label}
@@ -518,7 +518,7 @@ export default function Branding() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-black/50">Showcase your best work</p>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               Add Project
             </button>
@@ -560,7 +560,7 @@ export default function Branding() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-black/50">Meet your team members</p>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               Add Member
             </button>
@@ -590,7 +590,7 @@ export default function Branding() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-black/50">Customer reviews and testimonials</p>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               Add Testimonial
             </button>

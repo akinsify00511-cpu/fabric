@@ -231,7 +231,7 @@ export default function Events() {
         <div className="flex gap-2">
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
           >
             <Plus size={16} />
             New Event
@@ -250,7 +250,7 @@ export default function Events() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
             }`}
           >
             {tab.label}
@@ -548,7 +548,7 @@ export default function Events() {
               <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
                 Cancel
               </button>
-              <button onClick={handleCreateEvent} className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium">
+              <button onClick={handleCreateEvent} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">
                 Create Event
               </button>
             </div>
@@ -591,7 +591,7 @@ export default function Events() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleRegister(selectedEvent)}
-                  className="flex-1 py-2 rounded-lg fabric-gradient text-white font-medium"
+                  className="flex-1 py-2 rounded-lg avenize-gradient text-white font-medium"
                 >
                   Register
                 </button>

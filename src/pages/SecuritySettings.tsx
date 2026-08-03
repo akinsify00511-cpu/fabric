@@ -201,7 +201,7 @@ Each code can only be used once!`
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
               activeTab === tab.id
-                ? 'fabric-gradient text-white'
+                ? 'avenize-gradient text-white'
                 : 'text-black/50 hover:text-black'
             }`}
           >
@@ -303,7 +303,7 @@ Each code can only be used once!`
 
                   <button
                     onClick={setup2FA}
-                    className="w-full px-4 py-3 rounded-xl fabric-gradient text-white text-sm font-medium"
+                    className="w-full px-4 py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
                   >
                     Set Up 2FA
                   </button>
@@ -423,7 +423,7 @@ Each code can only be used once!`
                   </p>
                   <button
                     onClick={() => setSetupStep('verify')}
-                    className="w-full py-3 rounded-xl fabric-gradient text-white text-sm font-medium"
+                    className="w-full py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
                   >
                     Continue
                   </button>
@@ -449,7 +449,7 @@ Each code can only be used once!`
                   <button
                     onClick={verifyAndEnable2FA}
                     disabled={verifyCode.length !== 6}
-                    className="w-full py-3 rounded-xl fabric-gradient text-white text-sm font-medium disabled:opacity-50"
+                    className="w-full py-3 rounded-xl avenize-gradient text-white text-sm font-medium disabled:opacity-50"
                   >
                     Verify & Enable
                   </button>
@@ -483,7 +483,7 @@ Each code can only be used once!`
                       downloadBackupCodes()
                       setShowSetup2FA(false)
                     }}
-                    className="w-full py-3 rounded-xl fabric-gradient text-white text-sm font-medium"
+                    className="w-full py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
                   >
                     Download Codes & Finish
                   </button>

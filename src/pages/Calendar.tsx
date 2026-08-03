@@ -250,7 +250,7 @@ export default function Calendar() {
           </button>
           <button
             onClick={() => openNewEvent()}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
           >
             <Plus size={16} />
             New Event
@@ -292,7 +292,7 @@ export default function Calendar() {
                   <span
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${
                       isToday
-                        ? 'fabric-gradient text-white'
+                        ? 'avenize-gradient text-white'
                         : 'text-black/60'
                     }`}
                   >
@@ -530,7 +530,7 @@ export default function Calendar() {
                 </button>
                 <button
                   onClick={saveEvent}
-                  className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium"
+                  className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium"
                 >
                   {editingEvent ? 'Save Changes' : 'Create Event'}
                 </button>

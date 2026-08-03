@@ -107,7 +107,7 @@ export default function BrandingSettings() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
-                  ? 'fabric-gradient text-white'
+                  ? 'avenize-gradient text-white'
                   : 'text-black/50 hover:text-black'
               }`}
             >
@@ -337,7 +337,7 @@ export default function BrandingSettings() {
 
               {/* Upload */}
               <div className="flex-1">
-                <label className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl fabric-gradient text-white cursor-pointer hover:opacity-90 transition">
+                <label className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl avenize-gradient text-white cursor-pointer hover:opacity-90 transition">
                   <Upload size={16} />
                   {uploading ? 'Uploading...' : 'Upload Logo'}
                   <input
@@ -406,7 +406,7 @@ export default function BrandingSettings() {
                     onClick={() => updateBranding({ theme_mode: option.value as any })}
                     className={`p-4 rounded-xl border-2 transition flex flex-col items-center gap-2 ${
                       branding.theme_mode === option.value
-                        ? 'border-[var(--avenize-accent-end)] fabric-gradient bg-opacity-10'
+                        ? 'border-[var(--avenize-accent-end)] avenize-gradient bg-opacity-10'
                         : 'border-transparent bg-black/[0.02]'
                     }`}
                   >

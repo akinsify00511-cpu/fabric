@@ -218,7 +218,7 @@ export default function FileManager({ onSelect }: { onSelect?: (file: FileAttach
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl fabric-gradient text-white text-sm font-medium disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl avenize-gradient text-white text-sm font-medium disabled:opacity-50"
         >
           <Upload size={16} />
           {uploading ? 'Uploading...' : 'Upload'}
@@ -233,7 +233,7 @@ export default function FileManager({ onSelect }: { onSelect?: (file: FileAttach
             onClick={() => setCategoryFilter(cat)}
             className={`px-3 py-1 rounded-full text-xs font-medium capitalize whitespace-nowrap ${
               categoryFilter === cat
-                ? 'fabric-gradient text-white'
+                ? 'avenize-gradient text-white'
                 : 'bg-black/[0.05] text-black/60'
             }`}
           >
@@ -365,7 +365,7 @@ export default function FileManager({ onSelect }: { onSelect?: (file: FileAttach
             <div className="px-6 py-4 border-t border-black/[0.06] flex gap-2">
               <button
                 onClick={() => downloadFile(selectedFile)}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-xl fabric-gradient text-white font-medium"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-xl avenize-gradient text-white font-medium"
               >
                 <Download size={16} />
                 Download

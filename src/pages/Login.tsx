@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import FabricMark from '../components/FabricMark'
+import AvenizeMark from '../components/AvenizeMark'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -25,7 +25,7 @@ export default function Login() {
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <FabricMark size={26} />
+          <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">Sign in to your workspace</p>

@@ -425,7 +425,7 @@ export default function Knowledge() {
               <button
                 onClick={savePage}
                 disabled={saving}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
               >
                 <Save size={14} />
                 {saving ? 'Saving...' : 'Save'}
@@ -505,7 +505,7 @@ export default function Knowledge() {
           /* Welcome / Empty State */
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center max-w-md">
-              <div className="w-20 h-20 rounded-2xl fabric-gradient flex items-center justify-center text-white text-3xl mx-auto mb-6">
+              <div className="w-20 h-20 rounded-2xl avenize-gradient flex items-center justify-center text-white text-3xl mx-auto mb-6">
                 📚
               </div>
               <h2 className="text-xl font-semibold text-[var(--avenize-black)] mb-2">Knowledge Base</h2>
@@ -514,7 +514,7 @@ export default function Knowledge() {
               </p>
               <button
                 onClick={() => setShowNewPage(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90 transition"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90 transition"
               >
                 <Plus size={16} />
                 Create your first page
@@ -546,7 +546,7 @@ export default function Knowledge() {
               </button>
               <button
                 onClick={createPage}
-                className="flex-1 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium hover:opacity-90"
+                className="flex-1 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90"
               >
                 Create
               </button>

@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import FabricMark from '../components/FabricMark'
+import AvenizeMark from '../components/AvenizeMark'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -56,7 +56,7 @@ export default function Signup() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-3">
-          <FabricMark size={26} />
+          <AvenizeMark size={26} />
           <p className="text-sm text-[var(--avenize-black)] font-medium">Check your email</p>
           <p className="text-sm text-black/50">
             Confirm your address, then sign in — we'll finish setting up {businessName || 'your business'} automatically.
@@ -76,7 +76,7 @@ export default function Signup() {
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"
       >
         <div className="flex items-center gap-2">
-          <FabricMark size={26} />
+          <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">Set up your business</p>

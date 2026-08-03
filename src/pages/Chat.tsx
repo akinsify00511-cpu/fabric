@@ -320,7 +320,7 @@ export default function Chat() {
                         </div>
                       ) : (
                         <div className="flex items-start gap-3 hover:bg-black/[0.01] px-2 py-1 -mx-2 rounded group-hover:bg-black/[0.02]">
-                          <div className="w-9 h-9 rounded-full fabric-gradient flex items-center justify-center text-white text-sm font-medium shrink-0">
+                          <div className="w-9 h-9 rounded-full avenize-gradient flex items-center justify-center text-white text-sm font-medium shrink-0">
                             {(msg.sender_name ?? 'U').charAt(0).toUpperCase()}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -397,7 +397,7 @@ export default function Chat() {
               <button
                 onClick={sendMessage}
                 disabled={!newMessage.trim()}
-                className="p-3 rounded-xl fabric-gradient text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
+                className="p-3 rounded-xl avenize-gradient text-white disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition"
               >
                 <Send size={18} />
               </button>
@@ -414,7 +414,7 @@ export default function Chat() {
             <p className="text-sm text-black/40 mt-1">Select a channel or create a new one</p>
             <button
               onClick={() => setCreatingChannel(true)}
-              className="mt-4 rounded-lg fabric-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-2 mx-auto"
+              className="mt-4 rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-2 mx-auto"
             >
               <Plus size={16} />
               Create channel

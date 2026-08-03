@@ -112,7 +112,7 @@ export default function GamificationBar({ userId }: { userId: string }) {
       >
         {/* Level Badge */}
         <div className="flex items-center gap-1.5">
-          <div className="w-7 h-7 rounded-lg fabric-gradient flex items-center justify-center">
+          <div className="w-7 h-7 rounded-lg avenize-gradient flex items-center justify-center">
             <Star size={14} className="text-white" />
           </div>
           <span className="text-sm font-bold text-[var(--avenize-black)]">Lv.{xp.level}</span>
@@ -151,7 +151,7 @@ export default function GamificationBar({ userId }: { userId: string }) {
           <div className="fixed inset-0 z-40" onClick={() => setShowDropdown(false)} />
           <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-black/[0.06] z-50 overflow-hidden">
             {/* Header */}
-            <div className="p-4 fabric-gradient">
+            <div className="p-4 avenize-gradient">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                   <Star size={24} className="text-white" />

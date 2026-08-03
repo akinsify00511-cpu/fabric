@@ -261,7 +261,7 @@ export default function Requisitions() {
         </div>
         <button
           onClick={openNewModal}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
         >
           <Plus size={16} />
           New Request
@@ -279,7 +279,7 @@ export default function Requisitions() {
             key={tab.key}
             onClick={() => setView(tab.key as typeof view)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              view === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+              view === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
             }`}
           >
             {tab.label}
@@ -528,7 +528,7 @@ export default function Requisitions() {
               <button
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50"
+                className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
               >
                 {saving ? 'Saving...' : selectedReq ? 'Update' : 'Submit for Approval'}
               </button>

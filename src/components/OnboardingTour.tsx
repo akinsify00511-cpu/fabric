@@ -132,7 +132,7 @@ export default function OnboardingTour({
         `}
       >
         {/* Header Pattern */}
-        <div className="h-24 rounded-t-3xl fabric-gradient relative overflow-hidden">
+        <div className="h-24 rounded-t-3xl avenize-gradient relative overflow-hidden">
           <div className="absolute inset-0 opacity-20">
             {[...Array(20)].map((_, i) => (
               <div
@@ -205,7 +205,7 @@ export default function OnboardingTour({
             )}
             <button
               onClick={step.actionLabel ? handleAction : goNext}
-              className={`${isFirstStep ? 'flex-1' : 'flex-[2]'} flex items-center justify-center gap-1 py-3 rounded-xl fabric-gradient text-white text-sm font-medium hover:opacity-90 transition-opacity`}
+              className={`${isFirstStep ? 'flex-1' : 'flex-[2]'} flex items-center justify-center gap-1 py-3 rounded-xl avenize-gradient text-white text-sm font-medium hover:opacity-90 transition-opacity`}
             >
               {step.actionLabel || (isLastStep ? 'Get Started!' : 'Next')}
               {!step.actionLabel && <ChevronRight size={16} />}

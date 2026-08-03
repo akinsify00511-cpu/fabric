@@ -216,7 +216,7 @@ export default function Organogram() {
             <RefreshCw size={14} />
             Refresh
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
             <UserPlus size={16} />
             Add Member
           </button>
@@ -234,7 +234,7 @@ export default function Organogram() {
             key={tab.key}
             onClick={() => setView(tab.key as typeof view)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
-              view === tab.key ? 'fabric-gradient text-white' : 'border border-black/10'
+              view === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -309,7 +309,7 @@ export default function Organogram() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-black/50">Automated reporting and sync channels</p>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               New Channel
             </button>
@@ -466,7 +466,7 @@ export default function Organogram() {
               </div>
 
               <div className="flex gap-2">
-                <button className="flex-1 py-2 rounded-lg fabric-gradient text-white text-sm font-medium">
+                <button className="flex-1 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
                   View Full Profile
                 </button>
                 <button className="px-4 py-2 rounded-lg border border-black/10">

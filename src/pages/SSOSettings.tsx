@@ -201,7 +201,7 @@ export default function SSOSettings() {
         </div>
         <button
           onClick={openAddSSO}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
         >
           <Plus size={16} />
           Add SSO
@@ -234,7 +234,7 @@ export default function SSOSettings() {
             <p className="text-sm text-black/50 mb-4">Add your first SSO provider to get started</p>
             <button
               onClick={openAddSSO}
-              className="px-4 py-2 rounded-lg fabric-gradient text-white text-sm font-medium"
+              className="px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
             >
               Add SSO Provider
             </button>
@@ -585,7 +585,7 @@ export default function SSOSettings() {
                 <button
                   onClick={handleVerify}
                   disabled={!selectedProvider || !domain}
-                  className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
                 >
                   Continue
                 </button>
@@ -594,7 +594,7 @@ export default function SSOSettings() {
                 <button
                   onClick={handleVerify}
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg fabric-gradient text-white font-medium disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Create Connection'}
                 </button>
