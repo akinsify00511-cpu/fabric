@@ -48,6 +48,7 @@ import Meetings from './pages/Meetings'
 import ProjectsNigeria from './pages/ProjectsNigeria'
 import InventoryNigeria from './pages/InventoryNigeria'
 import FinanceNigeria from './pages/FinanceNigeria'
+import Quotes from './pages/Quotes'
 import TrialBanner from './components/TrialBanner'
 import OwnerInsights from './pages/OwnerInsights'
 import FieldLocation from './pages/FieldLocation'
@@ -105,6 +106,7 @@ function AppRoutes() {
         <Route path="crm" element={<CRM />} />
         <Route path="projects" element={<ProjectsNigeria />} />
         <Route path="finance" element={<FinanceNigeria />} />
+        <Route path="quotes" element={<Quotes />} />
         <Route path="payments" element={<Payments />} />
         <Route path="people" element={<People />} />
         <Route path="inventory" element={<InventoryNigeria />} />
