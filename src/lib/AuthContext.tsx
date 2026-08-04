@@ -18,6 +18,7 @@ export type Staff = {
   job_title: string | null
   department?: string
   avatar_url?: string
+  plan?: 'free' | 'starter' | 'pro' | 'enterprise'
   is_admin?: boolean
   active?: boolean
   user?: any

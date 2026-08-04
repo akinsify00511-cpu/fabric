@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import AvenizeMark from './AvenizeMark'
 import NotificationBell from './NotificationBell'
@@ -30,8 +30,8 @@ const NAV_ITEMS = [
 
 const MOBILE_NAV_ITEMS = [
   { to: '/', end: true, icon: Home },
+  { to: '/chat', end: false, icon: ChatIcon },
   { to: '/more', end: false, icon: LayoutGrid },
-  { to: '/reports', end: false, icon: BarChart3 },
   { to: '/settings', end: false, icon: User },
 ]
 
@@ -136,8 +136,8 @@ export default function Shell() {
                 <Icon size={20} strokeWidth={2} />
                 <span className="text-[10px] font-medium">
                   {item.to === '/' ? 'Home' : 
-                   item.to === '/more' ? 'More' :
-                   item.to === '/reports' ? 'Reports' : 'Settings'}
+                   item.to === '/chat' ? 'Chat' :
+                   item.to === '/more' ? 'More' : 'Settings'}
                 </span>
               </NavLink>
             )
