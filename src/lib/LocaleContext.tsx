@@ -309,20 +309,35 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
     const loadLocale = async () => {
       setLoading(true)
-      const { data } = await supabase
-        .from('user_locale')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
+      try {
+        const { data, error } = await supabase
+          .from('user_locale')
+          .select('*')
+          .eq('user_id', userId)
+          .single()
 
-      if (data) {
-        setLocale(data as Locale)
-      } else {
-        // Create default locale
-        await supabase.from('user_locale').insert({
-          user_id: userId,
-          ...DEFAULT_LOCALE,
-        })
+        // If table doesn't exist (404), just use defaults
+        if (error?.code === 'PGRST116' || error?.code === '42P01') {
+          console.warn('user_locale table not found, using defaults')
+          setLoading(false)
+          return
+        }
+
+        if (data) {
+          setLocale(data as Locale)
+        } else {
+          // Try to create default locale
+          try {
+            await supabase.from('user_locale').insert({
+              user_id: userId,
+              ...DEFAULT_LOCALE,
+            })
+          } catch (insertErr) {
+            console.warn('Could not create user_locale:', insertErr)
+          }
+        }
+      } catch (err) {
+        console.warn('Locale load error:', err)
       }
       setLoading(false)
     }
@@ -336,16 +351,20 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     const newLocale = { ...locale, ...updates }
     setLocale(newLocale)
 
-    const { error } = await supabase
-      .from('user_locale')
-      .upsert({
-        user_id: userId,
-        ...newLocale,
-      })
+    try {
+      const { error } = await supabase
+        .from('user_locale')
+        .upsert({
+          user_id: userId,
+          ...newLocale,
+        })
 
-    if (error) {
-      console.error('Failed to update locale:', error)
-      setLocale(locale)
+      if (error && error.code !== 'PGRST116' && error.code !== '42P01') {
+        console.error('Failed to update locale:', error)
+        setLocale(locale)
+      }
+    } catch (err) {
+      console.warn('Locale update error:', err)
     }
   }, [userId, locale])
 

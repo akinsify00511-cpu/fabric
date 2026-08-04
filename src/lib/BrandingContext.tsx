@@ -73,14 +73,25 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     if (!staff?.business_id) return
 
     setLoading(true)
-    const { data } = await supabase
-      .from('business_branding')
-      .select('*')
-      .eq('business_id', staff.business_id)
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('business_branding')
+        .select('*')
+        .eq('business_id', staff.business_id)
+        .single()
 
-    if (data) {
-      setBranding({ ...DEFAULT_BRANDING, ...data } as Branding)
+      // If table doesn't exist (404), just use defaults
+      if (error?.code === 'PGRST116' || error?.code === '42P01') {
+        console.warn('business_branding table not found, using defaults')
+        setLoading(false)
+        return
+      }
+
+      if (data) {
+        setBranding({ ...DEFAULT_BRANDING, ...data } as Branding)
+      }
+    } catch (err) {
+      console.warn('Branding load error:', err)
     }
     setLoading(false)
   }, [staff?.business_id])
@@ -128,17 +139,21 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     const newBranding = { ...branding, ...updates }
     setBranding(newBranding)
 
-    const { error } = await supabase
-      .from('business_branding')
-      .upsert({
-        business_id: staff.business_id,
-        ...updates,
-      })
+    try {
+      const { error } = await supabase
+        .from('business_branding')
+        .upsert({
+          business_id: staff.business_id,
+          ...updates,
+        })
 
-    if (error) {
-      console.error('Failed to update branding:', error)
-      // Revert on error
-      setBranding(branding)
+      if (error && error.code !== 'PGRST116' && error.code !== '42P01') {
+        console.error('Failed to update branding:', error)
+        // Revert on error
+        setBranding(branding)
+      }
+    } catch (err) {
+      console.warn('Branding update error:', err)
     }
   }, [staff?.business_id, branding])
 
