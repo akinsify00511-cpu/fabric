@@ -516,7 +516,7 @@ export default function InventoryNigeria() {
                     type="text"
                     value={newItem.category}
                     onChange={(e) => setNewItem(prev => ({ ...prev, category: e.target.value }))}
-                    placeholder="e.g., Roofing Materials"
+                    placeholder="e.g., Construction Materials"
                     className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-sm"
                   />
                 </div>

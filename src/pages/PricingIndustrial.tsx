@@ -454,7 +454,7 @@ export default function PricingIndustrial() {
               color: '#FBF9F4',
             }}
           >
-            Your roofing crews are on sites you can't visit daily. Your factory runs out of resin without warning. Your agents chase leads in WhatsApp groups you can't see.{' '}
+            Your construction crews are on sites you can't visit daily. Your factory runs out of resin without warning. Your agents chase leads in WhatsApp groups you can't see.{' '}
             <span style={{ color: '#E8A33D' }}>Find out before it's an emergency.</span>
           </blockquote>
           

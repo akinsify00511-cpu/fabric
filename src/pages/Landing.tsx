@@ -818,7 +818,7 @@ function AlertsMockup() {
 // ============================================
 function ChatMockup() {
   const messages = [
-    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Roofing 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "#4F46E5" },
+    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Project 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "#4F46E5" },
     { initials: "WH", name: "Warehouse", role: "", message: "Chimic Plus delivered 500L resin. Stock updated. Factory notified.", color: "#EC4899" },
     { initials: "FN", name: "Finance", role: "", message: "GTBank alert: ₦450,000 received from ABC Holdings. Matches Invoice #147.", color: "#10B981" }
   ]

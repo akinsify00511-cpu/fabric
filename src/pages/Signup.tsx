@@ -286,7 +286,7 @@ export default function Signup() {
               className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/30 focus:border-[var(--avenize-primary)] bg-white"
             >
               <option value="">Select industry (optional)</option>
-              <option value="construction">Construction / Roofing</option>
+              <option value="construction">Construction</option>
               <option value="real_estate">Real Estate</option>
               <option value="manufacturing">Manufacturing</option>
               <option value="retail">Retail</option>

@@ -30,7 +30,7 @@ const STEPS = [
 ]
 
 const INDUSTRIES = [
-  { id: 'construction', name: 'Construction / Roofing', emoji: '🏗️' },
+  { id: 'construction', name: 'Construction', emoji: '🏗️' },
   { id: 'real_estate', name: 'Real Estate', emoji: '🏠' },
   { id: 'manufacturing', name: 'Manufacturing', emoji: '🏭' },
   { id: 'retail', name: 'Retail', emoji: '🛒' },

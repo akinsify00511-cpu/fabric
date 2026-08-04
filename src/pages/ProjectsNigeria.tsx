@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 // Nigerian Construction Pipeline
-type JobType = 'roofing' | 'restoration' | 'real_estate' | 'paint_production'
+type JobType = 'general' | 'restoration' | 'real_estate' | 'paint_production'
 type PipelineStage = 
   | 'enquiry' 
   | 'quoted' 
@@ -108,7 +108,7 @@ const PIPELINE_STAGES: { key: PipelineStage; label: string; color: string }[] = 
 ]
 
 const JOB_TYPE_LABELS: Record<JobType, string> = {
-  roofing: 'Roofing',
+  general: 'General',
   restoration: 'Restoration',
   real_estate: 'Real Estate',
   paint_production: 'Paint Production',
@@ -141,7 +141,7 @@ export default function ProjectsNigeria() {
     client_name: '',
     client_phone: '',
     client_email: '',
-    type: 'roofing' as JobType,
+    type: 'general' as JobType,
     location: '',
     estimated_value: 0,
     start_date: '',
@@ -209,7 +209,7 @@ export default function ProjectsNigeria() {
       setShowNewJob(false)
       setNewJob({
         title: '', client_name: '', client_phone: '', client_email: '',
-        type: 'roofing', location: '', estimated_value: 0, start_date: '', end_date: '',
+        type: 'construction', location: '', estimated_value: 0, start_date: '', end_date: '',
       })
       showToast('Job created!', 'success')
     } catch (err) {
@@ -286,7 +286,7 @@ export default function ProjectsNigeria() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium">Jobs & Projects</h1>
-          <p className="text-sm text-black/50">Track roofing, restoration, real estate, and paint production</p>
+          <p className="text-sm text-black/50">Track projects, restoration, real estate, and paint production</p>
         </div>
         <button
           onClick={() => setShowNewJob(true)}
@@ -358,7 +358,7 @@ export default function ProjectsNigeria() {
           className="px-4 py-2.5 rounded-xl border border-black/10 text-sm bg-white"
         >
           <option value="all">All Types</option>
-          <option value="roofing">Roofing</option>
+          <option value="construction">Construction</option>
           <option value="restoration">Restoration</option>
           <option value="real_estate">Real Estate</option>
           <option value="paint_production">Paint Production</option>
@@ -409,7 +409,7 @@ export default function ProjectsNigeria() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-mono text-black/40">{job.job_number}</span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      job.type === 'roofing' ? 'bg-blue-100 text-blue-700' :
+                      job.type === 'construction' ? 'bg-blue-100 text-blue-700' :
                       job.type === 'real_estate' ? 'bg-green-100 text-green-700' :
                       job.type === 'paint_production' ? 'bg-purple-100 text-purple-700' :
                       'bg-orange-100 text-orange-700'
@@ -471,7 +471,7 @@ export default function ProjectsNigeria() {
                   onChange={(e) => setNewJob(prev => ({ ...prev, type: e.target.value as JobType }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-sm"
                 >
-                  <option value="roofing">Roofing</option>
+                  <option value="construction">Construction</option>
                   <option value="restoration">Restoration</option>
                   <option value="real_estate">Real Estate</option>
                   <option value="paint_production">Paint Production</option>
