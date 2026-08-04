@@ -5,7 +5,7 @@ import AvenizeMark from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Home', end: true, icon: Home },
+  { to: '/', label: 'Dashboard', end: true, icon: Home },
   { to: '/chat', label: 'Chat', icon: MessageSquare },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare },
   { to: '/calendar', label: 'Calendar', icon: CalendarIcon },

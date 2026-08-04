@@ -4,7 +4,7 @@ import { MessageCircle, X, Send, Bot, User, Sparkles, ChevronDown } from 'lucide
 // Sarah's knowledge base
 const SARAH_KNOWLEDGE = {
   greetings: [
-    "Hi there! 👋 I'm Sarah, your Avenize assistant. How can I help you today?",
+    "Hi there! 👋 Sarah here! I'm your Avenize guide. How can I help you today?",
     "Hello! Welcome to Avenize! I'm Sarah, here to help you get the most out of your account.",
     "Hey! Great to see you! I'm Sarah. What would you like to know about Avenize?",
   ],
@@ -221,7 +221,7 @@ export default function SarahChat() {
               </div>
               <div>
                 <h3 className="font-bold">Sarah</h3>
-                <p className="text-xs text-white/80">AI Support Assistant</p>
+                <p className="text-xs text-white/80">AI-Assisted Helper</p>
               </div>
             </div>
             <button
