@@ -1,7 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { supabase } from './supabase'
-import AchievementToast, { useAchievementToasts } from '../components/AchievementToast'
-import OnboardingTour from '../components/OnboardingTour'
+import { createContext, useContext, useState, ReactNode } from 'react'
 
 type UserXP = {
   xp_total: number
@@ -24,70 +21,37 @@ type GamificationContextType = {
 
 const GamificationContext = createContext<GamificationContextType | undefined>(undefined)
 
+// Stub toast system
+const useAchievementToasts = () => ({
+  toasts: [],
+  dismissToast: () => {},
+  showAchievement: () => {},
+  showLevelUp: () => {},
+  showStreak: () => {},
+})
+
+// Stub onboarding tour
+const OnboardingTour = () => null
+
 export function GamificationProvider({ children }: { children: ReactNode }) {
-  const [xp, setXp] = useState<UserXP | null>(null)
-  const [isOnboardingComplete, setIsOnboardingComplete] = useState(false)
-  const [showOnboarding, setShowOnboarding] = useState(false)
-  const { toasts, dismissToast, showAchievement } = useAchievementToasts()
-
-  // Non-blocking XP loader - fires after session is ready
-  useEffect(() => {
-    let mounted = true
-
-    const loadXP = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user?.id || !mounted) return
-
-      // Fire and forget - don't block anything
-      try {
-        const { data } = await supabase
-          .from('user_xp')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single()
-
-        if (mounted && data) {
-          setXp(data as UserXP)
-        }
-      } catch {
-        // XP is optional - silently fail
-      }
-
-      // Check onboarding progress separately
-      try {
-        const { data } = await supabase
-          .from('onboarding_progress')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single()
-        
-        if (mounted) {
-          setIsOnboardingComplete(!!data)
-        }
-      } catch {
-        // Onboarding is optional
-      }
-    }
-
-    loadXP()
-
-    return () => { mounted = false }
-  }, [])
+  const [isOnboardingComplete] = useState(true) // Always complete - disabled
+  const [showOnboarding] = useState(false) // Never show
+  const { toasts, dismissToast } = useAchievementToasts()
 
   const awardXP = async () => {
-    // XP awarding is fire-and-forget
+    // XP disabled - fire and forget
   }
 
   const checkAchievements = async () => {
-    // Achievement checks are fire-and-forget
+    // Achievements disabled
   }
 
-  const completeOnboarding = () => setIsOnboardingComplete(true)
-  const startOnboarding = () => setShowOnboarding(true)
+  const completeOnboarding = () => {}
+  const startOnboarding = () => {}
 
   return (
     <GamificationContext.Provider value={{ 
-      xp, 
+      xp: null, 
       isOnboardingComplete, 
       showOnboarding, 
       completeOnboarding, 
@@ -98,14 +62,6 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       dismissToast 
     }}>
       {children}
-      <AchievementToast toasts={toasts} onDismiss={dismissToast} />
-      {showOnboarding && !isOnboardingComplete && (
-        <OnboardingTour 
-          isOpen={showOnboarding} 
-          onClose={() => setShowOnboarding(false)} 
-          onComplete={completeOnboarding} 
-        />
-      )}
     </GamificationContext.Provider>
   )
 }

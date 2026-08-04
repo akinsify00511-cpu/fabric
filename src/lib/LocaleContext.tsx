@@ -13,8 +13,6 @@ export const LANGUAGES: Language[] = [
   { code: 'en', name: 'English', nativeName: 'English', dir: 'ltr', flag: '🇺🇸' },
   { code: 'es', name: 'Spanish', nativeName: 'Español', dir: 'ltr', flag: '🇪🇸' },
   { code: 'fr', name: 'French', nativeName: 'Français', dir: 'ltr', flag: '🇫🇷' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', dir: 'ltr', flag: '🇩🇪' },
-  { code: 'pt', name: 'Portuguese', nativeName: 'Português', dir: 'ltr', flag: '🇧🇷' },
 ]
 
 type Locale = {
@@ -48,56 +46,20 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   const language = LANGUAGES.find((l) => l.code === locale.language) || LANGUAGES[0]
 
-  // Apply RTL direction to document
   useEffect(() => {
     document.documentElement.dir = language.dir
     document.documentElement.lang = language.code
   }, [language])
 
-  // Non-blocking locale loader - fires once session is ready
-  useEffect(() => {
-    let mounted = true
-
-    const loadLocale = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.user?.id || !mounted) return
-
-      // Fire and forget - don't block
-      try {
-        const { data } = await supabase
-          .from('user_locale')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .single()
-
-        if (mounted && data) {
-          setLocale(data as Locale)
-        }
-      } catch {
-        // Locale is optional - use defaults
-      }
-    }
-
-    loadLocale()
-    return () => { mounted = false }
+  // Completely disabled - don't try to load from DB
+  // This feature is disabled until tables are properly set up
+  
+  const setLanguage = useCallback(async (code: string) => {
+    setLocale(prev => ({ ...prev, language: code }))
   }, [])
 
-  const setLanguage = useCallback(async (code: string) => {
-    const newLocale = { ...locale, language: code }
-    setLocale(newLocale)
-    
-    // Fire and forget
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session?.user?.id) return
-    
-    supabase.from('user_locale').upsert({
-      user_id: session.user.id,
-      ...newLocale,
-    }).catch(() => {})
-  }, [locale])
-
   const t = useCallback((key: string): string => {
-    return key // Simplified - just return key for now
+    return key
   }, [])
 
   return (
