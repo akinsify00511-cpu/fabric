@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
-import { supabase } from './supabase'
 
 export type Language = {
   code: string
@@ -33,16 +32,18 @@ const DEFAULT_LOCALE: Locale = {
   timezone: 'Africa/Lagos',
 }
 
-const LocaleContext = createContext({
-  locale: DEFAULT_LOCALE,
-  loading: false,
-  setLanguage: async () => {},
-  t: (key: string) => key,
-} | undefined)
+type LocaleContextType = {
+  locale: Locale
+  loading: boolean
+  setLanguage: (code: string) => void
+  t: (key: string) => string
+}
+
+const LocaleContext = createContext<LocaleContextType | undefined>(undefined)
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>(DEFAULT_LOCALE)
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
 
   const language = LANGUAGES.find((l) => l.code === locale.language) || LANGUAGES[0]
 
@@ -51,10 +52,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = language.code
   }, [language])
 
-  // Completely disabled - don't try to load from DB
-  // This feature is disabled until tables are properly set up
-  
-  const setLanguage = useCallback(async (code: string) => {
+  const setLanguage = useCallback((code: string) => {
     setLocale(prev => ({ ...prev, language: code }))
   }, [])
 

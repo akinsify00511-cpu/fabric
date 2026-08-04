@@ -7,16 +7,20 @@ export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
 export type Staff = {
   id: string
+  user_id?: string
   business_id: string
+  business_name?: string
   full_name: string
   name?: string
   email?: string
+  phone?: string
   role: UserRole
   job_title: string | null
   department?: string
   avatar_url?: string
   is_admin?: boolean
   active?: boolean
+  user?: any
 }
 
 // Role permissions mapping
@@ -66,13 +70,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staffChecked, setStaffChecked] = useState(false)
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
     })
 
-    // Listen for auth changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
     })
@@ -81,20 +83,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchStaff = useCallback(async () => {
-    // Don't fetch if no session
     if (!session?.user?.id) {
       setStaff(null)
       setStaffChecked(true)
       return
     }
-    
+
     try {
       const { data } = await supabase
         .from('staff')
         .select('*')
         .eq('user_id', session.user.id)
         .maybeSingle()
-      setStaff(data as Staff | null)
+      
+      if (data) {
+        setStaff({ ...data, user: session.user } as Staff)
+      } else {
+        setStaff(null)
+      }
     } catch (err) {
       console.warn('Failed to fetch staff:', err)
       setStaff(null)
@@ -102,7 +108,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStaffChecked(true)
   }, [session])
 
-  // Fetch staff when session changes
   useEffect(() => {
     setStaffChecked(false)
     fetchStaff()
@@ -112,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
-  // Permission helpers based on current user's role
   const userRole = staff?.role || 'staff'
   const canManageStaff = hasPermission(userRole, 'manage_staff') || userRole === 'owner'
   const canApproveRequests = hasPermission(userRole, 'approve_requests') || userRole === 'owner'
@@ -120,12 +124,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const canManageSettings = hasPermission(userRole, 'manage_settings') || userRole === 'owner'
 
   return (
-    <AuthContext.Provider value={{ 
-      session, 
-      staff, 
-      loading, 
-      staffChecked, 
-      signOut, 
+    <AuthContext.Provider value={{
+      session,
+      staff,
+      loading,
+      staffChecked,
+      signOut,
       refreshStaff: fetchStaff,
       canManageStaff,
       canApproveRequests,
