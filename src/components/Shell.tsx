@@ -114,6 +114,36 @@ export default function Shell() {
       <main className="md:ml-56 p-4 md:p-8 pb-28 md:pb-8">
         <Outlet />
       </main>
+
+      {/* Mobile bottom navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-black/[0.06] px-2 py-2 z-20">
+        <div className="flex items-center justify-around">
+          {MOBILE_NAV_ITEMS.map((item) => {
+            const Icon = item.icon
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
+                    isActive
+                      ? 'text-indigo-600'
+                      : 'text-black/40'
+                  }`
+                }
+              >
+                <Icon size={20} strokeWidth={2} />
+                <span className="text-[10px] font-medium">
+                  {item.to === '/' ? 'Home' : 
+                   item.to === '/more' ? 'More' :
+                   item.to === '/reports' ? 'Reports' : 'Settings'}
+                </span>
+              </NavLink>
+            )
+          })}
+        </div>
+      </nav>
     </div>
   )
 }
