@@ -1,70 +1,84 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
 import { BrandingProvider } from './lib/BrandingContext'
 import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import ForgotPassword from './pages/ForgotPassword'
-import UpdatePassword from './pages/UpdatePassword'
-import Onboarding from './pages/Onboarding'
-import Join from './pages/Join'
-import AuthCallback from './pages/AuthCallback'
-import Dashboard from './pages/Dashboard'
-import CRM from './pages/CRM'
-import People from './pages/People'
-import Payments from './pages/Payments'
-import Pricing from './pages/Pricing'
-import Reports from './pages/Reports'
-import Settings from './pages/Settings'
-import Profile from './pages/Profile'
-import More from './pages/More'
-import Social from './pages/Social'
-import Tasks from './pages/Tasks'
-import Merit from './pages/Merit'
-import CashFlow from './pages/CashFlow'
-import Chat from './pages/Chat'
-import Knowledge from './pages/Knowledge'
-import Automations from './pages/Automations'
-import Tickets from './pages/Tickets'
-import Campaigns from './pages/Campaigns'
-import Accounting from './pages/Accounting'
-import BrandingSettings from './pages/BrandingSettings'
-import SecuritySettings from './pages/SecuritySettings'
-import SSOSettings from './pages/SSOSettings'
-import APISettings from './pages/APISettings'
-import CustomerPortal from './pages/CustomerPortal'
-import Calendar from './pages/Calendar'
-import Requisitions from './pages/Requisitions'
-import TimeTracking from './pages/TimeTracking'
-import Events from './pages/Events'
-import Monitoring from './pages/Monitoring'
-import Organogram from './pages/Organogram'
-import Landing from './pages/Landing'
-import LandingEnhanced from './pages/LandingEnhanced'
-import Meetings from './pages/Meetings'
-import ProjectsNigeria from './pages/ProjectsNigeria'
-import InventoryNigeria from './pages/InventoryNigeria'
-import FinanceNigeria from './pages/FinanceNigeria'
-import Quotes from './pages/Quotes'
-import TrialBanner from './components/TrialBanner'
-import OwnerInsights from './pages/OwnerInsights'
-import FieldLocation from './pages/FieldLocation'
-import LeadCapture from './pages/LeadCapture'
-import InvoicePreview from './components/InvoicePreview'
-import OnboardingWizard from './components/OnboardingWizard'
-import Premium from './pages/Premium'
-import SarahChat from './components/SarahChat'
-import ErrorBoundary from './components/ErrorBoundary'
-import CookieConsent from './components/CookieConsent'
-import NotFound from './pages/NotFound'
-import Privacy from './pages/Privacy'
-import Terms from './pages/Terms'
-import Contact from './pages/Contact'
-import CookiePolicy from './pages/CookiePolicy'
+
+// Lazy load heavy pages for code splitting
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
+const UpdatePassword = lazy(() => import('./pages/UpdatePassword'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
+const Join = lazy(() => import('./pages/Join'))
+const AuthCallback = lazy(() => import('./pages/AuthCallback'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const CRM = lazy(() => import('./pages/CRM'))
+const People = lazy(() => import('./pages/People'))
+const Payments = lazy(() => import('./pages/Payments'))
+const Pricing = lazy(() => import('./pages/Pricing'))
+const Reports = lazy(() => import('./pages/Reports'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Profile = lazy(() => import('./pages/Profile'))
+const More = lazy(() => import('./pages/More'))
+const Social = lazy(() => import('./pages/Social'))
+const Tasks = lazy(() => import('./pages/Tasks'))
+const Merit = lazy(() => import('./pages/Merit'))
+const CashFlow = lazy(() => import('./pages/CashFlow'))
+const Chat = lazy(() => import('./pages/Chat'))
+const Knowledge = lazy(() => import('./pages/Knowledge'))
+const Automations = lazy(() => import('./pages/Automations'))
+const Tickets = lazy(() => import('./pages/Tickets'))
+const Campaigns = lazy(() => import('./pages/Campaigns'))
+const Accounting = lazy(() => import('./pages/Accounting'))
+const BrandingSettings = lazy(() => import('./pages/BrandingSettings'))
+const SecuritySettings = lazy(() => import('./pages/SecuritySettings'))
+const SSOSettings = lazy(() => import('./pages/SSOSettings'))
+const APISettings = lazy(() => import('./pages/APISettings'))
+const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
+const Calendar = lazy(() => import('./pages/Calendar'))
+const Requisitions = lazy(() => import('./pages/Requisitions'))
+const TimeTracking = lazy(() => import('./pages/TimeTracking'))
+const Events = lazy(() => import('./pages/Events'))
+const Monitoring = lazy(() => import('./pages/Monitoring'))
+const Organogram = lazy(() => import('./pages/Organogram'))
+const Landing = lazy(() => import('./pages/Landing'))
+const LandingEnhanced = lazy(() => import('./pages/LandingEnhanced'))
+const Meetings = lazy(() => import('./pages/Meetings'))
+const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
+const InventoryNigeria = lazy(() => import('./pages/InventoryNigeria'))
+const FinanceNigeria = lazy(() => import('./pages/FinanceNigeria'))
+const Quotes = lazy(() => import('./pages/Quotes'))
+const TrialBanner = lazy(() => import('./components/TrialBanner'))
+const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
+const FieldLocation = lazy(() => import('./pages/FieldLocation'))
+const LeadCapture = lazy(() => import('./pages/LeadCapture'))
+const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
+const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
+const Premium = lazy(() => import('./pages/Premium'))
+const SarahChat = lazy(() => import('./components/SarahChat'))
+const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
+const CookieConsent = lazy(() => import('./components/CookieConsent'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const Privacy = lazy(() => import('./pages/Privacy'))
+const Terms = lazy(() => import('./pages/Terms'))
+const Contact = lazy(() => import('./pages/Contact'))
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy'))
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-10 h-10 border-3 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
+        <p className="text-sm text-black/50">Loading...</p>
+      </div>
+    </div>
+  )
+}
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
@@ -103,35 +117,36 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <ErrorBoundary>
-      <Routes>
-      <Route path="/" element={<LandingEnhanced />} />
-      <Route path="/v1" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/update-password" element={<UpdatePassword />} />
-      <Route path="/onboarding" element={<Onboarding />} />
-      <Route path="/join/:inviteId" element={<Join />} />
-      <Route path="/pricing" element={<Pricing />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
-      <Route path="/upgrade" element={<Premium />} />
-      <Route path="/owner-insights" element={<OwnerInsights />} />
-      <Route path="/field-location" element={<FieldLocation />} />
-      <Route path="/lead/:source?" element={<LeadCapture />} />
-      <Route path="/leads" element={<LeadCapture />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/cookies" element={<CookiePolicy />} />
-      <Route path="*" element={<NotFound />} />
-      <Route
-        path="/app"
-        element={
-          <RequireAuth>
-            <Shell />
-          </RequireAuth>
-        }
-      >
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+        <Route path="/" element={<LandingEnhanced />} />
+        <Route path="/v1" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
+        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/join/:inviteId" element={<Join />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/upgrade" element={<Premium />} />
+        <Route path="/owner-insights" element={<OwnerInsights />} />
+        <Route path="/field-location" element={<FieldLocation />} />
+        <Route path="/lead/:source?" element={<LeadCapture />} />
+        <Route path="/leads" element={<LeadCapture />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/cookies" element={<CookiePolicy />} />
+        <Route path="*" element={<NotFound />} />
+        <Route
+          path="/app"
+          element={
+            <RequireAuth>
+              <Shell />
+            </RequireAuth>
+          }
+        >
         <Route index element={<Dashboard />} />
         <Route path="crm" element={<CRM />} />
         <Route path="projects" element={<ProjectsNigeria />} />
@@ -166,8 +181,9 @@ function AppRoutes() {
         <Route path="monitoring" element={<Monitoring />} />
         <Route path="organogram" element={<Organogram />} />
         <Route path="meetings" element={<Meetings />} />
-      </Route>
-    </Routes>
+        </Route>
+        </Routes>
+      </Suspense>
     </ErrorBoundary>
   )
 }
