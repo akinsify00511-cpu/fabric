@@ -507,9 +507,9 @@ export default function FinanceNigeria() {
                         </span>
                       </div>
                       <button
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           e.stopPropagation()
-                          generateInvoicePDF(inv)
+                          await generateInvoicePDF({ ...inv, business_id: staff?.business_id })
                         }}
                         className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
                       >

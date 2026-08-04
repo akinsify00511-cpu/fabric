@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import { supabase } from './supabase'
 
 interface InvoiceItem {
   description: string
@@ -20,6 +21,7 @@ interface QuoteData {
   total: number
   valid_until: string
   issue_date?: string
+  business_id?: string
 }
 
 interface InvoiceData {
@@ -39,9 +41,55 @@ interface InvoiceData {
   due_date: string
   job_reference?: string
   notes?: string
+  business_id?: string
 }
 
-export function generateQuotePDF(quote: QuoteData): void {
+interface BrandingData {
+  custom_name: string | null
+  custom_tagline: string | null
+  logo_url: string | null
+  address: string | null
+  website: string | null
+  email: string | null
+  phone: string | null
+}
+
+async function getBranding(businessId?: string): Promise<BrandingData> {
+  if (!businessId) {
+    return {
+      custom_name: null,
+      custom_tagline: null,
+      logo_url: null,
+      address: null,
+      website: null,
+      email: null,
+      phone: null,
+    }
+  }
+  
+  const { data } = await supabase
+    .from('business_branding')
+    .select('custom_name, custom_tagline, logo_url, address, website, email, phone')
+    .eq('business_id', businessId)
+    .single()
+  
+  return data || {
+    custom_name: null,
+    custom_tagline: null,
+    logo_url: null,
+    address: null,
+    website: null,
+    email: null,
+    phone: null,
+  }
+}
+
+export async function generateQuotePDF(quote: QuoteData): Promise<void> {
+  const branding = await getBranding(quote.business_id)
+  const companyName = branding.custom_name || 'Your Business'
+  const tagline = branding.custom_tagline || ''
+  const address = branding.address || ''
+  
   const doc = new jsPDF()
   
   // Header
@@ -57,11 +105,14 @@ export function generateQuotePDF(quote: QuoteData): void {
   
   // Company info
   doc.setFont('helvetica', 'bold')
-  doc.text('Avenize', 140, 30)
+  doc.setFontSize(14)
+  doc.text(companyName, 140, 30)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
-  doc.text('Your Business Partner', 140, 37)
-  doc.text('Lagos, Nigeria', 140, 44)
+  if (tagline) doc.text(tagline, 140, 37)
+  if (address) doc.text(address, 140, tagline ? 44 : 37)
+  if (branding.email) doc.text(branding.email, 140, (tagline ? 44 : 37) + (address ? 7 : 0))
+  if (branding.phone) doc.text(branding.phone, 140, (tagline ? 44 : 37) + (address ? 14 : 7))
   
   // Bill To
   doc.setFontSize(11)
@@ -126,13 +177,17 @@ export function generateQuotePDF(quote: QuoteData): void {
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(128, 128, 128)
   doc.text('Thank you for your business!', 105, finalY + 45, { align: 'center' })
-  doc.text('Avenize - One app for your whole business', 105, finalY + 52, { align: 'center' })
+  if (branding.website) doc.text(branding.website, 105, finalY + 52, { align: 'center' })
   
   // Save
   doc.save(`Quote-${quote.quote_number}.pdf`)
 }
 
-export function generateInvoicePDF(invoice: InvoiceData): void {
+export async function generateInvoicePDF(invoice: InvoiceData): Promise<void> {
+  const branding = await getBranding(invoice.business_id)
+  const companyName = branding.custom_name || 'Your Business'
+  const tagline = branding.custom_tagline || ''
+  const address = branding.address || ''
   const doc = new jsPDF()
   
   // Header
@@ -148,11 +203,14 @@ export function generateInvoicePDF(invoice: InvoiceData): void {
   
   // Company info
   doc.setFont('helvetica', 'bold')
-  doc.text('Avenize', 140, 30)
+  doc.setFontSize(14)
+  doc.text(companyName, 140, 30)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(10)
-  doc.text('Your Business Partner', 140, 37)
-  doc.text('Lagos, Nigeria', 140, 44)
+  if (tagline) doc.text(tagline, 140, 37)
+  if (address) doc.text(address, 140, tagline ? 44 : 37)
+  if (branding.email) doc.text(branding.email, 140, (tagline ? 44 : 37) + (address ? 7 : 0))
+  if (branding.phone) doc.text(branding.phone, 140, (tagline ? 44 : 37) + (address ? 14 : 7))
   
   // Status badge
   const statusColors: Record<string, number[]> = {
@@ -262,7 +320,7 @@ export function generateInvoicePDF(invoice: InvoiceData): void {
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(128, 128, 128)
   doc.text('Thank you for your business!', 105, finalY + 85, { align: 'center' })
-  doc.text('Avenize - One app for your whole business', 105, finalY + 92, { align: 'center' })
+  if (branding.website) doc.text(branding.website, 105, finalY + 92, { align: 'center' })
   
   doc.save(`Invoice-${invoice.invoice_number}.pdf`)
 }

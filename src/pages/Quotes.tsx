@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Download } from 'lucide-react'
 import { useToast } from '../components/Toast'
+import { useAuth } from '../lib/AuthContext'
 import { isDemoMode, getDeals } from '../lib/Storage'
 import { DEMO_DEALS } from '../lib/DemoData'
 import { generateQuotePDF } from '../lib/PDFGenerator'
@@ -32,6 +33,7 @@ const formatCurrency = (amount: number) => {
 
 export default function Quotes() {
   const { success, error } = useToast()
+  const { staff } = useAuth()
   const [quotes, setQuotes] = useState<Quote[]>([])
   const [deals, setDeals] = useState<any[]>([])
   const [showNewQuote, setShowNewQuote] = useState(false)
@@ -284,7 +286,7 @@ export default function Quotes() {
                     </button>
                   )}
                   <button 
-                    onClick={() => generateQuotePDF(quote)}
+                    onClick={async () => await generateQuotePDF({ ...quote, business_id: staff?.business_id })}
                     className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition"
                   >
                     <Download size={14} /> PDF
