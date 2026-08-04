@@ -66,11 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staffChecked, setStaffChecked] = useState(false)
 
   useEffect(() => {
+    // Get initial session
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
     })
 
+    // Listen for auth changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
     })
@@ -79,20 +81,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchStaff = useCallback(async () => {
-    if (!session) {
+    // Don't fetch if no session
+    if (!session?.user?.id) {
       setStaff(null)
       setStaffChecked(true)
       return
     }
-    const { data } = await supabase
-      .from('staff')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .maybeSingle()
-    setStaff(data as Staff | null)
+    
+    try {
+      const { data } = await supabase
+        .from('staff')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle()
+      setStaff(data as Staff | null)
+    } catch (err) {
+      console.warn('Failed to fetch staff:', err)
+      setStaff(null)
+    }
     setStaffChecked(true)
   }, [session])
 
+  // Fetch staff when session changes
   useEffect(() => {
     setStaffChecked(false)
     fetchStaff()

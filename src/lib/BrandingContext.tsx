@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 import { supabase } from './supabase'
-import { useAuth } from './AuthContext'
 
 export type Branding = {
   logo_url: string | null
@@ -65,46 +64,68 @@ type BrandingContextType = {
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
-  const { staff } = useAuth()
   const [branding, setBranding] = useState<Branding>(DEFAULT_BRANDING)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [businessId, setBusinessId] = useState<string | null>(null)
 
-  const loadBranding = useCallback(async () => {
-    if (!staff?.business_id) return
-
-    setLoading(true)
-    try {
-      const { data, error } = await supabase
-        .from('business_branding')
-        .select('*')
-        .eq('business_id', staff.business_id)
-        .single()
-
-      // If table doesn't exist (404), just use defaults
-      if (error?.code === 'PGRST116' || error?.code === '42P01') {
-        console.warn('business_branding table not found, using defaults')
-        setLoading(false)
-        return
-      }
-
-      if (data) {
-        setBranding({ ...DEFAULT_BRANDING, ...data } as Branding)
-      }
-    } catch (err) {
-      console.warn('Branding load error:', err)
-    }
-    setLoading(false)
-  }, [staff?.business_id])
-
+  // Wait for auth and get business_id
   useEffect(() => {
-    loadBranding()
-  }, [loadBranding])
+    let mounted = true
 
-  // Apply CSS variables
+    const init = async () => {
+      // Get session
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user?.id || !mounted) return
+
+      // Get staff record for business_id
+      try {
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('business_id')
+          .eq('user_id', session.user.id)
+          .maybeSingle()
+
+        if (mounted && staffData?.business_id) {
+          setBusinessId(staffData.business_id)
+        }
+      } catch {
+        // Staff fetch failed - branding is optional
+      }
+    }
+
+    init()
+    return () => { mounted = false }
+  }, [])
+
+  // Load branding once we have business_id
+  useEffect(() => {
+    if (!businessId) return
+
+    const loadBranding = async () => {
+      setLoading(true)
+      try {
+        const { data } = await supabase
+          .from('business_branding')
+          .select('*')
+          .eq('business_id', businessId)
+          .single()
+
+        if (data) {
+          setBranding({ ...DEFAULT_BRANDING, ...data } as Branding)
+        }
+      } catch {
+        // Branding is optional - use defaults
+      }
+      setLoading(false)
+    }
+
+    loadBranding()
+  }, [businessId])
+
+  // Apply CSS variables when branding changes
   useEffect(() => {
     const root = document.documentElement
     
-    // Determine if dark mode
     const isDark = branding.theme_mode === 'dark' || 
       (branding.theme_mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     
@@ -122,67 +143,50 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
       root.style.setProperty('--avenize-text', branding.text_color)
     }
 
-    // Apply gradient using primary and accent
     root.style.setProperty('--avenize-accent-start', branding.primary_color)
     root.style.setProperty('--avenize-accent-end', branding.accent_color)
     root.style.setProperty('--avenize-offwhite', branding.background_color)
-
-    // Apply border radius
-    const radiusMap = { none: '0', sm: '0.125rem', md: '0.375rem', lg: '0.5rem', xl: '0.75rem', '2xl': '1rem' }
-    root.style.setProperty('--avenize-radius', radiusMap[branding.border_radius] || '0.5rem')
-
   }, [branding])
 
   const updateBranding = useCallback(async (updates: Partial<Branding>) => {
-    if (!staff?.business_id) return
-
     const newBranding = { ...branding, ...updates }
     setBranding(newBranding)
 
-    try {
-      const { error } = await supabase
-        .from('business_branding')
-        .upsert({
-          business_id: staff.business_id,
-          ...updates,
-        })
+    if (!businessId) return
 
-      if (error && error.code !== 'PGRST116' && error.code !== '42P01') {
-        console.error('Failed to update branding:', error)
-        // Revert on error
-        setBranding(branding)
-      }
-    } catch (err) {
-      console.warn('Branding update error:', err)
-    }
-  }, [staff?.business_id, branding])
+    // Fire and forget
+    supabase.from('business_branding').upsert({
+      business_id: businessId,
+      ...updates,
+    }).catch(() => {})
+  }, [branding, businessId])
 
   const uploadLogo = useCallback(async (file: File): Promise<string | null> => {
-    if (!staff?.business_id) return null
+    if (!businessId) return null
 
     const ext = file.name.split('.').pop()
-    const path = `branding/${staff.business_id}/logo.${ext}`
+    const path = `branding/${businessId}/logo.${ext}`
 
-    const { error: uploadError } = await supabase.storage
-      .from('business-assets')
+    const { error } = await supabase.storage
+      .from('assets')
       .upload(path, file, { upsert: true })
 
-    if (uploadError) {
-      console.error('Failed to upload logo:', uploadError)
-      return null
-    }
+    if (error) return null
 
-    const { data: urlData } = supabase.storage
-      .from('business-assets')
-      .getPublicUrl(path)
+    const { data } = supabase.storage.from('assets').getPublicUrl(path)
+    const logoUrl = data.publicUrl
 
-    await updateBranding({ logo_url: urlData.publicUrl })
-    return urlData.publicUrl
-  }, [staff?.business_id, updateBranding])
+    await updateBranding({ logo_url: logoUrl })
+    return logoUrl
+  }, [businessId, updateBranding])
 
   const resetBranding = useCallback(async () => {
-    await updateBranding(DEFAULT_BRANDING)
-  }, [updateBranding])
+    setBranding(DEFAULT_BRANDING)
+    
+    if (businessId) {
+      supabase.from('business_branding').delete().eq('business_id', businessId).catch(() => {})
+    }
+  }, [businessId])
 
   return (
     <BrandingContext.Provider value={{ branding, loading, updateBranding, uploadLogo, resetBranding }}>
@@ -193,8 +197,6 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
 
 export function useBranding() {
   const context = useContext(BrandingContext)
-  if (context === undefined) {
-    throw new Error('useBranding must be used within a BrandingProvider')
-  }
+  if (!context) throw new Error('useBranding must be used within BrandingProvider')
   return context
 }
