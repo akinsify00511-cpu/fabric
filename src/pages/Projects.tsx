@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 
 type Project = {
   id: string
@@ -8,21 +9,48 @@ type Project = {
   created_at: string
 }
 
+// Demo projects
+const DEMO_PROJECTS: Project[] = [
+  { id: '1', name: 'Website Redesign', status: 'active', created_at: new Date().toISOString() },
+  { id: '2', name: 'Mobile App v2', status: 'active', created_at: new Date().toISOString() },
+  { id: '3', name: 'Marketing Campaign Q4', status: 'on_hold', created_at: new Date().toISOString() },
+  { id: '4', name: 'CRM Integration', status: 'done', created_at: new Date().toISOString() },
+]
+
 export default function Projects() {
+  const { isDemo } = useAuth()
   const [projects, setProjects] = useState<Project[]>([])
   const [name, setName] = useState('')
 
   const load = async () => {
-    const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
-    setProjects((data as Project[]) ?? [])
+    if (isDemo) {
+      setProjects(DEMO_PROJECTS)
+      return
+    }
+    try {
+      const { data } = await supabase.from('projects').select('*').order('created_at', { ascending: false })
+      if (data && data.length > 0) {
+        setProjects(data as Project[])
+      } else {
+        setProjects(DEMO_PROJECTS)
+      }
+    } catch {
+      setProjects(DEMO_PROJECTS)
+    }
   }
 
   useEffect(() => {
     load()
-  }, [])
+  }, [isDemo])
 
   const addProject = async () => {
     if (!name.trim()) return
+    if (isDemo) {
+      const newProject: Project = { id: `demo-${Date.now()}`, name, status: 'active', created_at: new Date().toISOString() }
+      setProjects(prev => [newProject, ...prev])
+      setName('')
+      return
+    }
     await supabase.from('projects').insert({ name, status: 'active' })
     setName('')
     load()

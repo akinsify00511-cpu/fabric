@@ -1,24 +1,65 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Product } from '../lib/types'
+import { useAuth } from '../lib/AuthContext'
+
+// Local type for demo products
+type DemoProduct = {
+  id: string
+  name: string
+  price: number
+  stock: number
+  sku?: string
+  category?: string
+}
+
+// Demo products
+const DEMO_PRODUCTS: DemoProduct[] = [
+  { id: '1', name: 'Widget Pro', price: 29.99, stock: 150, sku: 'WGT-001', category: 'Electronics' },
+  { id: '2', name: 'Gadget Plus', price: 49.99, stock: 75, sku: 'GDT-002', category: 'Electronics' },
+  { id: '3', name: 'Smart Module', price: 99.99, stock: 30, sku: 'SMD-003', category: 'Components' },
+  { id: '4', name: 'Basic Kit', price: 19.99, stock: 200, sku: 'KIT-004', category: 'Starter' },
+  { id: '5', name: 'Premium Bundle', price: 199.99, stock: 15, sku: 'BDL-005', category: 'Bundle' },
+]
 
 export default function Inventory() {
-  const [products, setProducts] = useState<Product[]>([])
+  const { isDemo } = useAuth()
+  const [products, setProducts] = useState<DemoProduct[]>([])
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [stock, setStock] = useState('')
 
   const load = async () => {
-    const { data } = await supabase.from('products').select('*').order('name')
-    setProducts((data as Product[]) ?? [])
+    if (isDemo) {
+      setProducts(DEMO_PRODUCTS)
+      return
+    }
+    try {
+      const { data } = await supabase.from('products').select('*').order('name')
+      if (data && data.length > 0) {
+        setProducts(data as DemoProduct[])
+      } else {
+        setProducts(DEMO_PRODUCTS)
+      }
+    } catch {
+      setProducts(DEMO_PRODUCTS)
+    }
   }
 
   useEffect(() => {
     load()
-  }, [])
+  }, [isDemo])
 
   const addProduct = async () => {
     if (!name.trim()) return
+    if (isDemo) {
+      const newProduct: DemoProduct = { id: `demo-${Date.now()}`, name, price: Number(price) || 0, stock: Number(stock) || 0 }
+      setProducts(prev => [...prev, newProduct])
+      setName('')
+      setPrice('')
+      setStock('')
+      return
+    }
     await supabase.from('products').insert({
       name,
       price: Number(price) || 0,
@@ -30,7 +71,11 @@ export default function Inventory() {
     load()
   }
 
-  const adjustStock = async (product: Product, delta: number) => {
+  const adjustStock = async (product: DemoProduct, delta: number) => {
+    if (isDemo) {
+      setProducts(prev => prev.map(p => p.id === product.id ? { ...p, stock: Math.max(0, p.stock + delta) } : p))
+      return
+    }
     const newQty = Math.max(0, product.stock + delta)
     await supabase.from('products').update({ stock: newQty }).eq('id', product.id)
     await supabase.from('stock_movements').insert({
@@ -76,7 +121,7 @@ export default function Inventory() {
 
       <div className="bg-white rounded-2xl border border-black/5 divide-y divide-black/5">
         {products.map((p) => {
-          const low = p.stock <= p.low_stock_threshold
+          const low = p.stock <= 20 // Default low stock threshold for demo
           return (
             <div key={p.id} className="px-4 py-3 flex items-center justify-between text-sm">
               <div>

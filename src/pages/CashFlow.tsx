@@ -28,8 +28,24 @@ const CATEGORIES = {
   expense: ['Payroll', 'Marketing', 'Operations', 'Software', 'Facilities', 'Travel', 'Cost of Goods', 'Other Expense'],
 }
 
+// Demo data
+const DEMO_ENTRIES: CashFlowEntry[] = [
+  { id: '1', type: 'income', category: 'Sales', amount: 15000, description: 'Product sales - Apex Corp', date: new Date().toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+  { id: '2', type: 'income', category: 'Services', amount: 8500, description: 'Consulting services', date: new Date().toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+  { id: '3', type: 'expense', category: 'Payroll', amount: 25000, description: 'Staff salaries', date: new Date().toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+  { id: '4', type: 'expense', category: 'Marketing', amount: 3500, description: 'Google Ads campaign', date: new Date().toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+  { id: '5', type: 'income', category: 'Subscriptions', amount: 4200, description: 'Monthly subscription revenue', date: new Date(Date.now() - 86400000).toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+  { id: '6', type: 'expense', category: 'Software', amount: 890, description: 'SaaS tools subscription', date: new Date(Date.now() - 86400000).toISOString().split('T')[0], staff_id: null, created_at: new Date().toISOString() },
+]
+
+const DEMO_MONTHLY: MonthlyTotal[] = [
+  { month: new Date().toISOString().substring(0, 7), income: 27700, expense: 29390, net: -1690 },
+  { month: new Date(Date.now() - 30 * 86400000).toISOString().substring(0, 7), income: 45000, expense: 32000, net: 13000 },
+  { month: new Date(Date.now() - 60 * 86400000).toISOString().substring(0, 7), income: 38000, expense: 28500, net: 9500 },
+]
+
 export default function CashFlow() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [entries, setEntries] = useState<CashFlowEntry[]>([])
@@ -43,31 +59,44 @@ export default function CashFlow() {
 
   const load = async () => {
     setLoading(true)
-    const { data } = await supabase
-      .from('cashflow_entries')
-      .select('*')
-      .order('date', { ascending: false })
-      .limit(100)
-    const entriesData = (data as CashFlowEntry[]) ?? []
-    setEntries(entriesData)
 
-    // Calculate monthly totals
-    const monthly: Record<string, { income: number; expense: number }> = {}
-    entriesData.forEach((e) => {
-      const month = e.date.substring(0, 7)
-      if (!monthly[month]) monthly[month] = { income: 0, expense: 0 }
-      if (e.type === 'income') monthly[month].income += e.amount
-      else monthly[month].expense += e.amount
-    })
-    const monthlyTotals = Object.entries(monthly)
-      .map(([month, data]) => ({
-        month,
-        income: data.income,
-        expense: data.expense,
-        net: data.income - data.expense,
-      }))
-      .sort((a, b) => b.month.localeCompare(a.month))
-    setMonthlyData(monthlyTotals)
+    if (isDemo) {
+      setEntries(DEMO_ENTRIES)
+      setMonthlyData(DEMO_MONTHLY)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { data } = await supabase
+        .from('cashflow_entries')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(100)
+      const entriesData = (data as CashFlowEntry[]) ?? []
+      setEntries(entriesData)
+
+      // Calculate monthly totals
+      const monthly: Record<string, { income: number; expense: number }> = {}
+      entriesData.forEach((e) => {
+        const month = e.date.substring(0, 7)
+        if (!monthly[month]) monthly[month] = { income: 0, expense: 0 }
+        if (e.type === 'income') monthly[month].income += e.amount
+        else monthly[month].expense += e.amount
+      })
+      const monthlyTotals = Object.entries(monthly)
+        .map(([month, data]) => ({
+          month,
+          income: data.income,
+          expense: data.expense,
+          net: data.income - data.expense,
+        }))
+        .sort((a, b) => b.month.localeCompare(a.month))
+      setMonthlyData(monthlyTotals)
+    } catch {
+      setEntries(DEMO_ENTRIES)
+      setMonthlyData(DEMO_MONTHLY)
+    }
     setLoading(false)
   }
 

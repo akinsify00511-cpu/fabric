@@ -37,8 +37,20 @@ const LEAVE_TYPES = [
   { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-gray-100 text-gray-600' },
 ]
 
+// Demo data
+const DEMO_ENTRIES: TimeEntry[] = [
+  { id: 'te-1', description: 'Team standup meeting', start_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(9, 30, 0, 0)).toISOString(), duration_minutes: 30, billable: false, tags: ['meeting'], project: { name: 'General' } },
+  { id: 'te-2', description: 'Client proposal work', start_time: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(12, 30, 0, 0)).toISOString(), duration_minutes: 150, billable: true, tags: ['client'], project: { name: 'Apex Corp' } },
+  { id: 'te-3', description: 'Code review session', start_time: new Date(new Date().setHours(13, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), duration_minutes: 60, billable: true, tags: ['development'], project: { name: 'Website Redesign' } },
+  { id: 'te-4', description: 'Documentation updates', start_time: new Date(new Date().setHours(14, 30, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(16, 0, 0, 0)).toISOString(), duration_minutes: 90, billable: false, tags: ['admin'], project: { name: 'General' } },
+]
+
+const DEMO_SUMMARIES: DailySummary[] = [
+  { date: new Date().toISOString().split('T')[0], total_minutes: 330, billable_minutes: 240, non_billable_minutes: 90, target_minutes: 480, goal_met: false },
+]
+
 export default function TimeTracking() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [activeEntry, setActiveEntry] = useState<TimeEntry | null>(null)
@@ -85,38 +97,55 @@ export default function TimeTracking() {
   async function loadData() {
     setLoading(true)
 
-    // Check for active entry
-    const { data: active } = await supabase.rpc('get_active_time_entry')
-    if (active && active.length > 0) {
-      setActiveEntry(active[0] as TimeEntry)
-      const start = new Date(active[0].start_time).getTime()
-      setElapsed(Math.floor((Date.now() - start) / 1000))
+    // Use demo data for demo mode
+    if (isDemo || !staff?.id) {
+      setEntries(DEMO_ENTRIES)
+      setSummaries(DEMO_SUMMARIES)
+      setLoading(false)
+      return
     }
 
-    // Load entries for the week
-    const startDate = weekStart.toISOString().split('T')[0]
-    const endDate = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    try {
+      // Check for active entry
+      const { data: active } = await supabase.rpc('get_active_time_entry')
+      if (active && active.length > 0) {
+        setActiveEntry(active[0] as TimeEntry)
+        const start = new Date(active[0].start_time).getTime()
+        setElapsed(Math.floor((Date.now() - start) / 1000))
+      }
 
-    const { data: entriesData } = await supabase
-      .from('time_entries')
-      .select('*, task:tasks(title), project:projects(name)')
-      .eq('staff_id', staff?.id)
-      .gte('start_time', startDate)
-      .lte('start_time', endDate)
-      .order('start_time', { ascending: false })
+      // Load entries for the week
+      const startDate = weekStart.toISOString().split('T')[0]
+      const endDate = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
-    setEntries((entriesData as any[]) ?? [])
+      const { data: entriesData } = await supabase
+        .from('time_entries')
+        .select('*, task:tasks(title), project:projects(name)')
+        .eq('staff_id', staff?.id)
+        .gte('start_time', startDate)
+        .lte('start_time', endDate)
+        .order('start_time', { ascending: false })
 
-    // Load daily summaries
-    const { data: summaryData } = await supabase
-      .from('daily_time_summaries')
-      .select('*')
-      .eq('staff_id', staff?.id)
-      .gte('date', startDate)
-      .lte('date', endDate)
-      .order('date')
+      if (entriesData && entriesData.length > 0) {
+        setEntries(entriesData as any[])
+      }
 
-    setSummaries((summaryData as DailySummary[]) ?? [])
+      // Load daily summaries
+      const { data: summaryData } = await supabase
+        .from('daily_time_summaries')
+        .select('*')
+        .eq('staff_id', staff?.id)
+        .gte('date', startDate)
+        .lte('date', endDate)
+        .order('date')
+
+      if (summaryData) {
+        setSummaries(summaryData as DailySummary[])
+      }
+    } catch {
+      setEntries(DEMO_ENTRIES)
+      setSummaries(DEMO_SUMMARIES)
+    }
     setLoading(false)
   }
 

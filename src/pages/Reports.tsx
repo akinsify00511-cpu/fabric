@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
+
+// Demo stats
+const DEMO_STATS = {
+  dealsWon: 12,
+  revenueClosed: 142500,
+  invoicesPaid: 8,
+  invoicesOutstanding: 5,
+}
 
 export default function Reports() {
+  const { isDemo } = useAuth()
   const [stats, setStats] = useState({
     dealsWon: 0,
     revenueClosed: 0,
@@ -11,20 +21,29 @@ export default function Reports() {
 
   useEffect(() => {
     const load = async () => {
-      const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }] = await Promise.all([
-        supabase.from('deals').select('value').eq('stage', 'won'),
-        supabase.from('invoices').select('total').eq('status', 'paid'),
-        supabase.from('invoices').select('total').in('status', ['sent', 'overdue']),
-      ])
-      setStats({
-        dealsWon: wonDeals?.length ?? 0,
-        revenueClosed: (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0),
-        invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
-        invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
-      })
+      if (isDemo) {
+        setStats(DEMO_STATS)
+        return
+      }
+
+      try {
+        const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }] = await Promise.all([
+          supabase.from('deals').select('value').eq('stage', 'won'),
+          supabase.from('invoices').select('total').eq('status', 'paid'),
+          supabase.from('invoices').select('total').in('status', ['sent', 'overdue']),
+        ])
+        setStats({
+          dealsWon: wonDeals?.length ?? 0,
+          revenueClosed: (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0),
+          invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
+          invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
+        })
+      } catch {
+        setStats(DEMO_STATS)
+      }
     }
     load()
-  }, [])
+  }, [isDemo])
 
   const rows = [
     { label: 'Deals won', value: stats.dealsWon },
