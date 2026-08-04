@@ -59,6 +59,12 @@ import OnboardingWizard from './components/OnboardingWizard'
 import Premium from './pages/Premium'
 import SarahChat from './components/SarahChat'
 import ErrorBoundary from './components/ErrorBoundary'
+import CookieConsent from './components/CookieConsent'
+import NotFound from './pages/NotFound'
+import Privacy from './pages/Privacy'
+import Terms from './pages/Terms'
+import Contact from './pages/Contact'
+import CookiePolicy from './pages/CookiePolicy'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
@@ -113,6 +119,11 @@ function AppRoutes() {
       <Route path="/field-location" element={<FieldLocation />} />
       <Route path="/lead/:source?" element={<LeadCapture />} />
       <Route path="/leads" element={<LeadCapture />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/cookies" element={<CookiePolicy />} />
+      <Route path="*" element={<NotFound />} />
       <Route
         path="/app"
         element={
@@ -169,6 +180,7 @@ export default function App() {
           <BrandingProvider>
             <LocaleProvider>
               <BrowserRouter>
+                <CookieConsent />
                 <AppRoutes />
               </BrowserRouter>
             </LocaleProvider>
