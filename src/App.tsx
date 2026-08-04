@@ -49,6 +49,7 @@ import ProjectsNigeria from './pages/ProjectsNigeria'
 import InventoryNigeria from './pages/InventoryNigeria'
 import FinanceNigeria from './pages/FinanceNigeria'
 import TrialBanner from './components/TrialBanner'
+import Premium from './pages/Premium'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -79,6 +80,7 @@ function AppRoutes() {
       <Route path="/join/:inviteId" element={<Join />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/upgrade" element={<Premium />} />
       <Route
         path="/app"
         element={

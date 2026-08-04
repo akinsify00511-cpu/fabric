@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import AvenizeMark from './AvenizeMark'
 import NotificationBell from './NotificationBell'
@@ -37,8 +37,6 @@ const MOBILE_NAV_ITEMS = [
 
 export default function Shell() {
   const { staff, signOut } = useAuth()
-
-  // Get company name from staff record or business
   const companyName = staff?.business_name || 'My Company'
 
   return (
@@ -75,6 +73,18 @@ export default function Shell() {
             )
           })}
         </nav>
+        
+        {/* Upgrade CTA */}
+        <div className="px-3 pb-3">
+          <a
+            href="/upgrade"
+            className="flex items-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium hover:shadow-lg transition"
+          >
+            <Crown size={16} />
+            <span>Upgrade to Pro</span>
+          </a>
+        </div>
+        
         <div className="px-5 py-4 border-t border-black/[0.06] text-xs text-black/40">
           <p className="text-black/60 truncate">{staff?.full_name ?? staff?.name ?? '...'}</p>
           <p className="text-black/40 text-[10px] capitalize">{staff?.role || 'Staff'}</p>

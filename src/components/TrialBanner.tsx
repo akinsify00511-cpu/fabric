@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Crown } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const TRIAL_DAYS = 14
 
@@ -8,14 +9,11 @@ export default function TrialBanner() {
   const [daysLeft, setDaysLeft] = useState(TRIAL_DAYS)
 
   useEffect(() => {
-    // Check if trial has been started
     const trialStart = localStorage.getItem('avenize_trial_start')
     if (!trialStart) {
-      // Start new trial
       localStorage.setItem('avenize_trial_start', Date.now().toString())
       setVisible(true)
     } else {
-      // Check days remaining
       const daysPassed = Math.floor((Date.now() - parseInt(trialStart)) / (1000 * 60 * 60 * 24))
       const remaining = TRIAL_DAYS - daysPassed
       setDaysLeft(Math.max(0, remaining))
@@ -23,28 +21,31 @@ export default function TrialBanner() {
     }
   }, [])
 
-  const dismiss = () => {
-    setVisible(false)
-    localStorage.setItem('avenize_trial_dismissed', 'true')
-  }
+  const dismiss = () => setVisible(false)
 
   if (!visible) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 z-40">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm">
-          <Crown size={16} />
+    <div className="fixed bottom-12 md:bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 z-40">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 text-sm">
+          <Crown size={20} />
           <span>
-            <strong>{daysLeft} days left</strong> in your free trial. Enjoy all premium features!
+            <strong>{daysLeft} days left</strong> in your free trial • 
+            Unlock all premium features!
           </span>
         </div>
-        <button
-          onClick={dismiss}
-          className="p-1 hover:bg-white/20 rounded transition"
-        >
-          <X size={16} />
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/upgrade"
+            className="px-4 py-1.5 bg-white text-indigo-600 text-sm font-medium rounded-lg hover:bg-white/90 transition"
+          >
+            Upgrade Now
+          </Link>
+          <button onClick={dismiss} className="p-1 hover:bg-white/20 rounded transition">
+            <X size={16} />
+          </button>
+        </div>
       </div>
     </div>
   )
