@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { TrendingUp, Users, DollarSign, Target, Clock, ArrowRight, CheckSquare, AlertCircle, Star, FileText, TrendingDown, Calendar } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
+import { DEMO_STATS } from '../lib/DemoData'
 
 const QUICK_ACTIONS: Record<string, {icon: any, label: string, href: string, color: string}[]> = {
   owner: [
@@ -72,11 +73,19 @@ const UPCOMING = [
 ]
 
 export default function Dashboard() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const [roleView, setRoleView] = useState<'owner' | 'sales' | 'finance' | 'hr'>('owner')
 
-  const stats = STATS_CARDS[roleView]
-  const actions = QUICK_ACTIONS[roleView]
+  // Use demo stats for demo mode
+  const ownerStats = isDemo ? [
+    { label: 'Revenue This Month', value: `₦${(DEMO_STATS.revenue.value / 1000000).toFixed(1)}M`, change: `+${DEMO_STATS.revenue.change}%`, up: true, icon: DollarSign },
+    { label: 'Active Deals', value: String(DEMO_STATS.active_deals.value), change: `+${DEMO_STATS.active_deals.change}`, up: true, icon: Target },
+    { label: 'Pending Tasks', value: String(DEMO_STATS.tasks_pending.value), change: `${DEMO_STATS.tasks_pending.change} new`, up: false, icon: CheckSquare },
+    { label: 'Team Members', value: String(DEMO_STATS.team_active.value), change: '+0', up: true, icon: Users },
+  ] : STATS_CARDS.owner
+
+  const stats = isDemo ? ownerStats : STATS_CARDS[roleView]
+  const actions = isDemo ? QUICK_ACTIONS.owner : QUICK_ACTIONS[roleView]
 
   const getRoleLabel = () => {
     switch(roleView) {
@@ -89,6 +98,12 @@ export default function Dashboard() {
 
   return (
     <div>
+      {isDemo && (
+        <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-4 mb-6 text-white">
+          <p className="font-medium">🎯 Demo Mode Active</p>
+          <p className="text-sm opacity-90">This is sample data for demonstration. All actions are read-only.</p>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
@@ -96,22 +111,24 @@ export default function Dashboard() {
           </h1>
           <p className="text-gray-500">Here's what's happening with your business today.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {(['owner', 'sales', 'finance', 'hr'] as const).map((role) => (
-            <button
-              key={role}
-              onClick={() => setRoleView(role)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                roleView === role ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {role === 'owner' && '👤 Owner'}
-              {role === 'sales' && '💼 Sales'}
-              {role === 'finance' && '💰 Finance'}
-              {role === 'hr' && '👥 HR'}
-            </button>
-          ))}
-        </div>
+        {!isDemo && (
+          <div className="flex flex-wrap gap-2">
+            {(['owner', 'sales', 'finance', 'hr'] as const).map((role) => (
+              <button
+                key={role}
+                onClick={() => setRoleView(role)}
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                  roleView === role ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {role === 'owner' && '👤 Owner'}
+                {role === 'sales' && '💼 Sales'}
+                {role === 'finance' && '💰 Finance'}
+                {role === 'hr' && '👥 HR'}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-4 mb-6 text-white">

@@ -52,6 +52,7 @@ type AuthContextValue = {
   staff: Staff | null
   loading: boolean
   staffChecked: boolean
+  isDemo: boolean
   signOut: () => Promise<void>
   refreshStaff: () => Promise<void>
   // Helper functions
@@ -68,8 +69,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [loading, setLoading] = useState(true)
   const [staffChecked, setStaffChecked] = useState(false)
+  const [isDemo, setIsDemo] = useState(false)
 
   useEffect(() => {
+    // Check for demo mode
+    const demoMode = localStorage.getItem('avenize_demo') === 'true'
+    const demoUser = localStorage.getItem('avenize_demo_user')
+    
+    if (demoMode && demoUser) {
+      try {
+        const user = JSON.parse(demoUser)
+        setIsDemo(true)
+        setStaff({
+          id: user.id,
+          user_id: user.id,
+          business_id: user.business_id,
+          business_name: user.business_name,
+          full_name: user.name,
+          email: user.email,
+          role: 'owner',
+          job_title: 'Business Owner',
+        } as Staff)
+        setStaffChecked(true)
+        setLoading(false)
+        return
+      } catch (e) {
+        console.warn('Failed to parse demo user')
+      }
+    }
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
@@ -85,6 +113,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchStaff = useCallback(async () => {
     if (!session?.user?.id) {
       setStaff(null)
+      setStaffChecked(true)
+      return
+    }
+
+    // Skip for demo mode (already set in useEffect)
+    if (isDemo) {
       setStaffChecked(true)
       return
     }
@@ -106,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStaff(null)
     }
     setStaffChecked(true)
-  }, [session])
+  }, [session, isDemo])
 
   useEffect(() => {
     setStaffChecked(false)
@@ -129,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       staff,
       loading,
       staffChecked,
+      isDemo,
       signOut,
       refreshStaff: fetchStaff,
       canManageStaff,
