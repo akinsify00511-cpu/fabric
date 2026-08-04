@@ -24,7 +24,7 @@ const SARAH_KNOWLEDGE = {
   pricing: {
     free: "The Free plan includes: Basic Dashboard, up to 5 team members, CRM basics, task management, and 50MB storage. Great for getting started! 🚀",
     pro: "Pro plan (₦39/month yearly or ₦49/month) unlocks: Unlimited team members, advanced analytics, priority support, custom branding, API access, time tracking, invoicing & payments, and enterprise security! ⭐",
-    trial: "You have a 14-day free trial to experience all Pro features. No credit card required to start! 🎁",
+    trial: "You have a 7-day free trial to experience all Pro features. No credit card required to start! 🎁",
   },
   
   onboarding: [

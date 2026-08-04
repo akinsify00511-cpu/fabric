@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Crown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-const TRIAL_DAYS = 14
+const TRIAL_DAYS = 7
 
 export default function TrialBanner() {
   const [visible, setVisible] = useState(false)
