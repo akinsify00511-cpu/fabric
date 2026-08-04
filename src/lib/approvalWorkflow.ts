@@ -188,7 +188,7 @@ export async function createApprovalRequest(
       rule_id: rule?.id,
       metadata,
     })
-    .select('*, requester:staff(full_name, email)')
+    .select('*, requester:staff(name, email)')
     .single()
 
   if (error) throw error
@@ -219,7 +219,7 @@ export async function getPendingApprovals(
   
   const { data, error } = await supabase
     .from('approval_requests')
-    .select('*, requester:staff(full_name, email)')
+    .select('*, requester:staff(name, email)')
     .eq('business_id', businessId)
     .eq('status', 'pending')
     .in('rule_id', ruleIds)
@@ -398,7 +398,7 @@ export async function getApprovalHistory(
 ): Promise<ApprovalRequest[]> {
   const { data, error } = await supabase
     .from('approval_requests')
-    .select('*, requester:staff(full_name), decisions:approval_decisions(*, approver:staff(full_name))')
+    .select('*, requester:staff(name), decisions:approval_decisions(*, approver:staff(name))')
     .eq('business_id', businessId)
     .in('status', ['approved', 'rejected'])
     .order('updated_at', { ascending: false })

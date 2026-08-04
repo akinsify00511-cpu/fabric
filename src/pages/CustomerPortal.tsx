@@ -24,7 +24,7 @@ type Invitation = {
 
 type Contact = {
   id: string
-  full_name: string | null
+  name: string | null
   email: string
   company: string | null
 }
@@ -59,9 +59,9 @@ export default function CustomerPortal() {
 
     const { data: contactsData } = await supabase
       .from('contacts')
-      .select('id, full_name, email, company')
+      .select('id, name, email, company')
       .eq('business_id', staff?.business_id)
-      .order('full_name')
+      .order('name')
 
     setInvitations((invitesData as Invitation[]) ?? [])
     setContacts((contactsData as Contact[]) ?? [])
@@ -103,7 +103,7 @@ export default function CustomerPortal() {
 
   const selectContact = (contact: Contact) => {
     setEmail(contact.email)
-    setName(contact.full_name || contact.company || '')
+    setName(contact.name || contact.company || '')
   }
 
   const resendInvitation = async (invitation: Invitation) => {
@@ -365,7 +365,7 @@ export default function CustomerPortal() {
                                 : 'border-black/10 hover:bg-black/[0.02]'
                             }`}
                           >
-                            {contact.full_name || contact.email}
+                            {contact.name || contact.email}
                           </button>
                         ))}
                       </div>

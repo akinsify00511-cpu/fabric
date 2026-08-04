@@ -5,7 +5,7 @@ import FeatureSuggestions from '../components/FeatureSuggestions'
 
 type TeamMember = {
   id: string
-  full_name: string
+  name: string
   email: string
   phone?: string
   role: string
@@ -40,7 +40,7 @@ export default function People() {
   }, [])
 
   const filteredMembers = members.filter(m =>
-    m.full_name.toLowerCase().includes(search.toLowerCase()) ||
+    m.name.toLowerCase().includes(search.toLowerCase()) ||
     m.email.toLowerCase().includes(search.toLowerCase()) ||
     (m.department && m.department.toLowerCase().includes(search.toLowerCase()))
   )
@@ -115,9 +115,9 @@ export default function People() {
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[var(--avenize-primary)] flex items-center justify-center text-white font-medium">
-                      {member.full_name.charAt(0).toUpperCase()}
+                      {member.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-medium">{member.full_name}</span>
+                    <span className="font-medium">{member.name}</span>
                   </div>
                 </td>
                 <td className="px-4 py-3 hidden md:table-cell">
@@ -185,10 +185,10 @@ export default function People() {
 }
 
 const DEMO_MEMBERS: TeamMember[] = [
-  { id: '1', full_name: 'Adaeze Nwankwo', email: 'adaeze@company.com', role: 'owner', department: 'Leadership', joined_at: '2024-01-01' },
-  { id: '2', full_name: 'Emeka Obi', email: 'emeka@company.com', role: 'admin', department: 'Engineering', joined_at: '2024-01-05' },
-  { id: '3', full_name: 'Blessing Adeyemi', email: 'blessing@company.com', role: 'manager', department: 'Sales', joined_at: '2024-01-10' },
-  { id: '4', full_name: 'Kunle Adebayo', email: 'kunle@company.com', role: 'staff', department: 'Engineering', joined_at: '2024-01-15' },
-  { id: '5', full_name: 'Ngozi Chukwu', email: 'ngozi@company.com', role: 'staff', department: 'Marketing', joined_at: '2024-01-20' },
-  { id: '6', full_name: 'Tunde Bakare', email: 'tunde@company.com', role: 'team_lead', department: 'Operations', joined_at: '2024-02-01' },
+  { id: '1', name: 'Adaeze Nwankwo', email: 'adaeze@company.com', role: 'owner', department: 'Leadership', joined_at: '2024-01-01' },
+  { id: '2', name: 'Emeka Obi', email: 'emeka@company.com', role: 'admin', department: 'Engineering', joined_at: '2024-01-05' },
+  { id: '3', name: 'Blessing Adeyemi', email: 'blessing@company.com', role: 'manager', department: 'Sales', joined_at: '2024-01-10' },
+  { id: '4', name: 'Kunle Adebayo', email: 'kunle@company.com', role: 'staff', department: 'Engineering', joined_at: '2024-01-15' },
+  { id: '5', name: 'Ngozi Chukwu', email: 'ngozi@company.com', role: 'staff', department: 'Marketing', joined_at: '2024-01-20' },
+  { id: '6', name: 'Tunde Bakare', email: 'tunde@company.com', role: 'team_lead', department: 'Operations', joined_at: '2024-02-01' },
 ]

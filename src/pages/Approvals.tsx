@@ -34,7 +34,7 @@ export default function Approvals() {
       // Get pending approvals based on role
       const { data: pendingData } = await supabase
         .from('approval_requests')
-        .select('*, requester:staff(full_name)')
+        .select('*, requester:staff(name)')
         .eq('business_id', staff.business_id)
         .eq('status', 'pending')
         .order('created_at', { ascending: true })
@@ -42,7 +42,7 @@ export default function Approvals() {
       // Get history
       const { data: historyData } = await supabase
         .from('approval_requests')
-        .select('*, requester:staff(full_name)')
+        .select('*, requester:staff(name)')
         .eq('business_id', staff.business_id)
         .in('status', ['approved', 'rejected'])
         .order('updated_at', { ascending: false })

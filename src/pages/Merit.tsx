@@ -87,7 +87,7 @@ export default function Merit() {
       const [{ data: entriesData }, { data: staffData }] = await Promise.all([
         supabase
           .from('merit_entries')
-          .select('*, staff:staff_id(full_name, name), awarder:awarded_by(full_name, name)')
+          .select('*, staff:staff_id(name), awarder:awarded_by(name)')
           .order('created_at', { ascending: false })
           .limit(50),
         supabase.from('staff').select('id, full_name, name, email'),

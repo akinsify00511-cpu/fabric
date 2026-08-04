@@ -93,7 +93,7 @@ export default function Requisitions() {
     // Load requisitions based on view
     let query = supabase
       .from('requisitions')
-      .select('*, requester:staff(full_name, email), category:requisition_categories(name, icon, color)')
+      .select('*, requester:staff(name, email), category:requisition_categories(name, icon, color)')
       .eq('business_id', staff?.business_id)
       .order('created_at', { ascending: false })
 
