@@ -48,6 +48,7 @@ const Monitoring = lazy(() => import('./pages/Monitoring'))
 const Organogram = lazy(() => import('./pages/Organogram'))
 const Landing = lazy(() => import('./pages/Landing'))
 const LandingEnhanced = lazy(() => import('./pages/LandingEnhanced'))
+const CompanyHome = lazy(() => import('./pages/CompanyHome'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
 const InventoryNigeria = lazy(() => import('./pages/InventoryNigeria'))
@@ -198,6 +199,7 @@ function AppRoutes() {
         <Route path="time" element={<TimeTracking />} />
         <Route path="events" element={<Events />} />
         <Route path="monitoring" element={<Monitoring />} />
+        <Route path="home" element={<CompanyHome />} />
         <Route path="organogram" element={<Organogram />} />
         <Route path="meetings" element={<Meetings />} />
         </Route>

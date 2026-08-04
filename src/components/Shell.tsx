@@ -25,6 +25,7 @@ const NAV_ITEMS = [
   { to: '/app/reports', label: 'Reports', icon: BarChart3 },
   { to: '/app/monitoring', label: 'Monitoring', icon: Activity },
   { to: '/app/meetings', label: 'Meetings', icon: Headphones },
+  { to: '/app/home', label: 'Company', icon: Home },
   { to: '/app/branding', label: 'Branding', icon: Palette },
   { to: '/app/settings', label: 'Settings', icon: SettingsIcon },
 ]
