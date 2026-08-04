@@ -209,7 +209,7 @@ export default function ProjectsNigeria() {
       setShowNewJob(false)
       setNewJob({
         title: '', client_name: '', client_phone: '', client_email: '',
-        type: 'construction', location: '', estimated_value: 0, start_date: '', end_date: '',
+        type: 'general', location: '', estimated_value: 0, start_date: '', end_date: '',
       })
       showToast('Job created!', 'success')
     } catch (err) {
@@ -358,7 +358,7 @@ export default function ProjectsNigeria() {
           className="px-4 py-2.5 rounded-xl border border-black/10 text-sm bg-white"
         >
           <option value="all">All Types</option>
-          <option value="construction">Construction</option>
+          <option value="general">General</option>
           <option value="restoration">Restoration</option>
           <option value="real_estate">Real Estate</option>
           <option value="paint_production">Paint Production</option>
@@ -409,7 +409,7 @@ export default function ProjectsNigeria() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-mono text-black/40">{job.job_number}</span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      job.type === 'construction' ? 'bg-blue-100 text-blue-700' :
+                      job.type === 'general' ? 'bg-blue-100 text-blue-700' :
                       job.type === 'real_estate' ? 'bg-green-100 text-green-700' :
                       job.type === 'paint_production' ? 'bg-purple-100 text-purple-700' :
                       'bg-orange-100 text-orange-700'
@@ -471,7 +471,7 @@ export default function ProjectsNigeria() {
                   onChange={(e) => setNewJob(prev => ({ ...prev, type: e.target.value as JobType }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-sm"
                 >
-                  <option value="construction">Construction</option>
+                  <option value="general">General</option>
                   <option value="restoration">Restoration</option>
                   <option value="real_estate">Real Estate</option>
                   <option value="paint_production">Paint Production</option>
