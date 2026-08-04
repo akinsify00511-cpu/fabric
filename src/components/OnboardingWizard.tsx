@@ -1,115 +1,58 @@
-/**
- * AVENIZE ONBOARDING WIZARD
- * Step-by-step business setup flow
- */
-
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { X, Building2, User, Users, FileText, Check, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import { 
-  Building2, Users, Package, FileText, TrendingUp, Check,
-  ChevronRight, ChevronLeft, Sparkles, Zap, Target, Clock
-} from 'lucide-react'
-
-type Step = {
-  id: string
-  title: string
-  description: string
-  icon: typeof Building2
-  completed: boolean
-}
 
 interface OnboardingWizardProps {
-  onComplete?: () => void
+  onComplete: () => void
 }
 
 const STEPS = [
   {
     id: 'business',
-    title: 'Business Details',
-    description: 'Tell us about your business',
+    title: 'Tell us about your business',
+    description: 'Set up your company profile',
     icon: Building2,
   },
   {
+    id: 'profile',
+    title: 'Your profile',
+    description: 'Complete your profile',
+    icon: User,
+  },
+  {
     id: 'team',
-    title: 'Invite Your Team',
-    description: 'Add team members to get started',
+    title: 'Build your team',
+    description: 'Invite team members',
     icon: Users,
   },
   {
-    id: 'inventory',
-    title: 'Quick Setup',
-    description: 'Import or create your first items',
-    icon: Package,
-  },
-  {
-    id: 'clients',
-    title: 'Add Clients',
-    description: 'Import your existing clients',
+    id: 'first',
+    title: 'Create your first invoice',
+    description: 'Start billing clients',
     icon: FileText,
   },
-  {
-    id: 'complete',
-    title: 'You\'re All Set!',
-    description: 'Start using Avenize',
-    icon: Sparkles,
-  },
-]
-
-const INDUSTRIES = [
-  'Manufacturing', 'Retail & E-Commerce', 'Professional Services',
-  'Healthcare', 'Education', 'Technology', 'Logistics',
-  'Real Estate', 'Food & Beverage', 'Fashion & Textiles',
-  'Automotive', 'Media & Advertising', 'Agriculture', 'Other'
-]
-
-const QUICK_SETUP_OPTIONS = [
-  { id: 'blank', label: 'Start Fresh', description: 'Build from scratch', icon: Target },
-  { id: 'sample', label: 'Use Sample Data', description: 'Explore with demo data', icon: Sparkles },
-  { id: 'import', label: 'Import Data', description: 'Upload from spreadsheet', icon: FileText },
 ]
 
 export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
-  const navigate = useNavigate()
   const { staff } = useAuth()
   const [currentStep, setCurrentStep] = useState(0)
+  const [businessName, setBusinessName] = useState('')
+  const [industry, setIndustry] = useState('')
+  const [fullName, setFullName] = useState(staff?.full_name || '')
+  const [jobTitle, setJobTitle] = useState('')
+  const [teamSize, setTeamSize] = useState('')
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  
-  // Form data
-  const [businessData, setBusinessData] = useState({
-    name: (staff as any)?.business_name || '',
-    industry: '',
-    size: '',
-    website: '',
-  })
-  
-  const [teamEmails, setTeamEmails] = useState<string[]>([])
-  const [newEmail, setNewEmail] = useState('')
-  const [quickSetup, setQuickSetup] = useState<'blank' | 'sample' | 'import'>('blank')
 
-  const progress = ((currentStep + 1) / STEPS.length) * 100
-
-  const validateStep = (step: number): boolean => {
-    const newErrors: Record<string, string> = {}
-    
-    if (step === 0) {
-      if (!businessData.name.trim()) newErrors.name = 'Business name is required'
-      if (!businessData.industry) newErrors.industry = 'Please select an industry'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  const step = STEPS[currentStep]
 
   const handleNext = async () => {
-    if (!validateStep(currentStep)) return
-    
-    if (currentStep === STEPS.length - 2) {
-      // Save business data on last step before complete
-      await saveBusinessData()
-      setCurrentStep(prev => prev + 1)
+    if (currentStep === STEPS.length - 1) {
+      // Complete onboarding
+      setLoading(true)
+      localStorage.setItem('avenize_onboarding_complete', 'true')
+      await new Promise(resolve => setTimeout(resolve, 500)) // Simulate save
+      setLoading(false)
+      onComplete()
     } else {
       setCurrentStep(prev => prev + 1)
     }
@@ -121,349 +64,209 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
     }
   }
 
-  const saveBusinessData = async () => {
-    if (!staff?.business_id) return
-    setLoading(true)
-    
-    await supabase
-      .from('businesses')
-      .update({
-        industry: businessData.industry,
-        website: businessData.website,
-        size: businessData.size,
-        onboarding_completed: true,
-      })
-      .eq('id', staff.business_id)
-    
-    setLoading(false)
-  }
-
-  const sendInvites = async () => {
-    if (!staff?.business_id) return
-    setLoading(true)
-    
-    for (const email of teamEmails) {
-      await supabase.rpc('invite_staff', {
-        p_business_id: staff.business_id,
-        p_email: email.trim(),
-        p_role: 'staff',
-      })
-    }
-    
-    setLoading(false)
-  }
-
-  const handleComplete = () => {
-    // Mark onboarding complete
+  const skipOnboarding = () => {
     localStorage.setItem('avenize_onboarding_complete', 'true')
-    onComplete?.()
-    navigate('/app')
+    onComplete()
   }
 
-  const addTeamEmail = () => {
-    const email = newEmail.trim()
-    if (email && !teamEmails.includes(email) && email.includes('@')) {
-      setTeamEmails([...teamEmails, email])
-      setNewEmail('')
-    }
-  }
-
-  const removeTeamEmail = (email: string) => {
-    setTeamEmails(teamEmails.filter(e => e !== email))
-  }
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-900">Tell us about your business</h2>
-              <p className="text-slate-500 mt-2">This helps us customize Avenize for you</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Business Name *
-              </label>
-              <input
-                type="text"
-                value={businessData.name}
-                onChange={(e) => setBusinessData({ ...businessData, name: e.target.value })}
-                className={`w-full px-4 py-3 rounded-xl border ${errors.name ? 'border-red-500' : 'border-slate-200'} focus:outline-none focus:ring-2 focus:ring-indigo-500/30`}
-                placeholder="Your Company Ltd"
-              />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Industry *
-              </label>
-              <select
-                value={businessData.industry}
-                onChange={(e) => setBusinessData({ ...businessData, industry: e.target.value })}
-                className={`w-full px-4 py-3 rounded-xl border ${errors.industry ? 'border-red-500' : 'border-slate-200'} focus:outline-none focus:ring-2 focus:ring-indigo-500/30`}
-              >
-                <option value="">Select your industry</option>
-                {INDUSTRIES.map(ind => (
-                  <option key={ind} value={ind.toLowerCase()}>{ind}</option>
-                ))}
-              </select>
-              {errors.industry && <p className="text-red-500 text-sm mt-1">{errors.industry}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Company Size
-              </label>
-              <select
-                value={businessData.size}
-                onChange={(e) => setBusinessData({ ...businessData, size: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-              >
-                <option value="">Select size</option>
-                <option value="1-10">1-10 employees</option>
-                <option value="11-50">11-50 employees</option>
-                <option value="51-200">51-200 employees</option>
-                <option value="201+">201+ employees</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Website (optional)
-              </label>
-              <input
-                type="url"
-                value={businessData.website}
-                onChange={(e) => setBusinessData({ ...businessData, website: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-                placeholder="https://yourcompany.com"
-              />
-            </div>
-          </div>
-        )
-
-      case 1:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-900">Invite your team</h2>
-              <p className="text-slate-500 mt-2">Collaborate with your team from day one</p>
-            </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-              <p className="text-sm text-blue-700">
-                <strong>Tip:</strong> You can skip this step and invite team members later from Settings.
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Team Member Emails
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTeamEmail())}
-                  className="flex-1 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-                  placeholder="colleague@company.com"
-                />
-                <button
-                  onClick={addTeamEmail}
-                  className="px-4 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-
-            {teamEmails.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-slate-700">Invites to send:</p>
-                {teamEmails.map((email) => (
-                  <div key={email} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                    <span className="text-slate-700">{email}</span>
-                    <button
-                      onClick={() => removeTeamEmail(email)}
-                      className="text-slate-400 hover:text-red-500"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )
-
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-slate-900">Quick setup</h2>
-              <p className="text-slate-500 mt-2">Choose how you want to get started</p>
-            </div>
-
-            <div className="space-y-3">
-              {QUICK_SETUP_OPTIONS.map((option) => (
-                <button
-                  key={option.id}
-                  onClick={() => setQuickSetup(option.id as any)}
-                  className={`w-full p-4 rounded-xl border-2 text-left transition-all ${
-                    quickSetup === option.id
-                      ? 'border-indigo-600 bg-indigo-50'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                      quickSetup === option.id ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
-                    }`}>
-                      <option.icon size={24} />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-900">{option.label}</p>
-                      <p className="text-sm text-slate-500">{option.description}</p>
-                    </div>
-                    {quickSetup === option.id && (
-                      <Check size={20} className="ml-auto text-indigo-600" />
-                    )}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check size={40} className="text-emerald-600" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-900">You're all set!</h2>
-              <p className="text-slate-500 mt-2">Your business is ready to go</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 space-y-4">
-              <h3 className="font-semibold text-slate-900">What you can do next:</h3>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <Zap size={16} className="text-indigo-600" />
-                  </div>
-                  <span className="text-slate-700">Create your first invoice</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <Users size={16} className="text-indigo-600" />
-                  </div>
-                  <span className="text-slate-700">Add clients and leads</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <TrendingUp size={16} className="text-indigo-600" />
-                  </div>
-                  <span className="text-slate-700">Track your first task</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <Clock size={16} className="text-indigo-600" />
-                  </div>
-                  <span className="text-slate-700">Get smart alerts automatically</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        )
-
-      default:
-        return null
-    }
-  }
+  const industries = [
+    'Construction & Real Estate',
+    'Technology & Software',
+    'Consulting & Professional Services',
+    'Retail & E-commerce',
+    'Manufacturing',
+    'Healthcare',
+    'Education',
+    'Finance & Banking',
+    'Other',
+  ]
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between mb-2">
-            {STEPS.map((step, i) => {
-              const StepIcon = step.icon
-              return (
-                <div
-                  key={step.id}
-                  className={`flex flex-col items-center ${
-                    i <= currentStep ? 'text-indigo-600' : 'text-slate-300'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    i < currentStep
-                      ? 'bg-indigo-600 text-white'
-                      : i === currentStep
-                      ? 'bg-indigo-100 border-2 border-indigo-600'
-                      : 'bg-slate-100'
-                  }`}>
-                    {i < currentStep ? <Check size={20} /> : <StepIcon size={20} />}
-                  </div>
-                </div>
-              )
-            })}
+    <div className="fixed inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold">Welcome to Avenize! 🎉</h1>
+              <p className="text-white/80 mt-1">Let's set up your business in a few quick steps</p>
+            </div>
+            <button
+              onClick={skipOnboarding}
+              className="text-white/80 hover:text-white p-2"
+            >
+              <X size={20} />
+            </button>
           </div>
-          <div className="h-2 bg-slate-200 rounded-full">
-            <div
-              className="h-full bg-indigo-600 rounded-full transition-all"
-              style={{ width: `${progress}%` }}
-            />
+          
+          {/* Progress */}
+          <div className="flex items-center gap-2 mt-6">
+            {STEPS.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1.5 flex-1 rounded-full transition-all ${
+                  index <= currentStep ? 'bg-white' : 'bg-white/30'
+                }`}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          {renderStep()}
-
-          {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-            <button
-              onClick={handleBack}
-              disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium ${
-                currentStep === 0
-                  ? 'text-slate-300 cursor-not-allowed'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <ChevronLeft size={20} />
-              Back
-            </button>
-
-            {currentStep < STEPS.length - 1 ? (
-              <button
-                onClick={handleNext}
-                disabled={loading}
-                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50"
+        {/* Content */}
+        <div className="p-8 min-h-[400px]">
+          {/* Step indicators */}
+          <div className="flex justify-center gap-4 mb-8">
+            {STEPS.map((s, index) => (
+              <div
+                key={s.id}
+                className={`flex flex-col items-center ${
+                  index === currentStep ? 'opacity-100' : 'opacity-40'
+                } transition-opacity`}
               >
-                {loading ? 'Saving...' : 'Continue'}
-                <ChevronRight size={20} />
-              </button>
-            ) : (
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                  index < currentStep ? 'bg-green-500 text-white' :
+                  index === currentStep ? 'bg-indigo-500 text-white' :
+                  'bg-gray-100 text-gray-400'
+                }`}>
+                  {index < currentStep ? <Check size={20} /> : <s.icon size={20} />}
+                </div>
+                <span className="text-xs mt-2 font-medium text-gray-500">{s.title}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Step content */}
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h2>
+            <p className="text-gray-500">{step.description}</p>
+          </div>
+
+          {/* Step forms */}
+          <div className="space-y-4 max-w-md mx-auto">
+            {step.id === 'business' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
+                  <input
+                    type="text"
+                    value={businessName}
+                    onChange={(e) => setBusinessName(e.target.value)}
+                    placeholder="e.g., TechBuild Nigeria Ltd"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                  <select
+                    value={industry}
+                    onChange={(e) => setIndustry(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="">Select your industry</option>
+                    {industries.map(ind => (
+                      <option key={ind} value={ind}>{ind}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {step.id === 'profile' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <input
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Your full name"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                  <input
+                    type="text"
+                    value={jobTitle}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    placeholder="e.g., Managing Director"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+              </>
+            )}
+
+            {step.id === 'team' && (
+              <>
+                <div className="bg-indigo-50 rounded-xl p-6 text-center">
+                  <Users size={48} className="mx-auto text-indigo-500 mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    You can invite team members from the People page later.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    For now, let's skip this step and get you started!
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Team Size (optional)</label>
+                  <select
+                    value={teamSize}
+                    onChange={(e) => setTeamSize(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="">Select team size</option>
+                    <option value="1">Just me</option>
+                    <option value="2-5">2-5 people</option>
+                    <option value="6-20">6-20 people</option>
+                    <option value="21-50">21-50 people</option>
+                    <option value="50+">50+ people</option>
+                  </select>
+                </div>
+              </>
+            )}
+
+            {step.id === 'first' && (
+              <div className="bg-green-50 rounded-xl p-6 text-center">
+                <FileText size={48} className="mx-auto text-green-500 mb-4" />
+                <p className="text-gray-600 mb-4">
+                  You're all set! Go to the Finance page to create your first invoice.
+                </p>
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full text-green-700 text-sm">
+                  <Check size={16} />
+                  Ready to go!
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-8 py-6 bg-gray-50 flex items-center justify-between">
+          <button
+            onClick={skipOnboarding}
+            className="text-gray-500 hover:text-gray-700 text-sm"
+          >
+            Skip for now
+          </button>
+          
+          <div className="flex items-center gap-3">
+            {currentStep > 0 && (
               <button
-                onClick={async () => {
-                  if (teamEmails.length > 0) await sendInvites()
-                  handleComplete()
-                }}
-                disabled={loading}
-                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50"
+                onClick={handleBack}
+                className="flex items-center gap-1 px-4 py-2 text-gray-600 hover:text-gray-900"
               >
-                {loading ? 'Setting up...' : 'Go to Dashboard'}
-                <ChevronRight size={20} />
+                <ChevronLeft size={16} />
+                Back
               </button>
             )}
+            <button
+              onClick={handleNext}
+              disabled={loading}
+              className="flex items-center gap-2 px-6 py-2.5 bg-indigo-500 text-white rounded-xl font-medium hover:bg-indigo-600 transition disabled:opacity-50"
+            >
+              {loading ? 'Saving...' : currentStep === STEPS.length - 1 ? 'Get Started' : 'Continue'}
+              {!loading && (currentStep === STEPS.length - 1 ? <Check size={18} /> : <ChevronRight size={18} />)}
+            </button>
           </div>
         </div>
       </div>

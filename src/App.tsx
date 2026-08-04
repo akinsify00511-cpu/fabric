@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
@@ -54,20 +55,38 @@ import OwnerInsights from './pages/OwnerInsights'
 import FieldLocation from './pages/FieldLocation'
 import LeadCapture from './pages/LeadCapture'
 import InvoicePreview from './components/InvoicePreview'
+import OnboardingWizard from './components/OnboardingWizard'
 import Premium from './pages/Premium'
 import SarahChat from './components/SarahChat'
 import ErrorBoundary from './components/ErrorBoundary'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { session, loading, staff, staffChecked } = useAuth()
+  const { session, loading, staff, staffChecked, isDemo } = useAuth()
+  const [showOnboarding, setShowOnboarding] = useState(false)
+
+  useEffect(() => {
+    // Show onboarding for new real users
+    if (staffChecked && staff && !isDemo) {
+      const onboardingComplete = localStorage.getItem('avenize_onboarding_complete')
+      if (!onboardingComplete) {
+        setShowOnboarding(true)
+      }
+    }
+  }, [staffChecked, staff, isDemo])
 
   if (loading || (session && !staffChecked)) {
     return <div className="min-h-screen flex items-center justify-center text-black/40 text-sm">Loading…</div>
   }
   if (!session) return <Navigate to="/login" replace />
   if (!staff) return <Navigate to="/onboarding" replace />
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false)
+  }
+
   return (
     <>
+      {showOnboarding && <OnboardingWizard onComplete={handleOnboardingComplete} />}
       <TrialBanner />
       <SarahChat />
       {children}
