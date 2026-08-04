@@ -1,22 +1,65 @@
-import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, type FormEvent } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import AvenizeMark from '../components/AvenizeMark'
 
 export default function Login() {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [oauthLoading, setOauthLoading] = useState<string | null>(null)
 
+  // Check if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // Check if user has a business
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('business_id')
+          .eq('user_id', session.user.id)
+          .maybeSingle()
+        
+        if (staffData?.business_id) {
+          navigate('/app', { replace: true })
+        } else {
+          navigate('/onboarding', { replace: true })
+        }
+      }
+    }
+    checkSession()
+  }, [navigate])
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setError(error.message)
-    setLoading(false)
+    
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    
+    if (error) {
+      setError(error.message)
+      setLoading(false)
+      return
+    }
+    
+    // Check if user has a business after successful login
+    if (data.session) {
+      const { data: staffData } = await supabase
+        .from('staff')
+        .select('business_id')
+        .eq('user_id', data.session.user.id)
+        .maybeSingle()
+      
+      if (staffData?.business_id) {
+        navigate('/app')
+      } else {
+        navigate('/onboarding')
+      }
+    }
   }
 
   const handleOAuthSignIn = async (provider: 'google' | 'github') => {

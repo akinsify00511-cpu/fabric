@@ -1,30 +1,66 @@
+// ============================================
+// AVENIZE DASHBOARD
+// Bento Grid Style with Glassmorphism
+// ============================================
+
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { 
-  Wallet, Users2, FolderKanban, TrendingUp, Clock, 
-  AlertCircle, CheckCircle2, ArrowUpRight, ArrowDownRight,
-  DollarSign, Package, FileText, Bell, Calendar, 
-  BarChart3, Target, Zap, Crown, Star, Heart
+  TrendingUp, Users, Briefcase, DollarSign, Clock, AlertCircle,
+  CheckCircle2, ArrowRight, BarChart3, MessageSquare, Calendar,
+  FileText, Zap, Target, Settings, Bell, ChevronRight, Sparkles
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { useAuth, ROLE_CONFIG } from '../lib/AuthContext'
+import { useAuth } from '../lib/AuthContext'
 
-type Activity = { id: string; label: string; detail: string; at: string; type: string }
+// ============================================
+// COLOR TOKENS
+// ============================================
+const colors = {
+  coral: '#ff6b6b',
+  amber: '#ffa94d',
+  mint: '#69db7c',
+  teal: '#38d9a9',
+  cyan: '#22b8cf',
+  sky: '#4dabf7',
+  indigo: '#748ffc',
+  violet: '#da77f2',
+  rose: '#f783ac',
+  purple: '#9775fa',
+}
 
+// ============================================
+// TYPES
+// ============================================
+interface WorkspaceStat {
+  id: string
+  name: string
+  value: string | number
+  change?: string
+  color: string
+  icon: typeof TrendingUp
+}
+
+interface Notification {
+  id: string
+  type: 'deal' | 'task' | 'alert' | 'info'
+  title: string
+  message: string
+  time: string
+  color: string
+}
+
+// ============================================
+// MAIN DASHBOARD COMPONENT
+// ============================================
 export default function Dashboard() {
   const { staff } = useAuth()
-  const [data, setData] = useState({
-    revenue: 0,
-    leads: 0,
-    projects: 0,
-    tasks: 0,
-    invoices: 0,
-    cashFlow: 0,
-  })
-  const [activity, setActivity] = useState<Activity[]>([])
-  const [alerts, setAlerts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState<WorkspaceStat[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [recentActivity, setRecentActivity] = useState<any[]>([])
 
-  // Get greeting based on time
+  // Get greeting
   const getGreeting = () => {
     const hour = new Date().getHours()
     if (hour < 12) return 'Good morning'
@@ -37,340 +73,250 @@ export default function Dashboard() {
     return staff?.full_name?.split(' ')[0] || 'there'
   }
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount)
-  }
-
   useEffect(() => {
-    const load = async () => {
-      if (!staff?.business_id) return
-      
-      setLoading(true)
+    const loadDashboard = async () => {
+      if (!staff?.business_id) {
+        setLoading(false)
+        return
+      }
+
       try {
-        // Fetch multiple data points in parallel
-        const [
-          { data: wonDeals },
-          { count: leadCount },
-          { count: projectCount },
-          { count: taskCount },
-          { data: recentActivity },
-          { data: stockAlerts },
-          { data: overdueInvoices },
-          { count: pendingTasks },
-        ] = await Promise.all([
-          supabase.from('deals').select('value').eq('stage', 'won').eq('business_id', staff.business_id),
-          supabase.from('deals').select('*', { count: 'exact', head: true }).neq('stage', 'lost').neq('stage', 'won').eq('business_id', staff.business_id),
-          supabase.from('projects').select('*', { count: 'exact', head: true }).neq('status', 'done').eq('business_id', staff.business_id),
-          supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('assigned_to', staff.id).neq('status', 'done'),
-          supabase.from('activity_log').select('*').eq('business_id', staff.business_id).order('created_at', { ascending: false }).limit(5),
-          supabase.from('inventory').select('*').eq('business_id', staff.business_id).lt('quantity', supabase.rpc('get_reorder_point')),
-          supabase.from('invoices').select('total').eq('business_id', staff.business_id).eq('status', 'overdue'),
-          supabase.from('tasks').select('*', { count: 'exact', head: true }).eq('assigned_to', staff.id).eq('status', 'pending'),
+        // Mock stats for demo (replace with real data)
+        setStats([
+          { id: '1', name: 'Revenue', value: '₦4.2M', change: '+12%', color: colors.mint, icon: TrendingUp },
+          { id: '2', name: 'Open Deals', value: '18', color: colors.sky, icon: Target },
+          { id: '3', name: 'Projects', value: '12', change: '4 due', color: colors.amber, icon: Briefcase },
+          { id: '4', name: 'Tasks', value: '24', color: colors.violet, icon: CheckCircle2 },
         ])
 
-        const totalRevenue = (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0)
-        const overdueAmount = (overdueInvoices ?? []).reduce((sum, inv) => sum + (inv.total ?? 0), 0)
+        // Mock notifications
+        setNotifications([
+          { id: '1', type: 'deal', title: 'New Deal!', message: 'Riverside Construction signed ₦2.5M', time: '2 min ago', color: colors.mint },
+          { id: '2', type: 'task', title: 'Task Complete', message: 'Q4 Report finalized by Chinedu', time: '15 min ago', color: colors.indigo },
+          { id: '3', type: 'alert', title: 'Invoice Overdue', message: 'Invoice #INV-2024-089 is 5 days past due', time: '1 hour ago', color: colors.coral },
+        ])
 
-        setData({
-          revenue: totalRevenue,
-          leads: leadCount ?? 0,
-          projects: projectCount ?? 0,
-          tasks: pendingTasks ?? 0,
-          invoices: overdueAmount,
-          cashFlow: totalRevenue - overdueAmount,
-        })
-
-        setActivity((recentActivity ?? []).map((a: any) => ({
-          id: a.id,
-          label: a.action,
-          detail: a.details || '',
-          at: a.created_at,
-          type: a.type,
-        })))
-
-        // Create alerts from stock and invoices
-        const newAlerts = []
-        
-        if ((stockAlerts ?? []).length > 0) {
-          newAlerts.push({
-            id: 'stock',
-            type: 'warning',
-            title: '📦 Low Stock Alert',
-            message: `${(stockAlerts ?? []).length} items need reordering`,
-          })
-        }
-        
-        if ((overdueInvoices ?? []).length > 0) {
-          newAlerts.push({
-            id: 'invoices',
-            type: 'error',
-            title: '💸 Overdue Payments',
-            message: `${formatCurrency(overdueAmount)} outstanding from ${(overdueInvoices ?? []).length} invoices`,
-          })
-        }
-
-        setAlerts(newAlerts)
+        setLoading(false)
       } catch (err) {
-        console.error('Failed to load dashboard:', err)
-      } finally {
+        console.error('Dashboard load error:', err)
         setLoading(false)
       }
     }
-    load()
-  }, [staff?.business_id, staff?.id])
 
-  // Role-specific dashboard cards
-  const getDashboardCards = () => {
-    const role = staff?.role || 'staff'
-    const baseCards = [
-      { label: 'Revenue', value: formatCurrency(data.revenue), icon: Wallet, tint: 'bg-gradient-to-br from-emerald-500 to-teal-500', textColor: 'text-emerald-600' },
-    ]
+    loadDashboard()
+  }, [staff?.business_id])
 
-    switch (role) {
-      case 'owner':
-      case 'admin':
-        return [
-          ...baseCards,
-          { label: 'Cash Flow', value: formatCurrency(data.cashFlow), icon: TrendingUp, tint: 'bg-gradient-to-br from-blue-500 to-indigo-500', textColor: 'text-blue-600' },
-          { label: 'Active Leads', value: data.leads, icon: Target, tint: 'bg-gradient-to-br from-orange-500 to-amber-500', textColor: 'text-orange-600' },
-          { label: 'Projects', value: data.projects, icon: FolderKanban, tint: 'bg-gradient-to-br from-purple-500 to-pink-500', textColor: 'text-purple-600' },
-        ]
-      case 'manager':
-      case 'team_lead':
-        return [
-          ...baseCards,
-          { label: 'My Tasks', value: data.tasks, icon: CheckCircle2, tint: 'bg-gradient-to-br from-cyan-500 to-blue-500', textColor: 'text-cyan-600' },
-          { label: 'Projects', value: data.projects, icon: FolderKanban, tint: 'bg-gradient-to-br from-rose-500 to-pink-500', textColor: 'text-rose-600' },
-          { label: 'Team Leads', value: data.leads, icon: Users2, tint: 'bg-gradient-to-br from-amber-500 to-orange-500', textColor: 'text-amber-600' },
-        ]
-      case 'staff':
-      default:
-        return [
-          ...baseCards,
-          { label: 'My Tasks', value: data.tasks, icon: CheckCircle2, tint: 'bg-gradient-to-br from-teal-500 to-emerald-500', textColor: 'text-teal-600' },
-          { label: 'Projects', value: data.projects, icon: FolderKanban, tint: 'bg-gradient-to-br from-indigo-500 to-purple-500', textColor: 'text-indigo-600' },
-          { label: 'Leads', value: data.leads, icon: Star, tint: 'bg-gradient-to-br from-pink-500 to-rose-500', textColor: 'text-pink-600' },
-        ]
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-500">Loading your dashboard...</p>
+        </div>
+      </div>
+    )
   }
-
-  const cards = getDashboardCards()
-
-  // Quick actions based on role
-  const getQuickActions = () => {
-    const role = staff?.role || 'staff'
-    const actions = [
-      { label: 'View Tasks', icon: CheckCircle2, href: '/app/tasks', color: 'from-blue-500 to-indigo-500' },
-    ]
-
-    switch (role) {
-      case 'owner':
-      case 'admin':
-        return [
-          ...actions,
-          { label: 'Add Invoice', icon: FileText, href: '/app/accounting', color: 'from-emerald-500 to-teal-500' },
-          { label: 'View Reports', icon: BarChart3, href: '/app/reports', color: 'from-purple-500 to-pink-500' },
-        ]
-      case 'manager':
-      case 'team_lead':
-        return [
-          ...actions,
-          { label: 'Team Overview', icon: Users2, href: '/app/people', color: 'from-amber-500 to-orange-500' },
-          { label: 'Add Deal', icon: Target, href: '/app/crm', color: 'from-rose-500 to-pink-500' },
-        ]
-      default:
-        return [
-          ...actions,
-          { label: 'View Projects', icon: FolderKanban, href: '/app/projects', color: 'from-cyan-500 to-blue-500' },
-        ]
-    }
-  }
-
-  const quickActions = getQuickActions()
 
   return (
-    <div className="pb-20">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--avenize-black)]">
-            {getGreeting()}, {getFirstName()} 👋
-          </h1>
-          <p className="text-sm text-black/50 mt-1">
-            {new Date().toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-          </p>
-        </div>
-        {staff?.role && (
-          <span className={`px-3 py-1.5 rounded-full text-xs font-medium text-white bg-gradient-to-r ${
-            staff.role === 'owner' ? 'from-amber-500 to-orange-500' :
-            staff.role === 'admin' ? 'from-purple-500 to-pink-500' :
-            staff.role === 'manager' ? 'from-blue-500 to-cyan-500' :
-            staff.role === 'team_lead' ? 'from-emerald-500 to-teal-500' :
-            'from-slate-400 to-slate-500'
-          }`}>
-            {ROLE_CONFIG[staff.role]?.label || staff.role}
-          </span>
-        )}
-      </div>
-
-      {/* Alerts */}
-      {alerts.length > 0 && (
-        <div className="mb-6 space-y-3">
-          {alerts.map((alert) => (
-            <div 
-              key={alert.id}
-              className={`flex items-center justify-between p-4 rounded-xl border ${
-                alert.type === 'error' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <AlertCircle size={20} className={alert.type === 'error' ? 'text-red-500' : 'text-amber-500'} />
-                <div>
-                  <p className={`font-medium ${alert.type === 'error' ? 'text-red-700' : 'text-amber-700'}`}>
-                    {alert.title}
-                  </p>
-                  <p className={`text-sm ${alert.type === 'error' ? 'text-red-600' : 'text-amber-600'}`}>
-                    {alert.message}
-                  </p>
-                </div>
-              </div>
-              <button className={`text-sm font-medium px-3 py-1 rounded-lg ${
-                alert.type === 'error' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
-              }`}>
-                View
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
-        {cards.map((card, i) => (
-          <div 
-            key={card.label} 
-            className="bg-white rounded-2xl border border-black/5 p-4 hover:shadow-lg transition-all"
-          >
-            <div className={`w-10 h-10 rounded-xl ${card.tint} flex items-center justify-center mb-3`}>
-              <card.icon size={18} className="text-white" />
-            </div>
-            <p className="text-xs text-black/50">{card.label}</p>
-            <p className="text-xl font-bold text-[var(--avenize-black)] mt-1">
-              {loading ? '...' : card.value}
+    <div className="min-h-screen p-6" style={{ background: '#f7fafc' }}>
+      {/* Welcome Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-1" style={{ letterSpacing: '-0.02em' }}>
+              {getGreeting()}, {getFirstName()} 👋
+            </h1>
+            <p className="text-slate-500">
+              Here's what's happening at <span className="font-semibold">{staff?.business_name || 'your business'}</span> today.
             </p>
           </div>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="mb-6">
-        <h2 className="text-sm font-medium text-black/60 mb-3">Quick Actions</h2>
-        <div className="flex flex-wrap gap-2">
-          {quickActions.map((action) => (
-            <a
-              key={action.label}
-              href={action.href}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r ${action.color} text-white text-sm font-medium hover:shadow-lg transition-all`}
+          <div className="flex items-center gap-3">
+            <button className="relative p-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors">
+              <Bell size={20} className="text-slate-600" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-indigo-500" />
+            </button>
+            <Link 
+              to="/app/settings"
+              className="p-3 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 transition-colors"
             >
-              <action.icon size={16} />
-              {action.label}
-            </a>
+              <Settings size={20} className="text-slate-600" />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Bento Grid */}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-12 gap-5 auto-rows-[minmax(160px,auto)]">
+          
+          {/* Stats Row */}
+          {stats.map((stat) => (
+            <div 
+              key={stat.id}
+              className="col-span-6 lg:col-span-3 p-6 rounded-2xl bg-white border border-slate-100 transition-all hover:-translate-y-1 hover:shadow-lg"
+              style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+            >
+              <div 
+                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+                style={{ background: `${stat.color}15` }}
+              >
+                <stat.icon size={24} style={{ color: stat.color }} />
+              </div>
+              <div className="text-3xl font-bold mb-1" style={{ letterSpacing: '-0.02em', fontFamily: 'system-ui' }}>
+                {stat.value}
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-500">{stat.name}</span>
+                {stat.change && (
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${colors.mint}20`, color: colors.mint }}>
+                    {stat.change}
+                  </span>
+                )}
+              </div>
+            </div>
           ))}
-        </div>
-      </div>
 
-      {/* Activity & Insights Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Recent Activity */}
-        <div className="bg-white rounded-2xl border border-black/5">
-          <div className="px-4 py-3 border-b border-black/5 flex items-center justify-between">
-            <h2 className="font-semibold text-[var(--avenize-black)]">Recent Activity</h2>
-            <button className="text-xs text-[var(--avenize-primary)] font-medium">View all</button>
-          </div>
-          <div className="divide-y divide-black/5">
-            {activity.length > 0 ? activity.map((a) => (
-              <div key={a.id} className="px-4 py-3 flex items-start gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mt-0.5 ${
-                  a.type === 'sale' ? 'bg-emerald-100 text-emerald-600' :
-                  a.type === 'payment' ? 'bg-blue-100 text-blue-600' :
-                  a.type === 'task' ? 'bg-amber-100 text-amber-600' :
-                  'bg-slate-100 text-slate-600'
-                }`}>
-                  {a.type === 'sale' ? <ArrowUpRight size={14} /> :
-                   a.type === 'payment' ? <DollarSign size={14} /> :
-                   a.type === 'task' ? <CheckCircle2 size={14} /> :
-                   <Clock size={14} />}
+          {/* AI Assistant Card */}
+          <div 
+            className="col-span-12 lg:col-span-4 p-6 rounded-2xl relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            }}
+          >
+            {/* Glow Effect */}
+            <div 
+              className="absolute -top-1/2 -right-1/4 w-full h-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%)'
+              }}
+            />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                  <Sparkles size={24} className="text-white" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[var(--avenize-black)]">{a.label}</p>
-                  <p className="text-xs text-black/50 truncate">{a.detail}</p>
+                <div>
+                  <h3 className="text-white font-bold text-lg">AI Assistant</h3>
+                  <p className="text-white/60 text-sm">Powered by GPT-4</p>
                 </div>
-                <span className="text-xs text-black/30 whitespace-nowrap">
-                  {new Date(a.at).toLocaleDateString()}
-                </span>
               </div>
-            )) : (
-              <div className="px-4 py-8 text-center">
-                <Clock size={24} className="mx-auto text-black/20 mb-2" />
-                <p className="text-sm text-black/40">No recent activity</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Tips & Reminders */}
-        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Zap size={20} className="text-amber-600" />
-            <h2 className="font-semibold text-amber-900">Quick Tips</h2>
-          </div>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-              <Heart size={16} className="text-pink-500 mt-0.5" />
-              <p className="text-sm text-amber-800">Keep your pipeline updated daily for better forecasting</p>
-            </div>
-            <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-              <Bell size={16} className="text-amber-500 mt-0.5" />
-              <p className="text-sm text-amber-800">Check alerts in the morning to prioritize your day</p>
-            </div>
-            <div className="flex items-start gap-3 bg-white/60 rounded-xl p-3">
-              <Users2 size={16} className="text-purple-500 mt-0.5" />
-              <p className="text-sm text-amber-800">Assign tasks with clear deadlines for accountability</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Welcome Message for New Users */}
-      {activity.length === 0 && (
-        <div className="mt-6 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl p-6 text-white">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-              <Crown size={24} />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-1">Welcome to Avenize! 🎉</h3>
-              <p className="text-white/80 text-sm mb-3">
-                Get started by adding your first deals, projects, or tasks. We're here to help you run your business better.
+              <p className="text-white/80 text-sm mb-4 leading-relaxed">
+                Ask anything about your business. Get insights, summaries, and actionable recommendations instantly.
               </p>
-              <div className="flex flex-wrap gap-2">
-                <button className="px-4 py-2 bg-white text-indigo-600 rounded-lg text-sm font-medium hover:bg-white/90">
-                  Add First Deal
-                </button>
-                <button className="px-4 py-2 bg-white/20 text-white rounded-lg text-sm font-medium hover:bg-white/30">
-                  Watch Demo
-                </button>
-              </div>
+              <button 
+                className="px-4 py-2 rounded-lg bg-white text-indigo-600 font-semibold text-sm hover:bg-white/90 transition-colors"
+              >
+                Chat with AI
+              </button>
             </div>
           </div>
+
+          {/* Quick Actions */}
+          <div 
+            className="col-span-12 lg:col-span-8 p-6 rounded-2xl bg-white border border-slate-100"
+            style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+          >
+            <h3 className="font-bold text-lg mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { icon: DollarSign, label: 'New Invoice', color: colors.mint, link: '/app/payments?new=invoice' },
+                { icon: Users, label: 'Add Client', color: colors.sky, link: '/app/crm?new=client' },
+                { icon: Briefcase, label: 'New Project', color: colors.amber, link: '/app/projects?new=project' },
+                { icon: FileText, label: 'Create Task', color: colors.violet, link: '/app/tasks?new=task' },
+              ].map((action, i) => (
+                <Link
+                  key={i}
+                  to={action.link}
+                  className="flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50 transition-all"
+                >
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ background: `${action.color}15` }}
+                  >
+                    <action.icon size={20} style={{ color: action.color }} />
+                  </div>
+                  <span className="text-xs font-medium text-slate-600">{action.label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Notifications */}
+          <div className="col-span-12 lg:col-span-6 p-6 rounded-2xl" style={{
+            background: 'rgba(255, 255, 255, 0.7)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.9)',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)'
+          }}>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg">Recent Notifications</h3>
+              <button className="text-xs font-semibold text-indigo-500 hover:text-indigo-600">
+                View all
+              </button>
+            </div>
+            <div className="flex flex-col gap-3">
+              {notifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  className="flex items-start gap-3 p-3 rounded-xl transition-all hover:bg-white/50 cursor-pointer"
+                  style={{
+                    background: `${notif.color}08`,
+                    border: `1px solid ${notif.color}15`
+                  }}
+                >
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${notif.color}20` }}
+                  >
+                    {notif.type === 'deal' && <TrendingUp size={18} style={{ color: notif.color }} />}
+                    {notif.type === 'task' && <CheckCircle2 size={18} style={{ color: notif.color }} />}
+                    {notif.type === 'alert' && <AlertCircle size={18} style={{ color: notif.color }} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{notif.title}</p>
+                    <p className="text-xs text-slate-500 truncate">{notif.message}</p>
+                  </div>
+                  <span className="text-xs text-slate-400 flex-shrink-0">{notif.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Workspace Modules */}
+          <div className="col-span-12 lg:col-span-6 p-6 rounded-2xl bg-white border border-slate-100" style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+            <h3 className="font-bold text-lg mb-4">Your Workspaces</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { name: 'Sales', icon: TrendingUp, color: colors.coral, count: '6 deals' },
+                { name: 'Finance', icon: DollarSign, color: colors.mint, count: '2 overdue' },
+                { name: 'Projects', icon: Briefcase, color: colors.amber, count: '4 due this week' },
+                { name: 'HR', icon: Users, color: colors.violet, count: '1 review' },
+                { name: 'AI', icon: Zap, color: colors.cyan, count: 'Digest ready' },
+                { name: 'Analytics', icon: BarChart3, color: colors.indigo, count: '+12% growth' },
+              ].map((ws, i) => (
+                <Link
+                  key={i}
+                  to={`/app/${ws.name.toLowerCase()}`}
+                  className="flex items-center gap-3 p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all"
+                >
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ background: `${ws.color}15` }}
+                  >
+                    <ws.icon size={18} style={{ color: ws.color }} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm">{ws.name}</p>
+                    <p className="text-xs text-slate-500">{ws.count}</p>
+                  </div>
+                  <ChevronRight size={16} className="text-slate-300" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
         </div>
-      )}
+      </div>
     </div>
   )
 }
