@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import { generateInvoicePDF } from '../lib/PDFGenerator'
 import {
   Plus, Search, Filter, DollarSign, TrendingUp, TrendingDown,
   Receipt, FileText, Clock, CheckCircle2, AlertCircle, Download,
@@ -498,11 +499,23 @@ export default function FinanceNigeria() {
                   </div>
                   
                   <div className="flex items-center justify-between pt-3 border-t border-black/5">
-                    <div className="text-sm">
-                      <span className="text-black/50">Due: </span>
-                      <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
-                        {new Date(inv.due_date).toLocaleDateString()}
-                      </span>
+                    <div className="flex items-center gap-4">
+                      <div className="text-sm">
+                        <span className="text-black/50">Due: </span>
+                        <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
+                          {new Date(inv.due_date).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          generateInvoicePDF(inv)
+                        }}
+                        className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
+                      >
+                        <Download size={12} />
+                        PDF
+                      </button>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold">{formatCurrency(inv.total)}</p>

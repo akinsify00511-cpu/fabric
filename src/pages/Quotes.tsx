@@ -3,6 +3,7 @@ import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Downl
 import { useToast } from '../components/Toast'
 import { isDemoMode, getDeals } from '../lib/Storage'
 import { DEMO_DEALS } from '../lib/DemoData'
+import { generateQuotePDF } from '../lib/PDFGenerator'
 
 type Quote = {
   id: string
@@ -282,7 +283,10 @@ export default function Quotes() {
                       <FileText size={14} /> Convert to Invoice
                     </button>
                   )}
-                  <button className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition">
+                  <button 
+                    onClick={() => generateQuotePDF(quote)}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition"
+                  >
                     <Download size={14} /> PDF
                   </button>
                   <button onClick={() => deleteQuote(quote.id)} className="flex items-center gap-1 px-3 py-1.5 hover:bg-red-50 text-red-500 rounded-lg text-xs transition ml-auto">
