@@ -311,19 +311,20 @@ Each code can only be used once!`
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {!twoFactorAvailable ? (
+                  {!twoFactorAvailable && (
                     <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
                       <div className="flex items-start gap-3">
                         <Clock4 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                         <div>
                           <p className="text-sm font-medium text-amber-800">Coming Soon</p>
                           <p className="text-xs text-amber-700 mt-1">
-                            2FA is being prepared for production. Contact sales for early access.
+                            Two-factor authentication is being prepared. Contact sales for early access.
                           </p>
                         </div>
                       </div>
                     </div>
-                  ) : (
+                  )}
+                  {twoFactorAvailable && !mfa?.enabled && (
                     <>
                       <div className="flex gap-4">
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">

@@ -191,18 +191,21 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
   return (
     <div className="pb-20">
-      {/* Coming Soon Banner */}
+      {/* BETA STATUS BANNER */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
+          <div className="p-2 bg-blue-100 rounded-lg shrink-0">
             <Zap size={20} className="text-blue-600" />
           </div>
           <div className="flex-1">
-            <h3 className="font-medium text-blue-900">Automation Execution: Coming Soon</h3>
-            <p className="text-sm text-blue-700 mt-1">
-              You can create and save automation workflows now. Actual execution (triggers and actions) 
-              will be available soon via Supabase Edge Functions and cron jobs. This will enable 
-              Zapier-style workflows between your apps.
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="font-bold text-blue-900">🚀 Automations: Beta</h3>
+              <span className="px-2 py-0.5 bg-blue-200 text-blue-800 text-xs rounded-full">BETA</span>
+            </div>
+            <p className="text-sm text-blue-800">
+              <strong>Creating and saving automations works.</strong> Execution triggers when events occur 
+              (deal won, task completed, etc.) require the Edge Function to be deployed. 
+              <a href="#" className="underline ml-1">View setup guide →</a>
             </p>
           </div>
         </div>

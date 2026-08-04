@@ -8,6 +8,7 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { generateInvoicePDF } from '../lib/PDFGenerator'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 import {
   Plus, Search, Filter, DollarSign, TrendingUp, TrendingDown,
   Receipt, FileText, Clock, CheckCircle2, AlertCircle, Download,
@@ -898,6 +899,13 @@ export default function FinanceNigeria() {
           </div>
         </div>
       )}
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Reports', path: '/app/reports', description: 'Financial analytics' },
+        { label: 'CRM', path: '/app/crm', description: 'Track deal payments' },
+        { label: 'Inventory', path: '/app/inventory', description: 'Track inventory' },
+      ]} />
     </div>
   )
 }

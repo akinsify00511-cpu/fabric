@@ -64,8 +64,8 @@ export default function Campaigns() {
   const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   
-  // Email sending feature status
-  const emailSendingAvailable = true // Set to false to show Coming Soon
+  // Email sending feature status - requires email provider integration (SendGrid, AWS SES, etc.)
+  const emailSendingAvailable = false
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
@@ -147,18 +147,43 @@ export default function Campaigns() {
   }
 
   const sendCampaign = async (campaignId: string) => {
-    // Show coming soon message
-    showToast('Email sending is coming soon! We\'ll notify you when it\'s ready.', 'info')
+    if (!emailSendingAvailable) {
+      showToast('Email sending requires integration with an email provider', 'info')
+      return
+    }
     
-    // Optionally: Mark as draft/ready for when email sending is implemented
+    // Mark campaign as sending
     const { error } = await supabase
       .from('email_campaigns')
-      .update({ status: 'draft' })
+      .update({ status: 'sending' })
       .eq('id', campaignId)
 
-    if (!error) {
-      load()
+    if (error) {
+      showToast('Failed to start campaign', 'error')
+      return
     }
+
+    try {
+      // Call Edge Function to send emails
+      const response = await supabase.functions.invoke('send-email', {
+        body: { campaignId }
+      })
+
+      if (response.error) {
+        throw new Error(response.error.message)
+      }
+
+      showToast('Campaign sent successfully!', 'success')
+    } catch (err) {
+      showToast('Failed to send campaign: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error')
+      // Revert status
+      await supabase
+        .from('email_campaigns')
+        .update({ status: 'draft' })
+        .eq('id', campaignId)
+    }
+
+    load()
   }
 
   const addContact = async () => {
@@ -221,21 +246,22 @@ export default function Campaigns() {
   return (
     <div className="pb-20">
       {/* Coming Soon Banner */}
-      <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-amber-100 rounded-lg">
-            <Mail size={20} className="text-amber-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-amber-900">Email Sending: Coming Soon</h3>
-            <p className="text-sm text-amber-700 mt-1">
-              Email campaigns are currently in development. You can create and save campaigns, 
-              but actual email delivery will be available soon. This includes integration with 
-              SendGrid, Mailgun, or Resend for reliable email delivery.
-            </p>
+      {!emailSendingAvailable && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <Mail size={20} className="text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-amber-900">Email Sending: Coming Soon</h3>
+              <p className="text-sm text-amber-700 mt-1">
+                Email campaigns are currently in development. You can create and save campaigns, 
+                but actual email delivery requires integration with an email provider (SendGrid, Mailgun, or Resend).
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="flex items-center justify-between mb-6">
         <div>

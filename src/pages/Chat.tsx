@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 import { Send, Hash, Lock, Users, Plus, ArrowLeft, Smile, Trash2 } from 'lucide-react'
 
 type Channel = {
@@ -529,6 +530,13 @@ export default function Chat() {
           </div>
         </div>
       )}
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Tasks', path: '/app/tasks', description: 'Create tasks from chat' },
+        { label: 'Calendar', path: '/app/calendar', description: 'Schedule meetings' },
+        { label: 'People', path: '/app/people', description: 'Invite team' },
+      ]} />
     </div>
   )
 }

@@ -70,7 +70,7 @@ const DEMO_STAFF: StaffMember[] = [
 ]
 
 export default function Tickets() {
-  const { staff, isDemo } = useAuth()
+  const { staff, isDemo, session } = useAuth()
   const { showToast } = useToast()
   const [tickets, setTickets] = useState<TicketType[]>([])
   const [teamMembers, setTeamMembers] = useState<StaffMember[]>([])
@@ -150,7 +150,7 @@ export default function Tickets() {
       priority: newPriority,
       category: newCategory || null,
       customer_name: staff?.full_name ?? staff?.name ?? 'Staff',
-      customer_email: '', // TODO: get from auth
+      customer_email: session?.user?.email ?? '',
       assignee_id: staff?.id,
     })
     if (error) {

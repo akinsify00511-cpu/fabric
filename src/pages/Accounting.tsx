@@ -64,6 +64,7 @@ export default function Accounting() {
   const [entries, setEntries] = useState<JournalEntry[]>([])
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null)
   const [loading, setLoading] = useState(true)
+  const [creating, setCreating] = useState(false)
   const [activeTab, setActiveTab] = useState<'chart' | 'journal' | 'reports'>('chart')
   const [reportType, setReportType] = useState<'balance' | 'income'>('balance')
   const [showNewEntry, setShowNewEntry] = useState(false)
@@ -106,25 +107,31 @@ export default function Accounting() {
   }
 
   const createAccount = async () => {
+    if (creating) return
+    setCreating(true)
     if (!newCode.trim() || !newName.trim()) {
       showToast('Enter code and name', 'error')
+      setCreating(false)
       return
     }
-    const { error } = await supabase.from('accounts').insert({
-      code: newCode,
-      name: newName,
-      type: newType,
-      opening_balance: Number(newOpening) || 0,
-    })
-    if (error) {
-      showToast('Failed to create account', 'error')
-    } else {
+    try {
+      const { error } = await supabase.from('accounts').insert({
+        code: newCode,
+        name: newName,
+        type: newType,
+        opening_balance: Number(newOpening) || 0,
+      })
+      if (error) throw error
       showToast('Account created!', 'success')
       setNewCode('')
       setNewName('')
       setNewOpening('0')
       setShowNewAccount(false)
       load()
+    } catch (err) {
+      showToast('Failed to create account', 'error')
+    } finally {
+      setCreating(false)
     }
   }
 
@@ -487,7 +494,7 @@ export default function Accounting() {
             </div>
             <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
               <button onClick={() => setShowNewAccount(false)} className="px-4 py-2 rounded-lg border border-black/10">Cancel</button>
-              <button onClick={createAccount} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">Create</button>
+              <button onClick={createAccount} disabled={creating} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50">{creating ? 'Creating...' : 'Create'}</button>
             </div>
           </div>
         </div>

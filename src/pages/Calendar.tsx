@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 import {
   Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock,
   MapPin, Users, X, Check, Trash2, Edit3
@@ -571,6 +572,13 @@ export default function Calendar() {
           </div>
         </div>
       )}
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Meetings', path: '/app/meetings', description: 'Schedule meetings' },
+        { label: 'Tasks', path: '/app/tasks', description: 'Create task deadlines' },
+        { label: 'Chat', path: '/app/chat', description: 'Discuss events' },
+      ]} />
     </div>
   )
 }

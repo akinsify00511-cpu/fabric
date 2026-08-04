@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
@@ -25,6 +25,7 @@ const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
 const More = lazy(() => import('./pages/More'))
 const Social = lazy(() => import('./pages/Social'))
+const Approvals = lazy(() => import('./pages/Approvals'))
 const Tasks = lazy(() => import('./pages/Tasks'))
 const Merit = lazy(() => import('./pages/Merit'))
 const CashFlow = lazy(() => import('./pages/CashFlow'))
@@ -67,6 +68,7 @@ const Privacy = lazy(() => import('./pages/Privacy'))
 const Terms = lazy(() => import('./pages/Terms'))
 const Contact = lazy(() => import('./pages/Contact'))
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'))
+const HelpCenter = lazy(() => import('./pages/HelpCenter'))
 
 // Loading fallback component
 function PageLoader() {
@@ -115,6 +117,16 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  // Backward-compatible redirects: old flat paths → new /app/... paths
+  const appRoutes = [
+    'dashboard', 'crm', 'projects', 'finance', 'quotes', 'payments', 'people',
+    'inventory', 'reports', 'settings', 'more', 'social', 'approvals', 'tasks',
+    'merit', 'cashflow', 'chat', 'knowledge', 'automations', 'tickets',
+    'campaigns', 'accounting', 'branding', 'security', 'sso', 'api', 'portal',
+    'calendar', 'requisitions', 'time', 'events', 'monitoring', 'organogram',
+    'meetings'
+  ]
+
   return (
     <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
@@ -134,10 +146,16 @@ function AppRoutes() {
         <Route path="/field-location" element={<FieldLocation />} />
         <Route path="/lead/:source?" element={<LeadCapture />} />
         <Route path="/leads" element={<LeadCapture />} />
+        <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/cookies" element={<CookiePolicy />} />
+        {/* Backward-compatible redirects for old flat paths → /app/... */}
+        {appRoutes.map(route => (
+          <Route key={route} path={route} element={<Navigate to={`/app/${route}`} replace />} />
+        ))}
+        <Route path="settings/profile" element={<Navigate to="/app/settings/profile" replace />} />
         <Route path="*" element={<NotFound />} />
         <Route
           path="/app"
@@ -160,6 +178,7 @@ function AppRoutes() {
         <Route path="settings/profile" element={<Profile />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
+        <Route path="approvals" element={<Approvals />} />
         <Route path="tasks" element={<Tasks />} />
         <Route path="merit" element={<Merit />} />
         <Route path="cashflow" element={<CashFlow />} />

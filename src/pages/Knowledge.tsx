@@ -354,7 +354,28 @@ export default function Knowledge() {
           <div className="px-3 py-2 flex items-center justify-between">
             <span className="text-xs font-medium text-black/40 uppercase tracking-wide">Spaces</span>
             <button
-              onClick={() => {/* TODO: create space */}}
+              onClick={async () => {
+                const name = prompt('Space name:')
+                if (!name?.trim()) return
+                const icon = prompt('Icon emoji (default: 📁):') || '📁'
+                if (isDemo) {
+                  const newSpace = { id: `space-${Date.now()}`, name, icon_emoji: icon, is_default: false, description: '' }
+                  setSpaces([...spaces, newSpace])
+                  showToast('Space created', 'success')
+                } else {
+                  const { error } = await supabase.from('kb_spaces').insert({
+                    name,
+                    icon_emoji: icon,
+                    business_id: staff?.business_id,
+                  })
+                  if (error) {
+                    showToast('Failed to create space', 'error')
+                  } else {
+                    loadSpaces()
+                    showToast('Space created', 'success')
+                  }
+                }
+              }}
               className="p-1 hover:bg-black/[0.05] rounded text-black/30 hover:text-black/50"
             >
               <Plus size={14} />

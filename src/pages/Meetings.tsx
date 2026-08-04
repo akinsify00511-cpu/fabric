@@ -227,90 +227,11 @@ export default function Meetings() {
 
   const transcribeMeeting = async (meeting: Meeting) => {
     setSummarizing(meeting.id)
-    try {
-      // Update status to processing
-      await supabase
-        .from('meetings')
-        .update({ status: 'processing' })
-        .eq('id', meeting.id)
-
-      setMeetings(prev => prev.map(m => 
-        m.id === meeting.id ? { ...m, status: 'processing' as const } : m
-      ))
-
-      // Simulate AI transcription (in production, use OpenAI Whisper or similar)
-      const sampleTranscript = `Speaker 1: Good morning everyone. Let's start with the agenda for today.
-Speaker 2: Thanks for joining. I wanted to discuss the Q4 roadmap and timeline.
-Speaker 1: Yes, I've prepared some slides. Let's start with the key milestones.
-Speaker 2: First, let's review what we accomplished last quarter.
-Speaker 1: We shipped the new dashboard and improved performance by 40%.
-Speaker 2: Excellent work. Now let's look at the upcoming features.
-Speaker 1: The main focus should be on mobile optimization and API improvements.
-Speaker 2: Agreed. We should also address the customer feedback about onboarding.
-Speaker 1: Good point. Let's allocate more resources to that.
-Speaker 2: I'll schedule a follow-up with the design team.
-Speaker 1: Perfect. Any other business?
-Speaker 2: Not for today. Thanks everyone.`
-
-      const sampleSummary = `## Meeting Summary
-
-### Key Discussion Points
-- Reviewed Q3 accomplishments including new dashboard and 40% performance improvement
-- Discussed Q4 priorities: mobile optimization and API improvements
-- Addressed customer feedback regarding onboarding experience
-
-### Decisions Made
-- Allocate additional resources to improve onboarding flow
-- Schedule follow-up meeting with design team
-
-### Action Items
-- [ ] Schedule design team sync for onboarding improvements
-- [ ] Prepare mobile optimization timeline
-- [ ] Draft API improvement proposal
-
-### Next Steps
-Follow-up meeting scheduled for next week to review design mockups.`
-
-      // Update with transcript and summary
-      await supabase
-        .from('meetings')
-        .update({ 
-          status: 'summarized',
-          transcript: sampleTranscript,
-          summary: sampleSummary
-        })
-        .eq('id', meeting.id)
-
-      setMeetings(prev => prev.map(m => 
-        m.id === meeting.id ? { 
-          ...m, 
-          status: 'summarized' as const,
-          transcript: sampleTranscript,
-          summary: sampleSummary
-        } : m
-      ))
-
-      if (selectedMeeting?.id === meeting.id) {
-        setSelectedMeeting(prev => prev ? { 
-          ...prev, 
-          status: 'summarized' as const,
-          transcript: sampleTranscript,
-          summary: sampleSummary
-        } : null)
-      }
-
-      showToast('Meeting transcribed and summarized!', 'success')
-    } catch (err) {
-      console.error('Failed to transcribe:', err)
-      showToast('Failed to transcribe meeting', 'error')
-      
-      await supabase
-        .from('meetings')
-        .update({ status: 'recorded' })
-        .eq('id', meeting.id)
-    } finally {
-      setSummarizing(null)
-    }
+    
+    // Show coming soon message - AI transcription requires OpenAI Whisper API integration
+    showToast('AI Transcription & Summaries coming soon! We\'ll notify you when this feature is ready.', 'info')
+    
+    setSummarizing(null)
   }
 
   const getStatusBadge = (status: Meeting['status']) => {
@@ -375,7 +296,7 @@ Follow-up meeting scheduled for next week to review design mockups.`
         <div>
           <h1 className="text-xl font-medium text-[var(--avenize-black)]">Meetings</h1>
           <p className="text-sm text-black/50 mt-0.5">
-            AI-powered meeting notes with transcription & summaries
+            Voice memo recording • AI transcription & summaries coming soon
           </p>
         </div>
         <button
@@ -385,6 +306,22 @@ Follow-up meeting scheduled for next week to review design mockups.`
           <Mic size={16} />
           New Recording
         </button>
+      </div>
+
+      {/* AI Features Coming Soon Banner */}
+      <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+            <Sparkles size={16} className="text-amber-600" />
+          </div>
+          <div>
+            <h3 className="font-medium text-amber-800 text-sm">AI Transcription & Summaries</h3>
+            <p className="text-xs text-amber-700 mt-0.5">
+              This feature uses OpenAI Whisper for transcription and GPT for meeting summaries. 
+              It's being finalized — stay tuned!
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Recording Modal */}
@@ -484,7 +421,7 @@ Follow-up meeting scheduled for next week to review design mockups.`
           </div>
           <h3 className="font-semibold mb-2">No meetings yet</h3>
           <p className="text-sm text-black/50 mb-6">
-            Start recording to capture your meetings with AI-powered notes.
+            Start recording voice memos. AI-powered notes coming soon!
           </p>
           <button
             onClick={() => setShowRecorder(true)}
@@ -575,20 +512,11 @@ Follow-up meeting scheduled for next week to review design mockups.`
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     onClick={() => transcribeMeeting(meeting)}
-                    disabled={summarizing === meeting.id || meeting.status === 'processing'}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--avenize-primary)]/10 text-[var(--avenize-primary)] text-xs font-medium hover:bg-[var(--avenize-primary)]/20 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--avenize-primary)]/10 text-[var(--avenize-primary)] text-xs font-medium hover:bg-[var(--avenize-primary)]/20 transition-colors opacity-60"
+                    title="Coming Soon"
                   >
-                    {summarizing === meeting.id ? (
-                      <>
-                        <Loader2 size={12} className="animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <Wand2 size={12} />
-                        Transcribe & Summarize
-                      </>
-                    )}
+                    <Wand2 size={12} />
+                    AI Summary (Coming Soon)
                   </button>
                 </div>
               )}
@@ -649,11 +577,12 @@ Follow-up meeting scheduled for next week to review design mockups.`
                 <div className="flex justify-end">
                   <button
                     onClick={() => transcribeMeeting(selectedMeeting)}
-                    disabled={summarizing === selectedMeeting.id}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 text-black/60 text-sm font-medium opacity-60 cursor-not-allowed"
+                    disabled
+                    title="Coming Soon"
                   >
                     <Wand2 size={14} />
-                    Regenerate Summary
+                    Regenerate Summary (Coming Soon)
                   </button>
                 </div>
               )}

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Plus, Users, Search, Mail, Phone, Briefcase } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 
 type TeamMember = {
   id: string
@@ -23,11 +25,6 @@ export default function People() {
     const load = async () => {
       setLoading(true)
       try {
-        const { createClient } = await import('@supabase/supabase-js')
-        const supabase = createClient(
-          import.meta.env.VITE_SUPABASE_URL,
-          import.meta.env.VITE_SUPABASE_ANON_KEY
-        )
         const { data } = await supabase.from('staff').select('*').order('created_at', { ascending: false }).limit(50)
         if (data && data.length > 0) {
           setMembers(data as TeamMember[])
@@ -176,6 +173,13 @@ export default function People() {
           </div>
         </div>
       )}
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Chat', path: '/app/chat', description: 'Message team members' },
+        { label: 'Time', path: '/app/time', description: 'Track attendance' },
+        { label: 'Tasks', path: '/app/tasks', description: 'Assign tasks' },
+      ]} />
     </div>
   )
 }

@@ -1,5 +1,47 @@
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { MessageCircle, X, Send, Bot, User, Sparkles, ArrowRight, Lightbulb } from 'lucide-react'
+
+// Feature suggestions based on context
+const FEATURE_SUGGESTIONS: Record<string, { label: string; path: string; keywords: string[]; description: string }> = {
+  crm: { label: 'CRM', path: '/app/crm', keywords: ['crm', 'leads', 'deals', 'contacts', 'pipeline', 'sales', 'customer'], description: 'Manage leads and deals' },
+  tasks: { label: 'Tasks', path: '/app/tasks', keywords: ['task', 'todo', 'to-do', 'assignment', 'track'], description: 'Create and track tasks' },
+  people: { label: 'People', path: '/app/people', keywords: ['people', 'team', 'staff', 'hr', 'employee', 'invite'], description: 'Manage your team' },
+  projects: { label: 'Projects', path: '/app/projects', keywords: ['project', 'job', 'field work'], description: 'Track projects and jobs' },
+  chat: { label: 'Chat', path: '/app/chat', keywords: ['chat', 'message', 'conversation', 'team chat'], description: 'Team messaging' },
+  calendar: { label: 'Calendar', path: '/app/calendar', keywords: ['calendar', 'event', 'meeting', 'schedule', 'appointment'], description: 'Schedule events' },
+  finance: { label: 'Finance', path: '/app/finance', keywords: ['invoice', 'payment', 'money', 'finance', 'cash flow', 'quote'], description: 'Invoicing & payments' },
+  inventory: { label: 'Inventory', path: '/app/inventory', keywords: ['inventory', 'stock', 'product', 'item'], description: 'Track stock & products' },
+  reports: { label: 'Reports', path: '/app/reports', keywords: ['report', 'analytics', 'insight', 'metric', 'dashboard', 'data'], description: 'View business insights' },
+  social: { label: 'Social', path: '/app/social', keywords: ['social', 'post', 'marketing', 'campaign'], description: 'Social media management' },
+  knowledge: { label: 'Knowledge', path: '/app/knowledge', keywords: ['knowledge', 'docs', 'documentation', 'wiki', 'guide'], description: 'Internal documentation' },
+  automations: { label: 'Automations', path: '/app/automations', keywords: ['automation', 'workflow', 'automate', 'trigger', 'action', 'rule'], description: 'Set up workflows' },
+  tickets: { label: 'Support', path: '/app/tickets', keywords: ['ticket', 'support', 'issue', 'problem', 'help'], description: 'Customer support' },
+  branding: { label: 'Branding', path: '/app/branding', keywords: ['branding', 'logo', 'color', 'theme', 'customize'], description: 'Customize your brand' },
+  settings: { label: 'Settings', path: '/app/settings', keywords: ['settings', 'config', 'preference', 'account'], description: 'App settings' },
+  campaigns: { label: 'Campaigns', path: '/app/campaigns', keywords: ['campaign', 'email', 'marketing', 'send'], description: 'Email campaigns' },
+  approvals: { label: 'Approvals', path: '/app/approvals', keywords: ['approval', 'approve', 'request', 'leave', 'expense'], description: 'Manage approvals' },
+  payments: { label: 'Payments', path: '/app/payments', keywords: ['payment', 'paystack', 'transaction'], description: 'Payment tracking' },
+  time: { label: 'Time Tracking', path: '/app/time', keywords: ['time', 'timer', 'hours', 'attendance', 'leave'], description: 'Track time & attendance' },
+  events: { label: 'Events', path: '/app/events', keywords: ['event', 'conference', 'workshop'], description: 'Manage events' },
+  requisitions: { label: 'Requisitions', path: '/app/requisitions', keywords: ['requisition', 'purchase', 'request item'], description: 'Purchase requests' },
+}
+
+function findFeatureSuggestions(message: string): Array<{ label: string; path: string; description: string }> {
+  const msg = message.toLowerCase()
+  const suggestions: Array<{ label: string; path: string; description: string }> = []
+  
+  for (const [key, feature] of Object.entries(FEATURE_SUGGESTIONS)) {
+    for (const keyword of feature.keywords) {
+      if (msg.includes(keyword) && !suggestions.find(s => s.label === feature.label)) {
+        suggestions.push({ label: feature.label, path: feature.path, description: feature.description })
+        break
+      }
+    }
+  }
+  
+  return suggestions.slice(0, 3) // Max 3 suggestions
+}
 
 const SARAH_KNOWLEDGE = {
   greetings: [
@@ -51,6 +93,7 @@ type Message = {
   role: 'user' | 'assistant'
   content: string
   time: string
+  suggestions?: Array<{ label: string; path: string; description: string }>
 }
 
 function generateId() {
@@ -61,79 +104,86 @@ function getTime() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-function generateResponse(userMessage: string): string {
+function generateResponse(userMessage: string): { text: string; suggestions: Array<{ label: string; path: string; description: string }> } {
   const msg = userMessage.toLowerCase()
   
   if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy)/.test(msg)) {
-    return SARAH_KNOWLEDGE.greetings[Math.floor(Math.random() * SARAH_KNOWLEDGE.greetings.length)]
+    return { text: SARAH_KNOWLEDGE.greetings[Math.floor(Math.random() * SARAH_KNOWLEDGE.greetings.length)], suggestions: [] }
   }
   
   if (/welcome|new user|first time|just signed|just started|getting started/i.test(msg)) {
-    return SARAH_KNOWLEDGE.onboarding[0]
+    return { text: SARAH_KNOWLEDGE.onboarding[0], suggestions: findFeatureSuggestions(msg) }
   }
 
   if (/crm|deals|contacts|leads|pipeline|sales/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.crm
+    return { text: SARAH_KNOWLEDGE.features.crm, suggestions: [{ label: 'CRM', path: '/app/crm', description: 'Go to CRM' }] }
   }
   if (/task|todo|to-do/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.tasks
+    return { text: SARAH_KNOWLEDGE.features.tasks, suggestions: [{ label: 'Tasks', path: '/app/tasks', description: 'Go to Tasks' }] }
   }
   if (/people|team|hr|staff|employee/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.people
+    return { text: SARAH_KNOWLEDGE.features.people, suggestions: [{ label: 'People', path: '/app/people', description: 'Go to People' }] }
   }
   if (/project/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.projects
+    return { text: SARAH_KNOWLEDGE.features.projects, suggestions: [{ label: 'Projects', path: '/app/projects', description: 'Go to Projects' }] }
   }
   if (/chat|message|conversation/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.chat
+    return { text: SARAH_KNOWLEDGE.features.chat, suggestions: [{ label: 'Chat', path: '/app/chat', description: 'Go to Chat' }] }
   }
   if (/calendar|event|meeting|schedule/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.calendar
+    return { text: SARAH_KNOWLEDGE.features.calendar, suggestions: [{ label: 'Calendar', path: '/app/calendar', description: 'Go to Calendar' }] }
   }
   if (/report|analytics|insight|metric|dashboard/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.reports
+    return { text: SARAH_KNOWLEDGE.features.reports, suggestions: [{ label: 'Reports', path: '/app/reports', description: 'Go to Reports' }] }
   }
   if (/finance|invoice|payment|money|cash|naira/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.finance
+    return { text: SARAH_KNOWLEDGE.features.finance, suggestions: [{ label: 'Finance', path: '/app/finance', description: 'Go to Finance' }] }
   }
   if (/inventory|stock|product/i.test(msg)) {
-    return SARAH_KNOWLEDGE.features.inventory
+    return { text: SARAH_KNOWLEDGE.features.inventory, suggestions: [{ label: 'Inventory', path: '/app/inventory', description: 'Go to Inventory' }] }
   }
   
   if (/pricing|price|cost|how much|plan|subscription|naira/i.test(msg)) {
     if (/free|free plan/i.test(msg)) {
-      return SARAH_KNOWLEDGE.pricing.free
+      return { text: SARAH_KNOWLEDGE.pricing.free, suggestions: [] }
     }
     if (/pro|premium|upgrade|paid/i.test(msg)) {
-      return SARAH_KNOWLEDGE.pricing.pro
+      return { text: SARAH_KNOWLEDGE.pricing.pro, suggestions: [] }
     }
-    return "Here's our pricing:\n\n" + SARAH_KNOWLEDGE.pricing.free + "\n\n" + SARAH_KNOWLEDGE.pricing.pro + "\n\n" + SARAH_KNOWLEDGE.pricing.trial
+    return { text: "Here's our pricing:\n\n" + SARAH_KNOWLEDGE.pricing.free + "\n\n" + SARAH_KNOWLEDGE.pricing.pro + "\n\n" + SARAH_KNOWLEDGE.pricing.trial, suggestions: [] }
   }
   
   if (/trial|free trial/i.test(msg)) {
-    return SARAH_KNOWLEDGE.pricing.trial
+    return { text: SARAH_KNOWLEDGE.pricing.trial, suggestions: [] }
   }
   
   if (/help|what can you do|how do i|how to|tutorial|guide/i.test(msg)) {
-    return SARAH_KNOWLEDGE.help[0]
+    return { text: SARAH_KNOWLEDGE.help[0], suggestions: [] }
   }
   
   if (/what.*new|new feature|update|what's new|recent/i.test(msg)) {
-    return "Here's what's new in Avenize:\n\n" + NEW_FEATURES.join('\n\n') + "\n\nIs there anything specific you'd like to know more about?"
+    return { text: "Here's what's new in Avenize:\n\n" + NEW_FEATURES.join('\n\n') + "\n\nIs there anything specific you'd like to know more about?", suggestions: [] }
   }
   
   if (/thank|thanks|appreciate/i.test(msg)) {
-    return "You're welcome! Is there anything else I can help you with?"
+    return { text: "You're welcome! Is there anything else I can help you with?", suggestions: [] }
   }
   
   if (/bye|goodbye|see you|talk later/i.test(msg)) {
-    return "Goodbye! Feel free to come back if you have any questions. Have a great day!"
+    return { text: "Goodbye! Feel free to come back if you have any questions. Have a great day!", suggestions: [] }
   }
   
-  return SARAH_KNOWLEDGE.unknown
+  // Check for any feature-related keywords in the message
+  const suggestions = findFeatureSuggestions(msg)
+  if (suggestions.length > 0) {
+    return { text: SARAH_KNOWLEDGE.unknown, suggestions }
+  }
+  
+  return { text: SARAH_KNOWLEDGE.unknown, suggestions: [] }
 }
 
 export default function SarahChat() {
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -166,12 +216,13 @@ export default function SarahChat() {
     setIsTyping(true)
 
     setTimeout(() => {
-      const response = generateResponse(userMsg.content)
+      const { text, suggestions } = generateResponse(userMsg.content)
       const assistantMsg: Message = {
         id: generateId(),
         role: 'assistant',
-        content: response,
-        time: getTime()
+        content: text,
+        time: getTime(),
+        suggestions
       }
       setMessages(prev => [...prev, assistantMsg])
       setIsTyping(false)
@@ -181,6 +232,11 @@ export default function SarahChat() {
   const handleQuickReply = (question: string) => {
     setInput(question)
     setTimeout(handleSend, 100)
+  }
+
+  const handleSuggestionClick = (path: string) => {
+    navigate(path)
+    setIsOpen(false)
   }
 
   return (
@@ -244,6 +300,29 @@ export default function SarahChat() {
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                     </div>
+                    
+                    {/* Feature Suggestions */}
+                    {msg.role === 'assistant' && msg.suggestions && msg.suggestions.length > 0 && (
+                      <div className="mt-2 space-y-1.5">
+                        <p className="text-[10px] text-indigo-600 font-medium px-1 flex items-center gap-1">
+                          <Lightbulb size={10} />
+                          Suggested features:
+                        </p>
+                        {msg.suggestions.map((suggestion, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleSuggestionClick(suggestion.path)}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg transition w-full text-left"
+                          >
+                            <span className="font-medium">{suggestion.label}</span>
+                            <span className="text-indigo-500">-</span>
+                            <span>{suggestion.description}</span>
+                            <ArrowRight size={12} className="ml-auto shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    
                     <p className="text-[10px] text-gray-400 mt-1 px-1">
                       {msg.role === 'assistant' ? 'Sarah' : 'You'} • {msg.time}
                     </p>

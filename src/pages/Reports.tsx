@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 
 // Demo stats
 const DEMO_STATS = {
@@ -66,6 +67,13 @@ export default function Reports() {
       <p className="text-xs text-black/40 mt-4">
         Deterministic, non-AI view — the natural-language reporting layer comes in a later build phase.
       </p>
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Finance', path: '/app/finance', description: 'Financial reports' },
+        { label: 'Projects', path: '/app/projects', description: 'Project analytics' },
+        { label: 'CRM', path: '/app/crm', description: 'Sales reports' },
+      ]} />
     </div>
   )
 }

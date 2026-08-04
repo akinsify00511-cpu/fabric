@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import FeatureSuggestions from '../components/FeatureSuggestions'
 import {
   Package, Plus, Search, Filter, AlertTriangle, TrendingDown,
   ArrowUpDown, ChevronDown, Edit2, Trash2, MapPin,
@@ -701,6 +702,13 @@ export default function InventoryNigeria() {
           </div>
         </div>
       )}
+
+      {/* Contextual Feature Suggestions */}
+      <FeatureSuggestions suggestions={[
+        { label: 'Finance', path: '/app/finance', description: 'Track inventory value' },
+        { label: 'Projects', path: '/app/projects', description: 'Use in projects' },
+        { label: 'Reports', path: '/app/reports', description: 'Stock analytics' },
+      ]} />
     </div>
   )
 }
