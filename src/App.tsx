@@ -50,6 +50,7 @@ import InventoryNigeria from './pages/InventoryNigeria'
 import FinanceNigeria from './pages/FinanceNigeria'
 import TrialBanner from './components/TrialBanner'
 import Premium from './pages/Premium'
+import SarahChat from './components/SarahChat'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -62,6 +63,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return (
     <>
       <TrialBanner />
+      <SarahChat />
       {children}
     </>
   )
