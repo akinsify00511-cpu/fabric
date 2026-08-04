@@ -1,9 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import { supabase } from '../lib/supabase'
 import AvenizeMark from './AvenizeMark'
-import GamificationBar from './GamificationBar'
 import NotificationBell from './NotificationBell'
 
 const NAV_ITEMS = [
@@ -38,8 +36,10 @@ const MOBILE_NAV_ITEMS = [
 ]
 
 export default function Shell() {
-  const { staff, session, signOut } = useAuth()
-  const userId = session?.user?.id
+  const { staff, signOut } = useAuth()
+
+  // Get company name from staff record or business
+  const companyName = staff?.business_name || 'My Company'
 
   return (
     <div className="min-h-screen bg-[var(--avenize-offwhite)]">
@@ -48,9 +48,10 @@ export default function Shell() {
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <AvenizeMark size={22} />
-            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+            <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)] truncate">
+              {companyName}
+            </span>
           </div>
-          {userId && <GamificationBar userId={userId} />}
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
           {NAV_ITEMS.map((item) => {
@@ -75,7 +76,8 @@ export default function Shell() {
           })}
         </nav>
         <div className="px-5 py-4 border-t border-black/[0.06] text-xs text-black/40">
-          <p className="text-black/60">{staff?.full_name ?? staff?.name ?? '…'}</p>
+          <p className="text-black/60 truncate">{staff?.full_name ?? staff?.name ?? '...'}</p>
+          <p className="text-black/40 text-[10px] capitalize">{staff?.role || 'Staff'}</p>
           <button onClick={signOut} className="mt-1 hover:text-black/70">
             Sign out
           </button>
@@ -86,7 +88,9 @@ export default function Shell() {
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-black/[0.06] sticky top-0 z-10">
         <div className="flex items-center gap-2">
           <AvenizeMark size={20} />
-          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)]">Avenize</span>
+          <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)] truncate">
+            {companyName}
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
@@ -100,27 +104,6 @@ export default function Shell() {
       <main className="md:ml-56 p-4 md:p-8 pb-28 md:pb-8">
         <Outlet />
       </main>
-
-      {/* Mobile floating bottom pill nav */}
-      <nav className="md:hidden fixed bottom-4 left-4 right-4 bg-[var(--avenize-black)] rounded-full px-6 py-3 flex items-center justify-between shadow-lg">
-        {MOBILE_NAV_ITEMS.map((item) => {
-          const Icon = item.icon
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `w-9 h-9 rounded-full flex items-center justify-center transition ${
-                  isActive ? 'avenize-gradient text-white' : 'text-white/50'
-                }`
-              }
-            >
-              <Icon size={18} strokeWidth={2} />
-            </NavLink>
-          )
-        })}
-      </nav>
     </div>
   )
 }
