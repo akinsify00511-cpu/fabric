@@ -80,3 +80,33 @@ export type Staff = {
   job_title: string | null
   active: boolean
 }
+
+export type BusinessBranding = {
+  id: string
+  business_id: string
+  logo_url: string | null
+  logo_dark_url: string | null
+  favicon_url: string | null
+  primary_color: string
+  accent_color: string
+  background_color: string
+  surface_color: string
+  text_color: string
+  dark_primary_color: string
+  dark_accent_color: string
+  dark_background_color: string
+  dark_surface_color: string
+  dark_text_color: string
+  theme_mode: 'light' | 'dark' | 'system'
+  border_radius: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+  font_family: 'default' | 'inter' | 'poppins' | 'roboto' | 'custom'
+  custom_name: string | null
+  custom_tagline: string | null
+  website_url: string | null
+  twitter_url: string | null
+  linkedin_url: string | null
+  facebook_url: string | null
+  instagram_url: string | null
+  created_at: string
+  updated_at: string
+}

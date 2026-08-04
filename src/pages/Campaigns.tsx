@@ -63,6 +63,9 @@ const DEMO_CONTACTS: Contact[] = [
 export default function Campaigns() {
   const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
+  
+  // Email sending feature status
+  const emailSendingAvailable = true // Set to false to show Coming Soon
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
@@ -144,27 +147,16 @@ export default function Campaigns() {
   }
 
   const sendCampaign = async (campaignId: string) => {
+    // Show coming soon message
+    showToast('Email sending is coming soon! We\'ll notify you when it\'s ready.', 'info')
+    
+    // Optionally: Mark as draft/ready for when email sending is implemented
     const { error } = await supabase
       .from('email_campaigns')
-      .update({ status: 'sending', sent_at: new Date().toISOString() })
+      .update({ status: 'draft' })
       .eq('id', campaignId)
 
     if (!error) {
-      showToast('Campaign is being sent...', 'success')
-      // Simulate sends
-      setTimeout(async () => {
-        await supabase
-          .from('email_campaigns')
-          .update({
-            status: 'sent',
-            sent_count: Math.floor(Math.random() * 100) + 50,
-            delivered_count: Math.floor(Math.random() * 90) + 45,
-            opened_count: Math.floor(Math.random() * 40) + 20,
-            clicked_count: Math.floor(Math.random() * 15) + 5,
-          })
-          .eq('id', campaignId)
-        load()
-      }, 2000)
       load()
     }
   }
@@ -228,6 +220,23 @@ export default function Campaigns() {
 
   return (
     <div className="pb-20">
+      {/* Coming Soon Banner */}
+      <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-amber-100 rounded-lg">
+            <Mail size={20} className="text-amber-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium text-amber-900">Email Sending: Coming Soon</h3>
+            <p className="text-sm text-amber-700 mt-1">
+              Email campaigns are currently in development. You can create and save campaigns, 
+              but actual email delivery will be available soon. This includes integration with 
+              SendGrid, Mailgun, or Resend for reliable email delivery.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-[var(--avenize-black)]">Email Marketing</h1>

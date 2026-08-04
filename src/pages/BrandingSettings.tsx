@@ -37,7 +37,7 @@ export default function BrandingSettings() {
   const [uploading, setUploading] = useState(false)
   const [activeTab, setActiveTab] = useState<'colors' | 'logo' | 'theme' | 'social'>('colors')
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'logo_dark' | 'favicon' = 'logo') => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -52,7 +52,7 @@ export default function BrandingSettings() {
     }
 
     setUploading(true)
-    const url = await uploadLogo(file)
+    const url = await uploadLogo(file, type)
     if (url) {
       showToast('Logo uploaded!', 'success')
     } else {
@@ -343,7 +343,7 @@ export default function BrandingSettings() {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleLogoUpload}
+                    onChange={(e) => handleLogoUpload(e, 'logo')}
                     disabled={uploading}
                     className="hidden"
                   />

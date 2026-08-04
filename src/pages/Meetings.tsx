@@ -12,7 +12,7 @@ import {
   CheckCircle2, AlertCircle, Loader2, Play, Pause,
   FileText, Trash2, Download, Eye, MoreVertical,
   MessageSquare, Users, ChevronRight, Sparkles,
-  Trash, Edit3, Wand2, X
+  Trash, Edit3, Wand2, X, Video
 } from 'lucide-react'
 
 interface Meeting {
@@ -353,6 +353,23 @@ Follow-up meeting scheduled for next week to review design mockups.`
 
   return (
     <div className="pb-20">
+      {/* Coming Soon Banner */}
+      <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-purple-100 rounded-lg">
+            <Video size={20} className="text-purple-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium text-purple-900">AI Transcription: Coming Soon</h3>
+            <p className="text-sm text-purple-700 mt-1">
+              Voice recording is available now. AI transcription and smart summaries using OpenAI Whisper 
+              will be available soon. You'll be able to record meetings and automatically get accurate 
+              transcripts and action items.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

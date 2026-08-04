@@ -191,6 +191,23 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
   return (
     <div className="pb-20">
+      {/* Coming Soon Banner */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <Zap size={20} className="text-blue-600" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium text-blue-900">Automation Execution: Coming Soon</h3>
+            <p className="text-sm text-blue-700 mt-1">
+              You can create and save automation workflows now. Actual execution (triggers and actions) 
+              will be available soon via Supabase Edge Functions and cron jobs. This will enable 
+              Zapier-style workflows between your apps.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-[var(--avenize-black)]">Automations</h1>
