@@ -51,6 +51,8 @@ import FinanceNigeria from './pages/FinanceNigeria'
 import TrialBanner from './components/TrialBanner'
 import OwnerInsights from './pages/OwnerInsights'
 import FieldLocation from './pages/FieldLocation'
+import LeadCapture from './pages/LeadCapture'
+import InvoicePreview from './components/InvoicePreview'
 import Premium from './pages/Premium'
 import SarahChat from './components/SarahChat'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -89,6 +91,8 @@ function AppRoutes() {
       <Route path="/upgrade" element={<Premium />} />
       <Route path="/owner-insights" element={<OwnerInsights />} />
       <Route path="/field-location" element={<FieldLocation />} />
+      <Route path="/lead/:source?" element={<LeadCapture />} />
+      <Route path="/leads" element={<LeadCapture />} />
       <Route
         path="/app"
         element={

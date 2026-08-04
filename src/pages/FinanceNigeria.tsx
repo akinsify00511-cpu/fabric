@@ -17,7 +17,7 @@ type InvoiceStatus = 'draft' | 'sent' | 'partially_paid' | 'paid' | 'overdue' | 
 type PaymentMethod = 'bank_transfer' | 'cash' | 'mobile_money' | 'pos' | 'cheque'
 type PaymentBank = 'access' | 'gtbank' | 'uba' | 'first_bank' | 'other'
 
-interface Invoice {
+export interface Invoice {
   id: string
   invoice_number: string
   client_name: string
@@ -43,7 +43,7 @@ interface Invoice {
   business_id: string
 }
 
-interface InvoiceItem {
+export interface InvoiceItem {
   description: string
   quantity: number
   unit_price: number
