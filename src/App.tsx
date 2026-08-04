@@ -53,6 +53,7 @@ import OwnerInsights from './pages/OwnerInsights'
 import FieldLocation from './pages/FieldLocation'
 import Premium from './pages/Premium'
 import SarahChat from './components/SarahChat'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
@@ -73,7 +74,8 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   return (
-    <Routes>
+    <ErrorBoundary>
+      <Routes>
       <Route path="/" element={<LandingEnhanced />} />
       <Route path="/v1" element={<Landing />} />
       <Route path="/login" element={<Login />} />
@@ -130,6 +132,7 @@ function AppRoutes() {
         <Route path="meetings" element={<Meetings />} />
       </Route>
     </Routes>
+    </ErrorBoundary>
   )
 }
 
