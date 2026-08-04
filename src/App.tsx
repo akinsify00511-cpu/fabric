@@ -49,6 +49,8 @@ import ProjectsNigeria from './pages/ProjectsNigeria'
 import InventoryNigeria from './pages/InventoryNigeria'
 import FinanceNigeria from './pages/FinanceNigeria'
 import TrialBanner from './components/TrialBanner'
+import OwnerInsights from './pages/OwnerInsights'
+import FieldLocation from './pages/FieldLocation'
 import Premium from './pages/Premium'
 import SarahChat from './components/SarahChat'
 
@@ -83,6 +85,8 @@ function AppRoutes() {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/upgrade" element={<Premium />} />
+      <Route path="/owner-insights" element={<OwnerInsights />} />
+      <Route path="/field-location" element={<FieldLocation />} />
       <Route
         path="/app"
         element={
