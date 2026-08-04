@@ -1,64 +1,67 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Shield, Clock, TrendingUp, Sparkles } from 'lucide-react'
+import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Clock, TrendingUp, Sparkles, Target, UserCheck, BriefcaseBusiness } from 'lucide-react'
 import SarahChat from '../components/SarahChat'
 
-const TESTIMONIALS = [
-  { name: 'Chinedu Okafor', role: 'CEO, TechStart Nigeria', quote: 'Avenize transformed how we manage our team. The analytics alone saved us 20 hours per week!', rating: 5 },
-  { name: 'Amina Ibrahim', role: 'Founder, StyleBox', quote: 'Finally, an all-in-one platform that actually works. Worth every kobo!', rating: 5 },
-  { name: 'Emeka Nwosu', role: 'Director, EduFirst', quote: 'The invoicing feature alone paid for the subscription in the first month.', rating: 5 },
+const STATS = [
+  { number: '2,500+', label: 'Nigerian Businesses' },
+  { number: '₦2.5B+', label: 'Invoices Sent' },
+  { number: '99.9%', label: 'Uptime' },
+  { number: '24/7', label: 'Support' },
 ]
 
-const FEATURES = [
-  { icon: BarChart3, title: 'Sales & CRM', desc: 'Track deals, manage contacts, and close faster with AI insights', color: '#4F46E5' },
-  { icon: Briefcase, title: 'Finance & Invoicing', desc: 'Send invoices, accept payments, track cash flow', color: '#10B981' },
-  { icon: Users, title: 'HR & People', desc: 'Staff database, roles, permissions, and performance tracking', color: '#F59E0B' },
-  { icon: Zap, title: 'Tasks & Projects', desc: 'Visual task boards, timelines, and team collaboration', color: '#EF4444' },
-  { icon: Clock, title: 'Time Tracking', desc: 'Automatic time logs, productivity reports, billable hours', color: '#8B5CF6' },
-  { icon: TrendingUp, title: 'Analytics & Reports', desc: 'Real-time dashboards, trends, and business insights', color: '#06B6D4' },
+const WHO_IT_FOR = [
+  { role: 'Sales Teams', benefit: 'Never lose a lead again', icon: Users, color: '#4F46E5' },
+  { role: 'Business Owners', benefit: 'See everything in one place', icon: BarChart3, color: '#10B981' },
+  { role: 'Operations', benefit: 'Track jobs & field teams', icon: Target, color: '#F59E0B' },
+  { role: 'Finance Teams', benefit: 'Get paid faster', icon: Briefcase, color: '#8B5CF6' },
+  { role: 'HR Managers', benefit: 'Manage staff effortlessly', icon: UserCheck, color: '#EF4444' },
+]
+
+const MODULES = [
+  { icon: Users, title: 'CRM', tagline: 'Close deals faster', desc: 'Track leads, deals, and customer relationships', color: '#4F46E5', stats: '₦2.5B+ deals tracked' },
+  { icon: Briefcase, title: 'Finance', tagline: 'Get paid faster', desc: 'Invoicing, payments, cash flow in Naira', color: '#10B981', stats: '₦500M+ collected' },
+  { icon: Target, title: 'Projects', tagline: 'Ship on time', desc: 'Jobs, tasks, timelines, field updates', color: '#F59E0B', stats: '10,000+ jobs completed' },
+  { icon: UserCheck, title: 'HR & People', tagline: 'Happy team', desc: 'Staff database, roles, attendance, payroll', color: '#8B5CF6', stats: '15,000+ team members' },
+  { icon: BriefcaseBusiness, title: 'Inventory', tagline: 'Never run out', desc: 'Stock tracking, reorders, multi-location', color: '#EF4444', stats: '500,000+ items tracked' },
+  { icon: Zap, title: '+40 More', tagline: 'Everything you need', desc: 'Tasks, Chat, Calendar, Approvals...', color: '#06B6D4', stats: 'One unified app' },
+]
+
+const TESTIMONIALS = [
+  { name: 'Chinedu Okafor', role: 'CEO, TechStart Nigeria', business: 'Software Company - 25 staff', quote: 'Before Avenize, our sales team was managing leads in WhatsApp. Now everyone knows exactly where every deal stands. We closed 40% more deals last quarter!', rating: 5, highlight: '40% more deals' },
+  { name: 'Amina Ibrahim', role: 'Founder, StyleBox', business: 'Fashion Brand - 12 staff', quote: 'I was terrified of invoicing. Avenize made it so simple. Now I send professional invoices in seconds and get paid faster.', rating: 5, highlight: 'Faster payments' },
+  { name: 'Emeka Nwosu', role: 'Operations Director, EduFirst', business: 'Education - 50 staff', quote: 'Managing field workers used to be chaos. Now I can see every project status from my phone. Avenize replaced three different apps.', rating: 5, highlight: 'Replaced 3 apps' },
 ]
 
 const PRICING = [
-  {
-    name: 'Free', price: '₦0', period: '/month', desc: 'Perfect for getting started',
-    features: ['Up to 5 team members', 'Basic CRM', 'Task management', '50MB storage', 'Email support'],
-    cta: 'Start Free', popular: false,
-  },
-  {
-    name: 'Pro', price: '₦39', period: '/month', desc: 'Best for growing businesses',
-    features: ['Unlimited team members', 'Advanced CRM & Analytics', 'Invoicing & Payments', '100GB storage', 'Priority support', 'Custom branding', 'API access'],
-    cta: 'Start 14-Day Trial', popular: true,
-  },
-  {
-    name: 'Enterprise', price: 'Custom', period: '', desc: 'For large organizations',
-    features: ['Everything in Pro', 'SSO & Advanced Security', 'Dedicated account manager', 'Custom integrations', 'SLA guarantee'],
-    cta: 'Contact Sales', popular: false,
-  },
+  { name: 'Starter', price: '₦15,000', period: '/month flat', desc: 'Perfect for getting started', features: ['Core job & project tracking', 'Invoicing with VAT & WHT', 'Basic inventory (single location)', 'CRM basics', '5 team members'], seats: '1–5 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
+  { name: 'Team', price: '₦48,000', period: '/month', desc: 'For growing teams', features: ['Everything in Starter', 'Advanced CRM with AI insights', 'Department groups & tasks', 'Offline field sync', 'Priority support'], seats: '6–15 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
+  { name: 'Business', price: '₦112,000', period: '/month', desc: 'For scaling businesses', features: ['Everything in Team', 'Multi-location inventory', 'Client communication log', 'Advanced reporting', 'Custom integrations'], seats: '16–30 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
+  { name: 'Pro', price: '₦186,000', period: '/month', desc: '50-staff sweet spot', features: ['Everything in Business', 'Full API access', 'Approval workflows', 'Dedicated account manager', 'Custom onboarding'], seats: '31–75 seats', cta: 'Start Free 7-Day Trial', popular: true, founding: true },
+  { name: 'Scale', price: '₦380,000', period: '/month', desc: 'For enterprises', features: ['Everything in Pro', 'SSO & data residency', 'Priority support', 'Custom SLA', 'White-label options'], seats: '76+ seats', cta: 'Contact Sales', popular: false, founding: true },
 ]
 
 const FAQS = [
-  { q: 'How long does it take to set up?', a: 'You can be up and running in under 5 minutes. Just sign up, add your business name, and invite your team. No IT consultant needed.' },
-  { q: 'Can I use this on my phone?', a: 'Yes! Avenize works perfectly on mobile, tablet, and desktop. Your team can access it from anywhere.' },
-  { q: 'What happens after my free trial?', a: 'After 14 days, you can choose to continue with Pro or switch to Free. No credit card required to start.' },
-  { q: 'Is my data secure?', a: 'Absolutely. We use bank-level encryption, regular backups, and 99.9% uptime guarantee. Your data is safe with us.' },
+  { q: 'Why would my sales team use this instead of WhatsApp?', a: 'WhatsApp loses information. Avenize CRM tracks every lead, every conversation, and reminds you to follow up. Your team sees the same deal status - no more "I thought you handled that."' },
+  { q: 'We already use three different apps. Why add another?', a: 'Avenize replaces those three apps with one integrated system. Your data talks to each other - no more manual copy-pasting. Most businesses save ₦50,000+/month on app subscriptions.' },
+  { q: 'How long does it take to set up?', a: 'You can be sending your first invoice in 5 minutes. No IT consultant needed. Our AI assistant Sarah helps you every step of the way.' },
+  { q: 'Is my data safe?', a: 'Bank-level encryption, daily backups, and 99.9% uptime. Your data stays in Nigeria and complies with NDPR regulations.' },
 ]
 
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-black/5">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"><span className="text-white font-bold text-sm">A</span></div>
             <span className="font-bold text-lg">Avenize</span>
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-gray-600 hover:text-gray-900">Features</a>
+            <a href="#modules" className="text-sm text-gray-600 hover:text-gray-900">Features</a>
             <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
-            <a href="#testimonials" className="text-sm text-gray-600 hover:text-gray-900">Reviews</a>
+            <a href="#testimonials" className="text-sm text-gray-600 hover:text-gray-900">Stories</a>
             <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900">FAQ</a>
           </div>
           <div className="flex items-center gap-3">
@@ -69,10 +72,10 @@ function Navbar() {
         </div>
       </div>
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-black/5 p-4 space-y-3">
-          <a href="#features" className="block text-sm text-gray-600">Features</a>
+        <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-3">
+          <a href="#modules" className="block text-sm text-gray-600">Features</a>
           <a href="#pricing" className="block text-sm text-gray-600">Pricing</a>
-          <a href="#testimonials" className="block text-sm text-gray-600">Reviews</a>
+          <a href="#testimonials" className="block text-sm text-gray-600">Stories</a>
           <a href="#faq" className="block text-sm text-gray-600">FAQ</a>
         </div>
       )}
@@ -82,30 +85,33 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="pt-32 pb-16 px-4 sm:px-6">
+    <section className="pt-32 pb-16 px-4 sm:px-6 bg-gradient-to-b from-indigo-50 to-white">
       <div className="max-w-5xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-indigo-600 text-sm font-medium mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
           <Sparkles size={16} /><span>Trusted by 2,500+ Nigerian businesses</span>
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-          The All-in-One Business<br />
-          <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Management Platform</span>
+          One App for Your<br />
+          <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Whole Business</span>
         </h1>
-        <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          CRM, Finance, HR, Projects, and more — all in one place. Run your entire business from Lagos to Abuja without switching apps.
+        <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
+          CRM • Invoicing • Projects • HR • Inventory • +40 more
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+        <p className="text-base text-gray-500 mb-8 max-w-xl mx-auto">
+          Different teams, different needs — one unified platform. From sales leads to payroll, Avenize keeps everyone aligned.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
           <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
-            Start Free 14-Day Trial <ArrowRight size={20} />
+            Start Free 7-Day Trial <ArrowRight size={20} />
           </Link>
           <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border-2 border-gray-200 text-gray-700 font-semibold text-lg hover:border-gray-300 transition">
             Sign In
           </Link>
         </div>
-        <p className="text-sm text-gray-500 mb-12">No credit card required • Set up in 5 minutes • Cancel anytime</p>
+        <p className="text-sm text-gray-500 mb-12">No credit card required • 5-minute setup • Cancel anytime</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-          {[{number: '2,500+', label: 'Businesses'}, {number: '99.9%', label: 'Uptime'}, {number: '4.9/5', label: 'Rating'}, {number: '24/7', label: 'Support'}].map((stat, i) => (
-            <div key={i} className="text-center">
+          {STATS.map((stat, i) => (
+            <div key={i} className="text-center p-4 bg-white rounded-xl shadow-sm">
               <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.number}</div>
               <div className="text-sm text-gray-500">{stat.label}</div>
             </div>
@@ -116,24 +122,24 @@ function HeroSection() {
   )
 }
 
-function FeaturesSection() {
+function WhoSection() {
   return (
-    <section id="features" className="py-16 px-4 sm:px-6 bg-white">
+    <section className="py-16 px-4 sm:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything You Need to Run Your Business</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">From sales to HR to finance — all the tools your business needs in one platform.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Built for Every Team</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((feature, i) => {
-            const Icon = feature.icon
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {WHO_IT_FOR.map((item, i) => {
+            const Icon = item.icon
             return (
-              <div key={i} className="p-6 rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: feature.color + '15' }}>
-                  <Icon size={24} style={{ color: feature.color }} />
+              <div key={i} className="text-center p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: item.color + '20' }}>
+                  <Icon size={24} style={{ color: item.color }} />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600 text-sm">{feature.desc}</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{item.role}</h3>
+                <p className="text-sm text-gray-600">{item.benefit}</p>
               </div>
             )
           })}
@@ -143,22 +149,80 @@ function FeaturesSection() {
   )
 }
 
-function TestimonialsSection() {
+function ModulesSection() {
   return (
-    <section id="testimonials" className="py-16 px-4 sm:px-6 bg-gray-50">
+    <section id="modules" className="py-16 px-4 sm:px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Loved by Nigerian Businesses</h2>
-          <p className="text-gray-600">See what business owners are saying about Avenize</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything Your Business Needs</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
+        </div>
+        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 mb-6 text-white">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-sm mb-3">⭐ Most Popular</div>
+              <h3 className="text-2xl font-bold mb-2">CRM — Customer Relationship Management</h3>
+              <p className="text-white/80 mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Lead Tracking</span>
+                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Deal Pipeline</span>
+                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">AI Insights</span>
+                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Follow-up Reminders</span>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold mb-1">₦2.5B+</div>
+              <div className="text-white/70 text-sm">Deals tracked</div>
+            </div>
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {MODULES.slice(1).map((module, i) => {
+            const Icon = module.icon
+            return (
+              <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: module.color + '15' }}>
+                    <Icon size={24} style={{ color: module.color }} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-1">{module.title}</h3>
+                    <p className="text-sm text-indigo-600 font-medium mb-2">{module.tagline}</p>
+                    <p className="text-sm text-gray-600 mb-3">{module.desc}</p>
+                    <p className="text-xs text-gray-400">{module.stats}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <p className="text-center text-sm text-gray-500 mt-8">+ 40 more modules: Tasks, Chat, Calendar, Approvals, Reports, Knowledge, Campaigns, and more...</p>
+      </div>
+    </section>
+  )
+}
+
+function TestimonialsSection() {
+  return (
+    <section id="testimonials" className="py-16 px-4 sm:px-6 bg-white">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Real Businesses. Real Results.</h2>
+          <p className="text-gray-600">See how Nigerian companies use Avenize</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <div key={i} className="bg-white p-6 rounded-2xl shadow-sm">
+            <div key={i} className="bg-gray-50 p-6 rounded-2xl">
               <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="text-amber-400 fill-amber-400" />)}</div>
-              <p className="text-gray-700 mb-4">"{t.quote}"</p>
+              <div className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
+              <p className="text-gray-700 mb-4 leading-relaxed">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">{t.name.charAt(0)}</div>
-                <div><div className="font-semibold text-gray-900">{t.name}</div><div className="text-sm text-gray-500">{t.role}</div></div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg">{t.name.charAt(0)}</div>
+                <div>
+                  <div className="font-semibold text-gray-900">{t.name}</div>
+                  <div className="text-sm text-gray-500">{t.role}</div>
+                  <div className="text-xs text-gray-400">{t.business}</div>
+                </div>
               </div>
             </div>
           ))}
@@ -170,31 +234,32 @@ function TestimonialsSection() {
 
 function PricingSection() {
   return (
-    <section id="pricing" className="py-16 px-4 sm:px-6 bg-white">
-      <div className="max-w-5xl mx-auto">
+    <section id="pricing" className="py-16 px-4 sm:px-6 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-gray-600">Start free. Upgrade when you're ready.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Simple, Honest Pricing</h2>
+          <p className="text-gray-600">Pay per team size. No hidden fees. No per-feature pricing.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 max-w-2xl mx-auto text-center">
+          <p className="text-amber-800 text-sm"><strong>Founding Rate:</strong> Prices locked for 12 months, even when list price changes.</p>
+        </div>
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {PRICING.map((plan, i) => (
-            <div key={i} className={`relative p-6 rounded-2xl border-2 ${plan.popular ? 'border-indigo-500 shadow-xl shadow-indigo-100' : 'border-gray-100'}`}>
-              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-500 text-white text-xs font-bold">Most Popular</div>}
+            <div key={i} className={`relative p-5 rounded-xl border-2 ${plan.popular ? 'border-indigo-500 shadow-xl bg-indigo-50/50' : 'border-gray-100 bg-white'}`}>
+              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-indigo-500 text-white text-xs font-bold">Most Popular</div>}
+              {plan.founding && <div className="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded mb-2 inline-block">Founding Rate</div>}
               <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
-              <p className="text-sm text-gray-500 mb-4">{plan.desc}</p>
-              <div className="mb-6"><span className="text-4xl font-bold text-gray-900">{plan.price}</span>{plan.period && <span className="text-gray-500">{plan.period}</span>}</div>
-              <ul className="space-y-3 mb-6">
-                {plan.features.map((feat, j) => (
-                  <li key={j} className="flex items-start gap-2 text-sm text-gray-700"><Check size={16} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>
-                ))}
+              <p className="text-sm text-gray-500 mb-3">{plan.desc}</p>
+              <div className="mb-4"><span className="text-3xl font-bold text-gray-900">{plan.price}</span><span className="text-gray-500 text-sm">{plan.period}</span></div>
+              <ul className="space-y-2 mb-4">
+                {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-gray-700"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
               </ul>
-              <Link to="/signup" className={`block text-center py-3 rounded-xl font-semibold transition ${plan.popular ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
-                {plan.cta}
-              </Link>
+              <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-indigo-500 text-white hover:bg-indigo-600' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>{plan.cta}</Link>
+              <p className="text-xs text-gray-500 mt-3 text-center">{plan.seats}</p>
             </div>
           ))}
         </div>
-        <p className="text-center text-sm text-gray-500 mt-8">All plans include 14-day free trial. No credit card required.</p>
+        <p className="text-center text-sm text-gray-500 mt-8">All plans include 7-day free trial • No credit card required</p>
       </div>
     </section>
   )
@@ -203,15 +268,15 @@ function PricingSection() {
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   return (
-    <section id="faq" className="py-16 px-4 sm:px-6 bg-gray-50">
+    <section id="faq" className="py-16 px-4 sm:px-6 bg-white">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12"><h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2></div>
         <div className="space-y-4">
           {FAQS.map((faq, i) => (
-            <div key={i} className="bg-white rounded-xl p-4">
+            <div key={i} className="bg-gray-50 rounded-xl p-4">
               <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full flex items-center justify-between text-left">
-                <span className="font-semibold text-gray-900">{faq.q}</span>
-                <span className={`text-2xl text-gray-400 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+                <span className="font-semibold text-gray-900 pr-4">{faq.q}</span>
+                <span className={`text-2xl text-gray-400 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && <p className="mt-3 text-gray-600 text-sm leading-relaxed">{faq.a}</p>}
             </div>
@@ -229,9 +294,9 @@ function FinalCTA() {
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Run Your Business Better?</h2>
         <p className="text-lg text-white/80 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
         <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-bold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
-          Start Your Free Trial <ArrowRight size={20} />
+          Start Your Free 7-Day Trial <ArrowRight size={20} />
         </Link>
-        <p className="text-sm text-white/60 mt-4">No credit card required • 14-day free trial</p>
+        <p className="text-sm text-white/60 mt-4">No credit card required • 5-minute setup</p>
       </div>
     </section>
   )
@@ -261,7 +326,8 @@ export default function LandingEnhanced() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <HeroSection />
-      <FeaturesSection />
+      <WhoSection />
+      <ModulesSection />
       <TestimonialsSection />
       <PricingSection />
       <FAQSection />
