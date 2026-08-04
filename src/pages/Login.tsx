@@ -1,7 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import AvenizeMark from '../components/AvenizeMark'
+import { AvenizeMark } from '../components/AvenizeMark'
 
 export default function Login() {
   const navigate = useNavigate()

@@ -2,7 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
-import AvenizeMark from './AvenizeMark'
+import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 
 const NAV_ITEMS = [
