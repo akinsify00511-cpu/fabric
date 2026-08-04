@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
+import { useBranding } from '../lib/BrandingContext'
 import AvenizeMark from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 
@@ -37,7 +38,9 @@ const MOBILE_NAV_ITEMS = [
 
 export default function Shell() {
   const { staff, signOut } = useAuth()
-  const companyName = staff?.business_name || 'My Company'
+  const { branding } = useBranding()
+  const companyName = branding.custom_name || staff?.business_name || 'My Company'
+  const displayLogo = branding.logo_url || branding.brand_name ? null : <AvenizeMark size={22} />
 
   return (
     <div className="min-h-screen bg-[var(--avenize-offwhite)]">
@@ -45,7 +48,15 @@ export default function Shell() {
       <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black/[0.06] flex-col fixed inset-y-0 left-0">
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <AvenizeMark size={22} />
+            {displayLogo}
+            {branding.logo_url && (
+              <img 
+                src={branding.logo_url} 
+                alt="Logo" 
+                className="h-6 w-auto object-contain"
+                style={{ maxHeight: '28px' }}
+              />
+            )}
             <span className="text-base font-semibold tracking-tight text-[var(--avenize-black)] truncate">
               {companyName}
             </span>
@@ -97,7 +108,14 @@ export default function Shell() {
       {/* Mobile top header */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-black/[0.06] sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <AvenizeMark size={20} />
+          {!branding.logo_url && <AvenizeMark size={20} />}
+          {branding.logo_url && (
+            <img 
+              src={branding.logo_url} 
+              alt="Logo" 
+              className="h-5 w-auto object-contain"
+            />
+          )}
           <span className="text-sm font-semibold tracking-tight text-[var(--avenize-black)] truncate">
             {companyName}
           </span>

@@ -1,4 +1,5 @@
 import { Invoice } from '../pages/FinanceNigeria'
+import { useBranding } from '../lib/BrandingContext'
 
 interface InvoicePreviewProps {
   invoice: Invoice
@@ -9,6 +10,9 @@ interface InvoicePreviewProps {
 }
 
 export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownloadPDF, onGeneratePaymentLink }: InvoicePreviewProps) {
+  const { branding } = useBranding()
+  const companyName = branding.custom_name || 'Your Business'
+  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(amount)
   }
@@ -69,9 +73,12 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
                 {invoice.is_proforma && <span className="inline-block mt-2 px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded">PROFORMA</span>}
               </div>
               <div className="text-right">
-                <h2 className="font-bold text-xl">Avenize</h2>
-                <p className="text-gray-500 text-sm">Your Business Partner</p>
-                <p className="text-gray-500 text-sm">Lagos, Nigeria</p>
+                {branding.logo_url ? (
+                  <img src={branding.logo_url} alt="Logo" className="h-10 w-auto object-contain mb-2 ml-auto" />
+                ) : null}
+                <h2 className="font-bold text-xl">{companyName}</h2>
+                {branding.custom_tagline && <p className="text-gray-500 text-sm">{branding.custom_tagline}</p>}
+                {branding.address && <p className="text-gray-500 text-sm">{branding.address}</p>}
               </div>
             </div>
 
@@ -160,7 +167,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
 
             <div className="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-400">
               <p>Thank you for your business!</p>
-              <p className="mt-1">Avenize - One app for your whole business</p>
+              {branding.website && <p className="mt-1">{branding.website}</p>}
             </div>
           </div>
         </div>
