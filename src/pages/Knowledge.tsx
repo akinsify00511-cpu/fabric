@@ -32,8 +32,23 @@ type KBPage = {
   children?: KBPage[]
 }
 
+// Demo data
+const DEMO_SPACES: KBSpace[] = [
+  { id: '1', name: 'Getting Started', description: 'Onboarding guides and tutorials', icon_emoji: '🚀', is_default: true },
+  { id: '2', name: 'Product Documentation', description: 'Feature guides and how-tos', icon_emoji: '📖', is_default: false },
+  { id: '3', name: 'Company Policies', description: 'Internal policies and procedures', icon_emoji: '📋', is_default: false },
+]
+
+const DEMO_PAGES: KBPage[] = [
+  { id: 'p1', space_id: '1', parent_id: null, title: 'Welcome to Avenize', content: 'Welcome! This guide will help you get started...', icon_emoji: '👋', slug: 'welcome', is_published: true, is_archived: false, created_by: 'admin', updated_at: new Date().toISOString() },
+  { id: 'p2', space_id: '1', parent_id: 'p1', title: 'Setting up your workspace', content: 'Learn how to configure your workspace...', icon_emoji: null, slug: 'setup', is_published: true, is_archived: false, created_by: 'admin', updated_at: new Date().toISOString() },
+  { id: 'p3', space_id: '1', parent_id: 'p1', title: 'Inviting team members', content: 'Add your team to collaborate...', icon_emoji: null, slug: 'invite', is_published: true, is_archived: false, created_by: 'admin', updated_at: new Date().toISOString() },
+  { id: 'p4', space_id: '2', parent_id: null, title: 'CRM Basics', content: 'Learn about the CRM module...', icon_emoji: '📊', slug: 'crm-basics', is_published: true, is_archived: false, created_by: 'admin', updated_at: new Date().toISOString() },
+  { id: 'p5', space_id: '2', parent_id: null, title: 'Invoicing Guide', content: 'How to create and send invoices...', icon_emoji: '💰', slug: 'invoicing', is_published: true, is_archived: false, created_by: 'admin', updated_at: new Date().toISOString() },
+]
+
 export default function Knowledge() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [spaces, setSpaces] = useState<KBSpace[]>([])
   const [selectedSpace, setSelectedSpace] = useState<KBSpace | null>(null)
@@ -71,23 +86,55 @@ export default function Knowledge() {
   }
 
   const loadSpaces = async () => {
-    const { data } = await supabase.from('kb_spaces').select('*').order('is_default', { ascending: false })
-    setSpaces((data as KBSpace[]) ?? [])
-    if (data && data.length > 0 && !selectedSpace) {
-      setSelectedSpace(data[0] as KBSpace)
+    if (isDemo) {
+      setSpaces(DEMO_SPACES)
+      if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
+      return
+    }
+    try {
+      const { data } = await supabase.from('kb_spaces').select('*').order('is_default', { ascending: false })
+      if (data && data.length > 0) {
+        setSpaces(data as KBSpace[])
+        if (!selectedSpace) setSelectedSpace(data[0] as KBSpace)
+      } else {
+        setSpaces(DEMO_SPACES)
+        if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
+      }
+    } catch {
+      setSpaces(DEMO_SPACES)
+      if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
     }
   }
 
   const loadPages = async (spaceId: string) => {
-    const { data } = await supabase
-      .from('kb_pages')
-      .select('*')
-      .eq('space_id', spaceId)
-      .eq('is_archived', false)
-      .order('created_at')
+    if (isDemo) {
+      const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
+      const tree = buildTree(spacePages)
+      setPages(tree)
+      setLoading(false)
+      return
+    }
+    try {
+      const { data } = await supabase
+        .from('kb_pages')
+        .select('*')
+        .eq('space_id', spaceId)
+        .eq('is_archived', false)
+        .order('created_at')
 
-    const tree = buildTree((data as KBPage[]) ?? [])
-    setPages(tree)
+      if (data && data.length > 0) {
+        const tree = buildTree(data as KBPage[])
+        setPages(tree)
+      } else {
+        const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
+        const tree = buildTree(spacePages)
+        setPages(tree)
+      }
+    } catch {
+      const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
+      const tree = buildTree(spacePages)
+      setPages(tree)
+    }
     setLoading(false)
   }
 

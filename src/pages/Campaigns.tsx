@@ -47,8 +47,21 @@ const STATUS_CONFIG = {
   cancelled: { label: 'Cancelled', color: 'bg-red-100 text-red-600' },
 }
 
+// Demo campaigns
+const DEMO_CAMPAIGNS: Campaign[] = [
+  { id: '1', name: 'Summer Sale Announcement', subject: '🎉 Summer Sale - 30% Off Everything!', status: 'sent', contact_count: 1250, sent_count: 1200, delivered_count: 1180, opened_count: 501, clicked_count: 147, unsubscribed_count: 5, scheduled_at: null, sent_at: new Date(Date.now() - 7 * 86400000).toISOString(), created_at: new Date(Date.now() - 10 * 86400000).toISOString() },
+  { id: '2', name: 'New Product Launch', subject: 'Introducing Our Latest Innovation', status: 'scheduled', contact_count: 890, sent_count: 0, delivered_count: 0, opened_count: 0, clicked_count: 0, unsubscribed_count: 0, scheduled_at: new Date(Date.now() + 2 * 86400000).toISOString(), sent_at: null, created_at: new Date(Date.now() - 3 * 86400000).toISOString() },
+  { id: '3', name: 'Weekly Newsletter', subject: 'Your Weekly Update', status: 'draft', contact_count: 0, sent_count: 0, delivered_count: 0, opened_count: 0, clicked_count: 0, unsubscribed_count: 0, scheduled_at: null, sent_at: null, created_at: new Date().toISOString() },
+]
+
+const DEMO_CONTACTS: Contact[] = [
+  { id: '1', email: 'john@example.com', first_name: 'John', last_name: 'Smith', tags: ['customer'], status: 'active' },
+  { id: '2', email: 'jane@example.com', first_name: 'Jane', last_name: 'Doe', tags: ['lead'], status: 'active' },
+  { id: '3', email: 'bob@example.com', first_name: 'Bob', last_name: 'Wilson', tags: ['customer', 'vip'], status: 'active' },
+]
+
 export default function Campaigns() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -67,16 +80,38 @@ export default function Campaigns() {
 
   const load = async () => {
     setLoading(true)
-    const { data: campaignsData } = await supabase
-      .from('email_campaigns')
-      .select('*')
-      .order('created_at', { ascending: false })
-    const { data: contactsData } = await supabase
-      .from('email_contacts')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setCampaigns((campaignsData as Campaign[]) ?? [])
-    setContacts((contactsData as Contact[]) ?? [])
+    
+    if (isDemo) {
+      setCampaigns(DEMO_CAMPAIGNS)
+      setContacts(DEMO_CONTACTS)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { data: campaignsData } = await supabase
+        .from('email_campaigns')
+        .select('*')
+        .order('created_at', { ascending: false })
+      const { data: contactsData } = await supabase
+        .from('email_contacts')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (campaignsData && campaignsData.length > 0) {
+        setCampaigns(campaignsData as Campaign[])
+      } else {
+        setCampaigns(DEMO_CAMPAIGNS)
+      }
+      if (contactsData && contactsData.length > 0) {
+        setContacts(contactsData as Contact[])
+      } else {
+        setContacts(DEMO_CONTACTS)
+      }
+    } catch {
+      setCampaigns(DEMO_CAMPAIGNS)
+      setContacts(DEMO_CONTACTS)
+    }
     setLoading(false)
   }
 

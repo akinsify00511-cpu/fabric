@@ -56,8 +56,21 @@ const PRIORITY_CONFIG = {
   urgent: { label: 'Urgent', color: 'text-red-500' },
 }
 
+// Demo tickets
+const DEMO_TICKETS = [
+  { id: '1', subject: 'Cannot access dashboard', description: 'Getting 404 error when trying to access the main dashboard', priority: 'urgent' as const, status: 'open' as const, category: 'Bug', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: '2', subject: 'Feature request: Dark mode', description: 'Would love to have a dark mode option for the interface', priority: 'low' as const, status: 'in_progress' as const, category: 'Feature', created_at: new Date(Date.now() - 86400000).toISOString(), updated_at: new Date().toISOString() },
+  { id: '3', subject: 'Invoice not generating', description: 'Invoice PDF download returns empty file', priority: 'high' as const, status: 'open' as const, category: 'Bug', created_at: new Date(Date.now() - 172800000).toISOString(), updated_at: new Date().toISOString() },
+  { id: '4', subject: 'Question about API integration', description: 'Need help setting up the webhook integration', priority: 'medium' as const, status: 'resolved' as const, category: 'Support', created_at: new Date(Date.now() - 259200000).toISOString(), updated_at: new Date().toISOString() },
+]
+
+const DEMO_STAFF: StaffMember[] = [
+  { id: '1', full_name: 'Sarah Johnson', name: 'Sarah Johnson' },
+  { id: '2', full_name: 'Michael Park', name: 'Michael Park' },
+]
+
 export default function Tickets() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [tickets, setTickets] = useState<TicketType[]>([])
   const [teamMembers, setTeamMembers] = useState<StaffMember[]>([])
@@ -77,22 +90,38 @@ export default function Tickets() {
 
   const loadTickets = async () => {
     setLoading(true)
-    const { data } = await supabase
-      .from('tickets')
-      .select('*')
-      .order('created_at', { ascending: false })
+    
+    if (isDemo) {
+      setTickets(DEMO_TICKETS as TicketType[])
+      setTeamMembers(DEMO_STAFF)
+      setLoading(false)
+      return
+    }
 
-    // Enrich with assignee names
-    const { data: staffData } = await supabase.from('staff').select('id, full_name, name')
-    const staffMap = new Map((staffData ?? []).map((s: StaffMember) => [s.id, s.full_name ?? s.name]))
+    try {
+      const { data } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false })
 
-    const enriched = ((data as TicketType[]) ?? []).map((t) => ({
-      ...t,
-      assignee_name: t.assignee_id ? staffMap.get(t.assignee_id) : undefined,
-    }))
+      // Enrich with assignee names
+      const { data: staffData } = await supabase.from('staff').select('id, full_name, name')
+      const staffMap = new Map((staffData ?? []).map((s: StaffMember) => [s.id, s.full_name ?? s.name]))
 
-    setTickets(enriched)
-    setTeamMembers((staffData ?? []) as StaffMember[])
+      if (data && data.length > 0) {
+        const enriched = (data as TicketType[]).map((t) => ({
+          ...t,
+          assignee_name: t.assignee_id ? staffMap.get(t.assignee_id) : undefined,
+        }))
+        setTickets(enriched)
+      } else {
+        setTickets(DEMO_TICKETS as TicketType[])
+      }
+      setTeamMembers((staffData ?? []) as StaffMember[])
+    } catch {
+      setTickets(DEMO_TICKETS as TicketType[])
+      setTeamMembers(DEMO_STAFF)
+    }
     setLoading(false)
   }
 

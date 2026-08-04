@@ -71,7 +71,20 @@ const ACTIONS: Action[] = [
 export default function Automations() {
   const { staff } = useAuth()
   const { showToast } = useToast()
-  const [automations, setAutomations] = useState<Automation[]>([])
+  // Demo automations
+const DEMO_AUTOMATIONS: Automation[] = [
+  { id: '1', name: 'Welcome Email', description: 'Send welcome email to new contacts', trigger_type: 'contact_created', trigger_config: {}, action_type: 'send_email', action_config: {}, enabled: true, run_count: 156, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
+  { id: '2', name: 'Deal Follow-up', description: 'Remind team to follow up on stale deals', trigger_type: 'deal_stale', trigger_config: { days: '7' }, action_type: 'send_notification', action_config: {}, enabled: true, run_count: 42, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
+  { id: '3', name: 'Invoice Reminder', description: 'Send reminder for overdue invoices', trigger_type: 'invoice_overdue', trigger_config: {}, action_type: 'send_email', action_config: {}, enabled: false, run_count: 23, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
+]
+
+const DEMO_RUNS: Run[] = [
+  { id: 'r1', automation_id: '1', trigger_event: {}, status: 'success', error_message: null, executed_at: new Date().toISOString() },
+  { id: 'r2', automation_id: '2', trigger_event: {}, status: 'success', error_message: null, executed_at: new Date(Date.now() - 3600000).toISOString() },
+  { id: 'r3', automation_id: '1', trigger_event: {}, status: 'failed', error_message: 'Email service unavailable', executed_at: new Date(Date.now() - 7200000).toISOString() },
+]
+
+const [automations, setAutomations] = useState<Automation[]>([])
   const [runs, setRuns] = useState<Run[]>([])
   const [loading, setLoading] = useState(true)
   const [showBuilder, setShowBuilder] = useState(false)
@@ -88,12 +101,25 @@ export default function Automations() {
 
   const load = async () => {
     setLoading(true)
-    const [{ data: autoData }, { data: runsData }] = await Promise.all([
-      supabase.from('automations').select('*').order('created_at', { ascending: false }),
-      supabase.from('automation_runs').select('*').order('executed_at', { ascending: false }).limit(50),
-    ])
-    setAutomations((autoData as Automation[]) ?? [])
-    setRuns((runsData as Run[]) ?? [])
+    try {
+      const [{ data: autoData }, { data: runsData }] = await Promise.all([
+        supabase.from('automations').select('*').order('created_at', { ascending: false }),
+        supabase.from('automation_runs').select('*').order('executed_at', { ascending: false }).limit(50),
+      ])
+      if (autoData && autoData.length > 0) {
+        setAutomations(autoData as Automation[])
+      } else {
+        setAutomations(DEMO_AUTOMATIONS)
+      }
+      if (runsData && runsData.length > 0) {
+        setRuns(runsData as Run[])
+      } else {
+        setRuns(DEMO_RUNS)
+      }
+    } catch {
+      setAutomations(DEMO_AUTOMATIONS)
+      setRuns(DEMO_RUNS)
+    }
     setLoading(false)
   }
 

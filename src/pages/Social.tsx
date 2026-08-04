@@ -46,8 +46,21 @@ const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok', icon: () => <span className="text-lg">🎵</span>, color: 'bg-pink-600' },
 ]
 
+// Demo data
+const DEMO_POSTS: SocialPost[] = [
+  { id: '1', content: 'Excited to announce our new product launch! 🚀 #innovation #startup', platform: 'linkedin', status: 'published', scheduled_at: null, published_at: new Date(Date.now() - 86400000).toISOString(), image_url: null, likes_count: 124, comments_count: 18, shares_count: 12, impressions_count: 1500, reach_count: 1200, created_at: new Date().toISOString() },
+  { id: '2', content: 'Behind the scenes of our team building day! 💪', platform: 'instagram', status: 'published', scheduled_at: null, published_at: new Date(Date.now() - 2 * 86400000).toISOString(), image_url: null, likes_count: 256, comments_count: 32, shares_count: 8, impressions_count: 2000, reach_count: 1800, created_at: new Date().toISOString() },
+  { id: '3', content: 'Join us for our upcoming webinar on digital marketing strategies 📊', platform: 'facebook', status: 'scheduled', scheduled_at: new Date(Date.now() + 3 * 86400000).toISOString(), published_at: null, image_url: null, likes_count: 0, comments_count: 0, shares_count: 0, impressions_count: 0, reach_count: 0, created_at: new Date().toISOString() },
+]
+
+const DEMO_METRICS: SocialMetrics[] = [
+  { platform: 'instagram', followers_count: 4521, engagement_count: 190, posts_count: 45, impressions_count: 25000, reach_count: 18000 },
+  { platform: 'linkedin', followers_count: 2134, engagement_count: 124, posts_count: 23, impressions_count: 12000, reach_count: 8500 },
+  { platform: 'facebook', followers_count: 892, engagement_count: 19, posts_count: 18, impressions_count: 4500, reach_count: 3200 },
+]
+
 export default function Social() {
-  const { staff } = useAuth()
+  const { staff, isDemo } = useAuth()
   const { showToast } = useToast()
   const [activeTab, setActiveTab] = useState<'posts' | 'metrics' | 'branding'>('posts')
   const [loading, setLoading] = useState(true)
@@ -71,14 +84,36 @@ export default function Social() {
 
   const load = async () => {
     setLoading(true)
-    const [{ data: postsData }, { data: metricsData }, { data: assetsData }] = await Promise.all([
-      supabase.from('social_posts').select('*').order('created_at', { ascending: false }),
-      supabase.from('social_metrics').select('*').order('date', { ascending: false }).limit(30),
-      supabase.from('brand_assets').select('*').order('created_at'),
-    ])
-    setPosts((postsData as SocialPost[]) ?? [])
-    setMetrics((metricsData as SocialMetrics[]) ?? [])
-    setBrandAssets((assetsData as BrandAsset[]) ?? [])
+    
+    if (isDemo) {
+      setPosts(DEMO_POSTS)
+      setMetrics(DEMO_METRICS)
+      setLoading(false)
+      return
+    }
+
+    try {
+      const [{ data: postsData }, { data: metricsData }, { data: assetsData }] = await Promise.all([
+        supabase.from('social_posts').select('*').order('created_at', { ascending: false }),
+        supabase.from('social_metrics').select('*').order('date', { ascending: false }).limit(30),
+        supabase.from('brand_assets').select('*').order('created_at'),
+      ])
+      
+      if (postsData && postsData.length > 0) {
+        setPosts(postsData as SocialPost[])
+      } else {
+        setPosts(DEMO_POSTS)
+      }
+      if (metricsData && metricsData.length > 0) {
+        setMetrics(metricsData as SocialMetrics[])
+      } else {
+        setMetrics(DEMO_METRICS)
+      }
+      setBrandAssets((assetsData as BrandAsset[]) ?? [])
+    } catch {
+      setPosts(DEMO_POSTS)
+      setMetrics(DEMO_METRICS)
+    }
     setLoading(false)
   }
 
