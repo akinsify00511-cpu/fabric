@@ -21,8 +21,14 @@ ALTER TABLE staff ADD COLUMN IF NOT EXISTS department TEXT;
 -- Add job_title column for role display
 ALTER TABLE staff ADD COLUMN IF NOT EXISTS job_title TEXT;
 
+-- Add onboarding_completed flag for persistent session tracking
+ALTER TABLE staff ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT FALSE;
+
 -- Update existing rows: copy name to full_name if full_name is null
 UPDATE staff SET full_name = name WHERE full_name IS NULL AND name IS NOT NULL;
+
+-- Mark existing staff as having completed onboarding (they're already using the app)
+UPDATE staff SET onboarding_completed = TRUE WHERE onboarding_completed IS NULL;
 
 -- ============================================
 -- BUSINESS TABLE COLUMNS
@@ -64,31 +70,21 @@ CREATE INDEX IF NOT EXISTS idx_staff_department ON staff(department);
 
 -- ============================================
 -- AVATARS STORAGE BUCKET
--- Note: Run this separately via Supabase Dashboard if the bucket doesn't exist
 -- ============================================
 
--- Uncomment the following to create the storage bucket:
--- INSERT INTO storage.buckets (id, name, public)
--- VALUES ('avatars', 'avatars', true)
--- ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('avatars', 'avatars', true)
+ON CONFLICT (id) DO NOTHING;
 
 -- Storage RLS policies for avatars
--- DROP POLICY IF EXISTS "Public avatar access" ON storage.objects;
--- CREATE POLICY "Public avatar access" ON storage.objects
---   FOR SELECT USING (bucket_id = 'avatars');
+DROP POLICY IF EXISTS "Public avatar access" ON storage.objects;
+CREATE POLICY "Public avatar access" ON storage.objects
+  FOR SELECT USING (bucket_id = 'avatars');
 
--- Allow authenticated users to upload their own avatar
--- DROP POLICY IF EXISTS "Authenticated users upload own avatar" ON storage.objects;
--- CREATE POLICY "Authenticated users upload own avatar" ON storage.objects
---   FOR INSERT WITH CHECK (
---     bucket_id = 'avatars' AND
---     auth.uid()::text = (storage.foldername(name))[1]
---   );
+DROP POLICY IF EXISTS "Authenticated users upload avatar" ON storage.objects;
+CREATE POLICY "Authenticated users upload avatar" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.role() = 'authenticated');
 
--- Allow users to update their own avatar
--- DROP POLICY IF EXISTS "Users update own avatar" ON storage.objects;
--- CREATE POLICY "Users update own avatar" ON storage.objects
---   FOR UPDATE USING (
---     bucket_id = 'avatars' AND
---     auth.uid()::text = (storage.foldername(name))[1]
---   );
+DROP POLICY IF EXISTS "Users update own avatar" ON storage.objects;
+CREATE POLICY "Users update own avatar" ON storage.objects
+  FOR UPDATE USING (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);

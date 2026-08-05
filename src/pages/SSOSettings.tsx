@@ -55,7 +55,7 @@ export default function SSOSettings() {
               </p>
               <div className="flex items-center gap-4">
                 <a
-                  href="mailto:sales@avenize.com?subject=SSO%20Beta%20Access%20Request"
+                  href="mailto:hello@riverwayse.com?subject=SSO%20Beta%20Access%20Request"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-slate-900 rounded-xl text-sm font-medium hover:bg-slate-100 transition"
                 >
                   <Sparkles className="w-4 h-4" />

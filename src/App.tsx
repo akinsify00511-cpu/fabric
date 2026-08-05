@@ -65,6 +65,7 @@ const LeadCapture = lazy(() => import('./pages/LeadCapture'))
 const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
+const StaffProfile = lazy(() => import('./pages/StaffProfile'))
 const SarahChat = lazy(() => import('./components/SarahChat'))
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 const CookieConsent = lazy(() => import('./components/CookieConsent'))
@@ -92,10 +93,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
-    // Show onboarding for new real users
+    // Show onboarding for new real users (check both localStorage for quick access and staff record for persistence)
     if (staffChecked && staff && !isDemo) {
-      const onboardingComplete = localStorage.getItem('avenize_onboarding_complete')
-      if (!onboardingComplete) {
+      // Check localStorage first for quick check
+      const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
+      // Use the staff record's onboarding_completed flag if available, otherwise fall back to localStorage
+      const staffOnboarding = (staff as any)?.onboarding_completed
+      if (!localOnboarding && !staffOnboarding) {
         setShowOnboarding(true)
       }
     }
@@ -185,6 +189,7 @@ function AppRoutes() {
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
         <Route path="premium" element={<Premium />} />
+        <Route path="staff/:staffId" element={<StaffProfile />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />

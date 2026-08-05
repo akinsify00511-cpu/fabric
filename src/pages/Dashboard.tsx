@@ -1,260 +1,315 @@
-import { useState } from 'react'
+// ============================================
+// AVENIZE DASHBOARD - Based on Design Mockup
+// Bento grid layout with workspace launcher and KPIs
+// ============================================
+
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { TrendingUp, Users, DollarSign, Target, Clock, ArrowRight, CheckSquare, AlertCircle, Star, FileText, TrendingDown, Calendar, Zap, Phone, MessageCircle, Plus } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import { DEMO_STATS } from '../lib/DemoData'
+import { supabase } from '../lib/supabase'
+import {
+  Users, DollarSign, Target, CheckSquare, 
+  TrendingUp, Flame, Building2
+} from 'lucide-react'
 
-const QUICK_ACTIONS: Record<string, {icon: any, label: string, href: string, color: string}[]> = {
-  owner: [
-    { icon: Zap, label: '🔥 Hot Deal', href: '/app/crm', color: 'bg-red-500' },
-    { icon: Users, label: 'Add Contact', href: '/app/crm', color: 'bg-indigo-500' },
-    { icon: DollarSign, label: 'New Invoice', href: '/app/finance', color: 'bg-green-500' },
-    { icon: CheckSquare, label: 'My Tasks', href: '/app/tasks', color: 'bg-purple-500' },
-    { icon: Target, label: 'Track Projects', href: '/app/projects', color: 'bg-amber-500' },
-    { icon: MessageCircle, label: 'Team Chat', href: '/app/chat', color: 'bg-blue-500' },
-  ],
-  sales: [
-    { icon: Zap, label: 'New Hot Lead', href: '/app/crm', color: 'bg-red-500' },
-    { icon: Phone, label: 'Call Customer', href: '/app/crm', color: 'bg-green-500' },
-    { icon: MessageCircle, label: 'WhatsApp', href: '/app/crm', color: 'bg-emerald-500' },
-    { icon: Target, label: 'View Pipeline', href: '/app/crm', color: 'bg-indigo-500' },
-    { icon: CheckSquare, label: 'My Tasks', href: '/app/tasks', color: 'bg-purple-500' },
-    { icon: Calendar, label: 'Schedule Call', href: '/app/calendar', color: 'bg-blue-500' },
-  ],
-  finance: [
-    { icon: DollarSign, label: 'Send Invoice', href: '/app/finance', color: 'bg-green-500' },
-    { icon: TrendingUp, label: 'Cash Flow', href: '/app/cashflow', color: 'bg-emerald-500' },
-    { icon: FileText, label: 'Expenses', href: '/app/accounting', color: 'bg-orange-500' },
-    { icon: CheckSquare, label: 'Approvals', href: '/app/approvals', color: 'bg-teal-500' },
-  ],
-  hr: [
-    { icon: Users, label: 'Add Staff', href: '/app/people', color: 'bg-indigo-500' },
-    { icon: Clock, label: 'Attendance', href: '/app/time', color: 'bg-blue-500' },
-    { icon: CheckSquare, label: 'Leave Requests', href: '/app/requisitions', color: 'bg-purple-500' },
-    { icon: Calendar, label: 'Team Schedule', href: '/app/calendar', color: 'bg-teal-500' },
-  ],
+interface DashboardStats {
+  hotDeals: number
+  hotDealsChange: number
+  pipelineValue: number
+  pipelineChange: number
+  pendingTasks: number
+  tasksChange: number
+  teamMembers: number
+  teamChange: number
 }
 
-const STATS_CARDS: Record<string, {label: string, value: string, change: string, up: boolean, icon: any, href: string}[]> = {
-  owner: [
-    { label: 'Hot Deals 🔥', value: '7', change: '+3 this week', up: true, icon: Zap, href: '/app/crm' },
-    { label: 'Pipeline Value', value: '₦8.5M', change: '+₦2M', up: true, icon: TrendingUp, href: '/app/crm' },
-    { label: 'Won This Month', value: '₦3.2M', change: '+35%', up: true, icon: DollarSign, href: '/app/finance' },
-    { label: 'Pending Tasks', value: '18', change: '-3', up: false, icon: CheckSquare, href: '/app/tasks' },
-  ],
-  sales: [
-    { label: '🔥 Hot Leads', value: '12', change: '+4 today', up: true, icon: Zap, href: '/app/crm' },
-    { label: 'My Pipeline', value: '₦5.2M', change: '+₦800k', up: true, icon: TrendingUp, href: '/app/crm' },
-    { label: 'Follow-ups Today', value: '6', change: 'Due today', up: false, icon: AlertCircle, href: '/app/crm' },
-    { label: 'Won This Month', value: '₦1.8M', change: '+35%', up: true, icon: Star, href: '/app/crm' },
-  ],
-  finance: [
-    { label: 'Invoices Sent', value: '₦3.2M', change: '+₦500k', up: true, icon: FileText, href: '/app/finance' },
-    { label: 'Outstanding', value: '₦890,000', change: '15 days avg', up: false, icon: Clock, href: '/app/finance' },
-    { label: 'Received Today', value: '₦156,000', change: '3 payments', up: true, icon: DollarSign, href: '/app/finance' },
-    { label: 'Expenses', value: '₦420,000', change: 'This month', up: false, icon: TrendingDown, href: '/app/finance' },
-  ],
-  hr: [
-    { label: 'Total Staff', value: '42', change: '+2', up: true, icon: Users, href: '/app/people' },
-    { label: 'On Leave', value: '3', change: 'Today', up: false, icon: Calendar, href: '/app/time' },
-    { label: 'Pending Requests', value: '5', change: 'Awaiting', up: false, icon: Clock, href: '/app/approvals' },
-    { label: 'New Hires', value: '2', change: 'This month', up: true, icon: Star, href: '/app/people' },
-  ],
+interface RecentActivity {
+  id: string
+  type: string
+  text: string
+  time: string
+  icon: string
+  color: string
 }
 
-const RECENT_ACTIVITY = [
-  { icon: Zap, message: '🔥 New hot lead: Ibrahim Musa - ₦3.5M deal', time: '2 min ago', color: 'text-red-500', href: '/app/crm' },
-  { icon: Target, message: 'Riverside Construction signed - ₦2.5M deal', time: '15 min ago', color: 'text-green-500', href: '/app/crm' },
-  { icon: DollarSign, message: 'Invoice #INV-0042 sent to TechStart', time: '30 min ago', color: 'text-blue-500', href: '/app/finance' },
-  { icon: Phone, message: 'Called Adebayo Johnson - interested in enterprise', time: '1 hour ago', color: 'text-green-500', href: '/app/crm' },
-  { icon: MessageCircle, message: 'WhatsApp message to Chioma Okonkwo', time: '2 hours ago', color: 'text-emerald-500', href: '/app/crm' },
+interface UpcomingItem {
+  id: string
+  text: string
+  time: string
+  priority: 'high' | 'medium' | 'low'
+}
+
+interface WorkspaceModule {
+  name: string
+  href: string
+  icon: React.ReactNode
+  color: string
+  bgColor: string
+}
+
+const WORKSPACE_MODULES: WorkspaceModule[] = [
+  { name: 'CRM', href: '/app/crm', icon: <Users size={20} />, color: '#185FA5', bgColor: '#E6F1FB' },
+  { name: 'Finance', href: '/app/finance', icon: <DollarSign size={20} />, color: '#27500A', bgColor: '#EAF3DE' },
+  { name: 'Projects', href: '/app/projects', icon: <Target size={20} />, color: '#633806', bgColor: '#FAEEDA' },
+  { name: 'People', href: '/app/people', icon: <Building2 size={20} />, color: '#3C3489', bgColor: '#EEEDFE' },
 ]
 
-const UPCOMING = [
-  { title: '🔥 Call Ibrahim Musa - Hot deal closing!', time: 'Today, 2:00 PM', priority: 'high', href: '/app/crm' },
-  { title: 'Team standup meeting', time: 'Today, 9:00 AM', priority: 'medium', href: '/app/calendar' },
-  { title: 'Follow up with Alhaji Motors', time: 'Tomorrow, 10:00 AM', priority: 'high', href: '/app/crm' },
-  { title: 'Submit proposal to Enterprise Ltd', time: 'This week', priority: 'medium', href: '/app/crm' },
-]
+const formatCurrency = (amount: number) => {
+  if (amount >= 1000000) {
+    return `₦${(amount / 1000000).toFixed(1)}M`
+  }
+  if (amount >= 1000) {
+    return `₦${(amount / 1000).toFixed(0)}k`
+  }
+  return `₦${amount.toLocaleString()}`
+}
+
+const getMockData = (): { stats: DashboardStats; activities: RecentActivity[]; upcoming: UpcomingItem[] } => ({
+  stats: {
+    hotDeals: 7,
+    hotDealsChange: 3,
+    pipelineValue: 3200000,
+    pipelineChange: 2000000,
+    pendingTasks: 18,
+    tasksChange: -3,
+    teamMembers: 42,
+    teamChange: 2,
+  },
+  activities: [
+    { id: '1', type: 'deal', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago', icon: '🔥', color: '#712B13' },
+    { id: '2', type: 'payment', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago', icon: '✓', color: '#27500A' },
+    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: '📄', color: '#0C447C' },
+  ],
+  upcoming: [
+    { id: '1', text: 'Call Ibrahim Musa, hot deal closing', time: 'Today, 2:00 PM', priority: 'high' },
+    { id: '2', text: 'Team standup meeting', time: 'Today, 9:00 AM', priority: 'medium' },
+    { id: '3', text: 'Follow up with Alhaji Motors', time: 'Tomorrow, 10:00 AM', priority: 'high' },
+  ],
+})
 
 export default function Dashboard() {
   const { staff, isDemo } = useAuth()
-  const [roleView, setRoleView] = useState<'owner' | 'sales' | 'finance' | 'hr'>('owner')
+  
+  const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [activities, setActivities] = useState<RecentActivity[]>([])
+  const [upcoming, setUpcoming] = useState<UpcomingItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [revenueData, setRevenueData] = useState<number[]>([])
 
-  // Use demo stats for demo mode
-  const ownerStats = isDemo ? [
-    { label: 'Revenue This Month', value: `₦${(DEMO_STATS.revenue.value / 1000000).toFixed(1)}M`, change: `+${DEMO_STATS.revenue.change}%`, up: true, icon: DollarSign, href: '/app/finance' },
-    { label: 'Active Deals', value: String(DEMO_STATS.active_deals.value), change: `+${DEMO_STATS.active_deals.change}`, up: true, icon: Target, href: '/app/crm' },
-    { label: 'Pending Tasks', value: String(DEMO_STATS.tasks_pending.value), change: `${DEMO_STATS.tasks_pending.change} new`, up: false, icon: CheckSquare, href: '/app/tasks' },
-    { label: 'Team Members', value: String(DEMO_STATS.team_active.value), change: '+0', up: true, icon: Users, href: '/app/people' },
-  ] : STATS_CARDS.owner
+  useEffect(() => {
+    loadDashboardData()
+  }, [staff, isDemo])
 
-  const stats = isDemo ? ownerStats : STATS_CARDS[roleView]
-  const actions = isDemo ? QUICK_ACTIONS.owner : QUICK_ACTIONS[roleView]
-
-  const getRoleLabel = () => {
-    switch(roleView) {
-      case 'owner': return 'Business Owner'
-      case 'sales': return 'Sales Manager'
-      case 'finance': return 'Finance Team'
-      case 'hr': return 'HR Manager'
+  const loadDashboardData = async () => {
+    if (isDemo || !staff) {
+      const mockData = getMockData()
+      setStats(mockData.stats)
+      setActivities(mockData.activities)
+      setUpcoming(mockData.upcoming)
+      setRevenueData([40, 55, 45, 70, 60, 90, 100])
+      setLoading(false)
+      return
     }
+
+    try {
+      const [dealsData, tasksData, staffData] = await Promise.all([
+        supabase.from('deals').select('value, stage').eq('business_id', staff.business_id).eq('stage', 'hot'),
+        supabase.from('tasks').select('id').eq('business_id', staff.business_id).eq('status', 'pending'),
+        supabase.from('staff').select('id').eq('business_id', staff.business_id),
+      ])
+
+      const hotDeals = dealsData.data?.length || 0
+      const pipelineValue = dealsData.data?.reduce((sum, d) => sum + (d.value || 0), 0) || 0
+      const pendingTasks = tasksData.data?.length || 0
+      const teamMembers = staffData.data?.length || 0
+
+      setStats({
+        hotDeals,
+        hotDealsChange: 0,
+        pipelineValue,
+        pipelineChange: 0,
+        pendingTasks,
+        tasksChange: 0,
+        teamMembers,
+        teamChange: 0,
+      })
+
+      setRevenueData([40, 55, 45, 70, 60, 90, 100])
+      
+      setActivities([
+        { id: '1', type: 'deal', text: `You have ${hotDeals} hot deals`, time: 'Just now', icon: '🔥', color: '#712B13' },
+        { id: '2', type: 'invoice', text: `${pendingTasks} pending tasks`, time: 'Updated', icon: '📄', color: '#0C447C' },
+      ])
+
+      setUpcoming([
+        { id: '1', text: 'Check your tasks', time: 'Today', priority: 'high' },
+      ])
+
+    } catch (error) {
+      console.error('Error loading dashboard:', error)
+      const mockData = getMockData()
+      setStats(mockData.stats)
+      setActivities(mockData.activities)
+      setUpcoming(mockData.upcoming)
+      setRevenueData([40, 55, 45, 70, 60, 90, 100])
+    }
+
+    setLoading(false)
+  }
+
+  const getUserName = () => {
+    if (!staff) return 'User'
+    return staff.full_name?.split(' ')[0] || staff.name?.split(' ')[0] || 'User'
+  }
+
+  const revenueChange = 35
+
+  if (loading) {
+    return (
+      <div className="pb-20">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-black/5 rounded w-48"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-black/5 rounded-2xl"></div>)}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div>
-      {isDemo && (
-        <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-4 mb-6 text-white">
-          <p className="font-medium">🎯 Demo Mode Active</p>
-          <p className="text-sm opacity-90">This is sample data for demonstration. All actions are read-only.</p>
-        </div>
-      )}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {staff?.full_name?.split(' ')[0] || 'there'} 👋
-          </h1>
-          <p className="text-gray-500">Here's what's happening with your business today.</p>
-        </div>
-        {!isDemo && (
-          <div className="flex flex-wrap gap-2">
-            {(['owner', 'sales', 'finance', 'hr'] as const).map((role) => (
-              <button
-                key={role}
-                onClick={() => setRoleView(role)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
-                  roleView === role ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
-              >
-                {role === 'owner' && '👤 Owner'}
-                {role === 'sales' && '💼 Sales'}
-                {role === 'finance' && '💰 Finance'}
-                {role === 'hr' && '👥 HR'}
-              </button>
-            ))}
+    <div className="pb-20">
+      {/* Bento Grid Layout */}
+      <div className="grid grid-cols-12 gap-3">
+        
+        {/* Hero: Revenue KPI */}
+        <div className="col-span-12 md:col-span-7 bg-[#111111] rounded-2xl p-5 flex flex-col justify-between min-h-[180px] text-white">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-5 h-5">
+                <svg viewBox="0 0 1254 1254" className="w-full h-full fill-white">
+                  <path d="M613.7 269.1c-36.4 3.9-70.6 23.9-91.9 53.6-3 4.3-31.8 55.5-63.9 113.8-32 58.3-62.3 113.2-67.1 122-39.2 71.1-34.9 137 11.5 177.3 11.2 9.7 36.3 23 38.7 20.5 1.1-1 97.6-176.1 121-219.3 3.1-5.8 12.1-22.2 20-36.5s18.1-32.9 22.7-41.4c10.9-20.1 15.7-27.3 23.2-35.4 30.8-32.9 80.2-40.8 124.9-20.1 8.8 4 25.4 14.9 29.6 19.3 1.7 1.7 3.4 3.1 3.9 3.1 1.1 0-42.1-85-48.5-95.3-26.3-42.8-74.8-66.8-124.1-61.6"/>
+                </svg>
+              </div>
+              <span className="text-xs text-[#A8A8A8]">Avenize</span>
+            </div>
+            <div className="text-xs text-[#A8A8A8]">Welcome back, {getUserName()}</div>
+            <div className="text-xs text-[#A8A8A8] mt-1">Revenue this month</div>
+            <div className="text-[34px] font-medium mt-0.5">
+              {stats ? formatCurrency(stats.pipelineValue) : '₦0'}
+            </div>
           </div>
-        )}
-      </div>
-
-      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-4 mb-6 text-white">
-        <p className="text-sm opacity-90">
-          <strong>{getRoleLabel()} View:</strong> Showing metrics most relevant to your role. 
-          Switch tabs above to see other team perspectives.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, i) => {
-          const Icon = stat.icon
-          return (
-            <Link
-              key={i}
-              to={stat.href}
-              className="bg-white rounded-xl p-5 border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all cursor-pointer group"
-            >
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-100 transition">
-                  <Icon size={20} className="text-indigo-600" />
-                </div>
-                <span className={`text-xs font-medium ${stat.up ? 'text-green-600' : 'text-orange-600'}`}>
-                  {stat.change}
-                </span>
-              </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-500 flex items-center gap-1">
-                {stat.label}
-                <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition ml-1" />
-              </div>
-            </Link>
-          )
-        })}
-      </div>
-
-      <div className="bg-white rounded-xl p-6 border border-gray-100 mb-8">
-        <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {actions.map((action, i) => {
-            const Icon = action.icon
-            return (
-              <Link
+          <div className="flex items-end gap-1">
+            {revenueData.map((height, i) => (
+              <div
                 key={i}
-                to={action.href}
-                className="flex flex-col items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition group"
-              >
-                <div className={`w-12 h-12 rounded-xl ${action.color} flex items-center justify-center mb-3 group-hover:scale-110 transition`}>
-                  <Icon size={24} className="text-white" />
-                </div>
-                <span className="text-sm font-medium text-gray-900">{action.label}</span>
-              </Link>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-6 border border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {RECENT_ACTIVITY.map((item, i) => {
-              const Icon = item.icon
-              return (
-                <div key={i} className="flex items-start gap-3">
-                  <div className={`w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 ${item.color}`}>
-                    <Icon size={16} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-900">{item.message}</p>
-                    <p className="text-xs text-gray-500">{item.time}</p>
-                  </div>
-                </div>
-              )
-            })}
+                className={`w-2.5 rounded-sm ${i >= revenueData.length - 2 ? 'bg-[#4F46E5]' : 'bg-[#3B82F6]'}`}
+                style={{ height: `${height}%` }}
+              />
+            ))}
+            <span className="text-xs text-green-400 ml-2 mb-0.5">+{revenueChange}%</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-100">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Upcoming</h2>
+        {/* Workspace Launcher */}
+        <div className="col-span-12 md:col-span-5 grid grid-cols-2 gap-3">
+          {WORKSPACE_MODULES.map((module) => (
+            <Link
+              key={module.name}
+              to={module.href}
+              className="bg-[#F7F7F5] rounded-xl p-3 flex flex-col justify-center gap-2 hover:border-[#111111] border border-transparent transition-colors"
+            >
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: module.bgColor }}
+              >
+                <span style={{ color: module.color }}>{module.icon}</span>
+              </div>
+              <div className="text-sm font-medium">{module.name}</div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Stat Cards */}
+        <Link to="/app/crm" className="col-span-6 md:col-span-3 bg-white rounded-2xl border border-black/[0.06] p-4 hover:border-black/10 transition-colors">
+          <div className="flex items-center justify-between mb-2">
+            <Flame className="w-4 h-4" style={{ color: '#D85A30' }} />
+            <span className="text-xs" style={{ color: '#639922' }}>+{stats?.hotDealsChange || 0} this week</span>
+          </div>
+          <div className="text-[22px] font-medium">{stats?.hotDeals || 0}</div>
+          <div className="text-xs text-black/50">Hot deals</div>
+        </Link>
+
+        <Link to="/app/crm" className="col-span-6 md:col-span-3 bg-white rounded-2xl border border-black/[0.06] p-4 hover:border-black/10 transition-colors">
+          <div className="flex items-center justify-between mb-2">
+            <TrendingUp className="w-4 h-4" style={{ color: '#185FA5' }} />
+            <span className="text-xs" style={{ color: '#639922' }}>+{formatCurrency(stats?.pipelineChange || 0)}</span>
+          </div>
+          <div className="text-[22px] font-medium">{formatCurrency(stats?.pipelineValue || 0)}</div>
+          <div className="text-xs text-black/50">Pipeline value</div>
+        </Link>
+
+        <Link to="/app/tasks" className="col-span-6 md:col-span-3 bg-white rounded-2xl border border-black/[0.06] p-4 hover:border-black/10 transition-colors">
+          <div className="flex items-center justify-between mb-2">
+            <CheckSquare className="w-4 h-4" style={{ color: '#3C3489' }} />
+            <span className="text-xs" style={{ color: '#854F0B' }}>{stats?.tasksChange || 0}</span>
+          </div>
+          <div className="text-[22px] font-medium">{stats?.pendingTasks || 0}</div>
+          <div className="text-xs text-black/50">Pending tasks</div>
+        </Link>
+
+        <Link to="/app/people" className="col-span-6 md:col-span-3 bg-white rounded-2xl border border-black/[0.06] p-4 hover:border-black/10 transition-colors">
+          <div className="flex items-center justify-between mb-2">
+            <Users className="w-4 h-4" style={{ color: '#0F6E56' }} />
+            <span className="text-xs" style={{ color: '#639922' }}>+{stats?.teamChange || 0}</span>
+          </div>
+          <div className="text-[22px] font-medium">{stats?.teamMembers || 0}</div>
+          <div className="text-xs text-black/50">Team members</div>
+        </Link>
+
+        {/* Recent Activity */}
+        <div className="col-span-12 md:col-span-7 bg-white rounded-2xl border border-black/[0.06] p-4">
+          <div className="text-sm font-medium mb-3">Recent activity</div>
           <div className="space-y-3">
-            {UPCOMING.map((item, i) => (
-              <Link key={i} to={item.href} className="flex items-center justify-between p-3 bg-gray-50 hover:bg-indigo-50 rounded-lg transition group">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${
-                    item.priority === 'high' ? 'bg-red-500' :
-                    item.priority === 'medium' ? 'bg-amber-500' : 'bg-green-500'
-                  }`} />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 group-hover:text-indigo-700">{item.title}</p>
-                    <p className="text-xs text-gray-500">{item.time}</p>
-                  </div>
+            {activities.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-2.5">
+                <div 
+                  className="w-6 h-6 rounded-lg flex items-center justify-center text-xs shrink-0"
+                  style={{ backgroundColor: `${activity.color}15` }}
+                >
+                  <span style={{ fontSize: '14px' }}>{activity.icon}</span>
                 </div>
-                <ArrowRight size={16} className="text-gray-400 group-hover:text-indigo-500 transition" />
-              </Link>
+                <div>
+                  <div className="text-sm">{activity.text}</div>
+                  <div className="text-xs text-black/40">{activity.time}</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      </div>
 
-      <div className="mt-8 grid md:grid-cols-4 gap-4">
-        <Link to="/app/crm" className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-5 text-white hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <Users size={24} className="mb-2 group-hover:scale-110 transition" />
-          <h3 className="font-bold mb-1">CRM</h3>
-          <p className="text-sm text-white/80">Track leads & deals</p>
-        </Link>
-        <Link to="/app/finance" className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl p-5 text-white hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <DollarSign size={24} className="mb-2 group-hover:scale-110 transition" />
-          <h3 className="font-bold mb-1">Finance</h3>
-          <p className="text-sm text-white/80">Invoices & payments</p>
-        </Link>
-        <Link to="/app/projects" className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl p-5 text-white hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <Target size={24} className="mb-2 group-hover:scale-110 transition" />
-          <h3 className="font-bold mb-1">Projects</h3>
-          <p className="text-sm text-white/80">Track jobs & teams</p>
-        </Link>
-        <Link to="/app/people" className="bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl p-5 text-white hover:shadow-xl hover:-translate-y-1 transition-all group">
-          <Users size={24} className="mb-2 group-hover:scale-110 transition" />
-          <h3 className="font-bold mb-1">People</h3>
-          <p className="text-sm text-white/80">Manage your team</p>
-        </Link>
+        {/* Upcoming */}
+        <div className="col-span-12 md:col-span-5 bg-white rounded-2xl border border-black/[0.06] p-4">
+          <div className="text-sm font-medium mb-3">Upcoming</div>
+          <div className="space-y-3">
+            {upcoming.map((item) => (
+              <div key={item.id} className="flex items-center gap-2.5">
+                <div 
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ 
+                    backgroundColor: item.priority === 'high' ? '#E24B4A' : 
+                                   item.priority === 'medium' ? '#EF9F27' : '#888780'
+                  }}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm truncate">{item.text}</div>
+                  <div className="text-xs text-black/40">{item.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
       </div>
     </div>
   )
