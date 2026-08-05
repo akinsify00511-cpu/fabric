@@ -66,6 +66,7 @@ const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
 const StaffProfile = lazy(() => import('./pages/StaffProfile'))
+const BusinessInfrastructure = lazy(() => import('./pages/BusinessInfrastructure'))
 const SarahChat = lazy(() => import('./components/SarahChat'))
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 const CookieConsent = lazy(() => import('./components/CookieConsent'))
@@ -190,6 +191,7 @@ function AppRoutes() {
         <Route path="settings/profile" element={<Profile />} />
         <Route path="premium" element={<Premium />} />
         <Route path="staff/:staffId" element={<StaffProfile />} />
+        <Route path="infrastructure" element={<BusinessInfrastructure />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
