@@ -2,32 +2,59 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
+import { useAccessibleTools } from '../lib/useToolAccess'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 
+// Map nav routes to tool keys
+const TOOL_KEY_MAP: Record<string, string> = {
+  '/app': 'dashboard',
+  '/app/chat': 'chat',
+  '/app/tasks': 'tasks',
+  '/app/calendar': 'calendar',
+  '/app/time': 'time-tracking',
+  '/app/events': 'events',
+  '/app/knowledge': 'knowledge',
+  '/app/tickets': 'tickets',
+  '/app/crm': 'crm',
+  '/app/social': 'social',
+  '/app/projects': 'projects',
+  '/app/finance': 'finance',
+  '/app/people': 'people',
+  '/app/inventory': 'inventory',
+  '/app/requisitions': 'requisitions',
+  '/app/organogram': 'merit',
+  '/app/reports': 'reports',
+  '/app/monitoring': 'dashboard',
+  '/app/meetings': 'meetings',
+  '/app/home': 'dashboard',
+  '/app/branding': 'branding',
+  '/app/settings': 'settings',
+}
+
 const NAV_ITEMS = [
-  { to: '/app', label: 'Dashboard', end: true, icon: Home },
-  { to: '/app/chat', label: 'Chat', icon: MessageSquare },
-  { to: '/app/tasks', label: 'Tasks', icon: CheckSquare },
-  { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon },
-  { to: '/app/time', label: 'Time', icon: Clock },
-  { to: '/app/events', label: 'Events', icon: CalendarDays },
-  { to: '/app/knowledge', label: 'Docs', icon: Book },
-  { to: '/app/tickets', label: 'Support', icon: Headphones },
-  { to: '/app/crm', label: 'CRM', icon: Users2 },
-  { to: '/app/social', label: 'Social', icon: Share2 },
-  { to: '/app/projects', label: 'Projects', icon: FolderKanban },
-  { to: '/app/finance', label: 'Finance', icon: Wallet },
-  { to: '/app/people', label: 'People', icon: Contact },
-  { to: '/app/inventory', label: 'Inventory', icon: Boxes },
-  { to: '/app/requisitions', label: 'Requests', icon: FileText },
-  { to: '/app/organogram', label: 'Org Chart', icon: Network },
-  { to: '/app/reports', label: 'Reports', icon: BarChart3 },
-  { to: '/app/monitoring', label: 'Monitoring', icon: Activity },
-  { to: '/app/meetings', label: 'Meetings', icon: Headphones },
-  { to: '/app/home', label: 'Company', icon: Home },
-  { to: '/app/branding', label: 'Branding', icon: Palette },
-  { to: '/app/settings', label: 'Settings', icon: SettingsIcon },
+  { to: '/app', label: 'Dashboard', end: true, icon: Home, toolKey: 'dashboard' },
+  { to: '/app/chat', label: 'Chat', icon: MessageSquare, toolKey: 'chat' },
+  { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
+  { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
+  { to: '/app/time', label: 'Time', icon: Clock, toolKey: 'time-tracking' },
+  { to: '/app/events', label: 'Events', icon: CalendarDays, toolKey: 'events' },
+  { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
+  { to: '/app/tickets', label: 'Support', icon: Headphones, toolKey: 'tickets' },
+  { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
+  { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
+  { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
+  { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
+  { to: '/app/people', label: 'People', icon: Contact, toolKey: 'people' },
+  { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
+  { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
+  { to: '/app/organogram', label: 'Org Chart', icon: Network, toolKey: 'merit' },
+  { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
+  { to: '/app/monitoring', label: 'Monitoring', icon: Activity, toolKey: 'dashboard' },
+  { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
+  { to: '/app/home', label: 'Company', icon: Home, toolKey: 'dashboard' },
+  { to: '/app/branding', label: 'Branding', icon: Palette, toolKey: 'branding' },
+  { to: '/app/settings', label: 'Settings', icon: SettingsIcon, toolKey: 'settings' },
 ]
 
 const MOBILE_NAV_ITEMS = [
@@ -40,6 +67,16 @@ const MOBILE_NAV_ITEMS = [
 export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
+  const { tools: accessibleTools, loading } = useAccessibleTools()
+  
+  // Check if user is admin/owner (they see everything)
+  const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
+  
+  // Filter nav items based on tool access (unless privileged)
+  const visibleNavItems = loading || isPrivileged 
+    ? NAV_ITEMS 
+    : NAV_ITEMS.filter(item => accessibleTools.includes(item.toolKey as any))
+  
   const companyName = branding.custom_name || staff?.business_name || 'My Company'
   const displayLogo = branding.logo_url || branding.brand_name ? null : <AvenizeMark size={22} />
 
@@ -64,7 +101,7 @@ export default function Shell() {
           </div>
         </div>
         <nav className="flex-1 px-2 space-y-0.5">
-          {NAV_ITEMS.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon
             return (
               <NavLink

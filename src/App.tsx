@@ -42,6 +42,7 @@ const Integrations = lazy(() => import('./pages/Integrations'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const ProjectSettings = lazy(() => import('./pages/ProjectSettings'))
+const RoleSettings = lazy(() => import('./pages/RoleSettings'))
 const Calendar = lazy(() => import('./pages/Calendar'))
 const Requisitions = lazy(() => import('./pages/Requisitions'))
 const TimeTracking = lazy(() => import('./pages/TimeTracking'))
@@ -179,6 +180,7 @@ function AppRoutes() {
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
         <Route path="settings/projects" element={<ProjectSettings />} />
+        <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
