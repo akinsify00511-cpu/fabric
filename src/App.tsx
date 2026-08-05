@@ -38,6 +38,7 @@ const Accounting = lazy(() => import('./pages/Accounting'))
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings'))
 const SecuritySettings = lazy(() => import('./pages/SecuritySettings'))
 const SSOSettings = lazy(() => import('./pages/SSOSettings'))
+const Integrations = lazy(() => import('./pages/Integrations'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const Calendar = lazy(() => import('./pages/Calendar'))
@@ -192,6 +193,7 @@ function AppRoutes() {
         <Route path="branding" element={<BrandingSettings />} />
         <Route path="security" element={<SecuritySettings />} />
         <Route path="sso" element={<SSOSettings />} />
+        <Route path="integrations" element={<Integrations />} />
         <Route path="api" element={<APISettings />} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
