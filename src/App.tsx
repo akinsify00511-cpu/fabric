@@ -184,6 +184,7 @@ function AppRoutes() {
         <Route path="settings/projects" element={<ProjectSettings />} />
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
+        <Route path="premium" element={<Premium />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
