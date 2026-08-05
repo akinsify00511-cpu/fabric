@@ -308,18 +308,30 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
         </div>
 
         {/* CTA Button */}
-        <a
-          href={paystackLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
-            isMonthly && monthlyPlan.popular
-              ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
-              : 'bg-[#111111] text-white hover:bg-[#222222]'
-          }`}
-        >
-          Start free setup
-        </a>
+        {paystackLink ? (
+          <a
+            href={paystackLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
+              isMonthly && monthlyPlan.popular
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
+                : 'bg-[#111111] text-white hover:bg-[#222222]'
+            }`}
+          >
+            {monthlyPlan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
+          </a>
+        ) : (
+          <button
+            className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
+              isMonthly && monthlyPlan.popular
+                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
+                : 'bg-[#111111] text-white hover:bg-[#222222]'
+            }`}
+          >
+            {monthlyPlan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
+          </button>
+        )}
       </div>
     </div>
   )

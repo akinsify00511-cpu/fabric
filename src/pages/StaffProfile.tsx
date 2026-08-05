@@ -8,7 +8,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { 
-  Mail, Phone, MapPin, Building2, Refresh, Users, 
+  Mail, Phone, MapPin, Building2, RefreshCw, Users, 
   Target, DollarSign, Calendar, MessageCircle
 } from 'lucide-react'
 
