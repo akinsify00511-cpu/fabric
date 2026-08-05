@@ -15,43 +15,57 @@ import {
 // ============================================
 const MONTHLY_PLANS = [
   {
-    id: 'starter-monthly',
-    name: 'Starter',
-    tier: '01 — Solo',
-    description: 'Perfect for solo operators and small teams getting started',
-    price: 15000,
-    priceLabel: '₦15,000',
+    id: 'free',
+    name: 'Free',
+    tier: '— Get Started',
+    description: 'Perfect for getting started',
+    price: 0,
+    priceLabel: '₦0',
     period: 'flat / month',
     seats: '1–5 seats',
     features: [
+      'Core job tracking',
+      'Basic CRM'
+    ],
+    notIncluded: [],
+    paystackLink: null,
+    popular: false
+  },
+  {
+    id: 'starter-monthly',
+    name: 'Starter',
+    tier: 'Founding Rate',
+    description: 'Perfect for getting started',
+    price: 15000,
+    priceLabel: '₦15,000',
+    period: '/month flat',
+    seats: '1–5 seats',
+    features: [
       'Core job & project tracking',
-      'Invoicing with VAT & WHT tracking',
+      'Invoicing with VAT & WHT',
       'Basic inventory (single location)',
-      'Payment tracking',
-      'Self-serve setup'
+      'CRM basics',
+      '5 team members'
     ],
-    notIncluded: [
-      'AI Alerts',
-      'Team Chat'
-    ],
+    notIncluded: [],
     paystackLink: 'https://paystack.shop/pay/starter-avenize',
     popular: false
   },
   {
     id: 'team-monthly',
     name: 'Team',
-    tier: '02 — Small Team',
-    description: 'For growing teams that need full operational control',
+    tier: 'Founding Rate',
+    description: 'For growing teams',
     price: 48000,
     priceLabel: '₦48,000',
-    period: 'starting / month · 6 seats',
+    period: '/month',
     seats: '6–15 seats',
     features: [
       'Everything in Starter',
-      'AI operational alerts (rules engine)',
-      'Department groups & task management',
+      'Advanced CRM with AI insights',
+      'Department groups & tasks',
       'Offline field sync',
-      'Multi-location inventory'
+      'Priority support'
     ],
     notIncluded: [],
     paystackLink: 'https://paystack.shop/pay/team-avenize',
@@ -60,18 +74,18 @@ const MONTHLY_PLANS = [
   {
     id: 'business-monthly',
     name: 'Business',
-    tier: '03 — Growing Team',
-    description: 'For established businesses scaling operations',
+    tier: 'Founding Rate',
+    description: 'For scaling businesses',
     price: 112000,
     priceLabel: '₦112,000',
-    period: 'starting / month · 16 seats',
+    period: '/month',
     seats: '16–30 seats',
     features: [
       'Everything in Team',
       'Multi-location inventory',
-      'Client communication log per job',
-      'Variation order tracking',
-      'Approval workflows'
+      'Client communication log',
+      'Advanced reporting',
+      'Custom integrations'
     ],
     notIncluded: [],
     paystackLink: 'https://paystack.shop/pay/business-avenize',
@@ -80,18 +94,18 @@ const MONTHLY_PLANS = [
   {
     id: 'pro-monthly',
     name: 'Pro',
-    tier: '04 — Mid-Size',
-    description: 'For businesses with complex operations — 50-staff sweet spot',
+    tier: 'Founding Rate',
+    description: '50-staff sweet spot',
     price: 186000,
     priceLabel: '₦186,000',
-    period: 'starting / month · 31 seats',
+    period: '/month',
     seats: '31–75 seats',
     features: [
       'Everything in Business',
-      'Advanced reporting & multi-location',
       'Full API access',
-      'Free onboarding walkthrough',
-      'Priority support'
+      'Approval workflows',
+      'Dedicated account manager',
+      'Custom onboarding'
     ],
     notIncluded: [],
     paystackLink: 'https://paystack.shop/pay/pro-avenize',
@@ -100,18 +114,18 @@ const MONTHLY_PLANS = [
   {
     id: 'scale-monthly',
     name: 'Scale',
-    tier: '05 — Large',
-    description: 'For large organizations with unlimited growth',
+    tier: 'Founding Rate',
+    description: 'For enterprises',
     price: 380000,
     priceLabel: '₦380,000',
-    period: 'starting / month · 76 seats',
-    seats: '76+ seats · uncapped',
+    period: '/month',
+    seats: '76+ seats',
     features: [
       'Everything in Pro',
       'SSO & data residency',
       'Priority support',
-      'Uncapped seats — add anytime',
-      'Dedicated onboarding'
+      'Custom SLA',
+      'White-label options'
     ],
     notIncluded: [],
     paystackLink: 'https://paystack.shop/pay/scale-avenize',
@@ -120,6 +134,14 @@ const MONTHLY_PLANS = [
 ]
 
 const YEARLY_PLANS = [
+  {
+    id: 'free-yearly',
+    name: 'Free',
+    priceLabel: '₦0',
+    period: '/year',
+    seats: '1–5 seats',
+    paystackLink: null
+  },
   {
     id: 'starter-yearly',
     name: 'Starter',
@@ -157,7 +179,7 @@ const YEARLY_PLANS = [
     name: 'Scale',
     priceLabel: '₦3,800,000',
     period: '/year — 2 months free',
-    seats: '76+ seats · uncapped',
+    seats: '76+ seats',
     paystackLink: 'https://paystack.shop/pay/scale-yearly'
   }
 ]
@@ -551,7 +573,7 @@ export default function Pricing() {
           </div>
 
           {/* Pricing Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
             {billingCycle === 'monthly' ? (
               MONTHLY_PLANS.map((plan) => (
                 <PricingTicket key={plan.id} plan={plan} isYearly={false} />
