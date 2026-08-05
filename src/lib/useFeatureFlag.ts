@@ -29,7 +29,7 @@ const CACHE_DURATION = 60 * 1000 // 1 minute
  * Hook to check if a feature flag is enabled
  */
 export function useFeatureFlag(key: string): boolean {
-  const { staff, business } = useAuth()
+  const { staff } = useAuth()
   const [enabled, setEnabled] = useState(false)
   const [loading, setLoading] = useState(true)
 

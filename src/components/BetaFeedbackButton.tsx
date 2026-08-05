@@ -24,7 +24,7 @@ interface BetaFeedbackButtonProps {
 }
 
 export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButtonProps) {
-  const { staff, business } = useAuth()
+  const { staff } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [description, setDescription] = useState('')
   const [showErrors, setShowErrors] = useState(false)
