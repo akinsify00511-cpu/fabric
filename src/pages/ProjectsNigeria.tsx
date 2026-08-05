@@ -11,11 +11,12 @@ import {
   Plus, Search, Filter, MoreVertical, MapPin, Users, Clock,
   AlertTriangle, CheckCircle2, DollarSign, Package, Wrench,
   Home, Factory, ArrowRight, Camera, Phone, MessageSquare,
-  ChevronDown, ChevronUp, Edit2, Trash2, FileText, Eye
+  ChevronDown, ChevronUp, Edit2, Trash2, FileText, Eye,
+  Settings
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 // Nigerian Construction Pipeline
-type JobType = 'general' | 'restoration' | 'real_estate' | 'paint_production'
 type PipelineStage = 
   | 'enquiry' 
   | 'quoted' 
@@ -34,7 +35,7 @@ interface Job {
   client_name: string
   client_phone: string
   client_email?: string
-  type: JobType
+  type: string // References job_types.id
   stage: PipelineStage
   value: number // In Naira
   location?: string
@@ -107,7 +108,8 @@ const PIPELINE_STAGES: { key: PipelineStage; label: string; color: string }[] = 
   { key: 'paid', label: 'Paid', color: 'emerald' },
 ]
 
-const JOB_TYPE_LABELS: Record<JobType, string> = {
+// Fallback labels for when job_types table doesn't have data yet
+const JOB_TYPE_FALLBACK: Record<string, string> = {
   general: 'General',
   restoration: 'Restoration',
   real_estate: 'Real Estate',
@@ -130,7 +132,8 @@ export default function ProjectsNigeria() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [typeFilter, setTypeFilter] = useState<JobType | 'all'>('all')
+  const [typeFilter, setTypeFilter] = useState<string | 'all'>('all')
+  const [jobTypes, setJobTypes] = useState<{ id: string; label: string; color: string }[]>([])
   const [stageFilter, setStageFilter] = useState<PipelineStage | 'all'>('all')
   const [showNewJob, setShowNewJob] = useState(false)
   const [selectedJob, setSelectedJob] = useState<Job | null>(null)
@@ -141,12 +144,67 @@ export default function ProjectsNigeria() {
     client_name: '',
     client_phone: '',
     client_email: '',
-    type: 'general' as JobType,
+    type: 'general', // Will be UUID from job_types table once created
     location: '',
     estimated_value: 0,
     start_date: '',
     end_date: '',
   })
+
+  // Load job types from database (configurable per business)
+  const loadJobTypes = useCallback(async () => {
+    if (!staff?.business_id) return
+
+    try {
+      const { data, error } = await supabase
+        .from('job_types')
+        .select('id, label, color')
+        .eq('business_id', staff.business_id)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+
+      if (error) {
+        console.warn('job_types table not available, using fallback labels')
+        return
+      }
+
+      if (data && data.length > 0) {
+        setJobTypes(data)
+      }
+    } catch (err) {
+      console.warn('Failed to load job types:', err)
+    }
+  }, [staff?.business_id])
+
+  // Helper function to get job type label
+  const getJobTypeLabel = (typeId: string): string => {
+    const found = jobTypes.find(jt => jt.id === typeId)
+    if (found) return found.label
+    // Fallback to old hardcoded values
+    return JOB_TYPE_FALLBACK[typeId] || typeId
+  }
+
+  // Helper function to get job type color
+  const getJobTypeColor = (typeId: string): string => {
+    const found = jobTypes.find(jt => jt.id === typeId)
+    if (found) return found.color
+    return '#6366F1' // Default indigo
+  }
+
+  // Helper function to get job type color classes for badges
+  const getJobTypeColorClass = (typeId: string): string => {
+    const color = getJobTypeColor(typeId)
+    // Map colors to Tailwind bg/text classes
+    const colorMap: Record<string, string> = {
+      '#6366F1': 'bg-indigo-100 text-indigo-700', // indigo
+      '#10B981': 'bg-green-100 text-green-700',   // green
+      '#F59E0B': 'bg-amber-100 text-amber-700',  // amber
+      '#8B5CF6': 'bg-purple-100 text-purple-700', // purple
+      '#EF4444': 'bg-red-100 text-red-700',       // red
+      '#3B82F6': 'bg-blue-100 text-blue-700',     // blue
+    }
+    return colorMap[color] || 'bg-gray-100 text-gray-700'
+  }
 
   const loadJobs = useCallback(async () => {
     if (!staff?.business_id) return
@@ -170,8 +228,9 @@ export default function ProjectsNigeria() {
   }, [staff?.business_id, showToast])
 
   useEffect(() => {
+    loadJobTypes()
     loadJobs()
-  }, [loadJobs])
+  }, [loadJobTypes, loadJobs])
 
   const createJob = async () => {
     if (!staff?.business_id || !staff?.id) return
@@ -288,13 +347,22 @@ export default function ProjectsNigeria() {
           <h1 className="text-xl font-medium">Jobs & Projects</h1>
           <p className="text-sm text-black/50">Track projects, restoration, real estate, and paint production</p>
         </div>
-        <button
-          onClick={() => setShowNewJob(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
-        >
-          <Plus size={16} />
-          New Job
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/app/settings/projects"
+            className="p-2 hover:bg-black/[0.05] rounded-lg text-black/50"
+            title="Project Settings"
+          >
+            <Settings size={18} />
+          </Link>
+          <button
+            onClick={() => setShowNewJob(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
+          >
+            <Plus size={16} />
+            New Job
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -354,14 +422,23 @@ export default function ProjectsNigeria() {
         </div>
         <select
           value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value as JobType | 'all')}
+          onChange={(e) => setTypeFilter(e.target.value)}
           className="px-4 py-2.5 rounded-xl border border-black/10 text-sm bg-white"
         >
           <option value="all">All Types</option>
-          <option value="general">General</option>
-          <option value="restoration">Restoration</option>
-          <option value="real_estate">Real Estate</option>
-          <option value="paint_production">Paint Production</option>
+          {jobTypes.length > 0 ? (
+            jobTypes.map(jt => (
+              <option key={jt.id} value={jt.id}>{jt.label}</option>
+            ))
+          ) : (
+            // Fallback options
+            <>
+              <option value="general">General</option>
+              <option value="restoration">Restoration</option>
+              <option value="real_estate">Real Estate</option>
+              <option value="paint_production">Paint Production</option>
+            </>
+          )}
         </select>
       </div>
 
@@ -408,13 +485,8 @@ export default function ProjectsNigeria() {
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-mono text-black/40">{job.job_number}</span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      job.type === 'general' ? 'bg-blue-100 text-blue-700' :
-                      job.type === 'real_estate' ? 'bg-green-100 text-green-700' :
-                      job.type === 'paint_production' ? 'bg-purple-100 text-purple-700' :
-                      'bg-orange-100 text-orange-700'
-                    }`}>
-                      {JOB_TYPE_LABELS[job.type]}
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${getJobTypeColorClass(job.type)}`}>
+                      {getJobTypeLabel(job.type)}
                     </span>
                   </div>
                   <h3 className="font-medium">{job.title}</h3>
@@ -468,13 +540,22 @@ export default function ProjectsNigeria() {
                 <label className="block text-sm font-medium mb-1">Job Type</label>
                 <select
                   value={newJob.type}
-                  onChange={(e) => setNewJob(prev => ({ ...prev, type: e.target.value as JobType }))}
+                  onChange={(e) => setNewJob(prev => ({ ...prev, type: e.target.value }))}
                   className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-sm"
                 >
-                  <option value="general">General</option>
-                  <option value="restoration">Restoration</option>
-                  <option value="real_estate">Real Estate</option>
-                  <option value="paint_production">Paint Production</option>
+                  {jobTypes.length > 0 ? (
+                    jobTypes.map(jt => (
+                      <option key={jt.id} value={jt.id}>{jt.label}</option>
+                    ))
+                  ) : (
+                    // Fallback options
+                    <>
+                      <option value="general">General</option>
+                      <option value="restoration">Restoration</option>
+                      <option value="real_estate">Real Estate</option>
+                      <option value="paint_production">Paint Production</option>
+                    </>
+                  )}
                 </select>
               </div>
               
@@ -650,7 +731,7 @@ export default function ProjectsNigeria() {
                 </div>
                 <div className="bg-gray-50 rounded-xl p-3">
                   <p className="text-xs text-black/50">Type</p>
-                  <p className="font-medium">{JOB_TYPE_LABELS[selectedJob.type]}</p>
+                  <p className="font-medium">{getJobTypeLabel(selectedJob.type)}</p>
                 </div>
                 {selectedJob.location && (
                   <div className="bg-gray-50 rounded-xl p-3 col-span-2">
