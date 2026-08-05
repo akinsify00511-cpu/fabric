@@ -9,6 +9,7 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import EntitlementGate from '../components/EntitlementGate'
 import {
   Package, Plus, Search, Filter, AlertTriangle, TrendingDown,
   ArrowUpDown, ChevronDown, Edit2, Trash2, MapPin,
@@ -271,6 +272,7 @@ export default function InventoryNigeria() {
   }
 
   return (
+    <EntitlementGate feature="inventory" modal={true}>
     <div className="pb-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -710,5 +712,6 @@ export default function InventoryNigeria() {
         { label: 'Reports', path: '/app/reports', description: 'Stock analytics' },
       ]} />
     </div>
+    </EntitlementGate>
   )
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import EntitlementGate from '../components/EntitlementGate'
 import {
   Ticket, Plus, Search, Filter, Clock, User, AlertTriangle, CheckCircle2,
   MessageCircle, Tag, ChevronRight, ArrowLeft, Send, Lock, Inbox,
@@ -224,6 +225,7 @@ export default function Tickets() {
   }
 
   return (
+    <EntitlementGate feature="support_tickets" modal={true}>
     <div className="flex h-[calc(100vh-140px)] md:h-[calc(100vh-80px)]">
       {/* Ticket List */}
       <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} w-full md:w-80 bg-white border-r border-black/[0.06] flex-col`}>
@@ -526,5 +528,6 @@ export default function Tickets() {
         </div>
       )}
     </div>
+    </EntitlementGate>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import EntitlementGate from '../components/EntitlementGate'
 import {
   Clock, Play, Square, Plus, Calendar, ChevronLeft, ChevronRight,
   CheckCircle2, Coffee, Plane, Heart, User, Trash2, Edit3,
@@ -253,6 +254,7 @@ export default function TimeTracking() {
   const weekTotal = summaries.reduce((sum, s) => sum + s.total_minutes, 0)
 
   return (
+    <EntitlementGate feature="time_tracking" modal={true}>
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -564,5 +566,6 @@ export default function TimeTracking() {
         </div>
       )}
     </div>
+    </EntitlementGate>
   )
 }

@@ -3,6 +3,7 @@ import { Plus, Users, Search, Mail, Phone, Briefcase, UserCog, X, Check } from '
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { useTeamLimit } from '../lib/useEntitlement'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 
 type FunctionalRole = {
@@ -26,6 +27,7 @@ type TeamMember = {
 export default function People() {
   const { staff: currentStaff } = useAuth()
   const { showToast } = useToast()
+  const { canAddMember: canAddTeamMember, currentCount: teamCount, limit: teamLimit, loading: teamLimitLoading } = useTeamLimit()
   const [members, setMembers] = useState<TeamMember[]>([])
   const [functionalRoles, setFunctionalRoles] = useState<FunctionalRole[]>([])
   const [search, setSearch] = useState('')
@@ -178,13 +180,20 @@ export default function People() {
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-[var(--avenize-black)]">People</h1>
-        <button
-          onClick={() => setShowInvite(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm font-medium"
-        >
-          <Plus size={16} />
-          Invite Team
-        </button>
+        <div className="flex items-center gap-3">
+          {!teamLimitLoading && !canAddTeamMember && (
+            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
+              Team limit reached ({teamCount}/{teamLimit})
+            </span>
+          )}
+          <button
+            onClick={() => canAddTeamMember ? setShowInvite(true) : showToast('Team limit reached. Upgrade your plan to add more members.', 'error')}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm font-medium"
+          >
+            <Plus size={16} />
+            Invite Team
+          </button>
+        </div>
       </div>
 
            {/* Stats */}

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { ListSkeleton } from '../components/Skeleton'
+import EntitlementGate from '../components/EntitlementGate'
 import { Globe, Camera, Calendar, BarChart3, Palette, Send, Image, Eye, Heart, MessageCircle, Share2 } from 'lucide-react'
 
 type SocialPost = {
@@ -209,6 +210,7 @@ export default function Social() {
   ]
 
   return (
+    <EntitlementGate feature="social_media" modal={true}>
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -566,5 +568,6 @@ export default function Social() {
         </div>
       )}
     </div>
+    </EntitlementGate>
   )
 }
