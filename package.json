@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
     "deploy": "npm run build && npx vercel --prod",
     "deploy:preview": "npm run build && npx vercel",
     "test": "playwright test",
