@@ -6,6 +6,7 @@ import { GamificationProvider } from './lib/GamificationContext'
 import { BrandingProvider } from './lib/BrandingContext'
 import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
+import BetaFeedbackButton from './components/BetaFeedbackButton'
 
 // Lazy load heavy pages for code splitting
 const Login = lazy(() => import('./pages/Login'))
@@ -115,6 +116,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
       {showOnboarding && <OnboardingWizard onComplete={handleOnboardingComplete} />}
       <TrialBanner />
       <SarahChat />
+      <BetaFeedbackButton />
       {children}
     </>
   )

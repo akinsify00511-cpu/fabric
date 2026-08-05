@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './supabase'
+import * as Sentry from '@sentry/react'
 
 // Role definitions with permissions
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
@@ -21,6 +22,7 @@ export type Staff = {
   plan?: 'free' | 'starter' | 'pro' | 'enterprise'
   is_admin?: boolean
   active?: boolean
+  is_beta_tester?: boolean
   user?: any
 }
 
@@ -148,7 +150,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     fetchStaff()
   }, [fetchStaff])
 
+  // Update Sentry context when staff changes
+  useEffect(() => {
+    if (staff) {
+      Sentry.setUser({ id: staff.id })
+      Sentry.setTag('business_id', staff.business_id)
+      Sentry.setTag('is_beta_tester', String(staff.is_beta_tester ?? false))
+      Sentry.setTag('user_role', staff.role)
+    } else {
+      Sentry.setUser(null)
+    }
+  }, [staff])
+
   const signOut = async () => {
+    Sentry.setUser(null)
     await supabase.auth.signOut()
   }
 

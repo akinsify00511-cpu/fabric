@@ -2,9 +2,12 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { useFeatureFlag, FEATURE_FLAG_KEYS } from '../lib/useFeatureFlag'
+import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
+import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
 import {
   Zap, Plus, Play, Pause, Trash2, Settings, ChevronRight, CheckCircle2,
-  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X
+  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X, Sparkles
 } from 'lucide-react'
 
 type Automation = {
@@ -71,6 +74,10 @@ const ACTIONS: Action[] = [
 export default function Automations() {
   const { staff } = useAuth()
   const { showToast } = useToast()
+  const { track } = useAnalytics()
+
+  // Feature flag gating - automations are behind a flag, defaulted off for beta
+  const automationsEnabled = useFeatureFlag(FEATURE_FLAG_KEYS.AUTOMATIONS)
   // Demo automations
 const DEMO_AUTOMATIONS: Automation[] = [
   { id: '1', name: 'Welcome Email', description: 'Send welcome email to new contacts', trigger_type: 'contact_created', trigger_config: {}, action_type: 'send_email', action_config: {}, enabled: true, run_count: 156, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
@@ -189,6 +196,108 @@ const [automations, setAutomations] = useState<Automation[]>([])
     return runs.filter((r) => r.automation_id === autoId).slice(0, 5)
   }
 
+  // Feature flag gating - if not enabled, show coming soon
+  if (!automationsEnabled) {
+    return (
+      <div className="pb-20">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-xl font-medium text-[var(--avenize-black)]">Automations</h1>
+            <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
+          </div>
+        </div>
+
+        {/* Beta Request Banner */}
+        <div className="bg-gradient-to-br from-blue-800 to-blue-900 rounded-2xl p-8 mb-6 text-white">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
+              <Zap className="w-7 h-7 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium">
+                  Beta Feature
+                </span>
+                <BetaBadge />
+              </div>
+              <h2 className="text-xl font-semibold mb-2">Workflow Automations</h2>
+              <p className="text-white/70 text-sm leading-relaxed mb-4">
+                Automate repetitive tasks with triggers and actions. When a deal is won, send a notification. 
+                When a task is overdue, award merit points. When a contact is added, create a welcome task.
+              </p>
+              <div className="flex items-center gap-4">
+                <a
+                  href="mailto:support@avenize.com?subject=Automations%20Beta%20Access%20Request"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-900 rounded-xl text-sm font-medium hover:bg-blue-50 transition"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Request Beta Access
+                </a>
+                <span className="text-white/50 text-sm">
+                  Join the beta program for early access
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature Preview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-amber-600" />
+              </div>
+              <h3 className="font-medium">Smart Triggers</h3>
+            </div>
+            <p className="text-sm text-black/50">
+              Fire automations on deal won, task completed, invoice paid, staff joined, and more events.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <Settings className="w-5 h-5 text-indigo-600" />
+              </div>
+              <h3 className="font-medium">Multiple Actions</h3>
+            </div>
+            <p className="text-sm text-black/50">
+              Send notifications, create tasks, update deals, award merit, or post to chat.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <Activity className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h3 className="font-medium">Activity Log</h3>
+            </div>
+            <p className="text-sm text-black/50">
+              Track every automation run with success/failure status and error details.
+            </p>
+          </div>
+        </div>
+
+        {/* Beta Note */}
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                Beta Access <BetaBadge />
+              </p>
+              <p className="text-xs text-amber-700 mt-1">
+                Automations are currently being tested with beta users. Contact support to join the beta program.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="pb-20">
       {/* BETA STATUS BANNER */}
@@ -199,8 +308,8 @@ const [automations, setAutomations] = useState<Automation[]>([])
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-bold text-blue-900">🚀 Automations: Beta</h3>
-              <span className="px-2 py-0.5 bg-blue-200 text-blue-800 text-xs rounded-full">BETA</span>
+              <h3 className="font-bold text-blue-900">Automations</h3>
+              <BetaBadge />
             </div>
             <p className="text-sm text-blue-800">
               <strong>Creating and saving automations works.</strong> Execution triggers when events occur 
@@ -217,7 +326,10 @@ const [automations, setAutomations] = useState<Automation[]>([])
           <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
         </div>
         <button
-          onClick={() => setShowBuilder(true)}
+          onClick={() => {
+            track(ANALYTICS_EVENTS.AUTOMATION_CREATED)
+            setShowBuilder(true)
+          }}
           className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium hover:opacity-90 transition"
         >
           <Plus size={16} />

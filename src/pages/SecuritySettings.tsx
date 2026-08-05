@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
-import { isFeatureEnabled } from '../lib/features'
+import { useFeatureFlag, FEATURE_FLAG_KEYS } from '../lib/useFeatureFlag'
+import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
+import BetaTesterGate from '../components/BetaTesterGate'
+import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
 import {
-  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4
+  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Sparkles
 } from 'lucide-react'
 import { TOTP, Secret } from 'otpauth'
 
@@ -44,6 +47,7 @@ function generateBackupCodes(count: number): string[] {
 export default function SecuritySettings() {
   const { session } = useAuth()
   const { showToast } = useToast()
+  const { track } = useAnalytics()
   const [mfa, setMfa] = useState<MFAStatus | null>(null)
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([])
   const [loading, setLoading] = useState(true)
@@ -55,7 +59,8 @@ export default function SecuritySettings() {
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'security' | 'audit'>('security')
 
-  const twoFactorAvailable = isFeatureEnabled('twoFactor')
+  // Feature flag gating - 2FA is behind a flag, defaulted off
+  const twoFactorEnabled = useFeatureFlag(FEATURE_FLAG_KEYS.TWO_FACTOR_AUTH)
   const user = session?.user
 
   const loadSecurity = async () => {
@@ -311,20 +316,23 @@ Each code can only be used once!`
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {!twoFactorAvailable && (
+                  {!twoFactorEnabled && (
                     <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
                       <div className="flex items-start gap-3">
                         <Clock4 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-amber-800">Coming Soon</p>
+                          <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
+                            Beta Feature
+                            <BetaBadge />
+                          </p>
                           <p className="text-xs text-amber-700 mt-1">
-                            Two-factor authentication is being prepared. Contact sales for early access.
+                            Two-factor authentication is being tested with beta users. Contact support if you'd like early access.
                           </p>
                         </div>
                       </div>
                     </div>
                   )}
-                  {twoFactorAvailable && !mfa?.enabled && (
+                  {twoFactorEnabled && !mfa?.enabled && (
                     <>
                       <div className="flex gap-4">
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
@@ -344,7 +352,10 @@ Each code can only be used once!`
                       </div>
 
                       <button
-                        onClick={setup2FA}
+                        onClick={() => {
+                          track(ANALYTICS_EVENTS.SETTINGS_2FA_ENABLED)
+                          setup2FA()
+                        }}
                         className="w-full px-4 py-3 rounded-xl avenize-gradient text-white text-sm font-medium"
                       >
                         Set Up 2FA
