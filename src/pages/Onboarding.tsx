@@ -3,8 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import {
-  Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2
+  Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2, Palette
 } from 'lucide-react'
+
+// Brand color palette - black, ash (gray), white
+const BRAND_COLORS = [
+  { id: 'black', name: 'Graphite', hex: '#111111', textColor: '#FFFFFF' },
+  { id: 'ash', name: 'Ash', hex: '#E8E8E8', textColor: '#111111' },
+  { id: 'white', name: 'White', hex: '#FFFFFF', textColor: '#111111' },
+]
 
 const STEPS = [
   {
@@ -16,6 +23,11 @@ const STEPS = [
     icon: Users,
     title: 'Your Profile',
     description: 'Tell us about yourself',
+  },
+  {
+    icon: Palette,
+    title: 'Your Theme',
+    description: 'Choose your look',
   },
   {
     icon: Wrench,
@@ -78,6 +90,7 @@ export default function Onboarding() {
     (session?.user.user_metadata?.full_name as string | undefined) ?? '',
   )
   const [industry, setIndustry] = useState('')
+  const [selectedColor, setSelectedColor] = useState<typeof BRAND_COLORS[0] | null>(null)
 
   const handleNext = async () => {
     if (step === 0 && !businessName.trim()) {
@@ -88,14 +101,18 @@ export default function Onboarding() {
       setError('Please enter your name')
       return
     }
-    if (step === 2 && !industry) {
+    if (step === 2 && !selectedColor) {
+      setError('Please select a color theme')
+      return
+    }
+    if (step === 3 && !industry) {
       setError('Please select your industry')
       return
     }
 
     setError(null)
 
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1)
     } else {
       await completeSetup()
@@ -118,6 +135,12 @@ export default function Onboarding() {
         throw rpcError
       }
 
+      // Save color preferences to localStorage for branding
+      if (selectedColor) {
+        localStorage.setItem('avenize_theme_bg', selectedColor.hex)
+        localStorage.setItem('avenize_theme_text', selectedColor.textColor)
+      }
+
       // Mark onboarding as complete in localStorage (for quick access)
       localStorage.setItem('avenize_onboarding_complete', 'true')
       
@@ -127,6 +150,18 @@ export default function Onboarding() {
           .from('staff')
           .update({ onboarding_completed: true })
           .eq('id', data.staff_id)
+        
+        // Save branding colors to database
+        if (selectedColor) {
+          await supabase
+            .from('business_branding')
+            .upsert({
+              business_id: data.business_id,
+              background_color: selectedColor.hex,
+              text_color: selectedColor.textColor,
+              updated_at: new Date().toISOString(),
+            })
+        }
       }
 
       // Force a full page reload to reset all auth state
@@ -187,13 +222,13 @@ export default function Onboarding() {
           {/* Mobile Progress */}
           <div className="md:hidden mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Step {step + 1} of 4</span>
-              <span className="text-sm text-black/50">{Math.round(((step + 1) / 4) * 100)}%</span>
+              <span className="text-sm font-medium">Step {step + 1} of {STEPS.length}</span>
+              <span className="text-sm text-black/50">{Math.round(((step + 1) / STEPS.length) * 100)}%</span>
             </div>
             <div className="h-2 bg-gray-100 rounded-full">
               <div 
                 className="h-2 bg-[var(--avenize-primary)] rounded-full transition-all"
-                style={{ width: `${((step + 1) / 4) * 100}%` }}
+                style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
               />
             </div>
           </div>
@@ -240,8 +275,53 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 2: Industry */}
+          {/* Step 2: Theme Color Picker */}
           {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold">Choose your theme</h2>
+                <p className="text-black/60 mt-2">Pick a background color that suits your style.</p>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {BRAND_COLORS.map((color) => (
+                  <button
+                    key={color.id}
+                    onClick={() => setSelectedColor(color)}
+                    className={`relative p-6 rounded-2xl border-2 transition-all ${
+                      selectedColor?.id === color.id
+                        ? 'border-[var(--avenize-primary)] shadow-lg'
+                        : 'border-black/10 hover:border-black/30'
+                    }`}
+                    style={{ backgroundColor: color.hex }}
+                  >
+                    <div 
+                      className="w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl font-bold"
+                      style={{ color: color.textColor }}
+                    >
+                      A
+                    </div>
+                    <span 
+                      className="block text-sm font-medium text-center"
+                      style={{ color: color.textColor }}
+                    >
+                      {color.name}
+                    </span>
+                    {selectedColor?.id === color.id && (
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check size={14} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-black/40 text-center">
+                Your text color will automatically contrast for readability
+              </p>
+            </div>
+          )}
+
+          {/* Step 3: Industry */}
+          {step === 3 && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold">What industry are you in?</h2>
@@ -266,8 +346,8 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 3: Ready */}
-          {step === 3 && (
+          {/* Step 4: Ready */}
+          {step === 4 && (
             <div className="text-center space-y-6">
               <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                 <Check size={40} className="text-green-600" />
@@ -319,7 +399,7 @@ export default function Onboarding() {
             >
               {loading ? (
                 <Loader2 size={20} className="animate-spin" />
-              ) : step === 3 ? (
+              ) : step === 4 ? (
                 <>Launch Avenize <ArrowRight size={20} /></>
               ) : (
                 <>Continue <ArrowRight size={20} /></>

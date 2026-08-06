@@ -183,12 +183,23 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     if (loading) return
 
     const root = document.documentElement
+    
+    // Check for locally stored theme colors first
+    const localBg = localStorage.getItem('avenize_theme_bg')
+    const localText = localStorage.getItem('avenize_theme_text')
+    
+    // Apply background color (from localStorage or branding)
+    const bgColor = localBg || branding.background_color
+    const textColor = localText || branding.text_color
+    
     root.style.setProperty('--avenize-primary', branding.primary_color)
     root.style.setProperty('--avenize-accent', branding.accent_color)
-    root.style.setProperty('--avenize-bg', branding.background_color)
+    root.style.setProperty('--avenize-bg', bgColor)
     root.style.setProperty('--avenize-accent-start', branding.primary_color)
     root.style.setProperty('--avenize-accent-end', branding.accent_color)
-    root.style.setProperty('--avenize-offwhite', branding.background_color)
+    root.style.setProperty('--avenize-offwhite', bgColor)
+    root.style.setProperty('--avenize-background', bgColor)
+    root.style.setProperty('--avenize-text', textColor)
 
     // Update favicon if custom
     if (branding.favicon_url) {

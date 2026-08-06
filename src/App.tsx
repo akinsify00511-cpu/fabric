@@ -122,21 +122,17 @@ function PageLoader() {
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
 
-  // Check if onboarding is needed
-  const [needsOnboarding, setNeedsOnboarding] = useState(false)
-  
-  useEffect(() => {
-    if (staffChecked && staff && !isDemo) {
-      const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-      const staffOnboarding = (staff as any)?.onboarding_completed
-      if (!localOnboarding && !staffOnboarding) {
-        setNeedsOnboarding(true)
-      }
-    }
-  }, [staffChecked, staff, isDemo])
+  // Memoize the onboarding check to prevent unnecessary re-renders
+  const needsOnboarding = (() => {
+    if (!staffChecked || !staff || isDemo) return false
+    const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
+    const staffOnboarding = (staff as any)?.onboarding_completed
+    return !localOnboarding && !staffOnboarding
+  })()
 
+  // Don't render anything until we have auth state resolved
   if (loading || (session && !staffChecked)) {
-    return <div className="min-h-screen flex items-center justify-center text-black/40 text-sm">Loading…</div>
+    return null // Return null instead of loading state to prevent flicker
   }
   
   // Demo mode or no session check - allow access if staff is loaded (demo or authenticated)
