@@ -4,7 +4,8 @@ import {
   Phone, MessageCircle, Mail, MoreVertical, ChevronRight,
   Upload, Download, X, Check, Clock, Star,
   Zap, Briefcase, User, Trash2, Edit3,
-  ArrowUpRight
+  ArrowUpRight, AlertCircle, Heart, MessageSquare, 
+  TrendingDown, Award, UsersRound, Gift, ThumbsUp, BarChart3
 } from 'lucide-react'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import { useToast } from '../components/Toast'
@@ -38,8 +39,60 @@ type Contact = {
   won_deals: number
 }
 
-type ViewMode = 'deals' | 'contacts' | 'pipeline'
+type ViewMode = 'deals' | 'contacts' | 'pipeline' | 'postsale'
 type QuickAddType = 'deal' | 'contact' | null
+
+// Post-Sale Types
+type ClientComplaint = {
+  id: string
+  client_id: string
+  client_name: string
+  subject: string
+  description: string
+  status: 'open' | 'in_progress' | 'resolved' | 'closed'
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  created_at: string
+  resolved_at?: string
+  assigned_to: string
+}
+
+type ClientReferral = {
+  id: string
+  referrer_id: string
+  referrer_name: string
+  referred_name: string
+  referred_company: string
+  referred_phone: string
+  referred_email: string
+  status: 'pending' | 'contacted' | 'converted' | 'not_interested'
+  notes: string
+  created_at: string
+  converted_deal_id?: string
+}
+
+type ClientSuggestion = {
+  id: string
+  client_id: string
+  client_name: string
+  type: 'feature' | 'improvement' | 'compliment' | 'other'
+  subject: string
+  description: string
+  status: 'new' | 'reviewed' | 'implemented' | 'declined'
+  created_at: string
+}
+
+type ClientLTV = {
+  client_id: string
+  client_name: string
+  company: string
+  total_revenue: number
+  deal_count: number
+  last_purchase: string
+  avg_deal_value: number
+  customer_since: string
+  satisfaction_score: number
+  referral_count: number
+}
 
 const SOURCE_LABELS: Record<Deal['source'], string> = {
   referral: 'Referral',
@@ -77,6 +130,32 @@ const DEMO_CONTACTS: Contact[] = [
   { id: '5', full_name: 'Chukwudi Emeka', email: 'chukwudi@firm.ng', phone: '08099988777', company: 'Legal Firm & Co', created_at: '2024-01-09', last_contact: '2024-01-20', total_deals: 1, won_deals: 0 },
 ]
 
+// Demo Post-Sale Data
+const DEMO_COMPLAINTS: ClientComplaint[] = [
+  { id: '1', client_id: '1', client_name: 'Adebayo Johnson', subject: 'Invoice discrepancy', description: 'The invoice amount does not match the agreed price', status: 'open', priority: 'high', created_at: '2024-01-18', assigned_to: 'You' },
+  { id: '2', client_id: '3', client_name: 'Emmanuel Eze', subject: 'Delayed delivery', description: 'Project deliverables are 3 days late', status: 'in_progress', priority: 'medium', created_at: '2024-01-15', assigned_to: 'You' },
+  { id: '3', client_id: '2', client_name: 'Chioma Okonkwo', subject: 'App crashing', description: 'Mobile app crashes on login', status: 'resolved', priority: 'urgent', created_at: '2024-01-10', resolved_at: '2024-01-12', assigned_to: 'You' },
+]
+
+const DEMO_REFERRALS: ClientReferral[] = [
+  { id: '1', referrer_id: '1', referrer_name: 'Adebayo Johnson', referred_name: 'Kunle Adeyemi', referred_company: 'TechStart Hub', referred_phone: '08055566677', referred_email: 'kunle@techstart.ng', status: 'contacted', notes: 'Interested in annual plan', created_at: '2024-01-15' },
+  { id: '2', referrer_id: '4', referrer_name: 'Fatima Bello', referred_name: 'Tunde Bakare', referred_company: 'FreshCo Ltd', referred_phone: '08112233445', referred_email: 'tunde@freshco.ng', status: 'converted', notes: 'Closed! ₦200K deal', created_at: '2024-01-08', converted_deal_id: '6' },
+  { id: '3', referrer_id: '2', referrer_name: 'Chioma Okonkwo', referred_name: 'Ngozi Peter', referred_company: 'StartupHub', referred_phone: '08099988877', referred_email: 'ngozi@startuphub.ng', status: 'pending', notes: 'Will call next week', created_at: '2024-01-20' },
+]
+
+const DEMO_SUGGESTIONS: ClientSuggestion[] = [
+  { id: '1', client_id: '1', client_name: 'Adebayo Johnson', type: 'feature', subject: 'API integration', description: 'Would love to see Zapier integration', status: 'reviewed', created_at: '2024-01-15' },
+  { id: '2', client_id: '4', client_name: 'Fatima Bello', type: 'compliment', subject: 'Great support!', description: 'Your team is amazing. Sarah helped solve my issue in minutes.', status: 'new', created_at: '2024-01-18' },
+  { id: '3', client_id: '3', client_name: 'Emmanuel Eze', type: 'improvement', subject: 'Dashboard customization', description: 'Allow us to reorder dashboard widgets', status: 'implemented', created_at: '2024-01-05' },
+]
+
+const DEMO_LTV: ClientLTV[] = [
+  { client_id: '1', client_name: 'Adebayo Johnson', company: 'TechCorp Nigeria', total_revenue: 3500000, deal_count: 3, last_purchase: '2024-01-15', avg_deal_value: 1166667, customer_since: '2023-06-15', satisfaction_score: 4.5, referral_count: 2 },
+  { client_id: '4', client_name: 'Fatima Bello', company: 'Business Solutions', total_revenue: 2500000, deal_count: 2, last_purchase: '2024-01-10', avg_deal_value: 1250000, customer_since: '2023-03-20', satisfaction_score: 5.0, referral_count: 3 },
+  { client_id: '2', client_name: 'Chioma Okonkwo', company: 'StartupNG', total_revenue: 450000, deal_count: 2, last_purchase: '2024-01-05', avg_deal_value: 225000, customer_since: '2023-11-01', satisfaction_score: 4.0, referral_count: 1 },
+  { client_id: '3', client_name: 'Emmanuel Eze', company: 'Enterprise Ltd', total_revenue: 1800000, deal_count: 1, last_purchase: '2024-01-12', avg_deal_value: 1800000, customer_since: '2023-09-10', satisfaction_score: 4.2, referral_count: 0 },
+]
+
 export default function CRM() {
   const [viewMode, setViewMode] = useState<ViewMode>('deals')
   const [deals, setDeals] = useState<Deal[]>([])
@@ -86,6 +165,11 @@ export default function CRM() {
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null)
   const [selectedStage, setSelectedStage] = useState<string>('all')
   const [showDeadDeals, setShowDeadDeals] = useState(false)
+  const [postSaleTab, setPostSaleTab] = useState<'overview' | 'complaints' | 'referrals' | 'suggestions' | 'ltv'>('overview')
+  const [complaints, setComplaints] = useState<ClientComplaint[]>([])
+  const [referrals, setReferrals] = useState<ClientReferral[]>([])
+  const [suggestions, setSuggestions] = useState<ClientSuggestion[]>([])
+  const [clientLTV, setClientLTV] = useState<ClientLTV[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { showToast } = useToast()
 
@@ -100,6 +184,10 @@ export default function CRM() {
   useEffect(() => {
     setDeals(DEMO_DEALS)
     setContacts(DEMO_CONTACTS)
+    setComplaints(DEMO_COMPLAINTS)
+    setReferrals(DEMO_REFERRALS)
+    setSuggestions(DEMO_SUGGESTIONS)
+    setClientLTV(DEMO_LTV)
   }, [])
 
   const activeDeals = deals.filter(d => !['won', 'lost'].includes(d.stage))
@@ -343,6 +431,9 @@ export default function CRM() {
         </button>
         <button onClick={() => setViewMode('pipeline')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === 'pipeline' ? 'bg-white shadow-sm text-[var(--avenize-black)]' : 'text-black/60'}`}>
           Pipeline
+        </button>
+        <button onClick={() => setViewMode('postsale')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === 'postsale' ? 'bg-white shadow-sm text-[var(--avenize-black)]' : 'text-black/60'}`}>
+          🎉 Post-Sale
         </button>
       </div>
 
@@ -591,6 +682,315 @@ export default function CRM() {
               )
             })}
           </div>
+        </div>
+      )}
+
+      {/* Post-Sale View */}
+      {viewMode === 'postsale' && (
+        <div>
+          {/* Post-Sale Sub-Tabs */}
+          <div className="flex gap-1 bg-white border border-black/10 p-1 rounded-xl w-fit mb-6">
+            <button onClick={() => setPostSaleTab('overview')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${postSaleTab === 'overview' ? 'avenize-gradient text-white' : 'text-black/60'}`}>
+              📊 Overview
+            </button>
+            <button onClick={() => setPostSaleTab('complaints')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${postSaleTab === 'complaints' ? 'avenize-gradient text-white' : 'text-black/60'}`}>
+              ⚠️ Complaints ({complaints.filter(c => c.status === 'open' || c.status === 'in_progress').length})
+            </button>
+            <button onClick={() => setPostSaleTab('referrals')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${postSaleTab === 'referrals' ? 'avenize-gradient text-white' : 'text-black/60'}`}>
+              🎁 Referrals ({referrals.length})
+            </button>
+            <button onClick={() => setPostSaleTab('suggestions')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${postSaleTab === 'suggestions' ? 'avenize-gradient text-white' : 'text-black/60'}`}>
+              💡 Suggestions ({suggestions.length})
+            </button>
+            <button onClick={() => setPostSaleTab('ltv')} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${postSaleTab === 'ltv' ? 'avenize-gradient text-white' : 'text-black/60'}`}>
+              👑 LTV Analysis
+            </button>
+          </div>
+
+          {/* Overview Tab */}
+          {postSaleTab === 'overview' && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+                    <AlertCircle size={20} className="text-red-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{complaints.filter(c => c.status === 'open').length}</div>
+                    <div className="text-xs text-black/50">Open Complaints</div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
+                    <Gift size={20} className="text-green-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{referrals.filter(r => r.status === 'converted').length}</div>
+                    <div className="text-xs text-black/50">Referrals Converted</div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                    <ThumbsUp size={20} className="text-purple-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">{suggestions.filter(s => s.type === 'compliment').length}</div>
+                    <div className="text-xs text-black/50">Compliments</div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <TrendingUp size={20} className="text-amber-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold">₦{(clientLTV.reduce((sum, c) => sum + c.total_revenue, 0) / 1000000).toFixed(1)}M</div>
+                    <div className="text-xs text-black/50">Total LTV</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Complaints Tab */}
+          {postSaleTab === 'complaints' && (
+            <div>
+              <div className="flex justify-end mb-4">
+                <button onClick={() => showToast('Complaint form coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-medium">
+                  <Plus size={16} /> New Complaint
+                </button>
+              </div>
+              {complaints.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+                  <AlertCircle size={48} className="mx-auto text-black/20 mb-3" />
+                  <p className="text-black/50">No complaints recorded</p>
+                  <p className="text-sm text-black/30 mt-1">Great job keeping clients happy! 🎉</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {complaints.map(complaint => (
+                    <div key={complaint.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium">{complaint.subject}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              complaint.priority === 'urgent' ? 'bg-red-100 text-red-700' :
+                              complaint.priority === 'high' ? 'bg-orange-100 text-orange-700' :
+                              complaint.priority === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-gray-100 text-gray-600'
+                            }`}>{complaint.priority}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              complaint.status === 'open' ? 'bg-blue-100 text-blue-700' :
+                              complaint.status === 'in_progress' ? 'bg-amber-100 text-amber-700' :
+                              complaint.status === 'resolved' ? 'bg-green-100 text-green-700' :
+                              'bg-gray-100 text-gray-600'
+                            }`}>{complaint.status.replace('_', ' ')}</span>
+                          </div>
+                          <p className="text-sm text-black/60 mb-2">{complaint.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-black/40">
+                            <span>👤 {complaint.client_name}</span>
+                            <span>📅 {new Date(complaint.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <button onClick={() => {
+                          setComplaints(prev => prev.map(c => c.id === complaint.id ? {...c, status: c.status === 'open' ? 'in_progress' : c.status === 'in_progress' ? 'resolved' : 'closed'} : c))
+                          showToast('Status updated', 'success')
+                        }} className="text-sm text-[var(--avenize-primary)] hover:underline">
+                          {complaint.status === 'open' ? 'Start' : complaint.status === 'in_progress' ? 'Resolve' : 'Close'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Referrals Tab */}
+          {postSaleTab === 'referrals' && (
+            <div>
+              <div className="flex justify-end mb-4">
+                <button onClick={() => showToast('Referral form coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-green-500 text-white text-sm font-medium">
+                  <Plus size={16} /> Add Referral
+                </button>
+              </div>
+              {referrals.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+                  <Gift size={48} className="mx-auto text-black/20 mb-3" />
+                  <p className="text-black/50">No referrals yet</p>
+                  <p className="text-sm text-black/30 mt-1">Ask your clients to refer friends!</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {referrals.map(referral => (
+                    <div key={referral.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <UsersRound size={16} className="text-green-500" />
+                            <span className="font-medium">{referral.referred_name}</span>
+                            <span className="text-sm text-black/50">from {referral.referrer_name}</span>
+                          </div>
+                          <p className="text-sm text-black/60">{referral.referred_company}</p>
+                          <div className="flex items-center gap-4 mt-2 text-xs text-black/40">
+                            <span>{referral.referred_phone}</span>
+                            <span>{referral.referred_email}</span>
+                          </div>
+                          {referral.notes && <p className="text-sm text-black/50 mt-2 bg-black/5 rounded-lg px-3 py-2">💬 {referral.notes}</p>}
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            referral.status === 'converted' ? 'bg-green-100 text-green-700' :
+                            referral.status === 'contacted' ? 'bg-blue-100 text-blue-700' :
+                            referral.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>{referral.status.replace('_', ' ')}</span>
+                          <p className="text-xs text-black/40 mt-2">{new Date(referral.created_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Suggestions Tab */}
+          {postSaleTab === 'suggestions' && (
+            <div>
+              <div className="flex justify-end mb-4">
+                <button onClick={() => showToast('Feedback form coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500 text-white text-sm font-medium">
+                  <Plus size={16} /> Add Feedback
+                </button>
+              </div>
+              {suggestions.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+                  <MessageSquare size={48} className="mx-auto text-black/20 mb-3" />
+                  <p className="text-black/50">No suggestions yet</p>
+                  <p className="text-sm text-black/30 mt-1">Client feedback will appear here</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {suggestions.map(suggestion => (
+                    <div key={suggestion.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            {suggestion.type === 'compliment' && <Heart size={16} className="text-pink-500" />}
+                            {suggestion.type === 'feature' && <Star size={16} className="text-amber-500" />}
+                            {suggestion.type === 'improvement' && <TrendingUp size={16} className="text-blue-500" />}
+                            {suggestion.type === 'other' && <MessageSquare size={16} className="text-gray-500" />}
+                            <span className="font-medium">{suggestion.subject}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              suggestion.type === 'compliment' ? 'bg-pink-100 text-pink-700' :
+                              suggestion.type === 'feature' ? 'bg-amber-100 text-amber-700' :
+                              suggestion.type === 'improvement' ? 'bg-blue-100 text-blue-700' :
+                              'bg-gray-100 text-gray-600'
+                            }`}>{suggestion.type}</span>
+                          </div>
+                          <p className="text-sm text-black/60 mb-2">{suggestion.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-black/40">
+                            <span>👤 {suggestion.client_name}</span>
+                            <span>📅 {new Date(suggestion.created_at).toLocaleDateString()}</span>
+                            <span className={`${
+                              suggestion.status === 'new' ? 'text-blue-600' :
+                              suggestion.status === 'reviewed' ? 'text-amber-600' :
+                              suggestion.status === 'implemented' ? 'text-green-600' :
+                              'text-gray-600'
+                            }`}>• {suggestion.status}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* LTV Tab */}
+          {postSaleTab === 'ltv' && (
+            <div>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white">
+                  <div className="text-sm opacity-80 mb-1">Total LTV</div>
+                  <div className="text-2xl font-bold">₦{(clientLTV.reduce((sum, c) => sum + c.total_revenue, 0) / 1000000).toFixed(1)}M</div>
+                </div>
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 text-white">
+                  <div className="text-sm opacity-80 mb-1">Avg LTV</div>
+                  <div className="text-2xl font-bold">₦{(clientLTV.reduce((sum, c) => sum + c.total_revenue, 0) / clientLTV.length / 1000000).toFixed(1)}M</div>
+                </div>
+                <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-4 text-white">
+                  <div className="text-sm opacity-80 mb-1">Avg Satisfaction</div>
+                  <div className="text-2xl font-bold">{clientLTV.reduce((sum, c) => sum + c.satisfaction_score, 0) / clientLTV.length}/5</div>
+                </div>
+                <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-4 text-white">
+                  <div className="text-sm opacity-80 mb-1">Total Referrals</div>
+                  <div className="text-2xl font-bold">{clientLTV.reduce((sum, c) => sum + c.referral_count, 0)}</div>
+                </div>
+              </div>
+
+              {/* LTV Table */}
+              <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-black/5">
+                    <tr>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-black/60">Client</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Total Revenue</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Deals</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Avg Value</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Satisfaction</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Referrals</th>
+                      <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Since</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clientLTV.sort((a, b) => b.total_revenue - a.total_revenue).map((client, i) => (
+                      <tr key={client.client_id} className="border-t border-black/5">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full avenize-gradient flex items-center justify-center text-white text-sm font-bold">
+                              {client.client_name.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="font-medium text-sm">{client.client_name}</div>
+                              <div className="text-xs text-black/50">{client.company}</div>
+                            </div>
+                            {i === 0 && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">👑 Top</span>}
+                          </div>
+                        </td>
+                        <td className="text-right px-4 py-3 font-semibold">₦{client.total_revenue.toLocaleString()}</td>
+                        <td className="text-right px-4 py-3">{client.deal_count}</td>
+                        <td className="text-right px-4 py-3 text-black/60">₦{client.avg_deal_value.toLocaleString()}</td>
+                        <td className="text-right px-4 py-3">
+                          <div className="flex items-center justify-end gap-1">
+                            {[1,2,3,4,5].map(n => (
+                              <Star key={n} size={14} className={n <= Math.round(client.satisfaction_score) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />
+                            ))}
+                          </div>
+                        </td>
+                        <td className="text-right px-4 py-3">
+                          {client.referral_count > 0 ? (
+                            <span className="text-green-600">+{client.referral_count}</span>
+                          ) : (
+                            <span className="text-black/30">-</span>
+                          )}
+                        </td>
+                        <td className="text-right px-4 py-3 text-black/50 text-sm">{new Date(client.customer_since).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
