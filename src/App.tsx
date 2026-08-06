@@ -18,7 +18,6 @@ const Join = lazy(() => import('./pages/Join'))
 const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const CRM = lazy(() => import('./pages/CRM'))
-const People = lazy(() => import('./pages/People'))
 const HumanResources = lazy(() => import('./pages/HumanResources'))
 const Operations = lazy(() => import('./pages/Operations'))
 const SalesPerformance = lazy(() => import('./pages/SalesPerformance'))
@@ -139,7 +138,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   // Backward-compatible redirects: old flat paths → new /app/... paths
   const appRoutes = [
-    'dashboard', 'crm', 'projects', 'finance', 'quotes', 'payments', 'people',
+    'dashboard', 'crm', 'projects', 'finance', 'quotes', 'payments', 'hr',
     'inventory', 'reports', 'settings', 'more', 'social', 'approvals', 'tasks',
     'merit', 'cashflow', 'chat', 'knowledge', 'automations', 'tickets',
     'campaigns', 'accounting', 'branding', 'security', 'sso', 'api', 'portal',
@@ -191,7 +190,6 @@ function AppRoutes() {
         <Route path="finance" element={<FinanceCenter />} />
         <Route path="quotes" element={<Quotes />} />
         <Route path="payments" element={<Payments />} />
-        <Route path="people" element={<People />} />
         <Route path="hr" element={<HumanResources />} />
         <Route path="operations" element={<Operations />} />
         <Route path="sales-performance" element={<SalesPerformance />} />

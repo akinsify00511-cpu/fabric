@@ -5,10 +5,11 @@ import { useToast } from '../components/Toast'
 import {
   Users, Calendar, Clock, Award, FileText, Briefcase,
   Plus, ChevronRight, Loader2, Check, X, AlertCircle,
-  UserPlus, TrendingUp, Star, Heart, MapPin, Phone, Mail
+  UserPlus, TrendingUp, Star, Heart, MapPin, Phone, Mail,
+  Wallet, Download, GraduationCap, Gift
 } from 'lucide-react'
 
-type HRTab = 'overview' | 'leave' | 'attendance' | 'performance' | 'recruitment' | 'contracts'
+type HRTab = 'overview' | 'employees' | 'leave' | 'attendance' | 'payroll' | 'performance' | 'recruitment' | 'contracts' | 'benefits' | 'training'
 
 export default function HumanResources() {
   const { staff } = useAuth()
@@ -18,11 +19,15 @@ export default function HumanResources() {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
+    { id: 'employees', label: 'Employees', icon: Users },
     { id: 'leave', label: 'Leave', icon: Calendar },
     { id: 'attendance', label: 'Attendance', icon: Clock },
-    { id: 'performance', label: 'Reviews', icon: Award },
+    { id: 'payroll', label: 'Payroll', icon: Wallet },
+    { id: 'performance', label: 'Appraisal', icon: Award },
     { id: 'recruitment', label: 'Recruitment', icon: UserPlus },
     { id: 'contracts', label: 'Contracts', icon: FileText },
+    { id: 'benefits', label: 'Benefits', icon: Gift },
+    { id: 'training', label: 'Training', icon: GraduationCap },
   ]
 
   return (
@@ -53,11 +58,15 @@ export default function HumanResources() {
       </div>
 
       {activeTab === 'overview' && <OverviewTab businessId={businessId} />}
+      {activeTab === 'employees' && <EmployeesTab businessId={businessId} staff={staff} />}
       {activeTab === 'leave' && <LeaveTab businessId={businessId} staffId={staff?.id} />}
       {activeTab === 'attendance' && <AttendanceTab businessId={businessId} staffId={staff?.id} />}
+      {activeTab === 'payroll' && <PayrollTab businessId={businessId} staffId={staff?.id} />}
       {activeTab === 'performance' && <PerformanceTab businessId={businessId} />}
       {activeTab === 'recruitment' && <RecruitmentTab businessId={businessId} />}
       {activeTab === 'contracts' && <ContractsTab businessId={businessId} />}
+      {activeTab === 'benefits' && <BenefitsTab businessId={businessId} staffId={staff?.id} />}
+      {activeTab === 'training' && <TrainingTab businessId={businessId} />}
     </div>
   )
 }
@@ -765,6 +774,484 @@ function ContractsTab({ businessId }: { businessId?: string }) {
               <div className="mt-2 flex items-center gap-4 text-sm text-black/50">
                 <span>Probation: {contract.probation_months} months</span>
                 <span>Notice: {contract.notice_period_days} days</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Employees Tab
+function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any }) {
+  const [employees, setEmployees] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    loadEmployees()
+  }, [])
+
+  async function loadEmployees() {
+    setLoading(true)
+    const { data } = await supabase
+      .from('staff')
+      .select('*')
+      .eq('business_id', businessId)
+      .order('created_at', { ascending: false })
+    setEmployees(data || [])
+    setLoading(false)
+  }
+
+  const departmentStats = employees.reduce((acc: any, emp) => {
+    const dept = emp.department || 'Unassigned'
+    acc[dept] = (acc[dept] || 0) + 1
+    return acc
+  }, {})
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-medium">All Employees ({employees.length})</h2>
+      </div>
+
+      {/* Department Distribution */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        {Object.entries(departmentStats).map(([dept, count]) => (
+          <div key={dept} className="bg-white rounded-xl border border-black/[0.06] p-3">
+            <div className="text-xs text-black/50">{dept}</div>
+            <div className="text-xl font-semibold">{count as number}</div>
+          </div>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      ) : employees.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+          <Users size={48} className="mx-auto text-black/20 mb-3" />
+          <p className="text-black/50">No employees found</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {employees.map((emp) => (
+            <div key={emp.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-[var(--avenize-primary)] flex items-center justify-center text-white font-semibold">
+                  {(emp.full_name || emp.name || 'U').charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium">{emp.full_name || emp.name}</div>
+                  <div className="text-sm text-black/50">{emp.department || 'No department'} • {emp.role}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-medium">{emp.email}</div>
+                  {emp.phone && <div className="text-xs text-black/40">{emp.phone}</div>}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Payroll Tab
+function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+  const [payslips, setPayslips] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedPayslip, setSelectedPayslip] = useState<any>(null)
+
+  useEffect(() => {
+    loadPayslips()
+  }, [])
+
+  async function loadPayslips() {
+    setLoading(true)
+    const { data } = await supabase
+      .from('payroll_records')
+      .select('*')
+      .eq('staff_id', staffId)
+      .order('pay_period', { ascending: false })
+    setPayslips(data || [])
+    setLoading(false)
+  }
+
+  const formatCurrency = (amount: number) => `₦${(amount || 0).toLocaleString()}`
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-medium">My Payslips</h2>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      ) : payslips.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+          <Wallet size={48} className="mx-auto text-black/20 mb-3" />
+          <p className="text-black/50">No payslips available</p>
+          <p className="text-sm text-black/40 mt-1">Payslips will appear after payroll processing</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {payslips.map((payslip) => (
+            <div 
+              key={payslip.id} 
+              className="bg-white rounded-2xl border border-black/[0.06] p-4 cursor-pointer hover:bg-black/[0.02]"
+              onClick={() => setSelectedPayslip(payslip)}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">{new Date(payslip.pay_period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+                  <div className="text-sm text-black/50">
+                    Basic: {formatCurrency(payslip.basic_salary)} • Net: {formatCurrency(payslip.net_pay)}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-3 py-1 rounded-full ${
+                    payslip.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {payslip.status}
+                  </span>
+                  <Download size={16} className="text-black/30" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Payslip Detail Modal */}
+      {selectedPayslip && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-auto">
+            <div className="p-4 border-b border-black/[0.06] flex items-center justify-between">
+              <h3 className="font-semibold">Payslip - {new Date(selectedPayslip.pay_period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
+              <button onClick={() => setSelectedPayslip(null)} className="p-1 hover:bg-black/5 rounded">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              {/* Earnings */}
+              <div>
+                <h4 className="text-sm font-medium text-black/50 mb-2">EARNINGS</h4>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span>Basic Salary</span>
+                    <span className="font-medium">{formatCurrency(selectedPayslip.basic_salary)}</span>
+                  </div>
+                  {selectedPayslip.housing_allowance > 0 && (
+                    <div className="flex justify-between">
+                      <span>Housing Allowance</span>
+                      <span>{formatCurrency(selectedPayslip.housing_allowance)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.transport_allowance > 0 && (
+                    <div className="flex justify-between">
+                      <span>Transport Allowance</span>
+                      <span>{formatCurrency(selectedPayslip.transport_allowance)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.other_allowances > 0 && (
+                    <div className="flex justify-between">
+                      <span>Other Allowances</span>
+                      <span>{formatCurrency(selectedPayslip.other_allowances)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.bonus > 0 && (
+                    <div className="flex justify-between">
+                      <span>Bonus</span>
+                      <span className="text-green-600">{formatCurrency(selectedPayslip.bonus)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-semibold border-t border-black/10 pt-2">
+                    <span>Gross Pay</span>
+                    <span>{formatCurrency(selectedPayslip.gross_pay)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Deductions */}
+              <div>
+                <h4 className="text-sm font-medium text-black/50 mb-2">DEDUCTIONS</h4>
+                <div className="space-y-2">
+                  {selectedPayslip.tax_deduction > 0 && (
+                    <div className="flex justify-between">
+                      <span>PAYE Tax</span>
+                      <span className="text-red-600">-{formatCurrency(selectedPayslip.tax_deduction)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.pension_deduction > 0 && (
+                    <div className="flex justify-between">
+                      <span>Pension (Employee)</span>
+                      <span className="text-red-600">-{formatCurrency(selectedPayslip.pension_deduction)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.health_insurance > 0 && (
+                    <div className="flex justify-between">
+                      <span>Health Insurance</span>
+                      <span className="text-red-600">-{formatCurrency(selectedPayslip.health_insurance)}</span>
+                    </div>
+                  )}
+                  {selectedPayslip.other_deductions > 0 && (
+                    <div className="flex justify-between">
+                      <span>Other Deductions</span>
+                      <span className="text-red-600">-{formatCurrency(selectedPayslip.other_deductions)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between font-semibold border-t border-black/10 pt-2">
+                    <span>Total Deductions</span>
+                    <span className="text-red-600">-{formatCurrency(selectedPayslip.total_deductions)}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Net Pay */}
+              <div className="bg-green-50 rounded-xl p-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">NET PAY</span>
+                  <span className="text-2xl font-bold text-green-600">{formatCurrency(selectedPayslip.net_pay)}</span>
+                </div>
+              </div>
+
+              {/* Download Button */}
+              <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium">
+                <Download size={18} />
+                Download Payslip PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Benefits Tab
+function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+  const [benefits, setBenefits] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const defaultBenefits = [
+    { id: 'health', name: 'Health Insurance', provider: 'National Health Insurance', status: 'active', coverage: 'Family Coverage' },
+    { id: 'pension', name: 'Pension Scheme', provider: 'PENCOM Compliant', status: 'active', coverage: '8% Employee + 10% Employer' },
+    { id: 'transport', name: 'Transport Allowance', provider: 'Monthly Stipend', status: 'active', coverage: '₦15,000/month' },
+    { id: 'communication', name: 'Communication Allowance', provider: 'Monthly Stipend', status: 'active', coverage: '₦5,000/month' },
+  ]
+
+  useEffect(() => {
+    loadBenefits()
+  }, [])
+
+  async function loadBenefits() {
+    setLoading(true)
+    const { data } = await supabase.from('staff_benefits').select('*').eq('staff_id', staffId)
+    setBenefits(data?.length ? data : defaultBenefits)
+    setLoading(false)
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-medium">Employee Benefits</h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {benefits.map((benefit) => (
+          <div key={benefit.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                benefit.id === 'health' ? 'bg-red-100 text-red-500' :
+                benefit.id === 'pension' ? 'bg-blue-100 text-blue-500' :
+                'bg-green-100 text-green-500'
+              }`}>
+                {benefit.id === 'health' ? <Heart size={20} /> :
+                 benefit.id === 'pension' ? <Wallet size={20} /> :
+                 <Gift size={20} />}
+              </div>
+              <div>
+                <div className="font-medium">{benefit.name}</div>
+                <div className="text-xs text-black/50">{benefit.provider}</div>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className={`text-xs px-2 py-0.5 rounded-full ${benefit.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                {benefit.status}
+              </span>
+              <span className="text-sm font-medium">{benefit.coverage}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 bg-amber-50 rounded-2xl p-4">
+        <div className="flex items-center gap-2 text-amber-700">
+          <AlertCircle size={20} />
+          <span className="font-medium">Benefits Enrollment</span>
+        </div>
+        <p className="text-sm text-amber-600 mt-2">
+          Contact HR to enroll in additional benefit schemes or make changes to your existing coverage.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// Training Tab
+function TrainingTab({ businessId }: { businessId?: string }) {
+  const [trainings, setTrainings] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const { showToast } = useToast()
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({
+    title: '',
+    type: 'internal',
+    provider: '',
+    start_date: '',
+    end_date: '',
+    status: 'completed',
+    certificate: '',
+  })
+
+  useEffect(() => {
+    loadTrainings()
+  }, [])
+
+  async function loadTrainings() {
+    setLoading(true)
+    const { data } = await supabase.from('training_records').select('*').order('created_at', { ascending: false })
+    setTrainings(data || [])
+    setLoading(false)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    await supabase.from('training_records').insert(form)
+    showToast('Training record added!', 'success')
+    setShowForm(false)
+    loadTrainings()
+  }
+
+  const typeColors: Record<string, string> = {
+    internal: 'bg-blue-100 text-blue-700',
+    external: 'bg-purple-100 text-purple-700',
+    certification: 'bg-amber-100 text-amber-700',
+    workshop: 'bg-green-100 text-green-700',
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-medium">Training & Development</h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm"
+        >
+          <Plus size={16} /> Add Training
+        </button>
+      </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <input
+            type="text"
+            placeholder="Training Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            required
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <select
+              value={form.type}
+              onChange={(e) => setForm({ ...form, type: e.target.value })}
+              className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            >
+              <option value="internal">Internal Training</option>
+              <option value="external">External Course</option>
+              <option value="certification">Certification</option>
+              <option value="workshop">Workshop</option>
+            </select>
+            <select
+              value={form.status}
+              onChange={(e) => setForm({ ...form, status: e.target.value })}
+              className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            >
+              <option value="completed">Completed</option>
+              <option value="in_progress">In Progress</option>
+              <option value="scheduled">Scheduled</option>
+            </select>
+          </div>
+          <input
+            type="text"
+            placeholder="Provider/Organizer"
+            value={form.provider}
+            onChange={(e) => setForm({ ...form, provider: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="date"
+              value={form.start_date}
+              onChange={(e) => setForm({ ...form, start_date: e.target.value })}
+              className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+            <input
+              type="date"
+              value={form.end_date}
+              onChange={(e) => setForm({ ...form, end_date: e.target.value })}
+              className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+          </div>
+          <input
+            type="text"
+            placeholder="Certificate (if obtained)"
+            value={form.certificate}
+            onChange={(e) => setForm({ ...form, certificate: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+          />
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">
+            Save Training
+          </button>
+        </form>
+      )}
+
+      {loading ? (
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      ) : trainings.length === 0 ? (
+        <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
+          <GraduationCap size={48} className="mx-auto text-black/20 mb-3" />
+          <p className="text-black/50">No training records</p>
+          <p className="text-sm text-black/40 mt-1">Add your completed trainings and certifications</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {trainings.map((training) => (
+            <div key={training.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <GraduationCap size={20} className="text-black/30" />
+                  <div>
+                    <div className="font-medium">{training.title}</div>
+                    <div className="text-sm text-black/50">{training.provider}</div>
+                  </div>
+                </div>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${typeColors[training.type]}`}>
+                  {training.type}
+                </span>
+              </div>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-black/40">
+                  {training.start_date && new Date(training.start_date).toLocaleDateString()}
+                  {training.end_date && ` - ${new Date(training.end_date).toLocaleDateString()}`}
+                </span>
+                {training.certificate && (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                    ✓ {training.certificate}
+                  </span>
+                )}
               </div>
             </div>
           ))}
