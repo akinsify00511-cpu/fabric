@@ -257,7 +257,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
 
       const { data: xpData } = await supabase
         .from('user_xp')
-        .select('xp_total')
+        .select('xp_total, streak_days, longest_streak, last_active_date')
         .eq('user_id', user.id)
         .single()
 

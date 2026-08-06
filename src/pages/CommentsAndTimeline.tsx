@@ -44,6 +44,13 @@ interface MentionSuggestion {
   user_email: string
 }
 
+// Map full_name to user_name for compatibility
+interface StaffRow {
+  user_id: string
+  full_name: string
+  email: string
+}
+
 interface ActivityTimelineProps {
   entityType: string
   entityId: string
@@ -86,7 +93,12 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
             .neq('user_id', staff.user_id)
             .limit(10)
           
-          setMentionSuggestions(data || [])
+          const mapped: MentionSuggestion[] = (data || []).map((row: any) => ({
+            user_id: row.user_id,
+            user_name: row.full_name,
+            user_email: row.email,
+          }))
+          setMentionSuggestions(mapped)
         }
       } else {
         // Filter by search
@@ -99,7 +111,12 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
             .ilike('full_name', `${mentionSearch}%`)
             .limit(10)
           
-          setMentionSuggestions(data || [])
+          const mapped: MentionSuggestion[] = (data || []).map((row: any) => ({
+            user_id: row.user_id,
+            user_name: row.full_name,
+            user_email: row.email,
+          }))
+          setMentionSuggestions(mapped)
         }
       }
     }
@@ -140,7 +157,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
   const insertMention = (user: MentionSuggestion) => {
     const before = newComment.slice(0, mentionStartIndex)
     const after = newComment.slice(textareaRef.current?.selectionStart || mentionStartIndex)
-    const mentionText = `@${user.full_name} `
+    const mentionText = `@${user.user_name} `
     
     setNewComment(before + mentionText + after)
     setShowMentionPopup(false)

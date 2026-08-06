@@ -26,6 +26,14 @@ interface AnalyticsData {
   eventsOverTime: { label: string; value: number }[]
 }
 
+interface RawAnalyticsData {
+  eventsByCategory?: any[]
+  userActivity?: any[]
+  topFeatures?: any[]
+  errorCount?: number
+  totalEvents?: number
+}
+
 export default function AdminAnalytics() {
   const { staff } = useAuth()
   const isAdmin = useIsAdmin()
@@ -54,7 +62,14 @@ export default function AdminAnalytics() {
     // Calculate events over time for the line chart
     const eventsOverTime = calculateEventsOverTime(eventsData, timeRange)
 
-    setAnalytics({ ...analyticsData, eventsOverTime })
+    setAnalytics({ 
+      eventsByCategory: analyticsData?.eventsByCategory || [],
+      userActivity: analyticsData?.userActivity || [],
+      topFeatures: analyticsData?.topFeatures || [],
+      errorCount: analyticsData?.errorCount || 0,
+      totalEvents: analyticsData?.totalEvents || 0,
+      eventsOverTime 
+    })
     setRecentEvents(eventsData)
     setLoading(false)
   }

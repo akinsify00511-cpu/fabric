@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { supabase } from '../lib/supabase'
-import TermiiSMS, { SMSUtils, SMS_TEMPLATES } from '../lib/smsService'
+import { TermiiSMS, SMSUtils, SMS_TEMPLATES } from '../lib/smsService'
 import {
   MessageSquare, Save, Eye, EyeOff, Check, AlertCircle, RefreshCw,
   Send, History, Settings, Zap, ExternalLink, Copy
