@@ -30,6 +30,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Remove stale .vercel directory
+        run: rm -rf .vercel
+
       - name: Deploy to Vercel Preview
         uses: amondnet/vercel-action@v25
         with:
