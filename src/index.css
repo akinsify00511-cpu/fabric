@@ -1,79 +1,262 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Avenize Design System v2 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
+@import "./styles/avenize-design-system.css";
+
+/* ============================================
+   LEGACY COMPATIBILITY
+   Map old variables to new design system
+   ============================================ */
 
 :root {
-  /* Primary Colors */
-  --avenize-black: #111111;
-  --avenize-white: #FFFFFF;
-  --avenize-stone: #F7F7F5;
-  --avenize-gray: #E8E8E8;
+  /* Legacy aliases for old code */
+  --avenize-black: var(--av-black);
+  --avenize-white: var(--av-white);
+  --avenize-stone: var(--av-black);
+  --avenize-gray: var(--av-surface-2);
   
-  /* Legacy alias for backwards compatibility */
-  --avenize-offwhite: var(--avenize-stone);
+  /* Legacy gradient (deprecated - use av-accent) */
+  --avenize-gradient-start: var(--av-accent);
+  --avenize-gradient-mid: #FF8F3D;
+  --avenize-gradient-end: var(--av-accent-2);
   
-  /* Signature Gradient - Intelligence flowing through business */
-  --avenize-gradient-start: #2563EB;
-  --avenize-gradient-mid: #4F46E5;
-  --avenize-gradient-end: #8B5CF6;
-  
-  /* Workspace Accent Colors */
-  --avenize-sales: #3B82F6;
-  --avenize-finance: #10B981;
-  --avenize-projects: #F59E0B;
-  --avenize-hr: #8B5CF6;
+  /* Legacy workspace colors */
+  --avenize-sales: var(--av-sales);
+  --avenize-finance: var(--av-finance);
+  --avenize-projects: var(--av-projects);
+  --avenize-hr: var(--av-hr);
   --avenize-communication: #EC4899;
-  --avenize-ai: #06B6D4;
-  --avenize-automation: #F97316;
-  --avenize-analytics: #6366F1;
+  --avenize-ai: var(--av-info);
+  --avenize-automation: var(--av-accent);
+  --avenize-analytics: var(--av-hr);
   
   /* Legacy alias */
   --avenize-accent-start: var(--avenize-gradient-start);
   --avenize-accent-end: var(--avenize-gradient-end);
 }
 
+/* Body - Dark mode by default */
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--avenize-stone);
-  color: var(--avenize-black);
+  font-family: var(--av-font-sans);
+  background-color: var(--av-black);
+  color: var(--av-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Signature Gradient - Used for premium moments only */
+/* Numeric class for big numbers */
+.num {
+  font-family: var(--av-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Signature Gradient - Deprecated, use av-accent */
 .avenize-gradient {
-  background: linear-gradient(135deg, var(--avenize-gradient-start), var(--avenize-gradient-mid), var(--avenize-gradient-end));
+  background: linear-gradient(135deg, var(--av-accent) 0%, var(--av-accent-2) 100%);
 }
 
 /* Gradient text effect */
 .avenize-gradient-text {
-  background: linear-gradient(135deg, var(--avenize-gradient-start), var(--avenize-gradient-mid), var(--avenize-gradient-end));
+  background: linear-gradient(135deg, var(--av-accent) 0%, var(--av-accent-2) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Workspace accent utilities */
-.accent-sales { color: var(--avenize-sales); }
-.accent-finance { color: var(--avenize-finance); }
-.accent-projects { color: var(--avenize-projects); }
-.accent-hr { color: var(--avenize-hr); }
-.accent-communication { color: var(--avenize-communication); }
-.accent-ai { color: var(--avenize-ai); }
-.accent-automation { color: var(--avenize-automation); }
-.accent-analytics { color: var(--avenize-analytics); }
+/* Workspace accent utilities - Legacy */
+.accent-sales { color: var(--av-sales); }
+.accent-finance { color: var(--av-finance); }
+.accent-projects { color: var(--av-projects); }
+.accent-hr { color: var(--av-hr); }
+.accent-communication { color: var(--av-communication); }
+.accent-ai { color: var(--av-info); }
+.accent-automation { color: var(--av-accent); }
+.accent-analytics { color: var(--av-hr); }
 
-.bg-accent-sales { background-color: var(--avenize-sales); }
-.bg-accent-finance { background-color: var(--avenize-finance); }
-.bg-accent-projects { background-color: var(--avenize-projects); }
-.bg-accent-hr { background-color: var(--avenize-hr); }
-.bg-accent-communication { background-color: var(--avenize-communication); }
-.bg-accent-ai { background-color: var(--avenize-ai); }
-.bg-accent-automation { background-color: var(--avenize-automation); }
-.bg-accent-analytics { background-color: var(--avenize-analytics); }
+.bg-accent-sales { background-color: var(--av-sales-bg); }
+.bg-accent-finance { background-color: var(--av-finance-bg); }
+.bg-accent-projects { background-color: var(--av-projects-bg); }
+.bg-accent-hr { background-color: var(--av-hr-bg); }
+.bg-accent-communication { background-color: rgba(236, 72, 153, 0.14); }
+.bg-accent-ai { background-color: var(--av-info-bg); }
+.bg-accent-automation { background-color: var(--av-accent-soft); }
+.bg-accent-analytics { background-color: rgba(99, 102, 241, 0.14); }
 
-/* Avenize Brand Gradient */
+/* Legacy gradient button */
 .avenize-gradient {
-  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 50%, #8B5CF6 100%);
+  background: linear-gradient(135deg, var(--av-accent) 0%, var(--av-accent-2) 100%);
 }
 
 .avenize-gradient:hover {
-  background: linear-gradient(135deg, #1D4ED8 0%, #4338CA 50%, #7C3AED 100%);
+  background: linear-gradient(135deg, #E64E15 0%, #E6A018 100%);
+}
+
+/* ============================================
+   NEW DESIGN SYSTEM UTILITIES
+   ============================================ */
+
+/* Card base */
+.card {
+  background: var(--av-surface);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-xl);
+  transition: transform var(--av-transition-fast), box-shadow var(--av-transition-fast), border-color var(--av-transition-fast);
+}
+
+/* Interactive card with hover lift */
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--av-shadow-md);
+  border-color: var(--av-border-strong);
+}
+
+/* Hero card with glow */
+.card-hero {
+  position: relative;
+  background: linear-gradient(160deg, #171310 0%, var(--av-black) 62%);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-xl);
+  overflow: hidden;
+}
+
+.card-hero::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  right: -100px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--av-accent) 0%, rgba(255, 176, 32, 0.18) 45%, transparent 72%);
+  opacity: 0.35;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.card-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass card - use surgically */
+.glass-card {
+  background: var(--av-glass-bg);
+  backdrop-filter: var(--av-glass-blur);
+  -webkit-backdrop-filter: var(--av-glass-blur);
+  border: 0.5px solid var(--av-glass-border);
+  border-radius: var(--av-radius-xl);
+}
+
+/* Flat card */
+.card-flat {
+  background: var(--av-surface-2);
+  border-radius: var(--av-radius-md);
+}
+
+/* Stat card - minimal elevation */
+.card-stat {
+  background: var(--av-surface);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-lg);
+  transition: border-color var(--av-transition-fast);
+}
+
+.card-stat:hover {
+  border-color: var(--av-border-strong);
+}
+
+/* Accent bar for stats */
+.accent-bar {
+  position: relative;
+  padding-left: 12px;
+}
+
+.accent-bar::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+}
+
+.accent-bar-sales::before { background: var(--av-sales); }
+.accent-bar-finance::before { background: var(--av-finance); }
+.accent-bar-projects::before { background: var(--av-projects); }
+.accent-bar-hr::before { background: var(--av-hr); }
+.accent-bar-accent::before { background: var(--av-accent); }
+
+/* Pill badges */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--av-surface-2);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--av-text);
+  text-decoration: none;
+  transition: border-color var(--av-transition-fast), background-color var(--av-transition-fast);
+}
+
+.pill:hover {
+  border-color: var(--av-border-strong);
+  background: var(--av-surface-3);
+}
+
+/* Workspace launcher tile */
+.tile-launcher {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--av-surface-2);
+  border: 0.5px solid transparent;
+  border-radius: var(--av-radius-md);
+  cursor: pointer;
+  transition: border-color var(--av-transition-fast), transform var(--av-transition-fast);
+}
+
+.tile-launcher:hover {
+  border-color: var(--av-border-strong);
+  transform: translateY(-1px);
+}
+
+.tile-launcher .icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--av-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bento grid */
+.bento-grid {
+  display: grid;
+  gap: 16px;
+}
+
+/* Activity row */
+.activity-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--av-border);
+}
+
+.activity-row:last-child {
+  border-bottom: none;
+}
+
+/* Focus styles */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--av-accent);
+  outline-offset: 2px;
 }

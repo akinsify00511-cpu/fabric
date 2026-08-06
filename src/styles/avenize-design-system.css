@@ -1,0 +1,563 @@
+/**
+ * Avenize Design System v2
+ * Spatial + Minimalism + Glassmorphism
+ */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Design Tokens)
+   ============================================ */
+
+:root {
+  /* Base surfaces - Warm dark theme */
+  --av-black: #0D0C0B;
+  --av-surface: #17150F;
+  --av-surface-2: #201D16;
+  --av-surface-3: #282519;
+  
+  /* Borders - Hairline style */
+  --av-border: rgba(255, 255, 255, 0.08);
+  --av-border-strong: rgba(255, 255, 255, 0.16);
+  --av-border-focus: rgba(255, 90, 31, 0.5);
+  
+  /* Text */
+  --av-white: #F7F4EE;
+  --av-text: #F7F4EE;
+  --av-text-secondary: #A79F91;
+  --av-text-muted: #726A5C;
+  
+  /* Signature accent — warm orange */
+  --av-accent: #FF5A1F;
+  --av-accent-2: #FFB020;
+  --av-accent-soft: rgba(255, 90, 31, 0.14);
+  --av-accent-glow: rgba(255, 90, 31, 0.35);
+  
+  /* Functional workspace colors */
+  --av-sales: #5B9EF7;
+  --av-sales-bg: rgba(91, 158, 247, 0.14);
+  --av-finance: #3DD68C;
+  --av-finance-bg: rgba(61, 214, 140, 0.14);
+  --av-projects: #F5B93D;
+  --av-projects-bg: rgba(245, 185, 61, 0.14);
+  --av-hr: #B098F5;
+  --av-hr-bg: rgba(176, 152, 245, 0.14);
+  
+  /* Semantic colors */
+  --av-success: #4ADE80;
+  --av-success-bg: rgba(74, 222, 128, 0.12);
+  --av-warning: #FBBF24;
+  --av-warning-bg: rgba(251, 191, 36, 0.12);
+  --av-danger: #FB7185;
+  --av-danger-bg: rgba(251, 113, 133, 0.14);
+  --av-info: #38BDF8;
+  --av-info-bg: rgba(56, 189, 248, 0.12);
+  
+  /* Spacing */
+  --av-gap-xs: 8px;
+  --av-gap-sm: 12px;
+  --av-gap-md: 16px;
+  --av-gap-lg: 20px;
+  --av-gap-xl: 24px;
+  
+  /* Radii */
+  --av-radius-sm: 9px;
+  --av-radius-md: 12px;
+  --av-radius-lg: 16px;
+  --av-radius-xl: 20px;
+  
+  /* Elevation - Spatial depth */
+  --av-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --av-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --av-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --av-shadow-glow: 0 0 40px var(--av-accent-glow);
+  
+  /* Glassmorphism */
+  --av-glass-bg: rgba(255, 255, 255, 0.05);
+  --av-glass-border: rgba(255, 255, 255, 0.1);
+  --av-glass-rim: rgba(255, 255, 255, 0.14);
+  --av-glass-blur: blur(20px) saturate(160%);
+  
+  /* Typography */
+  --av-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --av-font-numeric: 'Space Grotesk', 'Inter', var(--av-font-sans);
+  
+  /* Transitions */
+  --av-transition-fast: 150ms ease;
+  --av-transition-normal: 200ms ease;
+  --av-transition-slow: 300ms ease;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+.av-body {
+  font-family: var(--av-font-sans);
+  background-color: var(--av-black);
+  color: var(--av-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Numeric typography */
+.av-num,
+.num {
+  font-family: var(--av-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================
+   SPATIAL CARD SYSTEM
+   ============================================ */
+
+/* Base card - sits on the base plane */
+.av-card {
+  background: var(--av-surface);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-xl);
+  padding: var(--av-gap-md);
+  transition: 
+    transform var(--av-transition-fast),
+    box-shadow var(--av-transition-fast),
+    border-color var(--av-transition-fast);
+}
+
+/* Card with hover elevation */
+.av-card-interactive {
+  cursor: pointer;
+}
+
+.av-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--av-shadow-md);
+  border-color: var(--av-border-strong);
+}
+
+/* Hero/Focal card - sits forward with glow */
+.av-card-hero {
+  position: relative;
+  background: linear-gradient(160deg, #171310 0%, var(--av-black) 62%);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-xl);
+  overflow: hidden;
+}
+
+/* Aperture glow - the signature element */
+.av-card-hero::before {
+  content: "";
+  position: absolute;
+  top: -120px;
+  right: -100px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle, 
+    var(--av-accent) 0%, 
+    rgba(255, 176, 32, 0.18) 45%, 
+    transparent 72%
+  );
+  opacity: 0.35;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+.av-card-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Flat surface - closer to base plane, minimal shadow */
+.av-card-flat {
+  background: var(--av-surface-2);
+  border-radius: var(--av-radius-md);
+  padding: var(--av-gap-sm);
+}
+
+/* Stat card - almost inset, barely any elevation */
+.av-card-stat {
+  background: var(--av-surface);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-lg);
+  padding: var(--av-gap-md);
+  transition: border-color var(--av-transition-fast);
+}
+
+.av-card-stat:hover {
+  border-color: var(--av-border-strong);
+}
+
+/* ============================================
+   GLASSMORPHISM (Surgical use only)
+   ============================================ */
+
+/* Only use on hero/bio cards with glow behind */
+.av-glass {
+  background: var(--av-glass-bg);
+  backdrop-filter: var(--av-glass-blur);
+  -webkit-backdrop-filter: var(--av-glass-blur);
+  border: 0.5px solid var(--av-glass-border);
+  border-radius: var(--av-radius-xl);
+}
+
+/* Top-light rim effect */
+.av-glass::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--av-glass-rim);
+  border-radius: var(--av-radius-xl) var(--av-radius-xl) 0 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   MINIMALISM UTILITIES
+   ============================================ */
+
+/* Replace icon-in-circle with this for non-launcher elements */
+.av-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.av-dot-sm {
+  width: 6px;
+  height: 6px;
+}
+
+.av-dot-lg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Accent bar - left edge indicator */
+.av-accent-bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* ============================================
+   WORKSPACE TILES (Launcher only keeps icon-in-circle)
+   ============================================ */
+
+.av-tile-launcher {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--av-gap-xs);
+  padding: var(--av-gap-md);
+  background: var(--av-surface-2);
+  border: 0.5px solid transparent;
+  border-radius: var(--av-radius-md);
+  cursor: pointer;
+  transition: 
+    border-color var(--av-transition-fast),
+    transform var(--av-transition-fast);
+}
+
+.av-tile-launcher:hover {
+  border-color: var(--av-border-strong);
+  transform: translateY(-1px);
+}
+
+.av-tile-launcher .icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--av-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================
+   BENTO GRID
+   ============================================ */
+
+.av-bento {
+  display: grid;
+  gap: var(--av-gap-md);
+}
+
+/* Wider gaps for more negative space */
+.av-bento-gap-sm { gap: var(--av-gap-sm); }
+.av-bento-gap-md { gap: var(--av-gap-md); }
+.av-bento-gap-lg { gap: var(--av-gap-lg); }
+
+/* ============================================
+   TOPBAR / NAVIGATION
+   ============================================ */
+
+.av-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--av-gap-sm);
+  padding: var(--av-gap-md) var(--av-gap-xl);
+  background: var(--av-black);
+  border-bottom: 0.5px solid var(--av-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.av-topbar-brand {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+.av-title-hero {
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.av-title-lg {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.av-title-md {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.av-title-sm {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.av-title-xs {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.av-body-lg {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.av-body-md {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.av-body-sm {
+  font-size: 12px;
+}
+
+.av-label {
+  font-size: 11px;
+  color: var(--av-text-muted);
+}
+
+/* ============================================
+   PILL / BADGE ELEMENTS
+   ============================================ */
+
+.av-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--av-surface-2);
+  border: 0.5px solid var(--av-border);
+  border-radius: var(--av-radius-sm);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--av-text);
+  text-decoration: none;
+  transition: 
+    border-color var(--av-transition-fast),
+    background-color var(--av-transition-fast);
+}
+
+.av-pill:hover {
+  border-color: var(--av-border-strong);
+  background: var(--av-surface-3);
+}
+
+.av-pill-icon {
+  font-size: 15px;
+  color: var(--av-text-secondary);
+}
+
+/* Status pills */
+.av-pill-success {
+  background: var(--av-success-bg);
+  color: var(--av-success);
+  border-color: transparent;
+}
+
+.av-pill-warning {
+  background: var(--av-warning-bg);
+  color: var(--av-warning);
+  border-color: transparent;
+}
+
+.av-pill-danger {
+  background: var(--av-danger-bg);
+  color: var(--av-danger);
+  border-color: transparent;
+}
+
+/* ============================================
+   STAT ELEMENTS
+   ============================================ */
+
+/* Minimalist stat - no icon circle */
+.av-stat {
+  position: relative;
+  padding-left: var(--av-gap-md);
+}
+
+.av-stat::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+}
+
+.av-stat-sales::before { background: var(--av-sales); }
+.av-stat-finance::before { background: var(--av-finance); }
+.av-stat-projects::before { background: var(--av-projects); }
+.av-stat-hr::before { background: var(--av-hr); }
+
+.av-stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-family: var(--av-font-numeric);
+}
+
+.av-stat-label {
+  font-size: 12px;
+  color: var(--av-text-secondary);
+  margin-top: 2px;
+}
+
+.av-stat-delta {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.av-stat-delta-up {
+  color: var(--av-success);
+}
+
+.av-stat-delta-down {
+  color: var(--av-warning);
+}
+
+/* ============================================
+   ACTIVITY / LIST ROWS
+   ============================================ */
+
+/* Flat, quiet rows */
+.av-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--av-gap-sm);
+  padding: var(--av-gap-sm) 0;
+  border-bottom: 0.5px solid var(--av-border);
+}
+
+.av-row:last-child {
+  border-bottom: none;
+}
+
+.av-row-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--av-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.av-row-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.av-row-text {
+  font-size: 13px;
+  color: var(--av-text);
+}
+
+.av-row-meta {
+  font-size: 11px;
+  color: var(--av-text-muted);
+  margin-top: 2px;
+}
+
+/* ============================================
+   FOCUS STATES
+   ============================================ */
+
+.av-focus:focus-visible {
+  outline: 2px solid var(--av-accent);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes av-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.av-animate-pulse {
+  animation: av-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes av-fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.av-animate-fade-in {
+  animation: av-fade-in 0.3s ease-out forwards;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 860px) {
+  .av-bento { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 520px) {
+  .av-bento { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
