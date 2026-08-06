@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark, Calendar, Users, LineChart } from 'lucide-react'
+import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark, Calendar, Users, LineChart, GitBranch, Scale, AlertCircle } from 'lucide-react'
 import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
@@ -16,7 +16,8 @@ const ITEMS = [
   { to: '/projects', label: 'Projects', icon: FolderKanban, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Project management', feature: 'projects' },
   { to: '/cashflow', label: 'Cash Flow', icon: DollarSign, tint: 'bg-[#FF7A59]/10 text-[#FF7A59]', desc: 'Income & expenses', feature: 'cashflow' },
   { to: '/people', label: 'People', icon: Contact, tint: 'bg-emerald-500/10 text-emerald-500', desc: 'Team & invites', feature: 'people' },
-  { to: '/hr', label: 'Human Resources', icon: Users, tint: 'bg-teal-500/10 text-teal-500', desc: 'Leave, Attendance & HR', feature: null },
+  { to: '/hr', label: 'Human Resources', icon: Users, tint: 'bg-teal-500/10 text-teal-500', desc: 'Leave, Attendance', feature: null },
+  { to: '/operations', label: 'Operations', icon: GitBranch, tint: 'bg-orange-500/10 text-orange-500', desc: 'Processes & Compliance', feature: null },
   { to: '/merit', label: 'Merit', icon: Award, tint: 'bg-yellow-500/10 text-yellow-600', desc: 'Recognition & points', feature: 'merit' },
   { to: '/inventory', label: 'Inventory', icon: Boxes, tint: 'bg-amber-500/10 text-amber-500', desc: 'Stock & products', feature: 'inventory' },
   { to: '/reports', label: 'Reports', icon: BarChart3, tint: 'bg-sky-500/10 text-sky-500', desc: 'Analytics', feature: 'reports' },
