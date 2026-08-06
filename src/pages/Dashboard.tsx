@@ -205,7 +205,11 @@ export default function Dashboard() {
         return 0
       }).slice(0, 5)
 
-      const upcomingJobs = soon.filter(i => i.type === 'job').map(j => ({ ...j, time: daysUntil((jobs.find((jo: any) => jo.id === j.id) as any)?.due_date) || null) as any }))
+      const upcomingJobs = soon.filter(i => i.type === 'job').map(j => {
+        const jobData = jobs.find((jo: any) => jo.id === j.id) as any
+        const due = daysUntil(jobData?.due_date)
+        return { ...j, time: due ? due.label : '' }
+      })
       setUpcoming(upcomingJobs.length ? upcomingJobs : DEMO_UPCOMING)
 
     } catch (err) {
