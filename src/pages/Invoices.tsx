@@ -133,8 +133,21 @@ export default function Invoices() {
   const [paying, setPaying] = useState(false)
   const [savingPayment, setSavingPayment] = useState(false)
   const [paymentAmount, setPaymentAmount] = useState('')
+  const [quoteData, setQuoteData] = useState<any>(null)
 
   useEffect(() => {
+    // Check for quote-to-invoice conversion data
+    const quoteStr = sessionStorage.getItem('avenize_quote_to_invoice')
+    if (quoteStr) {
+      try {
+        const data = JSON.parse(quoteStr)
+        setQuoteData(data)
+        setShowCreateModal(true)
+        sessionStorage.removeItem('avenize_quote_to_invoice')
+      } catch (e) {
+        // ignore
+      }
+    }
     loadInvoices()
   }, [businessId, isDemo])
 
@@ -606,8 +619,9 @@ export default function Invoices() {
       {/* Create Invoice Modal */}
       {showCreateModal && (
         <CreateInvoiceModal
-          onClose={() => setShowCreateModal(false)}
+          onClose={() => { setShowCreateModal(false); setQuoteData(null) }}
           onCreate={handleCreateInvoice}
+          quoteData={quoteData}
         />
       )}
     </div>
@@ -617,13 +631,22 @@ export default function Invoices() {
 // ============================================
 // CREATE INVOICE MODAL
 // ============================================
-function CreateInvoiceModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: any) => void }) {
-  const [clientName, setClientName] = useState('')
-  const [clientEmail, setClientEmail] = useState('')
-  const [clientAddress, setClientAddress] = useState('')
+function CreateInvoiceModal({ onClose, onCreate, quoteData }: {
+  onClose: () => void
+  onCreate: (data: any) => void
+  quoteData?: { client_name: string; client_email: string; client_address: string; items: any[]; notes: string } | null
+}) {
+  const [clientName, setClientName] = useState(quoteData?.client_name || '')
+  const [clientEmail, setClientEmail] = useState(quoteData?.client_email || '')
+  const [clientAddress, setClientAddress] = useState(quoteData?.client_address || '')
   const [dueDate, setDueDate] = useState('')
-  const [notes, setNotes] = useState('')
-  const [items, setItems] = useState<InvoiceItem[]>([{ description: '', quantity: 1, unit_price: 0, total: 0 }])
+  const [notes, setNotes] = useState(quoteData?.notes || '')
+  const [items, setItems] = useState<InvoiceItem[]>(
+    quoteData?.items?.length
+      ? quoteData.items.map((item: any) => ({ ...item }))
+      : [{ description: '', quantity: 1, unit_price: 0, total: 0 }]
+  )
+  const isFromQuote = !!quoteData
 
   const updateItem = (i: number, field: keyof InvoiceItem, value: string | number) => {
     setItems(items.map((item, idx) => {
@@ -656,7 +679,10 @@ function CreateInvoiceModal({ onClose, onCreate }: { onClose: () => void; onCrea
       <div className="absolute inset-0 bg-black/30" />
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 bg-white border-b border-black/6 p-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold">New Invoice</h2>
+          <div>
+            <h2 className="text-base font-semibold">{isFromQuote ? 'Create Invoice from Quote' : 'New Invoice'}</h2>
+            {isFromQuote && <p className="text-xs text-purple-600 mt-0.5">All fields pre-filled from your accepted quote</p>}
+          </div>
           <button onClick={onClose} className="w-8 h-8 rounded-xl bg-black/5 flex items-center justify-center hover:bg-black/10">
             <X size={16} />
           </button>

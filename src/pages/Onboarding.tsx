@@ -1,42 +1,60 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import {
-  Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2
+  Building2, Users, Wrench, TrendingUp, ArrowRight, ArrowLeft,
+  Check, Loader2, Zap, Eye, Rocket
 } from 'lucide-react'
 
 const STEPS = [
-  {
-    icon: Building2,
-    title: 'Your Business',
-    description: 'Set up your company details',
-  },
-  {
-    icon: Users,
-    title: 'Your Profile',
-    description: 'Tell us about yourself',
-  },
-  {
-    icon: Wrench,
-    title: 'What You Do',
-    description: 'Configure your operations',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Ready to Go',
-    description: "You're all set!",
-  },
+  { icon: Building2, title: 'Your Business', description: 'Set up your company details' },
+  { icon: Users, title: 'Your Profile', description: 'Tell us about yourself' },
+  { icon: Wrench, title: 'What You Do', description: 'Configure your operations' },
+  { icon: TrendingUp, title: 'Ready to Go', description: "You're all set!" },
 ]
 
 const INDUSTRIES = [
-  { id: 'construction', name: 'Construction', emoji: '🏗️' },
-  { id: 'real_estate', name: 'Real Estate', emoji: '🏠' },
-  { id: 'manufacturing', name: 'Manufacturing', emoji: '🏭' },
-  { id: 'retail', name: 'Retail', emoji: '🛒' },
-  { id: 'services', name: 'Professional Services', emoji: '💼' },
-  { id: 'other', name: 'Other', emoji: '📋' },
+  { id: 'construction', name: 'Construction', emoji: '🏗️', tip: 'Track field jobs, materials, and crew schedules easily' },
+  { id: 'manufacturing', name: 'Manufacturing', emoji: '🏭', tip: 'Monitor production, inventory, and equipment maintenance' },
+  { id: 'services', name: 'Field Services', emoji: '🔧', tip: 'Manage jobs, schedules, and field worker updates' },
+  { id: 'retail', name: 'Retail & Trading', emoji: '🛒', tip: 'Track sales, inventory, and customer orders' },
+  { id: 'real_estate', name: 'Real Estate', emoji: '🏠', tip: 'Manage properties, leads, and rental schedules' },
+  { id: 'other', name: 'Other Industry', emoji: '📋', tip: 'Customize Avenize to fit any business type' },
 ]
+
+const INDUSTRY_FEATURES: Record<string, { icon: React.ReactNode; label: string }[]> = {
+  construction: [
+    { icon: '🔨', label: 'Job tracking & field updates' },
+    { icon: '📦', label: 'Materials management' },
+    { icon: '👷', label: 'Crew scheduling' },
+  ],
+  manufacturing: [
+    { icon: '🏭', label: 'Production monitoring' },
+    { icon: '📦', label: 'Inventory & stock' },
+    { icon: '⚙️', label: 'Equipment maintenance' },
+  ],
+  services: [
+    { icon: '🔧', label: 'Job management' },
+    { icon: '📍', label: 'Field worker tracking' },
+    { icon: '📊', label: 'Service reports' },
+  ],
+  retail: [
+    { icon: '💰', label: 'Sales & payments' },
+    { icon: '📦', label: 'Inventory management' },
+    { icon: '👥', label: 'Customer CRM' },
+  ],
+  real_estate: [
+    { icon: '🏠', label: 'Property management' },
+    { icon: '🤝', label: 'Lead tracking' },
+    { icon: '📅', label: 'Viewing schedules' },
+  ],
+  other: [
+    { icon: '✅', label: 'Task management' },
+    { icon: '💰', label: 'Invoicing & payments' },
+    { icon: '👥', label: 'Team coordination' },
+  ],
+}
 
 export default function Onboarding() {
   const navigate = useNavigate()
@@ -45,24 +63,20 @@ export default function Onboarding() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // Check if already onboarded - redirect to app
+  // Check if already onboarded
   useEffect(() => {
     const checkOnboarding = async () => {
-      // Check localStorage first
       const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
       if (localOnboarding === 'true') {
         navigate('/app', { replace: true })
         return
       }
-      
-      // Check database
       if (session?.user.id) {
         const { data: staffData } = await supabase
           .from('staff')
           .select('onboarding_completed, business_id')
           .eq('user_id', session.user.id)
           .maybeSingle()
-        
         if (staffData?.business_id && staffData?.onboarding_completed) {
           localStorage.setItem('avenize_onboarding_complete', 'true')
           navigate('/app', { replace: true })
@@ -73,11 +87,21 @@ export default function Onboarding() {
   }, [session, navigate])
 
   // Form data
-  const [businessName, setBusinessName] = useState('')
+  const [businessName, setBusinessName] = useState(
+    session?.user?.user_metadata?.business_name as string || '',
+  )
   const [fullName, setFullName] = useState(
-    (session?.user.user_metadata?.full_name as string | undefined) ?? '',
+    session?.user?.user_metadata?.full_name as string || '',
   )
   const [industry, setIndustry] = useState('')
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleNext()
+    }
+  }, [step, businessName, fullName, industry])
 
   const handleNext = async () => {
     if (step === 0 && !businessName.trim()) {
@@ -94,7 +118,6 @@ export default function Onboarding() {
     }
 
     setError(null)
-
     if (step < 3) {
       setStep(step + 1)
     } else {
@@ -102,26 +125,35 @@ export default function Onboarding() {
     }
   }
 
+  const tryDemo = () => {
+    // Set demo mode and skip onboarding
+    localStorage.setItem('avenize_onboarding_complete', 'true')
+    localStorage.setItem('avenize_demo', 'true')
+    localStorage.setItem('avenize_demo_user', JSON.stringify({
+      id: 'demo-user',
+      name: fullName || 'Demo User',
+      email: session?.user?.email || 'demo@example.com',
+      business_id: 'demo-business',
+      business_name: 'Demo Business',
+      role: 'owner',
+    }))
+    window.location.href = '/app'
+  }
+
   const completeSetup = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      // Create business and owner
       const { data, error: rpcError } = await supabase.rpc('create_business_and_owner', {
         p_business_name: businessName,
         p_industry: industry,
         p_staff_name: fullName,
       })
 
-      if (rpcError) {
-        throw rpcError
-      }
+      if (rpcError) throw rpcError
 
-      // Mark onboarding as complete in localStorage (for quick access)
       localStorage.setItem('avenize_onboarding_complete', 'true')
-      
-      // Also mark as complete in the staff record (for persistence)
       if (data?.staff_id) {
         await supabase
           .from('staff')
@@ -129,7 +161,6 @@ export default function Onboarding() {
           .eq('id', data.staff_id)
       }
 
-      // Force a full page reload to reset all auth state
       window.location.href = '/app'
     } catch (err: any) {
       console.error('Setup error:', err)
@@ -139,8 +170,11 @@ export default function Onboarding() {
     }
   }
 
+  const selectedIndustryData = INDUSTRIES.find(i => i.id === industry)
+  const selectedFeatures = INDUSTRY_FEATURES[industry] || INDUSTRY_FEATURES.other
+
   return (
-    <div className="min-h-screen bg-[var(--avenize-offwhite)] flex">
+    <div className="min-h-screen bg-[var(--avenize-offwhite)] flex" onKeyDown={handleKeyDown}>
       {/* Progress Sidebar */}
       <div className="hidden md:flex w-80 bg-white border-r border-black/5 flex-col">
         <div className="p-8">
@@ -171,18 +205,20 @@ export default function Onboarding() {
           ))}
         </div>
 
-        <div className="p-8 border-t border-black/5">
-          <button 
-            onClick={signOut}
-            className="text-sm text-black/40 hover:text-black/60"
-          >
+        {/* Try Demo shortcut */}
+        <div className="p-6 border-t border-black/5">
+          <button onClick={tryDemo}
+            className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm text-black/60 hover:bg-black/[0.03] transition mb-2">
+            <Eye size={14} /> Try demo first
+          </button>
+          <button onClick={signOut} className="text-xs text-black/30 hover:text-black/50">
             Sign out
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-6 md:p-8">
         <div className="w-full max-w-md">
           {/* Mobile Progress */}
           <div className="md:hidden mb-8">
@@ -190,11 +226,8 @@ export default function Onboarding() {
               <span className="text-sm font-medium">Step {step + 1} of 4</span>
               <span className="text-sm text-black/50">{Math.round(((step + 1) / 4) * 100)}%</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full">
-              <div 
-                className="h-2 bg-[var(--avenize-primary)] rounded-full transition-all"
-                style={{ width: `${((step + 1) / 4) * 100}%` }}
-              />
+            <div className="h-1.5 bg-gray-100 rounded-full">
+              <div className="h-1.5 bg-[var(--avenize-primary)] rounded-full transition-all" style={{ width: `${((step + 1) / 4) * 100}%` }} />
             </div>
           </div>
 
@@ -208,17 +241,24 @@ export default function Onboarding() {
           {step === 0 && (
             <div className="space-y-6">
               <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <Building2 size={16} className="text-blue-600" />
+                  </div>
+                  <span className="text-xs font-semibold text-black/40 uppercase tracking-wide">Step 1 of 4</span>
+                </div>
                 <h2 className="text-2xl font-bold">What's your business called?</h2>
-                <p className="text-black/60 mt-2">This will be your workspace name in Avenize.</p>
+                <p className="text-black/50 mt-2">This will be your workspace name in Avenize.</p>
               </div>
               <input
                 type="text"
                 value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Your Company Ltd"
+                onChange={(e) => { setBusinessName(e.target.value); setError(null) }}
+                placeholder="e.g. Lekki Construction Ltd"
                 className="w-full px-4 py-4 rounded-xl border-2 border-black/10 text-lg focus:border-[var(--avenize-primary)] focus:outline-none"
                 autoFocus
               />
+              <p className="text-xs text-black/30">Press Enter ↵ to continue</p>
             </div>
           )}
 
@@ -226,32 +266,45 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="space-y-6">
               <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                    <Users size={16} className="text-purple-600" />
+                  </div>
+                  <span className="text-xs font-semibold text-black/40 uppercase tracking-wide">Step 2 of 4</span>
+                </div>
                 <h2 className="text-2xl font-bold">And your name?</h2>
-                <p className="text-black/60 mt-2">How should we address you?</p>
+                <p className="text-black/50 mt-2">How should we address you?</p>
               </div>
               <input
                 type="text"
                 value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Chinedu Okonkwo"
+                onChange={(e) => { setFullName(e.target.value); setError(null) }}
+                placeholder="e.g. Chinedu Okonkwo"
                 className="w-full px-4 py-4 rounded-xl border-2 border-black/10 text-lg focus:border-[var(--avenize-primary)] focus:outline-none"
                 autoFocus
               />
+              <p className="text-xs text-black/30">Press Enter ↵ to continue</p>
             </div>
           )}
 
           {/* Step 2: Industry */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <h2 className="text-2xl font-bold">What industry are you in?</h2>
-                <p className="text-black/60 mt-2">This helps us customize Avenize for you.</p>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <Wrench size={16} className="text-orange-600" />
+                  </div>
+                  <span className="text-xs font-semibold text-black/40 uppercase tracking-wide">Step 3 of 4</span>
+                </div>
+                <h2 className="text-2xl font-bold">What do you do?</h2>
+                <p className="text-black/50 mt-2">We personalize Avenize based on your industry.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {INDUSTRIES.map((ind) => (
                   <button
                     key={ind.id}
-                    onClick={() => setIndustry(ind.id)}
+                    onClick={() => { setIndustry(ind.id); setError(null) }}
                     className={`p-4 rounded-xl border-2 text-left transition-all ${
                       industry === ind.id
                         ? 'border-[var(--avenize-primary)] bg-[var(--avenize-primary)]/5'
@@ -259,7 +312,10 @@ export default function Onboarding() {
                     }`}
                   >
                     <span className="text-2xl mb-2 block">{ind.emoji}</span>
-                    <span className="text-sm font-medium">{ind.name}</span>
+                    <span className="text-sm font-medium block">{ind.name}</span>
+                    {industry === ind.id && ind.tip && (
+                      <p className="text-[10px] text-[var(--avenize-primary)] mt-1 leading-tight">{ind.tip}</p>
+                    )}
                   </button>
                 ))}
               </div>
@@ -274,30 +330,32 @@ export default function Onboarding() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold">You're all set!</h2>
-                <p className="text-black/60 mt-2">
-                  {businessName} is ready. Let's build something great.
-                </p>
+                <p className="text-black/50 mt-2">{businessName} is ready. Let's build something great.</p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-left">
-                <p className="text-sm font-medium mb-2">What you get with Avenize:</p>
-                <ul className="space-y-2 text-sm text-black/60">
-                  <li className="flex items-center gap-2">
-                    <Check size={16} className="text-green-500" />
-                    Job & project tracking
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check size={16} className="text-green-500" />
-                    Inventory management
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check size={16} className="text-green-500" />
-                    Invoicing & payments
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check size={16} className="text-green-500" />
-                    Team coordination
-                  </li>
-                </ul>
+
+              {/* Industry-specific features */}
+              {industry && (
+                <div className="bg-black/[0.03] rounded-2xl p-4 text-left">
+                  <p className="text-xs font-semibold text-black/40 uppercase tracking-wide mb-3">
+                    What you'll get for {selectedIndustryData?.name}
+                  </p>
+                  <div className="space-y-2">
+                    {selectedFeatures.map((f, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <span className="text-lg">{f.icon}</span>
+                        <span className="text-sm text-[var(--avenize-black)]">{f.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Try demo option */}
+              <div className="pt-2">
+                <button onClick={tryDemo}
+                  className="text-sm text-black/30 hover:text-black/50 transition underline">
+                  Or explore with demo data first →
+                </button>
               </div>
             </div>
           )}
@@ -305,24 +363,22 @@ export default function Onboarding() {
           {/* Navigation */}
           <div className="flex gap-3 mt-8">
             {step > 0 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-xl border border-black/10 font-medium"
-              >
-                Back
+              <button onClick={() => setStep(step - 1)}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl border border-black/10 font-medium hover:bg-black/[0.03] transition">
+                <ArrowLeft size={16} /> Back
               </button>
             )}
             <button
               onClick={handleNext}
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl avenize-gradient text-white py-3 font-semibold disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl avenize-gradient text-white py-3 font-semibold disabled:opacity-50 hover:opacity-90 transition"
             >
               {loading ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : step === 3 ? (
-                <>Launch Avenize <ArrowRight size={20} /></>
+                <>Launch Avenize <Rocket size={18} /></>
               ) : (
-                <>Continue <ArrowRight size={20} /></>
+                <>Continue <ArrowRight size={18} /></>
               )}
             </button>
           </div>
