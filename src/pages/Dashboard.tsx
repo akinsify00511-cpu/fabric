@@ -45,7 +45,7 @@ interface ActivityItem {
 interface QuickStat {
   label: string
   value: string | number
-  change?: string
+  change?: string | null
   changeDir?: 'up' | 'down' | 'neutral'
   color: string
   href: string
@@ -143,19 +143,21 @@ export default function Dashboard() {
 
     try {
       const bid = staff.business_id
-      const [jobsData, dealsData, invoicesData, tasksData, staffData] = await Promise.allSettled([
-        supabase.from('jobs').select('id, status, priority, due_date, title').eq('business_id', bid).neq('status', 'cancelled').order('created_at', { ascending: false }).limit(10),
-        supabase.from('deals').select('id, value, stage, title, updated_at').eq('business_id', bid).order('updated_at', { ascending: false }).limit(5),
-        supabase.from('invoices').select('id, total, balance, status, due_date, client_name, invoice_number').eq('business_id', bid).order('created_at', { ascending: false }).limit(5),
-        supabase.from('tasks').select('id, status, due_date').eq('business_id', bid).eq('status', 'pending').limit(5),
-        supabase.from('staff').select('id, active').eq('business_id', bid).eq('active', true),
+
+      // Run queries in parallel, fall back to empty on failure
+      const [jobsResult, dealsResult, invoicesResult, tasksResult, staffResult] = await Promise.all([
+        supabase.from('jobs').select('id, status, priority, due_date, title').eq('business_id', bid).neq('status', 'cancelled').order('created_at', { ascending: false }).limit(10).then(r => r.data || [], () => [] as any[]),
+        supabase.from('deals').select('id, value, stage, title, updated_at').eq('business_id', bid).order('updated_at', { ascending: false }).limit(5).then(r => r.data || [], () => [] as any[]),
+        supabase.from('invoices').select('id, total, balance, status, due_date, client_name, invoice_number').eq('business_id', bid).order('created_at', { ascending: false }).limit(5).then(r => r.data || [], () => [] as any[]),
+        supabase.from('tasks').select('id, status, due_date').eq('business_id', bid).eq('status', 'pending').limit(5).then(r => r.data || [], () => [] as any[]),
+        supabase.from('staff').select('id, active').eq('business_id', bid).eq('active', true).then(r => r.data || [], () => [] as any[]),
       ])
 
-      const jobs = (jobsData as PromiseSettledResult<any>).status === 'fulfilled' ? (jobsData as PromiseSettledResult<any>).value?.data || [] : []
-      const deals = (dealsData as PromiseSettledResult<any>).status === 'fulfilled' ? (dealsData as PromiseSettledResult<any>).value?.data || [] : []
-      const invoices = (invoicesData as PromiseSettledResult<any>).status === 'fulfilled' ? (invoicesData as PromiseSettledResult<any>).value?.data || [] : []
-      const pendingTasks = (tasksData as PromiseSettledResult<any>).status === 'fulfilled' ? (tasksData as PromiseSettledResult<any>).value?.data || [] : []
-      const teamMembers = (staffData as PromiseSettledResult<any>).status === 'fulfilled' ? (staffData as PromiseSettledResult<any>).value?.data || [] : []
+      const jobs = jobsResult
+      const deals = dealsResult
+      const invoices = invoicesResult
+      const pendingTasks = tasksResult
+      const teamMembers = staffResult
 
       const hotDeals = deals.filter((d: any) => d.stage === 'hot' || d.stage === 'qualified')
       const pipelineValue = deals.reduce((s: number, d: any) => s + (d.value || 0), 0)
