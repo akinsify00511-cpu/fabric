@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark } from 'lucide-react'
+import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark, Calendar, Users, LineChart } from 'lucide-react'
 import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
@@ -9,17 +9,18 @@ const ITEMS = [
   { to: '/automations', label: 'Automations', icon: Zap, tint: 'bg-violet-500/10 text-violet-500', desc: 'Workflow rules', feature: 'automations' },
   { to: '/campaigns', label: 'Email', icon: Mail, tint: 'bg-blue-500/10 text-blue-500', desc: 'Email marketing', feature: 'campaigns' },
   { to: '/accounting', label: 'Accounting', icon: Calculator, tint: 'bg-rose-500/10 text-rose-500', desc: 'Bookkeeping', feature: 'accounting' },
+  { to: '/finance', label: 'Finance', icon: LineChart, tint: 'bg-green-500/10 text-green-500', desc: 'Financial ratios', feature: 'invoices' },
   { to: '/crm', label: 'CRM', icon: Users2, tint: 'bg-purple-500/10 text-purple-500', desc: 'Contacts & deals', feature: 'crm' },
   { to: '/social', label: 'Social', icon: Share2, tint: 'bg-pink-500/10 text-pink-500', desc: 'Posts & branding', feature: 'social' },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare, tint: 'bg-cyan-500/10 text-cyan-500', desc: 'Assign & track', feature: 'tasks' },
   { to: '/projects', label: 'Projects', icon: FolderKanban, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Project management', feature: 'projects' },
-  { to: '/finance', label: 'Finance', icon: Wallet, tint: 'bg-[#FF7A59]/10 text-[#FF7A59]', desc: 'Invoices & billing', feature: 'invoices' },
-  { to: '/cashflow', label: 'Cash Flow', icon: DollarSign, tint: 'bg-green-500/10 text-green-500', desc: 'Income & expenses', feature: 'cashflow' },
+  { to: '/cashflow', label: 'Cash Flow', icon: DollarSign, tint: 'bg-[#FF7A59]/10 text-[#FF7A59]', desc: 'Income & expenses', feature: 'cashflow' },
   { to: '/people', label: 'People', icon: Contact, tint: 'bg-emerald-500/10 text-emerald-500', desc: 'Team & invites', feature: 'people' },
+  { to: '/hr', label: 'Human Resources', icon: Users, tint: 'bg-teal-500/10 text-teal-500', desc: 'Leave, Attendance & HR', feature: null },
   { to: '/merit', label: 'Merit', icon: Award, tint: 'bg-yellow-500/10 text-yellow-600', desc: 'Recognition & points', feature: 'merit' },
   { to: '/inventory', label: 'Inventory', icon: Boxes, tint: 'bg-amber-500/10 text-amber-500', desc: 'Stock & products', feature: 'inventory' },
   { to: '/reports', label: 'Reports', icon: BarChart3, tint: 'bg-sky-500/10 text-sky-500', desc: 'Analytics', feature: 'reports' },
-  { to: '/infrastructure', label: 'Infrastructure', icon: Building2, tint: 'bg-slate-500/10 text-slate-500', desc: 'HR, Payroll & Assets', feature: null },
+  { to: '/infrastructure', label: 'Infrastructure', icon: Building2, tint: 'bg-slate-500/10 text-slate-500', desc: 'Payroll & Assets', feature: null },
   { to: '/settings', label: 'Settings', icon: SettingsIcon, tint: 'bg-black/[0.06] text-black/60', desc: 'Profile & config', feature: null },
 ]
 

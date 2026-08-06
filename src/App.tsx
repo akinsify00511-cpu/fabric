@@ -19,6 +19,7 @@ const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const CRM = lazy(() => import('./pages/CRM'))
 const People = lazy(() => import('./pages/People'))
+const HumanResources = lazy(() => import('./pages/HumanResources'))
 const Payments = lazy(() => import('./pages/Payments'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const Reports = lazy(() => import('./pages/Reports'))
@@ -185,6 +186,7 @@ function AppRoutes() {
         <Route path="quotes" element={<Quotes />} />
         <Route path="payments" element={<Payments />} />
         <Route path="people" element={<People />} />
+        <Route path="hr" element={<HumanResources />} />
         <Route path="inventory" element={<InventoryNigeria />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
