@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react'
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react'
 import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'info'
@@ -7,10 +7,10 @@ interface Toast {
   id: string
   type: ToastType
   message: string
+  duration: number
 }
 
 interface ToastContextType {
-  toast: (type: ToastType, message: string) => void
   showToast: (message: string, type?: ToastType) => void
   success: (message: string) => void
   error: (message: string) => void
@@ -27,79 +27,98 @@ export function useToast() {
   return context
 }
 
+const DURATION_MS = 4000
+
+function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: () => void }) {
+  const [progress, setProgress] = useState(100)
+  const [paused, setPaused] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startRef = useRef(Date.now())
+  const remainingRef = useRef(toast.duration)
+
+  useEffect(() => {
+    if (paused) {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      return
+    }
+    const elapsed = Date.now() - startRef.current
+    const remaining = remainingRef.current - elapsed
+    if (remaining <= 0) { onRemove(); return }
+    const pct = (remaining / toast.duration) * 100
+    setProgress(pct)
+
+    intervalRef.current = setInterval(() => {
+      const now = Date.now()
+      const elapsedTotal = now - startRef.current
+      const rem = toast.duration - elapsedTotal
+      if (rem <= 0) { onRemove(); return }
+      setProgress((rem / toast.duration) * 100)
+    }, 50)
+
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
+  }, [paused, toast.duration, onRemove])
+
+  const typeColors = {
+    success: 'bg-green-500',
+    error: 'bg-red-500',
+    info: 'bg-indigo-500',
+  }
+
+  return (
+    <div
+      className={`relative flex items-center gap-3 px-4 py-3 pr-10 rounded-lg shadow-lg text-white overflow-hidden w-80 ${typeColors[toast.type]}`}
+      style={{ animation: 'slide-in 0.25s ease-out' }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => { startRef.current = Date.now(); remainingRef.current = toast.duration * (progress / 100); setPaused(false) }}
+    >
+      {toast.type === 'success' && <CheckCircle size={18} className="shrink-0" />}
+      {toast.type === 'error' && <XCircle size={18} className="shrink-0" />}
+      {toast.type === 'info' && <AlertCircle size={18} className="shrink-0" />}
+      <span className="text-sm font-medium flex-1">{toast.message}</span>
+      <button
+        onClick={onRemove}
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/20 transition-colors"
+      >
+        <X size={14} />
+      </button>
+      {/* Shrinking progress bar */}
+      <div className="absolute bottom-0 left-0 h-0.5 bg-white/40 transition-none"
+        style={{ width: `${progress}%`, transition: paused ? 'none' : 'width 50ms linear' }}
+      />
+    </div>
+  )
+}
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = useCallback((type: ToastType, message: string) => {
-    const id = Math.random().toString(36).substring(2, 9)
-    setToasts(prev => [...prev, { id, type, message }])
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id))
-    }, 4000)
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
-  const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id))
-  }
-
-  const toast = useCallback((type: ToastType, message: string) => {
-    addToast(type, message)
-  }, [addToast])
-
   const showToast = useCallback((message: string, type: ToastType = 'info') => {
-    // Handle old pattern: showToast(message, type) or showToast(type, message)
-    const types: ToastType[] = ['success', 'error', 'info']
-    if (types.includes(message as ToastType)) {
-      addToast(message as ToastType, type)
-    } else {
-      addToast(type, message)
-    }
-  }, [addToast])
+    const id = Math.random().toString(36).substring(2, 9)
+    setToasts(prev => [...prev, { id, type, message, duration: DURATION_MS }])
+    setTimeout(() => removeToast(id), DURATION_MS)
+  }, [removeToast])
 
-  const success = useCallback((message: string) => {
-    addToast('success', message)
-  }, [addToast])
-
-  const error = useCallback((message: string) => {
-    addToast('error', message)
-  }, [addToast])
-
-  const info = useCallback((message: string) => {
-    addToast('info', message)
-  }, [addToast])
+  const success = useCallback((message: string) => showToast(message, 'success'), [showToast])
+  const error = useCallback((message: string) => showToast(message, 'error'), [showToast])
+  const info = useCallback((message: string) => showToast(message, 'info'), [showToast])
 
   return (
-    <ToastContext.Provider value={{ toast, showToast, success, error, info }}>
+    <ToastContext.Provider value={{ showToast, success, error, info }}>
       {children}
       <div className="fixed bottom-20 md:bottom-4 right-4 z-50 flex flex-col gap-2">
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg animate-slide-in ${
-              t.type === 'success' ? 'bg-green-500 text-white' :
-              t.type === 'error' ? 'bg-red-500 text-white' :
-              'bg-indigo-500 text-white'
-            }`}
-          >
-            {t.type === 'success' && <CheckCircle size={20} />}
-            {t.type === 'error' && <XCircle size={20} />}
-            {t.type === 'info' && <AlertCircle size={20} />}
-            <span className="text-sm font-medium">{t.message}</span>
-            <button
-              onClick={() => removeToast(t.id)}
-              className="ml-2 hover:opacity-70"
-            >
-              <X size={16} />
-            </button>
-          </div>
+        {toasts.map(t => (
+          <ToastItem key={t.id} toast={t} onRemove={() => removeToast(t.id)} />
         ))}
       </div>
       <style>{`
         @keyframes slide-in {
-          from { transform: translateX(100%); opacity: 0; }
+          from { transform: translateX(110%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
         }
-        .animate-slide-in { animation: slide-in 0.3s ease-out; }
       `}</style>
     </ToastContext.Provider>
   )

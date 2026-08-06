@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 import {
   Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock,
   MapPin, Users, X, Check, Trash2, Edit3
@@ -252,6 +253,15 @@ export default function Calendar() {
 
   const days = getDaysInMonth(currentDate)
   const today = new Date()
+
+  if (loading) {
+    return (
+      <div className="pb-20 space-y-4">
+        <LoadingSkeleton type="card" count={1} />
+        <LoadingSkeleton type="list" count={5} />
+      </div>
+    )
+  }
 
   return (
     <div className="pb-20">

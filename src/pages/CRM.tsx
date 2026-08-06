@@ -8,6 +8,7 @@ import {
   TrendingDown, Award, UsersRound, Gift, ThumbsUp, BarChart3
 } from 'lucide-react'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 import { useToast } from '../components/Toast'
 
 // Types
@@ -160,6 +161,7 @@ export default function CRM() {
   const [viewMode, setViewMode] = useState<ViewMode>('deals')
   const [deals, setDeals] = useState<Deal[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [showQuickAdd, setShowQuickAdd] = useState<QuickAddType>(null)
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null)
@@ -188,6 +190,9 @@ export default function CRM() {
     setReferrals(DEMO_REFERRALS)
     setSuggestions(DEMO_SUGGESTIONS)
     setClientLTV(DEMO_LTV)
+    // Brief delay to show loading skeleton (simulates real async fetch)
+    const timer = setTimeout(() => setLoading(false), 400)
+    return () => clearTimeout(timer)
   }, [])
 
   const activeDeals = deals.filter(d => !['won', 'lost'].includes(d.stage))
@@ -341,6 +346,15 @@ export default function CRM() {
     if (days === 1) return 'Yesterday'
     if (days < 7) return `${days} days ago`
     return `${Math.floor(days / 7)} weeks ago`
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto space-y-4">
+        <LoadingSkeleton type="card" count={1} />
+        <LoadingSkeleton type="table" count={3} />
+      </div>
+    )
   }
 
   return (

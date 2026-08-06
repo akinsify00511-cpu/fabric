@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { useTeamLimit } from '../lib/useEntitlement'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import LoadingSkeleton from '../components/LoadingSkeleton'
 
 type FunctionalRole = {
   id: string
@@ -174,6 +175,15 @@ export default function People() {
     return roleIds
       .map(id => functionalRoles.find(r => r.id === id)?.name)
       .filter(Boolean) as string[]
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-4">
+        <LoadingSkeleton type="card" count={1} />
+        <LoadingSkeleton type="table" count={4} />
+      </div>
+    )
   }
 
   return (
