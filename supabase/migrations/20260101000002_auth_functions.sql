@@ -29,9 +29,9 @@ BEGIN
   VALUES (p_business_name, p_industry)
   RETURNING id INTO v_business_id;
   
-  -- Create the owner staff record
-  INSERT INTO staff (business_id, user_id, name, role, job_title)
-  VALUES (v_business_id, auth.uid(), p_staff_name, 'owner', 'Owner')
+  -- Create the owner staff record WITH onboarding completed
+  INSERT INTO staff (business_id, user_id, name, role, job_title, onboarding_completed)
+  VALUES (v_business_id, auth.uid(), p_staff_name, 'owner', 'Owner', TRUE)
   RETURNING id INTO v_staff_id;
   
   RETURN QUERY SELECT v_business_id, v_staff_id;

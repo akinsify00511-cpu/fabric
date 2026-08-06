@@ -45,6 +45,33 @@ export default function Onboarding() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // Check if already onboarded - redirect to app
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      // Check localStorage first
+      const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
+      if (localOnboarding === 'true') {
+        navigate('/app', { replace: true })
+        return
+      }
+      
+      // Check database
+      if (session?.user.id) {
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('onboarding_completed, business_id')
+          .eq('user_id', session.user.id)
+          .maybeSingle()
+        
+        if (staffData?.business_id && staffData?.onboarding_completed) {
+          localStorage.setItem('avenize_onboarding_complete', 'true')
+          navigate('/app', { replace: true })
+        }
+      }
+    }
+    checkOnboarding()
+  }, [session, navigate])
+
   // Form data
   const [businessName, setBusinessName] = useState('')
   const [fullName, setFullName] = useState(

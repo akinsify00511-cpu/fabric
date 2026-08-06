@@ -91,17 +91,16 @@ function PageLoader() {
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
-  const [showOnboarding, setShowOnboarding] = useState(false)
 
+  // Check if onboarding is needed
+  const [needsOnboarding, setNeedsOnboarding] = useState(false)
+  
   useEffect(() => {
-    // Show onboarding for new real users (check both localStorage for quick access and staff record for persistence)
     if (staffChecked && staff && !isDemo) {
-      // Check localStorage first for quick check
       const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-      // Use the staff record's onboarding_completed flag if available, otherwise fall back to localStorage
       const staffOnboarding = (staff as any)?.onboarding_completed
       if (!localOnboarding && !staffOnboarding) {
-        setShowOnboarding(true)
+        setNeedsOnboarding(true)
       }
     }
   }, [staffChecked, staff, isDemo])
@@ -109,16 +108,19 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   if (loading || (session && !staffChecked)) {
     return <div className="min-h-screen flex items-center justify-center text-black/40 text-sm">Loading…</div>
   }
+  
   if (!session) return <Navigate to="/login" replace />
-  if (!staff) return <Navigate to="/onboarding" replace />
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false)
+  
+  // If staff exists but onboarding not complete, redirect to onboarding page
+  if (staff && needsOnboarding) {
+    return <Navigate to="/onboarding" replace />
   }
+  
+  // No staff record yet
+  if (!staff) return <Navigate to="/onboarding" replace />
 
   return (
     <>
-      {showOnboarding && <OnboardingWizard onComplete={handleOnboardingComplete} />}
       <TrialBanner />
       <SarahChat />
       <BetaFeedbackButton />
