@@ -23,6 +23,7 @@ export type Staff = {
   is_admin?: boolean
   active?: boolean
   is_beta_tester?: boolean
+  onboarding_completed?: boolean
   user?: any
 }
 

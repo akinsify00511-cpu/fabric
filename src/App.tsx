@@ -123,29 +123,40 @@ function PageLoader() {
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
 
-  // Memoize the onboarding check to prevent unnecessary re-renders
-  const needsOnboarding = (() => {
-    if (!staffChecked || !staff || isDemo) return false
-    const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-    const staffOnboarding = (staff as any)?.onboarding_completed
-    return !localOnboarding && !staffOnboarding
-  })()
-
-  // Don't render anything until we have auth state resolved
-  if (loading || (session && !staffChecked)) {
-    return null // Return null instead of loading state to prevent flicker
+  // Don't render until auth state is resolved
+  if (loading || !staffChecked) {
+    return null
   }
-  
-  // Demo mode or no session check - allow access if staff is loaded (demo or authenticated)
-  if (!session && !isDemo) return <Navigate to="/login" replace />
-  
-  // If staff exists but onboarding not complete, redirect to onboarding page
-  if (staff && needsOnboarding) {
+
+  // No session - redirect to login
+  if (!session && !isDemo) {
+    return <Navigate to="/login" replace />
+  }
+
+  // Demo mode - allow access
+  if (isDemo) {
+    return (
+      <>
+        <TrialBanner />
+        <SarahChat />
+        <BetaFeedbackButton />
+        {children}
+      </>
+    )
+  }
+
+  // No staff record - send to onboarding
+  if (!staff) {
     return <Navigate to="/onboarding" replace />
   }
-  
-  // No staff record yet
-  if (!staff) return <Navigate to="/onboarding" replace />
+
+  // Check if onboarding is complete
+  const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
+  const staffOnboarding = staff?.onboarding_completed
+
+  if (!localOnboarding && !staffOnboarding) {
+    return <Navigate to="/onboarding" replace />
+  }
 
   return (
     <>
