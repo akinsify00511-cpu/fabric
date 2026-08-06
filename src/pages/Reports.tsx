@@ -3,54 +3,76 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 
-// Demo stats
-const DEMO_STATS = {
-  dealsWon: 12,
-  revenueClosed: 142500,
-  invoicesPaid: 8,
-  invoicesOutstanding: 5,
-}
-
 export default function Reports() {
-  const { isDemo } = useAuth()
+  const { staff } = useAuth()
   const [stats, setStats] = useState({
     dealsWon: 0,
     revenueClosed: 0,
     invoicesPaid: 0,
     invoicesOutstanding: 0,
+    totalTasks: 0,
+    completedTasks: 0,
   })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
-      if (isDemo) {
-        setStats(DEMO_STATS)
+      if (!staff?.business_id) {
+        setLoading(false)
         return
       }
 
+      setLoading(true)
       try {
-        const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }] = await Promise.all([
-          supabase.from('deals').select('value').eq('stage', 'won'),
-          supabase.from('invoices').select('total').eq('status', 'paid'),
-          supabase.from('invoices').select('total').in('status', ['sent', 'overdue']),
+        const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }, { data: allTasks }, { data: completedTasks }] = await Promise.all([
+          supabase.from('deals').select('value').eq('business_id', staff.business_id).eq('stage', 'won'),
+          supabase.from('invoices').select('total').eq('business_id', staff.business_id).eq('status', 'paid'),
+          supabase.from('invoices').select('total').eq('business_id', staff.business_id).in('status', ['sent', 'overdue']),
+          supabase.from('tasks').select('id').eq('business_id', staff.business_id),
+          supabase.from('tasks').select('id').eq('business_id', staff.business_id).eq('status', 'done'),
         ])
         setStats({
           dealsWon: wonDeals?.length ?? 0,
           revenueClosed: (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0),
           invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
           invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
+          totalTasks: allTasks?.length ?? 0,
+          completedTasks: completedTasks?.length ?? 0,
         })
-      } catch {
-        setStats(DEMO_STATS)
+      } catch (error) {
+        console.error('Failed to load reports:', error)
+      } finally {
+        setLoading(false)
       }
     }
     load()
-  }, [isDemo])
+  }, [staff?.business_id])
+
+  const formatCurrency = (value: number) => {
+    if (value >= 1000000) return `\u20a6${(value / 1000000).toFixed(1)}M`
+    if (value >= 1000) return `\u20a6${(value / 1000).toFixed(1)}K`
+    return `\u20a6${value.toLocaleString()}`
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Reports</h1>
+        <div className="animate-pulse space-y-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-16 bg-white/5 rounded-xl"></div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   const rows = [
-    { label: 'Deals won', value: stats.dealsWon },
-    { label: 'Revenue closed', value: stats.revenueClosed.toLocaleString() },
-    { label: 'Invoices paid', value: stats.invoicesPaid.toLocaleString() },
-    { label: 'Invoices outstanding', value: stats.invoicesOutstanding.toLocaleString() },
+    { label: 'Deals won', value: stats.dealsWon, icon: '🎯' },
+    { label: 'Revenue closed', value: formatCurrency(stats.revenueClosed), icon: '💰' },
+    { label: 'Invoices paid', value: formatCurrency(stats.invoicesPaid), icon: '✅' },
+    { label: 'Invoices outstanding', value: formatCurrency(stats.invoicesOutstanding), icon: '⏳' },
+    { label: 'Tasks completed', value: `${stats.completedTasks}/${stats.totalTasks}`, icon: '📋' },
   ]
 
   return (
@@ -59,7 +81,10 @@ export default function Reports() {
       <div className="bg-white rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
         {rows.map((r) => (
           <div key={r.label} className="px-4 py-3 flex items-center justify-between text-sm">
-            <span className="text-black/60">{r.label}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-lg">{r.icon}</span>
+              <span className="text-black/60">{r.label}</span>
+            </div>
             <span className="text-[var(--avenize-black)] font-medium">{r.value}</span>
           </div>
         ))}
