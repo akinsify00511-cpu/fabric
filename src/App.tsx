@@ -97,6 +97,13 @@ const CommentsAndTimeline = lazy(() => import('./pages/CommentsAndTimeline'))
 const CommentsPage = lazy(() => import('./pages/CommentsAndTimeline').then(m => ({ default: m.CommentsPage })))
 const CurrencyExchange = lazy(() => import('./pages/CurrencyExchange'))
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'))
+const Organization = lazy(() => import('./pages/Organization'))
+const LeaveManagement = lazy(() => import('./pages/LeaveManagement'))
+const Announcements = lazy(() => import('./pages/Announcements'))
+const ExpenseClaims = lazy(() => import('./pages/ExpenseClaims'))
+const AssetManagement = lazy(() => import('./pages/AssetManagement'))
+const ResourceBooking = lazy(() => import('./pages/ResourceBooking'))
+const Attendance = lazy(() => import('./pages/Attendance'))
 
 // Loading fallback component
 function PageLoader() {
@@ -255,6 +262,13 @@ function AppRoutes() {
         <Route path="comments" element={<CommentsPage />} />
         <Route path="currency" element={<CurrencyExchange />} />
         <Route path="workflows" element={<WorkflowBuilder />} />
+        <Route path="organization" element={<Organization />} />
+        <Route path="leave" element={<LeaveManagement />} />
+        <Route path="announcements" element={<Announcements />} />
+        <Route path="expenses" element={<ExpenseClaims />} />
+        <Route path="assets" element={<AssetManagement />} />
+        <Route path="booking" element={<ResourceBooking />} />
+        <Route path="attendance" element={<Attendance />} />
         </Route>
         </Routes>
       </Suspense>
