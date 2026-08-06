@@ -8,6 +8,7 @@ import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
 import BetaFeedbackButton from './components/BetaFeedbackButton'
 import QCDashboard from './components/QCDashboard'
+import PersonalizationHub from './components/PersonalizationHub'
 import { setupGlobalErrorHandlers } from './lib/quality-control'
 
 // Initialize QC system on app load
@@ -79,6 +80,7 @@ const Premium = lazy(() => import('./pages/Premium'))
 const StaffProfile = lazy(() => import('./pages/StaffProfile'))
 const BusinessInfrastructure = lazy(() => import('./pages/BusinessInfrastructure'))
 const SarahChat = lazy(() => import('./components/SarahChat'))
+const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics'))
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 const CookieConsent = lazy(() => import('./components/CookieConsent'))
 const NotFound = lazy(() => import('./pages/NotFound'))
@@ -239,6 +241,7 @@ function AppRoutes() {
         <Route path="organogram" element={<Organogram />} />
         <Route path="meetings" element={<Meetings />} />
         <Route path="notifications" element={<Notifications />} />
+        <Route path="admin-analytics" element={<AdminAnalytics />} />
         </Route>
         </Routes>
       </Suspense>
@@ -258,6 +261,8 @@ export default function App() {
                 <AppRoutes />
                 {/* Quality Control Dashboard - visible in dev mode */}
                 {import.meta.env.DEV && <QCDashboard />}
+                {/* Personalization Hub - suggestions based on user behavior */}
+                <PersonalizationHub />
               </BrowserRouter>
             </LocaleProvider>
           </BrandingProvider>
