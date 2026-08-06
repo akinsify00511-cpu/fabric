@@ -78,6 +78,7 @@ const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 const CookieConsent = lazy(() => import('./components/CookieConsent'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const Privacy = lazy(() => import('./pages/Privacy'))
+const Notifications = lazy(() => import('./pages/Notifications'))
 const Terms = lazy(() => import('./pages/Terms'))
 const Contact = lazy(() => import('./pages/Contact'))
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'))
@@ -232,6 +233,7 @@ function AppRoutes() {
         <Route path="monitoring" element={<Monitoring />} />
         <Route path="organogram" element={<Organogram />} />
         <Route path="meetings" element={<Meetings />} />
+        <Route path="notifications" element={<Notifications />} />
         </Route>
         </Routes>
       </Suspense>
