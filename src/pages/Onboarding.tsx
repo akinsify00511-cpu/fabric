@@ -8,9 +8,9 @@ import {
 
 // Brand color palette - black, ash (gray), white
 const BRAND_COLORS = [
-  { id: 'black', name: 'Graphite', hex: '#111111', textColor: '#FFFFFF' },
-  { id: 'ash', name: 'Ash', hex: '#E8E8E8', textColor: '#111111' },
-  { id: 'white', name: 'White', hex: '#FFFFFF', textColor: '#111111' },
+  { id: 'black', name: 'Graphite', hex: '#1a1a1a', textColor: '#FFFFFF', borderColor: '#333333' },
+  { id: 'ash', name: 'Ash', hex: '#f0f0ed', textColor: '#1a1a1a', borderColor: '#d4d4d0' },
+  { id: 'white', name: 'White', hex: '#FFFFFF', textColor: '#1a1a1a', borderColor: '#e5e5e5' },
 ]
 
 const STEPS = [
@@ -175,7 +175,7 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--avenize-offwhite)] flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Progress Sidebar */}
       <div className="hidden md:flex w-80 bg-white border-r border-black/5 flex-col">
         <div className="p-8">
@@ -251,7 +251,7 @@ export default function Onboarding() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Your Company Ltd"
-                className="w-full px-4 py-4 rounded-xl border-2 border-black/10 text-lg focus:border-[var(--avenize-primary)] focus:outline-none"
+                className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 text-lg focus:border-[var(--avenize-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20 transition-all"
                 autoFocus
               />
             </div>
@@ -269,7 +269,7 @@ export default function Onboarding() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Chinedu Okonkwo"
-                className="w-full px-4 py-4 rounded-xl border-2 border-black/10 text-lg focus:border-[var(--avenize-primary)] focus:outline-none"
+                className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 text-lg focus:border-[var(--avenize-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20 transition-all"
                 autoFocus
               />
             </div>
@@ -287,36 +287,55 @@ export default function Onboarding() {
                   <button
                     key={color.id}
                     onClick={() => setSelectedColor(color)}
-                    className={`relative p-6 rounded-2xl border-2 transition-all ${
+                    className={`relative p-6 rounded-2xl border-2 transition-all hover:scale-105 ${
                       selectedColor?.id === color.id
-                        ? 'border-[var(--avenize-primary)] shadow-lg'
-                        : 'border-black/10 hover:border-black/30'
+                        ? 'border-[var(--avenize-primary)] shadow-lg ring-2 ring-[var(--avenize-primary)] ring-offset-2'
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                     }`}
                     style={{ backgroundColor: color.hex }}
                   >
+                    {/* Preview Card */}
                     <div 
-                      className="w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl font-bold"
-                      style={{ color: color.textColor }}
+                      className="w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl font-bold border shadow-sm"
+                      style={{ 
+                        backgroundColor: color.id === 'white' ? '#f9f9f9' : color.id === 'ash' ? '#e8e8e5' : '#2a2a2a',
+                        color: color.textColor,
+                        borderColor: color.borderColor
+                      }}
                     >
                       A
                     </div>
+                    
+                    {/* Color Name */}
                     <span 
-                      className="block text-sm font-medium text-center"
+                      className="block text-sm font-semibold text-center"
                       style={{ color: color.textColor }}
                     >
                       {color.name}
                     </span>
+                    
+                    {/* Color Code */}
+                    <span 
+                      className="block text-xs text-center mt-1"
+                      style={{ color: color.textColor, opacity: 0.7 }}
+                    >
+                      {color.hex}
+                    </span>
+                    
+                    {/* Selected Checkmark */}
                     {selectedColor?.id === color.id && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                        <Check size={14} className="text-white" />
+                      <div className="absolute -top-3 -right-3 w-8 h-8 bg-[var(--avenize-primary)] rounded-full flex items-center justify-center shadow-lg">
+                        <Check size={18} className="text-white" />
                       </div>
                     )}
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-black/40 text-center">
-                Your text color will automatically contrast for readability
-              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+                <p className="text-xs text-blue-700 text-center">
+                  <span className="font-medium">Text color auto-adjusts</span> for optimal readability on each theme
+                </p>
+              </div>
             </div>
           )}
 
@@ -387,7 +406,7 @@ export default function Onboarding() {
             {step > 0 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-xl border border-black/10 font-medium"
+                className="px-6 py-3 rounded-xl border-2 border-gray-200 font-medium hover:bg-gray-50 transition-colors"
               >
                 Back
               </button>
@@ -395,7 +414,7 @@ export default function Onboarding() {
             <button
               onClick={handleNext}
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl avenize-gradient text-white py-3 font-semibold disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-[var(--avenize-primary)] text-white py-3 font-semibold disabled:opacity-50 hover:opacity-90 transition-opacity shadow-sm hover:shadow-md"
             >
               {loading ? (
                 <Loader2 size={20} className="animate-spin" />
