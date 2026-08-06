@@ -104,6 +104,8 @@ const ExpenseClaims = lazy(() => import('./pages/ExpenseClaims'))
 const AssetManagement = lazy(() => import('./pages/AssetManagement'))
 const ResourceBooking = lazy(() => import('./pages/ResourceBooking'))
 const Attendance = lazy(() => import('./pages/Attendance'))
+const PaymentSettings = lazy(() => import('./pages/PaymentSettings'))
+const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'))
 
 // Loading fallback component
 function PageLoader() {
@@ -269,6 +271,8 @@ function AppRoutes() {
         <Route path="assets" element={<AssetManagement />} />
         <Route path="booking" element={<ResourceBooking />} />
         <Route path="attendance" element={<Attendance />} />
+        <Route path="payments" element={<PaymentSettings />} />
+        <Route path="notifications-center" element={<NotificationsCenter />} />
         </Route>
         </Routes>
       </Suspense>
