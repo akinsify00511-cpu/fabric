@@ -15,6 +15,8 @@ export default function Profile() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [jobTitle, setJobTitle] = useState('')
+  const [department, setDepartment] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [profileLoading, setProfileLoading] = useState(false)
@@ -40,6 +42,8 @@ export default function Profile() {
       setFullName(staff.full_name || staff.name || '')
       setEmail(staff.user?.email || '')
       setPhone(staff.phone || '')
+      setJobTitle((staff as any).job_title || '')
+      setDepartment((staff as any).department || '')
       setAvatarUrl(staff.avatar_url || null)
     }
   }, [staff])
@@ -101,6 +105,8 @@ export default function Profile() {
       .update({
         full_name: fullName,
         phone,
+        job_title: jobTitle || null,
+        department: department || null,
       })
       .eq('id', staff.id)
 
@@ -335,6 +341,32 @@ export default function Profile() {
                 onChange={(e) => setPhone(e.target.value)}
                 className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
                 placeholder="+234..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                Job Title
+              </label>
+              <input
+                type="text"
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
+                placeholder="e.g. Sales Manager"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                Department
+              </label>
+              <input
+                type="text"
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
+                placeholder="e.g. Sales, Operations, Finance"
               />
             </div>
 

@@ -41,6 +41,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const [industry, setIndustry] = useState('')
   const [fullName, setFullName] = useState(staff?.full_name || '')
   const [jobTitle, setJobTitle] = useState('')
+  const [department, setDepartment] = useState('')
   const [teamSize, setTeamSize] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -50,11 +51,16 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
     // Set localStorage for quick access
     localStorage.setItem('avenize_onboarding_complete', 'true')
     
-    // Update staff record for persistence
+    // Update staff record for persistence - save profile data too
     if (staff?.id) {
       await supabase
         .from('staff')
-        .update({ onboarding_completed: true })
+        .update({ 
+          onboarding_completed: true,
+          full_name: fullName || staff.full_name,
+          job_title: jobTitle || null,
+          department: department || null,
+        })
         .eq('id', staff.id)
     }
   }
