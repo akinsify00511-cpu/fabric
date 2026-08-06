@@ -7,6 +7,11 @@ import { BrandingProvider } from './lib/BrandingContext'
 import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
 import BetaFeedbackButton from './components/BetaFeedbackButton'
+import QCDashboard from './components/QCDashboard'
+import { setupGlobalErrorHandlers } from './lib/quality-control'
+
+// Initialize QC system on app load
+setupGlobalErrorHandlers()
 
 // Lazy load heavy pages for code splitting
 const Login = lazy(() => import('./pages/Login'))
@@ -251,6 +256,8 @@ export default function App() {
               <BrowserRouter>
                 <CookieConsent />
                 <AppRoutes />
+                {/* Quality Control Dashboard - visible in dev mode */}
+                {import.meta.env.DEV && <QCDashboard />}
               </BrowserRouter>
             </LocaleProvider>
           </BrandingProvider>

@@ -1,32 +1,61 @@
 import { Component, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw } from 'lucide-react'
+import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { qcLogger, issueReporter } from '../lib/quality-control'
 
 interface Props {
   children: ReactNode
   fallback?: ReactNode
+  onError?: (error: Error, errorInfo: any) => void
 }
 
 interface State {
   hasError: boolean
-  error?: Error
+  error: Error | null
+  errorId: string | null
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = { hasError: false }
+    this.state = { hasError: false, error: null, errorId: null }
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
-    console.error('Error caught by boundary:', error, errorInfo)
+  async componentDidCatch(error: Error, errorInfo: any) {
+    // Generate error ID for tracking
+    const errorId = crypto.randomUUID()
+    
+    // Log to QC system
+    qcLogger.error('React Error Boundary caught an error', {
+      errorId,
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      componentStack: errorInfo?.componentStack,
+    })
+
+    // Report to issue tracker
+    await issueReporter.reportBug(
+      `UI Error: ${error.message.slice(0, 100)}`,
+      `${error.name}: ${error.message}\n\nStack:\n${error.stack || 'No stack trace'}`,
+      {
+        errorId,
+        componentStack: errorInfo?.componentStack,
+        page: window.location.pathname,
+        userAgent: navigator.userAgent,
+      }
+    )
+
+    this.setState({ errorId })
+    this.props.onError?.(error, errorInfo)
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, error: undefined })
+    this.setState({ hasError: false, error: null, errorId: null })
   }
 
   render() {
@@ -43,8 +72,16 @@ export default class ErrorBoundary extends Component<Props, State> {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
             <p className="text-gray-500 mb-6">
-              We're sorry. Something unexpected happened. Please try again.
+              We encountered an unexpected error. This has been logged automatically.
             </p>
+
+            {this.state.errorId && (
+              <div className="mb-4 p-3 bg-black/5 rounded-lg">
+                <p className="text-xs text-black/50">Reference ID</p>
+                <p className="font-mono text-sm text-black/70">{this.state.errorId}</p>
+              </div>
+            )}
+
             <div className="space-y-3">
               <button
                 onClick={this.handleRetry}
@@ -55,17 +92,25 @@ export default class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => window.location.href = '/app'}
-                className="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition"
               >
+                <Home size={18} />
                 Go to Dashboard
               </button>
             </div>
-            {typeof window !== 'undefined' && window.location.hostname === 'localhost' && this.state.error && (
-              <div className="mt-6 p-4 bg-red-50 rounded-lg text-left">
-                <p className="text-xs font-mono text-red-600 break-all">
+
+            {/* Show detailed error in dev mode */}
+            {import.meta.env.DEV && this.state.error && (
+              <details className="mt-6 p-4 bg-red-50 rounded-lg text-left">
+                <summary className="text-xs font-medium text-red-600 cursor-pointer">
+                  Technical Details
+                </summary>
+                <pre className="mt-2 p-2 bg-white rounded text-xs text-red-700 overflow-x-auto max-h-40">
                   {this.state.error.message}
-                </p>
-              </div>
+                  {'\n\n'}
+                  {this.state.error.stack?.split('\n').slice(0, 8).join('\n')}
+                </pre>
+              </details>
             )}
           </div>
         </div>
@@ -74,4 +119,22 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return this.props.children
   }
+}
+
+// Hook for manual error reporting
+export function useErrorReporting() {
+  const reportError = async (title: string, error: Error | string, context?: Record<string, any>) => {
+    const errorMessage = typeof error === 'string' ? error : error.message
+    const errorStack = typeof error === 'string' ? undefined : error.stack
+
+    qcLogger.error(title, { message: errorMessage, stack: errorStack, ...context })
+
+    await issueReporter.reportBug(
+      title,
+      errorMessage,
+      { stack: errorStack, ...context }
+    )
+  }
+
+  return { reportError }
 }
