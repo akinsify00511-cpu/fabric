@@ -23,6 +23,9 @@ const HumanResources = lazy(() => import('./pages/HumanResources'))
 const Operations = lazy(() => import('./pages/Operations'))
 const SalesPerformance = lazy(() => import('./pages/SalesPerformance'))
 const FinanceCenter = lazy(() => import('./pages/FinanceCenter'))
+const Logistics = lazy(() => import('./pages/Logistics'))
+const Equipment = lazy(() => import('./pages/Equipment'))
+const LabQC = lazy(() => import('./pages/LabQC'))
 const Payments = lazy(() => import('./pages/Payments'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const Reports = lazy(() => import('./pages/Reports'))
@@ -192,6 +195,9 @@ function AppRoutes() {
         <Route path="hr" element={<HumanResources />} />
         <Route path="operations" element={<Operations />} />
         <Route path="sales-performance" element={<SalesPerformance />} />
+        <Route path="logistics" element={<Logistics />} />
+        <Route path="equipment" element={<Equipment />} />
+        <Route path="lab" element={<LabQC />} />
         <Route path="inventory" element={<InventoryNigeria />} />
         <Route path="reports" element={<Reports />} />
         <Route path="settings" element={<Settings />} />
