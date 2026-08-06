@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Plus, ArrowRight, Zap } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Plus, ArrowRight, Zap, Wrench } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
@@ -17,9 +17,11 @@ const NAV_ITEMS = [
   { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
   { to: '/app/tickets', label: 'Support', icon: Headphones, toolKey: 'tickets' },
   { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
+  { to: '/app/jobs', label: 'Jobs', icon: Wrench, toolKey: 'jobs' },
   { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
   { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
   { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
+  { to: '/app/invoices', label: 'Invoices', icon: FileText, toolKey: 'invoices' },
   { to: '/app/people', label: 'People', icon: Contact, toolKey: 'people' },
   { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
   { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
@@ -34,7 +36,9 @@ const NAV_ITEMS = [
 
 const QUICK_ACTIONS = [
   { label: 'New Deal', icon: Plus, path: '/app/crm', action: 'new_deal' },
+  { label: 'New Job', icon: Plus, path: '/app/jobs', action: 'new_job' },
   { label: 'New Task', icon: Plus, path: '/app/tasks', action: 'new_task' },
+  { label: 'New Invoice', icon: Plus, path: '/app/invoices', action: 'new_invoice' },
   { label: 'New Contact', icon: Plus, path: '/app/crm', action: 'new_contact' },
 ]
 

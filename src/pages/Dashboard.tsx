@@ -9,7 +9,7 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import {
   Users, DollarSign, Target, CheckSquare, 
-  TrendingUp, Flame, Building2
+  TrendingUp, Flame, Building2, Wrench
 } from 'lucide-react'
 
 interface DashboardStats {
@@ -49,9 +49,9 @@ interface WorkspaceModule {
 
 const WORKSPACE_MODULES: WorkspaceModule[] = [
   { name: 'CRM', href: '/app/crm', icon: <Users size={20} />, color: '#185FA5', bgColor: '#E6F1FB' },
+  { name: 'Jobs', href: '/app/jobs', icon: <Wrench size={20} />, color: '#C2410C', bgColor: '#FFF7ED' },
   { name: 'Finance', href: '/app/finance', icon: <DollarSign size={20} />, color: '#27500A', bgColor: '#EAF3DE' },
   { name: 'Projects', href: '/app/projects', icon: <Target size={20} />, color: '#633806', bgColor: '#FAEEDA' },
-  { name: 'People', href: '/app/people', icon: <Building2 size={20} />, color: '#3C3489', bgColor: '#EEEDFE' },
 ]
 
 const formatCurrency = (amount: number) => {

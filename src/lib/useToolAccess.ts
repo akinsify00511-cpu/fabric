@@ -12,9 +12,11 @@ import { useAuth } from './AuthContext'
 export const TOOLS = [
   { key: 'dashboard', label: 'Dashboard', category: 'core' },
   { key: 'crm', label: 'CRM', category: 'sales' },
+  { key: 'jobs', label: 'Jobs', category: 'ops' },
   { key: 'projects', label: 'Projects', category: 'ops' },
   { key: 'finance', label: 'Finance', category: 'finance' },
   { key: 'quotes', label: 'Quotes', category: 'sales' },
+  { key: 'invoices', label: 'Invoices', category: 'finance' },
   { key: 'payments', label: 'Payments', category: 'finance' },
   { key: 'accounting', label: 'Accounting', category: 'finance' },
   { key: 'people', label: 'People', category: 'hr' },

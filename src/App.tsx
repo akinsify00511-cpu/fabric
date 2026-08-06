@@ -18,6 +18,7 @@ const Join = lazy(() => import('./pages/Join'))
 const AuthCallback = lazy(() => import('./pages/AuthCallback'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const CRM = lazy(() => import('./pages/CRM'))
+const Jobs = lazy(() => import('./pages/Jobs'))
 const People = lazy(() => import('./pages/People'))
 const HumanResources = lazy(() => import('./pages/HumanResources'))
 const Operations = lazy(() => import('./pages/Operations'))
@@ -27,6 +28,7 @@ const Logistics = lazy(() => import('./pages/Logistics'))
 const Equipment = lazy(() => import('./pages/Equipment'))
 const LabQC = lazy(() => import('./pages/LabQC'))
 const Payments = lazy(() => import('./pages/Payments'))
+const Invoices = lazy(() => import('./pages/Invoices'))
 const Pricing = lazy(() => import('./pages/Pricing'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Settings = lazy(() => import('./pages/Settings'))
@@ -139,7 +141,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   // Backward-compatible redirects: old flat paths → new /app/... paths
   const appRoutes = [
-    'dashboard', 'crm', 'projects', 'finance', 'quotes', 'payments', 'people',
+    'dashboard', 'crm', 'jobs', 'projects', 'finance', 'quotes', 'invoices', 'payments', 'people',
     'inventory', 'reports', 'settings', 'more', 'social', 'approvals', 'tasks',
     'merit', 'cashflow', 'chat', 'knowledge', 'automations', 'tickets',
     'campaigns', 'accounting', 'branding', 'security', 'sso', 'api', 'portal',
@@ -187,9 +189,11 @@ function AppRoutes() {
         >
         <Route index element={<CompanyHome />} />
         <Route path="crm" element={<CRM />} />
+        <Route path="jobs" element={<Jobs />} />
         <Route path="projects" element={<ProjectsNigeria />} />
         <Route path="finance" element={<FinanceCenter />} />
         <Route path="quotes" element={<Quotes />} />
+        <Route path="invoices" element={<Invoices />} />
         <Route path="payments" element={<Payments />} />
         <Route path="people" element={<People />} />
         <Route path="hr" element={<HumanResources />} />
