@@ -10,6 +10,7 @@ test.describe('Keyboard Navigation', () => {
     // Enable demo mode by setting localStorage
     await page.goto('/login')
     await page.evaluate(() => {
+      localStorage.setItem('avenize_demo', 'true')
       localStorage.setItem('avenize_demo_user', JSON.stringify({
         id: 'test-user-1',
         name: 'Test User',

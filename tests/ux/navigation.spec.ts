@@ -10,6 +10,7 @@ test.describe('Navigation', () => {
     // Set demo mode
     await page.goto('/login')
     await page.evaluate(() => {
+      localStorage.setItem('avenize_demo', 'true')
       localStorage.setItem('avenize_demo_user', JSON.stringify({
         id: 'test-user-1',
         name: 'Test User',
