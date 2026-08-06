@@ -230,7 +230,7 @@ export async function getUserExports(limit = 20) {
 }
 
 // ============================================
-// Search Service
+// Search Service with Fuzzy Matching & Autocomplete
 // ============================================
 
 export interface SearchResult {
@@ -243,6 +243,78 @@ export interface SearchResult {
   metadata: Record<string, any>
 }
 
+export interface SearchSuggestion {
+  text: string
+  type: 'recent' | 'popular' | 'entity'
+  entityType?: string
+}
+
+// Fuzzy match score (simple Levenshtein-inspired)
+function fuzzyMatch(query: string, text: string): number {
+  const q = query.toLowerCase()
+  const t = text.toLowerCase()
+  
+  // Exact match
+  if (t.includes(q)) return 1.0
+  
+  // Starts with
+  if (t.startsWith(q)) return 0.9
+  
+  // Word starts with
+  const words = t.split(/\s+/)
+  for (const word of words) {
+    if (word.startsWith(q)) return 0.8
+  }
+  
+  // Contains characters in order
+  let qi = 0
+  for (let i = 0; i < t.length && qi < q.length; i++) {
+    if (t[i] === q[qi]) qi++
+  }
+  if (qi === q.length) return 0.5
+  
+  // Fuzzy character match
+  const matchRatio = qi / q.length
+  if (matchRatio > 0.5) return matchRatio * 0.4
+  
+  return 0
+}
+
+// Sort by relevance score
+function sortByRelevance<T extends { title: string; content?: string }>(
+  items: T[],
+  query: string
+): T[] {
+  return items
+    .map(item => ({
+      item,
+      score: Math.max(
+        fuzzyMatch(query, item.title),
+        item.content ? fuzzyMatch(query, item.content) * 0.7 : 0
+      )
+    }))
+    .filter(({ score }) => score > 0.2)
+    .sort((a, b) => b.score - a.score)
+    .map(({ item }) => item)
+}
+
+// Highlight matching text
+export function highlightMatch(text: string, query: string): { before: string; match: string; after: string } | null {
+  if (!query.trim()) return null
+  
+  const lowerText = text.toLowerCase()
+  const lowerQuery = query.toLowerCase()
+  const index = lowerText.indexOf(lowerQuery)
+  
+  if (index === -1) return null
+  
+  return {
+    before: text.slice(0, index),
+    match: text.slice(index, index + query.length),
+    after: text.slice(index + query.length)
+  }
+}
+
 export async function search(query: string, entityTypes?: string[], limit = 20): Promise<SearchResult[]> {
   if (!query.trim()) return []
 
@@ -253,7 +325,7 @@ export async function search(query: string, entityTypes?: string[], limit = 20):
       .select('*')
       .textSearch('search_vector', query.split(' ').join(' | '))
       .order('rank', { ascending: false })
-      .limit(limit)
+      .limit(limit * 2) // Get more for client-side fuzzy filtering
 
     if (entityTypes && entityTypes.length > 0) {
       dbQuery = dbQuery.in('entity_type', entityTypes)
@@ -267,12 +339,48 @@ export async function search(query: string, entityTypes?: string[], limit = 20):
         .from('search_indexes')
         .select('*')
         .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
-        .limit(limit)
+        .limit(limit * 2)
 
-      return (fallbackData || []) as SearchResult[]
+      const results = (fallbackData || []) as SearchResult[]
+      // Apply fuzzy matching and re-sort
+      const sorted = sortByRelevance(results, query)
+      return sorted.slice(0, limit)
     }
 
-    return (data || []) as SearchResult[]
+    const results = (data || []) as SearchResult[]
+    // Apply fuzzy matching and re-sort
+    const sorted = sortByRelevance(results, query)
+    return sorted.slice(0, limit)
+  } catch {
+    return []
+  }
+}
+
+// Autocomplete suggestions
+export async function getSearchSuggestions(query: string, limit = 5): Promise<SearchSuggestion[]> {
+  if (!query.trim() || query.length < 2) return []
+
+  const suggestions: SearchSuggestion[] = []
+  
+  try {
+    // Search for matching entity names
+    const { data: entities } = await supabase
+      .from('search_indexes')
+      .select('title, entity_type')
+      .ilike('title', `${query}%`)
+      .limit(limit)
+    
+    if (entities) {
+      for (const entity of entities) {
+        suggestions.push({
+          text: entity.title,
+          type: 'entity',
+          entityType: entity.entity_type
+        })
+      }
+    }
+    
+    return suggestions.slice(0, limit)
   } catch {
     return []
   }

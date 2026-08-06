@@ -6,7 +6,7 @@
 import { supabase } from './supabase'
 
 type NotificationCategory = 'onboarding' | 'task' | 'payment' | 'reminder' | 'marketing' | 'social' | 'system'
-type NotificationChannel = 'in_app' | 'email' | 'both'
+type NotificationChannel = 'in_app' | 'email' | 'sms' | 'both'
 
 interface CreateNotificationParams {
   userId: string
@@ -138,6 +138,13 @@ export async function updateNotificationPreferences(
     email_feature_updates: boolean
     email_tips_tricks: boolean
     email_promotions: boolean
+    // SMS preferences
+    sms_onboarding: boolean
+    sms_tasks: boolean
+    sms_payments: boolean
+    sms_reminders: boolean
+    sms_marketing: boolean
+    sms_security: boolean
   }>
 ) {
   try {

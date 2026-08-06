@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
@@ -7,7 +7,8 @@ import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
 import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
 import {
   Zap, Plus, Play, Pause, Trash2, Settings, ChevronRight, CheckCircle2,
-  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X, Sparkles
+  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X, Sparkles,
+  GripVertical, ChevronDown, Info, Eye, EyeOff, Edit3
 } from 'lucide-react'
 
 type Automation = {
@@ -399,70 +400,102 @@ const [automations, setAutomations] = useState<Automation[]>([])
         </div>
       ) : (
         <div className="space-y-3">
-          {automations.map((auto) => (
-            <div
-              key={auto.id}
-              className={`bg-white rounded-2xl border border-black/[0.06] p-4 transition ${
-                !auto.enabled ? 'opacity-60' : ''
-              }`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{getTriggerIcon(auto.trigger_type)}</span>
-                    <ArrowRight size={14} className="text-black/20" />
-                    <span className="text-lg">{getActionIcon(auto.action_type)}</span>
-                    <h3 className="text-sm font-medium text-[var(--avenize-black)]">{auto.name}</h3>
-                    {!auto.enabled && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>
+          {automations.map((auto) => {
+            const trigger = TRIGGERS.find((t) => t.type === auto.trigger_type)
+            const action = ACTIONS.find((a) => a.type === auto.action_type)
+            
+            return (
+              <div
+                key={auto.id}
+                className={`bg-white rounded-2xl border border-black/[0.06] p-4 transition hover:shadow-md ${
+                  !auto.enabled ? 'opacity-60' : ''
+                }`}
+              >
+                {/* Visual Flow Preview */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 mb-3">
+                  {/* Trigger */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
+                    <span className="text-xl">{trigger?.icon || '⚡'}</span>
+                    <div>
+                      <div className="text-xs text-black/50">When</div>
+                      <div className="text-sm font-medium">{trigger?.name || auto.trigger_type}</div>
+                    </div>
+                  </div>
+                  
+                  {/* Arrow */}
+                  <div className="flex items-center">
+                    <ArrowRight className="text-[var(--avenize-primary)]" size={20} />
+                  </div>
+                  
+                  {/* Action */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
+                    <span className="text-xl">{action?.icon || '⚡'}</span>
+                    <div>
+                      <div className="text-xs text-black/50">Do</div>
+                      <div className="text-sm font-medium">{action?.name || auto.action_type}</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-sm font-medium text-[var(--avenize-black)]">{auto.name}</h3>
+                      {!auto.enabled && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>
+                      )}
+                      {auto.enabled && (
+                        <span className="flex items-center gap-1 text-xs text-green-600">
+                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    {auto.description && (
+                      <p className="text-xs text-black/50">{auto.description}</p>
                     )}
                   </div>
-                  <p className="text-xs text-black/40">
-                    {TRIGGERS.find((t) => t.type === auto.trigger_type)?.name} → {ACTIONS.find((a) => a.type === auto.action_type)?.name}
-                  </p>
-                  {auto.description && (
-                    <p className="text-xs text-black/50 mt-1">{auto.description}</p>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        setSelectedAutomation(auto)
+                        setShowRuns(true)
+                      }}
+                      className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
+                      title="View runs"
+                    >
+                      <Activity size={16} />
+                    </button>
+                    <button
+                      onClick={() => toggleAutomation(auto)}
+                      className={`p-2 rounded-lg ${auto.enabled ? 'text-amber-500 hover:bg-amber-50' : 'text-green-500 hover:bg-green-50'}`}
+                      title={auto.enabled ? 'Pause' : 'Enable'}
+                    >
+                      {auto.enabled ? <Pause size={16} /> : <Play size={16} />}
+                    </button>
+                    <button
+                      onClick={() => deleteAutomation(auto.id)}
+                      className="p-2 hover:bg-red-50 rounded-lg text-red-400"
+                      title="Delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/[0.06]">
+                  <span className="flex items-center gap-1 text-xs text-black/30">
+                    <Activity size={12} />
+                    {auto.run_count} runs
+                  </span>
+                  {auto.last_run_at && (
+                    <span className="text-xs text-black/30">
+                      Last: {new Date(auto.last_run_at).toLocaleString()}
+                    </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedAutomation(auto)
-                      setShowRuns(true)
-                    }}
-                    className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
-                    title="View runs"
-                  >
-                    <Activity size={16} />
-                  </button>
-                  <button
-                    onClick={() => toggleAutomation(auto)}
-                    className={`p-2 rounded-lg ${auto.enabled ? 'text-green-500 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
-                    title={auto.enabled ? 'Pause' : 'Enable'}
-                  >
-                    {auto.enabled ? <Pause size={16} /> : <Play size={16} />}
-                  </button>
-                  <button
-                    onClick={() => deleteAutomation(auto.id)}
-                    className="p-2 hover:bg-red-50 rounded-lg text-red-400"
-                    title="Delete"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
               </div>
-              <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/[0.06]">
-                <span className="text-xs text-black/30">
-                  {auto.run_count} runs
-                </span>
-                {auto.last_run_at && (
-                  <span className="text-xs text-black/30">
-                    Last: {new Date(auto.last_run_at).toLocaleString()}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

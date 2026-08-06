@@ -4,11 +4,12 @@ import {
   AlertTriangle, Eye, MousePointer, Search, Zap,
   Calendar, Filter, Download, RefreshCw, ChevronDown,
   Database, Globe, MessageSquare, CreditCard, Settings,
-  CheckCircle, XCircle, Filter as FilterIcon
+  CheckCircle, XCircle, Filter as FilterIcon, TrendingDown, PieChart as PieChartIcon
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { getAdminAnalytics, getRecentEvents } from '../lib/eventTracker'
 import { supabase } from '../lib/supabase'
+import { BarChart, LineChart, PieChart, DonutChart, Sparkline } from '../lib/charts'
 
 // Admin-only check
 function useIsAdmin() {
@@ -22,6 +23,7 @@ interface AnalyticsData {
   topFeatures: any[]
   errorCount: number
   totalEvents: number
+  eventsOverTime: { label: string; value: number }[]
 }
 
 export default function AdminAnalytics() {
@@ -49,9 +51,34 @@ export default function AdminAnalytics() {
       getRecentEvents(staff.business_id, 100),
     ])
 
-    setAnalytics(analyticsData)
+    // Calculate events over time for the line chart
+    const eventsOverTime = calculateEventsOverTime(eventsData, timeRange)
+
+    setAnalytics({ ...analyticsData, eventsOverTime })
     setRecentEvents(eventsData)
     setLoading(false)
+  }
+
+  // Calculate events grouped by time period
+  function calculateEventsOverTime(events: any[], days: number) {
+    const now = new Date()
+    const data: { label: string; value: number }[] = []
+    
+    // Group by day
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(now)
+      date.setDate(date.getDate() - i)
+      const dateStr = date.toISOString().split('T')[0]
+      const label = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+      
+      const count = events.filter(e => 
+        e.created_at && e.created_at.startsWith(dateStr)
+      ).length
+      
+      data.push({ label, value: count })
+    }
+    
+    return data
   }
 
   if (!isAdmin) {
@@ -88,6 +115,24 @@ export default function AdminAnalytics() {
     auth: 'bg-gray-100 text-gray-600',
     performance: 'bg-orange-100 text-orange-600',
     engagement: 'bg-pink-100 text-pink-600',
+  }
+
+  // Get hex color for charts
+  const categoryColorValues: Record<string, string> = {
+    page_view: '#3B82F6',
+    user_action: '#10B981',
+    feature_usage: '#8B5CF6',
+    search: '#F59E0B',
+    error: '#EF4444',
+    payment: '#10B981',
+    notification: '#6366F1',
+    auth: '#6B7280',
+    performance: '#F97316',
+    engagement: '#EC4899',
+  }
+
+  function getCategoryColor(category: string): string {
+    return categoryColorValues[category] || '#6B7280'
   }
 
   const filteredEvents = selectedCategory === 'all' 
@@ -159,6 +204,81 @@ export default function AdminAnalytics() {
           icon={<TrendingUp size={20} />}
           color="bg-purple-500"
         />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid md:grid-cols-2 gap-6 mb-6">
+        {/* Events Over Time - Line Chart */}
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold">Events Over Time</h2>
+          </div>
+          <div className="h-48">
+            {analytics?.eventsOverTime && analytics.eventsOverTime.length > 0 ? (
+              <LineChart 
+                data={analytics.eventsOverTime}
+                width={500}
+                height={180}
+                showDots={analytics.eventsOverTime.length <= 14}
+                fill
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-black/30">
+                <div className="text-center">
+                  <TrendingUp size={32} className="mx-auto mb-2 opacity-30" />
+                  <p className="text-sm">No timeline data yet</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Category Distribution - Pie Chart */}
+        <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <h2 className="font-semibold mb-4">Category Distribution</h2>
+          {analytics?.eventsByCategory && analytics.eventsByCategory.length > 0 ? (
+            <div className="flex items-center justify-center">
+              <PieChart 
+                data={analytics.eventsByCategory.map((cat) => ({
+                  label: cat.category.replace('_', ' '),
+                  value: cat.count,
+                  color: getCategoryColor(cat.category),
+                }))}
+                size={160}
+              />
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-40 text-black/30">
+              <div className="text-center">
+                <PieChartIcon size={32} className="mx-auto mb-2 opacity-30" />
+                <p className="text-sm">No category data</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Top Features Bar Chart */}
+      <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
+        <h2 className="font-semibold mb-4">Top Features</h2>
+        {analytics?.topFeatures && analytics.topFeatures.length > 0 ? (
+          <BarChart 
+            data={analytics.topFeatures.slice(0, 6).map((feature) => ({
+              label: feature.action,
+              value: feature.count,
+            }))}
+            width={700}
+            height={200}
+            horizontal={false}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-40 text-black/30">
+            <div className="text-center">
+              <BarChart3 size={32} className="mx-auto mb-2 opacity-30" />
+              <p className="text-sm">No feature data</p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">

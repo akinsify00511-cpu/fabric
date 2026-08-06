@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   MessageSquare, Clock, User, Send, Reply, MoreHorizontal,
   Trash2, Edit2, Heart, Smile, Paperclip, AtSign,
@@ -19,6 +19,7 @@ interface Comment {
   parent_id?: string
   depth: number
   reactions: Record<string, string[]>
+  mentions?: string[]
   is_edited: boolean
   created_at: string
   replies?: Comment[]
@@ -37,6 +38,12 @@ interface TimelineItem {
   created_at: string
 }
 
+interface MentionSuggestion {
+  user_id: string
+  user_name: string
+  user_email: string
+}
+
 interface ActivityTimelineProps {
   entityType: string
   entityId: string
@@ -51,12 +58,126 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
   const [newComment, setNewComment] = useState('')
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  
+  // @mention autocomplete
+  const [mentionSuggestions, setMentionSuggestions] = useState<MentionSuggestion[]>([])
+  const [showMentionPopup, setShowMentionPopup] = useState(false)
+  const [mentionSearch, setMentionSearch] = useState('')
+  const [mentionStartIndex, setMentionStartIndex] = useState(-1)
+  const [selectedMentionIndex, setSelectedMentionIndex] = useState(0)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     if (entityType && entityId) {
       loadData()
     }
   }, [entityType, entityId])
+
+  // Fetch mention suggestions
+  useEffect(() => {
+    const fetchMentions = async () => {
+      if (!mentionSearch) {
+        // Load all team members when @ is typed
+        if (staff?.business_id) {
+          const { data } = await supabase
+            .from('staff')
+            .select('user_id, full_name, email')
+            .eq('business_id', staff.business_id)
+            .neq('user_id', staff.user_id)
+            .limit(10)
+          
+          setMentionSuggestions(data || [])
+        }
+      } else {
+        // Filter by search
+        if (staff?.business_id) {
+          const { data } = await supabase
+            .from('staff')
+            .select('user_id, full_name, email')
+            .eq('business_id', staff.business_id)
+            .neq('user_id', staff.user_id)
+            .ilike('full_name', `${mentionSearch}%`)
+            .limit(10)
+          
+          setMentionSuggestions(data || [])
+        }
+      }
+    }
+    
+    if (showMentionPopup) {
+      fetchMentions()
+    }
+  }, [mentionSearch, showMentionPopup, staff?.business_id, staff?.user_id])
+
+  // Handle @ mention in text
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value
+    const cursorPos = e.target.selectionStart
+    const textBeforeCursor = value.slice(0, cursorPos)
+    
+    // Check if we're typing a mention
+    const atIndex = textBeforeCursor.lastIndexOf('@')
+    
+    if (atIndex !== -1 && atIndex < cursorPos) {
+      const textAfterAt = textBeforeCursor.slice(atIndex + 1)
+      // Only show popup if there's no space after @
+      if (!textAfterAt.includes(' ')) {
+        setMentionStartIndex(atIndex)
+        setMentionSearch(textAfterAt)
+        setShowMentionPopup(true)
+        setSelectedMentionIndex(0)
+      } else {
+        setShowMentionPopup(false)
+      }
+    } else {
+      setShowMentionPopup(false)
+    }
+    
+    setNewComment(value)
+  }
+
+  // Insert mention into text
+  const insertMention = (user: MentionSuggestion) => {
+    const before = newComment.slice(0, mentionStartIndex)
+    const after = newComment.slice(textareaRef.current?.selectionStart || mentionStartIndex)
+    const mentionText = `@${user.full_name} `
+    
+    setNewComment(before + mentionText + after)
+    setShowMentionPopup(false)
+    
+    // Focus back on textarea
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const newPos = mentionStartIndex + mentionText.length
+        textareaRef.current.focus()
+        textareaRef.current.setSelectionRange(newPos, newPos)
+      }
+    }, 0)
+  }
+
+  // Handle keyboard in mention popup
+  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (showMentionPopup && mentionSuggestions.length > 0) {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault()
+          setSelectedMentionIndex(prev => Math.min(prev + 1, mentionSuggestions.length - 1))
+          break
+        case 'ArrowUp':
+          e.preventDefault()
+          setSelectedMentionIndex(prev => Math.max(prev - 1, 0))
+          break
+        case 'Enter':
+        case 'Tab':
+          e.preventDefault()
+          insertMention(mentionSuggestions[selectedMentionIndex])
+          break
+        case 'Escape':
+          setShowMentionPopup(false)
+          break
+      }
+    }
+  }
 
   async function loadData() {
     setLoading(true)
@@ -91,6 +212,22 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
     if (!newComment.trim() || !staff) return
 
     try {
+      // Extract mentions from content
+      const mentionMatches = newComment.match(/@(\w+(?:\s\w+)?)/g) || []
+      const mentionedNames = mentionMatches.map(m => m.slice(1).trim())
+      
+      // Get user IDs for mentions
+      let mentionedUserIds: string[] = []
+      if (mentionedNames.length > 0) {
+        const { data: mentionedUsers } = await supabase
+          .from('staff')
+          .select('user_id, full_name')
+          .eq('business_id', staff.business_id)
+          .in('full_name', mentionedNames)
+        
+        mentionedUserIds = mentionedUsers?.map(u => u.user_id) || []
+      }
+
       const { data, error } = await supabase
         .from('comments')
         .insert({
@@ -101,6 +238,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
           entity_id: entityId,
           parent_id: replyingTo,
           depth: replyingTo ? 1 : 0,
+          mentions: mentionedUserIds,
         })
         .select()
         .single()
@@ -112,8 +250,8 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
         business_id: staff.business_id,
         entity_type: entityType,
         entity_id: entityId,
-        activity_type: 'commented',
-        title: 'Comment added',
+        activity_type: mentionedUserIds.length > 0 ? 'mentioned' : 'commented',
+        title: mentionedUserIds.length > 0 ? 'Mentioned someone' : 'Comment added',
         content: newComment.slice(0, 100),
         user_id: staff.user_id,
         user_name: staff.full_name,
@@ -121,6 +259,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
 
       setNewComment('')
       setReplyingTo(null)
+      setShowMentionPopup(false)
       loadData()
     } catch (e) {
       console.error('Failed to add comment:', e)
@@ -195,22 +334,61 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
       )}
 
       {/* Comment Input */}
-      <div className="bg-white rounded-xl border border-black/[0.06] p-4">
+      <div className="bg-white rounded-xl border border-black/[0.06] p-4 relative">
         <div className="flex gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--avenize-primary)] to-purple-500 flex items-center justify-center text-white text-sm font-medium shrink-0">
             {staff?.full_name?.charAt(0) || 'U'}
           </div>
           <div className="flex-1">
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder={replyingTo ? 'Write a reply...' : 'Add a comment...'}
-              className="w-full p-3 rounded-lg border border-black/10 resize-none text-sm focus:outline-none focus:border-[var(--avenize-primary)]"
-              rows={3}
-            />
+            <div className="relative">
+              <textarea
+                ref={textareaRef}
+                value={newComment}
+                onChange={handleCommentChange}
+                onKeyDown={handleTextareaKeyDown}
+                placeholder={replyingTo ? 'Write a reply... Use @ to mention someone' : 'Add a comment... Use @ to mention someone'}
+                className="w-full p-3 rounded-lg border border-black/10 resize-none text-sm focus:outline-none focus:border-[var(--avenize-primary)]"
+                rows={3}
+              />
+              
+              {/* @Mention Autocomplete Popup */}
+              {showMentionPopup && mentionSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 bottom-full mb-1 bg-white rounded-lg border border-black/10 shadow-xl z-20 max-h-48 overflow-auto">
+                  <div className="p-2">
+                    <div className="text-xs text-black/40 px-2 py-1 flex items-center gap-1">
+                      <AtSign size={10} />
+                      Mention someone
+                    </div>
+                    {mentionSuggestions.map((user, idx) => (
+                      <button
+                        key={user.user_id}
+                        onClick={() => insertMention(user)}
+                        className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left transition ${
+                          selectedMentionIndex === idx 
+                            ? 'bg-[var(--avenize-primary)]/10 text-[var(--avenize-primary)]' 
+                            : 'hover:bg-black/5'
+                        }`}
+                      >
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
+                          {user.user_name?.charAt(0) || '?'}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium">{user.user_name}</div>
+                          <div className="text-xs text-black/40">{user.user_email}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
-                <button className="p-1.5 rounded hover:bg-black/5 text-black/40">
+                <button 
+                  className="p-1.5 rounded hover:bg-black/5 text-[var(--avenize-primary)]"
+                  title="Type @ to mention someone"
+                >
                   <AtSign size={16} />
                 </button>
                 <button className="p-1.5 rounded hover:bg-black/5 text-black/40">

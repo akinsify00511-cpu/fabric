@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Search, Clock, FileText, User, DollarSign, Briefcase,
   Folder, Tag, Bookmark, Filter, X, Plus, Star,
-  TrendingUp, Calendar, ChevronRight
+  TrendingUp, Calendar, ChevronRight, ArrowUp, ArrowDown, CornerDownLeft,
+  Sparkles
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { search, saveSearch, getSavedSearches, type SearchResult, type SavedSearch } from '../lib/auditLogger'
+import { search, saveSearch, getSavedSearches, getSearchSuggestions, highlightMatch, type SearchResult, type SavedSearch, type SearchSuggestion } from '../lib/auditLogger'
 import { supabase } from '../lib/supabase'
 
 const ENTITY_COLORS: Record<string, string> = {
@@ -34,14 +35,18 @@ const ENTITY_ICONS: Record<string, any> = {
 
 export default function SearchPage() {
   const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement>(null)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
   const [loading, setLoading] = useState(false)
   const [savedSearches, setSavedSearches] = useState<SavedSearch[]>([])
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [entityFilter, setEntityFilter] = useState<string[]>([])
   const [showSaveModal, setShowSaveModal] = useState(false)
   const [saveName, setSaveName] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [showSuggestions, setShowSuggestions] = useState(false)
 
   // Load saved searches
   useEffect(() => {
@@ -54,10 +59,29 @@ export default function SearchPage() {
     } catch {}
   }, [])
 
+  // Get autocomplete suggestions
+  useEffect(() => {
+    const getSuggestions = async () => {
+      if (query.length >= 2 && !results.length) {
+        const sugg = await getSearchSuggestions(query)
+        setSuggestions(sugg)
+        setShowSuggestions(sugg.length > 0)
+      } else {
+        setSuggestions([])
+        setShowSuggestions(false)
+      }
+    }
+    
+    const timer = setTimeout(getSuggestions, 150)
+    return () => clearTimeout(timer)
+  }, [query])
+
   // Search on submit
   const handleSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) return
     setLoading(true)
+    setShowSuggestions(false)
+    setSelectedIndex(-1)
 
     try {
       const searchResults = await search(searchQuery, entityFilter.length > 0 ? entityFilter : undefined)
@@ -86,6 +110,53 @@ export default function SearchPage() {
 
     return () => clearTimeout(timer)
   }, [query, handleSearch])
+
+  // Keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    const totalItems = suggestions.length + results.length
+    
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault()
+        setSelectedIndex(prev => Math.min(prev + 1, totalItems - 1))
+        break
+      case 'ArrowUp':
+        e.preventDefault()
+        setSelectedIndex(prev => Math.max(prev - 1, -1))
+        break
+      case 'Enter':
+        e.preventDefault()
+        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+          // Select suggestion
+          setQuery(suggestions[selectedIndex].text)
+          handleSearch(suggestions[selectedIndex].text)
+        } else if (selectedIndex >= suggestions.length && results.length > 0) {
+          // Select result
+          const resultIndex = selectedIndex - suggestions.length
+          navigateToResult(results[resultIndex])
+        } else if (query.trim()) {
+          // Submit search
+          handleSearch(query)
+        }
+        break
+      case 'Escape':
+        setShowSuggestions(false)
+        setSelectedIndex(-1)
+        break
+    }
+  }
+
+  const navigateToResult = (result: SearchResult) => {
+    const routeMap: Record<string, string> = {
+      contacts: `/app/crm?contact=${result.entityId}`,
+      tasks: `/app/tasks?id=${result.entityId}`,
+      staff: `/app/people?staff=${result.entityId}`,
+      invoices: `/app/finance?id=${result.entityId}`,
+      projects: `/app/projects?id=${result.entityId}`,
+      documents: `/app/documents?id=${result.entityId}`,
+    }
+    navigate(routeMap[result.entityType] || '/app')
+  }
 
   async function handleSaveSearch() {
     if (!saveName.trim() || !query.trim()) return
@@ -117,10 +188,14 @@ export default function SearchPage() {
         <div className="relative">
           <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" />
           <input
+            ref={inputRef}
             type="text"
             placeholder="Search everything..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             className="w-full pl-12 pr-12 py-4 rounded-2xl border border-black/10 text-lg focus:outline-none focus:border-[var(--avenize-primary)]"
             autoFocus
           />
@@ -132,7 +207,46 @@ export default function SearchPage() {
               <X size={20} className="text-black/40" />
             </button>
           )}
+          
+          {/* Keyboard Shortcuts Hint */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-2 text-xs text-black/30">
+            <kbd className="px-1.5 py-0.5 bg-black/5 rounded border border-black/10">↑↓</kbd>
+            <span>navigate</span>
+            <kbd className="px-1.5 py-0.5 bg-black/5 rounded border border-black/10 ml-2">↵</kbd>
+            <span>select</span>
+          </div>
         </div>
+
+        {/* Autocomplete Suggestions */}
+        {showSuggestions && suggestions.length > 0 && (
+          <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl border border-black/10 shadow-xl overflow-hidden">
+            <div className="p-2">
+              <div className="text-xs text-black/40 px-2 py-1 flex items-center gap-1">
+                <Sparkles size={10} />
+                Suggestions
+              </div>
+              {suggestions.map((suggestion, idx) => {
+                const Icon = ENTITY_ICONS[suggestion.entityType || 'contacts'] || FileText
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setQuery(suggestion.text)
+                      handleSearch(suggestion.text)
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition ${
+                      selectedIndex === idx ? 'bg-[var(--avenize-primary)]/10 text-[var(--avenize-primary)]' : 'hover:bg-black/5'
+                    }`}
+                  >
+                    <Icon size={16} className="text-black/40" />
+                    <span className="flex-1 truncate">{suggestion.text}</span>
+                    <CornerDownLeft size={14} className="text-black/30" />
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Entity Filters */}
         {results.length > 0 && (
@@ -187,26 +301,21 @@ export default function SearchPage() {
           </div>
 
           {/* Results List */}
-          {results.map((result) => {
+          {results.map((result, idx) => {
             const Icon = ENTITY_ICONS[result.entityType] || FileText
             const colorClass = ENTITY_COLORS[result.entityType] || 'bg-gray-100 text-gray-600'
+            const highlighted = highlightMatch(result.title, query)
 
             return (
               <button
                 key={result.id}
-                onClick={() => {
-                  // Navigate to the entity
-                  const routeMap: Record<string, string> = {
-                    contacts: `/app/crm?contact=${result.entityId}`,
-                    tasks: `/app/tasks?id=${result.entityId}`,
-                    staff: `/app/people?staff=${result.entityId}`,
-                    invoices: `/app/finance?id=${result.entityId}`,
-                    projects: `/app/projects?id=${result.entityId}`,
-                    documents: `/app/documents?id=${result.entityId}`,
-                  }
-                  navigate(routeMap[result.entityType] || '/app')
-                }}
-                className="w-full p-4 bg-white rounded-xl border border-black/[0.06] hover:border-[var(--avenize-primary)] hover:shadow-lg transition text-left"
+                onClick={() => navigateToResult(result)}
+                onMouseEnter={() => setSelectedIndex(suggestions.length + idx)}
+                className={`w-full p-4 rounded-xl border transition text-left ${
+                  selectedIndex === suggestions.length + idx 
+                    ? 'border-[var(--avenize-primary)] bg-[var(--avenize-primary)]/5 shadow-md' 
+                    : 'border-black/[0.06] hover:border-[var(--avenize-primary)] hover:shadow-lg'
+                }`}
               >
                 <div className="flex items-start gap-3">
                   <div className={`w-10 h-10 rounded-lg ${colorClass} flex items-center justify-center shrink-0`}>
@@ -224,7 +333,17 @@ export default function SearchPage() {
                         </span>
                       )}
                     </div>
-                    <div className="font-medium">{result.title}</div>
+                    <div className="font-medium">
+                      {highlighted ? (
+                        <>
+                          {highlighted.before}
+                          <mark className="bg-yellow-200">{highlighted.match}</mark>
+                          {highlighted.after}
+                        </>
+                      ) : (
+                        result.title
+                      )}
+                    </div>
                     <div className="text-sm text-black/50 line-clamp-2 mt-1">
                       {result.content?.slice(0, 150)}...
                     </div>
@@ -240,6 +359,9 @@ export default function SearchPage() {
           <Search size={48} className="mx-auto text-black/20 mb-4" />
           <h3 className="text-lg font-medium mb-2">No results found</h3>
           <p className="text-black/50">Try different keywords or check your filters</p>
+          {query.length < 3 && (
+            <p className="text-sm text-black/30 mt-2">Tip: Try using more characters for fuzzy matching</p>
+          )}
         </div>
       ) : (
         <div className="space-y-8">

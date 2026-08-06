@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Download, FileText, FileSpreadsheet, FileJson, File,
   Clock, CheckCircle, XCircle, RefreshCw, Trash2,
-  Calendar, Filter, Plus, DownloadCloud
+  Calendar, Filter, Plus, DownloadCloud, FileDown
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { getUserExports, type ExportOptions } from '../lib/auditLogger'
@@ -23,24 +23,59 @@ interface ExportRecord {
 }
 
 const ENTITY_OPTIONS = [
-  { value: 'contacts', label: 'Contacts' },
-  { value: 'tasks', label: 'Tasks' },
-  { value: 'staff', label: 'Staff' },
-  { value: 'invoices', label: 'Invoices' },
-  { value: 'quotes', label: 'Quotes' },
-  { value: 'projects', label: 'Projects' },
-  { value: 'payments', label: 'Payments' },
-  { value: 'inventory', label: 'Inventory' },
-  { value: 'documents', label: 'Documents' },
-  { value: 'all', label: 'Full Backup' },
+  { value: 'contacts', label: 'Contacts', table: 'contacts' },
+  { value: 'tasks', label: 'Tasks', table: 'tasks' },
+  { value: 'staff', label: 'Staff', table: 'staff' },
+  { value: 'invoices', label: 'Invoices', table: 'invoices' },
+  { value: 'quotes', label: 'Quotes', table: 'quotes' },
+  { value: 'projects', label: 'Projects', table: 'projects' },
+  { value: 'payments', label: 'Payments', table: 'payments' },
+  { value: 'inventory', label: 'Inventory', table: 'inventory_items' },
+  { value: 'documents', label: 'Documents', table: 'documents' },
+  { value: 'all', label: 'Full Backup', table: null },
 ]
 
 const FORMAT_OPTIONS = [
   { value: 'csv', label: 'CSV', icon: FileSpreadsheet, desc: 'For Excel, Google Sheets' },
-  { value: 'excel', label: 'Excel', icon: FileSpreadsheet, desc: 'Native .xlsx format' },
   { value: 'json', label: 'JSON', icon: FileJson, desc: 'For developers' },
-  { value: 'pdf', label: 'PDF', icon: File, desc: 'For printing' },
 ]
+
+// Convert data to CSV
+function convertToCSV(data: Record<string, any>[]): string {
+  if (data.length === 0) return ''
+  
+  const headers = Object.keys(data[0])
+  const csvRows = [
+    headers.join(','),
+    ...data.map(row => 
+      headers.map(header => {
+        const value = row[header]
+        // Escape quotes and wrap in quotes if contains comma
+        if (value === null || value === undefined) return ''
+        const str = String(value)
+        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+          return `"${str.replace(/"/g, '""')}"`
+        }
+        return str
+      }).join(',')
+    )
+  ]
+  
+  return csvRows.join('\n')
+}
+
+// Download file
+function downloadFile(content: string, filename: string, mimeType: string) {
+  const blob = new Blob([content], { type: mimeType })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+}
 
 export default function DataExportPage() {
   const { staff } = useAuth()
@@ -71,12 +106,58 @@ export default function DataExportPage() {
     }
   }
 
+  // Fetch data for export
+  async function fetchExportData(entityType: string): Promise<Record<string, any>[]> {
+    if (!staff?.business_id) return []
+    
+    const entityOption = ENTITY_OPTIONS.find(e => e.value === entityType)
+    if (!entityOption?.table) return []
+
+    try {
+      const { data, error } = await supabase
+        .from(entityOption.table)
+        .select('*')
+        .eq('business_id', staff.business_id)
+        .limit(10000)
+
+      if (error) throw error
+      return data || []
+    } catch (e) {
+      console.error('Failed to fetch data:', e)
+      return []
+    }
+  }
+
+  // Handle download of completed export
+  async function handleDownload(exportRecord: ExportRecord) {
+    if (!staff?.business_id) return
+    
+    // Fetch fresh data for download
+    const data = await fetchExportData(exportRecord.entity_type)
+    
+    if (data.length === 0) {
+      alert('No data to export')
+      return
+    }
+
+    const timestamp = new Date().toISOString().split('T')[0]
+    const filename = `${exportRecord.entity_type}_export_${timestamp}`
+    
+    if (exportRecord.export_type === 'csv') {
+      const csv = convertToCSV(data)
+      downloadFile(csv, `${filename}.csv`, 'text/csv')
+    } else if (exportRecord.export_type === 'json') {
+      const json = JSON.stringify(data, null, 2)
+      downloadFile(json, `${filename}.json`, 'application/json')
+    }
+  }
+
   async function handleExport() {
     if (!staff?.business_id) return
     setExporting(true)
 
     try {
-      // Request export
+      // Create export record
       const { data, error } = await supabase
         .from('data_exports')
         .insert({
@@ -85,23 +166,39 @@ export default function DataExportPage() {
           export_type: exportForm.format,
           entity_type: exportForm.entityType,
           filters: exportForm.filters || {},
-          status: 'pending',
+          status: 'processing',
         })
         .select('id')
         .single()
 
       if (error) throw error
 
-      // Simulate processing (in real app, this would be done server-side)
+      // Fetch the actual data
+      const exportData = await fetchExportData(exportForm.entityType)
+      
+      // Update record with results
+      const timestamp = new Date().toISOString().split('T')[0]
+      const filename = `${exportForm.entityType}_export_${timestamp}`
+      
       await supabase
         .from('data_exports')
         .update({
           status: 'completed',
-          file_name: `${exportForm.entityType}_export_${Date.now()}.${exportForm.format}`,
-          record_count: Math.floor(Math.random() * 1000),
+          file_name: `${filename}.${exportForm.format}`,
+          record_count: exportData.length,
           completed_at: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
         })
         .eq('id', data.id)
+
+      // Auto-download for CSV/JSON
+      if (exportForm.format === 'csv') {
+        const csv = convertToCSV(exportData)
+        downloadFile(csv, `${filename}.csv`, 'text/csv')
+      } else if (exportForm.format === 'json') {
+        const json = JSON.stringify(exportData, null, 2)
+        downloadFile(json, `${filename}.json`, 'application/json')
+      }
 
       setShowModal(false)
       loadExports()
@@ -215,7 +312,10 @@ export default function DataExportPage() {
                     </div>
                     <div className="text-right">
                       {exp.status === 'completed' && (
-                        <button className="px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm flex items-center gap-2">
+                        <button 
+                          onClick={() => handleDownload(exp)}
+                          className="px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm flex items-center gap-2 hover:bg-[var(--avenize-primary)]/90 transition"
+                        >
                           <Download size={16} />
                           Download
                         </button>

@@ -2,11 +2,86 @@ import { useState, useEffect } from 'react'
 import {
   Shield, Clock, User, FileText, Plus, Edit2, Trash2,
   Download, Filter, ChevronDown, ChevronUp, Search, RefreshCw,
-  ArrowUpDown, Eye, Settings, Activity
+  ArrowUpDown, Eye, Settings, Activity, ArrowRight
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useAuditLogs, type AuditLog } from '../lib/auditLogger'
 import { supabase } from '../lib/supabase'
+
+// Visual Diff Component
+function VisualDiff({ oldValues, newValues, changedFields }: { 
+  oldValues: Record<string, any> 
+  newValues: Record<string, any>
+  changedFields: string[] 
+}) {
+  // Get all unique keys from both objects
+  const allKeys = [...new Set([
+    ...Object.keys(oldValues || {}),
+    ...Object.keys(newValues || {}),
+  ])]
+
+  // Filter to only changed fields if available, otherwise show all
+  const displayKeys = changedFields.length > 0 
+    ? allKeys.filter(key => changedFields.includes(key))
+    : allKeys
+
+  if (displayKeys.length === 0) {
+    return (
+      <div className="text-center py-4 text-black/40">
+        No field changes to display
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="text-xs font-medium text-black/50 mb-3">Field Changes</div>
+      {displayKeys.map(key => {
+        const oldVal = oldValues?.[key]
+        const newVal = newValues?.[key]
+        const hasChanged = JSON.stringify(oldVal) !== JSON.stringify(newVal)
+        
+        // Format value for display
+        const formatValue = (val: any): string => {
+          if (val === null || val === undefined) return '—'
+          if (typeof val === 'boolean') return val ? 'Yes' : 'No'
+          if (typeof val === 'object') return JSON.stringify(val)
+          return String(val)
+        }
+
+        return (
+          <div 
+            key={key} 
+            className={`grid grid-cols-[1fr_auto_1fr] gap-3 items-center p-2 rounded-lg ${
+              hasChanged ? 'bg-amber-50' : 'bg-black/[0.02]'
+            }`}
+          >
+            {/* Old Value */}
+            <div className="text-sm">
+              <div className="text-xs text-black/40 mb-0.5">{key}</div>
+              <div className={`font-mono ${hasChanged ? 'text-red-600 line-through opacity-60' : 'text-black/70'}`}>
+                {formatValue(oldVal)}
+              </div>
+            </div>
+            
+            {/* Arrow */}
+            {hasChanged && (
+              <ArrowRight size={16} className="text-amber-500 shrink-0" />
+            )}
+            
+            {/* New Value */}
+            <div className="text-sm">
+              <div className="text-xs text-black/40 mb-0.5">&nbsp;</div>
+              <div className={`font-mono ${hasChanged ? 'text-green-600 font-medium' : 'text-black/70'}`}>
+                {formatValue(newVal)}
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 function useIsAdmin() {
   const { staff } = useAuth()
@@ -332,23 +407,17 @@ export default function AuditLogPage() {
                       {isExpanded && (
                         <tr className="bg-black/[0.02]">
                           <td colSpan={6} className="px-4 py-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              {log.old_values && (
-                                <div>
-                                  <div className="text-xs font-medium text-black/50 mb-2">Before</div>
-                                  <pre className="p-3 bg-white rounded-lg border border-black/10 text-xs font-mono overflow-x-auto max-h-40">
-                                    {JSON.stringify(log.old_values, null, 2)}
-                                  </pre>
-                                </div>
-                              )}
-                              {log.new_values && (
-                                <div>
-                                  <div className="text-xs font-medium text-black/50 mb-2">After</div>
-                                  <pre className="p-3 bg-white rounded-lg border border-black/10 text-xs font-mono overflow-x-auto max-h-40">
-                                    {JSON.stringify(log.new_values, null, 2)}
-                                  </pre>
-                                </div>
-                              )}
+                            <div className="bg-white rounded-xl border border-black/10 overflow-hidden">
+                              <div className="bg-black/[0.02] px-4 py-2 border-b border-black/10">
+                                <span className="text-sm font-medium">Changes Detail</span>
+                              </div>
+                              <div className="p-4">
+                                <VisualDiff 
+                                  oldValues={log.old_values} 
+                                  newValues={log.new_values}
+                                  changedFields={log.changed_fields || []}
+                                />
+                              </div>
                             </div>
                           </td>
                         </tr>
