@@ -1,5 +1,5 @@
-/* Avenize Design System v2 */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+/* Avenize Design System v3 - Professional Enterprise */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "./styles/avenize-design-system.css";
 
@@ -10,15 +10,15 @@
 
 :root {
   /* Legacy aliases for old code */
-  --avenize-black: var(--av-black);
+  --avenize-black: var(--av-text);
   --avenize-white: var(--av-white);
-  --avenize-stone: var(--av-black);
+  --avenize-stone: var(--av-surface-3);
   --avenize-gray: var(--av-surface-2);
   
-  /* Legacy gradient (deprecated - use av-accent) */
-  --avenize-gradient-start: var(--av-accent);
-  --avenize-gradient-mid: #FF8F3D;
-  --avenize-gradient-end: var(--av-accent-2);
+  /* Primary brand gradient */
+  --avenize-gradient-start: var(--av-primary);
+  --avenize-gradient-mid: #3B82F6;
+  --avenize-gradient-end: var(--av-accent);
   
   /* Legacy workspace colors */
   --avenize-sales: var(--av-sales);
@@ -35,11 +35,11 @@
   --avenize-accent-end: var(--avenize-gradient-end);
 }
 
-/* Body - Dark mode by default */
+/* Body - Clean light background */
 body {
   font-family: var(--av-font-sans);
-  background-color: var(--av-black);
-  color: var(--av-white);
+  background-color: var(--av-surface-2);
+  color: var(--av-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -50,20 +50,20 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Signature Gradient - Deprecated, use av-accent */
+/* Primary Gradient - Professional Blue to Teal */
 .avenize-gradient {
-  background: linear-gradient(135deg, var(--av-accent) 0%, var(--av-accent-2) 100%);
+  background: linear-gradient(135deg, var(--av-primary) 0%, var(--av-accent) 100%);
 }
 
 /* Gradient text effect */
 .avenize-gradient-text {
-  background: linear-gradient(135deg, var(--av-accent) 0%, var(--av-accent-2) 100%);
+  background: linear-gradient(135deg, var(--av-primary) 0%, var(--av-accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-/* Workspace accent utilities - Legacy */
+/* Workspace accent utilities */
 .accent-sales { color: var(--av-sales); }
 .accent-finance { color: var(--av-finance); }
 .accent-projects { color: var(--av-projects); }
@@ -73,11 +73,11 @@ body {
 .accent-automation { color: var(--av-accent); }
 .accent-analytics { color: var(--av-hr); }
 
-.bg-accent-sales { background-color: var(--av-sales-bg); }
-.bg-accent-finance { background-color: var(--av-finance-bg); }
-.bg-accent-projects { background-color: var(--av-projects-bg); }
-.bg-accent-hr { background-color: var(--av-hr-bg); }
-.bg-accent-communication { background-color: rgba(236, 72, 153, 0.14); }
+.bg-accent-sales { background-color: var(--av-sales-bg); color: var(--av-sales); }
+.bg-accent-finance { background-color: var(--av-finance-bg); color: var(--av-finance); }
+.bg-accent-projects { background-color: var(--av-projects-bg); color: var(--av-projects); }
+.bg-accent-hr { background-color: var(--av-hr-bg); color: var(--av-hr); }
+.bg-accent-communication { background-color: rgba(236, 72, 153, 0.1); }
 .bg-accent-ai { background-color: var(--av-info-bg); }
 .bg-accent-automation { background-color: var(--av-accent-soft); }
 .bg-accent-analytics { background-color: rgba(99, 102, 241, 0.14); }

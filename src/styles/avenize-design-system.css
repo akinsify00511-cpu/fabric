@@ -1,6 +1,7 @@
 /**
- * Avenize Design System v2
- * Spatial + Minimalism + Glassmorphism
+ * Avenize Design System v3
+ * Professional Enterprise Design
+ * Clean, Performance-Focused, Modern
  */
 
 /* ============================================
@@ -8,48 +9,53 @@
    ============================================ */
 
 :root {
-  /* Base surfaces - Warm dark theme */
-  --av-black: #0D0C0B;
-  --av-surface: #17150F;
-  --av-surface-2: #201D16;
-  --av-surface-3: #282519;
+  /* Primary Brand - Professional Blue */
+  --av-primary: #2563EB;
+  --av-primary-hover: #1D4ED8;
+  --av-primary-soft: rgba(37, 99, 235, 0.1);
   
-  /* Borders - Hairline style */
-  --av-border: rgba(255, 255, 255, 0.08);
-  --av-border-strong: rgba(255, 255, 255, 0.16);
-  --av-border-focus: rgba(255, 90, 31, 0.5);
+  /* Base surfaces - Clean neutral palette */
+  --av-black: #111827;
+  --av-surface: #FFFFFF;
+  --av-surface-2: #F9FAFB;
+  --av-surface-3: #F3F4F6;
   
-  /* Text */
-  --av-white: #F7F4EE;
-  --av-text: #F7F4EE;
-  --av-text-secondary: #A79F91;
-  --av-text-muted: #726A5C;
+  /* Borders - Subtle and refined */
+  --av-border: #E5E7EB;
+  --av-border-strong: #D1D5DB;
+  --av-border-focus: rgba(37, 99, 235, 0.5);
   
-  /* Signature accent — warm orange */
-  --av-accent: #FF5A1F;
-  --av-accent-2: #FFB020;
-  --av-accent-soft: rgba(255, 90, 31, 0.14);
-  --av-accent-glow: rgba(255, 90, 31, 0.35);
+  /* Text - High contrast for readability */
+  --av-white: #FFFFFF;
+  --av-text: #111827;
+  --av-text-secondary: #6B7280;
+  --av-text-muted: #9CA3AF;
   
-  /* Functional workspace colors */
-  --av-sales: #5B9EF7;
-  --av-sales-bg: rgba(91, 158, 247, 0.14);
-  --av-finance: #3DD68C;
-  --av-finance-bg: rgba(61, 214, 140, 0.14);
-  --av-projects: #F5B93D;
-  --av-projects-bg: rgba(245, 185, 61, 0.14);
-  --av-hr: #B098F5;
-  --av-hr-bg: rgba(176, 152, 245, 0.14);
+  /* Accent - Teal for secondary actions */
+  --av-accent: #0D9488;
+  --av-accent-2: #14B8A6;
+  --av-accent-soft: rgba(13, 148, 136, 0.1);
+  --av-accent-glow: rgba(13, 148, 136, 0.25);
   
-  /* Semantic colors */
-  --av-success: #4ADE80;
-  --av-success-bg: rgba(74, 222, 128, 0.12);
-  --av-warning: #FBBF24;
-  --av-warning-bg: rgba(251, 191, 36, 0.12);
-  --av-danger: #FB7185;
-  --av-danger-bg: rgba(251, 113, 133, 0.14);
-  --av-info: #38BDF8;
-  --av-info-bg: rgba(56, 189, 248, 0.12);
+  /* Functional workspace colors - Muted & Professional */
+  --av-sales: #6366F1;
+  --av-sales-bg: rgba(99, 102, 241, 0.1);
+  --av-finance: #059669;
+  --av-finance-bg: rgba(5, 150, 105, 0.1);
+  --av-projects: #D97706;
+  --av-projects-bg: rgba(217, 119, 6, 0.1);
+  --av-hr: #7C3AED;
+  --av-hr-bg: rgba(124, 58, 237, 0.1);
+  
+  /* Semantic colors - Clean and clear */
+  --av-success: #059669;
+  --av-success-bg: rgba(5, 150, 105, 0.1);
+  --av-warning: #D97706;
+  --av-warning-bg: rgba(217, 119, 6, 0.1);
+  --av-danger: #DC2626;
+  --av-danger-bg: rgba(220, 38, 38, 0.1);
+  --av-info: #0284C7;
+  --av-info-bg: rgba(2, 132, 199, 0.1);
   
   /* Spacing */
   --av-gap-xs: 8px;
@@ -59,26 +65,26 @@
   --av-gap-xl: 24px;
   
   /* Radii */
-  --av-radius-sm: 9px;
-  --av-radius-md: 12px;
-  --av-radius-lg: 16px;
-  --av-radius-xl: 20px;
+  --av-radius-sm: 6px;
+  --av-radius-md: 8px;
+  --av-radius-lg: 12px;
+  --av-radius-xl: 16px;
   
-  /* Elevation - Spatial depth */
-  --av-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --av-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --av-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --av-shadow-glow: 0 0 40px var(--av-accent-glow);
+  /* Elevation - Subtle shadows */
+  --av-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --av-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --av-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --av-shadow-glow: 0 0 20px var(--av-accent-glow);
   
-  /* Glassmorphism */
-  --av-glass-bg: rgba(255, 255, 255, 0.05);
-  --av-glass-border: rgba(255, 255, 255, 0.1);
-  --av-glass-rim: rgba(255, 255, 255, 0.14);
-  --av-glass-blur: blur(20px) saturate(160%);
+  /* Glassmorphism - Light and clean */
+  --av-glass-bg: rgba(255, 255, 255, 0.8);
+  --av-glass-border: rgba(255, 255, 255, 0.2);
+  --av-glass-rim: rgba(255, 255, 255, 0.4);
+  --av-glass-blur: blur(12px);
   
   /* Typography */
   --av-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --av-font-numeric: 'Space Grotesk', 'Inter', var(--av-font-sans);
+  --av-font-numeric: 'Inter', var(--av-font-sans);
   
   /* Transitions */
   --av-transition-fast: 150ms ease;
@@ -92,8 +98,8 @@
 
 .av-body {
   font-family: var(--av-font-sans);
-  background-color: var(--av-black);
-  color: var(--av-white);
+  background-color: var(--av-surface-2);
+  color: var(--av-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -109,11 +115,11 @@
    SPATIAL CARD SYSTEM
    ============================================ */
 
-/* Base card - sits on the base plane */
+/* Base card - Clean white surface */
 .av-card {
   background: var(--av-surface);
-  border: 0.5px solid var(--av-border);
-  border-radius: var(--av-radius-xl);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius-lg);
   padding: var(--av-gap-md);
   transition: 
     transform var(--av-transition-fast),
@@ -127,38 +133,29 @@
 }
 
 .av-card-interactive:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--av-shadow-md);
   border-color: var(--av-border-strong);
 }
 
-/* Hero/Focal card - sits forward with glow */
+/* Hero/Focal card - Clean with subtle accent */
 .av-card-hero {
   position: relative;
-  background: linear-gradient(160deg, #171310 0%, var(--av-black) 62%);
-  border: 0.5px solid var(--av-border);
-  border-radius: var(--av-radius-xl);
+  background: var(--av-surface);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius-lg);
   overflow: hidden;
 }
 
-/* Aperture glow - the signature element */
+/* Subtle accent line - the signature element */
 .av-card-hero::before {
   content: "";
   position: absolute;
-  top: -120px;
-  right: -100px;
-  width: 320px;
-  height: 320px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle, 
-    var(--av-accent) 0%, 
-    rgba(255, 176, 32, 0.18) 45%, 
-    transparent 72%
-  );
-  opacity: 0.35;
-  filter: blur(2px);
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--av-primary) 0%, var(--av-accent) 100%);
 }
 
 .av-card-hero > * {
@@ -166,37 +163,39 @@
   z-index: 1;
 }
 
-/* Flat surface - closer to base plane, minimal shadow */
+/* Flat surface - Minimal elevation */
 .av-card-flat {
   background: var(--av-surface-2);
+  border: 1px solid var(--av-border);
   border-radius: var(--av-radius-md);
   padding: var(--av-gap-sm);
 }
 
-/* Stat card - almost inset, barely any elevation */
+/* Stat card - Clean with hover effect */
 .av-card-stat {
   background: var(--av-surface);
-  border: 0.5px solid var(--av-border);
-  border-radius: var(--av-radius-lg);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius-md);
   padding: var(--av-gap-md);
-  transition: border-color var(--av-transition-fast);
+  transition: all var(--av-transition-fast);
 }
 
 .av-card-stat:hover {
-  border-color: var(--av-border-strong);
+  border-color: var(--av-primary);
+  box-shadow: var(--av-shadow-sm);
 }
 
 /* ============================================
-   GLASSMORPHISM (Surgical use only)
+   GLASSMORPHISM (Light & Subtle)
    ============================================ */
 
-/* Only use on hero/bio cards with glow behind */
+/* Subtle glass for overlays */
 .av-glass {
   background: var(--av-glass-bg);
   backdrop-filter: var(--av-glass-blur);
   -webkit-backdrop-filter: var(--av-glass-blur);
-  border: 0.5px solid var(--av-glass-border);
-  border-radius: var(--av-radius-xl);
+  border: 1px solid var(--av-border);
+  border-radius: var(--av-radius-lg);
 }
 
 /* Top-light rim effect */
