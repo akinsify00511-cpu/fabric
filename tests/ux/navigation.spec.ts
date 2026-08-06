@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { setupDemoAuth } from '../helpers/demo-auth'
 
 /**
  * Navigation tests - ensure all nav items work correctly
@@ -7,18 +8,9 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    // Set demo mode
-    await page.goto('/login')
-    await page.evaluate(() => {
-      localStorage.setItem('avenize_demo_user', JSON.stringify({
-        id: 'test-user-1',
-        name: 'Test User',
-        email: 'test@example.com',
-        business_id: 'test-business',
-        business_name: 'Test Business',
-        role: 'owner'
-      }))
-    })
+    // Was only setting avenize_demo_user — missing the avenize_demo flag
+    // AuthContext also requires, so demo mode never actually activated.
+    await setupDemoAuth(page)
   })
 
   test('[Navigation] Every sidebar nav item navigates to a real page, not 404', async ({ page }) => {

@@ -116,7 +116,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <div className="min-h-screen flex items-center justify-center text-black/40 text-sm">Loading…</div>
   }
   
-  if (!session) return <Navigate to="/login" replace />
+  if (!session && !isDemo) return <Navigate to="/login" replace />
   
   // If staff exists but onboarding not complete, redirect to onboarding page
   if (staff && needsOnboarding) {

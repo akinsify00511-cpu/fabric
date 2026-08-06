@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { setupDemoAuth } from '../helpers/demo-auth'
 import AxeBuilder from '@axe-core/playwright'
 
 /**
@@ -7,15 +8,18 @@ import AxeBuilder from '@axe-core/playwright'
  */
 
 const PAGES_TO_TEST = [
-  { name: 'Dashboard', path: '/app/dashboard' },
-  { name: 'CRM', path: '/app/crm' },
-  { name: 'Login', path: '/login' },
-  { name: 'Signup', path: '/signup' },
+  { name: 'Dashboard', path: '/app/dashboard', protected: true },
+  { name: 'CRM', path: '/app/crm', protected: true },
+  { name: 'Login', path: '/login', protected: false },
+  { name: 'Signup', path: '/signup', protected: false },
 ]
 
-for (const page of PAGES_TO_TEST) {
-  test(`[Accessibility] ${page.name} has no critical WCAG violations`, async ({ page }) => {
-    await page.goto(page.path)
+for (const pageCase of PAGES_TO_TEST) {
+  test(`[Accessibility] ${pageCase.name} has no critical WCAG violations`, async ({ page }) => {
+    if (pageCase.protected) {
+      await setupDemoAuth(page)
+    }
+    await page.goto(pageCase.path)
     await page.waitForLoadState('networkidle')
 
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -32,10 +36,10 @@ for (const page of PAGES_TO_TEST) {
         .map(v => `  - ${v.id}: ${v.description} (${v.nodes.length} nodes)`)
         .join('\n')
       
-      console.log(`Critical accessibility violations on ${page.name}:\n${violationsText}`)
+      console.log(`Critical accessibility violations on ${pageCase.name}:\n${violationsText}`)
     }
 
-    expect.soft(criticalViolations, `Critical accessibility violations on ${page.name}`).toHaveLength(0)
+    expect.soft(criticalViolations, `Critical accessibility violations on ${pageCase.name}`).toHaveLength(0)
   })
 }
 

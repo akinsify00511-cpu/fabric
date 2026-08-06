@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { setupDemoAuth } from '../helpers/demo-auth'
 
 /**
  * Tap target size tests
@@ -9,6 +10,10 @@ const MIN_TAP_TARGET = 44
 
 test.describe('Tap Target Sizes (Mobile)', () => {
   test.beforeEach(async ({ page }) => {
+    // Had no auth setup at all — every /app/dashboard goto below was
+    // silently redirected to /login, so these were measuring tap targets
+    // on the login form, not the dashboard.
+    await setupDemoAuth(page)
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 })
   })
@@ -148,6 +153,7 @@ test.describe('Tap Target Sizes (Mobile)', () => {
 
 test.describe('Tap Target Spacing (Mobile)', () => {
   test.beforeEach(async ({ page }) => {
+    await setupDemoAuth(page)
     await page.setViewportSize({ width: 375, height: 667 })
   })
 

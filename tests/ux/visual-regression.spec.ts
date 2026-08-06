@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import path from 'path'
+import { setupDemoAuth } from '../helpers/demo-auth'
 
 /**
  * Visual regression tests
@@ -7,16 +8,26 @@ import path from 'path'
  */
 
 const PAGES_TO_SNAPSHOT = [
-  { name: 'Login', path: '/login' },
-  { name: 'Signup', path: '/signup' },
-  { name: 'Dashboard', path: '/app/dashboard' },
-  { name: 'CRM', path: '/app/crm' },
+  { name: 'Login', path: '/login', protected: false },
+  { name: 'Signup', path: '/signup', protected: false },
+  { name: 'Dashboard', path: '/app/dashboard', protected: true },
+  { name: 'CRM', path: '/app/crm', protected: true },
 ]
 
 test.describe('Visual Regression', () => {
-  for (const page of PAGES_TO_SNAPSHOT) {
-    test(`[Visual] ${page.name} matches baseline`, async ({ page }) => {
-      await page.goto(page.path)
+  // NOTE: the loop variable was previously also named `page`, fully shadowed
+  // by the destructured Playwright `page` fixture inside the test callback
+  // below. Every `page.path`/`page.name` reference in this file was
+  // therefore reading undefined properties off the Playwright Page object,
+  // not the loop item — `page.name.toLowerCase()` crashes with a TypeError
+  // in CI (process.env.CI branch), and `page.goto(page.path)` navigated to
+  // undefined for every one of the four snapshot tests.
+  for (const pageCase of PAGES_TO_SNAPSHOT) {
+    test(`[Visual] ${pageCase.name} matches baseline`, async ({ page }) => {
+      if (pageCase.protected) {
+        await setupDemoAuth(page)
+      }
+      await page.goto(pageCase.path)
       await page.waitForLoadState('networkidle')
       
       // Wait for any animations to complete
@@ -39,7 +50,7 @@ test.describe('Visual Regression', () => {
       
       // In CI, compare against baseline
       if (process.env.CI) {
-        const baselinePath = path.join(__dirname, 'baselines', `${page.name.toLowerCase()}.png`)
+        const baselinePath = path.join(__dirname, 'baselines', `${pageCase.name.toLowerCase()}.png`)
         const fs = await import('fs')
         
         if (fs.existsSync(baselinePath)) {
@@ -66,7 +77,7 @@ test.describe('Visual Regression', () => {
         fs.mkdirSync(screenshotsDir, { recursive: true })
       }
       
-      const outputPath = path.join(screenshotsDir, `${page.name.toLowerCase()}-${Date.now()}.png`)
+      const outputPath = path.join(screenshotsDir, `${pageCase.name.toLowerCase()}-${Date.now()}.png`)
       fs.writeFileSync(outputPath, screenshot)
       
       console.log(`Screenshot saved to: ${outputPath}`)
