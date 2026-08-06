@@ -54,6 +54,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create Vercel Project Link
+        run: |
+          mkdir -p .vercel
+          echo '{"orgId":"${{ secrets.VERCEL_ORG_ID }}","projectId":"${{ secrets.VERCEL_PROJECT_ID }}"}' > .vercel/project.json
+
       - name: Build
         run: npm run build
 
