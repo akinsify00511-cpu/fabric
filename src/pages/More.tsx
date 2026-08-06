@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock } from 'lucide-react'
+import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark } from 'lucide-react'
 import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
@@ -19,6 +19,7 @@ const ITEMS = [
   { to: '/merit', label: 'Merit', icon: Award, tint: 'bg-yellow-500/10 text-yellow-600', desc: 'Recognition & points', feature: 'merit' },
   { to: '/inventory', label: 'Inventory', icon: Boxes, tint: 'bg-amber-500/10 text-amber-500', desc: 'Stock & products', feature: 'inventory' },
   { to: '/reports', label: 'Reports', icon: BarChart3, tint: 'bg-sky-500/10 text-sky-500', desc: 'Analytics', feature: 'reports' },
+  { to: '/infrastructure', label: 'Infrastructure', icon: Building2, tint: 'bg-slate-500/10 text-slate-500', desc: 'HR, Payroll & Assets', feature: null },
   { to: '/settings', label: 'Settings', icon: SettingsIcon, tint: 'bg-black/[0.06] text-black/60', desc: 'Profile & config', feature: null },
 ]
 
