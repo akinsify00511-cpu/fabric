@@ -2,13 +2,8 @@
   "ci": {
     "collect": {
       "settings": {
-        "url": [
-          "http://localhost:5173/",
-          "http://localhost:5173/login",
-          "http://localhost:5173/app/dashboard"
-        ],
-        "numberOfRuns": 3,
-        "staticDistDir": "./dist"
+        "staticDistDir": "./dist",
+        "numberOfRuns": 3
       }
     },
     "assert": {
@@ -32,6 +27,10 @@
     },
     "upload": {
       "target": "temporary-public-storage"
+    },
+    "server": {
+      "port": 9001,
+      "distDir": "./dist"
     }
   }
 }
