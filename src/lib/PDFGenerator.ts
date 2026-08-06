@@ -42,6 +42,7 @@ interface InvoiceData {
   job_reference?: string
   notes?: string
   business_id?: string
+  business_name?: string
 }
 
 interface BrandingData {

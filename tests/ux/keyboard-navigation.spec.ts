@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { setupDemoAuth } from '../helpers/demo-auth'
 
 /**
  * Keyboard navigation tests
@@ -7,18 +8,11 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Keyboard Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    // Enable demo mode by setting localStorage
-    await page.goto('/login')
-    await page.evaluate(() => {
-      localStorage.setItem('avenize_demo_user', JSON.stringify({
-        id: 'test-user-1',
-        name: 'Test User',
-        email: 'test@example.com',
-        business_id: 'test-business',
-        business_name: 'Test Business',
-        role: 'owner'
-      }))
-    })
+    // Was only setting avenize_demo_user — AuthContext also requires
+    // avenize_demo === 'true' to actually enter demo mode, so this never
+    // worked (session stayed null, RequireAuth sent every /app/* test to
+    // /login regardless).
+    await setupDemoAuth(page)
   })
 
   test('[Keyboard] Login form can be completed with keyboard only', async ({ page }) => {

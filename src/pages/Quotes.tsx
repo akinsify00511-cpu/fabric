@@ -141,6 +141,24 @@ export default function Quotes() {
     success('Quote accepted!')
   }
 
+  const convertToInvoice = (quote: Quote) => {
+    // Mark quote as converted
+    const updatedQuotes = quotes.map(q => 
+      q.id === quote.id ? { ...q, status: 'converted' as const } : q
+    )
+    saveQuotes(updatedQuotes)
+    // Store quote data for invoice creation
+    const invoiceData = {
+      client_name: quote.client_name,
+      client_email: quote.client_email || '',
+      client_address: quote.client_address || '',
+      items: quote.items.map(item => ({ ...item })),
+      notes: `Quoted in ${quote.quote_number}`,
+    }
+    sessionStorage.setItem('avenize_quote_to_invoice', JSON.stringify(invoiceData))
+    window.location.href = '/app/invoices?new=true'
+  }
+
   const rejectQuote = (quoteId: string) => {
     const updatedQuotes = quotes.map(q => 
       q.id === quoteId ? { ...q, status: 'rejected' as const } : q
@@ -281,7 +299,7 @@ export default function Quotes() {
                     </>
                   )}
                   {quote.status === 'accepted' && (
-                    <button className="flex items-center gap-1 px-3 py-1.5 bg-purple-500 text-white rounded-lg text-xs font-medium hover:bg-purple-600 transition">
+                    <button onClick={() => convertToInvoice(quote)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-500 text-white rounded-lg text-xs font-medium hover:bg-purple-600 transition">
                       <FileText size={14} /> Convert to Invoice
                     </button>
                   )}

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { setupDemoAuth } from '../helpers/demo-auth'
 
 /**
  * Empty state and first-run experience tests
@@ -7,11 +8,12 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Empty States', () => {
   test.beforeEach(async ({ page }) => {
-    // Set up fresh account state
-    await page.goto('/login')
-    await page.evaluate(() => {
-      localStorage.clear()
-    })
+    // NOTE: previously this called localStorage.clear() to simulate a fresh
+    // account, but that also wipes demo auth — RequireAuth then redirects
+    // to /login before the dashboard ever renders, so every assertion below
+    // was actually running against the login page. Demo auth needs to stay
+    // set; "empty" here means the demo account's own data, not logged-out.
+    await setupDemoAuth(page)
   })
 
   test('[Empty State] Dashboard shows guidance for new users', async ({ page }) => {
@@ -157,6 +159,10 @@ test.describe('First Run Experience', () => {
 })
 
 test.describe('Navigation', () => {
+  test.beforeEach(async ({ page }) => {
+    await setupDemoAuth(page)
+  })
+
   test('[Navigation] Sidebar shows main sections', async ({ page }) => {
     await page.goto('/app/dashboard')
     await page.waitForLoadState('networkidle')
