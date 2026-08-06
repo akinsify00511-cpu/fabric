@@ -81,7 +81,7 @@ export default function Onboarding() {
 
     try {
       // Create business and owner
-      const { error: rpcError } = await supabase.rpc('create_business_and_owner', {
+      const { data, error: rpcError } = await supabase.rpc('create_business_and_owner', {
         p_business_name: businessName,
         p_industry: industry,
         p_staff_name: fullName,
@@ -91,9 +91,18 @@ export default function Onboarding() {
         throw rpcError
       }
 
-      await refreshStaff()
+      // Mark onboarding as complete in localStorage (for quick access)
+      localStorage.setItem('avenize_onboarding_complete', 'true')
       
-      // Redirect to dashboard
+      // Also mark as complete in the staff record (for persistence)
+      if (data?.staff_id) {
+        await supabase
+          .from('staff')
+          .update({ onboarding_completed: true })
+          .eq('id', data.staff_id)
+      }
+
+      // Force a full page reload to reset all auth state
       window.location.href = '/app'
     } catch (err: any) {
       console.error('Setup error:', err)

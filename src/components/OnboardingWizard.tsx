@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Building2, User, Users, FileText, Check, ChevronRight, ChevronLeft } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
+import { supabase } from '../lib/supabase'
 
 interface OnboardingWizardProps {
   onComplete: () => void
@@ -45,11 +46,24 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
   const step = STEPS[currentStep]
 
+  const markOnboardingComplete = async () => {
+    // Set localStorage for quick access
+    localStorage.setItem('avenize_onboarding_complete', 'true')
+    
+    // Update staff record for persistence
+    if (staff?.id) {
+      await supabase
+        .from('staff')
+        .update({ onboarding_completed: true })
+        .eq('id', staff.id)
+    }
+  }
+
   const handleNext = async () => {
     if (currentStep === STEPS.length - 1) {
       // Complete onboarding
       setLoading(true)
-      localStorage.setItem('avenize_onboarding_complete', 'true')
+      await markOnboardingComplete()
       await new Promise(resolve => setTimeout(resolve, 500)) // Simulate save
       setLoading(false)
       onComplete()
@@ -64,8 +78,8 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
     }
   }
 
-  const skipOnboarding = () => {
-    localStorage.setItem('avenize_onboarding_complete', 'true')
+  const skipOnboarding = async () => {
+    await markOnboardingComplete()
     onComplete()
   }
 
