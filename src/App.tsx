@@ -90,6 +90,13 @@ const Terms = lazy(() => import('./pages/Terms'))
 const Contact = lazy(() => import('./pages/Contact'))
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'))
 const HelpCenter = lazy(() => import('./pages/HelpCenter'))
+const AuditLog = lazy(() => import('./pages/AuditLog'))
+const DataExport = lazy(() => import('./pages/DataExport'))
+const SearchPage = lazy(() => import('./pages/SearchPage'))
+const CommentsAndTimeline = lazy(() => import('./pages/CommentsAndTimeline'))
+const CommentsPage = lazy(() => import('./pages/CommentsAndTimeline').then(m => ({ default: m.CommentsPage })))
+const CurrencyExchange = lazy(() => import('./pages/CurrencyExchange'))
+const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'))
 
 // Loading fallback component
 function PageLoader() {
@@ -242,6 +249,12 @@ function AppRoutes() {
         <Route path="meetings" element={<Meetings />} />
         <Route path="notifications" element={<Notifications />} />
         <Route path="admin-analytics" element={<AdminAnalytics />} />
+        <Route path="audit-log" element={<AuditLog />} />
+        <Route path="export" element={<DataExport />} />
+        <Route path="search" element={<SearchPage />} />
+        <Route path="comments" element={<CommentsPage />} />
+        <Route path="currency" element={<CurrencyExchange />} />
+        <Route path="workflows" element={<WorkflowBuilder />} />
         </Route>
         </Routes>
       </Suspense>
