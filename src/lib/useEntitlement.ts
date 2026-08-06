@@ -39,10 +39,29 @@ export const PLANS = {
   free: { label: 'Free', tier: 0 },
   starter: { label: 'Starter', tier: 1 },
   professional: { label: 'Professional', tier: 2 },
+  pro: { label: 'Pro', tier: 2 }, // Alias for professional
   enterprise: { label: 'Enterprise', tier: 3 },
 } as const
 
 export type PlanKey = keyof typeof PLANS
+
+// Map plan aliases to canonical names
+const PLAN_ALIASES: Record<string, PlanKey> = {
+  'pro': 'professional',
+  'Pro': 'professional',
+  'PRO': 'professional',
+  'starter': 'starter',
+  'Starter': 'starter',
+}
+
+// Helper to normalize plan names
+function normalizePlan(plan: string | undefined): PlanKey {
+  if (!plan) return 'free'
+  const normalized = PLAN_ALIASES[plan]
+  if (normalized) return normalized
+  if (plan in PLANS) return plan as PlanKey
+  return 'free'
+}
 
 interface BusinessEntitlement {
   id: string
@@ -157,11 +176,17 @@ export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
       recognition: true 
     },
+    pro: { // Alias for professional
+      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
+      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
+      recognition: true 
+    },
     enterprise: Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>,
   }
 
-  const plan = entitlement?.plan || 'free'
-  const features = { ...defaultFeatures, ...planFeatures[plan as PlanKey], ...entitlement?.features }
+  const plan = normalizePlan(entitlement?.plan)
+  const features = { ...defaultFeatures, ...planFeatures[plan], ...entitlement?.features }
   const teamLimit = entitlement?.team_limit || 3
   const canAddMember = teamCount < teamLimit
 
@@ -258,7 +283,7 @@ export function useEntitlements(): {
       })
   }, [staff?.business_id])
 
-  const plan = (entitlement?.plan || 'free') as PlanKey
+  const plan = normalizePlan(entitlement?.plan)
   
   const defaultFeatures: Partial<Record<FeatureKey, boolean>> = {
     crm: true,
@@ -269,6 +294,12 @@ export function useEntitlements(): {
     free: { crm: true, projects: true },
     starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
     professional: { 
+      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
+      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
+      recognition: true 
+    },
+    pro: { // Alias for professional
       crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
       multi_currency: true, campaigns: true, social_media: true, paystack: true, 
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
