@@ -8,6 +8,24 @@ import {
 } from 'lucide-react'
 import SarahChat from '../components/SarahChat'
 
+// AVENIZE BRAND COLORS - Use these, NOT hardcoded values
+const BRAND = {
+  primary: '#0891B2',
+  primaryHover: '#0E7490',
+  primarySoft: 'rgba(8, 145, 178, 0.08)',
+  gradient: 'linear-gradient(135deg, #0891B2 0%, #0D9488 50%, #059669 100%)',
+  amber: '#D97706',
+  surface: '#FAFAF9',
+  surface2: '#F5F5F4',
+  text: '#18181B',
+  textSecondary: '#52525B',
+  textMuted: '#A1A1AA',
+  border: '#E7E5E4',
+  success: '#059669',
+  purple: '#7C3AED',
+  pink: '#DB2777',
+}
+
 const STATS = [
   { number: '2,500+', label: 'Nigerian Businesses' },
   { number: '₦2.5B+', label: 'Invoices Sent' },
@@ -16,58 +34,58 @@ const STATS = [
 ]
 
 const WHO_IT_FOR = [
-  { role: 'Sales Teams', benefit: 'Never lose a lead again', icon: Users, color: '#4F46E5' },
-  { role: 'Business Owners', benefit: 'See everything in one place', icon: BarChart3, color: '#10B981' },
-  { role: 'Operations', benefit: 'Track jobs & field teams', icon: Target, color: '#F59E0B' },
-  { role: 'Finance Teams', benefit: 'Get paid faster', icon: Briefcase, color: '#8B5CF6' },
-  { role: 'HR Managers', benefit: 'Manage staff effortlessly', icon: UserCheck, color: '#EF4444' },
+  { role: 'Sales Teams', benefit: 'Never lose a lead again', icon: Users, color: BRAND.primary },
+  { role: 'Business Owners', benefit: 'See everything in one place', icon: BarChart3, color: BRAND.success },
+  { role: 'Operations', benefit: 'Track jobs & field teams', icon: Target, color: BRAND.amber },
+  { role: 'Finance Teams', benefit: 'Get paid faster', icon: Briefcase, color: BRAND.purple },
+  { role: 'HR Managers', benefit: 'Manage staff effortlessly', icon: UserCheck, color: BRAND.pink },
 ]
 
 const MODULES = [
-  { icon: Users, title: 'CRM', tagline: 'Close deals faster', desc: 'Track leads, deals, and customer relationships', color: '#4F46E5', stats: '₦2.5B+ deals tracked' },
-  { icon: Briefcase, title: 'Finance', tagline: 'Get paid faster', desc: 'Invoicing, payments, cash flow in Naira', color: '#10B981', stats: '₦500M+ collected' },
-  { icon: Target, title: 'Projects', tagline: 'Ship on time', desc: 'Jobs, tasks, timelines, field updates', color: '#F59E0B', stats: '10,000+ jobs completed' },
-  { icon: UserCheck, title: 'HR & People', tagline: 'Happy team', desc: 'Staff database, roles, attendance, payroll', color: '#8B5CF6', stats: '15,000+ team members' },
-  { icon: BriefcaseBusiness, title: 'Inventory', tagline: 'Never run out', desc: 'Stock tracking, reorders, multi-location', color: '#EF4444', stats: '500,000+ items tracked' },
-  { icon: Zap, title: '+40 More', tagline: 'Everything you need', desc: 'Tasks, Chat, Calendar, Approvals...', color: '#06B6D4', stats: 'One unified app' },
+  { icon: Users, title: 'CRM', tagline: 'Close deals faster', desc: 'Track leads, deals, and customer relationships', color: BRAND.primary, stats: '₦2.5B+ deals tracked' },
+  { icon: Briefcase, title: 'Finance', tagline: 'Get paid faster', desc: 'Invoicing, payments, cash flow in Naira', color: BRAND.success, stats: '₦500M+ collected' },
+  { icon: Target, title: 'Projects', tagline: 'Ship on time', desc: 'Jobs, tasks, timelines, field updates', color: BRAND.amber, stats: '10,000+ jobs completed' },
+  { icon: UserCheck, title: 'HR & People', tagline: 'Happy team', desc: 'Staff database, roles, attendance, payroll', color: BRAND.purple, stats: '15,000+ team members' },
+  { icon: BriefcaseBusiness, title: 'Inventory', tagline: 'Never run out', desc: 'Stock tracking, reorders, multi-location', color: BRAND.pink, stats: '500,000+ items tracked' },
+  { icon: Zap, title: '+40 More', tagline: 'Everything you need', desc: 'Tasks, Chat, Calendar, Approvals...', color: BRAND.primary, stats: 'One unified app' },
 ]
 
-// Comprehensive productivity tools feature set
+// Comprehensive productivity tools feature set - Using BRAND colors
 const PRODUCTIVITY_TOOLS = [
   {
     category: 'Task Management',
     icon: ListTodo,
-    color: '#4F46E5',
+    color: BRAND.primary,
     features: ['Kanban & List views', 'Subtasks & checklists', 'Due dates & reminders', 'Priority levels', 'Task assignments', 'Recurring tasks']
   },
   {
     category: 'Team Chat',
     icon: MessageSquare,
-    color: '#10B981',
+    color: BRAND.success,
     features: ['Direct messages', 'Group channels', 'File sharing', '@mentions', 'Message reactions', 'Read receipts']
   },
   {
     category: 'Video Meetings',
     icon: Video,
-    color: '#8B5CF6',
+    color: BRAND.purple,
     features: ['HD video calls', 'Screen sharing', 'Meeting recording', 'Calendar integration', 'Join links', 'Participant list']
   },
   {
     category: 'Calendar',
     icon: Calendar,
-    color: '#F59E0B',
+    color: BRAND.amber,
     features: ['Team calendar', 'Event scheduling', 'Availability check', 'Reminders', 'Google sync', 'Recurring events']
   },
   {
     category: 'Notifications',
     icon: Bell,
-    color: '#EF4444',
+    color: BRAND.pink,
     features: ['Real-time alerts', 'Push notifications', 'Email digests', 'In-app center', 'Customizable rules', 'Do not disturb']
   },
   {
     category: 'Documents',
     icon: FileText,
-    color: '#06B6D4',
+    color: BRAND.primary,
     features: ['Shared drive', 'Version history', 'Comments', 'Templates', 'E-signatures', 'Folder organization']
   }
 ]
@@ -106,35 +124,31 @@ const FAQS = [
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-white">
+    <nav className="fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
           {/* Left side - Logo */}
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: BRAND.gradient }}>
                 <span className="text-white font-bold text-sm">A</span>
               </div>
-              <span className="font-semibold text-black">Avenize</span>
+              <span className="font-semibold" style={{ color: BRAND.text }}>Avenize</span>
             </Link>
             <div className="hidden lg:flex items-center gap-1">
-              <a href="#modules" className="px-3 py-1.5 text-sm text-black hover:text-black hover:bg-white rounded-md transition">Features</a>
-              <Link to="/pricing" className="px-3 py-1.5 text-sm text-black hover:text-black hover:bg-white rounded-md transition">Pricing</Link>
-              <a href="#testimonials" className="px-3 py-1.5 text-sm text-black hover:text-black hover:bg-white rounded-md transition">Stories</a>
+              <a href="#modules" className="px-3 py-1.5 text-sm rounded-md transition" style={{ color: BRAND.textSecondary }}>Features</a>
+              <Link to="/pricing" className="px-3 py-1.5 text-sm rounded-md transition" style={{ color: BRAND.textSecondary }}>Pricing</Link>
+              <a href="#testimonials" className="px-3 py-1.5 text-sm rounded-md transition" style={{ color: BRAND.textSecondary }}>Stories</a>
             </div>
           </div>
           
           {/* Right side - Actions */}
           <div className="flex items-center gap-3">
-            <Link to="/signup" className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-black hover:text-black hover:bg-white rounded-md transition">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              Search
+            <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm rounded-md transition" style={{ color: BRAND.textSecondary }}>Sign in</Link>
+            <Link to="/signup" className="px-4 py-1.5 text-white text-sm font-medium rounded-md transition shadow-sm" style={{ backgroundColor: BRAND.primary }}>
+              Get started
             </Link>
-            <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm text-black hover:text-black hover:bg-white rounded-md transition">Sign in</Link>
-            <Link to="/signup" className="px-4 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition shadow-sm">Get started</Link>
-            <button className="lg:hidden p-2 text-black hover:bg-white rounded-md" onClick={() => setMobileOpen(!mobileOpen)}>
+            <button className="lg:hidden p-2 rounded-md" style={{ color: BRAND.text }} onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -142,11 +156,11 @@ function Navbar() {
       </div>
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-white px-4 py-3 space-y-1">
-          <a href="#modules" className="block px-3 py-2 text-sm text-black hover:bg-white rounded-md">Features</a>
-          <a href="#pricing" className="block px-3 py-2 text-sm text-black hover:bg-white rounded-md">Pricing</a>
-          <a href="#testimonials" className="block px-3 py-2 text-sm text-black hover:bg-white rounded-md">Stories</a>
-          <a href="#faq" className="block px-3 py-2 text-sm text-black hover:bg-white rounded-md">FAQ</a>
+        <div className="lg:hidden border-t px-4 py-3 space-y-1" style={{ backgroundColor: BRAND.surface, borderColor: BRAND.border }}>
+          <a href="#modules" className="block px-3 py-2 text-sm rounded-md" style={{ color: BRAND.textSecondary }}>Features</a>
+          <a href="#pricing" className="block px-3 py-2 text-sm rounded-md" style={{ color: BRAND.textSecondary }}>Pricing</a>
+          <a href="#testimonials" className="block px-3 py-2 text-sm rounded-md" style={{ color: BRAND.textSecondary }}>Stories</a>
+          <a href="#faq" className="block px-3 py-2 text-sm rounded-md" style={{ color: BRAND.textSecondary }}>FAQ</a>
         </div>
       )}
     </nav>
@@ -172,20 +186,20 @@ function HeroSection() {
   }
   
   return (
-    <section className="pt-28 pb-16 px-4 sm:px-6 bg-white">
+    <section className="pt-28 pb-16 px-4 sm:px-6" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-4xl mx-auto text-center">
-        {/* Google-style logo with live badge */}
+        {/* Avenize logo with live badge */}
         <div className="flex items-center justify-center gap-3 mb-6">
           <div className="relative">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: BRAND.gradient }}>
               <span className="text-white font-bold text-xl">A</span>
             </div>
             {/* Live indicator */}
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full animate-pulse" style={{ backgroundColor: BRAND.success }}></div>
           </div>
           <div className="text-left">
-            <span className="text-3xl font-semibold text-black">Avenize</span>
-            <div className="flex items-center gap-2 text-xs text-black">
+            <span className="text-3xl font-semibold" style={{ color: BRAND.text }}>Avenize</span>
+            <div className="flex items-center gap-2 text-xs" style={{ color: BRAND.textSecondary }}>
               <Clock size={12} />
               <span>Lagos • </span>
               <span className="font-mono font-bold">{formatTime(currentTime)}</span>
@@ -194,8 +208,8 @@ function HeroSection() {
         </div>
         
         {/* AI Feature Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-full text-sm text-indigo-700 mb-8">
-          <Sparkles size={16} className="text-amber-500" />
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-8" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+          <Sparkles size={16} style={{ color: BRAND.amber }} />
           <span className="font-medium">AI-Powered Insights included</span>
         </div>
         
@@ -238,7 +252,7 @@ function HeroSection() {
         {/* Main headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
           Run Your Entire<br />
-          <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Business in One Place</span>
+          <span className="bg-clip-text text-transparent" style={{ backgroundImage: BRAND.gradient }}>Business in One Place</span>
         </h1>
         <p className="text-lg sm:text-xl text-black mb-10 max-w-2xl mx-auto">
           CRM, Finance, HR, Projects — all connected. No more switching between apps.
@@ -535,7 +549,7 @@ function TestimonialsSection() {
               <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
               <p className="text-black mb-4 leading-relaxed">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg shadow-md">{t.name.charAt(0)}</div>
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md" style={{ background: BRAND.gradient }}>{t.name.charAt(0)}</div>
                 <div>
                   <div className="font-semibold text-black">{t.name}</div>
                   <div className="text-sm text-black">{t.role}</div>
@@ -626,7 +640,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-md"><span className="text-white font-bold text-sm">A</span></div>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-md" style={{ background: BRAND.gradient }}><span className="text-white font-bold text-sm">A</span></div>
             <span className="font-semibold text-black">Avenize</span>
           </div>
           <div className="text-center md:text-right text-sm">
