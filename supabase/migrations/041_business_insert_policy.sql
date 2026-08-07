@@ -85,7 +85,12 @@ ALTER TABLE staff ENABLE ROW LEVEL SECURITY;
 ALTER TABLE business_branding ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_xp ENABLE ROW LEVEL SECURITY;
 
--- Step 9: Create PERMISSIVE policies
+-- Step 9: Create PERMISSIVE policies (drop first if exists)
+DROP POLICY IF EXISTS "Allow all on businesses" ON businesses;
+DROP POLICY IF EXISTS "Allow all on staff" ON staff;
+DROP POLICY IF EXISTS "Allow all on branding" ON business_branding;
+DROP POLICY IF EXISTS "Allow all on user_xp" ON user_xp;
+
 CREATE POLICY "Allow all on businesses" ON businesses FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all on staff" ON staff FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all on branding" ON business_branding FOR ALL USING (true) WITH CHECK (true);
