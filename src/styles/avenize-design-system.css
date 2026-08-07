@@ -189,9 +189,9 @@
    ============================================ */
 
 .av-body {
-  font-family: var(--av-font-sans);
-  background-color: var(--av-surface-2);
-  color: var(--av-text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: white;
+  color: #202124;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

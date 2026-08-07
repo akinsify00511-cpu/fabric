@@ -74,9 +74,12 @@ export default function Shell() {
   const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
   
   // Filter nav items based on tool access (unless privileged)
+  // Always show Settings regardless of tool access
   const visibleNavItems = loading || isPrivileged 
     ? NAV_ITEMS 
-    : NAV_ITEMS.filter(item => accessibleTools.includes(item.toolKey as any))
+    : NAV_ITEMS.filter(item => 
+        item.toolKey === 'settings' || accessibleTools.includes(item.toolKey as any)
+      )
   
   const companyName = branding.custom_name || staff?.business_name || 'My Company'
   const displayLogo = branding.logo_url || branding.brand_name ? null : <AvenizeMark size={22} />
