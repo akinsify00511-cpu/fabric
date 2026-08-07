@@ -75,9 +75,9 @@ const getMockData = (): { stats: DashboardStats; activities: RecentActivity[]; u
     teamChange: 2,
   },
   activities: [
-    { id: '1', type: 'deal', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago', icon: '🔥', colorVar: 'var(--av-danger)' },
-    { id: '2', type: 'payment', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago', icon: '✓', colorVar: 'var(--av-finance)' },
-    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: '📄', colorVar: 'var(--av-sales)' },
+    { id: '1', type: 'deal', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago', icon: '🔥', colorVar: '#EA4335' },
+    { id: '2', type: 'payment', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago', icon: '✓', colorVar: '#34A853' },
+    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: '📄', colorVar: '#4285F4' },
   ],
   upcoming: [
     { id: '1', text: 'Call Ibrahim Musa, hot deal closing', time: 'Today, 2:00 PM', priority: 'high' },
@@ -137,8 +137,8 @@ export default function Dashboard() {
       setRevenueData([40, 55, 45, 70, 60, 90, 100])
       
       setActivities([
-        { id: '1', type: 'deal', text: `You have ${hotDeals} hot deals`, time: 'Just now', icon: '🔥', colorVar: 'var(--av-danger)' },
-        { id: '2', type: 'invoice', text: `${pendingTasks} pending tasks`, time: 'Updated', icon: '📄', colorVar: 'var(--av-sales)' },
+        { id: '1', type: 'deal', text: `You have ${hotDeals} hot deals`, time: 'Just now', icon: '🔥', colorVar: '#EA4335' },
+        { id: '2', type: 'invoice', text: `${pendingTasks} pending tasks`, time: 'Updated', icon: '📄', colorVar: '#4285F4' },
       ])
 
       setUpcoming([
@@ -168,9 +168,9 @@ export default function Dashboard() {
     return (
       <div className="pb-20">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-white/5 rounded w-48"></div>
+          <div className="h-8 bg-gray-200 rounded w-48"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-white/5 rounded-2xl"></div>)}
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-gray-200 rounded-2xl"></div>)}
           </div>
         </div>
       </div>
@@ -188,14 +188,14 @@ export default function Dashboard() {
             {/* Brand mark */}
             <div className="flex items-center gap-2 mb-4">
               <div className="w-5 h-5">
-                <svg viewBox="0 0 1254 1254" className="w-full h-full fill-[var(--av-accent)]">
+                <svg viewBox="0 0 1254 1254" className="w-full h-full fill-teal-500">
                   <path d="M613.7 269.1c-36.4 3.9-70.6 23.9-91.9 53.6-3 4.3-31.8 55.5-63.9 113.8-32 58.3-62.3 113.2-67.1 122-39.2 71.1-34.9 137 11.5 177.3 11.2 9.7 36.3 23 38.7 20.5 1.1-1 97.6-176.1 121-219.3 3.1-5.8 12.1-22.2 20-36.5s18.1-32.9 22.7-41.4c10.9-20.1 15.7-27.3 23.2-35.4 30.8-32.9 80.2-40.8 124.9-20.1 8.8 4 25.4 14.9 29.6 19.3 1.7 1.7 3.4 3.1 3.9 3.1 1.1 0-42.1-85-48.5-95.3-26.3-42.8-74.8-66.8-124.1-61.6"/>
                 </svg>
               </div>
-              <span className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>Avenize</span>
+              <span className="text-sm" style={{ color: '#5F6368' }}>Avenize</span>
             </div>
-            <div className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>Welcome back, {getUserName()}</div>
-            <div className="text-sm mt-2" style={{ color: 'var(--av-text-secondary)' }}>Revenue this month</div>
+            <div className="text-sm" style={{ color: '#5F6368' }}>Welcome back, {getUserName()}</div>
+            <div className="text-sm mt-2" style={{ color: '#5F6368' }}>Revenue this month</div>
             <div className="text-[38px] font-semibold num mt-1" style={{ letterSpacing: '-0.01em' }}>
               {stats ? formatCurrency(stats.pipelineValue) : '₦0'}
             </div>
@@ -205,11 +205,11 @@ export default function Dashboard() {
             {revenueData.map((height, i) => (
               <div
                 key={i}
-                className={`w-2.5 rounded-sm ${i >= revenueData.length - 2 ? 'bg-gradient-to-t from-[var(--av-accent-2)] to-[var(--av-accent)]' : 'bg-[var(--av-accent)]'}`}
+                className={`w-2.5 rounded-sm ${i >= revenueData.length - 2 ? 'bg-gradient-to-t from-teal-600 to-teal-500' : 'bg-teal-500'}`}
                 style={{ height: `${height}%`, opacity: i >= revenueData.length - 2 ? 1 : 0.35 }}
               />
             ))}
-            <span className="text-xs font-semibold ml-3 mb-0.5" style={{ color: 'var(--av-success)' }}>+{revenueChange}%</span>
+            <span className="text-xs font-semibold ml-3 mb-0.5" style={{ color: '#34A853' }}>+{revenueChange}%</span>
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export default function Dashboard() {
               >
                 <span style={{ color: module.color }}>{module.icon}</span>
               </div>
-              <div className="text-sm font-medium" style={{ color: 'var(--av-text)' }}>{module.name}</div>
+              <div className="text-sm font-medium" style={{ color: '#202124' }}>{module.name}</div>
             </Link>
           ))}
         </div>
@@ -236,61 +236,61 @@ export default function Dashboard() {
         <Link to="/app/crm" className="col-span-6 md:col-span-3 card-stat p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--av-danger-bg)' }}>
-                <Flame size={14} style={{ color: 'var(--av-danger)' }} />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(234, 67, 53, 0.1)' }}>
+                <Flame size={14} style={{ color: '#EA4335' }} />
               </div>
             </div>
-            <span className="text-xs font-semibold" style={{ color: 'var(--av-success)' }}>+{stats?.hotDealsChange || 0} this week</span>
+            <span className="text-xs font-semibold" style={{ color: '#34A853' }}>+{stats?.hotDealsChange || 0} this week</span>
           </div>
           <div className="text-[24px] font-semibold num">{stats?.hotDeals || 0}</div>
-          <div className="text-xs mt-1" style={{ color: 'var(--av-text-secondary)' }}>Hot deals</div>
+          <div className="text-xs mt-1" style={{ color: '#5F6368' }}>Hot deals</div>
         </Link>
 
         <Link to="/app/crm" className="col-span-6 md:col-span-3 card-stat p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--av-sales-bg)' }}>
-                <TrendingUp size={14} style={{ color: 'var(--av-sales)' }} />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(66, 133, 244, 0.1)' }}>
+                <TrendingUp size={14} style={{ color: '#4285F4' }} />
               </div>
             </div>
-            <span className="text-xs font-semibold" style={{ color: 'var(--av-success)' }}>+{formatCurrency(stats?.pipelineChange || 0)}</span>
+            <span className="text-xs font-semibold" style={{ color: '#34A853' }}>+{formatCurrency(stats?.pipelineChange || 0)}</span>
           </div>
           <div className="text-[24px] font-semibold num">{formatCurrency(stats?.pipelineValue || 0)}</div>
-          <div className="text-xs mt-1" style={{ color: 'var(--av-text-secondary)' }}>Pipeline value</div>
+          <div className="text-xs mt-1" style={{ color: '#5F6368' }}>Pipeline value</div>
         </Link>
 
         <Link to="/app/tasks" className="col-span-6 md:col-span-3 card-stat p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--av-hr-bg)' }}>
-                <CheckSquare size={14} style={{ color: 'var(--av-hr)' }} />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)' }}>
+                <CheckSquare size={14} style={{ color: '#8B5CF6' }} />
               </div>
             </div>
-            <span className="text-xs font-semibold" style={{ color: 'var(--av-warning)' }}>{stats?.tasksChange || 0}</span>
+            <span className="text-xs font-semibold" style={{ color: '#FBBC05' }}>{stats?.tasksChange || 0}</span>
           </div>
           <div className="text-[24px] font-semibold num">{stats?.pendingTasks || 0}</div>
-          <div className="text-xs mt-1" style={{ color: 'var(--av-text-secondary)' }}>Pending tasks</div>
+          <div className="text-xs mt-1" style={{ color: '#5F6368' }}>Pending tasks</div>
         </Link>
 
         <Link to="/app/people" className="col-span-6 md:col-span-3 card-stat p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--av-finance-bg)' }}>
-                <Users size={14} style={{ color: 'var(--av-finance)' }} />
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(52, 168, 83, 0.1)' }}>
+                <Users size={14} style={{ color: '#34A853' }} />
               </div>
             </div>
-            <span className="text-xs font-semibold" style={{ color: 'var(--av-success)' }}>+{stats?.teamChange || 0}</span>
+            <span className="text-xs font-semibold" style={{ color: '#34A853' }}>+{stats?.teamChange || 0}</span>
           </div>
           <div className="text-[24px] font-semibold num">{stats?.teamMembers || 0}</div>
-          <div className="text-xs mt-1" style={{ color: 'var(--av-text-secondary)' }}>Team members</div>
+          <div className="text-xs mt-1" style={{ color: '#5F6368' }}>Team members</div>
         </Link>
 
         {/* Recent Activity - Flat rows, no card elevation */}
         <div className="col-span-12 md:col-span-7 card p-5">
-          <div className="text-sm font-semibold mb-4" style={{ color: 'var(--av-text)' }}>Recent activity</div>
+          <div className="text-sm font-semibold mb-4" style={{ color: '#202124' }}>Recent activity</div>
           <div className="space-y-3">
             {activities.map((activity) => (
-              <div key={activity.id} className="flex items-start gap-3 py-2" style={{ borderBottom: '0.5px solid var(--av-border)' }}>
+              <div key={activity.id} className="flex items-start gap-3 py-2" style={{ borderBottom: '0.5px solid #E8EAED' }}>
                 <div 
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0"
                   style={{ backgroundColor: `${activity.colorVar}20` }}
@@ -298,8 +298,8 @@ export default function Dashboard() {
                   {activity.icon === '✓' ? <Check size={14} style={{ color: activity.colorVar }} /> : activity.icon}
                 </div>
                 <div>
-                  <div className="text-sm" style={{ color: 'var(--av-text)' }}>{activity.text}</div>
-                  <div className="text-xs mt-0.5" style={{ color: 'var(--av-text-muted)' }}>{activity.time}</div>
+                  <div className="text-sm" style={{ color: '#202124' }}>{activity.text}</div>
+                  <div className="text-xs mt-0.5" style={{ color: '#9AA0A6' }}>{activity.time}</div>
                 </div>
               </div>
             ))}
@@ -308,22 +308,22 @@ export default function Dashboard() {
 
         {/* Upcoming - Minimalist with dots */}
         <div className="col-span-12 md:col-span-5 card p-5">
-          <div className="text-sm font-semibold mb-4" style={{ color: 'var(--av-text)' }}>Upcoming</div>
+          <div className="text-sm font-semibold mb-4" style={{ color: '#202124' }}>Upcoming</div>
           <div className="space-y-3">
             {upcoming.map((item) => (
-              <div key={item.id} className="flex items-center gap-3 py-2" style={{ borderBottom: '0.5px solid var(--av-border)' }}>
+              <div key={item.id} className="flex items-center gap-3 py-2" style={{ borderBottom: '0.5px solid #E8EAED' }}>
                 <div 
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ 
-                    backgroundColor: item.priority === 'high' ? 'var(--av-danger)' : 
-                                   item.priority === 'medium' ? 'var(--av-warning)' : 'var(--av-text-muted)',
+                    backgroundColor: item.priority === 'high' ? '#EA4335' : 
+                                   item.priority === 'medium' ? '#FBBC05' : '#9AA0A6',
                     boxShadow: `0 0 0 3px ${item.priority === 'high' ? 'rgba(251, 113, 133, 0.25)' : 
                                           item.priority === 'medium' ? 'rgba(251, 191, 36, 0.25)' : 'transparent'}`
                   }}
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm truncate" style={{ color: 'var(--av-text)' }}>{item.text}</div>
-                  <div className="text-xs mt-0.5" style={{ color: 'var(--av-text-muted)' }}>{item.time}</div>
+                  <div className="text-sm truncate" style={{ color: '#202124' }}>{item.text}</div>
+                  <div className="text-xs mt-0.5" style={{ color: '#9AA0A6' }}>{item.time}</div>
                 </div>
               </div>
             ))}
