@@ -55,6 +55,7 @@ const Integrations = lazy(() => import('./pages/Integrations'))
 const SMSBroadcast = lazy(() => import('./pages/SMSBroadcast'))
 const LiveChat = lazy(() => import('./pages/LiveChat'))
 const WhatsAppIntegration = lazy(() => import('./pages/WhatsAppIntegration'))
+const PublicAppointments = lazy(() => import('./pages/PublicAppointments'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const ProjectSettings = lazy(() => import('./pages/ProjectSettings'))
@@ -237,6 +238,8 @@ function AppRoutes() {
         <Route path="/field-location" element={<FieldLocation />} />
         <Route path="/lead/:source?" element={<LeadCapture />} />
         <Route path="/leads" element={<LeadCapture />} />
+        <Route path="/book" element={<PublicAppointments />} />
+        <Route path="/book/:slug" element={<PublicAppointments />} />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
