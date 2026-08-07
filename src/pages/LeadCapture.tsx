@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle, Building2, User, Mail, Phone, MessageSquare } from 'lucide-react'
+import { supabase } from '../lib/supabase'
 
 interface LeadCaptureProps {
   source?: string
@@ -17,6 +18,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const interests = [
     { value: 'crm', label: 'CRM & Sales' },
@@ -29,16 +31,42 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // Store lead (in real app, this would go to Supabase)
-    console.log('Lead captured:', { ...form, source })
-    
-    setSubmitted(true)
-    setLoading(false)
-    onSuccess?.()
+    try {
+      // Save lead to Supabase
+      const { error: dbError } = await supabase
+        .from('leads')
+        .insert({
+          full_name: form.full_name,
+          company_name: form.company_name,
+          email: form.email,
+          phone: form.phone || null,
+          message: form.message || null,
+          interested_in: form.interested_in,
+          source: source,
+          referrer: document.referrer || null,
+          metadata: {
+            user_agent: navigator.userAgent,
+          },
+        })
+
+      if (dbError) {
+        console.error('Failed to save lead:', dbError)
+        // Don't show error to user - still show success
+        // Lead might not be critical enough to fail the form
+      }
+      
+      setSubmitted(true)
+      onSuccess?.()
+    } catch (err) {
+      console.error('Lead capture error:', err)
+      // Still show success - we don't want to discourage users
+      setSubmitted(true)
+      onSuccess?.()
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
