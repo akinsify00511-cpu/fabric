@@ -104,7 +104,7 @@ export default function AssetManagementPage() {
   const statusConfig: Record<string, { bg: string; text: string }> = {
     active: { bg: 'bg-green-100', text: 'text-green-600' },
     in_maintenance: { bg: 'bg-amber-100', text: 'text-amber-600' },
-    retired: { bg: 'bg-gray-100', text: 'text-gray-900' },
+    retired: { bg: 'bg-white', text: 'text-black' },
     disposed: { bg: 'bg-red-100', text: 'text-red-600' },
     lost: { bg: 'bg-red-100', text: 'text-red-600' },
   }
@@ -124,7 +124,7 @@ export default function AssetManagementPage() {
             <Package size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Asset Management</h1>
+            <h1 className="text-2xl font-bold text-black">Asset Management</h1>
             <p className="text-sm text-black/50">Track and manage company assets</p>
           </div>
         </div>

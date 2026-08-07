@@ -35,11 +35,11 @@ export default function Contact() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-lg font-semibold text-gray-900">Contact Us</h1>
+          <h1 className="text-lg font-semibold text-black">Contact Us</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -52,8 +52,8 @@ export default function Contact() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
-            <p className="text-gray-900 mb-6 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-black mb-2">Message Sent!</h2>
+            <p className="text-black mb-6 max-w-md mx-auto">
               Thank you for contacting us. Our team will get back to you within 24 hours.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -71,7 +71,7 @@ export default function Contact() {
               </button>
               <Link
                 to="/"
-                className="px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
+                className="px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/5 transition"
               >
                 Back to Home
               </Link>
@@ -81,7 +81,7 @@ export default function Contact() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Contact Options */}
             <div className="lg:col-span-1">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">How can we help?</h2>
+              <h2 className="text-xl font-bold text-black mb-4">How can we help?</h2>
               <div className="space-y-2">
                 {contactOptions.map((option) => (
                   <button
@@ -94,10 +94,10 @@ export default function Contact() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-gray-900'}`} />
+                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-black'}`} />
                       <div>
-                        <p className="font-medium text-gray-900">{option.label}</p>
-                        <p className="text-xs text-gray-900">{option.desc}</p>
+                        <p className="font-medium text-black">{option.label}</p>
+                        <p className="text-xs text-black">{option.desc}</p>
                       </div>
                     </div>
                   </button>
@@ -108,37 +108,37 @@ export default function Contact() {
               <div className="mt-8 space-y-4">
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Mail className="w-5 h-5 text-gray-900" />
+                    <Mail className="w-5 h-5 text-black" />
                     <div>
-                      <p className="text-gray-900">Email</p>
+                      <p className="text-black">Email</p>
                       <a href="mailto:hello@avenize.com" className="text-indigo-600 hover:underline">hello@avenize.com</a>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Phone className="w-5 h-5 text-gray-900" />
+                    <Phone className="w-5 h-5 text-black" />
                     <div>
-                      <p className="text-gray-900">Phone</p>
+                      <p className="text-black">Phone</p>
                       <a href="tel:+14155551234" className="text-indigo-600 hover:underline">(415) 555-1234</a>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Clock className="w-5 h-5 text-gray-900" />
+                    <Clock className="w-5 h-5 text-black" />
                     <div>
-                      <p className="text-gray-900">Support Hours</p>
-                      <p className="text-gray-900">Mon-Fri, 9am-6pm PST</p>
+                      <p className="text-black">Support Hours</p>
+                      <p className="text-black">Mon-Fri, 9am-6pm PST</p>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <MapPin className="w-5 h-5 text-gray-900" />
+                    <MapPin className="w-5 h-5 text-black" />
                     <div>
-                      <p className="text-gray-900">Address</p>
-                      <p className="text-gray-900">San Francisco, CA</p>
+                      <p className="text-black">Address</p>
+                      <p className="text-black">San Francisco, CA</p>
                     </div>
                   </div>
                 </div>
@@ -148,13 +148,13 @@ export default function Contact() {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl border border-black/5 p-8">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">
+                <h2 className="text-xl font-bold text-black mb-6">
                   {contactOptions.find(o => o.id === contactType)?.label}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">Name</label>
+                      <label className="block text-sm font-medium text-black mb-1">Name</label>
                       <input
                         type="text"
                         required
@@ -165,7 +165,7 @@ export default function Contact() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-1">Email</label>
+                      <label className="block text-sm font-medium text-black mb-1">Email</label>
                       <input
                         type="email"
                         required
@@ -177,7 +177,7 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Subject</label>
+                    <label className="block text-sm font-medium text-black mb-1">Subject</label>
                     <input
                       type="text"
                       required
@@ -188,7 +188,7 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 mb-1">Message</label>
+                    <label className="block text-sm font-medium text-black mb-1">Message</label>
                     <textarea
                       required
                       value={message}
@@ -219,8 +219,8 @@ export default function Contact() {
               <div className="mt-6 bg-indigo-50 rounded-2xl p-6 flex items-start gap-4">
                 <HelpCircle className="w-6 h-6 text-indigo-600 shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">Need quick answers?</h3>
-                  <p className="text-sm text-gray-900 mb-3">
+                  <h3 className="font-semibold text-black mb-1">Need quick answers?</h3>
+                  <p className="text-sm text-black mb-3">
                     Check our Help Center for guides, tutorials, and frequently asked questions.
                   </p>
                   <Link

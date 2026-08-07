@@ -122,7 +122,7 @@ export default function PaymentSettingsPage() {
             <CreditCard size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Payment Settings</h1>
+            <h1 className="text-2xl font-bold text-black">Payment Settings</h1>
             <p className="text-sm text-black/50">Configure payment gateways</p>
           </div>
         </div>
@@ -189,7 +189,7 @@ export default function PaymentSettingsPage() {
                       <div className="font-medium">{providerNames[gw.provider] || gw.provider}</div>
                       <div className="flex items-center gap-2 text-sm text-black/50">
                         <span className={`px-2 py-0.5 rounded text-xs ${
-                          gw.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-900'
+                          gw.is_active ? 'bg-green-100 text-green-600' : 'bg-white text-black'
                         }`}>
                           {gw.is_active ? 'Active' : 'Inactive'}
                         </span>

@@ -297,11 +297,11 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
 
   if (error) {
     return (
-      <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl p-6 max-w-md text-center">
           <VideoOff size={48} className="mx-auto mb-4 text-red-500" />
           <h2 className="text-xl font-bold mb-2">Unable to Start Video Call</h2>
-          <p className="text-gray-900 mb-4">{error}</p>
+          <p className="text-black mb-4">{error}</p>
           <button
             onClick={onLeave}
             className="px-6 py-2 bg-indigo-500 text-white rounded-lg font-medium"
@@ -314,18 +314,18 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-900 flex flex-col z-50">
+    <div className="fixed inset-0 bg-black flex flex-col z-50">
       {/* Header */}
-      <div className="bg-gray-800 px-4 py-3 flex items-center justify-between">
+      <div className="bg-black px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
             <span className="text-white font-medium">In Call</span>
           </div>
-          <span className="text-gray-900">{formatDuration(callDuration)}</span>
+          <span className="text-black">{formatDuration(callDuration)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-gray-900 text-sm">{participants.length} participant{participants.length !== 1 ? 's' : ''}</span>
+          <span className="text-black text-sm">{participants.length} participant{participants.length !== 1 ? 's' : ''}</span>
         </div>
       </div>
 
@@ -341,7 +341,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
             : 'grid-cols-3 grid-rows-2'
         }`}>
           {/* Local Video */}
-          <div className="relative bg-gray-700 rounded-xl overflow-hidden aspect-video">
+          <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
             <video
               ref={localVideoRef}
               autoPlay
@@ -350,7 +350,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
               className={`w-full h-full object-cover ${!isVideoEnabled ? 'hidden' : ''}`}
             />
             {!isVideoEnabled && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+              <div className="absolute inset-0 flex items-center justify-center bg-black">
                 <div className="w-20 h-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
                   {staff?.full_name?.charAt(0) || 'Y'}
                 </div>
@@ -369,12 +369,12 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
       </div>
 
       {/* Controls */}
-      <div className="bg-gray-800 px-4 py-4">
+      <div className="bg-black px-4 py-4">
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={toggleAudio}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition ${
-              isAudioEnabled ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-red-500 text-white'
+              isAudioEnabled ? 'bg-black hover:bg-black text-white' : 'bg-red-500 text-white'
             }`}
           >
             {isAudioEnabled ? <Mic size={20} /> : <MicOff size={20} />}
@@ -383,7 +383,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
           <button
             onClick={toggleVideo}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition ${
-              isVideoEnabled ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-red-500 text-white'
+              isVideoEnabled ? 'bg-black hover:bg-black text-white' : 'bg-red-500 text-white'
             }`}
           >
             {isVideoEnabled ? <Video size={20} /> : <VideoOff size={20} />}
@@ -398,7 +398,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
           
           <button
             onClick={toggleFullscreen}
-            className="w-12 h-12 rounded-full bg-gray-700 hover:bg-gray-600 text-white flex items-center justify-center transition"
+            className="w-12 h-12 rounded-full bg-black hover:bg-black text-white flex items-center justify-center transition"
           >
             {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
           </button>
@@ -419,7 +419,7 @@ function VideoParticipant({ participant }: { participant: Participant }) {
   }, [participant.stream])
   
   return (
-    <div className="relative bg-gray-700 rounded-xl overflow-hidden aspect-video">
+    <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
       {participant.stream && participant.videoEnabled ? (
         <video
           ref={videoRef}
@@ -428,7 +428,7 @@ function VideoParticipant({ participant }: { participant: Participant }) {
           className="w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+        <div className="absolute inset-0 flex items-center justify-center bg-black">
           <div className="w-20 h-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
             {participant.name.charAt(0)}
           </div>

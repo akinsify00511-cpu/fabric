@@ -50,10 +50,10 @@ export default function OwnerInsights() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Owner Insights</h1>
-          <p className="text-gray-900">Your business command center</p>
+          <h1 className="text-2xl font-bold text-black">Owner Insights</h1>
+          <p className="text-black">Your business command center</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-900">
+        <div className="flex items-center gap-2 text-sm text-black">
           <Clock size={16} />
           <span>Last updated: {new Date().toLocaleTimeString()}</span>
         </div>
@@ -71,7 +71,7 @@ export default function OwnerInsights() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-white text-black hover:bg-white'
               }`}
             >
               <Icon size={16} />
@@ -90,25 +90,25 @@ export default function OwnerInsights() {
             <MetricCard label="Sarah Conversations" value="1,247" change={14.5} icon={MessageSquare} color="blue" />
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">System Performance</h2>
+          <div className="bg-white rounded-xl p-6 border border-white">
+            <h2 className="text-lg font-bold text-black mb-4">System Performance</h2>
             <div className="grid md:grid-cols-4 gap-4">
               {PERFORMANCE.map((p, i) => (
-                <div key={i} className="text-center p-4 bg-gray-50 rounded-lg">
+                <div key={i} className="text-center p-4 bg-white rounded-lg">
                   <CheckCircle size={24} className="text-green-500 mx-auto mb-2" />
-                  <div className="text-xl font-bold text-gray-900">{p.value}</div>
-                  <div className="text-sm text-gray-900">{p.metric}</div>
-                  <div className="text-xs text-gray-900 mt-1">Target: {p.target}</div>
+                  <div className="text-xl font-bold text-black">{p.value}</div>
+                  <div className="text-sm text-black">{p.metric}</div>
+                  <div className="text-xs text-black mt-1">Target: {p.target}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+          <div className="bg-white rounded-xl p-6 border border-white">
+            <h2 className="text-lg font-bold text-black mb-4">Recent Activity</h2>
             <div className="space-y-3">
               {RECENT_ACTIVITY.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={i} className="flex items-center justify-between p-3 bg-white rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${
                       item.type === 'finance' ? 'bg-green-500' :
@@ -116,11 +116,11 @@ export default function OwnerInsights() {
                       item.type === 'project' ? 'bg-amber-500' : 'bg-purple-500'
                     }`} />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{item.action}</p>
-                      <p className="text-xs text-gray-900">by {item.user}</p>
+                      <p className="text-sm font-medium text-black">{item.action}</p>
+                      <p className="text-xs text-black">by {item.user}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-900">{item.time}</span>
+                  <span className="text-xs text-black">{item.time}</span>
                 </div>
               ))}
             </div>
@@ -137,40 +137,40 @@ export default function OwnerInsights() {
             <MetricCard label="Satisfaction Score" value="94%" change={2.3} icon={Star} color="amber" />
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Sarah Performance</h2>
+          <div className="bg-white rounded-xl p-6 border border-white">
+            <h2 className="text-lg font-bold text-black mb-4">Sarah Performance</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-900 mb-4">Week-over-Week</p>
+                <p className="text-sm text-black mb-4">Week-over-Week</p>
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">1,247</div>
-                    <div className="text-sm text-gray-900">This week</div>
+                    <div className="text-3xl font-bold text-black">1,247</div>
+                    <div className="text-sm text-black">This week</div>
                   </div>
                   <div className="flex items-center gap-1 text-green-600">
                     <ArrowUp size={20} />
                     <span className="font-bold">14.5%</span>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-900">1,089</div>
-                    <div className="text-sm text-gray-900">Last week</div>
+                    <div className="text-2xl font-bold text-black">1,089</div>
+                    <div className="text-sm text-black">Last week</div>
                   </div>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-gray-900 mb-4">Resolution Rate</p>
+                <p className="text-sm text-black mb-4">Resolution Rate</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-full bg-gray-100 rounded-full h-4">
+                  <div className="w-full bg-white rounded-full h-4">
                     <div className="bg-green-500 h-4 rounded-full" style={{ width: '95%' }} />
                   </div>
-                  <span className="font-bold text-gray-900">95.4%</span>
+                  <span className="font-bold text-black">95.4%</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Top Questions Asked</h2>
+          <div className="bg-white rounded-xl p-6 border border-white">
+            <h2 className="text-lg font-bold text-black mb-4">Top Questions Asked</h2>
             <div className="space-y-3">
               {SARAH_STATS.top_questions.map((item, i) => (
                 <div key={i} className="flex items-center gap-4">
@@ -178,11 +178,11 @@ export default function OwnerInsights() {
                     {i + 1}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{item.q}</p>
+                    <p className="text-sm font-medium text-black">{item.q}</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-gray-900">{item.count}</div>
-                    <div className="text-xs text-gray-900">queries</div>
+                    <div className="text-lg font-bold text-black">{item.count}</div>
+                    <div className="text-xs text-black">queries</div>
                   </div>
                 </div>
               ))}
@@ -193,11 +193,11 @@ export default function OwnerInsights() {
 
       {activeTab === 'modules' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-xl p-6 border border-gray-100 overflow-x-auto">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Module Usage Across Team</h2>
+          <div className="bg-white rounded-xl p-6 border border-white overflow-x-auto">
+            <h2 className="text-lg font-bold text-black mb-4">Module Usage Across Team</h2>
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr className="text-left text-sm text-gray-900 border-b">
+                <tr className="text-left text-sm text-black border-b">
                   <th className="pb-3">Module</th>
                   <th className="pb-3 text-center">Active Users</th>
                   <th className="pb-3 text-center">Sessions</th>
@@ -207,9 +207,9 @@ export default function OwnerInsights() {
               </thead>
               <tbody>
                 {MODULE_USAGE.map((m, i) => (
-                  <tr key={i} className="border-b border-gray-50 last:border-0">
+                  <tr key={i} className="border-b border-white last:border-0">
                     <td className="py-4">
-                      <Link to={`/app/${m.module.toLowerCase().split('/')[0]}`} className="flex items-center gap-2 text-gray-900 font-medium hover:text-indigo-600">
+                      <Link to={`/app/${m.module.toLowerCase().split('/')[0]}`} className="flex items-center gap-2 text-black font-medium hover:text-indigo-600">
                         {m.module}
                         <ChevronRight size={16} />
                       </Link>
@@ -243,7 +243,7 @@ function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { 
     amber: 'bg-amber-50 text-amber-600',
   }
   return (
-    <div className="bg-white rounded-xl p-5 border border-gray-100">
+    <div className="bg-white rounded-xl p-5 border border-white">
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center`}>
           <Icon size={20} />
@@ -253,8 +253,8 @@ function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { 
           {Math.abs(change)}%
         </span>
       </div>
-      <div className="text-2xl font-bold text-gray-900 mb-1">{prefix}{value}</div>
-      <div className="text-sm text-gray-900">{label}</div>
+      <div className="text-2xl font-bold text-black mb-1">{prefix}{value}</div>
+      <div className="text-sm text-black">{label}</div>
     </div>
   )
 }

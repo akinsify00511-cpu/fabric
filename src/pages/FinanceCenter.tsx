@@ -29,7 +29,7 @@ export default function FinanceCenter() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Finance Center</h1>
+          <h1 className="text-xl font-semibold text-black">Finance Center</h1>
           <p className="text-sm text-black/50">Tax, Banking & Receivables</p>
         </div>
       </div>

@@ -303,7 +303,7 @@ export default function SearchPage() {
           {/* Results List */}
           {results.map((result, idx) => {
             const Icon = ENTITY_ICONS[result.entityType] || FileText
-            const colorClass = ENTITY_COLORS[result.entityType] || 'bg-gray-100 text-gray-900'
+            const colorClass = ENTITY_COLORS[result.entityType] || 'bg-white text-black'
             const highlighted = highlightMatch(result.title, query)
 
             return (

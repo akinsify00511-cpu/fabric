@@ -417,7 +417,7 @@ export default function InventoryNigeria() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs font-mono text-black/40">{item.sku}</span>
-                      <span className="px-2 py-0.5 rounded text-xs bg-gray-100">
+                      <span className="px-2 py-0.5 rounded text-xs bg-white">
                         {LOCATION_LABELS[item.location].label}
                       </span>
                     </div>
@@ -428,7 +428,7 @@ export default function InventoryNigeria() {
                   </div>
                   <div className="text-right">
                     <p className={`text-xl font-bold ${
-                      isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-gray-900'
+                      isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-black'
                     }`}>
                       {item.quantity}
                       <span className="text-xs font-normal text-black/40 ml-1">
@@ -464,7 +464,7 @@ export default function InventoryNigeria() {
                   m.type === 'used' ? 'bg-red-500' :
                   m.type === 'allocated' ? 'bg-blue-500' :
                   m.type === 'returned' ? 'bg-yellow-500' :
-                  'bg-gray-500'
+                  'bg-white0'
                 }`} />
                 <div className="flex-1">
                   <p className="text-sm">
@@ -632,7 +632,7 @@ export default function InventoryNigeria() {
             </div>
             
             <div className="p-4 space-y-4">
-              <div className="bg-gray-50 rounded-xl p-3">
+              <div className="bg-white rounded-xl p-3">
                 <p className="font-medium">{selectedItem.name}</p>
                 <p className="text-sm text-black/50">
                   Current: {selectedItem.quantity} {UNIT_LABELS[selectedItem.unit]}

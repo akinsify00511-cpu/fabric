@@ -27,15 +27,15 @@ export default function SSOSettings() {
       <div className="pb-20">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-medium text-gray-900">Single Sign-On</h1>
+            <h1 className="text-xl font-medium text-black">Single Sign-On</h1>
             <p className="text-sm text-black/50 mt-0.5">Enterprise identity provider integration</p>
           </div>
         </div>
 
         {/* Beta Access Banner */}
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 mb-6 text-white">
+        <div className="bg-gradient-to-br from-black to-black rounded-2xl p-8 mb-6 text-white">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gray-300 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center">
               <Lock className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
@@ -43,7 +43,7 @@ export default function SSOSettings() {
                 <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium">
                   Beta Feature
                 </span>
-                <span className="px-3 py-1 rounded-full bg-gray-300 text-white/70 text-xs">
+                <span className="px-3 py-1 rounded-full bg-white text-white/70 text-xs">
                   Enterprise Feature
                 </span>
               </div>
@@ -56,7 +56,7 @@ export default function SSOSettings() {
               <div className="flex items-center gap-4">
                 <a
                   href="mailto:hello@riverwayse.com?subject=SSO%20Beta%20Access%20Request"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-slate-900 rounded-xl text-sm font-medium hover:bg-slate-100 transition"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl text-sm font-medium hover:bg-slate-400 transition"
                 >
                   <Sparkles className="w-4 h-4" />
                   Request Beta Access
@@ -136,7 +136,7 @@ export default function SSOSettings() {
               { name: 'Ping Identity', color: 'bg-orange-500' },
               { name: 'Duo', color: 'bg-teal-500' },
               { name: 'JumpCloud', color: 'bg-red-600' },
-              { name: 'Custom SAML', color: 'bg-slate-600' },
+              { name: 'Custom SAML', color: 'bg-black' },
             ].map((provider) => (
               <div
                 key={provider.name}
@@ -175,7 +175,7 @@ export default function SSOSettings() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Single Sign-On</h1>
+          <h1 className="text-xl font-medium text-black">Single Sign-On</h1>
           <p className="text-sm text-black/50 mt-0.5">Configure your identity provider</p>
         </div>
         <BetaBadge />

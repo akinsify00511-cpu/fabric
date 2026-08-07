@@ -437,7 +437,7 @@ export default function Payments() {
                   className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 ${
                     newPayment.type === 'income' 
                       ? 'bg-green-600 text-white' 
-                      : 'bg-white text-black/60 hover:bg-gray-50'
+                      : 'bg-white text-black/60 hover:bg-white'
                   }`}
                 >
                   <ArrowUpRight size={16} />
@@ -448,7 +448,7 @@ export default function Payments() {
                   className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 ${
                     newPayment.type === 'expense' 
                       ? 'bg-red-600 text-white' 
-                      : 'bg-white text-black/60 hover:bg-gray-50'
+                      : 'bg-white text-black/60 hover:bg-white'
                   }`}
                 >
                   <ArrowDownRight size={16} />
@@ -629,7 +629,7 @@ export default function Payments() {
                 <p className="text-lg font-medium mt-1">{selectedPayment.description}</p>
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div className="bg-white rounded-xl p-4 space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-black/50">Type</span>
                   <span className={`text-sm font-medium capitalize ${
@@ -678,7 +678,7 @@ export default function Payments() {
               {selectedPayment.notes && (
                 <div>
                   <p className="text-sm text-black/50 mb-1">Notes</p>
-                  <p className="text-sm bg-gray-50 rounded-xl p-3">{selectedPayment.notes}</p>
+                  <p className="text-sm bg-white rounded-xl p-3">{selectedPayment.notes}</p>
                 </div>
               )}
             </div>

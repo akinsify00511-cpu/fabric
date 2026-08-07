@@ -220,7 +220,7 @@ export default function Profile() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h1 className="text-xl font-medium text-gray-900">Account Settings</h1>
+        <h1 className="text-xl font-medium text-black">Account Settings</h1>
       </div>
 
       {/* Tabs */}

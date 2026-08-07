@@ -225,7 +225,7 @@ export default function Events() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Events</h1>
+          <h1 className="text-xl font-medium text-black">Events</h1>
           <p className="text-sm text-black/50 mt-0.5">Manage and promote your events</p>
         </div>
         <div className="flex gap-2">
@@ -376,8 +376,8 @@ export default function Events() {
             ].map((reg, i) => (
               <div key={i} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                    <User size={18} className="text-gray-900" />
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                    <User size={18} className="text-black" />
                   </div>
                   <div>
                     <p className="font-medium">{reg.name}</p>

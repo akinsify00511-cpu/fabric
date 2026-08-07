@@ -172,7 +172,7 @@ export default function OnboardingTour({
 
           {/* Title & Description */}
           <div className="text-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h2>
+            <h2 className="text-xl font-bold text-black mb-2">{step.title}</h2>
             <p className="text-sm text-black/60 leading-relaxed">{step.description}</p>
           </div>
 

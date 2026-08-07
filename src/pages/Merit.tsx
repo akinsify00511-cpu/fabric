@@ -157,7 +157,7 @@ export default function Merit() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Merit Points</h1>
+          <h1 className="text-xl font-medium text-black">Merit Points</h1>
           <p className="text-sm text-black/50 mt-0.5">Recognize and reward great work</p>
         </div>
         <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full">
@@ -197,7 +197,7 @@ export default function Merit() {
       {activeTab === 'give' && (
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-gray-900 mb-4">Recognize a teammate</p>
+            <p className="text-sm font-medium text-black mb-4">Recognize a teammate</p>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3">
                 <select
@@ -250,7 +250,7 @@ export default function Merit() {
 
           {/* Recent Awards */}
           <div className="bg-white rounded-2xl border border-black/[0.06]">
-            <p className="px-4 py-3 text-sm font-medium text-gray-900 border-b border-black/[0.06]">
+            <p className="px-4 py-3 text-sm font-medium text-black border-b border-black/[0.06]">
               Recent Recognition
             </p>
             <div className="divide-y divide-black/[0.06]">
@@ -260,7 +260,7 @@ export default function Merit() {
                     {e.points}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900">
+                    <p className="text-sm text-black">
                       <span className="font-medium">{e.staff_name}</span>
                       <span className="text-black/40"> earned </span>
                       <span className="font-medium text-yellow-600">{e.points} pts</span>
@@ -290,7 +290,7 @@ export default function Merit() {
                       {e.points}
                     </div>
                     <div>
-                      <p className="text-sm text-gray-900 font-medium">{e.staff_name}</p>
+                      <p className="text-sm text-black font-medium">{e.staff_name}</p>
                       <p className="text-xs text-black/40">{e.reason || 'Merit recognition'}</p>
                     </div>
                   </div>
@@ -316,14 +316,14 @@ export default function Merit() {
               <div key={entry.staff_id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
                   index === 0 ? 'avenize-gradient text-white' :
-                  index === 1 ? 'bg-gray-200 text-gray-900' :
+                  index === 1 ? 'bg-white text-black' :
                   index === 2 ? 'bg-amber-100 text-amber-700' :
                   'bg-black/[0.05] text-black/40'
                 }`}>
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{entry.staff_name}</p>
+                  <p className="text-sm font-medium text-black">{entry.staff_name}</p>
                   <p className="text-xs text-black/40">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="text-right">

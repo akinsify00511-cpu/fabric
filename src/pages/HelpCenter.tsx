@@ -47,11 +47,11 @@ const HELP_RESOURCES = [
 
 export default function HelpCenter() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-white to-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white border-b border-black">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-900 hover:text-gray-900 text-sm">
+          <Link to="/" className="inline-flex items-center gap-2 text-black hover:text-black text-sm">
             <ArrowLeft size={16} />
             Back to Avenize
           </Link>
@@ -64,10 +64,10 @@ export default function HelpCenter() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-6">
             <HelpCircle className="w-8 h-8 text-indigo-600" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-black mb-4">
             How can we help you?
           </h1>
-          <p className="text-lg text-gray-900 mb-8">
+          <p className="text-lg text-black mb-8">
             Find answers to common questions, or get in touch with our team.
           </p>
         </div>
@@ -76,14 +76,14 @@ export default function HelpCenter() {
       {/* FAQ */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+          <h2 className="text-2xl font-bold text-black mb-8 text-center">
             Frequently Asked Questions
           </h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((item, i) => (
-              <div key={i} className="bg-gray-50 rounded-xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-2">{item.q}</h3>
-                <p className="text-gray-900">{item.a}</p>
+              <div key={i} className="bg-white rounded-xl p-6">
+                <h3 className="font-semibold text-black mb-2">{item.q}</h3>
+                <p className="text-black">{item.a}</p>
               </div>
             ))}
           </div>
@@ -93,7 +93,7 @@ export default function HelpCenter() {
       {/* Resources */}
       <section className="py-12 px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
+          <h2 className="text-2xl font-bold text-black mb-8 text-center">
             More Resources
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
@@ -103,13 +103,13 @@ export default function HelpCenter() {
                 <Link
                   key={i}
                   to={resource.link}
-                  className="bg-white rounded-xl p-6 border border-gray-200 hover:border-indigo-300 hover:shadow-md transition group"
+                  className="bg-white rounded-xl p-6 border border-black hover:border-indigo-300 hover:shadow-md transition group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition">
                     <Icon className="w-5 h-5 text-indigo-600" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{resource.title}</h3>
-                  <p className="text-sm text-gray-900">{resource.description}</p>
+                  <h3 className="font-semibold text-black mb-1">{resource.title}</h3>
+                  <p className="text-sm text-black">{resource.description}</p>
                 </Link>
               )
             })}
@@ -136,7 +136,7 @@ export default function HelpCenter() {
             </Link>
             <a
               href="mailto:hello@avenize.com"
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-gray-300 transition"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white transition"
             >
               <Phone size={18} />
               hello@avenize.com
@@ -146,13 +146,13 @@ export default function HelpCenter() {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-4 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center text-gray-900 text-sm">
+      <footer className="py-8 px-4 bg-black">
+        <div className="max-w-4xl mx-auto text-center text-black text-sm">
           <p>&copy; {new Date().getFullYear()} Avenize. All rights reserved.</p>
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
-            <Link to="/terms" className="hover:text-gray-900">Terms</Link>
-            <Link to="/cookies" className="hover:text-gray-900">Cookies</Link>
+            <Link to="/privacy" className="hover:text-black">Privacy</Link>
+            <Link to="/terms" className="hover:text-black">Terms</Link>
+            <Link to="/cookies" className="hover:text-black">Cookies</Link>
           </div>
         </div>
       </footer>

@@ -235,15 +235,15 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-white flex">
       {/* Progress Sidebar */}
-      <div className="hidden md:flex w-80 bg-white border-r border-gray-200 flex-col">
+      <div className="hidden md:flex w-80 bg-white border-r border-black flex-col">
         <div className="p-8">
           <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center mb-4">
             <span className="text-white font-bold text-xl">A</span>
           </div>
-          <h1 className="text-xl font-bold text-gray-900">Welcome to Avenize</h1>
-          <p className="text-sm text-gray-900 mt-1">Let's set up your business</p>
+          <h1 className="text-xl font-bold text-black">Welcome to Avenize</h1>
+          <p className="text-sm text-black mt-1">Let's set up your business</p>
         </div>
 
         <div className="flex-1 px-8">
@@ -252,24 +252,24 @@ export default function Onboarding() {
               <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                 i < step ? 'bg-green-500 text-white' :
                 i === step ? 'bg-blue-600 text-white' :
-                'bg-gray-100 text-gray-900'
+                'bg-white text-black'
               }`}>
                 {i < step ? <Check size={16} /> : <s.icon size={16} />}
               </div>
               <div>
-                <p className={`font-medium text-sm ${i === step ? 'text-gray-900' : 'text-gray-900'}`}>
+                <p className={`font-medium text-sm ${i === step ? 'text-black' : 'text-black'}`}>
                   {s.title}
                 </p>
-                <p className="text-xs text-gray-900">{s.description}</p>
+                <p className="text-xs text-black">{s.description}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="p-8 border-t border-gray-200">
+        <div className="p-8 border-t border-black">
           <button 
             onClick={signOut}
-            className="text-sm text-gray-900 hover:text-gray-900"
+            className="text-sm text-black hover:text-black"
           >
             Sign out
           </button>
@@ -282,10 +282,10 @@ export default function Onboarding() {
           {/* Mobile Progress */}
           <div className="md:hidden mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-900">Step {step + 1} of {STEPS.length}</span>
-              <span className="text-sm text-gray-900">{Math.round(((step + 1) / STEPS.length) * 100)}%</span>
+              <span className="text-sm font-medium text-black">Step {step + 1} of {STEPS.length}</span>
+              <span className="text-sm text-black">{Math.round(((step + 1) / STEPS.length) * 100)}%</span>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full">
+            <div className="h-2 bg-white rounded-full">
               <div 
                 className="h-2 bg-blue-600 rounded-full transition-all"
                 style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
@@ -303,15 +303,15 @@ export default function Onboarding() {
           {step === 0 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">What's your business called?</h2>
-                <p className="text-gray-900 mt-2">This will be your workspace name in Avenize.</p>
+                <h2 className="text-2xl font-bold text-black">What's your business called?</h2>
+                <p className="text-black mt-2">This will be your workspace name in Avenize.</p>
               </div>
               <input
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder="Your Company Ltd"
-                className="w-full px-5 py-4 rounded-lg border-2 border-gray-200 text-lg text-gray-900 placeholder-gray-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
+                className="w-full px-5 py-4 rounded-lg border-2 border-black text-lg text-black placeholder-black focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
                 autoFocus
               />
             </div>
@@ -321,15 +321,15 @@ export default function Onboarding() {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">And your name?</h2>
-                <p className="text-gray-900 mt-2">How should we address you?</p>
+                <h2 className="text-2xl font-bold text-black">And your name?</h2>
+                <p className="text-black mt-2">How should we address you?</p>
               </div>
               <input
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Chinedu Okonkwo"
-                className="w-full px-5 py-4 rounded-lg border-2 border-gray-200 text-lg text-gray-900 placeholder-gray-400 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
+                className="w-full px-5 py-4 rounded-lg border-2 border-black text-lg text-black placeholder-black focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
                 autoFocus
               />
             </div>
@@ -339,8 +339,8 @@ export default function Onboarding() {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Choose your theme</h2>
-                <p className="text-gray-900 mt-2">Pick a background color for your workspace.</p>
+                <h2 className="text-2xl font-bold text-black">Choose your theme</h2>
+                <p className="text-black mt-2">Pick a background color for your workspace.</p>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 {BRAND_COLORS.map((color) => (
@@ -350,7 +350,7 @@ export default function Onboarding() {
                     className={`relative p-4 rounded-xl border-2 transition-all hover:scale-105 ${
                       selectedColor?.id === color.id
                         ? 'border-blue-600 shadow-lg ring-2 ring-blue-600 ring-offset-2'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                        : 'border-black hover:border-black hover:shadow-md'
                     }`}
                     style={{ backgroundColor: color.hex }}
                   >
@@ -367,7 +367,7 @@ export default function Onboarding() {
                     </div>
                     
                     {/* Color Name - Always dark text for visibility */}
-                    <span className="block text-sm font-semibold text-center text-gray-900">
+                    <span className="block text-sm font-semibold text-center text-black">
                       {color.name}
                     </span>
                     
@@ -392,8 +392,8 @@ export default function Onboarding() {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">What industry are you in?</h2>
-                <p className="text-gray-900 mt-2">This helps us customize Avenize for you.</p>
+                <h2 className="text-2xl font-bold text-black">What industry are you in?</h2>
+                <p className="text-black mt-2">This helps us customize Avenize for you.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {INDUSTRIES.map((ind) => (
@@ -421,14 +421,14 @@ export default function Onboarding() {
                 <Check size={40} className="text-green-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">You're all set!</h2>
-                <p className="text-gray-900 mt-2">
+                <h2 className="text-2xl font-bold text-black">You're all set!</h2>
+                <p className="text-black mt-2">
                   {businessName} is ready. Let's build something great.
                 </p>
               </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-left">
-                <p className="text-sm font-medium text-gray-900 mb-2">What you get with Avenize:</p>
-                <ul className="space-y-2 text-sm text-gray-900">
+              <div className="bg-white rounded-xl p-4 text-left">
+                <p className="text-sm font-medium text-black mb-2">What you get with Avenize:</p>
+                <ul className="space-y-2 text-sm text-black">
                   <li className="flex items-center gap-2">
                     <Check size={16} className="text-green-500" />
                     Job & project tracking
@@ -455,7 +455,7 @@ export default function Onboarding() {
             {step > 0 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-lg border-2 border-gray-200 font-medium text-gray-900 hover:bg-gray-50 transition-colors bg-white"
+                className="px-6 py-3 rounded-lg border-2 border-black font-medium text-black hover:bg-white transition-colors bg-white"
               >
                 Back
               </button>

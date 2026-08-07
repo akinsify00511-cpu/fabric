@@ -128,7 +128,7 @@ export default function NotificationsCenterPage() {
             <Bell size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
+            <h1 className="text-2xl font-bold text-black">Notifications</h1>
             <p className="text-sm text-black/50">
               {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
             </p>
@@ -199,7 +199,7 @@ export default function NotificationsCenterPage() {
           <div className="divide-y divide-black/[0.06]">
             {filteredNotifications.map(notification => {
               const Icon = notificationIcons[notification.type] || Bell
-              const color = notificationColors[notification.type] || 'bg-gray-500'
+              const color = notificationColors[notification.type] || 'bg-white0'
 
               return (
                 <div

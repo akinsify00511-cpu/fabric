@@ -174,7 +174,7 @@ export default function AnnouncementsPage() {
   }
 
   const priorityConfig: Record<string, { bg: string; text: string; border: string; icon: any }> = {
-    low: { bg: 'bg-gray-50', text: 'text-gray-900', border: 'border-gray-200', icon: Info },
+    low: { bg: 'bg-white', text: 'text-black', border: 'border-black', icon: Info },
     normal: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: Info },
     high: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', icon: AlertTriangle },
     urgent: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle },
@@ -196,7 +196,7 @@ export default function AnnouncementsPage() {
             <Megaphone size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Announcements</h1>
+            <h1 className="text-2xl font-bold text-black">Announcements</h1>
             <p className="text-sm text-black/50">Company updates and notifications</p>
           </div>
         </div>

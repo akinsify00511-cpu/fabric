@@ -203,7 +203,7 @@ export default function ProjectsNigeria() {
       '#EF4444': 'bg-red-100 text-red-700',       // red
       '#3B82F6': 'bg-blue-100 text-blue-700',     // blue
     }
-    return colorMap[color] || 'bg-gray-100 text-gray-900'
+    return colorMap[color] || 'bg-white text-black'
   }
 
   const loadJobs = useCallback(async () => {
@@ -398,7 +398,7 @@ export default function ProjectsNigeria() {
                 className={`px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
                   stageFilter === stage.key
                     ? 'avenize-gradient text-white'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                    : 'bg-white text-black hover:bg-white'
                 }`}
               >
                 {stage.label} ({count})
@@ -498,7 +498,7 @@ export default function ProjectsNigeria() {
                     PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'green' ? 'bg-green-100 text-green-700' :
                     PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'red' ? 'bg-red-100 text-red-700' :
                     PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-gray-100 text-gray-900'
+                    'bg-white text-black'
                   }`}>
                     {PIPELINE_STAGES.find(s => s.key === job.stage)?.label}
                   </span>
@@ -683,7 +683,7 @@ export default function ProjectsNigeria() {
 
             <div className="p-4">
               {/* Client Info */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-4">
+              <div className="bg-white rounded-xl p-4 mb-4">
                 <h3 className="font-medium mb-2">Client</h3>
                 <p className="font-medium">{selectedJob.client_name}</p>
                 {selectedJob.client_phone && (
@@ -713,7 +713,7 @@ export default function ProjectsNigeria() {
                             ? 'avenize-gradient text-white'
                             : isComplete
                             ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-900'
+                            : 'bg-white text-black'
                         }`}
                       >
                         {stage.label}
@@ -725,16 +725,16 @@ export default function ProjectsNigeria() {
 
               {/* Job Details */}
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-gray-50 rounded-xl p-3">
+                <div className="bg-white rounded-xl p-3">
                   <p className="text-xs text-black/50">Value</p>
                   <p className="font-semibold text-[#4285F4]">{formatCurrency(selectedJob.value)}</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3">
+                <div className="bg-white rounded-xl p-3">
                   <p className="text-xs text-black/50">Type</p>
                   <p className="font-medium">{getJobTypeLabel(selectedJob.type)}</p>
                 </div>
                 {selectedJob.location && (
-                  <div className="bg-gray-50 rounded-xl p-3 col-span-2">
+                  <div className="bg-white rounded-xl p-3 col-span-2">
                     <p className="text-xs text-black/50">Location</p>
                     <p className="font-medium flex items-center gap-1">
                       <MapPin size={14} />
@@ -743,7 +743,7 @@ export default function ProjectsNigeria() {
                   </div>
                 )}
                 {selectedJob.end_date && (
-                  <div className="bg-gray-50 rounded-xl p-3">
+                  <div className="bg-white rounded-xl p-3">
                     <p className="text-xs text-black/50">Due Date</p>
                     <p className={`font-medium ${
                       new Date(selectedJob.end_date) < new Date() && selectedJob.stage !== 'paid'

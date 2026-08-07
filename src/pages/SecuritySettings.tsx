@@ -216,7 +216,7 @@ Each code can only be used once!`
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Security</h1>
+          <h1 className="text-xl font-medium text-black">Security</h1>
           <p className="text-sm text-black/50 mt-0.5">Protect your account and monitor activity</p>
         </div>
       </div>
@@ -464,7 +464,7 @@ Each code can only be used once!`
             <div className="p-6">
               {setupStep === 'verify' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-slate-50">
+                  <div className="p-4 rounded-xl bg-white">
                     <p className="text-sm font-medium mb-2">Manual entry code:</p>
                     <code className="text-xs font-mono break-all bg-white px-3 py-2 rounded block">
                       {totpSecret.match(/.{1,4}/g)?.join(' ') || totpSecret}

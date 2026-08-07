@@ -168,7 +168,7 @@ export default function RoleSettings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-gray-900 mb-6">Team Roles</h1>
+      <h1 className="text-xl font-medium text-black mb-6">Team Roles</h1>
 
       {/* Info Banner */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
@@ -248,7 +248,7 @@ export default function RoleSettings() {
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{role.name}</p>
                       {role.is_default && (
-                        <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-900 text-xs">Default</span>
+                        <span className="px-2 py-0.5 rounded-full bg-white text-black text-xs">Default</span>
                       )}
                     </div>
                     <p className="text-sm text-black/50">{role.tools.length} tools assigned</p>
@@ -271,7 +271,7 @@ export default function RoleSettings() {
 
               {/* Tool Grid (expandable) */}
               {expandedRole === role.id && (
-                <div className="border-t border-black/[0.06] p-4 bg-gray-50">
+                <div className="border-t border-black/[0.06] p-4 bg-white">
                   <p className="text-sm font-medium text-black/70 mb-4">
                     Check the tools this role can access:
                   </p>
@@ -313,7 +313,7 @@ export default function RoleSettings() {
       )}
 
       {/* Help Text */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-xl">
+      <div className="mt-6 p-4 bg-white rounded-xl">
         <p className="text-sm text-black/60">
           <strong>How it works:</strong> Create roles like "Sales" or "Support", then assign tools to each role. 
           When you invite team members in People settings, you can assign one or more roles to them. 

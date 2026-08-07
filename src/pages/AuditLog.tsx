@@ -148,8 +148,8 @@ export default function AuditLogPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Shield size={48} className="text-amber-500 mb-4" />
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Access Restricted</h1>
-        <p className="text-gray-900">Only administrators can view audit logs.</p>
+        <h1 className="text-xl font-bold text-black mb-2">Access Restricted</h1>
+        <p className="text-black">Only administrators can view audit logs.</p>
       </div>
     )
   }
@@ -179,7 +179,7 @@ export default function AuditLogPage() {
     update: 'bg-blue-100 text-blue-600',
     delete: 'bg-red-100 text-red-600',
     login: 'bg-purple-100 text-purple-600',
-    logout: 'bg-gray-100 text-gray-900',
+    logout: 'bg-white text-black',
     export: 'bg-amber-100 text-amber-600',
     import: 'bg-teal-100 text-teal-600',
   }
@@ -196,7 +196,7 @@ export default function AuditLogPage() {
             <Shield size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Audit Log</h1>
+            <h1 className="text-2xl font-bold text-black">Audit Log</h1>
             <p className="text-sm text-black/50">Track all changes and activity</p>
           </div>
         </div>
@@ -342,7 +342,7 @@ export default function AuditLogPage() {
               ) : (
                 filteredLogs.map((log) => {
                   const Icon = actionIcons[log.action] || FileText
-                  const colorClass = actionColors[log.action] || 'bg-gray-100 text-gray-900'
+                  const colorClass = actionColors[log.action] || 'bg-white text-black'
                   const isExpanded = expandedLog === log.id
                   const changedFields = log.changed_fields || []
 

@@ -148,14 +148,14 @@ export default function Signup() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Check your email</h2>
-            <p className="text-sm text-gray-900 mt-2">We sent a confirmation link to</p>
+            <h2 className="text-2xl font-bold text-black">Check your email</h2>
+            <p className="text-sm text-black mt-2">We sent a confirmation link to</p>
             <p className="font-semibold text-blue-600 mt-1">{email}</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 text-left space-y-3">
-            <p className="text-sm font-medium text-gray-900">Next steps:</p>
-            <ol className="text-sm text-gray-900 space-y-2">
+            <p className="text-sm font-medium text-black">Next steps:</p>
+            <ol className="text-sm text-black space-y-2">
               {[
                 'Click the confirmation link in your email',
                 `Your business "${businessName}" will be set up`,
@@ -170,7 +170,7 @@ export default function Signup() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-gray-900">Didn&apos;t receive the email? Check your spam folder.</p>
+            <p className="text-xs text-black">Didn&apos;t receive the email? Check your spam folder.</p>
             <button 
               onClick={handleResendEmail}
               className="text-sm text-blue-600 hover:underline font-medium"
@@ -181,7 +181,7 @@ export default function Signup() {
 
           <Link 
             to="/login" 
-            className="text-sm text-gray-900 hover:text-gray-900 font-medium flex items-center justify-center gap-1 pt-4 border-t border-gray-100"
+            className="text-sm text-black hover:text-black font-medium flex items-center justify-center gap-1 pt-4 border-t border-white"
           >
             ← Back to sign in
           </Link>
@@ -194,8 +194,8 @@ export default function Signup() {
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gray-200 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-200 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
         
         <div className="relative z-10">
           <div className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function Signup() {
           <div className="space-y-4">
             {FEATURES.map((feature, i) => (
               <div key={i} className="flex items-center gap-4 text-white/90">
-                <div className="w-10 h-10 rounded-lg bg-gray-300 backdrop-blur flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-white backdrop-blur flex items-center justify-center flex-shrink-0">
                   <feature.icon size={20} />
                 </div>
                 <span className="text-lg">{feature.text}</span>
@@ -246,26 +246,26 @@ export default function Signup() {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-50/50">
+      <div className="flex-1 flex items-center justify-center p-8 bg-white/50">
         <div className="w-full max-w-md space-y-8">
           <div className="lg:hidden text-center">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                 <span className="text-white font-bold text-xl">A</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">Avenize</span>
+              <span className="text-xl font-bold text-black">Avenize</span>
             </div>
           </div>
 
           <div className="text-center lg:text-left">
-            <h2 className="text-2xl font-bold text-gray-900">Set up your business</h2>
-            <p className="text-gray-900 mt-1">Create your workspace and invite your team</p>
+            <h2 className="text-2xl font-bold text-black">Set up your business</h2>
+            <p className="text-black mt-1">Create your workspace and invite your team</p>
           </div>
 
           <div className="space-y-3">
             <button
               onClick={() => handleOAuthSignIn('google')}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-black bg-white py-3 px-4 text-sm font-medium text-black hover:bg-white hover:border-black transition shadow-sm"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -278,7 +278,7 @@ export default function Signup() {
 
             <button
               onClick={() => handleOAuthSignIn('github')}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-black bg-white py-3 px-4 text-sm font-medium text-black hover:bg-white hover:border-black transition shadow-sm"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -289,10 +289,10 @@ export default function Signup() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
+              <div className="w-full border-t border-black" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-gray-50 px-4 text-sm text-gray-900">or</span>
+              <span className="bg-white px-4 text-sm text-black">or</span>
             </div>
           </div>
 
@@ -305,7 +305,7 @@ export default function Signup() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label className="block text-sm font-medium text-black mb-1.5">
                   Business Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -313,18 +313,18 @@ export default function Signup() {
                   placeholder="Acme Nigeria Ltd"
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
-                  Industry <span className="text-gray-900 font-normal">(optional)</span>
+                <label className="block text-sm font-medium text-black mb-1.5">
+                  Industry <span className="text-black font-normal">(optional)</span>
                 </label>
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition bg-white"
+                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition bg-white"
                 >
                   <option value="">Select an industry</option>
                   <option value="construction">Construction</option>
@@ -337,7 +337,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label className="block text-sm font-medium text-black mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -345,12 +345,12 @@ export default function Signup() {
                   placeholder="Chinedu Okonkwo"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label className="block text-sm font-medium text-black mb-1.5">
                   Work Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -359,12 +359,12 @@ export default function Signup() {
                   placeholder="you@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label className="block text-sm font-medium text-black mb-1.5">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -378,12 +378,12 @@ export default function Signup() {
                       setPassword(e.target.value)
                       if (confirmPassword) validatePassword()
                     }}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                    className="w-full rounded-xl border border-black px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -398,7 +398,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                <label className="block text-sm font-medium text-black mb-1.5">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -411,12 +411,12 @@ export default function Signup() {
                       setConfirmPassword(e.target.value)
                       if (password) validatePassword()
                     }}
-                    className={`w-full rounded-xl border ${passwordError ? 'border-red-400 bg-red-50' : 'border-gray-200'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition`}
+                    className={`w-full rounded-xl border ${passwordError ? 'border-red-400 bg-red-50' : 'border-black'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   >
                     {showConfirmPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -447,7 +447,7 @@ export default function Signup() {
               ) : 'Create Business'}
             </button>
 
-            <p className="text-xs text-center text-gray-900">
+            <p className="text-xs text-center text-black">
               By signing up, you agree to our{' '}
               <a href="/terms" className="text-blue-600 hover:underline">Terms</a>
               {' '}and{' '}
@@ -455,8 +455,8 @@ export default function Signup() {
             </p>
           </form>
 
-          <div className="text-center pt-4 border-t border-gray-100">
-            <p className="text-sm text-gray-900">
+          <div className="text-center pt-4 border-t border-white">
+            <p className="text-sm text-black">
               Already have an account?{' '}
               <Link to="/login" className="text-blue-600 font-medium hover:underline">
                 Sign in

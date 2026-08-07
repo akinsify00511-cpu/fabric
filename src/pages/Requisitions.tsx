@@ -38,19 +38,19 @@ type Category = {
 }
 
 const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-900',
+  low: 'bg-white text-black',
   normal: 'bg-blue-100 text-blue-700',
   high: 'bg-orange-100 text-orange-700',
   urgent: 'bg-red-100 text-red-700',
 }
 
 const STATUS_CONFIG = {
-  draft: { label: 'Draft', icon: FileText, color: 'text-gray-900', bg: 'bg-gray-100' },
+  draft: { label: 'Draft', icon: FileText, color: 'text-black', bg: 'bg-white' },
   pending_approval: { label: 'Pending', icon: Clock, color: 'text-yellow-600', bg: 'bg-yellow-100' },
   approved: { label: 'Approved', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-100' },
   denied: { label: 'Denied', icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },
   partially_approved: { label: 'Partial', icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-100' },
-  cancelled: { label: 'Cancelled', icon: XCircle, color: 'text-gray-900', bg: 'bg-gray-100' },
+  cancelled: { label: 'Cancelled', icon: XCircle, color: 'text-black', bg: 'bg-white' },
 }
 
 export default function Requisitions() {
@@ -256,7 +256,7 @@ export default function Requisitions() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Requisitions</h1>
+          <h1 className="text-xl font-medium text-black">Requisitions</h1>
           <p className="text-sm text-black/50 mt-0.5">Request approvals for purchases and expenses</p>
         </div>
         <button

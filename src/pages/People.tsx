@@ -179,7 +179,7 @@ export default function People() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">People</h1>
+        <h1 className="text-2xl font-bold text-black">People</h1>
         <div className="flex items-center gap-3">
           {!teamLimitLoading && !canAddTeamMember && (
             <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">

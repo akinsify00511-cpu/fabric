@@ -493,7 +493,7 @@ export default function FinanceNigeria() {
                       inv.status === 'overdue' || isOverdue ? 'bg-red-100 text-red-700' :
                       inv.status === 'partially_paid' ? 'bg-yellow-100 text-yellow-700' :
                       inv.status === 'sent' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-900'
+                      'bg-white text-black'
                     }`}>
                       {isOverdue && inv.status !== 'paid' ? 'Overdue' : STATUS_LABELS[inv.status].label}
                     </span>
@@ -512,7 +512,7 @@ export default function FinanceNigeria() {
                           e.stopPropagation()
                           await generateInvoicePDF({ ...inv, business_id: staff?.business_id })
                         }}
-                        className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition"
+                        className="flex items-center gap-1 px-2 py-1 text-xs bg-white hover:bg-white rounded transition"
                       >
                         <Download size={12} />
                         PDF
@@ -682,7 +682,7 @@ export default function FinanceNigeria() {
               </div>
 
               {/* Totals */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+              <div className="bg-white rounded-xl p-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
                   <span>{formatCurrency(totals.subtotal)}</span>
@@ -732,7 +732,7 @@ export default function FinanceNigeria() {
             </div>
             
             <div className="p-4 space-y-4">
-              <div className="bg-gray-50 rounded-xl p-4">
+              <div className="bg-white rounded-xl p-4">
                 <p className="font-medium">{selectedInvoice.client_name}</p>
                 <p className="text-sm text-black/50">{selectedInvoice.invoice_number}</p>
                 <p className="text-sm mt-2">
@@ -834,7 +834,7 @@ export default function FinanceNigeria() {
                 <h3 className="font-medium mb-2">Items</h3>
                 <div className="border rounded-xl overflow-hidden">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-white">
                       <tr>
                         <th className="text-left p-3">Description</th>
                         <th className="text-right p-3">Qty</th>
@@ -857,7 +857,7 @@ export default function FinanceNigeria() {
               </div>
 
               {/* Totals */}
-              <div className="bg-gray-50 rounded-xl p-4 mb-4 space-y-2">
+              <div className="bg-white rounded-xl p-4 mb-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span>Subtotal</span>
                   <span>{formatCurrency(selectedInvoice.subtotal)}</span>

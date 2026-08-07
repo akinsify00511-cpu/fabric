@@ -44,22 +44,22 @@ export default function EntitlementGate({
   }
 
   const UpgradePrompt = () => (
-    <div className={`flex flex-col items-center justify-center text-center p-6 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 ${
+    <div className={`flex flex-col items-center justify-center text-center p-6 rounded-xl border-2 border-dashed border-black bg-white ${
       modal ? 'w-full max-w-md mx-auto' : ''
     }`}>
       <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
         <Lock size={24} className="text-amber-600" />
       </div>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+      <h3 className="text-lg font-semibold text-black mb-2">
         {featureInfo?.label} requires a higher plan
       </h3>
-      <p className="text-sm text-gray-900 mb-6 max-w-xs">
+      <p className="text-sm text-black mb-6 max-w-xs">
         Your current {plan} plan doesn't include this feature. Upgrade to unlock it.
       </p>
       <div className="flex gap-3">
         <button
           onClick={() => navigate('/app/settings')}
-          className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100"
+          className="px-4 py-2 text-sm border border-black rounded-lg hover:bg-white"
         >
           Maybe Later
         </button>
@@ -80,9 +80,9 @@ export default function EntitlementGate({
         <div className="bg-white rounded-2xl p-6 w-full max-w-md relative">
           <button
             onClick={() => navigate('/app/settings')}
-            className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded"
+            className="absolute top-4 right-4 p-1 hover:bg-white rounded"
           >
-            <X size={20} className="text-gray-900" />
+            <X size={20} className="text-black" />
           </button>
           <UpgradePrompt />
         </div>
@@ -106,7 +106,7 @@ export function UpgradeBadge({ plan, children }: UpgradeBadgeProps) {
     <div className="relative group inline-block">
       {children}
       <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+        <div className="bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
           Requires {plan} plan
         </div>
       </div>

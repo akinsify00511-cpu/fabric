@@ -33,7 +33,7 @@ type Toast = {
 }
 
 const RARITY_COLORS = {
-  common: { bg: 'bg-white', border: 'border-gray-200', text: 'text-gray-900', glow: '' },
+  common: { bg: 'bg-white', border: 'border-black', text: 'text-black', glow: '' },
   rare: { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-800', glow: 'shadow-blue-200' },
   epic: { bg: 'bg-purple-50', border: 'border-purple-300', text: 'text-purple-800', glow: 'shadow-purple-200' },
   legendary: { bg: 'bg-amber-50', border: 'border-amber-400', text: 'text-amber-800', glow: 'shadow-amber-300' },

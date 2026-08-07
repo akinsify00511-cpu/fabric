@@ -24,7 +24,7 @@ const categoryConfig: Record<NotificationCategory, { icon: typeof Bell; color: s
   reminder: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-100' },
   marketing: { icon: Sparkles, color: 'text-pink-500', bg: 'bg-pink-100' },
   social: { icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-100' },
-  system: { icon: AlertCircle, color: 'text-gray-900', bg: 'bg-gray-100' },
+  system: { icon: AlertCircle, color: 'text-black', bg: 'bg-white' },
 }
 
 export default function NotificationBell() {

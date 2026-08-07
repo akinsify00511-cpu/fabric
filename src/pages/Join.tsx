@@ -239,7 +239,7 @@ export default function Join() {
                 type="email"
                 value={info.email}
                 disabled
-                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm bg-gray-50 text-black/50"
+                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm bg-white text-black/50"
               />
             </div>
             <div>
@@ -359,7 +359,7 @@ export default function Join() {
         <div className="bg-gradient-to-br from-[#4285F4]/5 to-[#0D9488]/5 rounded-2xl p-6 space-y-4">
           <div className="text-center">
             <p className="text-sm text-black/60 mb-2">You've been invited to join</p>
-            <h2 className="text-xl font-bold text-gray-900">{info.business_name}</h2>
+            <h2 className="text-xl font-bold text-black">{info.business_name}</h2>
           </div>
           
           <div className="flex items-center justify-center gap-8 pt-4 border-t border-black/10">

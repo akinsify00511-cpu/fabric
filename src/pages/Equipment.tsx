@@ -56,7 +56,7 @@ export default function Equipment() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Equipment & Maintenance</h1>
+          <h1 className="text-xl font-semibold text-black">Equipment & Maintenance</h1>
           <p className="text-sm text-black/50">Track assets and maintenance schedules</p>
         </div>
         <button
@@ -164,7 +164,7 @@ export default function Equipment() {
                   item.status === 'operational' ? 'bg-green-100 text-green-700' :
                   item.status === 'maintenance' ? 'bg-amber-100 text-amber-700' :
                   item.status === 'broken' ? 'bg-red-100 text-red-700' :
-                  'bg-gray-100 text-gray-900'
+                  'bg-white text-black'
                 }`}>
                   {item.status}
                 </span>

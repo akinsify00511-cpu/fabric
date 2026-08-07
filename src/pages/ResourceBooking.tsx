@@ -165,7 +165,7 @@ export default function ResourceBookingPage() {
             <Calendar size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Resource Booking</h1>
+            <h1 className="text-2xl font-bold text-black">Resource Booking</h1>
             <p className="text-sm text-black/50">Book rooms, equipment, and more</p>
           </div>
         </div>
@@ -318,7 +318,7 @@ export default function ResourceBookingPage() {
                               className={`p-2 rounded-lg text-center ${
                                 booking.booked_by?.id === staff?.id 
                                   ? 'bg-cyan-100 text-cyan-700' 
-                                  : 'bg-gray-100 text-gray-900'
+                                  : 'bg-white text-black'
                               }`}
                             >
                               {booking.booked_by?.id === staff?.id ? (

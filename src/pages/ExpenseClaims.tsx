@@ -129,7 +129,7 @@ export default function ExpenseClaimsPage() {
   }
 
   const statusConfig: Record<string, { bg: string; text: string; icon: any }> = {
-    draft: { bg: 'bg-gray-100', text: 'text-gray-900', icon: FileText },
+    draft: { bg: 'bg-white', text: 'text-black', icon: FileText },
     pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: Clock },
     approved: { bg: 'bg-green-100', text: 'text-green-600', icon: CheckCircle },
     rejected: { bg: 'bg-red-100', text: 'text-red-600', icon: XCircle },
@@ -149,7 +149,7 @@ export default function ExpenseClaimsPage() {
             <Receipt size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Expense Claims</h1>
+            <h1 className="text-2xl font-bold text-black">Expense Claims</h1>
             <p className="text-sm text-black/50">Track and manage expenses</p>
           </div>
         </div>

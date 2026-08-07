@@ -254,7 +254,7 @@ export default function SarahChat() {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-20 md:bottom-4 right-4 w-[calc(100vw-32px)] md:w-96 h-[70vh] md:h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 overflow-hidden">
+        <div className="fixed bottom-20 md:bottom-4 right-4 w-[calc(100vw-32px)] md:w-96 h-[70vh] md:h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-black overflow-hidden">
           <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -288,14 +288,14 @@ export default function SarahChat() {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     msg.role === 'assistant' 
                       ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' 
-                      : 'bg-gray-200 text-gray-900'
+                      : 'bg-white text-black'
                   }`}>
                     {msg.role === 'assistant' ? <Bot size={16} /> : <User size={16} />}
                   </div>
                   <div>
                     <div className={`rounded-2xl px-4 py-3 text-sm ${
                       msg.role === 'assistant'
-                        ? 'bg-gray-100 text-gray-900'
+                        ? 'bg-white text-black'
                         : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
@@ -323,7 +323,7 @@ export default function SarahChat() {
                       </div>
                     )}
                     
-                    <p className="text-[10px] text-gray-900 mt-1 px-1">
+                    <p className="text-[10px] text-black mt-1 px-1">
                       {msg.role === 'assistant' ? 'Sarah' : 'You'} • {msg.time}
                     </p>
                   </div>
@@ -337,11 +337,11 @@ export default function SarahChat() {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white flex items-center justify-center">
                     <Bot size={16} />
                   </div>
-                  <div className="bg-gray-100 rounded-2xl px-4 py-3">
+                  <div className="bg-white rounded-2xl px-4 py-3">
                     <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
@@ -379,7 +379,7 @@ export default function SarahChat() {
             </div>
           </div>
 
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-white">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -387,7 +387,7 @@ export default function SarahChat() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask Sarah anything..."
-                className="flex-1 rounded-full bg-gray-100 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <button
                 onClick={handleSend}

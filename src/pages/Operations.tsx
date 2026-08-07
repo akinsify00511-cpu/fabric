@@ -33,7 +33,7 @@ export default function Operations() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Operations</h1>
+          <h1 className="text-xl font-semibold text-black">Operations</h1>
           <p className="text-sm text-black/50">Processes, compliance & organization</p>
         </div>
       </div>
@@ -243,7 +243,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
   }
 
   const priorityColors: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-900',
+    low: 'bg-white text-black',
     normal: 'bg-blue-100 text-blue-700',
     high: 'bg-amber-100 text-amber-700',
     urgent: 'bg-red-100 text-red-700',
@@ -372,7 +372,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
   }
 
   const priorityColors: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-900',
+    low: 'bg-white text-black',
     medium: 'bg-blue-100 text-blue-700',
     high: 'bg-amber-100 text-amber-700',
     critical: 'bg-red-100 text-red-700',
@@ -383,7 +383,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
     acknowledged: 'bg-amber-100 text-amber-700',
     in_progress: 'bg-blue-100 text-blue-700',
     resolved: 'bg-green-100 text-green-700',
-    closed: 'bg-gray-100 text-gray-900',
+    closed: 'bg-white text-black',
   }
 
   return (
@@ -473,11 +473,11 @@ function SOPsTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-900',
+    draft: 'bg-white text-black',
     review: 'bg-amber-100 text-amber-700',
     approved: 'bg-blue-100 text-blue-700',
     active: 'bg-green-100 text-green-700',
-    archived: 'bg-gray-100 text-gray-900',
+    archived: 'bg-white text-black',
   }
 
   const categoryIcons: Record<string, any> = {
@@ -578,7 +578,7 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-xs bg-black/5 px-2 py-0.5 rounded text-black/50 capitalize">{wf.workflow_type}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
                     <h3 className="font-medium mt-1">{wf.name}</h3>
                     {wf.description && <p className="text-sm text-black/50 mt-1">{wf.description}</p>}
@@ -684,7 +684,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     contract: 'bg-purple-500/10 text-purple-500',
     template: 'bg-amber-500/10 text-amber-500',
     report: 'bg-green-500/10 text-green-500',
-    legal: 'bg-gray-500/10 text-gray-900',
+    legal: 'bg-white0/10 text-black',
     training: 'bg-teal-500/10 text-teal-500',
     other: 'bg-black/10 text-black/50',
   }
@@ -716,7 +716,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs px-2 py-0.5 rounded ${typeColors[doc.document_type]}`}>{doc.document_type}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>v{doc.version}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>v{doc.version}</span>
                   </div>
                   <h3 className="font-medium">{doc.title}</h3>
                 </div>

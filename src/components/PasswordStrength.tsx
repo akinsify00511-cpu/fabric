@@ -52,7 +52,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
   }
 
   const colorClasses: Record<string, string> = {
-    gray: 'bg-gray-200',
+    gray: 'bg-white',
     red: 'bg-red-500',
     yellow: 'bg-yellow-500',
     blue: 'bg-blue-500',
@@ -60,7 +60,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
   }
 
   const textClasses: Record<string, string> = {
-    gray: 'text-gray-900',
+    gray: 'text-black',
     red: 'text-red-600',
     yellow: 'text-yellow-600',
     blue: 'text-blue-600',
@@ -79,7 +79,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
     <div className="space-y-2">
       {/* Strength Bar */}
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex-1 h-1.5 bg-white rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${colorClasses[color]}`}
             style={{ width: `${(score / 4) * 100}%` }}
@@ -99,9 +99,9 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
             {requirements[key as keyof typeof requirements] ? (
               <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
             ) : (
-              <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />
+              <X className="w-3.5 h-3.5 text-black shrink-0" />
             )}
-            <span className={requirements[key as keyof typeof requirements] ? 'text-gray-900' : 'text-gray-900'}>
+            <span className={requirements[key as keyof typeof requirements] ? 'text-black' : 'text-black'}>
               {label}
             </span>
           </div>

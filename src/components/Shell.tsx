@@ -86,9 +86,9 @@ export default function Shell() {
   const textColor = branding.text_color
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-gray-200 flex-col fixed inset-y-0 left-0">
+      <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black flex-col fixed inset-y-0 left-0">
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {displayLogo}
@@ -100,7 +100,7 @@ export default function Shell() {
                 style={{ maxHeight: '28px' }}
               />
             )}
-            <span className="text-base font-semibold tracking-tight truncate text-gray-900">
+            <span className="text-base font-semibold tracking-tight truncate text-black">
               {companyName}
             </span>
           </div>
@@ -117,7 +117,7 @@ export default function Shell() {
                   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
                     isActive
                       ? 'bg-blue-50 text-blue-600 font-medium'
-                      : 'text-gray-900 hover:bg-gray-50'
+                      : 'text-black hover:bg-white'
                   }`
                 }
               >
@@ -139,9 +139,9 @@ export default function Shell() {
           </a>
         </div>
         
-        <div className="px-5 py-4 border-t border-gray-200 text-xs text-gray-900">
-          <p className="truncate text-gray-900">{staff?.full_name ?? staff?.name ?? '...'}</p>
-          <p className="text-[10px] capitalize text-gray-900">{staff?.role || 'Staff'}</p>
+        <div className="px-5 py-4 border-t border-black text-xs text-black">
+          <p className="truncate text-black">{staff?.full_name ?? staff?.name ?? '...'}</p>
+          <p className="text-[10px] capitalize text-black">{staff?.role || 'Staff'}</p>
           <button onClick={signOut} className="mt-1 hover:opacity-70">
             Sign out
           </button>
@@ -149,7 +149,7 @@ export default function Shell() {
       </aside>
 
       {/* Mobile top header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10 bg-white border-gray-200">
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10 bg-white border-black">
         <div className="flex items-center gap-2">
           {!branding.logo_url && <AvenizeMark size={20} />}
           {branding.logo_url && (
@@ -159,13 +159,13 @@ export default function Shell() {
               className="h-5 w-auto object-contain"
             />
           )}
-          <span className="text-sm font-semibold tracking-tight truncate text-gray-900">
+          <span className="text-sm font-semibold tracking-tight truncate text-black">
             {companyName}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-900">
+          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-white text-black">
             <Search size={15} strokeWidth={2} />
           </button>
         </div>
@@ -177,7 +177,7 @@ export default function Shell() {
       </main>
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20 bg-white border-gray-200">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20 bg-white border-black">
         <div className="flex items-center justify-around">
           {MOBILE_NAV_ITEMS.map((item) => {
             const Icon = item.icon
@@ -188,7 +188,7 @@ export default function Shell() {
                 end={item.end}
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
-                    isActive ? 'text-blue-600' : 'text-gray-900'
+                    isActive ? 'text-blue-600' : 'text-black'
                   }`
                 }
               >

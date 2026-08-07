@@ -27,11 +27,11 @@ type EmptyStateProps = {
 export function EmptyState({ icon, title, description, action, tips }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4 text-slate-400">
+      <div className="w-16 h-16 rounded-2xl bg-slate-400 flex items-center justify-center mb-4 text-black">
         {icon || <Inbox size={32} />}
       </div>
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-500 max-w-sm mb-6">{description}</p>
+      <h3 className="text-lg font-semibold text-black mb-2">{title}</h3>
+      <p className="text-black max-w-sm mb-6">{description}</p>
       
       {tips && tips.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left w-full max-w-sm">
@@ -337,8 +337,8 @@ export function ErrorState({
       <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mb-4">
         <AlertCircle size={32} className="text-red-500" />
       </div>
-      <h3 className="text-lg font-semibold text-slate-900 mb-2">Oops!</h3>
-      <p className="text-slate-500 max-w-sm mb-6">{message}</p>
+      <h3 className="text-lg font-semibold text-black mb-2">Oops!</h3>
+      <p className="text-black max-w-sm mb-6">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}

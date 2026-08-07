@@ -225,7 +225,7 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
                   ? 'border-green-200 bg-green-50' 
                   : status?.[check.key] === false 
                     ? 'border-red-200 bg-red-50' 
-                    : 'border-gray-200 bg-gray-50'
+                    : 'border-black bg-white'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -235,7 +235,7 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
                 ) : status?.[check.key] === false ? (
                   <XCircle size={18} className="text-red-500" />
                 ) : (
-                  <div className="w-4 h-4 rounded-full border-2 border-gray-300" />
+                  <div className="w-4 h-4 rounded-full border-2 border-black" />
                 )}
               </div>
               <div className="font-medium">{check.label}</div>
@@ -263,7 +263,7 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
 
 function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; stats: any; filterLevel: string; onFilterChange: (level: string) => void }) {
   const levelColors: Record<string, string> = {
-    debug: 'bg-gray-100 text-gray-900',
+    debug: 'bg-white text-black',
     info: 'bg-blue-100 text-blue-600',
     warn: 'bg-amber-100 text-amber-600',
     error: 'bg-red-100 text-red-600',
@@ -410,7 +410,7 @@ function ReportsTab({ reports }: { reports: any[] }) {
     open: <AlertCircle size={14} className="text-amber-500" />,
     investigating: <RefreshCw size={14} className="text-blue-500" />,
     fixed: <CheckCircle size={14} className="text-green-500" />,
-    wontfix: <XCircle size={14} className="text-gray-900" />,
+    wontfix: <XCircle size={14} className="text-black" />,
   }
 
   return (

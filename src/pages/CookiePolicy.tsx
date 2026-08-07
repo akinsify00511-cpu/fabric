@@ -7,11 +7,11 @@ export default function CookiePolicy() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-lg font-semibold text-gray-900">Cookie Policy</h1>
+          <h1 className="text-lg font-semibold text-black">Cookie Policy</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -24,8 +24,8 @@ export default function CookiePolicy() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
               <Cookie className="w-8 h-8 text-amber-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Cookie Policy</h1>
-            <p className="text-gray-900">Last updated: August 3, 2026</p>
+            <h1 className="text-3xl font-bold text-black mb-2">Cookie Policy</h1>
+            <p className="text-black">Last updated: August 3, 2026</p>
           </div>
 
           {/* Quick Summary */}
@@ -121,7 +121,7 @@ export default function CookiePolicy() {
                 <li>Block third-party cookies</li>
                 <li>Clear all cookies when you close the browser</li>
               </ul>
-              <p className="text-sm text-gray-900">
+              <p className="text-sm text-black">
                 Note: Blocking essential cookies may affect website functionality.
               </p>
 
@@ -159,7 +159,7 @@ export default function CookiePolicy() {
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/privacy"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/5 transition"
           >
             <Settings size={18} />
             Privacy Policy
@@ -174,9 +174,9 @@ export default function CookiePolicy() {
 
         {/* Footer Links */}
         <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
-          <Link to="/terms" className="text-gray-900 hover:text-gray-900">Terms of Service</Link>
-          <Link to="/privacy" className="text-gray-900 hover:text-gray-900">Privacy Policy</Link>
-          <Link to="/contact" className="text-gray-900 hover:text-gray-900">Contact Us</Link>
+          <Link to="/terms" className="text-black hover:text-black">Terms of Service</Link>
+          <Link to="/privacy" className="text-black hover:text-black">Privacy Policy</Link>
+          <Link to="/contact" className="text-black hover:text-black">Contact Us</Link>
         </div>
       </main>
     </div>

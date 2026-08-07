@@ -27,7 +27,7 @@ const DEMO_TASKS: Task[] = [
 ]
 
 const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-900',
+  low: 'bg-white text-black',
   medium: 'bg-amber-100 text-amber-600',
   high: 'bg-red-100 text-red-600',
 }
@@ -176,13 +176,13 @@ export default function Tasks() {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-8 bg-white rounded w-1/4"></div>
           <div className="grid grid-cols-4 gap-3">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>
+              <div key={i} className="h-20 bg-white rounded-xl"></div>
             ))}
           </div>
-          <div className="h-16 bg-gray-200 rounded-xl"></div>
+          <div className="h-16 bg-white rounded-xl"></div>
         </div>
       </div>
     )
@@ -197,7 +197,7 @@ export default function Tasks() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Tasks</h1>
+      <h1 className="text-2xl font-bold text-black mb-6">Tasks</h1>
 
       <div className="grid grid-cols-4 gap-3 mb-6">
         {[

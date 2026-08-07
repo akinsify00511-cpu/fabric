@@ -16,10 +16,10 @@ export default function NotFound() {
         </div>
 
         {/* Message */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-black mb-2">
           Page Not Found
         </h1>
-        <p className="text-gray-900 mb-8">
+        <p className="text-black mb-8">
           Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
         </p>
 
@@ -34,7 +34,7 @@ export default function NotFound() {
           </Link>
           <Link
             to="/app"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/5 transition"
           >
             <ArrowLeft size={18} />
             Back to App
@@ -43,7 +43,7 @@ export default function NotFound() {
 
         {/* Search suggestion */}
         <div className="mt-8 p-4 bg-white rounded-2xl border border-black/5">
-          <p className="text-sm text-gray-900 mb-2">Need help finding something?</p>
+          <p className="text-sm text-black mb-2">Need help finding something?</p>
           <a
             href="/app"
             className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
@@ -55,10 +55,10 @@ export default function NotFound() {
 
         {/* Quick Links */}
         <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm">
-          <Link to="/pricing" className="text-gray-900 hover:text-gray-900">Pricing</Link>
-          <Link to="/login" className="text-gray-900 hover:text-gray-900">Login</Link>
-          <Link to="/signup" className="text-gray-900 hover:text-gray-900">Sign Up</Link>
-          <Link to="/contact" className="text-gray-900 hover:text-gray-900">Contact</Link>
+          <Link to="/pricing" className="text-black hover:text-black">Pricing</Link>
+          <Link to="/login" className="text-black hover:text-black">Login</Link>
+          <Link to="/signup" className="text-black hover:text-black">Sign Up</Link>
+          <Link to="/contact" className="text-black hover:text-black">Contact</Link>
         </div>
       </div>
     </div>

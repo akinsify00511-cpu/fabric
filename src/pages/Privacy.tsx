@@ -7,11 +7,11 @@ export default function Privacy() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-lg font-semibold text-gray-900">Privacy Policy</h1>
+          <h1 className="text-lg font-semibold text-black">Privacy Policy</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -24,8 +24,8 @@ export default function Privacy() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
               <Shield className="w-8 h-8 text-indigo-600" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-            <p className="text-gray-900">Last updated: August 3, 2026</p>
+            <h1 className="text-3xl font-bold text-black mb-2">Privacy Policy</h1>
+            <p className="text-black">Last updated: August 3, 2026</p>
           </div>
 
           {/* Quick Summary */}
@@ -170,8 +170,8 @@ export default function Privacy() {
               <p>
                 If you have questions about this Privacy Policy or our privacy practices, please contact us:
               </p>
-              <div className="bg-gray-50 rounded-xl p-4 mt-4">
-                <p className="font-medium text-gray-900">Avenize, Inc.</p>
+              <div className="bg-white rounded-xl p-4 mt-4">
+                <p className="font-medium text-black">Avenize, Inc.</p>
                 <p>123 Business Avenue, Suite 400</p>
                 <p>San Francisco, CA 94105</p>
                 <p className="mt-2">
@@ -187,10 +187,10 @@ export default function Privacy() {
 
         {/* Footer Links */}
         <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
-          <Link to="/terms" className="text-gray-900 hover:text-gray-900">Terms of Service</Link>
-          <Link to="/cookies" className="text-gray-900 hover:text-gray-900">Cookie Policy</Link>
-          <Link to="/contact" className="text-gray-900 hover:text-gray-900">Contact Us</Link>
-          <Link to="/signup" className="text-gray-900 hover:text-gray-900">Sign Up</Link>
+          <Link to="/terms" className="text-black hover:text-black">Terms of Service</Link>
+          <Link to="/cookies" className="text-black hover:text-black">Cookie Policy</Link>
+          <Link to="/contact" className="text-black hover:text-black">Contact Us</Link>
+          <Link to="/signup" className="text-black hover:text-black">Sign Up</Link>
         </div>
       </main>
     </div>

@@ -34,7 +34,7 @@ export default function HumanResources() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Human Resources</h1>
+          <h1 className="text-xl font-semibold text-black">Human Resources</h1>
           <p className="text-sm text-black/50">Staff management & HR operations</p>
         </div>
       </div>
@@ -508,7 +508,7 @@ function PerformanceTab({ businessId }: { businessId?: string }) {
                 <span className="font-medium">{review.review_period || 'Review'}</span>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} size={16} className={n <= (review.rating_overall || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />
+                    <Star key={n} size={16} className={n <= (review.rating_overall || 0) ? 'text-amber-400 fill-amber-400' : 'text-white'} />
                   ))}
                 </div>
               </div>
@@ -681,7 +681,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
                     {job.department && `${job.department} • `}{job.location}
                   </p>
                 </div>
-                <span className={`text-xs px-3 py-1 rounded-full ${job.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>
+                <span className={`text-xs px-3 py-1 rounded-full ${job.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
                   {job.status}
                 </span>
               </div>
@@ -737,7 +737,7 @@ function ContractsTab({ businessId }: { businessId?: string }) {
     permanent: 'bg-green-100 text-green-700',
     contract: 'bg-blue-100 text-blue-700',
     internship: 'bg-amber-100 text-amber-700',
-    casual: 'bg-gray-100 text-gray-900',
+    casual: 'bg-white text-black',
   }
 
   return (
@@ -1077,7 +1077,7 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${benefit.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${benefit.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
                 {benefit.status}
               </span>
               <span className="text-sm font-medium">{benefit.coverage}</span>

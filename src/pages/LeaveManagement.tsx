@@ -181,7 +181,7 @@ export default function LeaveManagementPage() {
     pending: { bg: 'bg-amber-50', text: 'text-amber-600', icon: Clock },
     approved: { bg: 'bg-green-50', text: 'text-green-600', icon: CheckCircle },
     rejected: { bg: 'bg-red-50', text: 'text-red-600', icon: XCircle },
-    cancelled: { bg: 'bg-gray-50', text: 'text-gray-900', icon: XCircle },
+    cancelled: { bg: 'bg-white', text: 'text-black', icon: XCircle },
   }
 
   return (
@@ -193,7 +193,7 @@ export default function LeaveManagementPage() {
             <CalendarDays size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Leave Management</h1>
+            <h1 className="text-2xl font-bold text-black">Leave Management</h1>
             <p className="text-sm text-black/50">Request and manage time off</p>
           </div>
         </div>

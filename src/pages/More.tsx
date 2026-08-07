@@ -25,7 +25,7 @@ const ITEMS = [
   { to: '/equipment', label: 'Equipment', icon: Wrench, tint: 'bg-purple-500/10 text-purple-500', desc: 'Maintenance & Assets', feature: null },
   { to: '/lab', label: 'Lab/QC', icon: FlaskConical, tint: 'bg-blue-500/10 text-blue-500', desc: 'Samples & Tests', feature: null },
   { to: '/reports', label: 'Reports', icon: BarChart3, tint: 'bg-sky-500/10 text-sky-500', desc: 'Analytics', feature: 'reports' },
-  { to: '/infrastructure', label: 'Infrastructure', icon: Building2, tint: 'bg-slate-500/10 text-slate-500', desc: 'Payroll & Assets', feature: null },
+  { to: '/infrastructure', label: 'Infrastructure', icon: Building2, tint: 'bg-black/10 text-black', desc: 'Payroll & Assets', feature: null },
   { to: '/settings', label: 'Settings', icon: SettingsIcon, tint: 'bg-black/[0.06] text-black/60', desc: 'Profile & config', feature: null },
 ]
 
@@ -36,14 +36,14 @@ export default function More() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900 mb-1">All modules</h1>
+          <h1 className="text-xl font-semibold text-black mb-1">All modules</h1>
           <p className="text-sm text-black/50">Your complete business operating system</p>
         </div>
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
           plan === 'enterprise' ? 'bg-purple-100 text-purple-700' :
           plan === 'pro' ? 'bg-indigo-100 text-indigo-700' :
           plan === 'starter' ? 'bg-blue-100 text-blue-700' :
-          'bg-gray-100 text-gray-900'
+          'bg-white text-black'
         }`}>
           {plan.charAt(0).toUpperCase() + plan.slice(1)} Plan
         </div>
@@ -61,10 +61,10 @@ export default function More() {
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.tint}`}>
                   <item.icon size={18} strokeWidth={2} />
                 </div>
-                <Lock size={14} className="text-gray-900" />
+                <Lock size={14} className="text-black" />
               </div>
               <div>
-                <span className="text-sm font-medium text-gray-900">{item.label}</span>
+                <span className="text-sm font-medium text-black">{item.label}</span>
                 <p className="text-xs text-black/40">{item.desc}</p>
               </div>
               <Link
@@ -84,7 +84,7 @@ export default function More() {
                 <item.icon size={18} strokeWidth={2} />
               </div>
               <div>
-                <span className="text-sm font-medium text-gray-900">{item.label}</span>
+                <span className="text-sm font-medium text-black">{item.label}</span>
                 <p className="text-xs text-black/40">{item.desc}</p>
               </div>
             </Link>

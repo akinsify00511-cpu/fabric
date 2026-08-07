@@ -198,7 +198,7 @@ export default function WorkflowBuilderPage() {
             <GitBranch size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
+            <h1 className="text-2xl font-bold text-black">Workflows</h1>
             <p className="text-sm text-black/50">Automate your business processes</p>
           </div>
         </div>

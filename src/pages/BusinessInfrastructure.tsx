@@ -30,7 +30,7 @@ export default function BusinessInfrastructure() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Business Infrastructure</h1>
+          <h1 className="text-xl font-semibold text-black">Business Infrastructure</h1>
           <p className="text-sm text-black/50">HR, Payroll & Financial Assets</p>
         </div>
       </div>
@@ -229,7 +229,7 @@ function PayrollTab({ businessId }: { businessId?: string }) {
   }, [businessId])
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-900',
+    draft: 'bg-white text-black',
     processing: 'bg-amber-100 text-amber-700',
     completed: 'bg-green-100 text-green-700',
     cancelled: 'bg-red-100 text-red-700',
@@ -509,7 +509,7 @@ function AssetsTab({ businessId }: { businessId?: string }) {
             <div key={asset.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{asset.name}</span>
-                <span className="text-xs bg-gray-100 text-gray-900 px-2 py-1 rounded capitalize">{asset.asset_type}</span>
+                <span className="text-xs bg-white text-black px-2 py-1 rounded capitalize">{asset.asset_type}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><span className="text-black/40">Purchase</span><div className="font-medium">₦{asset.purchase_price?.toLocaleString()}</div></div>
@@ -695,7 +695,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
               </div>
               <div className="text-right">
                 <div className="font-semibold">₦{expense.amount?.toLocaleString()}</div>
-                <div className={`text-xs ${expense.is_active ? 'text-green-600' : 'text-gray-900'}`}>{expense.is_active ? 'Active' : 'Paused'}</div>
+                <div className={`text-xs ${expense.is_active ? 'text-green-600' : 'text-black'}`}>{expense.is_active ? 'Active' : 'Paused'}</div>
               </div>
             </div>
           ))}

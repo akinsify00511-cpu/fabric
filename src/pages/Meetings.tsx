@@ -259,7 +259,7 @@ export default function Meetings() {
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-900">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white text-black">
             <Mic size={10} />
             Recorded
           </span>
@@ -294,7 +294,7 @@ export default function Meetings() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Meetings</h1>
+          <h1 className="text-xl font-medium text-black">Meetings</h1>
           <p className="text-sm text-black/50 mt-0.5">
             Voice memo recording • AI transcription & summaries coming soon
           </p>
@@ -367,7 +367,7 @@ export default function Meetings() {
                 )}
               </div>
 
-              <p className="text-3xl font-mono font-bold mb-2 text-gray-900">
+              <p className="text-3xl font-mono font-bold mb-2 text-black">
                 {formatDuration(recordingTime)}
               </p>
 
@@ -457,14 +457,14 @@ export default function Meetings() {
                       </button>
                       <button
                         onClick={() => setEditingTitle(null)}
-                        className="p-1 text-gray-900"
+                        className="p-1 text-black"
                       >
                         <X size={16} />
                       </button>
                     </div>
                   ) : (
                     <h3 
-                      className="font-medium text-gray-900 cursor-pointer hover:text-[#4285F4]"
+                      className="font-medium text-black cursor-pointer hover:text-[#4285F4]"
                       onClick={() => setSelectedMeeting(meeting)}
                     >
                       {meeting.title}
@@ -565,7 +565,7 @@ export default function Meetings() {
                     <FileText size={16} className="text-[#4285F4]" />
                     Transcript
                   </h3>
-                  <div className="p-4 bg-gray-50 rounded-xl max-h-96 overflow-y-auto">
+                  <div className="p-4 bg-white rounded-xl max-h-96 overflow-y-auto">
                     <pre className="text-sm whitespace-pre-wrap text-black/70 font-sans">
                       {selectedMeeting.transcript}
                     </pre>

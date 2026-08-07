@@ -181,7 +181,7 @@ export default function OrganizationPage() {
             <Building2 size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Organization</h1>
+            <h1 className="text-2xl font-bold text-black">Organization</h1>
             <p className="text-sm text-black/50">Manage departments and teams</p>
           </div>
         </div>

@@ -39,7 +39,7 @@ type Template = {
 }
 
 const STATUS_CONFIG = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-900' },
+  draft: { label: 'Draft', color: 'bg-white text-black' },
   scheduled: { label: 'Scheduled', color: 'bg-blue-100 text-blue-700' },
   sending: { label: 'Sending', color: 'bg-yellow-100 text-yellow-700' },
   sent: { label: 'Sent', color: 'bg-green-100 text-green-700' },
@@ -265,7 +265,7 @@ export default function Campaigns() {
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Email Marketing</h1>
+          <h1 className="text-xl font-medium text-black">Email Marketing</h1>
           <p className="text-sm text-black/50 mt-0.5">Campaigns, contacts, and automations</p>
         </div>
         <button
@@ -311,28 +311,28 @@ export default function Campaigns() {
                 <Send size={14} className="text-[#8B5CF6]" />
                 <span className="text-xs text-black/50 uppercase tracking-wide">Sent</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalSent.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-black">{stats.totalSent.toLocaleString()}</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <MousePointer size={14} className="text-blue-500" />
                 <span className="text-xs text-black/50 uppercase tracking-wide">Open Rate</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stats.avgOpenRate}%</p>
+              <p className="text-2xl font-bold text-black">{stats.avgOpenRate}%</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp size={14} className="text-green-500" />
                 <span className="text-xs text-black/50 uppercase tracking-wide">Click Rate</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stats.avgClickRate}%</p>
+              <p className="text-2xl font-bold text-black">{stats.avgClickRate}%</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Mail size={14} className="text-black/30" />
                 <span className="text-xs text-black/50 uppercase tracking-wide">Campaigns</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <p className="text-2xl font-bold text-black">{stats.total}</p>
             </div>
           </div>
 
@@ -349,7 +349,7 @@ export default function Campaigns() {
           ) : campaigns.length === 0 ? (
             <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
               <Mail size={48} className="mx-auto mb-4 text-black/10" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No campaigns yet</h3>
+              <h3 className="text-lg font-medium text-black mb-2">No campaigns yet</h3>
               <p className="text-sm text-black/50 mb-4">Create your first email campaign to connect with your audience</p>
               <button
                 onClick={() => setShowBuilder(true)}
@@ -366,7 +366,7 @@ export default function Campaigns() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-medium text-gray-900 truncate">{campaign.name}</h3>
+                        <h3 className="font-medium text-black truncate">{campaign.name}</h3>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_CONFIG[campaign.status].color}`}>
                           {STATUS_CONFIG[campaign.status].label}
                         </span>
@@ -437,7 +437,7 @@ export default function Campaigns() {
             {contacts.map((contact) => (
               <div key={contact.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{contact.email}</p>
+                  <p className="text-sm font-medium text-black">{contact.email}</p>
                   <p className="text-xs text-black/40">
                     {contact.first_name || contact.last_name
                       ? `${contact.first_name || ''} ${contact.last_name || ''}`.trim()
@@ -451,7 +451,7 @@ export default function Campaigns() {
                     </span>
                   ))}
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    contact.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'
+                    contact.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-white text-black'
                   }`}>
                     {contact.status}
                   </span>
@@ -481,7 +481,7 @@ export default function Campaigns() {
 
             <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-1">Campaign Name</label>
+                <label className="text-sm font-medium text-black block mb-1">Campaign Name</label>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -491,7 +491,7 @@ export default function Campaigns() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-1">Subject Line</label>
+                <label className="text-sm font-medium text-black block mb-1">Subject Line</label>
                 <input
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
@@ -501,7 +501,7 @@ export default function Campaigns() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-1">Preview Text</label>
+                <label className="text-sm font-medium text-black block mb-1">Preview Text</label>
                 <input
                   value={preheader}
                   onChange={(e) => setPreheader(e.target.value)}
@@ -511,7 +511,7 @@ export default function Campaigns() {
               </div>
 
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-1">Content</label>
+                <label className="text-sm font-medium text-black block mb-1">Content</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}

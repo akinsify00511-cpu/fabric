@@ -56,7 +56,7 @@ export default function LabQC() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Lab & Quality Control</h1>
+          <h1 className="text-xl font-semibold text-black">Lab & Quality Control</h1>
           <p className="text-sm text-black/50">Samples, tests & QC reports</p>
         </div>
         <button
@@ -137,13 +137,13 @@ export default function LabQC() {
                     sample.status === 'reported' ? 'bg-green-500/10' :
                     sample.status === 'completed' ? 'bg-blue-500/10' :
                     sample.status === 'testing' ? 'bg-amber-500/10' :
-                    'bg-gray-500/10'
+                    'bg-white0/10'
                   }`}>
                     <FlaskConical size={24} className={
                       sample.status === 'reported' ? 'text-green-500' :
                       sample.status === 'completed' ? 'text-blue-500' :
                       sample.status === 'testing' ? 'text-amber-500' :
-                      'text-gray-900'
+                      'text-black'
                     } />
                   </div>
                   <div>
@@ -157,7 +157,7 @@ export default function LabQC() {
                   sample.status === 'reported' ? 'bg-green-100 text-green-700' :
                   sample.status === 'completed' ? 'bg-blue-100 text-blue-700' :
                   sample.status === 'testing' ? 'bg-amber-100 text-amber-700' :
-                  'bg-gray-100 text-gray-900'
+                  'bg-white text-black'
                 }`}>
                   {sample.status}
                 </span>

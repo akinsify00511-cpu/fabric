@@ -126,7 +126,7 @@ export default function Organogram() {
       { bg: 'from-indigo-500 to-purple-600', border: 'border-indigo-500' },
       { bg: 'from-blue-500 to-cyan-600', border: 'border-blue-500' },
       { bg: 'from-green-500 to-emerald-600', border: 'border-green-500' },
-      { bg: 'from-gray-500 to-gray-600', border: 'border-gray-500' },
+      { bg: 'from-white0 to-black', border: 'border-white0' },
     ]
     return colors[Math.min(level, colors.length - 1)]
   }
@@ -205,7 +205,7 @@ export default function Organogram() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Organogram</h1>
+          <h1 className="text-xl font-medium text-black">Organogram</h1>
           <p className="text-sm text-black/50 mt-0.5">Organization structure & reporting channels</p>
         </div>
         <div className="flex gap-2">

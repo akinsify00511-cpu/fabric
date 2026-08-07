@@ -18,7 +18,7 @@ export default function Settings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-gray-900 mb-6">Settings</h1>
+      <h1 className="text-xl font-medium text-black mb-6">Settings</h1>
 
       {/* User Info */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">

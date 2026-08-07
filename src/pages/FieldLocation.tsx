@@ -25,8 +25,8 @@ export default function FieldLocation() {
       case 'active': return 'bg-green-500'
       case 'idle': return 'bg-amber-500'
       case 'on_route': return 'bg-blue-500'
-      case 'offline': return 'bg-gray-400'
-      default: return 'bg-gray-400'
+      case 'offline': return 'bg-black'
+      default: return 'bg-black'
     }
   }
 
@@ -44,8 +44,8 @@ export default function FieldLocation() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Field Location Tracking</h1>
-          <p className="text-gray-900">Track your field team in real-time</p>
+          <h1 className="text-2xl font-bold text-black">Field Location Tracking</h1>
+          <p className="text-black">Track your field team in real-time</p>
         </div>
         <div className="flex items-center gap-2 text-sm text-green-600">
           <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
@@ -66,7 +66,7 @@ export default function FieldLocation() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-900'
+                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-white text-black'
               }`}
             >
               <Icon size={16} />
@@ -94,8 +94,8 @@ export default function FieldLocation() {
             {/* Simulated map content */}
             <div className="text-center z-10">
               <MapPin size={64} className="text-indigo-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Interactive Map</h3>
-              <p className="text-gray-900 mb-4">Live location of all field team members</p>
+              <h3 className="text-xl font-bold text-black mb-2">Interactive Map</h3>
+              <p className="text-black mb-4">Live location of all field team members</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <span className="px-3 py-1 bg-white rounded-full text-sm flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500" /> Active: 3
@@ -122,22 +122,22 @@ export default function FieldLocation() {
                 </div>
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-white rounded-lg shadow-lg p-2 min-w-[150px] opacity-0 group-hover:opacity-100 transition z-20">
                   <p className="font-medium text-sm">{member.name}</p>
-                  <p className="text-xs text-gray-900">{member.role}</p>
+                  <p className="text-xs text-black">{member.role}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Team Sidebar */}
-          <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-bold text-gray-900">Field Team ({FIELD_TEAMS.length})</h3>
+          <div className="bg-white rounded-xl border border-white overflow-hidden">
+            <div className="p-4 border-b border-white">
+              <h3 className="font-bold text-black">Field Team ({FIELD_TEAMS.length})</h3>
             </div>
-            <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
+            <div className="divide-y divide-white max-h-[400px] overflow-y-auto">
               {FIELD_TEAMS.map((member) => (
                 <div
                   key={member.id}
-                  className={`p-4 hover:bg-gray-50 cursor-pointer transition ${selectedTeam === member.id ? 'bg-indigo-50' : ''}`}
+                  className={`p-4 hover:bg-white cursor-pointer transition ${selectedTeam === member.id ? 'bg-indigo-50' : ''}`}
                   onClick={() => setSelectedTeam(member.id)}
                 >
                   <div className="flex items-start gap-3">
@@ -148,14 +148,14 @@ export default function FieldLocation() {
                       <span className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${getStatusColor(member.status)} border-2 border-white`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900">{member.name}</p>
-                      <p className="text-xs text-gray-900">{member.role}</p>
-                      <div className="flex items-center gap-1 mt-1 text-xs text-gray-900">
+                      <p className="font-medium text-black">{member.name}</p>
+                      <p className="text-xs text-black">{member.role}</p>
+                      <div className="flex items-center gap-1 mt-1 text-xs text-black">
                         <Navigation size={10} />
                         <span>{member.location}</span>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-900">{member.lastUpdate}</span>
+                    <span className="text-xs text-black">{member.lastUpdate}</span>
                   </div>
                 </div>
               ))}
@@ -168,7 +168,7 @@ export default function FieldLocation() {
       {activeTab === 'team' && (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {FIELD_TEAMS.map((member) => (
-            <div key={member.id} className="bg-white rounded-xl p-6 border border-gray-100">
+            <div key={member.id} className="bg-white rounded-xl p-6 border border-white">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="relative">
@@ -178,30 +178,30 @@ export default function FieldLocation() {
                     <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${getStatusColor(member.status)} border-2 border-white`} />
                   </div>
                   <div>
-                    <p className="font-bold text-gray-900">{member.name}</p>
-                    <p className="text-sm text-gray-900">{member.role}</p>
+                    <p className="font-bold text-black">{member.name}</p>
+                    <p className="text-sm text-black">{member.role}</p>
                   </div>
                 </div>
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                   member.status === 'active' ? 'bg-green-100 text-green-700' :
                   member.status === 'idle' ? 'bg-amber-100 text-amber-700' :
                   member.status === 'on_route' ? 'bg-blue-100 text-blue-700' :
-                  'bg-gray-100 text-gray-900'
+                  'bg-white text-black'
                 }`}>
                   {getStatusText(member.status)}
                 </span>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm text-gray-900">
+                <div className="flex items-center gap-2 text-sm text-black">
                   <MapPin size={14} />
                   <span>{member.location}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-900">
+                <div className="flex items-center gap-2 text-sm text-black">
                   <Clock size={14} />
                   <span>Last update: {member.lastUpdate}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-900">
+                <div className="flex items-center gap-2 text-sm text-black">
                   <Phone size={14} />
                   <a href={`tel:${member.phone}`} className="text-indigo-600 hover:underline">{member.phone}</a>
                 </div>
@@ -226,24 +226,24 @@ export default function FieldLocation() {
       {activeTab === 'jobs' && (
         <div className="space-y-4">
           {JOBS_ON_MAP.map((job) => (
-            <div key={job.id} className="bg-white rounded-xl p-5 border border-gray-100 flex items-center gap-4">
+            <div key={job.id} className="bg-white rounded-xl p-5 border border-white flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                 job.status === 'completed' ? 'bg-green-100' :
                 job.status === 'in_progress' ? 'bg-blue-100' :
-                'bg-gray-100'
+                'bg-white'
               }`}>
                 {job.status === 'completed' ? (
                   <CheckCircle size={24} className="text-green-600" />
                 ) : job.status === 'in_progress' ? (
                   <Zap size={24} className="text-blue-600" />
                 ) : (
-                  <AlertCircle size={24} className="text-gray-900" />
+                  <AlertCircle size={24} className="text-black" />
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-bold text-gray-900">{job.title}</p>
-                <p className="text-sm text-gray-900">{job.address}</p>
-                <div className="flex items-center gap-3 mt-1 text-xs text-gray-900">
+                <p className="font-bold text-black">{job.title}</p>
+                <p className="text-sm text-black">{job.address}</p>
+                <div className="flex items-center gap-3 mt-1 text-xs text-black">
                   <span>Assigned to: {job.assignedTo}</span>
                   <span>|</span>
                   <span>{job.time}</span>
@@ -252,13 +252,13 @@ export default function FieldLocation() {
               <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                 job.status === 'completed' ? 'bg-green-100 text-green-700' :
                 job.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                'bg-gray-100 text-gray-900'
+                'bg-white text-black'
               }`}>
                 {job.status === 'completed' ? 'Completed' :
                  job.status === 'in_progress' ? 'In Progress' : 'Pending'}
               </span>
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-                <Navigation size={20} className="text-gray-900" />
+              <button className="p-2 hover:bg-white rounded-lg transition">
+                <Navigation size={20} className="text-black" />
               </button>
             </div>
           ))}
@@ -266,9 +266,9 @@ export default function FieldLocation() {
           <div className="bg-indigo-50 rounded-xl p-6 border border-indigo-100">
             <div className="flex items-center gap-3 mb-3">
               <Zap size={24} className="text-indigo-600" />
-              <h3 className="font-bold text-gray-900">Pro Tip</h3>
+              <h3 className="font-bold text-black">Pro Tip</h3>
             </div>
-            <p className="text-sm text-gray-900">
+            <p className="text-sm text-black">
               Your field team can share their live location directly from the Avenize mobile app. 
               When they start a job, their location is automatically tracked and visible here on the map.
             </p>

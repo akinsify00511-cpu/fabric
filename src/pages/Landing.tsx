@@ -390,8 +390,8 @@ function Navbar() {
 // ============================================
 function HeroSection() {
   return (
-    <section className="relative min-h-screen bg-slate-900 text-white pt-16 md:pt-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950" />
+    <section className="relative min-h-screen bg-black text-white pt-16 md:pt-20 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-indigo-950" />
       
       <div className="relative max-w-7xl mx-auto px-6 py-12 md:py-20 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -416,11 +416,11 @@ function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="hero-cta text-lg md:text-xl text-slate-300 mb-6 max-w-xl leading-relaxed">
+            <p className="hero-cta text-lg md:text-xl text-black mb-6 max-w-xl leading-relaxed">
               Get alerts before supplies run out, invoices go unpaid, and clients complain. Know first — always.
             </p>
             
-            <p className="text-base text-slate-400 mb-8 max-w-xl">
+            <p className="text-base text-black mb-8 max-w-xl">
               Avenize monitors your business 24/7 and notifies you the moment something needs attention.
             </p>
 
@@ -435,7 +435,7 @@ function HeroSection() {
               </Link>
               <a
                 href="#product"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-600 text-white font-medium hover:bg-slate-800 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black text-white font-medium hover:bg-black transition-colors"
               >
                 See how it works
               </a>
@@ -445,30 +445,30 @@ function HeroSection() {
             <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-slate-300">Naira, VAT, WHT built in</span>
+                <span className="text-black">Naira, VAT, WHT built in</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-slate-300">Works on low-end Android</span>
+                <span className="text-black">Works on low-end Android</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-slate-300">Live in 30 minutes</span>
+                <span className="text-black">Live in 30 minutes</span>
               </span>
             </div>
           </div>
 
           {/* Right Content - Dashboard Preview */}
           <div className="relative mt-8 lg:mt-0">
-            <div className="relative bg-slate-800 border border-slate-700 rounded-2xl p-4 md:p-5 shadow-2xl">
+            <div className="relative bg-black border border-black rounded-2xl p-4 md:p-5 shadow-2xl">
               {/* Device Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-700 mb-4">
+              <div className="flex items-center justify-between pb-4 border-b border-black mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
                 </div>
-                <span className="text-xs text-slate-500 uppercase tracking-wider">6:45 AM</span>
+                <span className="text-xs text-black uppercase tracking-wider">6:45 AM</span>
               </div>
 
               {/* Alert Cards */}
@@ -498,7 +498,7 @@ function HeroSection() {
                 <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-xs font-bold text-emerald-400 uppercase">Job Complete</span>
-                    <span className="text-xs text-slate-400 font-mono">Now</span>
+                    <span className="text-xs text-black font-mono">Now</span>
                   </div>
                   <p className="text-white text-sm mb-2">Project finished. Awaiting your approval.</p>
                   <button className="w-full py-2 rounded-lg bg-emerald-500 text-white text-xs font-medium hover:bg-emerald-600 transition-colors">
@@ -508,8 +508,8 @@ function HeroSection() {
               </div>
               
               {/* Bottom Status */}
-              <div className="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between">
-                <span className="text-xs text-slate-500">3 alerts need attention</span>
+              <div className="mt-3 pt-3 border-t border-black flex items-center justify-between">
+                <span className="text-xs text-black">3 alerts need attention</span>
                 <span className="flex items-center gap-2 text-xs text-emerald-400">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -561,10 +561,10 @@ function MarqueeStrip() {
   ]
   
   return (
-    <div className="bg-slate-900 py-4 overflow-hidden border-y border-slate-800">
+    <div className="bg-black py-4 overflow-hidden border-y border-black">
       <div className="flex whitespace-nowrap animate-marquee">
         {[...items, ...items, ...items].map((item, i) => (
-          <span key={i} className="mx-8 text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-8">
+          <span key={i} className="mx-8 text-xs font-semibold text-black uppercase tracking-wider flex items-center gap-8">
             {item}
           </span>
         ))}
@@ -582,14 +582,14 @@ function ProblemsSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 md:mb-16 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
             The Problem
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6 leading-tight">
             Running a business is hard.<br className="hidden md:block" />
-            <span className="text-slate-500"> Managing it shouldn't be this chaotic.</span>
+            <span className="text-black"> Managing it shouldn't be this chaotic.</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          <p className="text-lg text-black max-w-2xl mx-auto">
             Every day, these silent problems drain your time, money, and energy. You know them. You're probably living with them right now.
           </p>
         </div>
@@ -599,26 +599,26 @@ function ProblemsSection() {
           {PROBLEMS.map((problem, i) => (
             <div 
               key={i} 
-              className="problem-card group bg-white border border-slate-200 rounded-xl p-5 hover:border-slate-400 hover:shadow-lg transition-all duration-300 opacity-0 translate-y-4"
+              className="problem-card group bg-white border border-black rounded-xl p-5 hover:border-black hover:shadow-lg transition-all duration-300 opacity-0 translate-y-4"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               {/* Number Badge */}
-              <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center mb-4">
-                <span className="text-lg font-bold text-slate-400">{problem.num}</span>
+              <div className="w-10 h-10 rounded-lg bg-slate-400 flex items-center justify-center mb-4">
+                <span className="text-lg font-bold text-black">{problem.num}</span>
               </div>
               
               {/* Problem Title */}
-              <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors">
+              <h3 className="text-lg font-bold text-black mb-3 group-hover:text-indigo-600 transition-colors">
                 {problem.problem}
               </h3>
               
               {/* Story */}
-              <p className="text-sm text-slate-500 leading-relaxed mb-4">
+              <p className="text-sm text-black leading-relaxed mb-4">
                 {problem.story}
               </p>
               
               {/* Cost Tag */}
-              <div className="pt-3 border-t border-slate-100">
+              <div className="pt-3 border-t border-black">
                 <p className="text-xs font-medium text-rose-600">
                   {problem.cost}
                 </p>
@@ -687,17 +687,17 @@ function FeaturesSection() {
   ]
 
   return (
-    <section id="product" className="py-16 md:py-24 bg-slate-50">
+    <section id="product" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 md:mb-16 animate-on-scroll text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold uppercase tracking-wider mb-6">
             The Solution
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6">
             Three things that fix everything.
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-black max-w-2xl mx-auto">
             No complicated dashboards. No features nobody uses. Just the essentials — connected.
           </p>
         </div>
@@ -706,11 +706,11 @@ function FeaturesSection() {
         {features.map((feature, i) => (
           <div
             key={i}
-            className={`feature-row grid lg:grid-cols-2 gap-8 lg:gap-16 py-12 md:py-16 border-t border-slate-200 ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+            className={`feature-row grid lg:grid-cols-2 gap-8 lg:gap-16 py-12 md:py-16 border-t border-black ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
           >
             {/* Copy */}
             <div className="feature-copy">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold uppercase tracking-wider mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-white text-xs font-bold uppercase tracking-wider mb-4">
                 {feature.num === "01" ? "01 The View" : feature.num === "02" ? "02 The Alert" : "03 The Channel"}
               </div>
               
@@ -720,17 +720,17 @@ function FeaturesSection() {
               </div>
               
               {/* Solution */}
-              <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4 leading-tight">
+              <h3 className="text-2xl md:text-3xl font-bold text-black mb-4 leading-tight">
                 {feature.solution}
               </h3>
               
-              <p className="text-base text-slate-600 mb-6 leading-relaxed">
+              <p className="text-base text-black mb-6 leading-relaxed">
                 {feature.description}
               </p>
               
               <ul className="space-y-3">
                 {feature.items.map((item, j) => (
-                  <li key={j} className="flex items-start gap-3 text-sm md:text-base text-slate-700">
+                  <li key={j} className="flex items-start gap-3 text-sm md:text-base text-black">
                     <span className="text-emerald-500 text-lg mt-0.5 flex-shrink-0">
                       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6 12L2.5 8.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </span>
@@ -744,7 +744,7 @@ function FeaturesSection() {
             <div className="feature-visual">
               <div className="relative">
                 <div className="absolute -inset-4 bg-indigo-500/5 rounded-3xl blur-xl" />
-                <div className="relative bg-white border border-slate-200 rounded-2xl p-4 md:p-6 shadow-lg">
+                <div className="relative bg-white border border-black rounded-2xl p-4 md:p-6 shadow-lg">
                   {feature.visual === 'pipeline' && <PipelineMockup />}
                   {feature.visual === 'alerts' && <AlertsMockup />}
                   {feature.visual === 'chat' && <ChatMockup />}
@@ -850,7 +850,7 @@ function DashboardsSection() {
   const [activeTab, setActiveTab] = useState(0)
   
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+    <section className="py-20 md:py-28 bg-gradient-to-b from-black to-black text-white">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
@@ -861,7 +861,7 @@ function DashboardsSection() {
             Every role. Every dashboard.<br />
             <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">One system.</span>
           </h2>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto">
+          <p className="text-xl text-black max-w-2xl mx-auto">
             From the owner who needs the big picture to the team lead managing daily operations — everyone gets their own command center.
           </p>
         </div>
@@ -876,7 +876,7 @@ function DashboardsSection() {
                 className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeTab === i
                     ? `bg-gradient-to-r ${dashboard.color} text-white shadow-lg`
-                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                    : 'bg-black text-black hover:bg-black'
                 }`}
               >
                 <span className="text-xl">{dashboard.icon}</span>
@@ -888,7 +888,7 @@ function DashboardsSection() {
 
         {/* Active Dashboard Display */}
         <div className="animate-on-scroll">
-          <div className="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-3xl p-8 md:p-12">
+          <div className="bg-black/50 backdrop-blur border border-black rounded-3xl p-8 md:p-12">
             {/* Dashboard Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
               <div className="flex items-center gap-4">
@@ -897,15 +897,15 @@ function DashboardsSection() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-white">{DASHBOARDS[activeTab].role}</h3>
-                  <p className="text-slate-400">"{DASHBOARDS[activeTab].tagline}"</p>
+                  <p className="text-black">"{DASHBOARDS[activeTab].tagline}"</p>
                 </div>
               </div>
               
               {/* Key Metrics */}
               <div className="flex flex-wrap gap-3">
                 {DASHBOARDS[activeTab].metrics.map((metric, i) => (
-                  <div key={i} className="px-4 py-2 bg-slate-700/50 rounded-lg border border-slate-600">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider">{metric}</p>
+                  <div key={i} className="px-4 py-2 bg-black/50 rounded-lg border border-black">
+                    <p className="text-xs text-black uppercase tracking-wider">{metric}</p>
                   </div>
                 ))}
               </div>
@@ -916,10 +916,10 @@ function DashboardsSection() {
               {DASHBOARDS[activeTab].features.map((feature, i) => (
                 <div 
                   key={i} 
-                  className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-slate-600 transition-colors"
+                  className="flex items-start gap-3 p-4 bg-black/50 rounded-xl border border-black hover:border-black transition-colors"
                 >
                   <span className="text-emerald-400 text-xl mt-0.5">✓</span>
-                  <span className="text-slate-300">{feature}</span>
+                  <span className="text-black">{feature}</span>
                 </div>
               ))}
             </div>
@@ -933,7 +933,7 @@ function DashboardsSection() {
               key={i}
               onClick={() => setActiveTab(i)}
               className={`w-3 h-3 rounded-full transition-all ${
-                activeTab === i ? 'bg-orange-500 w-8' : 'bg-slate-600 hover:bg-slate-500'
+                activeTab === i ? 'bg-orange-500 w-8' : 'bg-black hover:bg-black'
               }`}
             />
           ))}
@@ -948,7 +948,7 @@ function DashboardsSection() {
 // ============================================
 function PricingSection() {
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-slate-900 text-white">
+    <section id="pricing" className="py-16 md:py-24 bg-black text-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
@@ -959,7 +959,7 @@ function PricingSection() {
             Less than your data bundle.<br />
             <span className="text-indigo-400">Runs your whole business.</span>
           </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-black max-w-2xl mx-auto mb-8">
             Five tiers, no sales calls, no consultants — from one person to 100 seats.
           </p>
           <div className="inline-block bg-indigo-600 rounded-2xl px-8 py-5">
@@ -980,7 +980,7 @@ function PricingSection() {
               className={`snap-card rounded-xl p-4 md:p-5 border opacity-0 translate-y-6 transition-all hover:border-indigo-500/50 ${
                 plan.featured
                   ? 'bg-indigo-500/10 border-indigo-500'
-                  : 'bg-gray-200 border-white/10'
+                  : 'bg-white border-white/10'
               }`}
             >
               <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-3 min-h-[20px]">
@@ -1021,17 +1021,17 @@ function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-16 md:py-24 bg-slate-50">
+    <section id="faq" className="py-16 md:py-24 bg-white">
       <div className="max-w-3xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 border border-slate-300 text-slate-600 text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
             Real Questions
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
             What operators always ask before they start.
           </h2>
-          <p className="text-lg text-slate-600 max-w-xl mx-auto">
+          <p className="text-lg text-black max-w-xl mx-auto">
             Honest answers. No sales talk.
           </p>
         </div>
@@ -1039,22 +1039,22 @@ function FAQSection() {
         {/* FAQ List */}
         <div className="space-y-0">
           {FAQ_DATA.map((item, i) => (
-            <div key={i} className="border-t border-slate-200">
+            <div key={i} className="border-t border-black">
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between py-5 text-left"
               >
-                <span className="font-semibold text-slate-900 pr-4">{item.q}</span>
+                <span className="font-semibold text-black pr-4">{item.q}</span>
                 <span className={`text-indigo-600 text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && (
-                <div className="pb-5 text-slate-600 leading-relaxed">
+                <div className="pb-5 text-black leading-relaxed">
                   {item.a}
                 </div>
               )}
             </div>
           ))}
-          <div className="border-b border-slate-200" />
+          <div className="border-b border-black" />
         </div>
       </div>
     </section>
@@ -1081,13 +1081,13 @@ function StatsSection() {
   ]
 
   return (
-    <section className="py-12 md:py-16 bg-slate-100">
+    <section className="py-12 md:py-16 bg-slate-400">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center animate-on-scroll">
               <span className="block text-3xl md:text-4xl font-bold text-indigo-600 mb-2">{stat.value}</span>
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed max-w-xs mx-auto">{stat.label}</p>
+              <p className="text-black text-sm md:text-base leading-relaxed max-w-xs mx-auto">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -1101,13 +1101,13 @@ function StatsSection() {
 // ============================================
 function CTASection() {
   return (
-    <section className="relative py-16 md:py-24 bg-slate-900 text-white text-center">
+    <section className="relative py-16 md:py-24 bg-black text-white text-center">
       <div className="relative max-w-4xl mx-auto px-6">
         <div className="mb-8">
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6">
             <span className="text-white">Your operations stopped at 9am.</span>
             <br />
-            <span className="text-slate-500">Your team only told you now.</span>
+            <span className="text-black">Your team only told you now.</span>
           </p>
           
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
@@ -1119,7 +1119,7 @@ function CTASection() {
 
         {/* Emotional Hook */}
         <div className="mb-8 p-6 bg-indigo-500/10 border border-indigo-500/30 rounded-2xl">
-          <p className="text-base md:text-lg text-slate-300">
+          <p className="text-base md:text-lg text-black">
             <span className="text-white font-semibold">Avenize was built for exactly this moment.</span><br />
             The moment before it becomes urgent. The moment you wish you'd known sooner.
           </p>
@@ -1133,7 +1133,7 @@ function CTASection() {
           <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </Link>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-400">
+        <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-black">
           <span className="flex items-center gap-2">
             <span className="text-emerald-400">✓</span> Setup in 30 minutes
           </span>
@@ -1154,7 +1154,7 @@ function CTASection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="bg-slate-950 text-white/50 py-12 border-t border-slate-800">
+    <footer className="bg-slate-950 text-white/50 py-12 border-t border-black">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
@@ -1163,14 +1163,14 @@ function Footer() {
             </div>
             <div>
               <span className="font-bold text-white text-lg">Avenize</span>
-              <p className="text-xs text-slate-500">The Business Operating System</p>
+              <p className="text-xs text-black">The Business Operating System</p>
             </div>
           </div>
           <div className="text-center md:text-right">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-black">
               Built for Nigerian businesses. Running from Lagos.
             </p>
-            <p className="text-xs text-slate-600 mt-1">
+            <p className="text-xs text-black mt-1">
               © 2024 Avenize. All rights reserved.
             </p>
           </div>

@@ -232,7 +232,7 @@ export default function DataExportPage() {
             <Download size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Data Export</h1>
+            <h1 className="text-2xl font-bold text-black">Data Export</h1>
             <p className="text-sm text-black/50">Export your data in various formats</p>
           </div>
         </div>

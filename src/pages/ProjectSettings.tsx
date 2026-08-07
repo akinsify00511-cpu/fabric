@@ -165,7 +165,7 @@ export default function ProjectSettings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-gray-900 mb-6">Project Settings</h1>
+      <h1 className="text-xl font-medium text-black mb-6">Project Settings</h1>
 
       {/* Job Types Section */}
       <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
@@ -194,7 +194,7 @@ export default function ProjectSettings() {
 
         {/* New Job Type Form */}
         {showNewForm && (
-          <div className="p-4 bg-gray-50 border-b border-black/[0.06]">
+          <div className="p-4 bg-white border-b border-black/[0.06]">
             <div className="flex items-end gap-3">
               <div className="flex-1">
                 <label className="block text-xs font-medium text-black/50 mb-1">Label</label>
@@ -214,7 +214,7 @@ export default function ProjectSettings() {
                     <button
                       key={c.id}
                       onClick={() => setNewColor(c.value)}
-                      className={`w-6 h-6 rounded-full ${newColor === c.value ? 'ring-2 ring-offset-2 ring-gray-400' : ''}`}
+                      className={`w-6 h-6 rounded-full ${newColor === c.value ? 'ring-2 ring-offset-2 ring-black' : ''}`}
                       style={{ backgroundColor: c.value }}
                       title={c.label}
                     />
@@ -273,7 +273,7 @@ export default function ProjectSettings() {
                             const input = document.getElementById(`edit-${jt.id}`) as HTMLInputElement
                             updateJobType(jt.id, input.value, c.value)
                           }}
-                          className={`w-5 h-5 rounded-full ${jt.color === c.value ? 'ring-2 ring-offset-1 ring-gray-400' : ''}`}
+                          className={`w-5 h-5 rounded-full ${jt.color === c.value ? 'ring-2 ring-offset-1 ring-black' : ''}`}
                           style={{ backgroundColor: c.value }}
                         />
                       ))}
@@ -291,7 +291,7 @@ export default function ProjectSettings() {
                     <span className="text-xs text-black/30">{jt.is_active ? 'Active' : 'Inactive'}</span>
                     <button
                       onClick={() => toggleActive(jt)}
-                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-900'}`}
+                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-white text-black'}`}
                     >
                       {jt.is_active ? 'Disable' : 'Enable'}
                     </button>

@@ -36,14 +36,14 @@ export default function FeatureSuggestions({ suggestions, title = "You might als
             className="flex items-center gap-3 p-3 bg-white hover:bg-indigo-50 rounded-lg border border-indigo-100 hover:border-indigo-200 transition group"
           >
             <div className="flex-1 text-left">
-              <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-700">
+              <span className="text-sm font-medium text-black group-hover:text-indigo-700">
                 {suggestion.label}
               </span>
-              <span className="text-xs text-gray-900 ml-2">
+              <span className="text-xs text-black ml-2">
                 {suggestion.description}
               </span>
             </div>
-            <ArrowRight className="w-4 h-4 text-gray-900 group-hover:text-indigo-500 transition" />
+            <ArrowRight className="w-4 h-4 text-black group-hover:text-indigo-500 transition" />
           </button>
         ))}
       </div>

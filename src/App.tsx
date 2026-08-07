@@ -126,12 +126,12 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   // While any auth check is pending, show loading
   if (loading || !staffChecked) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
             <span className="text-white font-bold text-xl">A</span>
           </div>
-          <div className="w-8 h-8 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-black border-t-blue-600 rounded-full animate-spin" />
         </div>
       </div>
     )

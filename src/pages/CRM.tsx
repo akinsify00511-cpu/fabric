@@ -37,7 +37,7 @@ const STAGES = [
   { key: 'proposal', label: 'Proposal', color: 'bg-purple-500', textColor: 'text-white', probability: 60 },
   { key: 'negotiation', label: 'Negotiating', color: 'bg-amber-500', textColor: 'text-white', probability: 75 },
   { key: 'won', label: 'Won', color: 'bg-green-500', textColor: 'text-white', probability: 100 },
-  { key: 'lost', label: 'Lost', color: 'bg-gray-400', textColor: 'text-white', probability: 0 },
+  { key: 'lost', label: 'Lost', color: 'bg-black', textColor: 'text-white', probability: 0 },
 ]
 
 export default function CRM() {
@@ -210,9 +210,9 @@ export default function CRM() {
     return (
       <div className="max-w-7xl mx-auto">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-32"></div>
+          <div className="h-8 bg-white rounded w-32"></div>
           <div className="grid grid-cols-5 gap-3">
-            {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-gray-200 rounded-xl"></div>)}
+            {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-white rounded-xl"></div>)}
           </div>
         </div>
       </div>
@@ -223,7 +223,7 @@ export default function CRM() {
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">CRM</h1>
+          <h1 className="text-2xl font-bold text-black">CRM</h1>
           <p className="text-sm text-black/50">{deals.length} deals - {contacts.length} contacts</p>
         </div>
         <div className="flex gap-2">
@@ -262,7 +262,7 @@ export default function CRM() {
       <div className="flex gap-1 mb-6 bg-black/5 p-1 rounded-xl w-fit">
         {[{ key: 'deals', label: 'Deals' }, { key: 'contacts', label: 'Contacts' }, { key: 'pipeline', label: 'Pipeline' }].map(tab => (
           <button key={tab.key} onClick={() => setViewMode(tab.key as ViewMode)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-gray-900' : 'text-black/50 hover:text-black/70'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-black' : 'text-black/50 hover:text-black/70'}`}>
             {tab.label}
           </button>
         ))}

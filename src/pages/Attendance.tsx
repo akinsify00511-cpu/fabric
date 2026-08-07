@@ -202,7 +202,7 @@ export default function AttendancePage() {
     half_day: { bg: 'bg-blue-100', text: 'text-blue-600', icon: Clock },
     on_leave: { bg: 'bg-purple-100', text: 'text-purple-600', icon: Calendar },
     holiday: { bg: 'bg-indigo-100', text: 'text-indigo-600', icon: Calendar },
-    weekend: { bg: 'bg-gray-100', text: 'text-gray-900', icon: Calendar },
+    weekend: { bg: 'bg-white', text: 'text-black', icon: Calendar },
   }
 
   return (
@@ -214,7 +214,7 @@ export default function AttendancePage() {
             <Fingerprint size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
+            <h1 className="text-2xl font-bold text-black">Attendance</h1>
             <p className="text-sm text-black/50">Track your work hours</p>
           </div>
         </div>
@@ -224,7 +224,7 @@ export default function AttendancePage() {
       <div className={`rounded-2xl border-2 p-6 mb-6 ${
         todayRecord 
           ? todayRecord.check_out 
-            ? 'bg-gray-50 border-gray-200' 
+            ? 'bg-white border-black' 
             : 'bg-green-50 border-green-200' 
           : isWeekend 
             ? 'bg-purple-50 border-purple-200'

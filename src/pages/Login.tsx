@@ -101,7 +101,7 @@ export default function Login() {
       >
         <div className="flex items-center gap-2">
           <AvenizeMark size={26} />
-          <span className="text-xl font-semibold tracking-tight text-gray-900">Avenize</span>
+          <span className="text-xl font-semibold tracking-tight text-black">Avenize</span>
         </div>
         <p className="text-sm text-black/50 -mt-3">Sign in to your workspace</p>
 

@@ -100,8 +100,8 @@ export default function AdminAnalytics() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <AlertTriangle size={48} className="text-amber-500 mb-4" />
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Access Restricted</h1>
-        <p className="text-gray-900">This page is only visible to administrators.</p>
+        <h1 className="text-xl font-bold text-black mb-2">Access Restricted</h1>
+        <p className="text-black">This page is only visible to administrators.</p>
       </div>
     )
   }
@@ -127,7 +127,7 @@ export default function AdminAnalytics() {
     error: 'bg-red-100 text-red-600',
     payment: 'bg-emerald-100 text-emerald-600',
     notification: 'bg-indigo-100 text-indigo-600',
-    auth: 'bg-gray-100 text-gray-900',
+    auth: 'bg-white text-black',
     performance: 'bg-orange-100 text-orange-600',
     engagement: 'bg-pink-100 text-pink-600',
   }
@@ -161,7 +161,7 @@ export default function AdminAnalytics() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Admin Analytics</h1>
+          <h1 className="text-2xl font-bold text-black">Admin Analytics</h1>
           <p className="text-sm text-black/50">Monitor all app activity and user engagement</p>
         </div>
         <div className="flex items-center gap-3">
@@ -305,7 +305,7 @@ export default function AdminAnalytics() {
             <div className="space-y-3">
               {analytics?.eventsByCategory.map((cat) => {
                 const Icon = categoryIcons[cat.category] || Activity
-                const colorClass = categoryColors[cat.category] || 'bg-gray-100 text-gray-900'
+                const colorClass = categoryColors[cat.category] || 'bg-white text-black'
                 const percentage = totalCategoryCount > 0 ? ((cat.count / totalCategoryCount) * 100).toFixed(1) : '0'
                 
                 return (
@@ -340,7 +340,7 @@ export default function AdminAnalytics() {
               {analytics?.topFeatures.map((feature, i) => (
                 <div key={feature.action} className="flex items-center gap-4 p-3 bg-black/[0.02] rounded-xl">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold ${
-                    i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black/50'
+                    i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-black' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black/50'
                   }`}>
                     #{i + 1}
                   </div>
@@ -402,7 +402,7 @@ export default function AdminAnalytics() {
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
             {filteredEvents.slice(0, 50).map((event) => {
               const Icon = categoryIcons[event.category] || Activity
-              const colorClass = categoryColors[event.category] || 'bg-gray-100 text-gray-900'
+              const colorClass = categoryColors[event.category] || 'bg-white text-black'
               const isExpanded = expandedEvent === event.id
               
               return (

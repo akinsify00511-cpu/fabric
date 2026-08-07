@@ -35,7 +35,7 @@ const LEAVE_TYPES = [
   { value: 'vacation', label: 'Vacation', icon: Plane, color: 'bg-blue-100 text-blue-600' },
   { value: 'sick', label: 'Sick Leave', icon: Heart, color: 'bg-red-100 text-red-600' },
   { value: 'personal', label: 'Personal', icon: User, color: 'bg-purple-100 text-purple-600' },
-  { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-gray-100 text-gray-900' },
+  { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-white text-black' },
 ]
 
 // Demo data
@@ -258,7 +258,7 @@ export default function TimeTracking() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-gray-900">Time Tracking</h1>
+          <h1 className="text-xl font-medium text-black">Time Tracking</h1>
           <p className="text-sm text-black/50 mt-0.5">Track your work hours and request time off</p>
         </div>
         <div className="flex gap-2">
@@ -282,7 +282,7 @@ export default function TimeTracking() {
       {/* Timer Card */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="text-center">
-          <div className="text-5xl font-mono font-bold text-gray-900 mb-4">
+          <div className="text-5xl font-mono font-bold text-black mb-4">
             {formatElapsed(elapsed)}
           </div>
           <div className="flex justify-center gap-3">
@@ -414,7 +414,7 @@ export default function TimeTracking() {
                     {entry.duration_minutes ? `${Math.round(entry.duration_minutes / 60 * 10) / 10}h` : 'Active'}
                   </p>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    entry.billable ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'
+                    entry.billable ? 'bg-green-100 text-green-700' : 'bg-white text-black'
                   }`}>
                     {entry.billable ? 'Billable' : 'Non-billable'}
                   </span>

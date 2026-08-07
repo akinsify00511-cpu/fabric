@@ -27,7 +27,7 @@ export default function SalesPerformance() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Sales Performance</h1>
+          <h1 className="text-xl font-semibold text-black">Sales Performance</h1>
           <p className="text-sm text-black/50">Targets, commissions & analytics</p>
         </div>
       </div>
@@ -292,7 +292,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
             <div key={rule.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{rule.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
                   {rule.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>

@@ -104,7 +104,7 @@ export function BetaOnlyPage({
       <div className="pb-20">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-medium text-gray-900">{title}</h1>
+            <h1 className="text-xl font-medium text-black">{title}</h1>
             <p className="text-sm text-black/50 mt-0.5">{description}</p>
           </div>
           <BetaBadge />
