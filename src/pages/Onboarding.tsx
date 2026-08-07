@@ -132,6 +132,14 @@ export default function Onboarding() {
       })
 
       if (rpcError) {
+        console.error('RPC Error:', rpcError)
+        // Handle specific error messages
+        if (rpcError.message?.includes('already belongs')) {
+          throw new Error('You are already registered with a business')
+        }
+        if (rpcError.message?.includes('ambiguous')) {
+          throw new Error('Database configuration issue. Please contact support.')
+        }
         throw rpcError
       }
 
@@ -145,18 +153,18 @@ export default function Onboarding() {
       localStorage.setItem('avenize_onboarding_complete', 'true')
       
       // Also mark as complete in the staff record (for persistence)
-      if (data?.staff_id) {
+      if (data?.p_staff_id) {
         await supabase
           .from('staff')
           .update({ onboarding_completed: true })
-          .eq('id', data.staff_id)
+          .eq('id', data.p_staff_id)
         
         // Save branding colors to database
-        if (selectedColor) {
+        if (selectedColor && data?.p_business_id) {
           await supabase
             .from('business_branding')
             .upsert({
-              business_id: data.business_id,
+              business_id: data.p_business_id,
               background_color: selectedColor.hex,
               text_color: selectedColor.previewText,
               updated_at: new Date().toISOString(),
@@ -168,7 +176,14 @@ export default function Onboarding() {
       window.location.href = '/app'
     } catch (err: any) {
       console.error('Setup error:', err)
-      setError(err.message || 'Failed to complete setup')
+      // Show user-friendly error message
+      if (err.message?.includes('already belongs') || err.message?.includes('already registered')) {
+        // User already has a business - redirect to app
+        localStorage.setItem('avenize_onboarding_complete', 'true')
+        window.location.href = '/app'
+        return
+      }
+      setError(err.message || 'Failed to complete setup. Please try again.')
     } finally {
       setLoading(false)
     }

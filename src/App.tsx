@@ -123,9 +123,27 @@ function PageLoader() {
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
 
-  // Don't render until auth state is resolved
-  if (loading || !staffChecked) {
-    return null
+  // Wait for auth to be fully resolved
+  useEffect(() => {
+    // Prevent scrolling while auth is loading
+    if (loading || !staffChecked) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [loading, staffChecked])
+
+  // Show loading only if session exists but staff not checked yet
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   // No session - redirect to login
@@ -142,6 +160,18 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
         <BetaFeedbackButton />
         {children}
       </>
+    )
+  }
+
+  // Staff not checked yet - wait
+  if (!staffChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
+          <p className="text-sm text-gray-500">Checking...</p>
+        </div>
+      </div>
     )
   }
 
