@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 
 const PRESET_THEMES = [
-  { name: 'Avenize Default', primary: '#4F46E5', accent: '#2563EB', label: 'Signature' },
+  { name: 'Avenize Default', primary: '#4285F4', accent: '#3367D6', label: 'Signature' },
   { name: 'Ocean Blue', primary: '#0EA5E9', accent: '#06B6D4', label: 'Ocean' },
   { name: 'Forest Green', primary: '#10B981', accent: '#34D399', label: 'Nature' },
   { name: 'Sunset Orange', primary: '#F97316', accent: '#FBBF24', label: 'Warm' },

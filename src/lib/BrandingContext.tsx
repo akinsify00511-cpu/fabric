@@ -54,7 +54,7 @@ const DEFAULT_BRANDING: Branding = {
   logo_dark_url: null,
   favicon_url: null,
   og_image_url: null,
-  primary_color: '#4F46E5',
+  primary_color: '#4285F4',
   accent_color: '#FF7A59',
   background_color: '#FAFAFA',
   surface_color: '#FFFFFF',

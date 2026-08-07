@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1254 1254">
   <defs>
     <linearGradient id="avenize-grad" x1="0" y1="0" x2="1254" y2="1254" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="0%" stop-color="#4285F4"/>
+      <stop offset="50%" stop-color="#6366F1"/>
       <stop offset="100%" stop-color="#8B5CF6"/>
     </linearGradient>
   </defs>
