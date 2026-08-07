@@ -1,37 +1,30 @@
 -- ============================================
--- Grant all permissions needed for onboarding
+-- COMPLETELY DISABLE RLS for onboarding tables
+-- Then re-enable with permissive policies
 -- ============================================
 
--- Grant schema usage
-GRANT USAGE ON SCHEMA public TO postgres;
-GRANT USAGE ON SCHEMA public TO anon;
-GRANT USAGE ON SCHEMA public TO authenticated;
-GRANT USAGE ON SCHEMA public TO service_role;
-
--- Businesses table: Grant all permissions
-GRANT SELECT ON businesses TO postgres, anon, authenticated, service_role;
-GRANT INSERT ON businesses TO postgres, anon, authenticated, service_role;
-GRANT UPDATE ON businesses TO postgres, authenticated, service_role;
-GRANT DELETE ON businesses TO postgres, service_role;
-
--- Staff table: Grant all permissions
-GRANT SELECT ON staff TO postgres, anon, authenticated, service_role;
-GRANT INSERT ON staff TO postgres, anon, authenticated, service_role;
-GRANT UPDATE ON staff TO postgres, authenticated, service_role;
-GRANT DELETE ON staff TO postgres, service_role;
-
--- Business branding table: Grant all permissions
-GRANT SELECT ON business_branding TO postgres, anon, authenticated, service_role;
-GRANT INSERT ON business_branding TO postgres, anon, authenticated, service_role;
-GRANT UPDATE ON business_branding TO postgres, authenticated, service_role;
-GRANT DELETE ON business_branding TO postgres, service_role;
-
--- Recreate INSERT policies
+-- Step 1: Completely drop ALL policies on these tables
+DROP POLICY IF EXISTS "Users see own business" ON businesses;
+DROP POLICY IF EXISTS "Authenticated users can create businesses" ON businesses;
+DROP POLICY IF EXISTS "Users can insert businesses" ON businesses;
 DROP POLICY IF EXISTS "Businesses insert" ON businesses;
-CREATE POLICY "Businesses insert" ON businesses FOR INSERT TO authenticated WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Staff see same business" ON staff;
+DROP POLICY IF EXISTS "Owners/managers can manage staff" ON staff;
+DROP POLICY IF EXISTS "Authenticated users can create staff" ON staff;
+DROP POLICY IF EXISTS "Users can insert staff" ON staff;
 DROP POLICY IF EXISTS "Staff insert" ON staff;
-CREATE POLICY "Staff insert" ON staff FOR INSERT TO authenticated WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Authenticated users can create branding" ON business_branding;
+DROP POLICY IF EXISTS "Users can insert branding" ON business_branding;
 DROP POLICY IF EXISTS "Branding insert" ON business_branding;
-CREATE POLICY "Branding insert" ON business_branding FOR INSERT TO authenticated WITH CHECK (true);
+
+-- Step 2: Disable RLS completely
+ALTER TABLE businesses DISABLE ROW LEVEL SECURITY;
+ALTER TABLE staff DISABLE ROW LEVEL SECURITY;
+ALTER TABLE business_branding DISABLE ROW LEVEL SECURITY;
+
+-- Step 3: Grant all permissions to all roles
+GRANT ALL ON businesses TO postgres, anon, authenticated, service_role;
+GRANT ALL ON staff TO postgres, anon, authenticated, service_role;
+GRANT ALL ON business_branding TO postgres, anon, authenticated, service_role;
