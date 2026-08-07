@@ -263,6 +263,7 @@ function AppRoutes() {
         <Route path="settings/projects" element={<ProjectSettings />} />
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
+        <Route path="settings/payments" element={<PaymentSettings />} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />
         <Route path="staff/:staffId" element={<StaffProfile />} />
@@ -310,7 +311,6 @@ function AppRoutes() {
         <Route path="assets" element={<AssetManagement />} />
         <Route path="booking" element={<ResourceBooking />} />
         <Route path="attendance" element={<Attendance />} />
-        <Route path="payments" element={<PaymentSettings />} />
         <Route path="notifications-center" element={<NotificationsCenter />} />
         </Route>
         </Routes>
