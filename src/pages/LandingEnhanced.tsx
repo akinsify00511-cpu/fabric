@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Clock, TrendingUp, Sparkles, Target, UserCheck, BriefcaseBusiness } from 'lucide-react'
+import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, BriefcaseBusiness } from 'lucide-react'
 import SarahChat from '../components/SarahChat'
 
 const STATS = [
@@ -64,19 +64,19 @@ function Navbar() {
             </Link>
             <div className="hidden lg:flex items-center gap-1">
               <a href="#modules" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Features</a>
-              <a href="#pricing" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Pricing</a>
+              <Link to="/pricing" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Pricing</Link>
               <a href="#testimonials" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Stories</a>
             </div>
           </div>
           
           {/* Right side - Actions */}
           <div className="flex items-center gap-3">
-            <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">
+            <Link to="/signup" className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               Search
-            </button>
+            </Link>
             <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Sign in</Link>
             <Link to="/signup" className="px-4 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition shadow-sm">Get started</Link>
             <button className="lg:hidden p-2 text-gray-500 hover:bg-gray-50 rounded-md" onClick={() => setMobileOpen(!mobileOpen)}>
