@@ -154,21 +154,36 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // User has a session - check onboarding status
-  // If no staff record exists, send to onboarding
+  // Check if onboarding is complete via localStorage first (fast path)
+  const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
+  
+  // If onboarding is complete in localStorage, allow access
+  if (localOnboarding === 'true') {
+    return (
+      <>
+        <TrialBanner />
+        <SarahChat />
+        <BetaFeedbackButton />
+        {children}
+      </>
+    )
+  }
+
+  // User has a session - check staff record
   if (!staff) {
+    // No staff record and no local onboarding complete - send to onboarding
     return <Navigate to="/onboarding" replace />
   }
 
-  // Check if onboarding is complete (either localStorage or database)
-  const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-  const staffOnboarding = staff?.onboarding_completed
-
-  if (!localOnboarding && !staffOnboarding) {
+  // Check if onboarding is complete in database
+  if (!staff.onboarding_completed) {
     return <Navigate to="/onboarding" replace />
   }
 
   // User is fully authenticated and onboarded - show app
+  // Also save to localStorage for faster future checks
+  localStorage.setItem('avenize_onboarding_complete', 'true')
+  
   return (
     <>
       <TrialBanner />

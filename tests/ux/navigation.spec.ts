@@ -7,9 +7,12 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    // Set demo mode
+    // Clear any existing state and set demo mode
     await page.goto('/login')
     await page.evaluate(() => {
+      // Clear localStorage first
+      localStorage.clear()
+      // Set demo mode
       localStorage.setItem('avenize_demo', 'true')
       localStorage.setItem('avenize_demo_user', JSON.stringify({
         id: 'test-user-1',
@@ -20,6 +23,9 @@ test.describe('Navigation', () => {
         role: 'owner'
       }))
     })
+    // Reload to ensure auth context picks up the demo state
+    await page.reload()
+    await page.waitForLoadState('networkidle')
   })
 
   test('[Navigation] Every sidebar nav item navigates to a real page, not 404', async ({ page }) => {
@@ -66,6 +72,7 @@ test.describe('Navigation', () => {
   test('[Navigation] Dashboard loads correctly', async ({ page }) => {
     await page.goto('/app')
     await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(1000) // Wait for auth to initialize
     
     // Should have some content, not 404
     const bodyText = await page.locator('body').textContent()
@@ -74,6 +81,10 @@ test.describe('Navigation', () => {
     // Should not show "Page Not Found"
     const notFound = await page.getByText(/page not found/i).isVisible().catch(() => false)
     expect(notFound).toBe(false)
+    
+    // Should show welcome message with user name
+    const welcomeText = await page.getByText(/welcome back/i).isVisible().catch(() => false)
+    expect(welcomeText).toBe(true)
   })
 
   test('[Navigation] Chat navigates correctly', async ({ page }) => {

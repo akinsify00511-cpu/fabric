@@ -60,15 +60,20 @@ export default function Onboarding() {
   // Check if already onboarded - redirect to app
   useEffect(() => {
     const checkOnboarding = async () => {
-      // Check localStorage first
+      // Check localStorage first (fast path)
       const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
       if (localOnboarding === 'true') {
         navigate('/app', { replace: true })
         return
       }
       
-      // Check database
-      if (session?.user.id) {
+      // No session - stay on onboarding
+      if (!session?.user.id) {
+        return
+      }
+      
+      // Check database for staff record
+      try {
         const { data: staffData } = await supabase
           .from('staff')
           .select('onboarding_completed, business_id')
@@ -79,6 +84,9 @@ export default function Onboarding() {
           localStorage.setItem('avenize_onboarding_complete', 'true')
           navigate('/app', { replace: true })
         }
+      } catch (err) {
+        console.warn('Error checking onboarding status:', err)
+        // Stay on onboarding page if error
       }
     }
     checkOnboarding()
