@@ -134,13 +134,16 @@ export default function Onboarding() {
       if (rpcError) {
         console.error('RPC Error:', rpcError)
         // Handle specific error messages
-        if (rpcError.message?.includes('already belongs')) {
-          throw new Error('You are already registered with a business')
+        if (rpcError.message?.includes('already belongs') || rpcError.message?.includes('already a member')) {
+          // User already registered - redirect to app
+          localStorage.setItem('avenize_onboarding_complete', 'true')
+          window.location.href = '/app'
+          return
         }
-        if (rpcError.message?.includes('ambiguous')) {
-          throw new Error('Database configuration issue. Please contact support.')
-        }
-        throw rpcError
+        // For other errors (including ambiguous column), try manual creation
+        console.warn('RPC failed, trying manual creation:', rpcError.message)
+        await createBusinessManually()
+        return
       }
 
       // Save color preferences to localStorage for branding
@@ -153,18 +156,21 @@ export default function Onboarding() {
       localStorage.setItem('avenize_onboarding_complete', 'true')
       
       // Also mark as complete in the staff record (for persistence)
-      if (data?.p_staff_id) {
+      const staffId = data?.p_staff_id || data?.staff_id
+      const businessId = data?.p_business_id || data?.business_id
+      
+      if (staffId) {
         await supabase
           .from('staff')
           .update({ onboarding_completed: true })
-          .eq('id', data.p_staff_id)
+          .eq('id', staffId)
         
         // Save branding colors to database
-        if (selectedColor && data?.p_business_id) {
+        if (selectedColor && businessId) {
           await supabase
             .from('business_branding')
             .upsert({
-              business_id: data.p_business_id,
+              business_id: businessId,
               background_color: selectedColor.hex,
               text_color: selectedColor.previewText,
               updated_at: new Date().toISOString(),
@@ -176,16 +182,70 @@ export default function Onboarding() {
       window.location.href = '/app'
     } catch (err: any) {
       console.error('Setup error:', err)
-      // Show user-friendly error message
-      if (err.message?.includes('already belongs') || err.message?.includes('already registered')) {
-        // User already has a business - redirect to app
-        localStorage.setItem('avenize_onboarding_complete', 'true')
-        window.location.href = '/app'
-        return
-      }
       setError(err.message || 'Failed to complete setup. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Fallback: Create business and staff manually
+  const createBusinessManually = async () => {
+    try {
+      // Save color preferences to localStorage for branding
+      if (selectedColor) {
+        localStorage.setItem('avenize_theme_bg', selectedColor.hex)
+        localStorage.setItem('avenize_theme_text', selectedColor.previewText)
+      }
+
+      // Create business
+      const { data: businessData, error: businessError } = await supabase
+        .from('businesses')
+        .insert({
+          name: businessName,
+          industry: industry,
+        })
+        .select()
+        .single()
+
+      if (businessError) throw businessError
+
+      // Create staff record
+      const { data: staffData, error: staffError } = await supabase
+        .from('staff')
+        .insert({
+          business_id: businessData.id,
+          user_id: session?.user?.id,
+          name: fullName,
+          email: session?.user?.email,
+          role: 'owner',
+          job_title: 'Owner',
+          onboarding_completed: true,
+        })
+        .select()
+        .single()
+
+      if (staffError) throw staffError
+
+      // Save branding colors
+      if (selectedColor) {
+        await supabase
+          .from('business_branding')
+          .upsert({
+            business_id: businessData.id,
+            background_color: selectedColor.hex,
+            text_color: selectedColor.previewText,
+            updated_at: new Date().toISOString(),
+          })
+      }
+
+      // Mark onboarding complete
+      localStorage.setItem('avenize_onboarding_complete', 'true')
+
+      // Redirect to app
+      window.location.href = '/app'
+    } catch (err: any) {
+      console.error('Manual creation error:', err)
+      setError(err.message || 'Failed to create your business. Please try again.')
     }
   }
 
