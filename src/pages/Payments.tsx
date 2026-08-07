@@ -51,7 +51,7 @@ const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNod
   cash: { label: 'Cash', icon: <Banknote size={16} />, color: 'green' },
   mobile_money: { label: 'Mobile Money', icon: <Smartphone size={16} />, color: 'purple' },
   pos: { label: 'POS', icon: <CreditCard size={16} />, color: 'orange' },
-  cheque: { label: 'Cheque', icon: <FileText size={16} />, color: 'gray' },
+  cheque: { label: 'Cheque', icon: <FileText size={16} />, color: 'slate' },
 }
 
 const BANK_LABELS: Record<PaymentBank, string> = {

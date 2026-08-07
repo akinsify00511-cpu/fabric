@@ -112,7 +112,7 @@ function renderBarChart(
 
       // Label
       if (showLabels) {
-        ctx.fillStyle = '#6b7280'
+        ctx.fillStyle = '#1e293b'
         ctx.textAlign = 'left'
         ctx.fillText(item.label, padding.left + barHeight + 5, y + (barWidth - barGap) / 2, 80)
         
@@ -137,13 +137,13 @@ function renderBarChart(
         ctx.save()
         ctx.translate(x + (barWidth - barGap) / 2, height - padding.bottom + 15)
         ctx.rotate(-Math.PI / 4)
-        ctx.fillStyle = '#6b7280'
+        ctx.fillStyle = '#1e293b'
         ctx.textAlign = 'right'
         ctx.fillText(item.label, 0, 0, 60)
         ctx.restore()
 
         // Value on top
-        ctx.fillStyle = '#374151'
+        ctx.fillStyle = '#0f172a'
         ctx.textAlign = 'center'
         ctx.fillText(item.value.toLocaleString(), x + (barWidth - barGap) / 2, padding.top + chartHeight - barHeight - 8)
       }
@@ -221,7 +221,7 @@ function renderLineChart(
   const range = maxValue - minValue
 
   // Draw grid lines
-  ctx.strokeStyle = '#e5e7eb'
+  ctx.strokeStyle = '#cbd5e1'
   ctx.lineWidth = 1
   const gridLines = 5
   for (let i = 0; i <= gridLines; i++) {
@@ -233,7 +233,7 @@ function renderLineChart(
 
     // Y-axis labels
     const value = maxValue - (range / gridLines) * i
-    ctx.fillStyle = '#9ca3af'
+    ctx.fillStyle = '#334155'
     ctx.font = '10px system-ui, sans-serif'
     ctx.textAlign = 'right'
     ctx.fillText(Math.round(value).toLocaleString(), padding.left - 8, y + 4)
@@ -287,7 +287,7 @@ function renderLineChart(
   }
 
   // X-axis labels
-  ctx.fillStyle = '#9ca3af'
+  ctx.fillStyle = '#334155'
   ctx.font = '10px system-ui, sans-serif'
   ctx.textAlign = 'center'
   points.forEach((p, i) => {
@@ -402,14 +402,14 @@ function renderPieChart(canvasId: string, data: ChartData[], size: number) {
   ctx.fill()
 
   // Draw total in center
-  ctx.fillStyle = '#374151'
+  ctx.fillStyle = '#0f172a'
   ctx.font = 'bold 16px system-ui, sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(total.toLocaleString(), centerX, centerY - 8)
   
   ctx.font = '11px system-ui, sans-serif'
-  ctx.fillStyle = '#9ca3af'
+  ctx.fillStyle = '#334155'
   ctx.fillText('Total', centerX, centerY + 12)
 }
 
@@ -620,7 +620,7 @@ function renderProgressRing(canvasId: string, progress: number, size: number, st
   // Background circle
   ctx.beginPath()
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
-  ctx.strokeStyle = '#e5e7eb'
+  ctx.strokeStyle = '#cbd5e1'
   ctx.lineWidth = strokeWidth
   ctx.stroke()
 

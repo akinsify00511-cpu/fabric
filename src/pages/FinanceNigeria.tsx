@@ -68,12 +68,12 @@ interface Payment {
 }
 
 const STATUS_LABELS: Record<InvoiceStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'gray' },
+  draft: { label: 'Draft', color: 'slate' },
   sent: { label: 'Sent', color: 'blue' },
   partially_paid: { label: 'Partially Paid', color: 'yellow' },
   paid: { label: 'Paid', color: 'green' },
   overdue: { label: 'Overdue', color: 'red' },
-  cancelled: { label: 'Cancelled', color: 'gray' },
+  cancelled: { label: 'Cancelled', color: 'slate' },
 }
 
 const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNode }> = {

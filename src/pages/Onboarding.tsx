@@ -9,7 +9,7 @@ import {
 // Professional brand colors - hardcoded for reliability
 const BRAND_COLORS = [
   { id: 'midnight', name: 'Midnight', hex: '#111827', previewBg: '#1F2937', previewText: '#FFFFFF' },
-  { id: 'slate', name: 'Slate', hex: '#374151', previewBg: '#4B5563', previewText: '#FFFFFF' },
+  { id: 'slate', name: 'Slate', hex: '#0f172a', previewBg: '#1e293b', previewText: '#FFFFFF' },
   { id: 'cloud', name: 'Cloud', hex: '#FFFFFF', previewBg: '#F3F4F6', previewText: '#111827' },
 ]
 
@@ -360,7 +360,7 @@ export default function Onboarding() {
                       style={{ 
                         backgroundColor: color.previewBg,
                         color: color.previewText,
-                        borderColor: color.id === 'cloud' ? '#E5E7EB' : '#4B5563'
+                        borderColor: color.id === 'cloud' ? '#cbd5e1' : '#1e293b'
                       }}
                     >
                       A

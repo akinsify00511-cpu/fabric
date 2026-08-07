@@ -141,13 +141,13 @@ export default function AdminAnalytics() {
     error: '#EF4444',
     payment: '#10B981',
     notification: '#6366F1',
-    auth: '#6B7280',
+    auth: '#1e293b',
     performance: '#F97316',
     engagement: '#EC4899',
   }
 
   function getCategoryColor(category: string): string {
-    return categoryColorValues[category] || '#6B7280'
+    return categoryColorValues[category] || '#1e293b'
   }
 
   const filteredEvents = selectedCategory === 'all' 

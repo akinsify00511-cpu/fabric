@@ -25,7 +25,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
     if (password.length === 0) {
       score = 0
       label = ''
-      color = 'gray'
+      color = 'slate'
     } else if (passedCount <= 2) {
       score = 1
       label = 'Weak'

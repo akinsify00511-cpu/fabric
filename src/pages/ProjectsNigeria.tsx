@@ -97,7 +97,7 @@ interface Variation {
 }
 
 const PIPELINE_STAGES: { key: PipelineStage; label: string; color: string }[] = [
-  { key: 'enquiry', label: 'Enquiry', color: 'gray' },
+  { key: 'enquiry', label: 'Enquiry', color: 'slate' },
   { key: 'quoted', label: 'Quoted', color: 'yellow' },
   { key: 'approved', label: 'Approved', color: 'blue' },
   { key: 'materials_allocated', label: 'Materials Ready', color: 'indigo' },
