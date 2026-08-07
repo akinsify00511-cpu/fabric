@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug, Share2, MessageSquare, CreditCard } from 'lucide-react'
+import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug, Share2, MessageSquare, CreditCard, KeyRound } from 'lucide-react'
 
 export default function Settings() {
   const { staff } = useAuth()
@@ -12,7 +12,8 @@ export default function Settings() {
     { to: '/app/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-red-50 text-red-500' },
     { to: '/app/sso', icon: Key, label: 'Single Sign-On', desc: 'SAML, OIDC, Okta, Azure', color: 'bg-blue-50 text-blue-500' },
     { to: '/app/integrations', icon: Plug, label: 'Integrations', desc: 'Social media, SMS, payments', color: 'bg-cyan-50 text-cyan-500' },
-    { to: '/app/settings/webhooks', icon: Zap, label: 'API & Webhooks', desc: 'REST API, integrations', color: 'bg-orange-50 text-orange-500' },
+    { to: '/app/settings/api-keys', icon: KeyRound, label: 'API Keys', desc: 'Developer API access', color: 'bg-orange-50 text-orange-500' },
+    { to: '/app/settings/webhooks', icon: Zap, label: 'Webhooks', desc: 'Outbound event delivery', color: 'bg-amber-50 text-amber-500' },
     { to: '/app/portal', icon: Users, label: 'Customer Portal', desc: 'Client self-service', color: 'bg-teal-50 text-teal-500' },
     { to: '/settings?lang', icon: Globe, label: 'Language', desc: 'i18n, timezone', color: 'bg-green-50 text-green-500' },
   ]
