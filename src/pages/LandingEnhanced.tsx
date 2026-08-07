@@ -366,35 +366,35 @@ function DailyWorkflowSection() {
 // Productivity Tools Section
 function ProductivityToolsSection() {
   return (
-    <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    <section className="py-20 px-4 sm:px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-sm mb-6">
-            <LayoutGrid size={16} />
-            <span>Productivity Suite</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full text-sm mb-6">
+            <LayoutGrid size={16} className="text-blue-600" />
+            <span className="text-blue-700 font-medium">Productivity Suite</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything Your Team Needs to Ship Faster</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">Everything Your Team Needs to Ship Faster</h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
         </div>
         
         {/* Task Features Mini Showcase */}
-        <div className="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur-sm border border-white/10">
+        <div className="bg-white rounded-2xl p-8 mb-12 shadow-sm border border-gray-200">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                <ListTodo size={28} className="text-blue-400" />
+                <ListTodo size={28} className="text-blue-600" />
                 Powerful Task Management
               </h3>
-              <p className="text-slate-400 mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
+              <p className="text-gray-600 mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {TASK_FEATURES.map((feat, i) => {
                   const Icon = feat.icon
                   return (
-                    <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                    <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Icon size={20} className="text-blue-400 shrink-0" />
                       <div>
                         <div className="font-medium text-sm">{feat.label}</div>
-                        <div className="text-xs text-slate-500">{feat.desc}</div>
+                        <div className="text-xs text-gray-500">{feat.desc}</div>
                       </div>
                     </div>
                   )
@@ -404,7 +404,7 @@ function ProductivityToolsSection() {
             
             {/* Mini Kanban Preview */}
             <div className="flex-1">
-              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                 <div className="text-xs text-slate-500 mb-3 font-mono">PROJECT: Website Redesign</div>
                 <div className="space-y-3">
                   {[
@@ -412,10 +412,10 @@ function ProductivityToolsSection() {
                     { title: 'API integration', status: 'In Progress', color: 'bg-blue-500' },
                     { title: 'Deploy to staging', status: 'Done', color: 'bg-green-500' },
                   ].map((task, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                    <div key={i} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
                       <div className={`w-2 h-2 rounded-full ${task.color}`}></div>
                       <span className="text-sm flex-1">{task.title}</span>
-                      <span className="text-xs text-slate-500">{task.status}</span>
+                      <span className="text-xs text-gray-500">{task.status}</span>
                     </div>
                   ))}
                 </div>
@@ -429,7 +429,7 @@ function ProductivityToolsSection() {
           {PRODUCTIVITY_TOOLS.map((tool, i) => {
             const Icon = tool.icon
             return (
-              <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+              <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-gray-200 hover:bg-white/10 transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
                     <Icon size={22} style={{ color: tool.color }} />
@@ -451,7 +451,7 @@ function ProductivityToolsSection() {
         
         {/* Integration Banner */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-white/10">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-gray-200">
             <span className="text-sm text-slate-400">Also includes:</span>
             <span className="text-sm font-medium">File Storage</span>
             <span className="text-slate-600">•</span>
@@ -475,17 +475,17 @@ function ModulesSection() {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything Your Business Needs</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
-        <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-2xl p-8 mb-6 text-white shadow-lg">
+        <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg border border-gray-200">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-sm mb-3">⭐ Most Popular</div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm mb-3">⭐ Most Popular</div>
               <h3 className="text-2xl font-bold mb-2">CRM — Customer Relationship Management</h3>
-              <p className="text-white/80 mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
+              <p className="text-gray-600 mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Lead Tracking</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Deal Pipeline</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">AI Insights</span>
-                <span className="px-3 py-1 rounded-full bg-white/20 text-sm">Follow-up Reminders</span>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Lead Tracking</span>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Deal Pipeline</span>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">AI Insights</span>
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Follow-up Reminders</span>
               </div>
             </div>
             <div className="text-center">
@@ -535,7 +535,7 @@ function TestimonialsSection() {
               <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
               <p className="text-gray-700 mb-4 leading-relaxed">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg">{t.name.charAt(0)}</div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg shadow-md">{t.name.charAt(0)}</div>
                 <div>
                   <div className="font-semibold text-gray-900">{t.name}</div>
                   <div className="text-sm text-gray-500">{t.role}</div>
@@ -607,14 +607,14 @@ function FAQSection() {
 
 function FinalCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500">
-      <div className="max-w-3xl mx-auto text-center text-white">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Run Your Business Better?</h2>
-        <p className="text-lg text-white/80 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
+    <section className="py-20 px-4 sm:px-6 bg-white border-t border-gray-200">
+      <div className="max-w-3xl mx-auto text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">Ready to Run Your Business Better?</h2>
+        <p className="text-lg text-gray-600 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
         <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-blue-500 font-semibold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
           Start Your Free 7-Day Trial <ArrowRight size={20} />
         </Link>
-        <p className="text-sm text-white/60 mt-4">No credit card required • 5-minute setup</p>
+        <p className="text-sm text-gray-500 mt-4">No credit card required • 5-minute setup</p>
       </div>
     </section>
   )
@@ -622,16 +622,16 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="py-12 px-4 sm:px-6 bg-gray-900 text-gray-400">
+    <footer className="py-12 px-4 sm:px-6 bg-white text-gray-500 border-t border-gray-200">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-md"><span className="text-white font-bold text-sm">A</span></div>
-            <span className="font-semibold text-white">Avenize</span>
+            <span className="font-semibold text-gray-900">Avenize</span>
           </div>
           <div className="text-center md:text-right text-sm">
             <p>© 2024 Avenize. Built for Nigerian businesses.</p>
-            <p className="text-gray-500 mt-1">Running from Lagos 🇳🇬</p>
+            <p className="text-gray-400 mt-1">Running from Lagos 🇳🇬</p>
           </div>
         </div>
       </div>

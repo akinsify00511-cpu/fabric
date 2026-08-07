@@ -84,14 +84,11 @@ export default function Shell() {
   // Get branding colors - use actual branding values
   const bgColor = branding.background_color
   const textColor = branding.text_color
-  // Check for dark backgrounds (light backgrounds are white/light gray)
-  const isLightBg = bgColor === '#FAFAFA' || bgColor === '#F8F9FA' || bgColor === '#FFFFFF' || bgColor === '#F3F4F6'
-  const isDarkBg = !isLightBg
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: bgColor }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 shrink-0 border-r flex-col fixed inset-y-0 left-0" style={{ backgroundColor: isLightBg ? '#17150F' : '#FFFFFF', borderColor: isLightBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
+      <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-gray-200 flex-col fixed inset-y-0 left-0">
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {displayLogo}
@@ -103,7 +100,7 @@ export default function Shell() {
                 style={{ maxHeight: '28px' }}
               />
             )}
-            <span className="text-base font-semibold tracking-tight truncate" style={{ color: textColor }}>
+            <span className="text-base font-semibold tracking-tight truncate text-gray-900">
               {companyName}
             </span>
           </div>
@@ -119,13 +116,10 @@ export default function Shell() {
                 className={({ isActive }) =>
                   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
                     isActive
-                      ? 'bg-white/[0.08] font-medium'
-                      : ''
+                      ? 'bg-blue-50 text-blue-600 font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
                   }`
                 }
-                style={({ isActive }) => ({
-                  color: isActive ? textColor : isDarkBg ? 'rgba(247,244,238,0.5)' : 'rgba(17,17,17,0.5)',
-                })}
               >
                 <Icon size={16} strokeWidth={2} />
                 {item.label}
@@ -145,9 +139,9 @@ export default function Shell() {
           </a>
         </div>
         
-        <div className="px-5 py-4 border-t text-xs" style={{ borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', color: isDarkBg ? 'rgba(247,244,238,0.4)' : 'rgba(17,17,17,0.4)' }}>
-          <p className="truncate" style={{ color: isDarkBg ? 'rgba(247,244,238,0.6)' : 'rgba(17,17,17,0.6)' }}>{staff?.full_name ?? staff?.name ?? '...'}</p>
-          <p className="text-[10px] capitalize" style={{ color: isDarkBg ? 'rgba(247,244,238,0.4)' : 'rgba(17,17,17,0.4)' }}>{staff?.role || 'Staff'}</p>
+        <div className="px-5 py-4 border-t border-gray-200 text-xs text-gray-500">
+          <p className="truncate text-gray-700">{staff?.full_name ?? staff?.name ?? '...'}</p>
+          <p className="text-[10px] capitalize text-gray-400">{staff?.role || 'Staff'}</p>
           <button onClick={signOut} className="mt-1 hover:opacity-70">
             Sign out
           </button>
@@ -155,9 +149,9 @@ export default function Shell() {
       </aside>
 
       {/* Mobile top header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10 bg-white border-gray-200">
         <div className="flex items-center gap-2">
-          {!branding.logo_url && <AvenizeMark size={20} fill={isDarkBg ? "#F7F4EE" : "#111111"} />}
+          {!branding.logo_url && <AvenizeMark size={20} />}
           {branding.logo_url && (
             <img 
               src={branding.logo_url} 
@@ -165,13 +159,13 @@ export default function Shell() {
               className="h-5 w-auto object-contain"
             />
           )}
-          <span className="text-sm font-semibold tracking-tight truncate" style={{ color: textColor }}>
+          <span className="text-sm font-semibold tracking-tight truncate text-gray-900">
             {companyName}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <button className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: isDarkBg ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)', color: isDarkBg ? 'rgba(247,244,238,0.5)' : 'rgba(17,17,17,0.5)' }}>
+          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-500">
             <Search size={15} strokeWidth={2} />
           </button>
         </div>
@@ -183,7 +177,7 @@ export default function Shell() {
       </main>
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20 bg-white border-gray-200">
         <div className="flex items-center justify-around">
           {MOBILE_NAV_ITEMS.map((item) => {
             const Icon = item.icon
@@ -192,16 +186,17 @@ export default function Shell() {
                 key={item.to}
                 to={item.to}
                 end={item.end}
-                className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition"
-                style={({ isActive }) => ({
-                  color: isActive ? '#6366F1' : isDarkBg ? 'rgba(247,244,238,0.4)' : 'rgba(17,17,17,0.4)',
-                })}
+                className={({ isActive }) =>
+                  `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
+                    isActive ? 'text-blue-600' : 'text-gray-400'
+                  }`
+                }
               >
                 <Icon size={20} strokeWidth={2} />
                 <span className="text-[10px] font-medium">
                   {item.to === '/' ? 'Home' : 
-                   item.to === '/chat' ? 'Chat' :
-                   item.to === '/more' ? 'More' : 'Settings'}
+                   item.to === '/app/chat' ? 'Chat' :
+                   item.to === '/app/more' ? 'More' : 'Settings'}
                 </span>
               </NavLink>
             )
