@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -31,6 +31,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/requisitions': 'requisitions',
   '/app/organogram': 'merit',
   '/app/reports': 'reports',
+  '/app/sms': 'settings',
   '/app/monitoring': 'dashboard',
   '/app/meetings': 'meetings',
   '/app/home': 'dashboard',
@@ -63,6 +64,7 @@ const NAV_ITEMS = [
   { to: '/app/organogram', label: 'Org Chart', icon: Network, toolKey: 'merit' },
   { to: '/app/departments', label: 'Departments', icon: Building2, toolKey: 'merit' },
   { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
+  { to: '/app/sms', label: 'SMS', icon: MessageSquareText, toolKey: 'settings' },
   { to: '/app/monitoring', label: 'Monitoring', icon: Activity, toolKey: 'dashboard' },
   { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
   { to: '/app/home', label: 'Company', icon: Home, toolKey: 'dashboard' },
