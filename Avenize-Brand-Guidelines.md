@@ -1,6 +1,8 @@
 # AVENIZE
-## Brand Guidelines v1.0
+## Brand Guidelines v2.0
 ### The Business Operating System
+
+*Inspired by Google's clean UI/UX principles*
 
 ---
 
@@ -127,28 +129,42 @@ White — `#FFFFFF`
 
 ## 07. Color System
 
-### Primary
+### Primary Colors (Google-Inspired)
 | Color | Hex |
 |-------|-----|
-| Graphite | `#111111` |
-| White | `#FFFFFF` |
-| Stone | `#F7F7F5` |
-| Gray | `#E8E8E8` |
+| Google Blue | `#4285F4` |
+| Primary Hover | `#3367D6` |
+| Primary Soft | `rgba(66, 133, 244, 0.08)` |
 
-### Signature Gradient
-Inspired by intelligence flowing through business.
+### Surface System (Google Style)
+| Surface | Hex | Usage |
+|---------|-----|-------|
+| Surface | `#FFFFFF` | Cards, inputs |
+| Surface 2 | `#F8F9FA` | Page background |
+| Surface 3 | `#F1F3F4` | Tertiary surfaces |
+
+### Text Hierarchy (Google Standard)
+| Text | Hex |
+|------|-----|
+| Primary | `#202124` |
+| Secondary | `#5F6368` |
+| Muted | `#9AA0A6` |
+| Disabled | `#DADCE0` |
+
+### Avenize Signature Gradient
+Google Blue to Violet — representing intelligence flowing through business.
 
 ```
-#2563EB → #4F46E5 → #8B5CF6
-Deep Blue → Indigo → Violet
+#4285F4 → #6366F1 → #8B5CF6
+Google Blue → Indigo → Violet
 ```
 
-### Product Colors
+### Workspace Colors
 | Workspace | Hex |
 |-----------|-----|
-| Sales | `#3B82F6` |
-| Finance | `#10B981` |
-| Projects | `#F59E0B` |
+| Sales | `#4285F4` |
+| Finance | `#34A853` |
+| Projects | `#FBBC05` |
 | HR | `#8B5CF6` |
 | Communication | `#EC4899` |
 | AI | `#06B6D4` |
@@ -156,6 +172,14 @@ Deep Blue → Indigo → Violet
 | Analytics | `#6366F1` |
 
 Each workspace has its own accent while preserving a unified experience.
+
+### Semantic Colors (Google Style)
+| State | Hex |
+|-------|-----|
+| Success | `#34A853` |
+| Warning | `#FBBC05` |
+| Error | `#EA4335` |
+| Info | `#4285F4` |
 
 ---
 
@@ -302,7 +326,14 @@ Every screen has:
 ## 20. Design Language
 
 ### Inspired by
-Apple, Linear, Notion, Arc Browser, Raycast
+Apple, Google, Linear, Notion, Arc Browser, Raycast
+
+### Google Material Design 3 Principles
+- **Elevation over borders** — Cards use shadows, not borders
+- **8dp grid system** — Consistent spacing throughout
+- **Clean surfaces** — White/light backgrounds with subtle shadows
+- **Purposeful motion** — 200ms transitions with ease-out curves
+- **Minimalist approach** — Less is more everywhere
 
 ### Not inspired by
 Salesforce, SAP, Oracle, Zoho

@@ -54,29 +54,31 @@ function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"><span className="text-white font-bold text-sm">A</span></div>
-            <span className="font-bold text-lg">Avenize</span>
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-sm">A</span>
+            </div>
+            <span className="font-semibold text-lg text-gray-900">Avenize</span>
           </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#modules" className="text-sm text-gray-600 hover:text-gray-900">Features</a>
-            <a href="#pricing" className="text-sm text-gray-600 hover:text-gray-900">Pricing</a>
-            <a href="#testimonials" className="text-sm text-gray-600 hover:text-gray-900">Stories</a>
-            <a href="#faq" className="text-sm text-gray-600 hover:text-gray-900">FAQ</a>
+          <div className="hidden md:flex items-center gap-1">
+            <a href="#modules" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Features</a>
+            <a href="#pricing" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Pricing</a>
+            <a href="#testimonials" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Stories</a>
+            <a href="#faq" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">FAQ</a>
           </div>
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="hidden sm:block text-sm font-medium text-gray-700 hover:text-gray-900">Sign In</Link>
-            <Link to="/signup" className="px-4 py-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium hover:shadow-lg transition">Start Free Trial</Link>
-            <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={20} /> : <Menu size={20} />}</button>
+          <div className="flex items-center gap-2">
+            <Link to="/login" className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Sign In</Link>
+            <Link to="/signup" className="px-5 py-2.5 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 hover:shadow-md transition-all">Start Free Trial</Link>
+            <button className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={20} /> : <Menu size={20} />}</button>
           </div>
         </div>
       </div>
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-3">
-          <a href="#modules" className="block text-sm text-gray-600">Features</a>
-          <a href="#pricing" className="block text-sm text-gray-600">Pricing</a>
-          <a href="#testimonials" className="block text-sm text-gray-600">Stories</a>
-          <a href="#faq" className="block text-sm text-gray-600">FAQ</a>
+        <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-1">
+          <a href="#modules" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Features</a>
+          <a href="#pricing" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Pricing</a>
+          <a href="#testimonials" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Stories</a>
+          <a href="#faq" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">FAQ</a>
         </div>
       )}
     </nav>
@@ -85,14 +87,14 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="pt-32 pb-16 px-4 sm:px-6 bg-gradient-to-b from-indigo-50 to-white">
+    <section className="pt-32 pb-16 px-4 sm:px-6 bg-gradient-to-b from-blue-50 via-indigo-50/30 to-white">
       <div className="max-w-5xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 text-indigo-700 text-sm font-medium mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
           <Sparkles size={16} /><span>Trusted by 2,500+ Nigerian businesses</span>
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
           One App for Your<br />
-          <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">Whole Business</span>
+          <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Whole Business</span>
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
           CRM • Invoicing • Projects • HR • Inventory • +40 more
@@ -100,11 +102,11 @@ function HeroSection() {
         <p className="text-base text-gray-500 mb-8 max-w-xl mx-auto">
           Different teams, different needs — one unified platform. From sales leads to payroll, Avenize keeps everyone aligned.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-          <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+          <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-blue-500 text-white font-semibold text-lg hover:bg-blue-600 hover:shadow-lg transition hover:-translate-y-0.5">
             Start Free 7-Day Trial <ArrowRight size={20} />
           </Link>
-          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl border-2 border-gray-200 text-gray-700 font-semibold text-lg hover:border-gray-300 transition">
+          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-gray-200 text-gray-700 font-semibold text-lg hover:bg-gray-50 hover:border-gray-300 transition">
             Sign In
           </Link>
         </div>
@@ -134,8 +136,8 @@ function WhoSection() {
           {WHO_IT_FOR.map((item, i) => {
             const Icon = item.icon
             return (
-              <div key={i} className="text-center p-6 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
-                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: item.color + '20' }}>
+              <div key={i} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: item.color + '15' }}>
                   <Icon size={24} style={{ color: item.color }} />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1">{item.role}</h3>
@@ -157,7 +159,7 @@ function ModulesSection() {
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything Your Business Needs</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 mb-6 text-white">
+        <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-2xl p-8 mb-6 text-white shadow-lg">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-sm mb-3">⭐ Most Popular</div>
@@ -180,14 +182,14 @@ function ModulesSection() {
           {MODULES.slice(1).map((module, i) => {
             const Icon = module.icon
             return (
-              <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition">
+              <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: module.color + '15' }}>
                     <Icon size={24} style={{ color: module.color }} />
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">{module.title}</h3>
-                    <p className="text-sm text-indigo-600 font-medium mb-2">{module.tagline}</p>
+                    <p className="text-sm text-blue-600 font-medium mb-2">{module.tagline}</p>
                     <p className="text-sm text-gray-600 mb-3">{module.desc}</p>
                     <p className="text-xs text-gray-400">{module.stats}</p>
                   </div>
@@ -212,12 +214,12 @@ function TestimonialsSection() {
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <div key={i} className="bg-gray-50 p-6 rounded-2xl">
+            <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
               <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="text-amber-400 fill-amber-400" />)}</div>
-              <div className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
+              <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
               <p className="text-gray-700 mb-4 leading-relaxed">"{t.quote}"</p>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg">{t.name.charAt(0)}</div>
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg">{t.name.charAt(0)}</div>
                 <div>
                   <div className="font-semibold text-gray-900">{t.name}</div>
                   <div className="text-sm text-gray-500">{t.role}</div>
@@ -245,8 +247,8 @@ function PricingSection() {
         </div>
         <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {PRICING.map((plan, i) => (
-            <div key={i} className={`relative p-5 rounded-xl border-2 ${plan.popular ? 'border-indigo-500 shadow-xl bg-indigo-50/50' : 'border-gray-100 bg-white'}`}>
-              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-indigo-500 text-white text-xs font-bold">Most Popular</div>}
+            <div key={i} className={`relative p-5 rounded-xl ${plan.popular ? 'bg-white shadow-lg ring-2 ring-blue-500' : 'bg-white shadow-sm'}`}>
+              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-bold">Most Popular</div>}
               {plan.founding && <div className="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded mb-2 inline-block">Founding Rate</div>}
               <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
               <p className="text-sm text-gray-500 mb-3">{plan.desc}</p>
@@ -254,7 +256,7 @@ function PricingSection() {
               <ul className="space-y-2 mb-4">
                 {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-gray-700"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
               </ul>
-              <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-indigo-500 text-white hover:bg-indigo-600' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>{plan.cta}</Link>
+              <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>{plan.cta}</Link>
               <p className="text-xs text-gray-500 mt-3 text-center">{plan.seats}</p>
             </div>
           ))}
@@ -271,11 +273,11 @@ function FAQSection() {
     <section id="faq" className="py-16 px-4 sm:px-6 bg-white">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12"><h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2></div>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {FAQS.map((faq, i) => (
-            <div key={i} className="bg-gray-50 rounded-xl p-4">
+            <div key={i} className="bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-shadow">
               <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full flex items-center justify-between text-left">
-                <span className="font-semibold text-gray-900 pr-4">{faq.q}</span>
+                <span className="font-medium text-gray-900 pr-4">{faq.q}</span>
                 <span className={`text-2xl text-gray-400 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && <p className="mt-3 text-gray-600 text-sm leading-relaxed">{faq.a}</p>}
@@ -289,11 +291,11 @@ function FAQSection() {
 
 function FinalCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-indigo-600 to-purple-600">
+    <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500">
       <div className="max-w-3xl mx-auto text-center text-white">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Run Your Business Better?</h2>
         <p className="text-lg text-white/80 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
-        <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-white text-indigo-600 font-bold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
+        <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-blue-500 font-semibold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
           Start Your Free 7-Day Trial <ArrowRight size={20} />
         </Link>
         <p className="text-sm text-white/60 mt-4">No credit card required • 5-minute setup</p>
@@ -307,9 +309,9 @@ function Footer() {
     <footer className="py-12 px-4 sm:px-6 bg-gray-900 text-gray-400">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"><span className="text-white font-bold text-sm">A</span></div>
-            <span className="font-bold text-white">Avenize</span>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-md"><span className="text-white font-bold text-sm">A</span></div>
+            <span className="font-semibold text-white">Avenize</span>
           </div>
           <div className="text-center md:text-right text-sm">
             <p>© 2024 Avenize. Built for Nigerian businesses.</p>

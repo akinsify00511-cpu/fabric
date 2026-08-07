@@ -1,0 +1,749 @@
+/**
+ * Avenize × Google-Inspired Design System
+ * A fusion of Google's clean UI principles with Avenize's brand identity
+ * 
+ * Based on Google Material Design 3 principles:
+ * - Clean surfaces (elevation over borders)
+ * - 8dp grid spacing system
+ * - Purposeful motion
+ * - Accessibility-first
+ */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Google-Inspired Tokens)
+   ============================================ */
+
+:root {
+  /* === COLORS (Google Palette) === */
+  
+  /* Primary - Google Blue */
+  --google-blue: #4285F4;
+  --google-blue-hover: #3367D6;
+  --google-blue-active: #2A5DB0;
+  --google-blue-light: rgba(66, 133, 244, 0.08);
+  
+  /* Google Brand Colors */
+  --google-red: #EA4335;
+  --google-yellow: #FBBC05;
+  --google-green: #34A853;
+  
+  /* Avenize Signature Gradient */
+  --avenize-gradient: linear-gradient(135deg, #4285F4 0%, #6366F1 50%, #8B5CF6 100%);
+  
+  /* Surfaces (Google-style clean whites) */
+  --surface-primary: #FFFFFF;
+  --surface-secondary: #F8F9FA;
+  --surface-tertiary: #F1F3F4;
+  --surface-inverse: #202124;
+  
+  /* Text (Google hierarchy) */
+  --text-primary: #202124;
+  --text-secondary: #5F6368;
+  --text-tertiary: #9AA0A6;
+  --text-disabled: #DADCE0;
+  --text-inverse: #FFFFFF;
+  
+  /* Borders (minimal - Google uses almost none) */
+  --border-light: #E8EAED;
+  --border-medium: #DADCE0;
+  
+  /* Semantic Colors */
+  --color-success: #34A853;
+  --color-warning: #FBBC05;
+  --color-error: #EA4335;
+  --color-info: #4285F4;
+  
+  /* Workspace Colors (Avenize) */
+  --workspace-sales: #4285F4;
+  --workspace-finance: #34A853;
+  --workspace-projects: #FBBC05;
+  --workspace-hr: #8B5CF6;
+  --workspace-communication: #EC4899;
+  --workspace-ai: #06B6D4;
+  
+  /* === ELEVATION (Google Material 3) === */
+  /* Google uses elevation (shadows) instead of borders */
+  
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.06);
+  --elevation-2: 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
+  --elevation-3: 0 4px 8px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
+  --elevation-4: 0 8px 16px rgba(0,0,0,0.1), 0 16px 32px rgba(0,0,0,0.08);
+  
+  /* === SPACING (8dp Grid) === */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  
+  /* === RADIUS (Google Material 3) === */
+  --radius-none: 0;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+  --radius-full: 50%;
+  
+  /* === TYPOGRAPHY === */
+  --font-family: 'Geist', 'Google Sans', 'Inter', system-ui, sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 28px;
+  --font-size-4xl: 32px;
+  --font-size-5xl: 40px;
+  --font-size-6xl: 48px;
+  
+  /* === MOTION (Google Material 3) === */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-enter: 250ms;
+  --duration-exit: 200ms;
+  
+  /* Google standard easing curves */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* === TRANSITIONS === */
+  --transition-fast: var(--duration-fast) var(--ease-standard);
+  --transition-normal: var(--duration-normal) var(--ease-standard);
+  --transition-slow: var(--duration-slow) var(--ease-standard);
+}
+
+/* Dark mode tokens */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-primary: #1F1F1F;
+    --surface-secondary: #2D2D2D;
+    --surface-tertiary: #3D3D3D;
+    --surface-inverse: #E8EAED;
+    
+    --text-primary: #E8EAED;
+    --text-secondary: #9AA0A6;
+    --text-tertiary: #707070;
+    --text-disabled: #5F6368;
+    --text-inverse: #202124;
+    
+    --border-light: rgba(255,255,255,0.12);
+    --border-medium: rgba(255,255,255,0.2);
+    
+    --elevation-1: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2);
+    --elevation-2: 0 2px 4px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.2);
+    --elevation-3: 0 4px 8px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2);
+    --elevation-4: 0 8px 16px rgba(0,0,0,0.4), 0 16px 32px rgba(0,0,0,0.3);
+  }
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+.google-body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--surface-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   GOOGLE-STYLE CARDS (Elevation-based, no borders)
+   ============================================ */
+
+/* Google Card - Clean surface with subtle elevation */
+.google-card {
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--elevation-1);
+  transition: box-shadow var(--transition-normal);
+}
+
+.google-card:hover {
+  box-shadow: var(--elevation-2);
+}
+
+/* Interactive Card */
+.google-card-interactive {
+  cursor: pointer;
+}
+
+.google-card-interactive:hover {
+  box-shadow: var(--elevation-2);
+}
+
+.google-card-interactive:active {
+  box-shadow: var(--elevation-1);
+}
+
+/* Card with accent top bar */
+.google-card-accent {
+  position: relative;
+  overflow: hidden;
+}
+
+.google-card-accent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--avenize-gradient);
+}
+
+/* ============================================
+   GOOGLE-STYLE BUTTONS
+   ============================================ */
+
+/* Filled Button (Primary) */
+.google-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  background: var(--google-blue);
+  color: var(--text-inverse);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: 
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.google-btn-filled:hover {
+  background: var(--google-blue-hover);
+  box-shadow: var(--elevation-1);
+}
+
+.google-btn-filled:active {
+  background: var(--google-blue-active);
+  box-shadow: none;
+}
+
+/* Outlined Button */
+.google-btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--google-blue);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: 
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.google-btn-outlined:hover {
+  background: var(--google-blue-light);
+  border-color: var(--google-blue);
+}
+
+/* Text Button */
+.google-btn-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--google-blue);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.google-btn-text:hover {
+  background: var(--google-blue-light);
+}
+
+/* Icon Button */
+.google-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.google-btn-icon:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+.google-btn-icon:active {
+  background: rgba(0,0,0,0.1);
+}
+
+/* ============================================
+   GOOGLE-STYLE SEARCH BAR (Iconic Pattern)
+   ============================================ */
+
+.google-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 12px 24px;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  transition: 
+    box-shadow var(--transition-normal),
+    border-color var(--transition-normal);
+}
+
+.google-search:hover {
+  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+}
+
+.google-search:focus-within {
+  box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+  border-color: transparent;
+  outline: none;
+}
+
+.google-search-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.google-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--text-primary);
+}
+
+.google-search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ============================================
+   GOOGLE-STYLE INPUT FIELDS
+   ============================================ */
+
+.google-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  transition: 
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.google-input:hover {
+  border-color: var(--border-medium);
+}
+
+.google-input:focus {
+  outline: none;
+  border-color: var(--google-blue);
+  box-shadow: 0 0 0 3px var(--google-blue-light);
+}
+
+.google-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ============================================
+   GOOGLE-STYLE HEADER/NAV
+   ============================================ */
+
+.google-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-5);
+  height: 64px;
+  background: var(--surface-primary);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.google-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.google-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.google-nav-link {
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: 
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.google-nav-link:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--text-primary);
+}
+
+.google-nav-link.active {
+  color: var(--google-blue);
+  background: var(--google-blue-light);
+}
+
+/* ============================================
+   GOOGLE-STYLE SIDEBAR RAIL
+   ============================================ */
+
+.google-sidebar {
+  width: 72px;
+  background: var(--surface-primary);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-3) var(--space-2);
+  gap: var(--space-1);
+}
+
+.google-sidebar-item {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: 
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.google-sidebar-item:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--text-primary);
+}
+
+.google-sidebar-item.active {
+  background: var(--google-blue-light);
+  color: var(--google-blue);
+}
+
+/* ============================================
+   GOOGLE-STYLE PILLS/BADGES
+   ============================================ */
+
+.google-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 16px;
+  background: var(--surface-tertiary);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: background-color var(--transition-fast);
+}
+
+.google-pill:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.google-pill-active {
+  background: var(--google-blue-light);
+  color: var(--google-blue);
+}
+
+/* ============================================
+   GOOGLE-STYLE FOCUS STATES
+   ============================================ */
+
+.google-focus:focus-visible {
+  outline: 2px solid var(--google-blue);
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users */
+.google-focus:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============================================
+   GOOGLE-STYLE ANIMATIONS
+   ============================================ */
+
+@keyframes google-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes google-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes google-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.google-animate-fade-in {
+  animation: google-fade-in var(--duration-enter) var(--ease-decelerate) forwards;
+}
+
+.google-animate-slide-up {
+  animation: google-slide-up var(--duration-enter) var(--ease-emphasized) forwards;
+}
+
+.google-animate-scale-in {
+  animation: google-scale-in var(--duration-normal) var(--ease-decelerate) forwards;
+}
+
+/* Staggered entrance animations */
+.google-stagger > * {
+  opacity: 0;
+  animation: google-slide-up var(--duration-enter) var(--ease-emphasized) forwards;
+}
+
+.google-stagger > *:nth-child(1) { animation-delay: 0ms; }
+.google-stagger > *:nth-child(2) { animation-delay: 75ms; }
+.google-stagger > *:nth-child(3) { animation-delay: 150ms; }
+.google-stagger > *:nth-child(4) { animation-delay: 225ms; }
+.google-stagger > *:nth-child(5) { animation-delay: 300ms; }
+.google-stagger > *:nth-child(6) { animation-delay: 375ms; }
+.google-stagger > *:nth-child(7) { animation-delay: 450ms; }
+.google-stagger > *:nth-child(8) { animation-delay: 525ms; }
+.google-stagger > *:nth-child(9) { animation-delay: 600ms; }
+.google-stagger > *:nth-child(10) { animation-delay: 675ms; }
+
+/* ============================================
+   STATE LAYERS (Google Material 3 interaction model)
+   ============================================ */
+
+.state-layer {
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  border-radius: inherit;
+}
+
+/* Interactive element with state layer */
+.has-state-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.has-state-layer:hover .state-layer {
+  opacity: 0.08;
+}
+
+.has-state-layer:focus-visible .state-layer {
+  opacity: 0.12;
+}
+
+.has-state-layer:active .state-layer {
+  opacity: 0.12;
+}
+
+/* ============================================
+   AVENIZE + GOOGLE HYBRID: SIGNATURE COMPONENTS
+   ============================================ */
+
+/* Avenize Hero Card with Google-style elevation */
+.avenize-hero-card {
+  position: relative;
+  background: var(--surface-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-7);
+  box-shadow: var(--elevation-2);
+  overflow: hidden;
+}
+
+.avenize-hero-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--avenize-gradient);
+}
+
+/* Avenize Workspace Tile (Google grid style) */
+.avenize-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--elevation-1);
+  cursor: pointer;
+  transition: 
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.avenize-tile:hover {
+  box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
+}
+
+.avenize-tile:active {
+  transform: translateY(0);
+}
+
+.avenize-tile-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.avenize-tile-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+/* Typography utilities */
+.text-display { font-size: 57px; font-weight: 400; line-height: 1.12; letter-spacing: -0.25px; }
+.text-headline { font-size: 32px; font-weight: 400; line-height: 1.25; letter-spacing: 0; }
+.text-title { font-size: 22px; font-weight: 500; line-height: 1.27; letter-spacing: 0; }
+.text-body { font-size: 16px; font-weight: 400; line-height: 1.5; letter-spacing: 0.25px; }
+.text-label { font-size: 14px; font-weight: 500; line-height: 1.43; letter-spacing: 0.1px; }
+
+/* Spacing utilities */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-7 { padding: var(--space-7); }
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .google-header {
+    padding: 0 var(--space-4);
+  }
+  
+  .google-sidebar {
+    width: 56px;
+  }
+  
+  .google-card {
+    padding: var(--space-4);
+  }
+  
+  .avenize-hero-card {
+    padding: var(--space-5);
+  }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
