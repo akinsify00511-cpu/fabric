@@ -25,3 +25,7 @@ dist-ssr
 *.sw?
 coverage/
 .vercel
+
+# Test artifacts
+test-results/
+playwright-report/
