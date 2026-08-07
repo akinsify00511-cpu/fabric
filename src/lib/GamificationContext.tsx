@@ -182,8 +182,15 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       // Calculate insights
       calculateInsights()
 
-    } catch (error) {
-      console.error('Failed to load gamification data:', error)
+    } catch (error: any) {
+      // Silently handle missing tables - gamification is optional
+      if (error?.code && ['PGRST116', '404', '406', '42501'].includes(error.code)) {
+        // Table doesn't exist or RLS issue - skip gamification
+        setXP({ xp_total: 0, level: 1, streak_days: 0, longest_streak: 0, last_active_date: null })
+        setAchievements(ACHIEVEMENTS.map(a => ({ ...a, unlocked_at: null, progress: 0 })))
+        return
+      }
+      console.warn('Gamification not available:', error?.message)
     }
   }
 

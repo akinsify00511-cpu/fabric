@@ -133,7 +133,7 @@ export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
         
         setTeamCount(count || 0)
       } catch (err) {
-        console.error('Failed to load entitlements:', err)
+        console.warn('Entitlements not available:', (err as any)?.message)
       } finally {
         setLoading(false)
       }
@@ -233,7 +233,7 @@ export function useTeamLimit(): UseTeamEntitlementResult {
         
         setCurrentCount(count || 0)
       } catch (err) {
-        console.error('Failed to load team limit:', err)
+        console.warn('Team limits not available:', (err as any)?.message)
       } finally {
         setLoading(false)
       }
@@ -273,8 +273,10 @@ export function useEntitlements(): {
       .eq('business_id', staff.business_id)
       .single()
       .then(({ data, error }) => {
-        if (error) {
-          console.error('Failed to load entitlements:', error)
+        // Silently handle 404 - table might not exist
+        if (error && error.code !== 'PGRST116') {
+          // Only log real errors, not missing tables
+          console.warn('Entitlements not available:', error.message)
         }
         if (data) {
           setEntitlement(data as BusinessEntitlement)

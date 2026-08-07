@@ -127,7 +127,7 @@ class SessionManager {
         p_duration_seconds: duration,
       })
     } catch (e) {
-      console.error('Failed to end session:', e)
+      console.warn('Session tracking not available:', (e as any)?.message)
     }
 
     this.sessionId = null
@@ -282,9 +282,14 @@ class EventTracker {
           p_session_id: sessionId,
         })
       }
-    } catch (e) {
-      console.error('Failed to flush analytics:', e)
-      // Put events back in queue
+    } catch (e: any) {
+      // Silently handle missing tables - analytics is optional
+      if (e?.code && ['PGRST116', '404', '406', '42501', '38000', '42883'].includes(e.code)) {
+        // RPC or table doesn't exist - skip analytics
+        return
+      }
+      console.warn('Analytics not available:', (e as any)?.message)
+      // Put events back in queue for retry
       this.queue.unshift(...events)
     }
   }
@@ -436,7 +441,7 @@ class LearningLoop {
         onConflict: 'user_id',
       })
     } catch (e) {
-      console.error('Failed to persist learning data:', e)
+      console.warn('Learning tracking not available:', (e as any)?.message)
     }
   }
 
@@ -546,7 +551,7 @@ class EngagementSystem {
         }
       }
     } catch (e) {
-      console.error('Failed to check achievement:', e)
+      console.warn('Achievement check not available:', (e as any)?.message)
     }
 
     return null
@@ -637,7 +642,7 @@ export async function getAdminAnalytics(businessId: string, days: number = 30) {
       totalEvents,
     }
   } catch (e) {
-    console.error('Failed to get admin analytics:', e)
+    console.warn('Admin analytics not available:', (e as any)?.message)
     return null
   }
 }
@@ -656,7 +661,7 @@ export async function getRecentEvents(businessId: string, limit: number = 50) {
 
     return data || []
   } catch (e) {
-    console.error('Failed to get recent events:', e)
+    console.warn('Recent events not available:', (e as any)?.message)
     return []
   }
 }

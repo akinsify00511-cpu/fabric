@@ -66,7 +66,7 @@ export default function Tasks() {
         if (error) throw error
         setTasks(data as Task[] || DEMO_TASKS)
       } catch (error) {
-        console.error('Failed to load tasks:', error)
+        console.warn('Tasks not available:', (error as any)?.message)
         setTasks(DEMO_TASKS)
       } finally {
         setLoading(false)
@@ -104,7 +104,7 @@ export default function Tasks() {
         
         if (error) throw error
       } catch (error) {
-        console.error('Failed to save task:', error)
+        console.warn('Could not save task:', (error as any)?.message)
         showToast('Failed to create task', 'error')
         return
       }
@@ -135,7 +135,7 @@ export default function Tasks() {
         
         if (error) throw error
       } catch (error) {
-        console.error('Failed to update task:', error)
+        console.warn('Could not update task:', (error as any)?.message)
         showToast('Failed to update task', 'error')
         setTasks(prev => prev.map(t => t.id === id ? { ...t, status: task.status } : t))
       }
@@ -158,7 +158,7 @@ export default function Tasks() {
         if (error) throw error
         showToast('Task deleted', 'info')
       } catch (error) {
-        console.error('Failed to delete task:', error)
+        console.warn('Could not delete task:', (error as any)?.message)
         showToast('Failed to delete task', 'error')
       }
     }

@@ -121,9 +121,9 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
           .eq('business_id', staff.business_id)
           .single()
 
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error loading branding:', error)
-          setError('Failed to load branding')
+        // Silently handle table not found (404) or RLS issues (406)
+        if (error && !['PGRST116', '404', '406'].includes(error.code || '')) {
+          console.warn('Branding not available:', error.message)
         }
 
         if (data) {
