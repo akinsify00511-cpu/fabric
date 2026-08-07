@@ -109,6 +109,7 @@ const PaymentSettings = lazy(() => import('./pages/PaymentSettings'))
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'))
 const Departments = lazy(() => import('./pages/Departments'))
 const Subscription = lazy(() => import('./pages/Subscription'))
+const Budgets = lazy(() => import('./pages/Budgets'))
 
 // Loading fallback component
 function PageLoader() {
@@ -264,6 +265,7 @@ function AppRoutes() {
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
         <Route path="settings/payments" element={<PaymentSettings />} />
+        <Route path="budgets" element={<Budgets />} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />
         <Route path="staff/:staffId" element={<StaffProfile />} />
