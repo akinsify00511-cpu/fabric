@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark, Calendar, Users, LineChart, GitBranch, Scale, AlertCircle, Target, FileText, Banknote, Truck, Wrench, FlaskConical } from 'lucide-react'
+import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, Share2, CheckSquare, Award, DollarSign, MessageSquare, Book, Zap, Headphones, Mail, Calculator, Lock, Building2, Briefcase, Percent, Clock, Receipt, TrendingUp, Landmark, Calendar, Users, LineChart, GitBranch, Scale, AlertCircle, Target, FileText, Banknote, Truck, Wrench, FlaskConical, CreditCard } from 'lucide-react'
 import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
+  { to: '/app/subscription', label: 'Billing', icon: CreditCard, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Plan & payments', feature: null },
   { to: '/chat', label: 'Chat', icon: MessageSquare, tint: 'bg-[#4F46E5]/10 text-[#4F46E5]', desc: 'Team messaging', feature: 'chat' },
   { to: '/knowledge', label: 'Docs', icon: Book, tint: 'bg-orange-500/10 text-orange-500', desc: 'Knowledge base', feature: 'knowledge' },
   { to: '/tickets', label: 'Support', icon: Headphones, tint: 'bg-teal-500/10 text-teal-500', desc: 'Help desk', feature: 'tickets' },

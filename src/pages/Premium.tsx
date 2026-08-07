@@ -1,320 +1,560 @@
 import { useState } from 'react'
-import { Check, Lock, Zap, Crown, Star, Shield, BarChart3, Users, Bell, Globe, Palette, Clock, FileText, CreditCard } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { 
+  Check, Lock, Zap, Crown, Star, Shield, BarChart3, Users, Bell, Globe, Palette, 
+  Clock, FileText, CreditCard, ChevronRight, ArrowLeft, Loader2, Users2, 
+  Package, Headphones, FileCheck, PieChart, Building, Sparkles
+} from 'lucide-react'
 
-const FREE_FEATURES = [
-  { name: 'Basic Dashboard', icon: BarChart3, included: true },
-  { name: 'Up to 5 Team Members', icon: Users, included: true },
-  { name: 'CRM Basics', icon: Users, included: true },
-  { name: 'Task Management', icon: Check, included: true },
-  { name: '50MB Storage', icon: FileText, included: true },
+// All available plans with correct pricing
+const PLANS = [
+  {
+    id: 'starter',
+    name: 'Starter',
+    seats: '1–5 seats',
+    description: 'Perfect for getting started',
+    monthlyPrice: 15000,
+    yearlyMonthly: 12500,
+    yearlyTotal: 150000,
+    color: 'blue',
+    features: [
+      'Core job & project tracking',
+      'Invoicing with VAT & WHT',
+      'Basic inventory (single location)',
+      'CRM basics',
+      '5 team members',
+      'Email support'
+    ],
+    notIncluded: [
+      'Advanced analytics',
+      'API access',
+      'Custom branding'
+    ]
+  },
+  {
+    id: 'team',
+    name: 'Team',
+    seats: '6–15 seats',
+    description: 'For growing teams',
+    monthlyPrice: 48000,
+    yearlyMonthly: 40000,
+    yearlyTotal: 480000,
+    color: 'indigo',
+    popular: false,
+    features: [
+      'Everything in Starter',
+      'Advanced CRM with AI insights',
+      'Department groups & tasks',
+      'Offline field sync',
+      'Priority support'
+    ],
+    notIncluded: [
+      'Custom branding',
+      'API access'
+    ]
+  },
+  {
+    id: 'business',
+    name: 'Business',
+    seats: '16–30 seats',
+    description: 'For scaling businesses',
+    monthlyPrice: 112000,
+    yearlyMonthly: 93333,
+    yearlyTotal: 1120000,
+    color: 'purple',
+    popular: false,
+    features: [
+      'Everything in Team',
+      'Multi-location inventory',
+      'Client communication log',
+      'Advanced reporting',
+      'Custom integrations'
+    ],
+    notIncluded: [
+      'Custom branding',
+      'White-label'
+    ]
+  },
+  {
+    id: 'pro',
+    name: 'Pro',
+    seats: '31–75 seats',
+    description: '50-staff sweet spot',
+    monthlyPrice: 186000,
+    yearlyMonthly: 155000,
+    yearlyTotal: 1860000,
+    color: 'violet',
+    popular: true,
+    features: [
+      'Everything in Business',
+      'Full API access',
+      'Approval workflows',
+      'Dedicated account manager',
+      'Custom onboarding'
+    ],
+    notIncluded: []
+  },
+  {
+    id: 'scale',
+    name: 'Scale',
+    seats: '76+ seats',
+    description: 'For enterprises',
+    monthlyPrice: 380000,
+    yearlyMonthly: 316667,
+    yearlyTotal: 3800000,
+    color: 'amber',
+    popular: false,
+    features: [
+      'Everything in Pro',
+      'SSO & data residency',
+      'Priority support',
+      'Custom SLA',
+      'White-label options'
+    ],
+    notIncluded: []
+  }
 ]
 
-const PREMIUM_FEATURES = [
-  { 
-    name: 'Unlimited Team Members', 
-    icon: Users, 
-    locked: true,
-    preview: '50+ team members',
-    description: 'Scale your team without limits'
-  },
-  { 
-    name: 'Advanced Analytics', 
-    icon: BarChart3, 
-    locked: true,
-    preview: 'Real-time dashboards & reports',
-    description: 'Deep insights into your business performance'
-  },
-  { 
-    name: 'Priority Support', 
-    icon: Bell, 
-    locked: true,
-    preview: '24/7 dedicated support',
-    description: 'Get help fast when you need it'
-  },
-  { 
-    name: 'Custom Branding', 
-    icon: Palette, 
-    locked: true,
-    preview: 'Your logo, colors, domain',
-    description: 'Make it truly yours with white-label'
-  },
-  { 
-    name: 'API Access', 
-    icon: Globe, 
-    locked: true,
-    preview: 'Full REST API & webhooks',
-    description: 'Integrate with any system'
-  },
-  { 
-    name: 'Time Tracking', 
-    icon: Clock, 
-    locked: true,
-    preview: 'Automatic time logs & reports',
-    description: 'Bill accurately and track productivity'
-  },
-  { 
-    name: 'Invoicing & Payments', 
-    icon: CreditCard, 
-    locked: true,
-    preview: 'Send invoices, accept payments',
-    description: 'Get paid faster with integrated payments'
-  },
-  { 
-    name: 'Advanced Security', 
-    icon: Shield, 
-    locked: true,
-    preview: 'SSO, 2FA, audit logs',
-    description: 'Enterprise-grade security for your data'
-  },
-]
+const PLAN_ICONS: Record<string, any> = {
+  starter: Package,
+  team: Users2,
+  business: Building,
+  pro: Sparkles,
+  scale: Crown
+}
 
 export default function Premium() {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
+  const navigate = useNavigate()
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+  const [selectedPlan, setSelectedPlan] = useState<typeof PLANS[0] | null>(null)
+  const [processing, setProcessing] = useState(false)
 
-  const monthlyPrice = 49
-  const yearlyPrice = 39 // Per month, billed yearly
-  const savings = (monthlyPrice - yearlyPrice) * 12
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
 
-  return (
-    <div className="max-w-6xl mx-auto pb-20">
-      {/* Hero */}
-      <div className="text-center py-12 px-4">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 text-sm font-medium mb-6">
-          <Crown size={16} />
-          <span>Unlock Your Business Potential</span>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-          Upgrade to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Pro</span>
-        </h1>
-        <p className="text-xl text-black/60 max-w-2xl mx-auto mb-8">
-          Get access to powerful features that will transform how you run your business. 
-          Join thousands of companies already growing with Avenize Pro.
-        </p>
-        
-        {/* Social Proof */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-black mb-8">
-          <span className="flex items-center gap-1">
-            <Star size={14} className="text-amber-500 fill-amber-500" />
-            <strong className="text-black">4.9/5</strong> rating
-          </span>
-          <span>•</span>
-          <span><strong className="text-black">2,500+</strong> businesses</span>
-          <span>•</span>
-          <span><strong className="text-black">99.9%</strong> uptime</span>
-        </div>
-      </div>
+  const handleSelectPlan = (plan: typeof PLANS[0]) => {
+    setSelectedPlan(plan)
+  }
 
-      {/* Pricing */}
-      <div className="bg-white rounded-3xl border border-black/[0.06] p-8 max-w-md mx-auto mb-16 relative overflow-hidden">
-        <div className="absolute top-0 right-0 px-4 py-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs font-medium rounded-bl-xl">
-          Save ₦{savings.toLocaleString()}/year
-        </div>
-        
-        <h2 className="text-2xl font-bold mb-2">Pro Plan</h2>
-        <p className="text-black text-sm mb-6">Everything you need to scale</p>
-        
-        {/* Billing Toggle */}
-        <div className="flex items-center gap-3 mb-6 p-1 bg-black/[0.04] rounded-xl">
-          <button
-            onClick={() => setBillingCycle('monthly')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-              billingCycle === 'monthly' ? 'bg-white shadow-sm' : ''
-            }`}
-          >
-            Monthly
-          </button>
-          <button
-            onClick={() => setBillingCycle('yearly')}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-              billingCycle === 'yearly' ? 'bg-white shadow-sm' : ''
-            }`}
-          >
-            Yearly <span className="text-green-600 text-xs">-20%</span>
-          </button>
-        </div>
-        
-        {/* Price */}
-        <div className="mb-6">
-          <div className="flex items-end gap-1">
-            <span className="text-5xl font-bold">₦{billingCycle === 'monthly' ? monthlyPrice : yearlyPrice}</span>
-            <span className="text-black mb-2">/month</span>
+  const handleBackToPlans = () => {
+    setSelectedPlan(null)
+  }
+
+  const handleCheckout = async () => {
+    if (!selectedPlan) return
+    setProcessing(true)
+    
+    // Navigate to subscription page for checkout
+    navigate(`/app/subscription?plan=${selectedPlan.id}&billing=${billingCycle}`)
+    
+    // In production, this would call the checkout API
+    setTimeout(() => {
+      setProcessing(false)
+    }, 1000)
+  }
+
+  // Show plan selection view
+  if (!selectedPlan) {
+    return (
+      <div className="max-w-6xl mx-auto pb-20">
+        {/* Hero */}
+        <div className="text-center py-12 px-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 text-sm font-medium mb-6">
+            <Crown size={16} />
+            <span>Unlock Your Business Potential</span>
           </div>
-          {billingCycle === 'yearly' && (
-            <p className="text-sm text-black">Billed as ₦{(yearlyPrice * 12).toLocaleString()} yearly</p>
-          )}
-        </div>
-        
-        {/* CTA */}
-        <button className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold text-lg hover:shadow-lg hover:shadow-indigo-500/30 transition mb-6">
-          Upgrade Now - Start Free Trial
-        </button>
-        
-        <p className="text-center text-sm text-black">
-          14-day free trial • No credit card required • Cancel anytime
-        </p>
-        
-        {/* Features List */}
-        <div className="mt-8 pt-8 border-t border-black/[0.06]">
-          <p className="font-medium mb-4">Everything in Free, plus:</p>
-          <div className="space-y-3">
-            {PREMIUM_FEATURES.slice(0, 5).map((feature) => (
-              <div key={feature.name} className="flex items-center gap-3">
-                <Check size={18} className="text-green-500 shrink-0" />
-                <span className="text-sm">{feature.name}</span>
-              </div>
-            ))}
+          <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
+            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Plan</span>
+          </h1>
+          <p className="text-xl text-black/60 max-w-2xl mx-auto mb-8">
+            Select the perfect plan for your team. All plans include a 14-day free trial.
+          </p>
+          
+          {/* Billing Toggle */}
+          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-black/5">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                billingCycle === 'monthly' 
+                  ? 'bg-indigo-600 text-white shadow-sm' 
+                  : 'text-black/60 hover:text-black'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                billingCycle === 'yearly' 
+                  ? 'bg-indigo-600 text-white shadow-sm' 
+                  : 'text-black/60 hover:text-black'
+              }`}
+            >
+              Yearly <span className="text-emerald-400 ml-1">Save 17%</span>
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Feature Preview Cards */}
-      <div className="mb-16">
-        <h2 className="text-2xl font-bold text-center mb-8">What You're Missing Out On</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PREMIUM_FEATURES.map((feature, index) => {
-            const Icon = feature.icon
+        {/* Plans Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 px-4 mb-12">
+          {PLANS.map((plan) => {
+            const PlanIcon = PLAN_ICONS[plan.id]
+            const price = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyMonthly
+            const isYearly = billingCycle === 'yearly'
+            
             return (
-              <div 
-                key={feature.name}
-                className="bg-white rounded-2xl border border-black/[0.06] p-6 relative overflow-hidden group hover:border-indigo-200 transition"
+              <div
+                key={plan.id}
+                onClick={() => handleSelectPlan(plan)}
+                className={`bg-white rounded-2xl border-2 p-5 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 ${
+                  plan.popular 
+                    ? 'border-indigo-500 shadow-indigo-100 relative' 
+                    : 'border-black/5 hover:border-indigo-200'
+                }`}
               >
-                {/* Lock Overlay */}
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-black/80 text-white text-xs font-medium rounded-full">
-                    <Lock size={12} />
-                    Pro Feature
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="px-3 py-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold rounded-full">
+                      Most Popular
+                    </span>
                   </div>
+                )}
+                
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                  plan.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                  plan.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+                  plan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                  plan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
+                  'bg-amber-100 text-amber-600'
+                }`}>
+                  <PlanIcon size={24} />
                 </div>
                 
-                {/* Content */}
-                <div className={`${feature.locked ? 'blur-sm select-none pointer-events-none' : ''}`}>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center mb-4">
-                    <Icon size={24} className="text-indigo-600" />
-                  </div>
-                  <h3 className="font-bold text-lg mb-2">{feature.name}</h3>
-                  <p className="text-sm text-black mb-4">{feature.description}</p>
-                  
-                  {/* Preview */}
-                  <div className="bg-black/[0.03] rounded-lg p-3">
-                    <p className="text-xs text-black mb-1">Preview:</p>
-                    <p className="text-sm font-medium text-indigo-600">{feature.preview}</p>
-                  </div>
+                <h3 className="text-lg font-bold text-black mb-1">{plan.name}</h3>
+                <p className="text-xs text-black mb-3">{plan.seats}</p>
+                
+                <div className="mb-4">
+                  <span className="text-2xl font-bold text-black">{formatCurrency(price)}</span>
+                  <span className="text-black text-sm">/mo</span>
                 </div>
+                
+                {isYearly && (
+                  <p className="text-xs text-black mb-4">
+                    {formatCurrency(plan.yearlyTotal)}/year
+                  </p>
+                )}
+                
+                <button className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  plan.popular
+                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg'
+                    : 'bg-black/5 text-black hover:bg-black/10'
+                }`}>
+                  Select Plan
+                </button>
               </div>
             )
           })}
         </div>
-      </div>
 
-      {/* Comparison Table */}
-      <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-16">
-        <div className="p-6 border-b border-black/[0.06]">
-          <h2 className="text-2xl font-bold">Compare Plans</h2>
+        {/* All Plans Comparison */}
+        <div className="bg-white rounded-2xl border border-black/5 overflow-hidden mx-4">
+          <div className="p-6 border-b border-black/5">
+            <h2 className="text-xl font-bold text-black">Compare All Plans</h2>
+            <p className="text-sm text-black mt-1">See what's included in each plan</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-black/[0.02]">
+                <tr>
+                  <th className="text-left p-4 font-medium text-black">Feature</th>
+                  {PLANS.map(plan => (
+                    <th key={plan.id} className={`p-4 text-center font-medium ${
+                      plan.popular ? 'bg-indigo-50 text-indigo-700' : 'text-black'
+                    }`}>
+                      {plan.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/5">
+                <tr className="bg-black/[0.02]">
+                  <td className="p-4 font-medium text-black">Price</td>
+                  {PLANS.map(plan => {
+                    const price = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyMonthly
+                    return (
+                      <td key={plan.id} className={`p-4 text-center font-bold ${
+                        plan.popular ? 'bg-indigo-50' : ''
+                      }`}>
+                        {formatCurrency(price)}<span className="text-sm font-normal text-black">/mo</span>
+                      </td>
+                    )
+                  })}
+                </tr>
+                <tr>
+                  <td className="p-4 text-black">Team Members</td>
+                  <td className="p-4 text-center bg-indigo-50">5</td>
+                  <td className="p-4 text-center">15</td>
+                  <td className="p-4 text-center">30</td>
+                  <td className="p-4 text-center bg-indigo-50">75</td>
+                  <td className="p-4 text-center">Unlimited</td>
+                </tr>
+                <tr className="bg-black/[0.02]">
+                  <td className="p-4 text-black">Job & Project Tracking</td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                </tr>
+                <tr>
+                  <td className="p-4 text-black">Invoicing & VAT/WHT</td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                </tr>
+                <tr className="bg-black/[0.02]">
+                  <td className="p-4 text-black">Inventory Management</td>
+                  <td className="p-4 text-center bg-indigo-50">Single</td>
+                  <td className="p-4 text-center">Single</td>
+                  <td className="p-4 text-center">Multi</td>
+                  <td className="p-4 text-center bg-indigo-50">Multi</td>
+                  <td className="p-4 text-center">Multi</td>
+                </tr>
+                <tr>
+                  <td className="p-4 text-black">Advanced Analytics</td>
+                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                </tr>
+                <tr className="bg-black/[0.02]">
+                  <td className="p-4 text-black">API Access</td>
+                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center">❌</td>
+                  <td className="p-4 text-center">❌</td>
+                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                </tr>
+                <tr>
+                  <td className="p-4 text-black">Custom Branding</td>
+                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center">❌</td>
+                  <td className="p-4 text-center">❌</td>
+                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                </tr>
+                <tr className="bg-black/[0.02]">
+                  <td className="p-4 text-black">Support</td>
+                  <td className="p-4 text-center bg-indigo-50">Email</td>
+                  <td className="p-4 text-center">Priority</td>
+                  <td className="p-4 text-center">Priority</td>
+                  <td className="p-4 text-center bg-indigo-50">Dedicated</td>
+                  <td className="p-4 text-center">Custom SLA</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-black/[0.02]">
-              <tr>
-                <th className="text-left px-6 py-4 font-medium">Feature</th>
-                <th className="text-center px-6 py-4 font-medium">Free</th>
-                <th className="text-center px-6 py-4 font-medium bg-indigo-50">Pro</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-black/[0.06]">
-              <tr>
-                <td className="px-6 py-4 text-black/60">Team Members</td>
-                <td className="px-6 py-4 text-center">5</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>Unlimited</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">Storage</td>
-                <td className="px-6 py-4 text-center">50MB</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>100GB</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">Analytics</td>
-                <td className="px-6 py-4 text-center">Basic</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>Advanced</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">API Access</td>
-                <td className="px-6 py-4 text-center">❌</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>✅</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">Custom Branding</td>
-                <td className="px-6 py-4 text-center">❌</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>✅</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">Priority Support</td>
-                <td className="px-6 py-4 text-center">❌</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>✅</strong></td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 text-black/60">Invoicing & Payments</td>
-                <td className="px-6 py-4 text-center">❌</td>
-                <td className="px-6 py-4 text-center bg-indigo-50"><strong>✅</strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      {/* Testimonials */}
-      <div className="mb-16">
-        <h2 className="text-2xl font-bold text-center mb-8">Trusted by Growing Businesses</h2>
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              name: 'Chinedu Okafor',
-              role: 'CEO, TechStart Nigeria',
-              quote: 'Avenize Pro transformed how we manage our team. The analytics alone saved us 20 hours per week!'
-            },
-            {
-              name: 'Amina Ibrahim',
-              role: 'Founder, StyleBox',
-              quote: 'Finally, an all-in-one platform that actually works. Worth every kobo!'
-            },
-            {
-              name: 'Emeka Nwosu',
-              role: 'Director, EduFirst',
-              quote: 'The invoicing feature alone paid for the subscription in the first month.'
-            },
-          ].map((testimonial, i) => (
-            <div key={i} className="bg-white rounded-2xl p-6 border border-black/[0.06]">
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} size={16} className="text-amber-500 fill-amber-500" />
-                ))}
-              </div>
-              <p className="text-black/70 mb-4 italic">"{testimonial.quote}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold">
-                  {testimonial.name.charAt(0)}
+        {/* FAQ */}
+        <div className="mt-16 px-4">
+          <h2 className="text-2xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+          <div className="max-w-2xl mx-auto space-y-4">
+            {[
+              {
+                q: "Can I change plans later?",
+                a: "Yes, you can upgrade or downgrade your plan at any time. Changes take effect at the start of your next billing cycle."
+              },
+              {
+                q: "What payment methods do you accept?",
+                a: "We accept all Nigerian payment methods: Debit/Credit Card, Bank Transfer, USSD, and Mobile Money through Paystack."
+              },
+              {
+                q: "Is there a free trial?",
+                a: "Yes! All paid plans come with a 14-day free trial. No credit card required to start."
+              },
+              {
+                q: "What happens if I cancel?",
+                a: "You can cancel anytime. You'll retain access to your current plan features until the end of your billing period."
+              }
+            ].map((faq, i) => (
+              <details key={i} className="bg-white rounded-xl border border-black/5 group">
+                <summary className="p-4 cursor-pointer font-medium text-black flex items-center justify-between">
+                  {faq.q}
+                  <ChevronRight size={18} className="text-black transition-transform group-open:rotate-90" />
+                </summary>
+                <div className="px-4 pb-4 text-black">
+                  {faq.a}
                 </div>
-                <div>
-                  <p className="font-medium text-sm">{testimonial.name}</p>
-                  <p className="text-xs text-black">{testimonial.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+              </details>
+            ))}
+          </div>
         </div>
       </div>
+    )
+  }
 
-      {/* Final CTA */}
-      <div className="text-center bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-12 text-white">
-        <Zap size={48} className="mx-auto mb-4" />
-        <h2 className="text-3xl font-bold mb-4">Ready to Level Up?</h2>
-        <p className="text-white/80 mb-8 max-w-lg mx-auto">
-          Join 2,500+ Nigerian businesses already growing with Avenize Pro. 
-          Start your free trial today - no credit card required.
-        </p>
-        <button className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:bg-white/90 transition shadow-xl">
-          Start 14-Day Free Trial
+  // Show plan breakdown view
+  return (
+    <div className="max-w-2xl mx-auto pb-20">
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-8">
+        <button
+          onClick={handleBackToPlans}
+          className="p-2 hover:bg-black/10 rounded-xl transition"
+        >
+          <ArrowLeft size={20} className="text-black" />
         </button>
-        <p className="text-white/60 text-sm mt-4">No credit card required • Cancel anytime</p>
+        <div>
+          <h1 className="text-2xl font-bold text-black">Review Your Plan</h1>
+          <p className="text-black">Complete your subscription details</p>
+        </div>
+      </div>
+
+      {/* Plan Summary Card */}
+      <div className="bg-white rounded-2xl border border-black/5 overflow-hidden mb-6">
+        <div className="p-6 border-b border-black/5 bg-gradient-to-r from-indigo-50 to-violet-50">
+          <div className="flex items-center gap-4">
+            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+              selectedPlan.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+              selectedPlan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
+              selectedPlan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+              selectedPlan.color === 'amber' ? 'bg-amber-100 text-amber-600' :
+              'bg-blue-100 text-blue-600'
+            }`}>
+              {(() => {
+                const Icon = PLAN_ICONS[selectedPlan.id]
+                return <Icon size={28} />
+              })()}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-black">{selectedPlan.name} Plan</h2>
+              <p className="text-black">{selectedPlan.seats}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6">
+          {/* Billing Cycle */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-black mb-3">Billing Cycle</label>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setBillingCycle('monthly')}
+                className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                  billingCycle === 'monthly'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-black/5 hover:border-black/10'
+                }`}
+              >
+                <p className="font-bold text-black">{formatCurrency(selectedPlan.monthlyPrice)}<span className="text-sm font-normal">/mo</span></p>
+                <p className="text-xs text-black mt-1">Billed monthly</p>
+              </button>
+              <button
+                onClick={() => setBillingCycle('yearly')}
+                className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                  billingCycle === 'yearly'
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-black/5 hover:border-black/10'
+                }`}
+              >
+                <p className="font-bold text-black">{formatCurrency(selectedPlan.yearlyMonthly)}<span className="text-sm font-normal">/mo</span></p>
+                <p className="text-xs text-black mt-1">
+                  {formatCurrency(selectedPlan.yearlyTotal)}/year (Save 17%)
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Price Breakdown */}
+          <div className="bg-black/[0.02] rounded-xl p-4 mb-6">
+            <h3 className="font-medium text-black mb-4">Price Breakdown</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-black">{selectedPlan.name} Plan ({billingCycle})</span>
+                <span className="text-black font-medium">
+                  {formatCurrency(billingCycle === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyMonthly)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-black">VAT (7.5%)</span>
+                <span className="text-black font-medium">
+                  {formatCurrency((billingCycle === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyMonthly) * 0.075)}
+                </span>
+              </div>
+              <div className="border-t border-black/10 pt-3 flex justify-between font-bold">
+                <span className="text-black">Total per month</span>
+                <span className="text-black">
+                  {formatCurrency((billingCycle === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyMonthly) * 1.075)}
+                </span>
+              </div>
+              {billingCycle === 'yearly' && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>Annual savings</span>
+                  <span className="font-medium">
+                    {formatCurrency((selectedPlan.monthlyPrice * 12 - selectedPlan.yearlyTotal) * 1.075)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Features Included */}
+          <div className="mb-6">
+            <h3 className="font-medium text-black mb-3">What's Included</h3>
+            <div className="space-y-2">
+              {selectedPlan.features.map((feature, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm">
+                  <Check size={16} className="text-green-500 shrink-0" />
+                  <span className="text-black">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Checkout Button */}
+          <button
+            onClick={handleCheckout}
+            disabled={processing}
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold text-lg hover:shadow-lg hover:shadow-indigo-500/30 transition disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {processing ? (
+              <>
+                <Loader2 size={20} className="animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Start 14-Day Free Trial
+                <ChevronRight size={20} />
+              </>
+            )}
+          </button>
+          
+          <p className="text-center text-xs text-black mt-4">
+            No credit card required • Cancel anytime
+          </p>
+        </div>
+      </div>
+
+      {/* Money Back Guarantee */}
+      <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+        <Shield size={20} className="text-green-600 shrink-0 mt-0.5" />
+        <div>
+          <p className="font-medium text-green-800">30-Day Money Back Guarantee</p>
+          <p className="text-xs text-green-700 mt-1">
+            If you're not satisfied within the first 30 days, we'll refund your payment in full. No questions asked.
+          </p>
+        </div>
       </div>
     </div>
   )

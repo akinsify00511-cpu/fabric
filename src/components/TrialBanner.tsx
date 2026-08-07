@@ -72,7 +72,7 @@ export default function TrialBanner() {
         <div className="flex items-center gap-2">
           {!hasPaidFeatures && (
             <Link
-              to="/upgrade"
+              to="/app/subscription"
               className="px-4 py-1.5 bg-white text-indigo-600 text-sm font-medium rounded-lg hover:bg-white/90 transition"
             >
               Upgrade Now

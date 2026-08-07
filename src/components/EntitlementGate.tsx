@@ -64,7 +64,7 @@ export default function EntitlementGate({
           Maybe Later
         </button>
         <button
-          onClick={() => navigate('/app/premium')}
+          onClick={() => navigate('/app/subscription')}
           className="flex items-center gap-2 px-4 py-2 text-sm bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:shadow-lg transition"
         >
           <Crown size={16} />
@@ -138,7 +138,7 @@ export function FeatureBanner({ feature, requiredPlan }: FeatureBannerProps) {
           </span>
         </div>
         <button
-          onClick={() => navigate('/app/premium')}
+          onClick={() => navigate('/app/subscription')}
           className="flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-800"
         >
           <Crown size={14} />

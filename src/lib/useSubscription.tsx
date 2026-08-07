@@ -95,7 +95,7 @@ export function FeatureGate({ feature, children, fallback }: FeatureLockProps) {
         This feature is available on our Pro plan and above.
       </p>
       <a
-        href="/upgrade"
+        href="/app/subscription"
         className="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition"
       >
         Upgrade Now
