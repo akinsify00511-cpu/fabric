@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, BriefcaseBusiness, Clock, TrendingUp, Sparkles } from 'lucide-react'
+import { 
+  ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, 
+  BriefcaseBusiness, Clock, TrendingUp, Sparkles, ListTodo, Calendar, MessageSquare, Video,
+  Bell, Search, Filter, Folder, FileText, Send, Phone, Mail, UsersRound, LayoutGrid,
+  CheckSquare, Clock3, AlertCircle, Repeat, Flag, MessageCircle, Share2, FilterIcon
+} from 'lucide-react'
 import SarahChat from '../components/SarahChat'
 
 const STATS = [
@@ -25,6 +30,56 @@ const MODULES = [
   { icon: UserCheck, title: 'HR & People', tagline: 'Happy team', desc: 'Staff database, roles, attendance, payroll', color: '#8B5CF6', stats: '15,000+ team members' },
   { icon: BriefcaseBusiness, title: 'Inventory', tagline: 'Never run out', desc: 'Stock tracking, reorders, multi-location', color: '#EF4444', stats: '500,000+ items tracked' },
   { icon: Zap, title: '+40 More', tagline: 'Everything you need', desc: 'Tasks, Chat, Calendar, Approvals...', color: '#06B6D4', stats: 'One unified app' },
+]
+
+// Comprehensive productivity tools feature set
+const PRODUCTIVITY_TOOLS = [
+  {
+    category: 'Task Management',
+    icon: ListTodo,
+    color: '#4F46E5',
+    features: ['Kanban & List views', 'Subtasks & checklists', 'Due dates & reminders', 'Priority levels', 'Task assignments', 'Recurring tasks']
+  },
+  {
+    category: 'Team Chat',
+    icon: MessageSquare,
+    color: '#10B981',
+    features: ['Direct messages', 'Group channels', 'File sharing', '@mentions', 'Message reactions', 'Read receipts']
+  },
+  {
+    category: 'Video Meetings',
+    icon: Video,
+    color: '#8B5CF6',
+    features: ['HD video calls', 'Screen sharing', 'Meeting recording', 'Calendar integration', 'Join links', 'Participant list']
+  },
+  {
+    category: 'Calendar',
+    icon: Calendar,
+    color: '#F59E0B',
+    features: ['Team calendar', 'Event scheduling', 'Availability check', 'Reminders', 'Google sync', 'Recurring events']
+  },
+  {
+    category: 'Notifications',
+    icon: Bell,
+    color: '#EF4444',
+    features: ['Real-time alerts', 'Push notifications', 'Email digests', 'In-app center', 'Customizable rules', 'Do not disturb']
+  },
+  {
+    category: 'Documents',
+    icon: FileText,
+    color: '#06B6D4',
+    features: ['Shared drive', 'Version history', 'Comments', 'Templates', 'E-signatures', 'Folder organization']
+  }
+]
+
+// Task management features showcase
+const TASK_FEATURES = [
+  { icon: CheckSquare, label: 'Kanban Board', desc: 'Drag & drop tasks' },
+  { icon: Flag, label: 'Priority Flags', desc: 'High/Medium/Low' },
+  { icon: Repeat, label: 'Recurring', desc: 'Daily, weekly, monthly' },
+  { icon: UsersRound, label: 'Assign', desc: 'Team members' },
+  { icon: Clock3, label: 'Due Dates', desc: 'Never miss deadline' },
+  { icon: MessageCircle, label: 'Comments', desc: 'Discuss tasks' },
 ]
 
 const TESTIMONIALS = [
@@ -308,6 +363,110 @@ function DailyWorkflowSection() {
   )
 }
 
+// Productivity Tools Section - Asana/ClickUp style features
+function ProductivityToolsSection() {
+  return (
+    <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-sm mb-6">
+            <LayoutGrid size={16} />
+            <span>Productivity Suite</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything Your Team Needs to Ship Faster</h2>
+          <p className="text-slate-400 max-w-2xl mx-auto">All-in-one workspace replacing Asana, ClickUp, Slack, and Google Meet. No more app switching.</p>
+        </div>
+        
+        {/* Task Features Mini Showcase */}
+        <div className="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur-sm border border-white/10">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="flex-1">
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
+                <ListTodo size={28} className="text-blue-400" />
+                Task Management Like Asana & ClickUp
+              </h3>
+              <p className="text-slate-400 mb-6">Manage tasks with the same power as Asana and ClickUp, but simpler and integrated with your business data.</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {TASK_FEATURES.map((feat, i) => {
+                  const Icon = feat.icon
+                  return (
+                    <div key={i} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                      <Icon size={20} className="text-blue-400 shrink-0" />
+                      <div>
+                        <div className="font-medium text-sm">{feat.label}</div>
+                        <div className="text-xs text-slate-500">{feat.desc}</div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+            
+            {/* Mini Kanban Preview */}
+            <div className="flex-1">
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="text-xs text-slate-500 mb-3 font-mono">PROJECT: Website Redesign</div>
+                <div className="space-y-3">
+                  {[
+                    { title: 'Design mockups', status: 'Todo', color: 'bg-slate-500' },
+                    { title: 'API integration', status: 'In Progress', color: 'bg-blue-500' },
+                    { title: 'Deploy to staging', status: 'Done', color: 'bg-green-500' },
+                  ].map((task, i) => (
+                    <div key={i} className="flex items-center gap-3 p-2 bg-white/5 rounded-lg">
+                      <div className={`w-2 h-2 rounded-full ${task.color}`}></div>
+                      <span className="text-sm flex-1">{task.title}</span>
+                      <span className="text-xs text-slate-500">{task.status}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Tool Cards Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PRODUCTIVITY_TOOLS.map((tool, i) => {
+            const Icon = tool.icon
+            return (
+              <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
+                    <Icon size={22} style={{ color: tool.color }} />
+                  </div>
+                  <h3 className="font-semibold text-lg">{tool.category}</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {tool.features.map((feat, j) => (
+                    <div key={j} className="flex items-center gap-2 text-sm text-slate-400">
+                      <Check size={14} className="text-green-400 shrink-0" />
+                      {feat}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        
+        {/* Integration Banner */}
+        <div className="mt-12 text-center">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-white/10">
+            <span className="text-sm text-slate-400">Also includes:</span>
+            <span className="text-sm font-medium">File Storage</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-sm font-medium">Time Tracking</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-sm font-medium">Reporting</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-sm font-medium">Approval Flows</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function ModulesSection() {
   return (
     <section id="modules" className="py-16 px-4 sm:px-6 bg-gray-50">
@@ -487,6 +646,7 @@ export default function LandingEnhanced() {
       <HeroSection />
       <WhoSection />
       <DailyWorkflowSection />
+      <ProductivityToolsSection />
       <ModulesSection />
       <TestimonialsSection />
       <PricingSection />
