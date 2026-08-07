@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -32,6 +32,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/organogram': 'merit',
   '/app/reports': 'reports',
   '/app/sms': 'settings',
+  '/app/live-chat': 'tickets',
   '/app/monitoring': 'dashboard',
   '/app/meetings': 'meetings',
   '/app/home': 'dashboard',
@@ -48,6 +49,7 @@ const NAV_ITEMS = [
   { to: '/app/events', label: 'Events', icon: CalendarDays, toolKey: 'events' },
   { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
   { to: '/app/tickets', label: 'Support', icon: Headphones, toolKey: 'tickets' },
+  { to: '/app/live-chat', label: 'Live Chat', icon: HeadphonesIcon, toolKey: 'tickets' },
   { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
   { to: '/app/leads', label: 'Leads', icon: UserPlus, toolKey: 'crm' },
   { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },

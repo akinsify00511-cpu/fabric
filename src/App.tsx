@@ -53,6 +53,7 @@ const SecuritySettings = lazy(() => import('./pages/SecuritySettings'))
 const SSOSettings = lazy(() => import('./pages/SSOSettings'))
 const Integrations = lazy(() => import('./pages/Integrations'))
 const SMSBroadcast = lazy(() => import('./pages/SMSBroadcast'))
+const LiveChat = lazy(() => import('./pages/LiveChat'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const ProjectSettings = lazy(() => import('./pages/ProjectSettings'))
@@ -303,6 +304,7 @@ function AppRoutes() {
         <Route path="sso" element={<SSOSettings />} />
         <Route path="integrations" element={<Integrations />} />
         <Route path="sms" element={<SMSBroadcast />} />
+        <Route path="live-chat" element={<LiveChat />} />
         <Route path="api" element={<APISettings />} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
