@@ -141,7 +141,7 @@ export default function Monitoring() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Monitoring</h1>
+          <h1 className="text-xl font-medium text-gray-900">Monitoring</h1>
           <p className="text-sm text-black/50 mt-0.5">System health and incident management</p>
         </div>
         <div className="flex gap-2">

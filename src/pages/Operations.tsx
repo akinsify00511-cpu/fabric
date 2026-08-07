@@ -33,7 +33,7 @@ export default function Operations() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--avenize-black)]">Operations</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Operations</h1>
           <p className="text-sm text-black/50">Processes, compliance & organization</p>
         </div>
       </div>

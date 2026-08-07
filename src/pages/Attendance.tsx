@@ -214,7 +214,7 @@ export default function AttendancePage() {
             <Fingerprint size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Attendance</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Attendance</h1>
             <p className="text-sm text-black/50">Track your work hours</p>
           </div>
         </div>

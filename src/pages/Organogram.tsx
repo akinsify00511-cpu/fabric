@@ -205,7 +205,7 @@ export default function Organogram() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Organogram</h1>
+          <h1 className="text-xl font-medium text-gray-900">Organogram</h1>
           <p className="text-sm text-black/50 mt-0.5">Organization structure & reporting channels</p>
         </div>
         <div className="flex gap-2">

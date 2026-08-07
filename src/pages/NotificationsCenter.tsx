@@ -128,7 +128,7 @@ export default function NotificationsCenterPage() {
             <Bell size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Notifications</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
             <p className="text-sm text-black/50">
               {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
             </p>

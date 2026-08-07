@@ -16,7 +16,7 @@ export default function NotFound() {
         </div>
 
         {/* Message */}
-        <h1 className="text-2xl font-bold text-[var(--avenize-black)] mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Page Not Found
         </h1>
         <p className="text-gray-500 mb-8">
@@ -34,7 +34,7 @@ export default function NotFound() {
           </Link>
           <Link
             to="/app"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-[var(--avenize-black)] rounded-xl font-medium hover:bg-black/5 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
           >
             <ArrowLeft size={18} />
             Back to App

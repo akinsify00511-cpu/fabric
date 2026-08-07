@@ -294,7 +294,7 @@ export default function Meetings() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Meetings</h1>
+          <h1 className="text-xl font-medium text-gray-900">Meetings</h1>
           <p className="text-sm text-black/50 mt-0.5">
             Voice memo recording • AI transcription & summaries coming soon
           </p>
@@ -367,7 +367,7 @@ export default function Meetings() {
                 )}
               </div>
 
-              <p className="text-3xl font-mono font-bold mb-2 text-[var(--avenize-black)]">
+              <p className="text-3xl font-mono font-bold mb-2 text-gray-900">
                 {formatDuration(recordingTime)}
               </p>
 
@@ -464,7 +464,7 @@ export default function Meetings() {
                     </div>
                   ) : (
                     <h3 
-                      className="font-medium text-[var(--avenize-black)] cursor-pointer hover:text-[var(--avenize-primary)]"
+                      className="font-medium text-gray-900 cursor-pointer hover:text-[var(--avenize-primary)]"
                       onClick={() => setSelectedMeeting(meeting)}
                     >
                       {meeting.title}

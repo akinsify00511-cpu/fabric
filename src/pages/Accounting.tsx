@@ -203,7 +203,7 @@ export default function Accounting() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Accounting</h1>
+          <h1 className="text-xl font-medium text-gray-900">Accounting</h1>
           <p className="text-sm text-black/50 mt-0.5">Double-entry bookkeeping</p>
         </div>
         <div className="flex gap-2">
@@ -267,7 +267,7 @@ export default function Accounting() {
                     <div key={account.id} className="px-4 py-2 flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-black/30 w-12">{account.code}</span>
-                        <span className="text-[var(--avenize-black)]">{account.name}</span>
+                        <span className="text-gray-900">{account.name}</span>
                       </div>
                       <span className="text-black/60 font-mono">
                         {account.opening_balance?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
@@ -295,7 +295,7 @@ export default function Accounting() {
                 className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/[0.02] transition"
               >
                 <div>
-                  <p className="text-sm font-medium text-[var(--avenize-black)]">{entry.entry_number}</p>
+                  <p className="text-sm font-medium text-gray-900">{entry.entry_number}</p>
                   <p className="text-xs text-black/40">{entry.description || 'No description'}</p>
                 </div>
                 <div className="text-right">

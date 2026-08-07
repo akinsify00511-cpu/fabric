@@ -80,7 +80,7 @@ export default function BrandingSettings() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Branding</h1>
+          <h1 className="text-xl font-medium text-gray-900">Branding</h1>
           <p className="text-sm text-black/50 mt-0.5">Customize how your business appears</p>
         </div>
         <button

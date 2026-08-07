@@ -101,7 +101,7 @@ export default function CookieConsent() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <Settings className="w-5 h-5 text-gray-800" />
-                  <h3 className="font-semibold text-[var(--avenize-black)]">Cookie Preferences</h3>
+                  <h3 className="font-semibold text-gray-900">Cookie Preferences</h3>
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
@@ -115,7 +115,7 @@ export default function CookieConsent() {
                 {/* Essential - Always On */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <h4 className="font-medium text-[var(--avenize-black)]">Essential Cookies</h4>
+                    <h4 className="font-medium text-gray-900">Essential Cookies</h4>
                     <p className="text-sm text-gray-900">Required for the website to function</p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -129,7 +129,7 @@ export default function CookieConsent() {
                 {/* Analytics */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <h4 className="font-medium text-[var(--avenize-black)]">Analytics</h4>
+                    <h4 className="font-medium text-gray-900">Analytics</h4>
                     <p className="text-sm text-gray-900">Help us understand how visitors use our site</p>
                   </div>
                   <button
@@ -147,7 +147,7 @@ export default function CookieConsent() {
                 {/* Marketing */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <h4 className="font-medium text-[var(--avenize-black)]">Marketing</h4>
+                    <h4 className="font-medium text-gray-900">Marketing</h4>
                     <p className="text-sm text-gray-900">Used to deliver relevant advertisements</p>
                   </div>
                   <button
@@ -165,7 +165,7 @@ export default function CookieConsent() {
                 {/* Functional */}
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
-                    <h4 className="font-medium text-[var(--avenize-black)]">Functional</h4>
+                    <h4 className="font-medium text-gray-900">Functional</h4>
                     <p className="text-sm text-gray-900">Remember your preferences and settings</p>
                   </div>
                   <button
@@ -208,7 +208,7 @@ export default function CookieConsent() {
                   <Cookie className="w-6 h-6 text-amber-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-[var(--avenize-black)] mb-1">
+                  <h3 className="font-semibold text-gray-900 mb-1">
                     We value your privacy
                   </h3>
                   <p className="text-sm text-gray-900 mb-4">
@@ -221,7 +221,7 @@ export default function CookieConsent() {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => setShowSettings(true)}
-                      className="px-4 py-2 bg-white border border-black/10 text-[var(--avenize-black)] rounded-lg text-sm font-medium hover:bg-black/5 transition flex items-center justify-center gap-2"
+                      className="px-4 py-2 bg-white border border-black/10 text-gray-900 rounded-lg text-sm font-medium hover:bg-black/5 transition flex items-center justify-center gap-2"
                     >
                       <Settings className="w-4 h-4" />
                       Customize

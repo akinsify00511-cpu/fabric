@@ -149,7 +149,7 @@ export default function ExpenseClaimsPage() {
             <Receipt size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Expense Claims</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Expense Claims</h1>
             <p className="text-sm text-black/50">Track and manage expenses</p>
           </div>
         </div>

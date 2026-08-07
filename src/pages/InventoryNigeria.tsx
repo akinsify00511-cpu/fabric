@@ -428,7 +428,7 @@ export default function InventoryNigeria() {
                   </div>
                   <div className="text-right">
                     <p className={`text-xl font-bold ${
-                      isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-[var(--avenize-black)]'
+                      isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-gray-900'
                     }`}>
                       {item.quantity}
                       <span className="text-xs font-normal text-black/40 ml-1">

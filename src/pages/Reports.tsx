@@ -57,7 +57,7 @@ export default function Reports() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Reports</h1>
+        <h1 className="text-xl font-medium text-gray-900 mb-6">Reports</h1>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3, 4].map(i => (
             <div key={i} className="h-16 bg-white/5 rounded-xl"></div>
@@ -77,7 +77,7 @@ export default function Reports() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Reports</h1>
+      <h1 className="text-xl font-medium text-gray-900 mb-6">Reports</h1>
       <div className="bg-white rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
         {rows.map((r) => (
           <div key={r.label} className="px-4 py-3 flex items-center justify-between text-sm">
@@ -85,7 +85,7 @@ export default function Reports() {
               <span className="text-lg">{r.icon}</span>
               <span className="text-black/60">{r.label}</span>
             </div>
-            <span className="text-[var(--avenize-black)] font-medium">{r.value}</span>
+            <span className="text-gray-900 font-medium">{r.value}</span>
           </div>
         ))}
       </div>

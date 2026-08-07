@@ -203,7 +203,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
       <div className="pb-20">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-medium text-[var(--avenize-black)]">Automations</h1>
+            <h1 className="text-xl font-medium text-gray-900">Automations</h1>
             <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
           </div>
         </div>
@@ -323,7 +323,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Automations</h1>
+          <h1 className="text-xl font-medium text-gray-900">Automations</h1>
           <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
         </div>
         <button
@@ -345,7 +345,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <Activity size={14} className="text-green-500" />
             <span className="text-xs text-black/50 uppercase tracking-wide">Active</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--avenize-black)]">
+          <p className="text-2xl font-bold text-gray-900">
             {automations.filter((a) => a.enabled).length}
           </p>
         </div>
@@ -354,7 +354,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <Zap size={14} className="text-[var(--avenize-accent-end)]" />
             <span className="text-xs text-black/50 uppercase tracking-wide">Total runs</span>
           </div>
-          <p className="text-2xl font-bold text-[var(--avenize-black)]">
+          <p className="text-2xl font-bold text-gray-900">
             {automations.reduce((sum, a) => sum + a.run_count, 0)}
           </p>
         </div>
@@ -363,7 +363,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <Clock size={14} className="text-black/30" />
             <span className="text-xs text-black/50 uppercase tracking-wide">Last run</span>
           </div>
-          <p className="text-sm font-medium text-[var(--avenize-black)]">
+          <p className="text-sm font-medium text-gray-900">
             {automations.filter((a) => a.last_run_at).length > 0
               ? new Date(Math.max(...automations.filter((a) => a.last_run_at).map((a) => new Date(a.last_run_at!).getTime()))).toLocaleDateString()
               : 'Never'}
@@ -386,7 +386,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
           <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center text-white text-2xl mx-auto mb-4">
             🤖
           </div>
-          <h3 className="text-lg font-medium text-[var(--avenize-black)] mb-2">No automations yet</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No automations yet</h3>
           <p className="text-sm text-black/50 mb-4 max-w-sm mx-auto">
             Create your first automation to streamline your workflow. For example: when a deal is won, create a task to follow up.
           </p>
@@ -440,7 +440,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-medium text-[var(--avenize-black)]">{auto.name}</h3>
+                      <h3 className="text-sm font-medium text-gray-900">{auto.name}</h3>
                       {!auto.enabled && (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>
                       )}
@@ -513,7 +513,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
               {/* Name */}
               <div>
-                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-1">Name</label>
+                <label className="text-sm font-medium text-gray-900 block mb-1">Name</label>
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -524,7 +524,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
               {/* Description */}
               <div>
-                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-1">Description (optional)</label>
+                <label className="text-sm font-medium text-gray-900 block mb-1">Description (optional)</label>
                 <input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -535,7 +535,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
               {/* Trigger */}
               <div>
-                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-2">
+                <label className="text-sm font-medium text-gray-900 block mb-2">
                   <span className="flex items-center gap-2">
                     <span className="text-lg">⚡</span> When this happens...
                   </span>
@@ -566,7 +566,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
               {/* Action */}
               <div>
-                <label className="text-sm font-medium text-[var(--avenize-black)] block mb-2">
+                <label className="text-sm font-medium text-gray-900 block mb-2">
                   <span className="flex items-center gap-2">
                     <span className="text-lg">➡️</span> Do this...
                   </span>

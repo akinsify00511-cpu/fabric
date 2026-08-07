@@ -162,7 +162,7 @@ export default function NotificationSettings() {
     <div className="max-w-3xl mx-auto pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Notification Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Notification Settings</h1>
           <p className="text-sm text-black/50 mt-1">Choose how you want to be notified</p>
         </div>
         <div className="flex gap-2">

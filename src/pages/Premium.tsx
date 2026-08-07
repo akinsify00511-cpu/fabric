@@ -83,7 +83,7 @@ export default function Premium() {
           <Crown size={16} />
           <span>Unlock Your Business Potential</span>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-[var(--avenize-black)] mb-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Upgrade to <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Pro</span>
         </h1>
         <p className="text-xl text-black/60 max-w-2xl mx-auto mb-8">

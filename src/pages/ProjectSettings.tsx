@@ -165,7 +165,7 @@ export default function ProjectSettings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Project Settings</h1>
+      <h1 className="text-xl font-medium text-gray-900 mb-6">Project Settings</h1>
 
       {/* Job Types Section */}
       <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">

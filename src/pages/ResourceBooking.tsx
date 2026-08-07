@@ -165,7 +165,7 @@ export default function ResourceBookingPage() {
             <Calendar size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Resource Booking</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Resource Booking</h1>
             <p className="text-sm text-black/50">Book rooms, equipment, and more</p>
           </div>
         </div>

@@ -58,7 +58,7 @@ export default function CashFlow() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Cash Flow</h1>
+        <h1 className="text-xl font-medium text-gray-900 mb-6">Cash Flow</h1>
         <div className="animate-pulse space-y-4">
           <div className="grid grid-cols-3 gap-4">
             {[1, 2, 3].map(i => <div key={i} className="h-24 bg-white/5 rounded-xl"></div>)}
@@ -70,7 +70,7 @@ export default function CashFlow() {
 
   return (
     <div className="max-w-5xl">
-      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Cash Flow</h1>
+      <h1 className="text-xl font-medium text-gray-900 mb-6">Cash Flow</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">

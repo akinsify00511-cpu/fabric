@@ -258,7 +258,7 @@ export default function TimeTracking() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Time Tracking</h1>
+          <h1 className="text-xl font-medium text-gray-900">Time Tracking</h1>
           <p className="text-sm text-black/50 mt-0.5">Track your work hours and request time off</p>
         </div>
         <div className="flex gap-2">
@@ -282,7 +282,7 @@ export default function TimeTracking() {
       {/* Timer Card */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="text-center">
-          <div className="text-5xl font-mono font-bold text-[var(--avenize-black)] mb-4">
+          <div className="text-5xl font-mono font-bold text-gray-900 mb-4">
             {formatElapsed(elapsed)}
           </div>
           <div className="flex justify-center gap-3">

@@ -232,7 +232,7 @@ export default function Tickets() {
         {/* Header */}
         <div className="p-4 border-b border-black/[0.06]">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-[var(--avenize-black)]">Tickets</h2>
+            <h2 className="text-sm font-semibold text-gray-900">Tickets</h2>
             <button
               onClick={() => setShowNewTicket(true)}
               className="p-2 rounded-lg avenize-gradient text-white"
@@ -306,7 +306,7 @@ export default function Tickets() {
                       <AlertTriangle size={14} className="text-red-500" />
                     )}
                   </div>
-                  <p className="text-sm font-medium text-[var(--avenize-black)] line-clamp-1">{ticket.subject}</p>
+                  <p className="text-sm font-medium text-gray-900 line-clamp-1">{ticket.subject}</p>
                   <p className="text-xs text-black/40 mt-1">
                     {ticket.customer_name ?? 'Unknown'} · {new Date(ticket.created_at).toLocaleDateString()}
                   </p>
@@ -329,7 +329,7 @@ export default function Tickets() {
               <ArrowLeft size={20} />
             </button>
             <div className="flex-1 min-w-0">
-              <h2 className="font-medium text-[var(--avenize-black)] truncate">{selectedTicket.subject}</h2>
+              <h2 className="font-medium text-gray-900 truncate">{selectedTicket.subject}</h2>
               <p className="text-xs text-black/40">
                 #{selectedTicket.id.slice(0, 8)} · {selectedTicket.customer_name ?? 'Unknown customer'}
               </p>
@@ -442,7 +442,7 @@ export default function Tickets() {
         <div className="hidden md:flex flex-1 items-center justify-center bg-[var(--avenize-offwhite)]">
           <div className="text-center">
             <Ticket size={64} className="mx-auto mb-4 text-black/10" />
-            <h2 className="text-lg font-medium text-[var(--avenize-black)]">Select a ticket</h2>
+            <h2 className="text-lg font-medium text-gray-900">Select a ticket</h2>
             <p className="text-sm text-black/40 mt-1">Choose a ticket from the list to view details</p>
           </div>
         </div>

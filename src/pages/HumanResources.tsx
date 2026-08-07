@@ -34,7 +34,7 @@ export default function HumanResources() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--avenize-black)]">Human Resources</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Human Resources</h1>
           <p className="text-sm text-black/50">Staff management & HR operations</p>
         </div>
       </div>

@@ -122,7 +122,7 @@ export default function PaymentSettingsPage() {
             <CreditCard size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Payment Settings</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Payment Settings</h1>
             <p className="text-sm text-black/50">Configure payment gateways</p>
           </div>
         </div>

@@ -256,7 +256,7 @@ export default function Requisitions() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Requisitions</h1>
+          <h1 className="text-xl font-medium text-gray-900">Requisitions</h1>
           <p className="text-sm text-black/50 mt-0.5">Request approvals for purchases and expenses</p>
         </div>
         <button

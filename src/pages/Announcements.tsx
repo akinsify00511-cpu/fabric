@@ -196,7 +196,7 @@ export default function AnnouncementsPage() {
             <Megaphone size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Announcements</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Announcements</h1>
             <p className="text-sm text-black/50">Company updates and notifications</p>
           </div>
         </div>

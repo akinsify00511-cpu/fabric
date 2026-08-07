@@ -7,11 +7,11 @@ export default function CookiePolicy() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-[var(--avenize-black)] hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-lg font-semibold text-[var(--avenize-black)]">Cookie Policy</h1>
+          <h1 className="text-lg font-semibold text-gray-900">Cookie Policy</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -24,7 +24,7 @@ export default function CookiePolicy() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
               <Cookie className="w-8 h-8 text-amber-600" />
             </div>
-            <h1 className="text-3xl font-bold text-[var(--avenize-black)] mb-2">Cookie Policy</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Cookie Policy</h1>
             <p className="text-gray-500">Last updated: August 3, 2026</p>
           </div>
 
@@ -159,7 +159,7 @@ export default function CookiePolicy() {
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/privacy"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-[var(--avenize-black)] rounded-xl font-medium hover:bg-black/5 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
           >
             <Settings size={18} />
             Privacy Policy

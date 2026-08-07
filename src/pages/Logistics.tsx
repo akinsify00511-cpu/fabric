@@ -37,7 +37,7 @@ export default function Logistics() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--avenize-black)]">Delivery & Logistics</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Delivery & Logistics</h1>
           <p className="text-sm text-black/50">Track orders and deliveries</p>
         </div>
       </div>

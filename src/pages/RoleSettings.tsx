@@ -168,7 +168,7 @@ export default function RoleSettings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Team Roles</h1>
+      <h1 className="text-xl font-medium text-gray-900 mb-6">Team Roles</h1>
 
       {/* Info Banner */}
       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">

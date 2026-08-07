@@ -325,7 +325,7 @@ export default function Chat() {
         }`}
       >
         <div className="p-4 border-b border-black/[0.06]">
-          <h2 className="text-sm font-semibold text-[var(--avenize-black)]">Channels</h2>
+          <h2 className="text-sm font-semibold text-gray-900">Channels</h2>
         </div>
 
         <div className="flex-1 overflow-y-auto py-2">
@@ -393,7 +393,7 @@ export default function Chat() {
             </button>
             <div className="flex items-center gap-2">
               <Hash size={18} className="text-black/40" />
-              <span className="font-medium text-[var(--avenize-black)]">{selectedChannel.name}</span>
+              <span className="font-medium text-gray-900">{selectedChannel.name}</span>
             </div>
             {selectedChannel.description && (
               <span className="text-sm text-black/40 hidden md:inline">— {selectedChannel.description}</span>
@@ -433,7 +433,7 @@ export default function Chat() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-baseline gap-2">
-                              <span className="text-sm font-medium text-[var(--avenize-black)]">
+                              <span className="text-sm font-medium text-gray-900">
                                 {msg.sender_name}
                               </span>
                               <span className="text-xs text-black/30">{formatTime(msg.created_at)}</span>
@@ -518,7 +518,7 @@ export default function Chat() {
         <div className="flex-1 flex items-center justify-center bg-[var(--avenize-offwhite)]">
           <div className="text-center">
             <Hash size={64} className="mx-auto mb-4 text-black/10" />
-            <h2 className="text-lg font-medium text-[var(--avenize-black)]">Welcome to Avenize Chat</h2>
+            <h2 className="text-lg font-medium text-gray-900">Welcome to Avenize Chat</h2>
             <p className="text-sm text-black/40 mt-1">Select a channel or create a new one</p>
             <button
               onClick={() => setCreatingChannel(true)}

@@ -216,7 +216,7 @@ Each code can only be used once!`
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Security</h1>
+          <h1 className="text-xl font-medium text-gray-900">Security</h1>
           <p className="text-sm text-black/50 mt-0.5">Protect your account and monitor activity</p>
         </div>
       </div>

@@ -196,7 +196,7 @@ export default function AuditLogPage() {
             <Shield size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Audit Log</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Audit Log</h1>
             <p className="text-sm text-black/50">Track all changes and activity</p>
           </div>
         </div>

@@ -35,11 +35,11 @@ export default function Contact() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-[var(--avenize-black)] hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-gray-900 hover:text-indigo-600 transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
-          <h1 className="text-lg font-semibold text-[var(--avenize-black)]">Contact Us</h1>
+          <h1 className="text-lg font-semibold text-gray-900">Contact Us</h1>
           <div className="w-20"></div>
         </div>
       </header>
@@ -52,7 +52,7 @@ export default function Contact() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-[var(--avenize-black)] mb-2">Message Sent!</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
             <p className="text-gray-500 mb-6 max-w-md mx-auto">
               Thank you for contacting us. Our team will get back to you within 24 hours.
             </p>
@@ -71,7 +71,7 @@ export default function Contact() {
               </button>
               <Link
                 to="/"
-                className="px-6 py-3 bg-white border border-black/10 text-[var(--avenize-black)] rounded-xl font-medium hover:bg-black/5 transition"
+                className="px-6 py-3 bg-white border border-black/10 text-gray-900 rounded-xl font-medium hover:bg-black/5 transition"
               >
                 Back to Home
               </Link>
@@ -81,7 +81,7 @@ export default function Contact() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Contact Options */}
             <div className="lg:col-span-1">
-              <h2 className="text-xl font-bold text-[var(--avenize-black)] mb-4">How can we help?</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">How can we help?</h2>
               <div className="space-y-2">
                 {contactOptions.map((option) => (
                   <button
@@ -96,7 +96,7 @@ export default function Contact() {
                     <div className="flex items-center gap-3">
                       <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-gray-400'}`} />
                       <div>
-                        <p className="font-medium text-[var(--avenize-black)]">{option.label}</p>
+                        <p className="font-medium text-gray-900">{option.label}</p>
                         <p className="text-xs text-gray-500">{option.desc}</p>
                       </div>
                     </div>
@@ -129,7 +129,7 @@ export default function Contact() {
                     <Clock className="w-5 h-5 text-gray-400" />
                     <div>
                       <p className="text-gray-500">Support Hours</p>
-                      <p className="text-[var(--avenize-black)]">Mon-Fri, 9am-6pm PST</p>
+                      <p className="text-gray-900">Mon-Fri, 9am-6pm PST</p>
                     </div>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function Contact() {
                     <MapPin className="w-5 h-5 text-gray-400" />
                     <div>
                       <p className="text-gray-500">Address</p>
-                      <p className="text-[var(--avenize-black)]">San Francisco, CA</p>
+                      <p className="text-gray-900">San Francisco, CA</p>
                     </div>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ export default function Contact() {
             {/* Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl border border-black/5 p-8">
-                <h2 className="text-xl font-bold text-[var(--avenize-black)] mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">
                   {contactOptions.find(o => o.id === contactType)?.label}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -219,7 +219,7 @@ export default function Contact() {
               <div className="mt-6 bg-indigo-50 rounded-2xl p-6 flex items-start gap-4">
                 <HelpCircle className="w-6 h-6 text-indigo-600 shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-[var(--avenize-black)] mb-1">Need quick answers?</h3>
+                  <h3 className="font-semibold text-gray-900 mb-1">Need quick answers?</h3>
                   <p className="text-sm text-gray-600 mb-3">
                     Check our Help Center for guides, tutorials, and frequently asked questions.
                   </p>

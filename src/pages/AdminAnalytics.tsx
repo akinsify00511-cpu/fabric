@@ -161,7 +161,7 @@ export default function AdminAnalytics() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Admin Analytics</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Admin Analytics</h1>
           <p className="text-sm text-black/50">Monitor all app activity and user engagement</p>
         </div>
         <div className="flex items-center gap-3">

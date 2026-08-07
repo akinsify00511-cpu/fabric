@@ -167,7 +167,7 @@ export default function CurrencyExchangePage() {
             <DollarSign size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Currency Exchange</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Currency Exchange</h1>
             <p className="text-sm text-black/50">Manage exchange rates and convert currencies</p>
           </div>
         </div>

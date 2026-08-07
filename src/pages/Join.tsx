@@ -359,7 +359,7 @@ export default function Join() {
         <div className="bg-gradient-to-br from-[var(--avenize-primary)]/5 to-[var(--avenize-accent)]/5 rounded-2xl p-6 space-y-4">
           <div className="text-center">
             <p className="text-sm text-black/60 mb-2">You've been invited to join</p>
-            <h2 className="text-xl font-bold text-[var(--avenize-black)]">{info.business_name}</h2>
+            <h2 className="text-xl font-bold text-gray-900">{info.business_name}</h2>
           </div>
           
           <div className="flex items-center justify-center gap-8 pt-4 border-t border-black/10">

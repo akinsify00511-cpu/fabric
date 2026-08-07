@@ -193,7 +193,7 @@ export default function LeaveManagementPage() {
             <CalendarDays size={24} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-[var(--avenize-black)]">Leave Management</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Leave Management</h1>
             <p className="text-sm text-black/50">Request and manage time off</p>
           </div>
         </div>

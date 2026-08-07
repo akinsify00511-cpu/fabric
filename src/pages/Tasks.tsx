@@ -197,7 +197,7 @@ export default function Tasks() {
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-[var(--avenize-black)] mb-6">Tasks</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Tasks</h1>
 
       <div className="grid grid-cols-4 gap-3 mb-6">
         {[

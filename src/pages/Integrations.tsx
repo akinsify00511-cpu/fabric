@@ -310,7 +310,7 @@ export default function Integrations() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Integrations</h1>
+      <h1 className="text-xl font-medium text-gray-900 mb-6">Integrations</h1>
 
       {/* Tab Navigation */}
       <div className="flex gap-2 mb-6 bg-black/[0.03] p-1 rounded-xl w-fit">
@@ -318,7 +318,7 @@ export default function Integrations() {
           onClick={() => setActiveTab('social')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'social' 
-              ? 'bg-white text-[var(--avenize-black)] shadow-sm' 
+              ? 'bg-white text-gray-900 shadow-sm' 
               : 'text-black/50 hover:text-black/70'
           }`}
         >
@@ -329,7 +329,7 @@ export default function Integrations() {
           onClick={() => setActiveTab('sms')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'sms' 
-              ? 'bg-white text-[var(--avenize-black)] shadow-sm' 
+              ? 'bg-white text-gray-900 shadow-sm' 
               : 'text-black/50 hover:text-black/70'
           }`}
         >

@@ -230,7 +230,7 @@ export default function Departments() {
   if (loading) {
     return (
       <div className="max-w-6xl">
-        <h1 className="text-xl font-medium text-[var(--avenize-black)] mb-6">Departments & Teams</h1>
+        <h1 className="text-xl font-medium text-gray-900 mb-6">Departments & Teams</h1>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl"></div>)}
         </div>
@@ -241,7 +241,7 @@ export default function Departments() {
   return (
     <div className="max-w-6xl">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-medium text-[var(--avenize-black)]">Departments & Teams</h1>
+        <h1 className="text-xl font-medium text-gray-900">Departments & Teams</h1>
         <div className="flex gap-2">
           <button
             onClick={() => openAddModal('department')}

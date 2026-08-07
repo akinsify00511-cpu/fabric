@@ -443,7 +443,7 @@ export default function Knowledge() {
                   >
                     <div className="flex items-center gap-2 mb-1">
                       {page.icon_emoji && <span>{page.icon_emoji}</span>}
-                      <span className="font-medium text-[var(--avenize-black)]">{page.title}</span>
+                      <span className="font-medium text-gray-900">{page.title}</span>
                     </div>
                     <p className="text-xs text-black/40">in {(page as any).kb_spaces?.name}</p>
                   </button>
@@ -508,7 +508,7 @@ export default function Knowledge() {
                   value={editingPage.title}
                   onChange={(e) => setEditingPage((prev) => prev ? { ...prev, title: e.target.value } : null)}
                   placeholder="Untitled"
-                  className="w-full text-3xl font-bold text-[var(--avenize-black)] mb-8 border-none outline-none placeholder:text-black/20"
+                  className="w-full text-3xl font-bold text-gray-900 mb-8 border-none outline-none placeholder:text-black/20"
                 />
 
                 {/* Simple Editor UI */}
@@ -576,7 +576,7 @@ export default function Knowledge() {
               <div className="w-20 h-20 rounded-2xl avenize-gradient flex items-center justify-center text-white text-3xl mx-auto mb-6">
                 📚
               </div>
-              <h2 className="text-xl font-semibold text-[var(--avenize-black)] mb-2">Knowledge Base</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Knowledge Base</h2>
               <p className="text-sm text-black/50 mb-6">
                 Your team's documentation hub. Create pages, organize with spaces, and keep everything in one place.
               </p>
@@ -596,7 +596,7 @@ export default function Knowledge() {
       {showNewPage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <h3 className="text-lg font-semibold text-[var(--avenize-black)] mb-4">Create new page</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Create new page</h3>
             <input
               value={newPageTitle}
               onChange={(e) => setNewPageTitle(e.target.value)}
@@ -638,7 +638,7 @@ export default function Knowledge() {
             ) : (
               history.map((v, i) => (
                 <div key={i} className="p-3 rounded-xl bg-black/[0.02]">
-                  <p className="text-sm font-medium text-[var(--avenize-black)]">{v.title}</p>
+                  <p className="text-sm font-medium text-gray-900">{v.title}</p>
                   <p className="text-xs text-black/40 mt-1">Version {history.length - i}</p>
                   <button
                     onClick={() => {

@@ -36,7 +36,7 @@ export default function More() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--avenize-black)] mb-1">All modules</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-1">All modules</h1>
           <p className="text-sm text-black/50">Your complete business operating system</p>
         </div>
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -64,7 +64,7 @@ export default function More() {
                 <Lock size={14} className="text-gray-400" />
               </div>
               <div>
-                <span className="text-sm font-medium text-[var(--avenize-black)]">{item.label}</span>
+                <span className="text-sm font-medium text-gray-900">{item.label}</span>
                 <p className="text-xs text-black/40">{item.desc}</p>
               </div>
               <Link
@@ -84,7 +84,7 @@ export default function More() {
                 <item.icon size={18} strokeWidth={2} />
               </div>
               <div>
-                <span className="text-sm font-medium text-[var(--avenize-black)]">{item.label}</span>
+                <span className="text-sm font-medium text-gray-900">{item.label}</span>
                 <p className="text-xs text-black/40">{item.desc}</p>
               </div>
             </Link>

@@ -27,7 +27,7 @@ export default function SSOSettings() {
       <div className="pb-20">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-medium text-[var(--avenize-black)]">Single Sign-On</h1>
+            <h1 className="text-xl font-medium text-gray-900">Single Sign-On</h1>
             <p className="text-sm text-black/50 mt-0.5">Enterprise identity provider integration</p>
           </div>
         </div>
@@ -175,7 +175,7 @@ export default function SSOSettings() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-[var(--avenize-black)]">Single Sign-On</h1>
+          <h1 className="text-xl font-medium text-gray-900">Single Sign-On</h1>
           <p className="text-sm text-black/50 mt-0.5">Configure your identity provider</p>
         </div>
         <BetaBadge />
