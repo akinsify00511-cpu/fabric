@@ -1,16 +1,28 @@
 -- ============================================
--- Add INSERT policy for businesses table
+-- Add INSERT policy for businesses and staff tables
 -- This allows new users to create a business during onboarding
 -- ============================================
 
--- Drop existing insert policy if exists
+-- Businesses: Drop existing insert policy if exists
 DROP POLICY IF EXISTS "Authenticated users can create businesses" ON businesses;
 
--- Create policy: Any authenticated user can INSERT a business
+-- Businesses: Create policy - Any authenticated user can INSERT
 CREATE POLICY "Authenticated users can create businesses"
   ON businesses FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
 
--- Grant permissions
+-- Businesses: Grant permissions
 GRANT INSERT ON businesses TO authenticated;
 GRANT INSERT ON businesses TO anon;
+
+-- Staff: Drop existing insert policy if exists
+DROP POLICY IF EXISTS "Authenticated users can create staff" ON staff;
+
+-- Staff: Create policy - Any authenticated user can INSERT
+CREATE POLICY "Authenticated users can create staff"
+  ON staff FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+-- Staff: Grant permissions
+GRANT INSERT ON staff TO authenticated;
+GRANT INSERT ON staff TO anon;
