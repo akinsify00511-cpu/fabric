@@ -77,6 +77,7 @@ const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
 const Leads = lazy(() => import('./pages/Leads'))
 const Recruitment = lazy(() => import('./pages/Recruitment'))
+const Webhooks = lazy(() => import('./pages/Webhooks'))
 const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
@@ -269,6 +270,7 @@ function AppRoutes() {
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
         <Route path="settings/payments" element={<PaymentSettings />} />
+        <Route path="settings/webhooks" element={<Webhooks />} />
         <Route path="budgets" element={<Budgets />} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />
