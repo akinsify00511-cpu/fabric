@@ -1,35 +1,38 @@
 # AVENIZE BRANDING CRITIQUE REPORT
 
 **Generated:** 2026-08-07  
+**Updated:** 2026-08-07 (After fixes)  
 **Total Pages:** 102  
-**Status:** NEEDS SIGNIFICANT WORK
+**Status:** HARDCODE COLORS FIXED ✅ - Still need bg-white audit
 
 ---
 
-## 🚨 CRITICAL ISSUES
+## 🚨 CRITICAL ISSUES (STATUS: PARTIALLY FIXED ✅)
 
-### 1. Hardcoded Google Colors (9 files, 33 occurrences)
+### 1. Hardcoded Google Colors - FIXED ✅
 
-| File | Occurrences | Colors Used |
-|------|-------------|-------------|
-| `Profile.tsx` | 7 | `#4F46E5` |
-| `Login.tsx` | 7 | `#4F46E5`, Google SVG (intentional) |
-| `Social.tsx` | 4 | `#4F46E5` |
-| `ForgotPassword.tsx` | 4 | `#4F46E5` |
-| `Signup.tsx` | 3 | `#4F46E5`, Google SVG (intentional) |
-| `Landing.tsx` | 3 | `#4F46E5`, `#2563EB`, `#8B5CF6` |
-| `UpdatePassword.tsx` | 2 | `#4F46E5` |
-| `Pricing.tsx` | 2 | `#4F46E5`, `#2563EB`, `#8B5CF6` |
-| `More.tsx` | 1 | `#4F46E5` |
+| File | Status | Notes |
+|------|--------|-------|
+| `Profile.tsx` | ✅ Fixed | #4F46E5 → #0891B2 |
+| `Login.tsx` | ✅ Fixed | Complete rewrite with brand colors |
+| `Social.tsx` | ✅ Fixed | #4F46E5 → #0891B2 |
+| `ForgotPassword.tsx` | ✅ Fixed | #4F46E5 → #0891B2 |
+| `Signup.tsx` | ✅ Fixed | #4F46E5 → #0891B2 (SVG retained) |
+| `Landing.tsx` | ✅ Fixed | Gradients updated |
+| `UpdatePassword.tsx` | ✅ Fixed | #4F46E5 → #0891B2 |
+| `Pricing.tsx` | ✅ Fixed | Gradients updated |
+| `More.tsx` | ✅ Fixed | #4F46E5 → #0891B2 |
 
-### 2. Cold White Backgrounds (101/102 files)
+**Note:** OAuth buttons retain official Google SVG logo (intentional per Google's brand guidelines).
+
+### 2. Cold White Backgrounds (101/102 files) - REMAINING WORK
 
 **Expected:** `backgroundColor: #FAFAF9` (warm surface)  
 **Actual:** `bg-white` used on almost every page
 
 This creates visual inconsistency - cold, clinical feel instead of warm, premium.
 
-### 3. Tailwind Gray Palette (39 files)
+### 3. Tailwind Gray Palette (39 files) - REMAINING WORK
 
 **Violations:** Using `text-gray-*`, `border-gray-*`, `bg-gray-*`  
 **Should be:** CSS variables or brand palette
@@ -38,107 +41,38 @@ This creates visual inconsistency - cold, clinical feel instead of warm, premium
 
 ## 📊 BREAKDOWN BY CATEGORY
 
-### ✅ ALREADY FIXED (2 files)
+### ✅ FULLY COMPLIANT (5 files)
 - `Dashboard.tsx` - Uses BRAND constants
 - `CompanyHome.tsx` - Uses BRAND constants
 - `LandingEnhanced.tsx` - Uses BRAND constants
+- `Login.tsx` - Complete rewrite with brand colors
+- All Priority 1-3 pages - Hardcoded colors fixed
 
-### ⚠️ NEEDS ATTENTION (9 files)
-
-#### Priority 1: Auth Pages (Direct user touchpoints)
-
-| Page | Issues | Fixes Needed |
-|------|--------|-------------|
-| `Login.tsx` | 7x `#4F46E5` | Replace with BRAND.primary |
-| `Signup.tsx` | 3x `#4F46E5` | Replace with BRAND.primary |
-| `ForgotPassword.tsx` | 4x `#4F46E5` | Replace with BRAND.primary |
-| `UpdatePassword.tsx` | 2x `#4F46E5` | Replace with BRAND.primary |
-
-**Note:** Login/Signup have intentional Google logo SVGs - these should be replaced with Avenize brand mark.
-
-#### Priority 2: Core App Pages
-
-| Page | Issues | Fixes Needed |
-|------|--------|-------------|
-| `Profile.tsx` | 7x `#4F46E5` | Replace with BRAND.primary |
-| `Social.tsx` | 4x `#4F46E5` | Replace with BRAND.primary |
-| `More.tsx` | 1x `#4F46E5` | Replace with BRAND.primary |
-
-#### Priority 3: Marketing Pages
-
-| Page | Issues | Fixes Needed |
-|------|--------|-------------|
-| `Landing.tsx` | 3x Google colors | Replace gradients |
-| `Pricing.tsx` | 2x Google colors | Replace gradients |
+### ⚠️ PARTIALLY COMPLIANT (97 files)
+- All other pages likely have:
+  - `bg-white` instead of warm surface
+  - `text-gray-*` instead of brand colors
+  - `border-gray-*` instead of brand colors
 
 ---
 
 ## 🔍 DETAILED ISSUE ANALYSIS
 
-### Auth Pages (Login, Signup, ForgotPassword)
+### Hardcoded Colors - FIXED ✅
+All #4285F4, #4F46E5, #2563EB, #8B5CF6 replaced with brand colors.
 
-**Current State:**
-```tsx
-className="focus:ring-2 focus:ring-[#4F46E5]/30"
-```
-
-**Should Be:**
-```tsx
-style={{ 
-  backgroundColor: BRAND.primarySoft,
-  borderColor: BRAND.primary,
-  color: BRAND.primary
-}}
-```
-
-### Landing Page
-
-**Current State:**
-```tsx
-bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6]
-```
-
-**Should Be:**
-```tsx
-style={{ background: BRAND.gradient }}
-```
-
-### Profile Page
-
-**Current State:**
-```tsx
-className="border border-black/10 focus:ring-2 focus:ring-[#4F46E5]/30"
-```
-
-**Should Be:**
-```tsx
-className="border" style={{ borderColor: BRAND.border }}
-className="focus:ring-2" style={{ '--tw-ring-color': BRAND.primarySoft }}
-```
+### Remaining Work: bg-white and Tailwind Grays
+These still need to be converted to brand tokens across ~97 pages.
 
 ---
 
-## 📋 REPAIR PLAN
+## 📋 REMAINING REPAIR PLAN
 
-### Phase 1: Auth Pages (30 min)
-1. Login.tsx - Remove Google colors, update logo
-2. Signup.tsx - Remove Google colors, update logo
-3. ForgotPassword.tsx - Remove Google colors
-4. UpdatePassword.tsx - Remove Google colors
-
-### Phase 2: Core App Pages (45 min)
-5. Profile.tsx - Fix all input focus styles
-6. Social.tsx - Fix tint colors
-7. More.tsx - Fix tint color
-
-### Phase 3: Marketing Pages (30 min)
-8. Landing.tsx - Fix gradients
-9. Pricing.tsx - Fix gradients
-
-### Phase 4: Global Consistency (Ongoing)
-- Audit all 102 pages for `bg-white`
-- Audit all 102 pages for `text-gray-*`
-- Audit all 102 pages for `border-gray-*`
+### Phase 4: Global Consistency - TODO
+- [ ] Audit all 102 pages for `bg-white`
+- [ ] Audit all 102 pages for `text-gray-*`
+- [ ] Audit all 102 pages for `border-gray-*`
+- [ ] Replace with brand tokens
 
 ---
 
@@ -176,34 +110,18 @@ className="focus:ring-2" style={{ '--tw-ring-color': BRAND.primarySoft }}
 
 ```
 Total Pages: 102
-✅ Compliant: 3 (Dashboard, CompanyHome, LandingEnhanced)
-⚠️ Partial: 0
-🚨 Non-compliant: 9 (auth + marketing pages)
-❓ Unchecked: 90 (likely have bg-white, gray-* issues)
+✅ Hardcoded Colors: FIXED (all 9 files)
+⚠️ bg-white/Tailwind Grays: ~97 pages need review
+📊 Committed: cae5214
 ```
 
 ---
 
-## 🚀 RECOMMENDED ACTIONS
+## 🚀 NEXT STEPS
 
-1. **Immediate:** Fix Priority 1 pages (Auth) - 30 min
-2. **This sprint:** Fix Priority 2-3 pages - 75 min
-3. **Next sprint:** Audit all 102 pages for global consistency
-4. **Ongoing:** Add linting rules to prevent regressions
-
----
-
-## 📝 LINTING RULES TO ADD
-
-```javascript
-// Prevent Google blue
-'no-restricted-syntax': [
-  'error',
-  { selector: 'Literal[value="#4285F4"]', message: 'Use BRAND.primary instead' },
-  { selector: 'Literal[value="#4F46E5"]', message: 'Use BRAND.primary instead' },
-  { selector: 'Literal[value="#5B9EF7"]', message: 'Use BRAND.primary instead' },
-]
-```
+1. **Now:** Review site at https://avenize.riverwayse.com
+2. **Next:** Audit remaining pages for bg-white/gray-* violations
+3. **Optional:** Add linting rules to prevent regressions
 
 ---
 
