@@ -51,34 +51,47 @@ const FAQS = [
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-sm">A</span>
+        <div className="flex items-center justify-between h-14">
+          {/* Left side - Logo */}
+          <div className="flex items-center gap-6">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">A</span>
+              </div>
+              <span className="font-semibold text-gray-900">Avenize</span>
+            </Link>
+            <div className="hidden lg:flex items-center gap-1">
+              <a href="#modules" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Features</a>
+              <a href="#pricing" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Pricing</a>
+              <a href="#testimonials" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Stories</a>
             </div>
-            <span className="font-semibold text-lg text-gray-900">Avenize</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-1">
-            <a href="#modules" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Features</a>
-            <a href="#pricing" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Pricing</a>
-            <a href="#testimonials" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Stories</a>
-            <a href="#faq" className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">FAQ</a>
           </div>
-          <div className="flex items-center gap-2">
-            <Link to="/login" className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition">Sign In</Link>
-            <Link to="/signup" className="px-5 py-2.5 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 hover:shadow-md transition-all">Start Free Trial</Link>
-            <button className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={20} /> : <Menu size={20} />}</button>
+          
+          {/* Right side - Actions */}
+          <div className="flex items-center gap-3">
+            <button className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
+            </button>
+            <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Sign in</Link>
+            <Link to="/signup" className="px-4 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition shadow-sm">Get started</Link>
+            <button className="lg:hidden p-2 text-gray-500 hover:bg-gray-50 rounded-md" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
         </div>
       </div>
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 p-4 space-y-1">
-          <a href="#modules" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Features</a>
-          <a href="#pricing" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Pricing</a>
-          <a href="#testimonials" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Stories</a>
-          <a href="#faq" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">FAQ</a>
+        <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
+          <a href="#modules" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Features</a>
+          <a href="#pricing" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Pricing</a>
+          <a href="#testimonials" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Stories</a>
+          <a href="#faq" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">FAQ</a>
         </div>
       )}
     </nav>
@@ -87,38 +100,72 @@ function Navbar() {
 
 function HeroSection() {
   return (
-    <section className="pt-32 pb-16 px-4 sm:px-6 bg-gradient-to-b from-blue-50 via-indigo-50/30 to-white">
-      <div className="max-w-5xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 text-blue-700 text-sm font-medium mb-6">
-          <Sparkles size={16} /><span>Trusted by 2,500+ Nigerian businesses</span>
+    <section className="pt-28 pb-16 px-4 sm:px-6 bg-white">
+      <div className="max-w-4xl mx-auto text-center">
+        {/* Google-style logo */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-xl">A</span>
+          </div>
+          <span className="text-3xl font-semibold text-gray-800">Avenize</span>
         </div>
+        
+        {/* Google-style search bar - THE ICONIC ELEMENT */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="relative bg-white rounded-full shadow-md hover:shadow-lg transition-shadow border border-gray-200 overflow-hidden">
+            <div className="flex items-center px-6 py-4">
+              <svg className="w-5 h-5 text-gray-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input 
+                type="text" 
+                placeholder="Search features, modules, pricing..." 
+                className="flex-1 text-lg text-gray-700 outline-none placeholder-gray-400"
+              />
+              <div className="flex items-center gap-2 ml-4">
+                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+                <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Quick action pills - Google style */}
+        <div className="flex flex-wrap justify-center gap-2 mb-10">
+          <span className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">How it works</span>
+          <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">Watch demo</span>
+          <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">See pricing</span>
+        </div>
+        
+        {/* Main headline */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-          One App for Your<br />
-          <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Whole Business</span>
+          Run Your Entire<br />
+          <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Business in One Place</span>
         </h1>
-        <p className="text-lg sm:text-xl text-gray-600 mb-4 max-w-2xl mx-auto">
-          CRM • Invoicing • Projects • HR • Inventory • +40 more
+        <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+          CRM, Finance, HR, Projects — all connected. No more switching between apps.
         </p>
-        <p className="text-base text-gray-500 mb-8 max-w-xl mx-auto">
-          Different teams, different needs — one unified platform. From sales leads to payroll, Avenize keeps everyone aligned.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-          <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-blue-500 text-white font-semibold text-lg hover:bg-blue-600 hover:shadow-lg transition hover:-translate-y-0.5">
-            Start Free 7-Day Trial <ArrowRight size={20} />
+        
+        {/* CTA buttons - Google style */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-blue-500 text-white font-medium text-lg hover:bg-blue-600 hover:shadow-lg transition-all">
+            Get Started Free
           </Link>
-          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-gray-200 text-gray-700 font-semibold text-lg hover:bg-gray-50 hover:border-gray-300 transition">
+          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-gray-300 text-gray-700 font-medium text-lg hover:bg-gray-50 transition-all">
             Sign In
           </Link>
         </div>
-        <p className="text-sm text-gray-500 mb-12">No credit card required • 5-minute setup • Cancel anytime</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-          {STATS.map((stat, i) => (
-            <div key={i} className="text-center p-4 bg-white rounded-xl shadow-sm">
-              <div className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.number}</div>
-              <div className="text-sm text-gray-500">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        
+        <p className="text-sm text-gray-500">No credit card required • Free 7-day trial • Cancel anytime</p>
       </div>
     </section>
   )
@@ -126,22 +173,22 @@ function HeroSection() {
 
 function WhoSection() {
   return (
-    <section className="py-16 px-4 sm:px-6 bg-white">
+    <section className="py-16 px-4 sm:px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Built for Every Team</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
         </div>
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {WHO_IT_FOR.map((item, i) => {
             const Icon = item.icon
             return (
-              <div key={i} className="text-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
-                <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: item.color + '15' }}>
-                  <Icon size={24} style={{ color: item.color }} />
+              <div key={i} className="text-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center transition-transform group-hover:scale-110" style={{ backgroundColor: item.color + '15' }}>
+                  <Icon size={28} style={{ color: item.color }} />
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1">{item.role}</h3>
-                <p className="text-sm text-gray-600">{item.benefit}</p>
+                <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.role}</h3>
+                <p className="text-xs text-gray-500">{item.benefit}</p>
               </div>
             )
           })}
