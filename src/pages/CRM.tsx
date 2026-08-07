@@ -227,7 +227,7 @@ export default function CRM() {
           <p className="text-sm text-black">{deals.length} deals - {contacts.length} contacts</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#202124] text-white text-sm font-medium">
+          <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium">
             <Plus size={18} /> Add Deal
           </button>
           <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10">
@@ -280,7 +280,7 @@ export default function CRM() {
               <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No deals yet</h3>
               <p className="text-sm text-black mb-4">Create your first deal to start tracking</p>
-              <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium">Add Deal</button>
+              <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-lg bg-[var(--av-text)] text-white text-sm font-medium">Add Deal</button>
             </div>
           ) : (
             filteredDeals.map(deal => {
@@ -314,7 +314,7 @@ export default function CRM() {
             <div className="p-8 text-center">
               <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No contacts yet</h3>
-              <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium">Add Contact</button>
+              <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-lg bg-[var(--av-text)] text-white text-sm font-medium">Add Contact</button>
             </div>
           ) : (
             <table className="w-full">
@@ -396,7 +396,7 @@ export default function CRM() {
             </div>
             <div className="p-4 border-t border-black/10 flex gap-3">
               <button onClick={() => setShowAddDeal(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button>
-              <button onClick={addDeal} className="flex-1 px-4 py-3 rounded-xl bg-[#202124] text-white font-medium">Create Deal</button>
+              <button onClick={addDeal} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Deal</button>
             </div>
           </div>
         </div>
@@ -417,7 +417,7 @@ export default function CRM() {
             </div>
             <div className="p-4 border-t border-black/10 flex gap-3">
               <button onClick={() => setShowAddContact(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button>
-              <button onClick={addContact} className="flex-1 px-4 py-3 rounded-xl bg-[#202124] text-white font-medium">Create Contact</button>
+              <button onClick={addContact} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Contact</button>
             </div>
           </div>
         </div>
@@ -441,7 +441,7 @@ export default function CRM() {
             </div>
             <div className="p-4 border-t border-black/10 flex gap-3">
               <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-red-500 font-medium">Delete</button>
-              <button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[#202124] text-white font-medium">Save Changes</button>
+              <button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Save Changes</button>
             </div>
           </div>
         </div>

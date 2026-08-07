@@ -1,7 +1,7 @@
-/* Avenize Design System v4 - Google-Inspired */
+/* Avenize Design System v5 - Boutique SaaS */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@import "./styles/avenize-design-system.css";
+@import "./styles/avenize-brand.css";
 
 /* ============================================
    LEGACY COMPATIBILITY
@@ -15,31 +15,31 @@
   --avenize-stone: var(--av-surface-3);
   --avenize-gray: var(--av-surface-2);
   
-  /* Primary brand gradient - Google blue to Avenize violet */
+  /* Primary brand gradient - Teal to Emerald */
   --avenize-gradient-start: var(--av-gradient-start);
   --avenize-gradient-mid: var(--av-gradient-mid);
   --avenize-gradient-end: var(--av-gradient-end);
   
-  /* Legacy workspace colors */
+  /* Legacy workspace colors - updated to brand colors */
   --avenize-sales: var(--av-sales);
   --avenize-finance: var(--av-finance);
   --avenize-projects: var(--av-projects);
   --avenize-hr: var(--av-hr);
-  --avenize-communication: #EC4899;
+  --avenize-communication: #0891B2;
   --avenize-ai: var(--av-info);
-  --avenize-automation: var(--av-accent);
-  --avenize-analytics: var(--av-hr);
+  --avenize-automation: var(--av-amber);
+  --avenize-analytics: var(--av-finance);
   
   /* Legacy alias */
   --avenize-accent-start: var(--avenize-gradient-start);
   --avenize-accent-end: var(--avenize-gradient-end);
 }
 
-/* Body - Clean Google-style background */
+/* Body - Warm surface, not cold white */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: white;
-  color: #202124;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--av-surface);
+  color: var(--av-text);
   font-size: 14px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;

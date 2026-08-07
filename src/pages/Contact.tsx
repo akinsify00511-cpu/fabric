@@ -65,7 +65,7 @@ export default function Contact() {
                   setSubject('')
                   setMessage('')
                 }}
-                className="px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
+                className="px-6 py-3 bg-[var(--av-text)] text-white rounded-xl font-medium hover:bg-black/90 transition"
               >
                 Send Another Message
               </button>
@@ -201,7 +201,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full sm:w-auto px-8 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3 bg-[var(--av-text)] text-white rounded-xl font-medium hover:bg-black/90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

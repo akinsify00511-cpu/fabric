@@ -184,7 +184,7 @@ export default function CookieConsent() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleSavePreferences}
-                  className="flex-1 px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
+                  className="flex-1 px-6 py-3 bg-[var(--av-text)] text-white rounded-xl font-medium hover:bg-black/90 transition"
                 >
                   Save Preferences
                 </button>

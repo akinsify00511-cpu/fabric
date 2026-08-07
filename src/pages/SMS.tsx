@@ -284,7 +284,7 @@ export default function SMSSettings() {
                     value={settings.apiKey}
                     onChange={(e) => setSettings({ ...settings, apiKey: e.target.value })}
                     placeholder="Enter your Termii API key"
-                    className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none pr-10"
+                    className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[var(--av-primary, #0891B2)] focus:ring-2 focus:ring-[var(--av-primary, #0891B2)]/20 outline-none pr-10"
                   />
                   <button
                     type="button"
@@ -307,7 +307,7 @@ export default function SMSSettings() {
                   onChange={(e) => setSettings({ ...settings, senderId: e.target.value })}
                   placeholder="e.g., Avenize"
                   maxLength={11}
-                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[var(--av-primary, #0891B2)] focus:ring-2 focus:ring-[var(--av-primary, #0891B2)]/20 outline-none"
                 />
                 <p className="text-xs text-black mt-1.5">
                   Alphanumeric sender ID (up to 11 characters)
@@ -322,7 +322,7 @@ export default function SMSSettings() {
                       key={channel.value}
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition ${
                         settings.channel === channel.value
-                          ? 'border-[#4285F4] bg-[#4285F4]/5'
+                          ? 'border-[var(--av-primary, #0891B2)] bg-[var(--av-primary, #0891B2)]/5'
                           : 'border-black/10 hover:bg-black/10'
                       }`}
                     >
@@ -347,7 +347,7 @@ export default function SMSSettings() {
                 <button
                   onClick={saveSettings}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#4285F4] text-white font-medium hover:opacity-90 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium hover:opacity-90 disabled:opacity-50"
                 >
                   <Save size={16} />
                   {saving ? 'Saving...' : 'Save Settings'}
@@ -376,7 +376,7 @@ export default function SMSSettings() {
                   value={testPhone}
                   onChange={(e) => setTestPhone(e.target.value)}
                   placeholder="e.g., 08012345678 or +2348012345678"
-                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[var(--av-primary, #0891B2)] focus:ring-2 focus:ring-[var(--av-primary, #0891B2)]/20 outline-none"
                 />
               </div>
 
@@ -386,7 +386,7 @@ export default function SMSSettings() {
                   value={testMessage}
                   onChange={(e) => setTestMessage(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none resize-none"
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[var(--av-primary, #0891B2)] focus:ring-2 focus:ring-[var(--av-primary, #0891B2)]/20 outline-none resize-none"
                 />
                 <div className="flex justify-between mt-1.5">
                   <p className="text-xs text-black">

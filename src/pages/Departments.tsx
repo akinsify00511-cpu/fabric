@@ -158,7 +158,7 @@ export default function Departments() {
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#202124] text-white text-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium"
         >
           <Plus size={18} /> Add Team
         </button>
@@ -184,7 +184,7 @@ export default function Departments() {
           <p className="text-sm text-black mb-4">Create teams to organize your workforce</p>
           <button
             onClick={openAddModal}
-            className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium"
+            className="px-4 py-2 rounded-lg bg-[var(--av-text)] text-white text-sm font-medium"
           >
             Create Team
           </button>
@@ -287,7 +287,7 @@ export default function Departments() {
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#202124] text-white text-sm font-medium"
+                className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium"
               >
                 {editingTeam ? 'Save Changes' : 'Create Team'}
               </button>

@@ -165,7 +165,7 @@ export default function PaymentSettingsPage() {
           </div>
           <button
             onClick={() => setShowModal('add')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
           >
             <Plus size={16} />
             Add Gateway
@@ -355,7 +355,7 @@ function AddGatewayModal({
               <button
                 key={p.id}
                 onClick={() => setSelected(p.id)}
-                className="w-full p-4 rounded-xl border border-black/10 hover:border-[#4285F4] text-left flex items-center gap-4"
+                className="w-full p-4 rounded-xl border border-black/10 hover:border-[var(--av-primary, #0891B2)] text-left flex items-center gap-4"
               >
                 <img src={p.logo} alt={p.name} className="w-12 h-12 rounded" />
                 <div className="flex-1">
@@ -420,7 +420,7 @@ function AddGatewayModal({
               <button 
                 onClick={handleSave} 
                 disabled={saving}
-                className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Gateway'}
               </button>

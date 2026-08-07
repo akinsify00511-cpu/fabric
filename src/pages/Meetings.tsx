@@ -358,12 +358,12 @@ export default function Meetings() {
               <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 transition-all ${
                 isRecording
                   ? 'bg-red-100 animate-pulse shadow-lg shadow-red-200'
-                  : 'bg-[#4285F4]/10'
+                  : 'bg-[var(--av-primary, #0891B2)]/10'
               }`}>
                 {isRecording ? (
                   <MicOff size={40} className="text-red-500" />
                 ) : (
-                  <Mic size={40} className="text-[#4285F4]" />
+                  <Mic size={40} className="text-[var(--av-primary, #0891B2)]" />
                 )}
               </div>
 
@@ -416,8 +416,8 @@ export default function Meetings() {
         </div>
       ) : filteredMeetings.length === 0 ? (
         <div className="text-center py-16">
-          <div className="w-16 h-16 rounded-2xl bg-[#4285F4]/10 flex items-center justify-center mx-auto mb-4">
-            <Mic size={24} className="text-[#4285F4]" />
+          <div className="w-16 h-16 rounded-2xl bg-[var(--av-primary, #0891B2)]/10 flex items-center justify-center mx-auto mb-4">
+            <Mic size={24} className="text-[var(--av-primary, #0891B2)]" />
           </div>
           <h3 className="font-semibold mb-2">No meetings yet</h3>
           <p className="text-sm text-black mb-6">
@@ -436,7 +436,7 @@ export default function Meetings() {
           {filteredMeetings.map((meeting) => (
             <div
               key={meeting.id}
-              className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[#4285F4]/20 transition-colors"
+              className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[var(--av-primary, #0891B2)]/20 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex-1">
@@ -464,7 +464,7 @@ export default function Meetings() {
                     </div>
                   ) : (
                     <h3 
-                      className="font-medium text-black cursor-pointer hover:text-[#4285F4]"
+                      className="font-medium text-black cursor-pointer hover:text-[var(--av-primary, #0891B2)]"
                       onClick={() => setSelectedMeeting(meeting)}
                     >
                       {meeting.title}
@@ -500,10 +500,10 @@ export default function Meetings() {
 
               {meeting.summary && (
                 <div 
-                  className="mt-3 p-3 bg-[#4285F4]/5 rounded-lg cursor-pointer"
+                  className="mt-3 p-3 bg-[var(--av-primary, #0891B2)]/5 rounded-lg cursor-pointer"
                   onClick={() => setSelectedMeeting(meeting)}
                 >
-                  <p className="text-xs font-medium text-[#4285F4] mb-1">AI Summary</p>
+                  <p className="text-xs font-medium text-[var(--av-primary, #0891B2)] mb-1">AI Summary</p>
                   <p className="text-sm text-black/70 line-clamp-2">{meeting.summary.split('\n')[0]}</p>
                 </div>
               )}
@@ -512,7 +512,7 @@ export default function Meetings() {
                 <div className="mt-3 flex items-center gap-2">
                   <button
                     onClick={() => transcribeMeeting(meeting)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#4285F4]/10 text-[#4285F4] text-xs font-medium hover:bg-[#4285F4]/20 transition-colors opacity-60"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--av-primary, #0891B2)]/10 text-[var(--av-primary, #0891B2)] text-xs font-medium hover:bg-[var(--av-primary, #0891B2)]/20 transition-colors opacity-60"
                     title="Coming Soon"
                   >
                     <Wand2 size={12} />
@@ -548,10 +548,10 @@ export default function Meetings() {
               {selectedMeeting.summary && (
                 <div>
                   <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <Sparkles size={16} className="text-[#4285F4]" />
+                    <Sparkles size={16} className="text-[var(--av-primary, #0891B2)]" />
                     AI Summary
                   </h3>
-                  <div className="p-4 bg-gradient-to-br from-[#4285F4]/5 to-[#0D9488]/5 rounded-xl">
+                  <div className="p-4 bg-gradient-to-br from-[var(--av-primary, #0891B2)]/5 to-[#0D9488]/5 rounded-xl">
                     <pre className="text-sm whitespace-pre-wrap text-black font-sans">
                       {selectedMeeting.summary}
                     </pre>
@@ -562,7 +562,7 @@ export default function Meetings() {
               {selectedMeeting.transcript && (
                 <div>
                   <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <FileText size={16} className="text-[#4285F4]" />
+                    <FileText size={16} className="text-[var(--av-primary, #0891B2)]" />
                     Transcript
                   </h3>
                   <div className="p-4 bg-white rounded-xl max-h-96 overflow-y-auto">

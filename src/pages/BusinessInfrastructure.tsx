@@ -171,7 +171,7 @@ function BranchesTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Branch
         </button>
       </div>
@@ -188,7 +188,7 @@ function BranchesTab({ businessId }: { businessId?: string }) {
             <input type="checkbox" checked={form.is_headquarters} onChange={(e) => setForm({ ...form, is_headquarters: e.target.checked })} className="rounded" />
             Headquarters
           </label>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Branch</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Branch</button>
         </form>
       )}
 
@@ -238,7 +238,7 @@ function PayrollTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> New Payroll Run
         </button>
       </div>
@@ -310,7 +310,7 @@ function LoansTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Loan
         </button>
       </div>
@@ -329,7 +329,7 @@ function LoansTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Interest Rate %" value={form.interest_rate} onChange={(e) => setForm({ ...form, interest_rate: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
           </div>
           <input type="number" placeholder="Tenure (months)" value={form.tenure_months} onChange={(e) => setForm({ ...form, tenure_months: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Loan</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Loan</button>
         </form>
       )}
 
@@ -394,7 +394,7 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Commission
         </button>
       </div>
@@ -408,7 +408,7 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
           </select>
           <input type="number" placeholder="Amount (₦)" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" rows={2} />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Commission</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Commission</button>
         </form>
       )}
 
@@ -475,7 +475,7 @@ function AssetsTab({ businessId }: { businessId?: string }) {
       </div>
 
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Asset
         </button>
       </div>
@@ -496,7 +496,7 @@ function AssetsTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Current Value (₦)" value={form.current_value} onChange={(e) => setForm({ ...form, current_value: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
           </div>
           <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" rows={2} />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Asset</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Asset</button>
         </form>
       )}
 
@@ -565,7 +565,7 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
       </div>
 
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Liability
         </button>
       </div>
@@ -585,7 +585,7 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Current Balance (₦)" value={form.current_balance} onChange={(e) => setForm({ ...form, current_balance: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
           </div>
           <input type="text" placeholder="Creditor" value={form.creditor} onChange={(e) => setForm({ ...form, creditor: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Liability</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Liability</button>
         </form>
       )}
 
@@ -650,7 +650,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
       </div>
 
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Add Recurring
         </button>
       </div>
@@ -675,7 +675,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
           </div>
           <input type="number" placeholder="Amount (₦)" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           <input type="text" placeholder="Vendor (optional)" value={form.vendor} onChange={(e) => setForm({ ...form, vendor: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Save Expense</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Save Expense</button>
         </form>
       )}
 
@@ -750,7 +750,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
       </div>
 
       <div className="flex justify-end mb-4">
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm font-medium">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium">
           <Plus size={16} /> Log Time
         </button>
       </div>
@@ -764,7 +764,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
             <input type="checkbox" checked={form.billable} onChange={(e) => setForm({ ...form, billable: e.target.checked })} className="rounded" />
             Billable time
           </label>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white text-sm">Log Time</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm">Log Time</button>
         </form>
       )}
 

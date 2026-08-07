@@ -79,7 +79,7 @@ export default function QCDashboard() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-20 right-4 z-50 w-12 h-12 bg-[#4285F4] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[#4285F4]/90 transition"
+        className="fixed bottom-20 right-4 z-50 w-12 h-12 bg-[var(--av-primary, #0891B2)] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[var(--av-primary, #0891B2)]/90 transition"
         title="Quality Control"
       >
         <Bug size={20} />
@@ -93,7 +93,7 @@ export default function QCDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-black/10">
           <div className="flex items-center gap-3">
-            <Bug size={24} className="text-[#4285F4]" />
+            <Bug size={24} className="text-[var(--av-primary, #0891B2)]" />
             <div>
               <h2 className="font-bold">Quality Control Dashboard</h2>
               <p className="text-xs text-black">Internal tools for monitoring and debugging</p>
@@ -182,7 +182,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
       onClick={onClick}
       className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition border-b-2 ${
         active 
-          ? 'border-[#4285F4] text-[#4285F4]' 
+          ? 'border-[var(--av-primary, #0891B2)] text-[var(--av-primary, #0891B2)]' 
           : 'border-transparent text-black hover:text-black/70'
       }`}
     >
@@ -207,7 +207,7 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
         <h3 className="font-semibold">System Health</h3>
         <button
           onClick={onCheck}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#4285F4] text-white text-sm"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
         >
           <RefreshCw size={14} />
           Check Now
@@ -293,7 +293,7 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
             onClick={() => onFilterChange(level)}
             className={`px-2 py-1 rounded text-xs font-medium ${
               filterLevel === level 
-                ? 'bg-[#4285F4] text-white' 
+                ? 'bg-[var(--av-primary, #0891B2)] text-white' 
                 : 'bg-black/10 hover:bg-black/10'
             }`}
           >

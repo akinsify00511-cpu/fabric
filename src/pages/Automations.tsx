@@ -424,7 +424,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   
                   {/* Arrow */}
                   <div className="flex items-center">
-                    <ArrowRight className="text-[#4285F4]" size={20} />
+                    <ArrowRight className="text-[var(--av-primary, #0891B2)]" size={20} />
                   </div>
                   
                   {/* Action */}

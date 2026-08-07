@@ -283,7 +283,7 @@ export default function Social() {
               <div className="flex gap-2">
                 <button
                   onClick={createPost}
-                  className="rounded-lg bg-[#202124] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                  className="rounded-lg bg-[var(--av-text)] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                 >
                   {isScheduled ? 'Schedule' : 'Save Draft'}
                 </button>

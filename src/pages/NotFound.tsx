@@ -27,7 +27,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             to="/"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--av-text)] text-white rounded-xl font-medium hover:bg-black/90 transition"
           >
             <Home size={18} />
             Go Home

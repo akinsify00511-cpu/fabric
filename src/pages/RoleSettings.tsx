@@ -214,7 +214,7 @@ export default function RoleSettings() {
         ) : (
           <button
             onClick={() => setShowNewForm(true)}
-            className="flex items-center gap-2 text-[#4285F4] font-medium text-sm"
+            className="flex items-center gap-2 text-[var(--av-primary, #0891B2)] font-medium text-sm"
           >
             <Plus size={18} />
             Add Role
@@ -295,7 +295,7 @@ export default function RoleSettings() {
                                   checked={hasTool}
                                   onChange={() => toggleTool(role.id, toolKey, role.tools)}
                                   disabled={saving}
-                                  className="w-4 h-4 rounded border-black/20 text-[#4285F4] focus:ring-[#4285F4]"
+                                  className="w-4 h-4 rounded border-black/20 text-[var(--av-primary, #0891B2)] focus:ring-[var(--av-primary, #0891B2)]"
                                 />
                                 <span className="text-sm">{tool?.label || toolKey}</span>
                               </label>

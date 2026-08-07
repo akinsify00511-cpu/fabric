@@ -77,7 +77,7 @@ const getMockData = (): { stats: DashboardStats; activities: RecentActivity[]; u
   activities: [
     { id: '1', type: 'deal', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago', icon: '🔥', colorVar: '#EA4335' },
     { id: '2', type: 'payment', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago', icon: '✓', colorVar: '#34A853' },
-    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: '📄', colorVar: '#4285F4' },
+    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: '📄', colorVar: 'var(--av-primary, #0891B2)' },
   ],
   upcoming: [
     { id: '1', text: 'Call Ibrahim Musa, hot deal closing', time: 'Today, 2:00 PM', priority: 'high' },
@@ -138,7 +138,7 @@ export default function Dashboard() {
       
       setActivities([
         { id: '1', type: 'deal', text: `You have ${hotDeals} hot deals`, time: 'Just now', icon: '🔥', colorVar: '#EA4335' },
-        { id: '2', type: 'invoice', text: `${pendingTasks} pending tasks`, time: 'Updated', icon: '📄', colorVar: '#4285F4' },
+        { id: '2', type: 'invoice', text: `${pendingTasks} pending tasks`, time: 'Updated', icon: '📄', colorVar: 'var(--av-primary, #0891B2)' },
       ])
 
       setUpcoming([
@@ -250,7 +250,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(66, 133, 244, 0.1)' }}>
-                <TrendingUp size={14} style={{ color: '#4285F4' }} />
+                <TrendingUp size={14} style={{ color: 'var(--av-primary, #0891B2)' }} />
               </div>
             </div>
             <span className="text-xs font-semibold" style={{ color: '#34A853' }}>+{formatCurrency(stats?.pipelineChange || 0)}</span>

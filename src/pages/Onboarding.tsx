@@ -402,7 +402,7 @@ export default function Onboarding() {
                     onClick={() => setIndustry(ind.id)}
                     className={`p-4 rounded-xl border-2 text-left transition-all ${
                       industry === ind.id
-                        ? 'border-[#4285F4] bg-[#4285F4]/5'
+                        ? 'border-[var(--av-primary, #0891B2)] bg-[var(--av-primary, #0891B2)]/5'
                         : 'border-black/10 hover:border-black/20'
                     }`}
                   >

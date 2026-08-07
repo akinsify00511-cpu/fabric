@@ -29,7 +29,7 @@ export default function PersonalizationHub() {
   return (
     <div className="fixed bottom-24 right-4 z-40 w-80 bg-white rounded-2xl shadow-2xl border border-black/[0.06] overflow-hidden animate-in slide-in-from-bottom">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#4285F4] to-purple-500 p-4 text-white">
+      <div className="bg-gradient-to-r from-[var(--av-primary, #0891B2)] to-purple-500 p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Lightbulb size={18} />
@@ -61,7 +61,7 @@ export default function PersonalizationHub() {
               engagement('suggestion_accepted', { suggestion })
               setDismissed(true)
             }}
-            className="flex-1 py-2 rounded-lg bg-[#4285F4] text-white text-sm font-medium"
+            className="flex-1 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm font-medium"
           >
             Try it
           </button>
@@ -84,7 +84,7 @@ export default function PersonalizationHub() {
                 key={i}
                 onClick={() => setActiveSuggestion(i)}
                 className={`w-2 h-2 rounded-full transition ${
-                  i === activeSuggestion ? 'bg-[#4285F4]' : 'bg-black/20'
+                  i === activeSuggestion ? 'bg-[var(--av-primary, #0891B2)]' : 'bg-black/20'
                 }`}
               />
             ))}
@@ -107,7 +107,7 @@ export function UserInsightsPanel() {
   return (
     <div className="space-y-6">
       {/* Engagement Score */}
-      <div className="bg-gradient-to-br from-[#4285F4] to-purple-600 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-br from-[var(--av-primary, #0891B2)] to-purple-600 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Crown size={20} />
@@ -293,7 +293,7 @@ export function AchievementCelebration({ achievement, onDismiss }: { achievement
         
         <button
           onClick={onDismiss}
-          className="w-full py-3 rounded-xl bg-[#4285F4] text-white font-semibold"
+          className="w-full py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-semibold"
         >
           Awesome!
         </button>

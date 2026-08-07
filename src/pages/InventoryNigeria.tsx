@@ -307,7 +307,7 @@ export default function InventoryNigeria() {
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Stock Value</p>
-          <p className="text-lg font-bold text-[#4285F4]">{formatCurrency(stats.totalValue)}</p>
+          <p className="text-lg font-bold text-[var(--av-primary, #0891B2)]">{formatCurrency(stats.totalValue)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Low Stock</p>
@@ -376,8 +376,8 @@ export default function InventoryNigeria() {
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-[#4285F4]/10 flex items-center justify-center mx-auto mb-4">
-            <Package size={24} className="text-[#4285F4]" />
+          <div className="w-16 h-16 rounded-2xl bg-[var(--av-primary, #0891B2)]/10 flex items-center justify-center mx-auto mb-4">
+            <Package size={24} className="text-[var(--av-primary, #0891B2)]" />
           </div>
           <h3 className="font-semibold mb-2">No items found</h3>
           <p className="text-sm text-black mb-4">
@@ -405,12 +405,12 @@ export default function InventoryNigeria() {
                 onClick={() => setSelectedItem(item)}
                 className={`bg-white rounded-xl border p-4 cursor-pointer transition-colors ${
                   selectedItem?.id === item.id
-                    ? 'border-[#4285F4] ring-1 ring-[#4285F4]'
+                    ? 'border-[var(--av-primary, #0891B2)] ring-1 ring-[var(--av-primary, #0891B2)]'
                     : isOut
                     ? 'border-red-200'
                     : isLow
                     ? 'border-orange-200 hover:border-orange-300'
-                    : 'border-black/[0.06] hover:border-[#4285F4]/20'
+                    : 'border-black/[0.06] hover:border-[var(--av-primary, #0891B2)]/20'
                 }`}
               >
                 <div className="flex items-center justify-between">

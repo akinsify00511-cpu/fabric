@@ -243,7 +243,7 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
         <h2 className="font-medium">My Leave Requests</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm"
         >
           <Plus size={16} /> Request Leave
         </button>
@@ -295,7 +295,7 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
               placeholder="Brief reason for leave..."
             />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white">
             Submit Request
           </button>
         </form>
@@ -606,7 +606,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
         <h2 className="font-medium">Open Positions ({jobs.filter(j => j.status === 'open').length})</h2>
         <button
           onClick={() => setShowJobForm(!showJobForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm"
         >
           <Plus size={16} /> Post Job
         </button>
@@ -662,7 +662,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
             onChange={(e) => setJobForm({ ...jobForm, salary_range: e.target.value })}
             className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
           />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white">
             Publish Job
           </button>
         </form>
@@ -837,7 +837,7 @@ function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any 
           {employees.map((emp) => (
             <div key={emp.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-[#4285F4] flex items-center justify-center text-white font-semibold">
+                <div className="w-12 h-12 rounded-full bg-[var(--av-primary, #0891B2)] flex items-center justify-center text-white font-semibold">
                   {(emp.full_name || emp.name || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1">
@@ -1017,7 +1017,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
               </div>
 
               {/* Download Button */}
-              <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#4285F4] text-white font-medium">
+              <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium">
                 <Download size={18} />
                 Download Payslip PDF
               </button>
@@ -1147,7 +1147,7 @@ function TrainingTab({ businessId }: { businessId?: string }) {
         <h2 className="font-medium">Training & Development</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm"
         >
           <Plus size={16} /> Add Training
         </button>
@@ -1212,7 +1212,7 @@ function TrainingTab({ businessId }: { businessId?: string }) {
             onChange={(e) => setForm({ ...form, certificate: e.target.value })}
             className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
           />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white">
             Save Training
           </button>
         </form>

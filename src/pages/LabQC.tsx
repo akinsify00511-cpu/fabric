@@ -61,7 +61,7 @@ export default function LabQC() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm"
         >
           <Plus size={16} /> Register Sample
         </button>
@@ -112,7 +112,7 @@ export default function LabQC() {
               className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
             />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white">
             Register Sample
           </button>
         </form>
@@ -174,7 +174,7 @@ export default function LabQC() {
                     showToast(`Status updated to ${nextStatus}`, 'success')
                     loadSamples()
                   }}
-                  className="text-xs text-[#4285F4] hover:underline"
+                  className="text-xs text-[var(--av-primary, #0891B2)] hover:underline"
                 >
                   Update Status →
                 </button>

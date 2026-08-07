@@ -247,9 +247,9 @@ export function FeatureTip({ children, tip, position = 'top' }: FeatureTipProps)
       {children}
       {showTip && (
         <div className={`absolute z-50 ${positionClasses[position]} pointer-events-none`}>
-          <div className="bg-[#202124] text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap max-w-[200px]">
+          <div className="bg-[var(--av-text)] text-white text-xs px-3 py-2 rounded-lg shadow-lg whitespace-nowrap max-w-[200px]">
             {tip}
-            <div className={`absolute w-2 h-2 bg-[#202124] rotate-45 ${
+            <div className={`absolute w-2 h-2 bg-[var(--av-text)] rotate-45 ${
               position === 'top' ? '-bottom-1 left-1/2 -translate-x-1/2' :
               position === 'bottom' ? '-top-1 left-1/2 -translate-x-1/2' :
               position === 'left' ? '-right-1 top-1/2 -translate-y-1/2' :

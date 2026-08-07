@@ -131,7 +131,7 @@ export default function AssetManagementPage() {
         {isAdmin && (
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
           >
             <Plus size={16} />
             Add Asset
@@ -482,7 +482,7 @@ function AssetModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium disabled:opacity-50">
               {submitting ? 'Adding...' : 'Add Asset'}
             </button>
           </div>
