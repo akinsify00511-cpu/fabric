@@ -1,6 +1,6 @@
 // ============================================
-// COMPANY HOME - AVENIZE DASHBOARD
-// Bento Grid Layout
+// COMPANY HOME - Human Activities Hub
+// Birthdays, Awards, Polls, Team Recognition
 // ============================================
 
 import { useState, useEffect } from 'react'
@@ -8,289 +8,375 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
-import { 
-  Users, DollarSign, Target, UserCircle, 
-  Flame, TrendingUp, List, UsersRound,
-  Activity, Check, FileText
+import {
+  Cake, Award, Trophy, Users, Vote,
+  Calendar, Star, Heart, CheckCircle, Gift,
+  Crown, ThumbsUp, Check
 } from 'lucide-react'
 
-// Color constants matching the design
-const COLORS = {
-  sales: '#3B82F6',
-  finance: '#10B981',
-  projects: '#F59E0B',
-  success: '#639922',
-  warning: '#854F0B',
-  danger: '#E24B4A',
+// Current month name
+const getCurrentMonth = () => {
+  return new Date().toLocaleString('default', { month: 'long' })
+}
+
+// Get upcoming birthdays this month
+const getBirthdaysThisMonth = () => {
+  const birthdays = [
+    { name: 'Chioma Adebayo', date: '2026-08-15', department: 'Sales', avatar: 'CA' },
+    { name: 'Emmanuel Okonkwo', date: '2026-08-22', department: 'Marketing', avatar: 'EO' },
+    { name: 'Fatima Bello', date: '2026-08-28', department: 'Finance', avatar: 'FB' },
+  ]
+  return birthdays
+}
+
+// Get best staff this month
+const getBestStaff = () => {
+  return {
+    name: 'Adebayo Johnson',
+    role: 'Sales Manager',
+    department: 'Sales',
+    achievement: 'Highest sales this month - ₦2.5M target achieved',
+    avatar: 'AJ',
+    stats: { sales: '₦2.5M', deals: 12, tasks: 28 }
+  }
+}
+
+// Get recent poll results
+const getPollResults = () => {
+  return [
+    {
+      id: '1',
+      question: 'Best Team Building Activity for Q3?',
+      options: [
+        { text: 'Beach Party', votes: 24, percentage: 45 },
+        { text: 'Game Night', votes: 18, percentage: 34 },
+        { text: 'Cooking Class', votes: 11, percentage: 21 },
+      ],
+      totalVotes: 53,
+      endsAt: '2026-08-20',
+      status: 'active'
+    },
+    {
+      id: '2',
+      question: 'Favorite Remote Work Day?',
+      options: [
+        { text: 'Friday', votes: 31, percentage: 52 },
+        { text: 'Monday', votes: 15, percentage: 25 },
+        { text: 'Wednesday', votes: 14, percentage: 23 },
+      ],
+      totalVotes: 60,
+      endsAt: '2026-08-10',
+      status: 'closed'
+    }
+  ]
+}
+
+// Get team awards/recognitions
+const getRecentAwards = () => {
+  return [
+    { id: '1', type: 'star', recipient: 'Ngozi Okafor', award: 'Star Performer', reason: 'Closed 3 major deals this week', icon: Star, color: '#F59E0B' },
+    { id: '2', type: 'trophy', recipient: 'Ibrahim Musa', award: 'Rising Star', reason: 'Exceeded quarterly targets by 150%', icon: Trophy, color: '#8B5CF6' },
+    { id: '3', type: 'heart', recipient: 'Grace Eze', award: 'Team Player', reason: 'Helped onboard 3 new clients', icon: Heart, color: '#EC4899' },
+  ]
 }
 
 export default function CompanyHome() {
   const { staff, isDemo } = useAuth()
   const { branding } = useBranding()
   const [loading, setLoading] = useState(true)
-  
+  const [selectedPoll, setSelectedPoll] = useState<string | null>(null)
+  const [hasVoted, setHasVoted] = useState<string[]>([])
+
+  // Data
+  const birthdaysThisMonth = getBirthdaysThisMonth()
+  const bestStaff = getBestStaff()
+  const pollResults = getPollResults()
+  const recentAwards = getRecentAwards()
+  const currentMonth = getCurrentMonth()
+
   // Get branding colors
-  const bgColor = branding.background_color || '#0D0C0B'
-  const isDarkBg = bgColor === '#111111' || bgColor === '#0D0C0B' || bgColor === '#000000'
-  
-  // Dashboard data
-  const [stats, setStats] = useState({
-    revenue: 3200000,
-    revenueChange: 35,
-    hotDeals: 7,
-    hotDealsChange: 3,
-    pipeline: 8500000,
-    pipelineChange: 2000000,
-    pendingTasks: 18,
-    pendingTasksChange: -3,
-    teamMembers: 42,
-    teamMembersChange: 2,
-  })
-  
-  const [recentActivity] = useState([
-    { icon: 'flame', color: '#FAECE7', iconColor: '#712B13', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago' },
-    { icon: 'check', color: '#EAF3DE', iconColor: '#27500A', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago' },
-    { icon: 'file', color: '#E6F1FB', iconColor: '#0C447C', text: 'Invoice #0042 sent to TechStart', time: '30 min ago' },
-  ])
-  
-  const [upcomingEvents] = useState([
-    { color: COLORS.danger, text: 'Call Ibrahim Musa, hot deal closing', time: 'Today, 2:00 PM' },
-    { color: '#EF9F27', text: 'Team standup meeting', time: 'Today, 9:00 AM' },
-    { color: COLORS.danger, text: 'Follow up with Alhaji Motors', time: 'Tomorrow, 10:00 AM' },
-  ])
+  const bgColor = branding.background_color || '#F9FAFB'
+  const primaryColor = branding.primary_color || '#3B82F6'
 
   useEffect(() => {
-    if (!isDemo && staff?.business_id) {
-      loadDashboardData()
-    } else {
-      setLoading(false)
+    // Load user's voted polls from localStorage
+    const voted = localStorage.getItem('avenize_voted_polls')
+    if (voted) {
+      setHasVoted(JSON.parse(voted))
     }
-  }, [staff?.business_id, isDemo])
-
-  const loadDashboardData = async () => {
-    if (!staff?.business_id) return
-    
-    setLoading(true)
-    
-    // Load deal stats
-    const { data: deals } = await supabase
-      .from('deals')
-      .select('value, stage')
-      .eq('business_id', staff.business_id)
-    
-    const { data: tasks } = await supabase
-      .from('tasks')
-      .select('id, completed')
-      .eq('business_id', staff.business_id)
-    
-    const { count: teamCount } = await supabase
-      .from('staff')
-      .select('id', { count: 'exact' })
-      .eq('business_id', staff.business_id)
-    
-    // Calculate stats from real data
-    const hotDeals = deals?.filter(d => d.stage === 'hot') || []
-    const pipeline = deals?.reduce((sum, d) => sum + (d.value || 0), 0) || 0
-    const pendingTasks = tasks?.filter(t => !t.completed).length || 0
-    
-    setStats(prev => ({
-      ...prev,
-      hotDeals: hotDeals.length,
-      pipeline,
-      pendingTasks,
-      teamMembers: teamCount || prev.teamMembers,
-    }))
-    
     setLoading(false)
-  }
+  }, [])
 
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `₦${(value / 1000000).toFixed(1)}M`
-    }
-    if (value >= 1000) {
-      return `₦${(value / 1000).toFixed(0)}K`
-    }
-    return `₦${value.toLocaleString()}`
-  }
-
-  const getActivityIcon = (icon: string) => {
-    switch (icon) {
-      case 'flame': return <Flame size={14} style={{ color: '#712B13' }} />
-      case 'check': return <Check size={14} style={{ color: '#27500A' }} />
-      case 'file': return <FileText size={14} style={{ color: '#0C447C' }} />
-      default: return <Activity size={14} />
-    }
+  // Handle poll vote
+  const handleVote = (pollId: string, optionIndex: number) => {
+    if (hasVoted.includes(pollId)) return
+    
+    const newVoted = [...hasVoted, pollId]
+    setHasVoted(newVoted)
+    localStorage.setItem('avenize_voted_polls', JSON.stringify(newVoted))
+    setSelectedPoll(`${pollId}-${optionIndex}`)
   }
 
   return (
-    <div className="pb-20" style={{ backgroundColor: bgColor, color: branding.text_color || '#F7F4EE' }}>
-      {/* Topbar */}
-      <div className="flex items-center gap-2.5 px-8 py-4 border-b border-black/[0.05]" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF' }}>
-        <svg width="22" height="22" viewBox="0 0 1254 1254" aria-hidden="true" fill={isDarkBg ? "#F7F4EE" : "#111111"}>
-          <path d="M613.7 269.1c-36.4 3.9-70.6 23.9-91.9 53.6-3 4.3-31.8 55.5-63.9 113.8-32 58.3-62.3 113.2-67.1 122-39.2 71.1-34.9 137 11.5 177.3 11.2 9.7 36.3 23 38.7 20.5 1.1-1 97.6-176.1 121-219.3 3.1-5.8 12.1-22.2 20-36.5s18.1-32.9 22.7-41.4c10.9-20.1 15.7-27.3 23.2-35.4 30.8-32.9 80.2-40.8 124.9-20.1 8.8 4 25.4 14.9 29.6 19.3 1.7 1.7 3.4 3.1 3.9 3.1 1.1 0-42.1-85-48.5-95.3-26.3-42.8-74.8-66.8-124.1-61.6"/>
-          <path d="M696 416.6c-22.5 3.4-37.8 11-51.6 25.5-6.9 7.4-14.4 18.3-14.4 21.1 0 .8 5.5 10.4 12.1 21.4 21.1 34.6 98.1 163.2 110.9 185 69.7 118.8 71.4 121.9 76.5 136.6 6.5 18.8 7.4 43.4 2.1 61.3-11.1 37.5-40.2 67.2-76.4 78.1-4.8 1.4-9.3 2.8-10.1 3-.8.3-1.2.5-1 .7.2.1 35.7 0 78.9-.3l78.5-.6 9.5-2.6c47.3-12.9 78.8-45.8 86.5-90.2 4.8-27.9-1.6-55.5-20.2-87.2-7.8-13.1-20.1-34.6-77.3-134.4-86.8-151.4-82.7-144.4-92.8-159-22.5-32.4-56.2-54.1-90.1-58-8.4-1-16.1-1.1-21.1-.4"/>
-          <path d="M339.9 647.2c-1.2 2.4-16.1 29.3-33.2 59.8-39.8 71.2-44.2 80.6-49.2 104.5-13.2 63.8 27.5 122.9 93.4 135.5 10.5 2 13.4 2.1 61.8 1.7 77.6-.6 69.4 2.1 184.8-61.4 33-18.1 90.2-49.3 127-69.3 36.9-20 67.4-36.6 67.8-37 1.1-.9-35.1-62.9-40.2-69-19.7-23.4-62.3-28.2-102.6-11.5-9.8 4-12.4 5.3-55 28.8-91.9 50.6-90 49.7-110.4 53.1-74.3 12.5-141.2-46.1-141.5-124.1-.1-8.4-.2-15.3-.3-15.3-.2 0-1.2 1.9-2.4 4.2"/>
-        </svg>
-        <span className="text-sm font-semibold">Avenize</span>
+    <div className="min-h-screen" style={{ backgroundColor: bgColor }}>
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 px-6 py-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl font-bold text-gray-900">Company Hub</h1>
+          <p className="text-gray-500 mt-1">Celebrate your team • {currentMonth} {new Date().getFullYear()}</p>
+        </div>
       </div>
 
-      <div className="max-w-[1120px] mx-auto px-6 py-8">
-        {/* Bento Grid */}
-        <div className="grid grid-cols-12 gap-3">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        
+        {/* ===== BIRTHDAYS THIS MONTH ===== */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                <Cake size={20} className="text-pink-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-900">Birthdays This Month</h2>
+                <p className="text-sm text-gray-500">{currentMonth}</p>
+              </div>
+            </div>
+            <span className="text-sm text-pink-600 font-medium">{birthdaysThisMonth.length} team members</span>
+          </div>
           
-          {/* Hero: Revenue KPI */}
-          <div className="col-span-12 lg:col-span-7 row-span-2 rounded-2xl p-5 flex flex-col justify-between min-h-[180px]" style={{ backgroundColor: '#111111' }}>
-            <div>
-              <div className="flex items-center gap-2 mb-3.5">
-                <svg width="20" height="20" viewBox="0 0 1254 1254" aria-hidden="true" fill="#fff">
-                  <path d="M613.7 269.1c-36.4 3.9-70.6 23.9-91.9 53.6-3 4.3-31.8 55.5-63.9 113.8-32 58.3-62.3 113.2-67.1 122-39.2 71.1-34.9 137 11.5 177.3 11.2 9.7 36.3 23 38.7 20.5 1.1-1 97.6-176.1 121-219.3 3.1-5.8 12.1-22.2 20-36.5s18.1-32.9 22.7-41.4c10.9-20.1 15.7-27.3 23.2-35.4 30.8-32.9 80.2-40.8 124.9-20.1 8.8 4 25.4 14.9 29.6 19.3 1.7 1.7 3.4 3.1 3.9 3.1 1.1 0-42.1-85-48.5-95.3-26.3-42.8-74.8-66.8-124.1-61.6"/>
-                  <path d="M696 416.6c-22.5 3.4-37.8 11-51.6 25.5-6.9 7.4-14.4 18.3-14.4 21.1 0 .8 5.5 10.4 12.1 21.4 21.1 34.6 98.1 163.2 110.9 185 69.7 118.8 71.4 121.9 76.5 136.6 6.5 18.8 7.4 43.4 2.1 61.3-11.1 37.5-40.2 67.2-76.4 78.1-4.8 1.4-9.3 2.8-10.1 3-.8.3-1.2.5-1 .7.2.1 35.7 0 78.9-.3l78.5-.6 9.5-2.6c47.3-12.9 78.8-45.8 86.5-90.2 4.8-27.9-1.6-55.5-20.2-87.2-7.8-13.1-20.1-34.6-77.3-134.4-86.8-151.4-82.7-144.4-92.8-159-22.5-32.4-56.2-54.1-90.1-58-8.4-1-16.1-1.1-21.1-.4"/>
-                  <path d="M339.9 647.2c-1.2 2.4-16.1 29.3-33.2 59.8-39.8 71.2-44.2 80.6-49.2 104.5-13.2 63.8 27.5 122.9 93.4 135.5 10.5 2 13.4 2.1 61.8 1.7 77.6-.6 69.4 2.1 184.8-61.4 33-18.1 90.2-49.3 127-69.3 36.9-20 67.4-36.6 67.8-37 1.1-.9-35.1-62.9-40.2-69-19.7-23.4-62.3-28.2-102.6-11.5-9.8 4-12.4 5.3-55 28.8-91.9 50.6-90 49.7-110.4 53.1-74.3 12.5-141.2-46.1-141.5-124.1-.1-8.4-.2-15.3-.3-15.3-.2 0-1.2 1.9-2.4 4.2"/>
-                </svg>
-                <span className="text-[13px] text-[#A8A8A8]">Avenize</span>
-              </div>
-              <div className="text-[13px] text-[#A8A8A8]">Welcome back, {staff?.full_name?.split(' ')[0] || 'User'}</div>
-              <div className="text-[13px] text-[#A8A8A8] mt-1">Revenue this month</div>
-              <div className="text-[34px] font-medium text-white mt-0.5">{formatCurrency(stats.revenue)}</div>
-            </div>
-            <div className="flex items-end gap-1 h-10">
-              {[40, 55, 45, 70, 60, 90, 100].map((h, i) => (
-                <div 
-                  key={i}
-                  className={`w-2.5 rounded-sm ${i >= 5 ? 'bg-indigo-500' : 'bg-[#3B82F6]'}`}
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-              <span className="text-[12px] text-emerald-400 ml-2.5 mb-0.5">+{stats.revenueChange}%</span>
-            </div>
-          </div>
-
-          {/* Workspace Launcher */}
-          <div className="col-span-12 lg:col-span-5 row-span-2 grid grid-cols-2 gap-3">
-            <Link 
-              to="/app/crm"
-              className="rounded-2xl p-3.5 flex flex-col justify-center gap-2 hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: isDarkBg ? '#201D16' : '#F7F7F5' }}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#E6F1FB] flex items-center justify-center">
-                <Users size={18} className="text-[#185FA5]" />
-              </div>
-              <div className="text-[13px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>CRM</div>
-            </Link>
-            <Link 
-              to="/app/finance"
-              className="rounded-2xl p-3.5 flex flex-col justify-center gap-2 hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: isDarkBg ? '#201D16' : '#F7F7F5' }}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#EAF3DE] flex items-center justify-center">
-                <DollarSign size={18} className="text-[#27500A]" />
-              </div>
-              <div className="text-[13px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>Finance</div>
-            </Link>
-            <Link 
-              to="/app/projects"
-              className="rounded-2xl p-3.5 flex flex-col justify-center gap-2 hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: isDarkBg ? '#201D16' : '#F7F7F5' }}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#FAEEDA] flex items-center justify-center">
-                <Target size={18} className="text-[#633806]" />
-              </div>
-              <div className="text-[13px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>Projects</div>
-            </Link>
-            <Link 
-              to="/app/people"
-              className="rounded-2xl p-3.5 flex flex-col justify-center gap-2 hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: isDarkBg ? '#201D16' : '#F7F7F5' }}
-            >
-              <div className="w-8 h-8 rounded-lg bg-[#EEEDFE] flex items-center justify-center">
-                <UserCircle size={18} className="text-[#3C3489]" />
-              </div>
-              <div className="text-[13px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>People</div>
-            </Link>
-          </div>
-
-          {/* Stat: Hot deals */}
-          <Link to="/app/crm" className="col-span-6 md:col-span-3 rounded-2xl border p-4 hover:opacity-80 transition-opacity" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-2.5">
-              <Flame size={18} className="text-[#D85A30]" />
-              <span className="text-[12px] text-[#639922]">+{stats.hotDealsChange} this week</span>
-            </div>
-            <div className="text-[22px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{stats.hotDeals}</div>
-            <div className="text-[12px]" style={{ color: isDarkBg ? '#A79F91' : '#5F5E5A' }}>Hot deals</div>
-          </Link>
-
-          {/* Stat: Pipeline */}
-          <Link to="/app/crm" className="col-span-6 md:col-span-3 rounded-2xl border p-4 hover:opacity-80 transition-opacity" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-2.5">
-              <TrendingUp size={18} className="text-[#185FA5]" />
-              <span className="text-[12px] text-[#639922]">+{formatCurrency(stats.pipelineChange)}</span>
-            </div>
-            <div className="text-[22px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{formatCurrency(stats.pipeline)}</div>
-            <div className="text-[12px]" style={{ color: isDarkBg ? '#A79F91' : '#5F5E5A' }}>Pipeline value</div>
-          </Link>
-
-          {/* Stat: Pending tasks */}
-          <Link to="/app/tasks" className="col-span-6 md:col-span-3 rounded-2xl border p-4 hover:opacity-80 transition-opacity" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-2.5">
-              <List size={18} className="text-[#3C3489]" />
-              <span className="text-[12px] text-[#854F0B]">{stats.pendingTasksChange}</span>
-            </div>
-            <div className="text-[22px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{stats.pendingTasks}</div>
-            <div className="text-[12px]" style={{ color: isDarkBg ? '#A79F91' : '#5F5E5A' }}>Pending tasks</div>
-          </Link>
-
-          {/* Stat: Team members */}
-          <Link to="/app/people" className="col-span-6 md:col-span-3 rounded-2xl border p-4 hover:opacity-80 transition-opacity" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-2.5">
-              <UsersRound size={18} className="text-[#0F6E56]" />
-              <span className="text-[12px] text-[#639922]">+{stats.teamMembersChange}</span>
-            </div>
-            <div className="text-[22px] font-medium" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{stats.teamMembers}</div>
-            <div className="text-[12px]" style={{ color: isDarkBg ? '#A79F91' : '#5F5E5A' }}>Team members</div>
-          </Link>
-
-          {/* Recent Activity */}
-          <div className="col-span-12 lg:col-span-7 rounded-2xl border p-4" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="text-[14px] font-medium mb-3.5" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>Recent activity</div>
-            <div className="space-y-3">
-              {recentActivity.map((activity, i) => (
-                <div key={i} className="flex gap-2.5 items-start">
-                  <div 
-                    className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: activity.color }}
-                  >
-                    {getActivityIcon(activity.icon)}
-                  </div>
-                  <div>
-                    <div className="text-[13px]" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{activity.text}</div>
-                    <div className="text-[11px]" style={{ color: isDarkBg ? '#726A5C' : '#888780' }}>{activity.time}</div>
-                  </div>
+          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {birthdaysThisMonth.map((birthday, index) => (
+              <div key={index} className="flex items-center gap-4 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-100">
+                <div className="w-14 h-14 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {birthday.avatar}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming */}
-          <div className="col-span-12 lg:col-span-5 rounded-2xl border p-4" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
-            <div className="text-[14px] font-medium mb-3.5" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>Upcoming</div>
-            <div className="space-y-3">
-              {upcomingEvents.map((event, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <div 
-                    className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: event.color }}
-                  />
-                  <div>
-                    <div className="text-[13px]" style={{ color: isDarkBg ? '#F7F4EE' : '#111111' }}>{event.text}</div>
-                    <div className="text-[11px]" style={{ color: isDarkBg ? '#726A5C' : '#888780' }}>{event.time}</div>
-                  </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900">{birthday.name}</p>
+                  <p className="text-sm text-gray-500">{birthday.department}</p>
+                  <p className="text-sm text-pink-600 font-medium mt-1">
+                    {new Date(birthday.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </p>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+            
+            {birthdaysThisMonth.length === 0 && (
+              <div className="col-span-3 text-center py-8 text-gray-500">
+                <Cake size={40} className="mx-auto mb-2 text-gray-300" />
+                <p>No birthdays this month</p>
+              </div>
+            )}
           </div>
-
         </div>
+
+        {/* ===== BEST STAFF OF THE MONTH ===== */}
+        <div className="bg-gradient-to-br from-amber-500 via-yellow-500 to-orange-500 rounded-2xl shadow-lg overflow-hidden text-white">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Crown size={24} />
+              <span className="text-sm font-medium opacity-90">Best Staff of the Month</span>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-3xl font-bold">
+                {bestStaff.avatar}
+              </div>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-1">{bestStaff.name}</h3>
+                <p className="text-white/80">{bestStaff.role} - {bestStaff.department}</p>
+                <p className="text-white/90 mt-2">{bestStaff.achievement}</p>
+                
+                <div className="flex gap-6 mt-4">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{bestStaff.stats.sales}</p>
+                    <p className="text-xs opacity-80">Sales</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{bestStaff.stats.deals}</p>
+                    <p className="text-xs opacity-80">Deals</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold">{bestStaff.stats.tasks}</p>
+                    <p className="text-xs opacity-80">Tasks</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-black/10 px-6 py-3 flex items-center justify-between text-sm">
+            <span>Congratulations, {bestStaff.name.split(' ')[0]}!</span>
+            <span>{currentMonth} {new Date().getFullYear()}</span>
+          </div>
+        </div>
+
+        {/* ===== TWO COLUMN: AWARDS + POLLS ===== */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          {/* RECENT AWARDS & RECOGNITION */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                <Award size={20} className="text-amber-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-900">Recent Awards & Recognition</h2>
+                <p className="text-sm text-gray-500">Team shoutouts</p>
+              </div>
+            </div>
+            
+            <div className="p-4 space-y-3">
+              {recentAwards.map((award) => {
+                const IconComponent = award.icon
+                return (
+                  <div key={award.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl">
+                    <div 
+                      className="w-12 h-12 rounded-xl flex items-center justify-center"
+                      style={{ backgroundColor: award.color + '20' }}
+                    >
+                      <IconComponent size={24} style={{ color: award.color }} />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-gray-900">{award.recipient}</p>
+                        <span 
+                          className="px-2 py-0.5 rounded-full text-xs font-medium"
+                          style={{ backgroundColor: award.color + '20', color: award.color }}
+                        >
+                          {award.award}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">{award.reason}</p>
+                    </div>
+                    <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition">
+                      <ThumbsUp size={16} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* POLLS */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Vote size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-gray-900">Team Polls</h2>
+                <p className="text-sm text-gray-500">Vote & see results</p>
+              </div>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {pollResults.map((poll) => {
+                const isVoted = hasVoted.includes(poll.id)
+                const isActive = poll.status === 'active'
+                
+                return (
+                  <div key={poll.id} className="p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="font-medium text-gray-900">{poll.question}</p>
+                      {isActive && !isVoted && (
+                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">
+                          Active
+                        </span>
+                      )}
+                      {!isActive && (
+                        <span className="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">
+                          Closed
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {poll.options.map((option, idx) => {
+                        const isSelected = selectedPoll === poll.id + '-' + idx
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => isActive && !isVoted && handleVote(poll.id, idx)}
+                            disabled={!isActive || isVoted}
+                            className={'w-full text-left p-3 rounded-lg border transition ' + (
+                              isSelected 
+                                ? 'border-blue-500 bg-blue-50' 
+                                : 'border-gray-200 bg-white hover:border-gray-300'
+                            ) + ((!isActive || isVoted) ? ' cursor-default' : ' cursor-pointer')}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                {isVoted && (
+                                  <div className={'w-4 h-4 rounded-full border-2 flex items-center justify-center ' + (
+                                    isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+                                  )}>
+                                    {isSelected && <Check size={12} className="text-white" />}
+                                  </div>
+                                )}
+                                <span className="text-sm font-medium text-gray-700">{option.text}</span>
+                              </div>
+                              {isVoted && (
+                                <span className="text-sm font-medium text-gray-500">
+                                  {option.percentage}%
+                                </span>
+                              )}
+                            </div>
+                            {isVoted && (
+                              <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-blue-500 rounded-full transition-all"
+                                  style={{ width: option.percentage + '%' }}
+                                />
+                              </div>
+                            )}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    
+                    <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
+                      <span>{poll.totalVotes} votes</span>
+                      <span>Ends {new Date(poll.endsAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ===== QUICK ACTIONS ===== */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link 
+            to="/app/people"
+            className="bg-white rounded-xl p-4 border border-gray-200 hover:border-blue-300 hover:shadow-md transition flex flex-col items-center text-center"
+          >
+            <Users size={24} className="text-blue-600 mb-2" />
+            <span className="text-sm font-medium text-gray-700">Team Directory</span>
+          </Link>
+          <Link 
+            to="/app/kudos"
+            className="bg-white rounded-xl p-4 border border-gray-200 hover:border-pink-300 hover:shadow-md transition flex flex-col items-center text-center"
+          >
+            <Heart size={24} className="text-pink-600 mb-2" />
+            <span className="text-sm font-medium text-gray-700">Send Kudos</span>
+          </Link>
+          <Link 
+            to="/app/polls"
+            className="bg-white rounded-xl p-4 border border-gray-200 hover:border-purple-300 hover:shadow-md transition flex flex-col items-center text-center"
+          >
+            <Vote size={24} className="text-purple-600 mb-2" />
+            <span className="text-sm font-medium text-gray-700">Create Poll</span>
+          </Link>
+          <Link 
+            to="/app/awards"
+            className="bg-white rounded-xl p-4 border border-gray-200 hover:border-amber-300 hover:shadow-md transition flex flex-col items-center text-center"
+          >
+            <Trophy size={24} className="text-amber-600 mb-2" />
+            <span className="text-sm font-medium text-gray-700">Nominate</span>
+          </Link>
+        </div>
+
       </div>
     </div>
   )

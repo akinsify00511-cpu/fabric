@@ -4,6 +4,8 @@
 // updates payments_paystack, marks the invoice paid, and logs income to
 // the accounting payments table.
 //
+// SECURE: Function is public (webhook endpoint) but verifies Paystack signature
+//
 // Deploy:  supabase functions deploy paystack-webhook --no-verify-jwt
 // Webhook URL in Paystack dashboard:
 //   https://<project-ref>.supabase.co/functions/v1/paystack-webhook
@@ -11,13 +13,25 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// SECURITY: Strict CORS for webhook endpoint
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://paystack.com',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'x-paystack-signature, content-type',
+};
+
 const PAYSTACK_SECRET_KEY = Deno.env.get("PAYSTACK_SECRET_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    return new Response("Method not allowed", { status: 405, headers: corsHeaders });
   }
 
   // Read the raw body first — signature is computed over the exact raw bytes

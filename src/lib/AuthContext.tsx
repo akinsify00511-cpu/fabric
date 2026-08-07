@@ -76,32 +76,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isDemo, setIsDemo] = useState(false)
 
   useEffect(() => {
-    // Check for demo mode
+    // SECURE DEMO MODE: Use hardcoded demo data, never trust localStorage user data
+    // Demo mode is read-only and cannot access real business data
     const demoMode = localStorage.getItem('avenize_demo') === 'true'
-    const demoUser = localStorage.getItem('avenize_demo_user')
     
-    if (demoMode && demoUser) {
-      try {
-        const user = JSON.parse(demoUser)
-        setIsDemo(true)
-        const demoStaff: Staff = {
-          id: user.id,
-          user_id: user.id,
-          business_id: user.business_id,
-          business_name: user.business_name,
-          full_name: user.name,
-          name: user.name,
-          email: user.email,
-          role: 'owner' as const,
-          job_title: 'Business Owner',
+    if (demoMode) {
+      const demoUser = localStorage.getItem('avenize_demo_user')
+      if (demoUser) {
+        try {
+          const user = JSON.parse(demoUser)
+          // SECURITY: Only allow specific demo user IDs, reject any custom injection
+          const ALLOWED_DEMO_IDS = ['demo-user-001', 'demo-user-002', 'demo-user-003']
+          if (!ALLOWED_DEMO_IDS.includes(user.id)) {
+            console.warn('Invalid demo user ID, clearing demo mode')
+            localStorage.removeItem('avenize_demo')
+            localStorage.removeItem('avenize_demo_user')
+          } else {
+            setIsDemo(true)
+            // Hardcoded demo staff - no data from localStorage
+            const demoStaff: Staff = {
+              id: 'demo-user-001',
+              user_id: 'demo-user-001',
+              business_id: 'demo-business-001',
+              business_name: 'TechBuild Nigeria Ltd',
+              full_name: 'Adebayo Johnson',
+              name: 'Adebayo Johnson',
+              email: 'demo@avenize.ng',
+              role: 'owner' as const,
+              job_title: 'Business Owner',
+            }
+            console.log('Demo login successful')
+            setStaff(demoStaff)
+            setStaffChecked(true)
+            setLoading(false)
+            return
+          }
+        } catch (e) {
+          console.warn('Failed to parse demo user, clearing')
+          localStorage.removeItem('avenize_demo')
+          localStorage.removeItem('avenize_demo_user')
         }
-        console.log('Demo login successful:', demoStaff)
-        setStaff(demoStaff)
-        setStaffChecked(true)
-        setLoading(false)
-        return
-      } catch (e) {
-        console.warn('Failed to parse demo user', e)
       }
     }
 
