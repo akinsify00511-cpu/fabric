@@ -80,7 +80,7 @@ export default function Social() {
   const [brandName, setBrandName] = useState('')
   const [brandTagline, setBrandTagline] = useState('')
   const [primaryColor, setPrimaryColor] = useState('#FF7A59')
-  const [secondaryColor, setSecondaryColor] = useState('#4F46E5')
+  const [secondaryColor, setSecondaryColor] = useState('#0891B2')
   const [brandAssets, setBrandAssets] = useState<BrandAsset[]>([])
 
   const load = async () => {
@@ -265,7 +265,7 @@ export default function Social() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="What's on your mind? Write your post here..."
-              className="w-full h-28 resize-none rounded-lg border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
+              className="w-full h-28 resize-none rounded-lg border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0891B2]/30"
             />
             <div className="flex items-center justify-between mt-3">
               <label className="flex items-center gap-2 text-xs text-black cursor-pointer">
@@ -329,7 +329,7 @@ export default function Social() {
                       {post.status === 'draft' && (
                         <button
                           onClick={() => publishPost(post.id)}
-                          className="text-xs text-[#4F46E5] hover:underline"
+                          className="text-xs text-[#0891B2] hover:underline"
                         >
                           Publish
                         </button>
@@ -539,7 +539,7 @@ export default function Social() {
                 <button
                   key={type}
                   onClick={() => addBrandAsset(type as BrandAsset['asset_type'])}
-                  className="aspect-square rounded-xl border-2 border-dashed border-black/10 flex flex-col items-center justify-center gap-2 text-black hover:border-[#4F46E5] hover:text-[#4F46E5] transition"
+                  className="aspect-square rounded-xl border-2 border-dashed border-black/10 flex flex-col items-center justify-center gap-2 text-black hover:border-[#0891B2] hover:text-[#0891B2] transition"
                 >
                   <Image size={20} />
                   <span className="text-xs capitalize">{type}</span>

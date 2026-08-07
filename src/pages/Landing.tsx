@@ -334,7 +334,7 @@ function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#0891B2] via-[#0891B2] to-[#7C3AED] flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
             </div>
             <span className="font-semibold text-white text-lg">Avenize</span>
@@ -779,7 +779,7 @@ function PipelineMockup() {
           key={i}
           className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-mono ${
             stage.active
-              ? 'bg-[#4F46E5] text-white'
+              ? 'bg-[#0891B2] text-white'
               : stage.done
               ? 'bg-emerald-100 text-emerald-700'
               : 'bg-[#E8E8E8] text-[#6B6B6B]'
@@ -818,7 +818,7 @@ function AlertsMockup() {
 // ============================================
 function ChatMockup() {
   const messages = [
-    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Project 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "#4F46E5" },
+    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Project 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "#0891B2" },
     { initials: "WH", name: "Warehouse", role: "", message: "Chimic Plus delivered 500L resin. Stock updated. Factory notified.", color: "#EC4899" },
     { initials: "FN", name: "Finance", role: "", message: "GTBank alert: ₦450,000 received from ABC Holdings. Matches Invoice #147.", color: "#10B981" }
   ]

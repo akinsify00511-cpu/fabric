@@ -458,7 +458,7 @@ function CTASection() {
     <section className="relative py-20 bg-[#111111] text-white text-center overflow-hidden">
       {/* Background Gradient */}
       <div className="absolute inset-0 opacity-20" style={{
-        background: 'radial-gradient(ellipse at 50% 100%, #4F46E5 0%, transparent 60%)'
+        background: 'radial-gradient(ellipse at 50% 100%, #0891B2 0%, transparent 60%)'
       }} />
 
       <div className="relative max-w-3xl mx-auto px-6">
@@ -471,7 +471,7 @@ function CTASection() {
 
         <a
           href="https://app.avenize.com/signup"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#2563EB] via-[#4F46E5] to-[#8B5CF6] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-indigo-500/25"
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#0891B2] via-[#0891B2] to-[#7C3AED] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-indigo-500/25"
         >
           Start free setup
         </a>
