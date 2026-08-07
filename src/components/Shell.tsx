@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -17,6 +17,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/knowledge': 'knowledge',
   '/app/tickets': 'tickets',
   '/app/crm': 'crm',
+  '/app/leads': 'crm',
   '/app/social': 'social',
   '/app/projects': 'projects',
   '/app/finance': 'finance',
@@ -43,6 +44,7 @@ const NAV_ITEMS = [
   { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
   { to: '/app/tickets', label: 'Support', icon: Headphones, toolKey: 'tickets' },
   { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
+  { to: '/app/leads', label: 'Leads', icon: UserPlus, toolKey: 'crm' },
   { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
   { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
   { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },

@@ -75,6 +75,7 @@ const TrialBanner = lazy(() => import('./components/TrialBanner'))
 const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
 const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
+const Leads = lazy(() => import('./pages/Leads'))
 const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
@@ -248,6 +249,7 @@ function AppRoutes() {
         >
         <Route index element={<CompanyHome />} />
         <Route path="crm" element={<CRM />} />
+        <Route path="leads" element={<Leads />} />
         <Route path="projects" element={<ProjectsNigeria />} />
         <Route path="finance" element={<FinanceCenter />} />
         <Route path="quotes" element={<Quotes />} />
