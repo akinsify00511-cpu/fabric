@@ -124,7 +124,7 @@ export default function Onboarding() {
     setError(null)
 
     try {
-      // Create business and owner
+      // Try RPC first (bypasses RLS due to SECURITY DEFINER)
       const { data, error: rpcError } = await supabase.rpc('create_business_and_owner', {
         p_business_name: businessName,
         p_industry: industry,
@@ -132,121 +132,98 @@ export default function Onboarding() {
       })
 
       if (rpcError) {
-        console.error('RPC Error:', rpcError)
-        // Handle specific error messages
-        if (rpcError.message?.includes('already belongs') || rpcError.message?.includes('already a member')) {
-          // User already registered - redirect to app
-          localStorage.setItem('avenize_onboarding_complete', 'true')
-          window.location.href = '/app'
-          return
-        }
-        // For other errors (including ambiguous column), try manual creation
-        console.warn('RPC failed, trying manual creation:', rpcError.message)
+        console.error('RPC Error details:', {
+          message: rpcError.message,
+          details: rpcError.details,
+          hint: rpcError.hint,
+          code: rpcError.code
+        })
+        
+        // If RPC fails, skip it and use manual creation
+        console.warn('RPC failed, using manual creation:', rpcError.message)
         await createBusinessManually()
         return
       }
 
-      // Save color preferences to localStorage for branding
+      // RPC succeeded!
       if (selectedColor) {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)
         localStorage.setItem('avenize_theme_text', selectedColor.previewText)
       }
-
-      // Mark onboarding as complete in localStorage (for quick access)
       localStorage.setItem('avenize_onboarding_complete', 'true')
-      
-      // Also mark as complete in the staff record (for persistence)
-      const staffId = data?.p_staff_id || data?.staff_id
-      const businessId = data?.p_business_id || data?.business_id
-      
-      if (staffId) {
-        await supabase
-          .from('staff')
-          .update({ onboarding_completed: true })
-          .eq('id', staffId)
-        
-        // Save branding colors to database
-        if (selectedColor && businessId) {
-          await supabase
-            .from('business_branding')
-            .upsert({
-              business_id: businessId,
-              background_color: selectedColor.hex,
-              text_color: selectedColor.previewText,
-              updated_at: new Date().toISOString(),
-            })
-        }
-      }
-
-      // Force a full page reload to reset all auth state
       window.location.href = '/app'
+      
     } catch (err: any) {
       console.error('Setup error:', err)
-      setError(err.message || 'Failed to complete setup. Please try again.')
+      setError(err.message || 'Setup failed. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Fallback: Create business and staff manually
+  // Create business and staff manually
   const createBusinessManually = async () => {
-    try {
-      // Save color preferences to localStorage for branding
-      if (selectedColor) {
-        localStorage.setItem('avenize_theme_bg', selectedColor.hex)
-        localStorage.setItem('avenize_theme_text', selectedColor.previewText)
-      }
-
-      // Create business
-      const { data: businessData, error: businessError } = await supabase
-        .from('businesses')
-        .insert({
-          name: businessName,
-          industry: industry,
-        })
-        .select()
-        .single()
-
-      if (businessError) throw businessError
-
-      // Create staff record
-      const { data: staffData, error: staffError } = await supabase
-        .from('staff')
-        .insert({
-          business_id: businessData.id,
-          user_id: session?.user?.id,
-          name: fullName,
-          email: session?.user?.email,
-          role: 'owner',
-          job_title: 'Owner',
-          onboarding_completed: true,
-        })
-        .select()
-        .single()
-
-      if (staffError) throw staffError
-
-      // Save branding colors
-      if (selectedColor) {
-        await supabase
-          .from('business_branding')
-          .upsert({
-            business_id: businessData.id,
-            background_color: selectedColor.hex,
-            text_color: selectedColor.previewText,
-            updated_at: new Date().toISOString(),
-          })
-      }
-
-      // Mark onboarding complete
-      localStorage.setItem('avenize_onboarding_complete', 'true')
-
-      // Redirect to app
-      window.location.href = '/app'
-    } catch (err: any) {
-      console.error('Manual creation error:', err)
-      setError(err.message || 'Failed to create your business. Please try again.')
+    if (selectedColor) {
+      localStorage.setItem('avenize_theme_bg', selectedColor.hex)
+      localStorage.setItem('avenize_theme_text', selectedColor.previewText)
     }
+
+    // Step 1: Create business
+    console.log('Creating business manually...')
+    const { data: businessData, error: businessError } = await supabase
+      .from('businesses')
+      .insert({ name: businessName, industry: industry })
+      .select()
+      .single()
+
+    if (businessError) {
+      console.error('Business insert error:', businessError)
+      setError(`Failed to create business: ${businessError.message}`)
+      setLoading(false)
+      return
+    }
+    console.log('Business created:', businessData.id)
+
+    // Step 2: Create staff record
+    console.log('Creating staff record...')
+    const { data: staffData, error: staffError } = await supabase
+      .from('staff')
+      .insert({
+        business_id: businessData.id,
+        user_id: session?.user?.id,
+        name: fullName,
+        email: session?.user?.email,
+        role: 'owner',
+        job_title: 'Owner',
+        onboarding_completed: true,
+      })
+      .select()
+      .single()
+
+    if (staffError) {
+      console.error('Staff insert error:', staffError)
+      setError(`Failed to create staff record: ${staffError.message}`)
+      setLoading(false)
+      return
+    }
+    console.log('Staff created:', staffData.id)
+
+    // Step 3: Save branding
+    if (selectedColor) {
+      console.log('Saving branding...')
+      await supabase
+        .from('business_branding')
+        .upsert({
+          business_id: businessData.id,
+          background_color: selectedColor.hex,
+          text_color: selectedColor.previewText,
+          updated_at: new Date().toISOString(),
+        })
+    }
+
+    // Complete!
+    localStorage.setItem('avenize_onboarding_complete', 'true')
+    window.location.href = '/app'
   }
 
   return (
