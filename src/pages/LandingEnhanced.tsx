@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, BriefcaseBusiness } from 'lucide-react'
+import { ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, BriefcaseBusiness, Clock, TrendingUp, Sparkles } from 'lucide-react'
 import SarahChat from '../components/SarahChat'
 
 const STATS = [
@@ -99,15 +99,49 @@ function Navbar() {
 }
 
 function HeroSection() {
+  const [currentTime, setCurrentTime] = useState(new Date())
+  
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+  
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-NG', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: 'Africa/Lagos'
+    })
+  }
+  
   return (
     <section className="pt-28 pb-16 px-4 sm:px-6 bg-white">
       <div className="max-w-4xl mx-auto text-center">
-        {/* Google-style logo */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-xl">A</span>
+        {/* Google-style logo with live badge */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="relative">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-xl">A</span>
+            </div>
+            {/* Live indicator */}
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
           </div>
-          <span className="text-3xl font-semibold text-gray-800">Avenize</span>
+          <div className="text-left">
+            <span className="text-3xl font-semibold text-gray-800">Avenize</span>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <Clock size={12} />
+              <span>Lagos • </span>
+              <span className="font-mono font-bold">{formatTime(currentTime)}</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* AI Feature Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-full text-sm text-indigo-700 mb-8">
+          <Sparkles size={16} className="text-amber-500" />
+          <span className="font-medium">AI-Powered Insights included</span>
         </div>
         
         {/* Google-style search bar - THE ICONIC ELEMENT */}
@@ -139,11 +173,11 @@ function HeroSection() {
           </div>
         </div>
         
-        {/* Quick action pills - Google style */}
+        {/* Quick action pills - Clickable */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          <span className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">How it works</span>
-          <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">Watch demo</span>
-          <span className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">See pricing</span>
+          <a href="#modules" className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-100 transition">How it works</a>
+          <a href="#testimonials" className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 transition">Watch demo</a>
+          <Link to="/pricing" className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 transition">See pricing</Link>
         </div>
         
         {/* Main headline */}
@@ -166,6 +200,31 @@ function HeroSection() {
         </div>
         
         <p className="text-sm text-gray-500">No credit card required • Free 7-day trial • Cancel anytime</p>
+        
+        {/* Quick Stats Row */}
+        <div className="flex flex-wrap justify-center gap-8 mt-12 pt-8 border-t border-gray-100">
+          <div className="flex items-center gap-2">
+            <TrendingUp size={20} className="text-green-500" />
+            <div className="text-left">
+              <div className="text-xl font-bold text-gray-900">₦2.5B+</div>
+              <div className="text-xs text-gray-500">Deals Tracked</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users size={20} className="text-blue-500" />
+            <div className="text-left">
+              <div className="text-xl font-bold text-gray-900">2,500+</div>
+              <div className="text-xs text-gray-500">Nigerian Businesses</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Clock size={20} className="text-purple-500" />
+            <div className="text-left">
+              <div className="text-xl font-bold text-gray-900">99.9%</div>
+              <div className="text-xs text-gray-500">Uptime</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -189,6 +248,57 @@ function WhoSection() {
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.role}</h3>
                 <p className="text-xs text-gray-500">{item.benefit}</p>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// Daily workflow activities - what businesses do every day
+const DAILY_WORKFLOW = [
+  { time: 'Morning', action: 'Check Dashboard', desc: 'Review daily tasks, pending invoices, and team activity', icon: BarChart3 },
+  { time: '9 AM', action: 'Log New Leads', desc: 'Add prospects from WhatsApp, calls, or referrals', icon: Users },
+  { time: '11 AM', action: 'Send Invoices', desc: 'Create and send invoices with VAT/WHT自动计算', icon: Briefcase },
+  { time: '2 PM', action: 'Track Jobs', desc: 'Update project progress and field team locations', icon: Target },
+  { time: '5 PM', action: 'Review Reports', desc: 'Check daily sales, payments received, and tasks completed', icon: TrendingUp },
+]
+
+function DailyWorkflowSection() {
+  return (
+    <section className="py-16 px-4 sm:px-6 bg-white border-y border-gray-100">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full text-sm text-green-700 mb-4">
+            <Clock size={16} />
+            <span className="font-medium">A Day with Avenize</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Your Daily Business Workflow</h2>
+          <p className="text-gray-600">Everything you need to run your business, organized the way you already work.</p>
+        </div>
+        
+        <div className="space-y-4">
+          {DAILY_WORKFLOW.map((item, i) => {
+            const Icon = item.icon
+            return (
+              <div key={i} className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center">
+                  <Icon size={20} className="text-blue-500" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-1">
+                    <span className="text-xs font-mono text-gray-400 bg-gray-200 px-2 py-0.5 rounded">{item.time}</span>
+                    <h3 className="font-semibold text-gray-900">{item.action}</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">{item.desc}</p>
+                </div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                    <span className="text-xs font-bold">{i + 1}</span>
+                  </div>
+                </div>
               </div>
             )
           })}
@@ -376,6 +486,7 @@ export default function LandingEnhanced() {
       <Navbar />
       <HeroSection />
       <WhoSection />
+      <DailyWorkflowSection />
       <ModulesSection />
       <TestimonialsSection />
       <PricingSection />
