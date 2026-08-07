@@ -100,14 +100,14 @@ export default function CookieConsent() {
             <div className="bg-white rounded-2xl shadow-2xl border border-black/5 p-6 animate-slide-up">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Settings className="w-5 h-5 text-gray-400" />
+                  <Settings className="w-5 h-5 text-gray-800" />
                   <h3 className="font-semibold text-[var(--avenize-black)]">Cookie Preferences</h3>
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
                   className="p-2 hover:bg-black/5 rounded-lg transition"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-gray-800" />
                 </button>
               </div>
 
@@ -116,10 +116,10 @@ export default function CookieConsent() {
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
                     <h4 className="font-medium text-[var(--avenize-black)]">Essential Cookies</h4>
-                    <p className="text-sm text-gray-500">Required for the website to function</p>
+                    <p className="text-sm text-gray-900">Required for the website to function</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">Always on</span>
+                    <span className="text-sm text-gray-900">Always on</span>
                     <div className="w-11 h-6 bg-indigo-600 rounded-full relative">
                       <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
                     </div>
@@ -130,7 +130,7 @@ export default function CookieConsent() {
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
                     <h4 className="font-medium text-[var(--avenize-black)]">Analytics</h4>
-                    <p className="text-sm text-gray-500">Help us understand how visitors use our site</p>
+                    <p className="text-sm text-gray-900">Help us understand how visitors use our site</p>
                   </div>
                   <button
                     onClick={() => setPreferences(p => ({ ...p, analytics: !p.analytics }))}
@@ -148,7 +148,7 @@ export default function CookieConsent() {
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
                     <h4 className="font-medium text-[var(--avenize-black)]">Marketing</h4>
-                    <p className="text-sm text-gray-500">Used to deliver relevant advertisements</p>
+                    <p className="text-sm text-gray-900">Used to deliver relevant advertisements</p>
                   </div>
                   <button
                     onClick={() => setPreferences(p => ({ ...p, marketing: !p.marketing }))}
@@ -166,7 +166,7 @@ export default function CookieConsent() {
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div>
                     <h4 className="font-medium text-[var(--avenize-black)]">Functional</h4>
-                    <p className="text-sm text-gray-500">Remember your preferences and settings</p>
+                    <p className="text-sm text-gray-900">Remember your preferences and settings</p>
                   </div>
                   <button
                     onClick={() => setPreferences(p => ({ ...p, functional: !p.functional }))}
@@ -196,7 +196,7 @@ export default function CookieConsent() {
                 </button>
               </div>
 
-              <p className="text-xs text-gray-400 text-center mt-4">
+              <p className="text-xs text-gray-800 text-center mt-4">
                 By clicking "Accept All", you consent to all cookies. You can update your preferences at any time.
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function CookieConsent() {
                   <h3 className="font-semibold text-[var(--avenize-black)] mb-1">
                     We value your privacy
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-gray-900 mb-4">
                     We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
                     {' '}
                     <Link to="/cookies" className="text-indigo-600 hover:underline">
@@ -228,7 +228,7 @@ export default function CookieConsent() {
                     </button>
                     <button
                       onClick={handleRejectAll}
-                      className="px-4 py-2 bg-white border border-black/10 text-gray-600 rounded-lg text-sm font-medium hover:bg-black/5 transition"
+                      className="px-4 py-2 bg-white border border-black/10 text-gray-900 rounded-lg text-sm font-medium hover:bg-black/5 transition"
                     >
                       Reject All
                     </button>
@@ -244,7 +244,7 @@ export default function CookieConsent() {
                   onClick={handleRejectAll}
                   className="p-2 hover:bg-black/5 rounded-lg transition shrink-0"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-gray-800" />
                 </button>
               </div>
             </div>

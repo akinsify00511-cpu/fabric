@@ -149,13 +149,13 @@ export default function Signup() {
 
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Check your email</h2>
-            <p className="text-sm text-gray-500 mt-2">We sent a confirmation link to</p>
+            <p className="text-sm text-gray-900 mt-2">We sent a confirmation link to</p>
             <p className="font-semibold text-blue-600 mt-1">{email}</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 text-left space-y-3">
             <p className="text-sm font-medium text-gray-700">Next steps:</p>
-            <ol className="text-sm text-gray-600 space-y-2">
+            <ol className="text-sm text-gray-900 space-y-2">
               {[
                 'Click the confirmation link in your email',
                 `Your business "${businessName}" will be set up`,
@@ -170,7 +170,7 @@ export default function Signup() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-gray-400">Didn&apos;t receive the email? Check your spam folder.</p>
+            <p className="text-xs text-gray-800">Didn&apos;t receive the email? Check your spam folder.</p>
             <button 
               onClick={handleResendEmail}
               className="text-sm text-blue-600 hover:underline font-medium"
@@ -181,7 +181,7 @@ export default function Signup() {
 
           <Link 
             to="/login" 
-            className="text-sm text-gray-500 hover:text-gray-700 font-medium flex items-center justify-center gap-1 pt-4 border-t border-gray-100"
+            className="text-sm text-gray-900 hover:text-gray-700 font-medium flex items-center justify-center gap-1 pt-4 border-t border-gray-100"
           >
             ← Back to sign in
           </Link>
@@ -259,7 +259,7 @@ export default function Signup() {
 
           <div className="text-center lg:text-left">
             <h2 className="text-2xl font-bold text-gray-900">Set up your business</h2>
-            <p className="text-gray-500 mt-1">Create your workspace and invite your team</p>
+            <p className="text-gray-900 mt-1">Create your workspace and invite your team</p>
           </div>
 
           <div className="space-y-3">
@@ -292,7 +292,7 @@ export default function Signup() {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-gray-50 px-4 text-sm text-gray-400">or</span>
+              <span className="bg-gray-50 px-4 text-sm text-gray-800">or</span>
             </div>
           </div>
 
@@ -319,7 +319,7 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Industry <span className="text-gray-400 font-normal">(optional)</span>
+                  Industry <span className="text-gray-800 font-normal">(optional)</span>
                 </label>
                 <select
                   value={industry}
@@ -383,7 +383,7 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-900"
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -416,7 +416,7 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-900"
                   >
                     {showConfirmPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -447,7 +447,7 @@ export default function Signup() {
               ) : 'Create Business'}
             </button>
 
-            <p className="text-xs text-center text-gray-400">
+            <p className="text-xs text-center text-gray-800">
               By signing up, you agree to our{' '}
               <a href="/terms" className="text-blue-600 hover:underline">Terms</a>
               {' '}and{' '}
@@ -456,7 +456,7 @@ export default function Signup() {
           </form>
 
           <div className="text-center pt-4 border-t border-gray-100">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-900">
               Already have an account?{' '}
               <Link to="/login" className="text-blue-600 font-medium hover:underline">
                 Sign in

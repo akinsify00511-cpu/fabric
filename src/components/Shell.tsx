@@ -117,7 +117,7 @@ export default function Shell() {
                   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
                     isActive
                       ? 'bg-blue-50 text-blue-600 font-medium'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      : 'text-gray-900 hover:bg-gray-50'
                   }`
                 }
               >
@@ -139,9 +139,9 @@ export default function Shell() {
           </a>
         </div>
         
-        <div className="px-5 py-4 border-t border-gray-200 text-xs text-gray-500">
+        <div className="px-5 py-4 border-t border-gray-200 text-xs text-gray-900">
           <p className="truncate text-gray-700">{staff?.full_name ?? staff?.name ?? '...'}</p>
-          <p className="text-[10px] capitalize text-gray-400">{staff?.role || 'Staff'}</p>
+          <p className="text-[10px] capitalize text-gray-800">{staff?.role || 'Staff'}</p>
           <button onClick={signOut} className="mt-1 hover:opacity-70">
             Sign out
           </button>
@@ -165,7 +165,7 @@ export default function Shell() {
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-500">
+          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 text-gray-900">
             <Search size={15} strokeWidth={2} />
           </button>
         </div>
@@ -188,7 +188,7 @@ export default function Shell() {
                 end={item.end}
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
-                    isActive ? 'text-blue-600' : 'text-gray-400'
+                    isActive ? 'text-blue-600' : 'text-gray-800'
                   }`
                 }
               >

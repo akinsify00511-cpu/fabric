@@ -118,23 +118,23 @@ function Navbar() {
               <span className="font-semibold text-gray-900">Avenize</span>
             </Link>
             <div className="hidden lg:flex items-center gap-1">
-              <a href="#modules" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Features</a>
-              <Link to="/pricing" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Pricing</Link>
-              <a href="#testimonials" className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Stories</a>
+              <a href="#modules" className="px-3 py-1.5 text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Features</a>
+              <Link to="/pricing" className="px-3 py-1.5 text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Pricing</Link>
+              <a href="#testimonials" className="px-3 py-1.5 text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Stories</a>
             </div>
           </div>
           
           {/* Right side - Actions */}
           <div className="flex items-center gap-3">
-            <Link to="/signup" className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">
+            <Link to="/signup" className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               Search
             </Link>
-            <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Sign in</Link>
+            <Link to="/login" className="hidden sm:block px-3 py-1.5 text-sm text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded-md transition">Sign in</Link>
             <Link to="/signup" className="px-4 py-1.5 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-600 transition shadow-sm">Get started</Link>
-            <button className="lg:hidden p-2 text-gray-500 hover:bg-gray-50 rounded-md" onClick={() => setMobileOpen(!mobileOpen)}>
+            <button className="lg:hidden p-2 text-gray-900 hover:bg-gray-50 rounded-md" onClick={() => setMobileOpen(!mobileOpen)}>
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -143,10 +143,10 @@ function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="lg:hidden bg-white border-t border-gray-100 px-4 py-3 space-y-1">
-          <a href="#modules" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Features</a>
-          <a href="#pricing" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Pricing</a>
-          <a href="#testimonials" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">Stories</a>
-          <a href="#faq" className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">FAQ</a>
+          <a href="#modules" className="block px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 rounded-md">Features</a>
+          <a href="#pricing" className="block px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 rounded-md">Pricing</a>
+          <a href="#testimonials" className="block px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 rounded-md">Stories</a>
+          <a href="#faq" className="block px-3 py-2 text-sm text-gray-900 hover:bg-gray-50 rounded-md">FAQ</a>
         </div>
       )}
     </nav>
@@ -185,7 +185,7 @@ function HeroSection() {
           </div>
           <div className="text-left">
             <span className="text-3xl font-semibold text-gray-800">Avenize</span>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
+            <div className="flex items-center gap-2 text-xs text-gray-900">
               <Clock size={12} />
               <span>Lagos • </span>
               <span className="font-mono font-bold">{formatTime(currentTime)}</span>
@@ -203,7 +203,7 @@ function HeroSection() {
         <div className="max-w-2xl mx-auto mb-8">
           <div className="relative bg-white rounded-full shadow-md hover:shadow-lg transition-shadow border border-gray-200 overflow-hidden">
             <div className="flex items-center px-6 py-4">
-              <svg className="w-5 h-5 text-gray-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-800 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input 
@@ -213,13 +213,13 @@ function HeroSection() {
               />
               <div className="flex items-center gap-2 ml-4">
                 <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                 </button>
                 <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                   </svg>
                 </button>
@@ -231,8 +231,8 @@ function HeroSection() {
         {/* Quick action pills - Clickable */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           <a href="#modules" className="px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium hover:bg-blue-100 transition">How it works</a>
-          <a href="#testimonials" className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 transition">Watch demo</a>
-          <Link to="/pricing" className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 transition">See pricing</Link>
+          <a href="#testimonials" className="px-4 py-2 bg-gray-100 text-gray-900 rounded-full text-sm font-medium hover:bg-gray-200 transition">Watch demo</a>
+          <Link to="/pricing" className="px-4 py-2 bg-gray-100 text-gray-900 rounded-full text-sm font-medium hover:bg-gray-200 transition">See pricing</Link>
         </div>
         
         {/* Main headline */}
@@ -240,7 +240,7 @@ function HeroSection() {
           Run Your Entire<br />
           <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">Business in One Place</span>
         </h1>
-        <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-gray-900 mb-10 max-w-2xl mx-auto">
           CRM, Finance, HR, Projects — all connected. No more switching between apps.
         </p>
         
@@ -254,7 +254,7 @@ function HeroSection() {
           </Link>
         </div>
         
-        <p className="text-sm text-gray-500">No credit card required • Free 7-day trial • Cancel anytime</p>
+        <p className="text-sm text-gray-900">No credit card required • Free 7-day trial • Cancel anytime</p>
         
         {/* Quick Stats Row */}
         <div className="flex flex-wrap justify-center gap-8 mt-12 pt-8 border-t border-gray-100">
@@ -262,21 +262,21 @@ function HeroSection() {
             <TrendingUp size={20} className="text-green-500" />
             <div className="text-left">
               <div className="text-xl font-bold text-gray-900">₦2.5B+</div>
-              <div className="text-xs text-gray-500">Deals Tracked</div>
+              <div className="text-xs text-gray-900">Deals Tracked</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Users size={20} className="text-blue-500" />
             <div className="text-left">
               <div className="text-xl font-bold text-gray-900">2,500+</div>
-              <div className="text-xs text-gray-500">Nigerian Businesses</div>
+              <div className="text-xs text-gray-900">Nigerian Businesses</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Clock size={20} className="text-purple-500" />
             <div className="text-left">
               <div className="text-xl font-bold text-gray-900">99.9%</div>
-              <div className="text-xs text-gray-500">Uptime</div>
+              <div className="text-xs text-gray-900">Uptime</div>
             </div>
           </div>
         </div>
@@ -291,7 +291,7 @@ function WhoSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Built for Every Team</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
+          <p className="text-gray-900 max-w-2xl mx-auto">Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {WHO_IT_FOR.map((item, i) => {
@@ -302,7 +302,7 @@ function WhoSection() {
                   <Icon size={28} style={{ color: item.color }} />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm">{item.role}</h3>
-                <p className="text-xs text-gray-500">{item.benefit}</p>
+                <p className="text-xs text-gray-900">{item.benefit}</p>
               </div>
             )
           })}
@@ -331,7 +331,7 @@ function DailyWorkflowSection() {
             <span className="font-medium">A Day with Avenize</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Your Daily Business Workflow</h2>
-          <p className="text-gray-600">Everything you need to run your business, organized the way you already work.</p>
+          <p className="text-gray-900">Everything you need to run your business, organized the way you already work.</p>
         </div>
         
         <div className="space-y-4">
@@ -344,10 +344,10 @@ function DailyWorkflowSection() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="text-xs font-mono text-gray-400 bg-gray-200 px-2 py-0.5 rounded">{item.time}</span>
+                    <span className="text-xs font-mono text-gray-800 bg-gray-200 px-2 py-0.5 rounded">{item.time}</span>
                     <h3 className="font-semibold text-gray-900">{item.action}</h3>
                   </div>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
+                  <p className="text-sm text-gray-900">{item.desc}</p>
                 </div>
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
@@ -374,7 +374,7 @@ function ProductivityToolsSection() {
             <span className="text-blue-700 font-medium">Productivity Suite</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">Everything Your Team Needs to Ship Faster</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
+          <p className="text-gray-900 max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
         </div>
         
         {/* Task Features Mini Showcase */}
@@ -385,7 +385,7 @@ function ProductivityToolsSection() {
                 <ListTodo size={28} className="text-blue-600" />
                 Powerful Task Management
               </h3>
-              <p className="text-gray-600 mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
+              <p className="text-gray-900 mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {TASK_FEATURES.map((feat, i) => {
                   const Icon = feat.icon
@@ -394,7 +394,7 @@ function ProductivityToolsSection() {
                       <Icon size={20} className="text-blue-400 shrink-0" />
                       <div>
                         <div className="font-medium text-sm">{feat.label}</div>
-                        <div className="text-xs text-gray-500">{feat.desc}</div>
+                        <div className="text-xs text-gray-900">{feat.desc}</div>
                       </div>
                     </div>
                   )
@@ -405,7 +405,7 @@ function ProductivityToolsSection() {
             {/* Mini Kanban Preview */}
             <div className="flex-1">
               <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                <div className="text-xs text-slate-500 mb-3 font-mono">PROJECT: Website Redesign</div>
+                <div className="text-xs text-gray-900 mb-3 font-mono">PROJECT: Website Redesign</div>
                 <div className="space-y-3">
                   {[
                     { title: 'Design mockups', status: 'Todo', color: 'bg-slate-500' },
@@ -415,7 +415,7 @@ function ProductivityToolsSection() {
                     <div key={i} className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
                       <div className={`w-2 h-2 rounded-full ${task.color}`}></div>
                       <span className="text-sm flex-1">{task.title}</span>
-                      <span className="text-xs text-gray-500">{task.status}</span>
+                      <span className="text-xs text-gray-900">{task.status}</span>
                     </div>
                   ))}
                 </div>
@@ -438,7 +438,7 @@ function ProductivityToolsSection() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {tool.features.map((feat, j) => (
-                    <div key={j} className="flex items-center gap-2 text-sm text-slate-400">
+                    <div key={j} className="flex items-center gap-2 text-sm text-gray-800">
                       <Check size={14} className="text-green-400 shrink-0" />
                       {feat}
                     </div>
@@ -452,7 +452,7 @@ function ProductivityToolsSection() {
         {/* Integration Banner */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-gray-200">
-            <span className="text-sm text-slate-400">Also includes:</span>
+            <span className="text-sm text-gray-800">Also includes:</span>
             <span className="text-sm font-medium">File Storage</span>
             <span className="text-slate-600">•</span>
             <span className="text-sm font-medium">Time Tracking</span>
@@ -473,14 +473,14 @@ function ModulesSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything Your Business Needs</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
+          <p className="text-gray-900 max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
         <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg border border-gray-200">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm mb-3">⭐ Most Popular</div>
               <h3 className="text-2xl font-bold mb-2">CRM — Customer Relationship Management</h3>
-              <p className="text-gray-600 mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
+              <p className="text-gray-900 mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Lead Tracking</span>
                 <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Deal Pipeline</span>
@@ -506,15 +506,15 @@ function ModulesSection() {
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">{module.title}</h3>
                     <p className="text-sm text-blue-600 font-medium mb-2">{module.tagline}</p>
-                    <p className="text-sm text-gray-600 mb-3">{module.desc}</p>
-                    <p className="text-xs text-gray-400">{module.stats}</p>
+                    <p className="text-sm text-gray-900 mb-3">{module.desc}</p>
+                    <p className="text-xs text-gray-800">{module.stats}</p>
                   </div>
                 </div>
               </div>
             )
           })}
         </div>
-        <p className="text-center text-sm text-gray-500 mt-8">+ 40 more modules: Tasks, Chat, Calendar, Approvals, Reports, Knowledge, Campaigns, and more...</p>
+        <p className="text-center text-sm text-gray-900 mt-8">+ 40 more modules: Tasks, Chat, Calendar, Approvals, Reports, Knowledge, Campaigns, and more...</p>
       </div>
     </section>
   )
@@ -526,7 +526,7 @@ function TestimonialsSection() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Real Businesses. Real Results.</h2>
-          <p className="text-gray-600">See how Nigerian companies use Avenize</p>
+          <p className="text-gray-900">See how Nigerian companies use Avenize</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
@@ -538,8 +538,8 @@ function TestimonialsSection() {
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg shadow-md">{t.name.charAt(0)}</div>
                 <div>
                   <div className="font-semibold text-gray-900">{t.name}</div>
-                  <div className="text-sm text-gray-500">{t.role}</div>
-                  <div className="text-xs text-gray-400">{t.business}</div>
+                  <div className="text-sm text-gray-900">{t.role}</div>
+                  <div className="text-xs text-gray-800">{t.business}</div>
                 </div>
               </div>
             </div>
@@ -556,7 +556,7 @@ function PricingSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Simple, Honest Pricing</h2>
-          <p className="text-gray-600">Pay per team size. No hidden fees. No per-feature pricing.</p>
+          <p className="text-gray-900">Pay per team size. No hidden fees. No per-feature pricing.</p>
         </div>
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 max-w-2xl mx-auto text-center">
           <p className="text-amber-800 text-sm"><strong>Founding Rate:</strong> Prices locked for 12 months, even when list price changes.</p>
@@ -567,17 +567,17 @@ function PricingSection() {
               {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-bold">Most Popular</div>}
               {plan.founding && <div className="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded mb-2 inline-block">Founding Rate</div>}
               <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
-              <p className="text-sm text-gray-500 mb-3">{plan.desc}</p>
-              <div className="mb-4"><span className="text-3xl font-bold text-gray-900">{plan.price}</span><span className="text-gray-500 text-sm">{plan.period}</span></div>
+              <p className="text-sm text-gray-900 mb-3">{plan.desc}</p>
+              <div className="mb-4"><span className="text-3xl font-bold text-gray-900">{plan.price}</span><span className="text-gray-900 text-sm">{plan.period}</span></div>
               <ul className="space-y-2 mb-4">
                 {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-gray-700"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
               </ul>
               <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>{plan.cta}</Link>
-              <p className="text-xs text-gray-500 mt-3 text-center">{plan.seats}</p>
+              <p className="text-xs text-gray-900 mt-3 text-center">{plan.seats}</p>
             </div>
           ))}
         </div>
-        <p className="text-center text-sm text-gray-500 mt-8">All plans include 7-day free trial • No credit card required</p>
+        <p className="text-center text-sm text-gray-900 mt-8">All plans include 7-day free trial • No credit card required</p>
       </div>
     </section>
   )
@@ -594,9 +594,9 @@ function FAQSection() {
             <div key={i} className="bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-shadow">
               <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full flex items-center justify-between text-left">
                 <span className="font-medium text-gray-900 pr-4">{faq.q}</span>
-                <span className={`text-2xl text-gray-400 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+                <span className={`text-2xl text-gray-800 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
-              {openIndex === i && <p className="mt-3 text-gray-600 text-sm leading-relaxed">{faq.a}</p>}
+              {openIndex === i && <p className="mt-3 text-gray-900 text-sm leading-relaxed">{faq.a}</p>}
             </div>
           ))}
         </div>
@@ -610,11 +610,11 @@ function FinalCTA() {
     <section className="py-20 px-4 sm:px-6 bg-white border-t border-gray-200">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">Ready to Run Your Business Better?</h2>
-        <p className="text-lg text-gray-600 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
+        <p className="text-lg text-gray-900 mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
         <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-blue-500 font-semibold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
           Start Your Free 7-Day Trial <ArrowRight size={20} />
         </Link>
-        <p className="text-sm text-gray-500 mt-4">No credit card required • 5-minute setup</p>
+        <p className="text-sm text-gray-900 mt-4">No credit card required • 5-minute setup</p>
       </div>
     </section>
   )
@@ -622,7 +622,7 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="py-12 px-4 sm:px-6 bg-white text-gray-500 border-t border-gray-200">
+    <footer className="py-12 px-4 sm:px-6 bg-white text-gray-900 border-t border-gray-200">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
@@ -631,7 +631,7 @@ function Footer() {
           </div>
           <div className="text-center md:text-right text-sm">
             <p>© 2024 Avenize. Built for Nigerian businesses.</p>
-            <p className="text-gray-400 mt-1">Running from Lagos 🇳🇬</p>
+            <p className="text-gray-800 mt-1">Running from Lagos 🇳🇬</p>
           </div>
         </div>
       </div>

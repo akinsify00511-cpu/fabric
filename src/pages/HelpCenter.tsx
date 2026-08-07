@@ -51,7 +51,7 @@ export default function HelpCenter() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm">
+          <Link to="/" className="inline-flex items-center gap-2 text-gray-900 hover:text-gray-900 text-sm">
             <ArrowLeft size={16} />
             Back to Avenize
           </Link>
@@ -67,7 +67,7 @@ export default function HelpCenter() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             How can we help you?
           </h1>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-lg text-gray-900 mb-8">
             Find answers to common questions, or get in touch with our team.
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function HelpCenter() {
             {FAQ_ITEMS.map((item, i) => (
               <div key={i} className="bg-gray-50 rounded-xl p-6">
                 <h3 className="font-semibold text-gray-900 mb-2">{item.q}</h3>
-                <p className="text-gray-600">{item.a}</p>
+                <p className="text-gray-900">{item.a}</p>
               </div>
             ))}
           </div>
@@ -109,7 +109,7 @@ export default function HelpCenter() {
                     <Icon className="w-5 h-5 text-indigo-600" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-1">{resource.title}</h3>
-                  <p className="text-sm text-gray-500">{resource.description}</p>
+                  <p className="text-sm text-gray-900">{resource.description}</p>
                 </Link>
               )
             })}
@@ -147,12 +147,12 @@ export default function HelpCenter() {
 
       {/* Footer */}
       <footer className="py-8 px-4 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center text-gray-400 text-sm">
+        <div className="max-w-4xl mx-auto text-center text-gray-800 text-sm">
           <p>&copy; {new Date().getFullYear()} Avenize. All rights reserved.</p>
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Link to="/privacy" className="hover:text-gray-300">Privacy</Link>
-            <Link to="/terms" className="hover:text-gray-300">Terms</Link>
-            <Link to="/cookies" className="hover:text-gray-300">Cookies</Link>
+            <Link to="/privacy" className="hover:text-gray-700">Privacy</Link>
+            <Link to="/terms" className="hover:text-gray-700">Terms</Link>
+            <Link to="/cookies" className="hover:text-gray-700">Cookies</Link>
           </div>
         </div>
       </footer>
