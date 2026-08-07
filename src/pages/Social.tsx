@@ -215,7 +215,7 @@ export default function Social() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Social Media</h1>
-          <p className="text-sm text-black/50 mt-0.5">Manage posts, track metrics, and build your brand</p>
+          <p className="text-sm text-black mt-0.5">Manage posts, track metrics, and build your brand</p>
         </div>
       </div>
 
@@ -230,7 +230,7 @@ export default function Social() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -268,7 +268,7 @@ export default function Social() {
               className="w-full h-28 resize-none rounded-lg border border-black/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5]/30"
             />
             <div className="flex items-center justify-between mt-3">
-              <label className="flex items-center gap-2 text-xs text-black/50 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-black cursor-pointer">
                 <Calendar size={14} />
                 <input
                   type="datetime-local"
@@ -342,9 +342,9 @@ export default function Social() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm text-black/80 mb-3">{post.content}</p>
+                  <p className="text-sm text-black mb-3">{post.content}</p>
                   {post.status === 'published' && (
-                    <div className="flex items-center gap-4 text-xs text-black/40">
+                    <div className="flex items-center gap-4 text-xs text-black">
                       <span className="flex items-center gap-1"><Heart size={12} /> {post.likes_count}</span>
                       <span className="flex items-center gap-1"><MessageCircle size={12} /> {post.comments_count}</span>
                       <span className="flex items-center gap-1"><Share2 size={12} /> {post.shares_count}</span>
@@ -352,14 +352,14 @@ export default function Social() {
                     </div>
                   )}
                   {post.status === 'scheduled' && post.scheduled_at && (
-                    <p className="text-xs text-black/40">
+                    <p className="text-xs text-black">
                       Scheduled for {new Date(post.scheduled_at).toLocaleString()}
                     </p>
                   )}
                 </div>
               ))}
               {posts.length === 0 && (
-                <div className="text-center py-12 text-black/40">
+                <div className="text-center py-12 text-black">
                   <Send size={32} className="mx-auto mb-2 opacity-30" />
                   <p className="text-sm">No posts yet. Create your first post above!</p>
                 </div>
@@ -392,11 +392,11 @@ export default function Social() {
                       </div>
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span className="text-black/50">Followers</span>
+                          <span className="text-black">Followers</span>
                           <span className="font-medium">{totalFollowers.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-xs">
-                          <span className="text-black/50">Engagement</span>
+                          <span className="text-black">Engagement</span>
                           <span className="font-medium">{totalEngagement.toLocaleString()}</span>
                         </div>
                       </div>
@@ -413,31 +413,31 @@ export default function Social() {
                     <p className="text-2xl font-semibold text-black">
                       {metrics.reduce((sum, m) => sum + m.followers_count, 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-black/50 mt-1">Total Followers</p>
+                    <p className="text-xs text-black mt-1">Total Followers</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
                     <p className="text-2xl font-semibold text-black">
                       {metrics.reduce((sum, m) => sum + m.engagement_count, 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-black/50 mt-1">Engagements</p>
+                    <p className="text-xs text-black mt-1">Engagements</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
                     <p className="text-2xl font-semibold text-black">
                       {metrics.reduce((sum, m) => sum + m.impressions_count, 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-black/50 mt-1">Impressions</p>
+                    <p className="text-xs text-black mt-1">Impressions</p>
                   </div>
                   <div className="text-center p-3 bg-black/[0.02] rounded-xl">
                     <p className="text-2xl font-semibold text-black">
                       {metrics.reduce((sum, m) => sum + m.reach_count, 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-black/50 mt-1">Reach</p>
+                    <p className="text-xs text-black mt-1">Reach</p>
                   </div>
                 </div>
               </div>
 
               {/* Note about manual metrics entry */}
-              <p className="text-xs text-black/40 text-center">
+              <p className="text-xs text-black text-center">
                 Metrics are synced manually or via integrations. Full analytics connections come in a later phase.
               </p>
             </>
@@ -453,7 +453,7 @@ export default function Social() {
             <p className="text-sm font-medium text-black mb-4">Brand Identity</p>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-black/50 block mb-1">Brand Name</label>
+                <label className="text-xs text-black block mb-1">Brand Name</label>
                 <input
                   value={brandName}
                   onChange={(e) => setBrandName(e.target.value)}
@@ -462,7 +462,7 @@ export default function Social() {
                 />
               </div>
               <div>
-                <label className="text-xs text-black/50 block mb-1">Tagline</label>
+                <label className="text-xs text-black block mb-1">Tagline</label>
                 <input
                   value={brandTagline}
                   onChange={(e) => setBrandTagline(e.target.value)}
@@ -484,7 +484,7 @@ export default function Social() {
             <p className="text-sm font-medium text-black mb-4">Brand Colors</p>
             <div className="flex items-center gap-4">
               <div>
-                <label className="text-xs text-black/50 block mb-1">Primary</label>
+                <label className="text-xs text-black block mb-1">Primary</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -500,7 +500,7 @@ export default function Social() {
                 </div>
               </div>
               <div>
-                <label className="text-xs text-black/50 block mb-1">Secondary</label>
+                <label className="text-xs text-black block mb-1">Secondary</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -539,7 +539,7 @@ export default function Social() {
                 <button
                   key={type}
                   onClick={() => addBrandAsset(type as BrandAsset['asset_type'])}
-                  className="aspect-square rounded-xl border-2 border-dashed border-black/10 flex flex-col items-center justify-center gap-2 text-black/40 hover:border-[#4F46E5] hover:text-[#4F46E5] transition"
+                  className="aspect-square rounded-xl border-2 border-dashed border-black/10 flex flex-col items-center justify-center gap-2 text-black hover:border-[#4F46E5] hover:text-[#4F46E5] transition"
                 >
                   <Image size={20} />
                   <span className="text-xs capitalize">{type}</span>
@@ -558,7 +558,7 @@ export default function Social() {
                         />
                       )}
                       <span className="text-sm">{asset.name}</span>
-                      <span className="text-xs text-black/40 capitalize">({asset.asset_type})</span>
+                      <span className="text-xs text-black capitalize">({asset.asset_type})</span>
                     </div>
                   </div>
                 ))}

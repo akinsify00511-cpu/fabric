@@ -226,7 +226,7 @@ export default function Events() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Events</h1>
-          <p className="text-sm text-black/50 mt-0.5">Manage and promote your events</p>
+          <p className="text-sm text-black mt-0.5">Manage and promote your events</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -275,7 +275,7 @@ export default function Events() {
           {/* Calendar Grid */}
           <div className="grid grid-cols-7">
             {DAYS.map((day) => (
-              <div key={day} className="p-3 text-center text-sm font-medium text-black/50 border-b border-black/[0.06]">
+              <div key={day} className="p-3 text-center text-sm font-medium text-black border-b border-black/[0.06]">
                 {day}
               </div>
             ))}
@@ -289,7 +289,7 @@ export default function Events() {
                 <div
                   key={i}
                   onClick={() => setSelectedDate(day)}
-                  className={`min-h-24 p-2 border-b border-r border-black/[0.06] cursor-pointer hover:bg-black/[0.02] ${
+                  className={`min-h-24 p-2 border-b border-r border-black/[0.06] cursor-pointer hover:bg-black/10 ${
                     isToday ? 'bg-indigo-50' : ''
                   }`}
                 >
@@ -312,7 +312,7 @@ export default function Events() {
                     </div>
                   ))}
                   {dayEvents.length > 2 && (
-                    <div className="text-xs text-black/40">+{dayEvents.length - 2} more</div>
+                    <div className="text-xs text-black">+{dayEvents.length - 2} more</div>
                   )}
                 </div>
               )
@@ -333,8 +333,8 @@ export default function Events() {
                   </div>
                   <div>
                     <h3 className="font-medium">{event.title}</h3>
-                    <p className="text-sm text-black/50 mt-1">{event.description}</p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-black/40">
+                    <p className="text-sm text-black mt-1">{event.description}</p>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-black">
                       <span className="flex items-center gap-1">
                         <Clock size={14} />
                         {new Date(event.start_date).toLocaleDateString()}
@@ -361,7 +361,7 @@ export default function Events() {
         <div className="bg-white rounded-2xl border border-black/[0.06]">
           <div className="p-4 border-b border-black/[0.06]">
             <div className="flex items-center gap-4">
-              <Search className="text-black/30" size={16} />
+              <Search className="text-black" size={16} />
               <input
                 placeholder="Search registrations..."
                 className="flex-1 outline-none"
@@ -381,7 +381,7 @@ export default function Events() {
                   </div>
                   <div>
                     <p className="font-medium">{reg.name}</p>
-                    <p className="text-sm text-black/50">{reg.email}</p>
+                    <p className="text-sm text-black">{reg.email}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -407,7 +407,7 @@ export default function Events() {
 
       {/* Create Event Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Create New Event</h2>
@@ -558,7 +558,7 @@ export default function Events() {
 
       {/* Event Detail Modal */}
       {showEventModal && selectedEvent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">{selectedEvent.title}</h2>
@@ -569,21 +569,21 @@ export default function Events() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-black/40">Date</p>
+                  <p className="text-black">Date</p>
                   <p className="font-medium">{new Date(selectedEvent.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-black/40">Time</p>
+                  <p className="text-black">Time</p>
                   <p className="font-medium">
                     {new Date(selectedEvent.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-black/40">Location</p>
+                  <p className="text-black">Location</p>
                   <p className="font-medium">{selectedEvent.location_name || selectedEvent.location_type}</p>
                 </div>
                 <div>
-                  <p className="text-black/40">Capacity</p>
+                  <p className="text-black">Capacity</p>
                   <p className="font-medium">{selectedEvent.current_registrations}/{selectedEvent.max_capacity || '∞'}</p>
                 </div>
               </div>

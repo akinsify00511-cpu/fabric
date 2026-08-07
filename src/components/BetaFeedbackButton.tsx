@@ -123,7 +123,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
 
       {/* Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/100">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-black/5">
@@ -133,16 +133,16 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
                 </div>
                 <div>
                   <h2 className="font-semibold">Report a Bug</h2>
-                  <p className="text-xs text-black/50">
+                  <p className="text-xs text-black">
                     Current page: {window.location.pathname}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-black/5 rounded-lg transition"
+                className="p-2 hover:bg-black/10 rounded-lg transition"
               >
-                <X size={20} className="text-black/40" />
+                <X size={20} className="text-black" />
               </button>
             </div>
 
@@ -154,7 +154,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
                     <CheckCircle2 size={32} className="text-green-600" />
                   </div>
                   <h3 className="font-semibold text-lg">Thanks for your feedback!</h3>
-                  <p className="text-sm text-black/50 mt-1">
+                  <p className="text-sm text-black mt-1">
                     We'll look into this issue right away.
                   </p>
                 </div>
@@ -206,7 +206,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
                   )}
 
                   {/* App Version */}
-                  <div className="text-xs text-black/30">
+                  <div className="text-xs text-black">
                     App version: {import.meta.env.VITE_GIT_SHA || 'development'}
                   </div>
 
@@ -225,7 +225,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
               <div className="px-4 py-4 border-t border-black/5 flex justify-end gap-3">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-sm text-black/50 hover:text-black transition"
+                  className="px-4 py-2 text-sm text-black hover:text-black transition"
                 >
                   Cancel
                 </button>

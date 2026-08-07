@@ -199,7 +199,7 @@ export default function WorkflowBuilderPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Workflows</h1>
-            <p className="text-sm text-black/50">Automate your business processes</p>
+            <p className="text-sm text-black">Automate your business processes</p>
           </div>
         </div>
         <button
@@ -213,15 +213,15 @@ export default function WorkflowBuilderPage() {
 
       {/* Workflows List */}
       {loading ? (
-        <div className="text-center py-20 text-black/40">
+        <div className="text-center py-20 text-black">
           <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
           Loading workflows...
         </div>
       ) : workflows.length === 0 ? (
         <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
-          <GitBranch size={48} className="mx-auto text-black/20 mb-4" />
+          <GitBranch size={48} className="mx-auto text-black/50 mb-4" />
           <h3 className="text-lg font-medium mb-2">No workflows yet</h3>
-          <p className="text-black/50 mb-4">Create your first workflow to automate tasks</p>
+          <p className="text-black mb-4">Create your first workflow to automate tasks</p>
           <button
             onClick={() => setShowModal(true)}
             className="px-6 py-3 rounded-xl bg-[#4285F4] text-white font-medium"
@@ -237,7 +237,7 @@ export default function WorkflowBuilderPage() {
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   workflow.is_active 
                     ? 'bg-green-100 text-green-600' 
-                    : 'bg-black/5 text-black/40'
+                    : 'bg-black/10 text-black'
                 }`}>
                   <Zap size={24} />
                 </div>
@@ -247,12 +247,12 @@ export default function WorkflowBuilderPage() {
                     <span className={`px-2 py-0.5 rounded text-xs ${
                       workflow.is_active 
                         ? 'bg-green-100 text-green-600' 
-                        : 'bg-black/5 text-black/40'
+                        : 'bg-black/10 text-black'
                     }`}>
                       {workflow.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-sm text-black/50">
+                  <div className="flex items-center gap-4 mt-1 text-sm text-black">
                     <span className="capitalize">{workflow.trigger_type.replace('_', ' ')}</span>
                     <span>•</span>
                     <span>{workflow.steps?.length || 0} steps</span>
@@ -274,7 +274,7 @@ export default function WorkflowBuilderPage() {
                   </button>
                   <button
                     onClick={() => editWorkflow(workflow)}
-                    className="p-2 rounded-lg hover:bg-black/5"
+                    className="p-2 rounded-lg hover:bg-black/10"
                   >
                     <Edit2 size={18} />
                   </button>
@@ -303,7 +303,7 @@ export default function WorkflowBuilderPage() {
 
       {/* Create/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-bold">{editingWorkflow ? 'Edit Workflow' : 'Create Workflow'}</h2>
@@ -336,7 +336,7 @@ export default function WorkflowBuilderPage() {
               {/* Trigger */}
               <div>
                 <label className="block text-sm font-medium mb-2">Trigger</label>
-                <p className="text-xs text-black/50 mb-2">When should this workflow run?</p>
+                <p className="text-xs text-black mb-2">When should this workflow run?</p>
                 <div className="grid grid-cols-2 gap-3">
                   {TRIGGER_TYPES.map(trigger => (
                     <button
@@ -349,7 +349,7 @@ export default function WorkflowBuilderPage() {
                       }`}
                     >
                       <div className="font-medium text-sm">{trigger.label}</div>
-                      <div className="text-xs text-black/50">{trigger.desc}</div>
+                      <div className="text-xs text-black">{trigger.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -374,7 +374,7 @@ export default function WorkflowBuilderPage() {
               {/* Steps */}
               <div>
                 <label className="block text-sm font-medium mb-2">Steps</label>
-                <p className="text-xs text-black/50 mb-3">Add actions to perform when triggered</p>
+                <p className="text-xs text-black mb-3">Add actions to perform when triggered</p>
 
                 {/* Existing Steps */}
                 <div className="space-y-3 mb-4">
@@ -414,21 +414,21 @@ export default function WorkflowBuilderPage() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => addStep('action')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/5 text-sm hover:bg-black/10"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/10 text-sm hover:bg-black/10"
                   >
                     <Plus size={14} />
                     Add Action
                   </button>
                   <button
                     onClick={() => addStep('condition')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/5 text-sm hover:bg-black/10"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/10 text-sm hover:bg-black/10"
                   >
                     <GitBranch size={14} />
                     Add Condition
                   </button>
                   <button
                     onClick={() => addStep('delay')}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/5 text-sm hover:bg-black/10"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-black/10 text-sm hover:bg-black/10"
                   >
                     <Clock size={14} />
                     Add Delay

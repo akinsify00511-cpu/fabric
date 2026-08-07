@@ -215,7 +215,7 @@ export default function AttendancePage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Attendance</h1>
-            <p className="text-sm text-black/50">Track your work hours</p>
+            <p className="text-sm text-black">Track your work hours</p>
           </div>
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function AttendancePage() {
           <div className="text-4xl font-bold mb-2">
             {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
-          <div className="text-black/50 mb-4">
+          <div className="text-black mb-4">
             {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
 
@@ -299,7 +299,7 @@ export default function AttendancePage() {
           )}
 
           {locationStatus === 'granted' && (
-            <div className="flex items-center justify-center gap-2 mt-4 text-xs text-black/40">
+            <div className="flex items-center justify-center gap-2 mt-4 text-xs text-black">
               <Wifi size={12} />
               <span>Location enabled</span>
             </div>
@@ -348,13 +348,13 @@ export default function AttendancePage() {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
         ) : records.length === 0 ? (
-          <div className="p-12 text-center text-black/40">
-            <Calendar size={48} className="mx-auto mb-4 text-black/20" />
+          <div className="p-12 text-center text-black">
+            <Calendar size={48} className="mx-auto mb-4 text-black/50" />
             <p>No attendance records yet</p>
           </div>
         ) : (
@@ -376,7 +376,7 @@ export default function AttendancePage() {
                           {new Date(record.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                           {isToday && <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500 text-white">Today</span>}
                         </div>
-                        <div className="text-sm text-black/50">
+                        <div className="text-sm text-black">
                           {record.check_in && (
                             <>In: {new Date(record.check_in).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</>
                           )}
@@ -410,7 +410,7 @@ function StatCard({ title, value, icon, color }: any) {
         {icon}
       </div>
       <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm text-black/50">{title}</div>
+      <div className="text-sm text-black">{title}</div>
     </div>
   )
 }

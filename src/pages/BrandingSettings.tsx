@@ -70,8 +70,8 @@ export default function BrandingSettings() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/5 rounded w-48" />
-        <div className="h-64 bg-black/5 rounded" />
+        <div className="h-8 bg-black/10 rounded w-48" />
+        <div className="h-64 bg-black/10 rounded" />
       </div>
     )
   }
@@ -81,11 +81,11 @@ export default function BrandingSettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Branding</h1>
-          <p className="text-sm text-black/50 mt-0.5">Customize how your business appears</p>
+          <p className="text-sm text-black mt-0.5">Customize how your business appears</p>
         </div>
         <button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
         >
           <RotateCcw size={14} />
           Reset
@@ -108,7 +108,7 @@ export default function BrandingSettings() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -150,7 +150,7 @@ export default function BrandingSettings() {
             <h2 className="text-sm font-medium mb-4">Custom Colors</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-black/50 block mb-1">Primary Color</label>
+                <label className="text-xs text-black block mb-1">Primary Color</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -165,11 +165,11 @@ export default function BrandingSettings() {
                     className="flex-1 px-3 rounded-lg border text-sm font-mono"
                   />
                 </div>
-                <p className="text-xs text-black/30 mt-1">Used for buttons, links, highlights</p>
+                <p className="text-xs text-black mt-1">Used for buttons, links, highlights</p>
               </div>
 
               <div>
-                <label className="text-xs text-black/50 block mb-1">Accent Color</label>
+                <label className="text-xs text-black block mb-1">Accent Color</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -184,11 +184,11 @@ export default function BrandingSettings() {
                     className="flex-1 px-3 rounded-lg border text-sm font-mono"
                   />
                 </div>
-                <p className="text-xs text-black/30 mt-1">Used for secondary actions, badges</p>
+                <p className="text-xs text-black mt-1">Used for secondary actions, badges</p>
               </div>
 
               <div>
-                <label className="text-xs text-black/50 block mb-1">Background</label>
+                <label className="text-xs text-black block mb-1">Background</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -206,7 +206,7 @@ export default function BrandingSettings() {
               </div>
 
               <div>
-                <label className="text-xs text-black/50 block mb-1">Surface</label>
+                <label className="text-xs text-black block mb-1">Surface</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -230,7 +230,7 @@ export default function BrandingSettings() {
             <h2 className="text-sm font-medium mb-4">Dark Mode Colors</h2>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs text-black/50 block mb-1">Primary (Dark)</label>
+                <label className="text-xs text-black block mb-1">Primary (Dark)</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -248,7 +248,7 @@ export default function BrandingSettings() {
               </div>
 
               <div>
-                <label className="text-xs text-black/50 block mb-1">Background (Dark)</label>
+                <label className="text-xs text-black block mb-1">Background (Dark)</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
@@ -348,7 +348,7 @@ export default function BrandingSettings() {
                     className="hidden"
                   />
                 </label>
-                <p className="text-xs text-black/40 mt-2">Recommended: 200x200px, PNG or SVG</p>
+                <p className="text-xs text-black mt-2">Recommended: 200x200px, PNG or SVG</p>
                 <button
                   onClick={() => updateBranding({ logo_url: null })}
                   className="text-xs text-red-500 mt-2 hover:underline"
@@ -364,17 +364,17 @@ export default function BrandingSettings() {
             <h2 className="text-sm font-medium mb-4">Display Name</h2>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-black/50 block mb-1">Custom Name</label>
+                <label className="text-xs text-black block mb-1">Custom Name</label>
                 <input
                   value={branding.custom_name || ''}
                   onChange={(e) => updateBranding({ custom_name: e.target.value || null })}
                   placeholder="Avenize"
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                 />
-                <p className="text-xs text-black/30 mt-1">Replace "Avenize" in the sidebar</p>
+                <p className="text-xs text-black mt-1">Replace "Avenize" in the sidebar</p>
               </div>
               <div>
-                <label className="text-xs text-black/50 block mb-1">Tagline</label>
+                <label className="text-xs text-black block mb-1">Tagline</label>
                 <input
                   value={branding.custom_tagline || ''}
                   onChange={(e) => updateBranding({ custom_tagline: e.target.value || null })}
@@ -462,7 +462,7 @@ export default function BrandingSettings() {
       {activeTab === 'social' && (
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
           <h2 className="text-sm font-medium mb-4">Social Links</h2>
-          <p className="text-xs text-black/50 mb-6">These appear in your public profile and footer</p>
+          <p className="text-xs text-black mb-6">These appear in your public profile and footer</p>
           <div className="space-y-4">
             {[
               { key: 'website_url', label: 'Website', placeholder: 'https://yoursite.com' },
@@ -472,7 +472,7 @@ export default function BrandingSettings() {
               { key: 'instagram_url', label: 'Instagram', placeholder: 'https://instagram.com/yoursite' },
             ].map((field) => (
               <div key={field.key}>
-                <label className="text-xs text-black/50 block mb-1">{field.label}</label>
+                <label className="text-xs text-black block mb-1">{field.label}</label>
                 <input
                   value={(branding as any)[field.key] || ''}
                   onChange={(e) => updateBranding({ [field.key]: e.target.value || null })}

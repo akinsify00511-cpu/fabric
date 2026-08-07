@@ -168,7 +168,7 @@ export default function CurrencyExchangePage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Currency Exchange</h1>
-            <p className="text-sm text-black/50">Manage exchange rates and convert currencies</p>
+            <p className="text-sm text-black">Manage exchange rates and convert currencies</p>
           </div>
         </div>
         {isAdmin && (
@@ -192,7 +192,7 @@ export default function CurrencyExchangePage() {
         <div className="grid md:grid-cols-3 gap-6">
           {/* From */}
           <div>
-            <label className="block text-sm font-medium text-black/50 mb-2">From</label>
+            <label className="block text-sm font-medium text-black mb-2">From</label>
             <div className="relative">
               <select
                 value={fromCurrency}
@@ -203,7 +203,7 @@ export default function CurrencyExchangePage() {
                   <option key={c.code} value={c.code}>{c.flag} {c.code} - {c.name}</option>
                 ))}
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/40 pointer-events-none" />
+              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
             <input
               type="number"
@@ -226,7 +226,7 @@ export default function CurrencyExchangePage() {
 
           {/* To */}
           <div>
-            <label className="block text-sm font-medium text-black/50 mb-2">To</label>
+            <label className="block text-sm font-medium text-black mb-2">To</label>
             <div className="relative">
               <select
                 value={toCurrency}
@@ -237,7 +237,7 @@ export default function CurrencyExchangePage() {
                   <option key={c.code} value={c.code}>{c.flag} {c.code} - {c.name}</option>
                 ))}
               </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-black/40 pointer-events-none" />
+              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-black pointer-events-none" />
             </div>
             <div className="mt-2 px-4 py-3 rounded-xl border border-black/10 text-2xl font-bold bg-black/[0.02]">
               {convertedAmount !== null ? (
@@ -245,7 +245,7 @@ export default function CurrencyExchangePage() {
                   {toCurrencyData?.symbol}{convertedAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               ) : (
-                <span className="text-black/30">Rate not available</span>
+                <span className="text-black">Rate not available</span>
               )}
             </div>
           </div>
@@ -253,7 +253,7 @@ export default function CurrencyExchangePage() {
 
         {/* Current Rate */}
         {convertedAmount !== null && rates.find(r => r.base_currency === fromCurrency && r.target_currency === toCurrency) && (
-          <div className="mt-4 p-3 bg-black/[0.02] rounded-lg text-sm text-black/50">
+          <div className="mt-4 p-3 bg-black/[0.02] rounded-lg text-sm text-black">
             1 {fromCurrency} = {rates.find(r => r.base_currency === fromCurrency && r.target_currency === toCurrency)?.rate} {toCurrency}
           </div>
         )}
@@ -263,7 +263,7 @@ export default function CurrencyExchangePage() {
       <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
         <div className="p-4 border-b border-black/[0.06]">
           <h2 className="font-semibold">Current Exchange Rates</h2>
-          <p className="text-sm text-black/50">Base currency: {selectedBase}</p>
+          <p className="text-sm text-black">Base currency: {selectedBase}</p>
         </div>
 
         {/* Currency Tabs */}
@@ -275,7 +275,7 @@ export default function CurrencyExchangePage() {
               className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 ${
                 selectedBase === currency 
                   ? 'border-[#4285F4] text-[#4285F4]' 
-                  : 'border-transparent text-black/50 hover:text-black/70'
+                  : 'border-transparent text-black hover:text-black/70'
               }`}
             >
               {currency}
@@ -284,12 +284,12 @@ export default function CurrencyExchangePage() {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading rates...
           </div>
         ) : !groupedRates[selectedBase] || groupedRates[selectedBase].length === 0 ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <DollarSign size={32} className="mx-auto mb-2" />
             <p>No rates configured for {selectedBase}</p>
           </div>
@@ -298,17 +298,17 @@ export default function CurrencyExchangePage() {
             {groupedRates[selectedBase].map(rate => {
               const targetData = CURRENCIES.find(c => c.code === rate.target_currency)
               return (
-                <div key={rate.id} className="p-4 flex items-center justify-between hover:bg-black/[0.02]">
+                <div key={rate.id} className="p-4 flex items-center justify-between hover:bg-black/10">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-black/5 flex items-center justify-center text-lg">
+                    <div className="w-10 h-10 rounded-lg bg-black/10 flex items-center justify-center text-lg">
                       {targetData?.flag || '💱'}
                     </div>
                     <div>
                       <div className="font-medium">
                         {rate.target_currency}
-                        <span className="text-black/50 ml-2">{targetData?.name}</span>
+                        <span className="text-black ml-2">{targetData?.name}</span>
                       </div>
-                      <div className="text-xs text-black/40">
+                      <div className="text-xs text-black">
                         Updated {new Date(rate.created_at).toLocaleDateString()}
                         {rate.source !== 'manual' && ` • Source: ${rate.source}`}
                       </div>
@@ -317,7 +317,7 @@ export default function CurrencyExchangePage() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <div className="text-xl font-bold">{Number(rate.rate).toFixed(4)}</div>
-                      <div className="text-xs text-black/40">1 {rate.base_currency}</div>
+                      <div className="text-xs text-black">1 {rate.base_currency}</div>
                     </div>
                     {isAdmin && (
                       <button
@@ -337,7 +337,7 @@ export default function CurrencyExchangePage() {
 
       {/* Add Rate Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-bold">Add Exchange Rate</h2>
@@ -377,7 +377,7 @@ export default function CurrencyExchangePage() {
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                   placeholder="e.g., 1550.00"
                 />
-                <p className="text-xs text-black/40 mt-1">
+                <p className="text-xs text-black mt-1">
                   1 {newRate.base_currency} = {newRate.rate || '?'} {newRate.target_currency}
                 </p>
               </div>

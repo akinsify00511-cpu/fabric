@@ -103,7 +103,7 @@ export default function Login() {
           <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight text-black">Avenize</span>
         </div>
-        <p className="text-sm text-black/50 -mt-3">Sign in to your workspace</p>
+        <p className="text-sm text-black -mt-3">Sign in to your workspace</p>
 
         {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
 
@@ -113,7 +113,7 @@ export default function Login() {
             type="button"
             onClick={() => handleOAuthSignIn('google')}
             disabled={!!oauthLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border border-black/10 py-2.5 text-sm font-medium hover:bg-black/[0.02] transition disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 rounded-lg border border-black/10 py-2.5 text-sm font-medium hover:bg-black/10 transition disabled:opacity-50"
           >
             {oauthLoading === 'google' ? (
               <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
@@ -132,7 +132,7 @@ export default function Login() {
             type="button"
             onClick={() => handleOAuthSignIn('github')}
             disabled={!!oauthLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border border-black/10 py-2.5 text-sm font-medium hover:bg-black/[0.02] transition disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 rounded-lg border border-black/10 py-2.5 text-sm font-medium hover:bg-black/10 transition disabled:opacity-50"
           >
             {oauthLoading === 'github' ? (
               <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin" />
@@ -150,7 +150,7 @@ export default function Login() {
             <div className="w-full border-t border-black/10"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-black/40">Or</span>
+            <span className="bg-white px-2 text-black">Or</span>
           </div>
         </div>
 
@@ -196,7 +196,7 @@ export default function Login() {
           🎯 Try Demo Account
         </button>
 
-        <p className="text-xs text-center text-black/40">
+        <p className="text-xs text-center text-black">
           New here?{' '}
           <Link to="/signup" className="text-[#4F46E5] hover:underline">
             Set up your business

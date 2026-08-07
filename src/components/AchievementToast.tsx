@@ -130,9 +130,9 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string)
             setIsLeaving(true)
             setTimeout(() => onDismiss(toast.id), 300)
           }}
-          className="p-1 hover:bg-black/5 rounded-lg transition-colors"
+          className="p-1 hover:bg-black/10 rounded-lg transition-colors"
         >
-          <X size={16} className="text-black/40" />
+          <X size={16} className="text-black" />
         </button>
       </div>
 

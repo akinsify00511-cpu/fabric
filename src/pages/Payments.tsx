@@ -51,7 +51,7 @@ const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNod
   cash: { label: 'Cash', icon: <Banknote size={16} />, color: 'green' },
   mobile_money: { label: 'Mobile Money', icon: <Smartphone size={16} />, color: 'purple' },
   pos: { label: 'POS', icon: <CreditCard size={16} />, color: 'orange' },
-  cheque: { label: 'Cheque', icon: <FileText size={16} />, color: 'slate' },
+  cheque: { label: 'Cheque', icon: <FileText size={16} />, color: 'blue' },
 }
 
 const BANK_LABELS: Record<PaymentBank, string> = {
@@ -226,7 +226,7 @@ export default function Payments() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium">Payments</h1>
-          <p className="text-sm text-black/50">Track income and expenses</p>
+          <p className="text-sm text-black">Track income and expenses</p>
         </div>
         <button
           onClick={() => setShowNewPayment(true)}
@@ -244,7 +244,7 @@ export default function Payments() {
             <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
               <ArrowUpRight size={16} className="text-green-600" />
             </div>
-            <span className="text-xs text-black/50">Total Income</span>
+            <span className="text-xs text-black">Total Income</span>
           </div>
           <p className="text-xl font-bold text-green-600">{formatCurrency(stats.totalIncome)}</p>
         </div>
@@ -254,7 +254,7 @@ export default function Payments() {
             <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
               <ArrowDownRight size={16} className="text-red-600" />
             </div>
-            <span className="text-xs text-black/50">Total Expenses</span>
+            <span className="text-xs text-black">Total Expenses</span>
           </div>
           <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalExpenses)}</p>
         </div>
@@ -264,7 +264,7 @@ export default function Payments() {
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
               <Wallet size={16} className="text-blue-600" />
             </div>
-            <span className="text-xs text-black/50">Net Balance</span>
+            <span className="text-xs text-black">Net Balance</span>
           </div>
           <p className={`text-xl font-bold ${netBalance >= 0 ? 'text-[#4285F4]' : 'text-red-600'}`}>
             {formatCurrency(netBalance)}
@@ -276,11 +276,11 @@ export default function Payments() {
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
               <Calendar size={16} className="text-amber-600" />
             </div>
-            <span className="text-xs text-black/50">This Month</span>
+            <span className="text-xs text-black">This Month</span>
           </div>
           <p className="text-lg font-bold">
             <span className="text-green-600">{formatCurrency(stats.thisMonth.income)}</span>
-            <span className="text-black/30 mx-1">/</span>
+            <span className="text-black mx-1">/</span>
             <span className="text-red-600">{formatCurrency(stats.thisMonth.expenses)}</span>
           </p>
         </div>
@@ -319,7 +319,7 @@ export default function Payments() {
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="flex-1 min-w-[200px] relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
           <input
             type="text"
             value={searchQuery}
@@ -345,8 +345,8 @@ export default function Payments() {
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-5 bg-black/5 rounded w-1/3 mb-2" />
-              <div className="h-4 bg-black/5 rounded w-1/2" />
+              <div className="h-5 bg-black/10 rounded w-1/3 mb-2" />
+              <div className="h-4 bg-black/10 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -356,7 +356,7 @@ export default function Payments() {
             <ReceiptText size={24} className="text-[#4285F4]" />
           </div>
           <h3 className="font-semibold mb-2">No payments found</h3>
-          <p className="text-sm text-black/50 mb-4">
+          <p className="text-sm text-black mb-4">
             {searchQuery ? 'Try adjusting your search' : 'Record your first payment to get started'}
           </p>
           {!searchQuery && (
@@ -390,7 +390,7 @@ export default function Payments() {
                   </div>
                   <div>
                     <p className="font-medium">{payment.description}</p>
-                    <div className="flex items-center gap-2 text-xs text-black/50">
+                    <div className="flex items-center gap-2 text-xs text-black">
                       <span className="flex items-center gap-1">
                         {METHOD_LABELS[payment.method].icon}
                         {METHOD_LABELS[payment.method].label}
@@ -408,7 +408,7 @@ export default function Payments() {
                   <p className={`font-semibold ${payment.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                     {payment.type === 'income' ? '+' : '-'}{formatCurrency(payment.amount)}
                   </p>
-                  <p className="text-xs text-black/50">
+                  <p className="text-xs text-black">
                     {new Date(payment.date).toLocaleDateString()}
                   </p>
                 </div>
@@ -420,7 +420,7 @@ export default function Payments() {
 
       {/* New Payment Modal */}
       {showNewPayment && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold text-lg">Record Payment</h2>
@@ -600,7 +600,7 @@ export default function Payments() {
 
       {/* Payment Detail Modal */}
       {selectedPayment && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold text-lg">Payment Details</h2>
@@ -631,7 +631,7 @@ export default function Payments() {
 
               <div className="bg-white rounded-xl p-4 space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-black/50">Type</span>
+                  <span className="text-sm text-black">Type</span>
                   <span className={`text-sm font-medium capitalize ${
                     selectedPayment.type === 'income' ? 'text-green-600' : 'text-red-600'
                   }`}>
@@ -639,7 +639,7 @@ export default function Payments() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-black/50">Method</span>
+                  <span className="text-sm text-black">Method</span>
                   <span className="text-sm font-medium flex items-center gap-1">
                     {METHOD_LABELS[selectedPayment.method].icon}
                     {METHOD_LABELS[selectedPayment.method].label}
@@ -647,29 +647,29 @@ export default function Payments() {
                 </div>
                 {selectedPayment.bank && (
                   <div className="flex justify-between">
-                    <span className="text-sm text-black/50">Bank</span>
+                    <span className="text-sm text-black">Bank</span>
                     <span className="text-sm font-medium">{BANK_LABELS[selectedPayment.bank]}</span>
                   </div>
                 )}
                 {selectedPayment.client_name && (
                   <div className="flex justify-between">
-                    <span className="text-sm text-black/50">Client</span>
+                    <span className="text-sm text-black">Client</span>
                     <span className="text-sm font-medium">{selectedPayment.client_name}</span>
                   </div>
                 )}
                 {selectedPayment.category && (
                   <div className="flex justify-between">
-                    <span className="text-sm text-black/50">Category</span>
+                    <span className="text-sm text-black">Category</span>
                     <span className="text-sm font-medium">{selectedPayment.category}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-sm text-black/50">Date</span>
+                  <span className="text-sm text-black">Date</span>
                   <span className="text-sm font-medium">{new Date(selectedPayment.date).toLocaleDateString()}</span>
                 </div>
                 {selectedPayment.reference && (
                   <div className="flex justify-between">
-                    <span className="text-sm text-black/50">Reference</span>
+                    <span className="text-sm text-black">Reference</span>
                     <span className="text-sm font-medium">{selectedPayment.reference}</span>
                   </div>
                 )}
@@ -677,7 +677,7 @@ export default function Payments() {
 
               {selectedPayment.notes && (
                 <div>
-                  <p className="text-sm text-black/50 mb-1">Notes</p>
+                  <p className="text-sm text-black mb-1">Notes</p>
                   <p className="text-sm bg-white rounded-xl p-3">{selectedPayment.notes}</p>
                 </div>
               )}

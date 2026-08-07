@@ -224,13 +224,13 @@ export default function CRM() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-black">CRM</h1>
-          <p className="text-sm text-black/50">{deals.length} deals - {contacts.length} contacts</p>
+          <p className="text-sm text-black">{deals.length} deals - {contacts.length} contacts</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#202124] text-white text-sm font-medium">
             <Plus size={18} /> Add Deal
           </button>
-          <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/5">
+          <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10">
             <Users size={18} /> Add Contact
           </button>
         </div>
@@ -239,37 +239,37 @@ export default function CRM() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
           <div className="text-2xl font-bold">{stats.totalDeals}</div>
-          <div className="text-xs text-black/50">Total Deals</div>
+          <div className="text-xs text-black">Total Deals</div>
         </div>
         <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
           <div className="text-2xl font-bold">\u20a6{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div>
-          <div className="text-xs text-black/50">Pipeline Value</div>
+          <div className="text-xs text-black">Pipeline Value</div>
         </div>
         <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
           <div className="text-2xl font-bold text-red-500">{stats.hotDeals}</div>
-          <div className="text-xs text-black/50">Hot Deals</div>
+          <div className="text-xs text-black">Hot Deals</div>
         </div>
         <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
           <div className="text-2xl font-bold text-green-500">{stats.wonDeals}</div>
-          <div className="text-xs text-black/50">Won</div>
+          <div className="text-xs text-black">Won</div>
         </div>
         <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
           <div className="text-2xl font-bold">{stats.conversionRate}%</div>
-          <div className="text-xs text-black/50">Conversion</div>
+          <div className="text-xs text-black">Conversion</div>
         </div>
       </div>
 
-      <div className="flex gap-1 mb-6 bg-black/5 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 mb-6 bg-black/10 p-1 rounded-xl w-fit">
         {[{ key: 'deals', label: 'Deals' }, { key: 'contacts', label: 'Contacts' }, { key: 'pipeline', label: 'Pipeline' }].map(tab => (
           <button key={tab.key} onClick={() => setViewMode(tab.key as ViewMode)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-black' : 'text-black/50 hover:text-black/70'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-black' : 'text-black hover:text-black/70'}`}>
             {tab.label}
           </button>
         ))}
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black/30" size={18} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
         <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={`Search ${viewMode}...`} className="w-full pl-11 pr-4 py-3 rounded-xl border border-black/10 bg-white text-sm" />
       </div>
 
@@ -277,9 +277,9 @@ export default function CRM() {
         <div className="space-y-4">
           {filteredDeals.length === 0 ? (
             <div className="bg-white rounded-2xl p-8 border border-black/[0.06] text-center">
-              <Users size={48} className="mx-auto mb-4 text-black/20" />
+              <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No deals yet</h3>
-              <p className="text-sm text-black/50 mb-4">Create your first deal to start tracking</p>
+              <p className="text-sm text-black mb-4">Create your first deal to start tracking</p>
               <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium">Add Deal</button>
             </div>
           ) : (
@@ -293,12 +293,12 @@ export default function CRM() {
                         <h3 className="font-semibold truncate">{deal.title}</h3>
                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${stage?.color} ${stage?.textColor}`}>{stage?.label}</span>
                       </div>
-                      <p className="text-sm text-black/50">{deal.contact_name}</p>
-                      {deal.notes && <p className="text-sm text-black/40 mt-1 line-clamp-1">{deal.notes}</p>}
+                      <p className="text-sm text-black">{deal.contact_name}</p>
+                      {deal.notes && <p className="text-sm text-black mt-1 line-clamp-1">{deal.notes}</p>}
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-bold text-lg">\u20a6{(deal.value || 0).toLocaleString()}</div>
-                      <div className="text-xs text-black/40">{deal.probability || 50}% likely</div>
+                      <div className="text-xs text-black">{deal.probability || 50}% likely</div>
                     </div>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ export default function CRM() {
         <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
           {filteredContacts.length === 0 ? (
             <div className="p-8 text-center">
-              <Users size={48} className="mx-auto mb-4 text-black/20" />
+              <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No contacts yet</h3>
               <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium">Add Contact</button>
             </div>
@@ -328,7 +328,7 @@ export default function CRM() {
               </thead>
               <tbody className="divide-y divide-black/[0.06]">
                 {filteredContacts.map(contact => (
-                  <tr key={contact.id} className="hover:bg-black/[0.02]">
+                  <tr key={contact.id} className="hover:bg-black/10">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
@@ -336,13 +336,13 @@ export default function CRM() {
                         </div>
                         <div>
                           <div className="font-medium text-sm">{contact.full_name}</div>
-                          <div className="text-xs text-black/40">{contact.email}</div>
+                          <div className="text-xs text-black">{contact.email}</div>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm">{contact.company || '-'}</td>
                     <td className="px-4 py-3 text-sm">{contact.phone || '-'}</td>
-                    <td className="px-4 py-3 text-right text-black/40 text-sm">{new Date(contact.created_at).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-right text-black text-sm">{new Date(contact.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -363,11 +363,11 @@ export default function CRM() {
                 {(dealsByStage[stage.key] || []).map(deal => (
                   <div key={deal.id} className="bg-white rounded-xl p-3 border border-black/[0.06] cursor-pointer hover:shadow" onClick={() => setEditingDeal(deal)}>
                     <div className="font-medium text-sm mb-1">{deal.title}</div>
-                    <div className="text-xs text-black/50">{deal.contact_name}</div>
+                    <div className="text-xs text-black">{deal.contact_name}</div>
                     <div className="text-sm font-bold mt-2">\u20a6{(deal.value || 0).toLocaleString()}</div>
                   </div>
                 ))}
-                {(dealsByStage[stage.key] || []).length === 0 && <div className="text-center py-8 text-black/30 text-sm">No deals</div>}
+                {(dealsByStage[stage.key] || []).length === 0 && <div className="text-center py-8 text-black text-sm">No deals</div>}
               </div>
             </div>
           ))}
@@ -375,11 +375,11 @@ export default function CRM() {
       )}
 
       {showAddDeal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}>
+        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}>
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Add New Deal</h3>
-              <button onClick={() => setShowAddDeal(false)} className="p-2 hover:bg-black/5 rounded-lg"><X size={20} /></button>
+              <button onClick={() => setShowAddDeal(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
             </div>
             <div className="p-4 space-y-4">
               <div><label className="block text-sm font-medium mb-1">Deal Title *</label><input value={newDealForm.title} onChange={e => setNewDealForm(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g. Enterprise License" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
@@ -403,11 +403,11 @@ export default function CRM() {
       )}
 
       {showAddContact && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}>
+        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}>
           <div className="bg-white rounded-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Add New Contact</h3>
-              <button onClick={() => setShowAddContact(false)} className="p-2 hover:bg-black/5 rounded-lg"><X size={20} /></button>
+              <button onClick={() => setShowAddContact(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
             </div>
             <div className="p-4 space-y-4">
               <div><label className="block text-sm font-medium mb-1">Full Name *</label><input value={newContactForm.full_name} onChange={e => setNewContactForm(prev => ({ ...prev, full_name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
@@ -424,11 +424,11 @@ export default function CRM() {
       )}
 
       {editingDeal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}>
+        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}>
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Edit Deal</h3>
-              <button onClick={() => setEditingDeal(null)} className="p-2 hover:bg-black/5 rounded-lg"><X size={20} /></button>
+              <button onClick={() => setEditingDeal(null)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
             </div>
             <div className="p-4 space-y-4">
               <div><label className="block text-sm font-medium mb-1">Deal Title</label><input value={editingDeal.title} onChange={e => setEditingDeal(prev => prev ? { ...prev, title: e.target.value } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>

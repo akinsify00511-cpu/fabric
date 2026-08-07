@@ -177,7 +177,7 @@ export default function ProjectSettings() {
               </div>
               <div>
                 <h2 className="font-medium">Job Types</h2>
-                <p className="text-xs text-black/50">Manage project/job categories for your business</p>
+                <p className="text-xs text-black">Manage project/job categories for your business</p>
               </div>
             </div>
             {!showNewForm && (
@@ -197,7 +197,7 @@ export default function ProjectSettings() {
           <div className="p-4 bg-white border-b border-black/[0.06]">
             <div className="flex items-end gap-3">
               <div className="flex-1">
-                <label className="block text-xs font-medium text-black/50 mb-1">Label</label>
+                <label className="block text-xs font-medium text-black mb-1">Label</label>
                 <input
                   type="text"
                   value={newLabel}
@@ -208,7 +208,7 @@ export default function ProjectSettings() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-black/50 mb-1">Color</label>
+                <label className="block text-xs font-medium text-black mb-1">Color</label>
                 <div className="flex gap-1">
                   {COLORS.map(c => (
                     <button
@@ -240,17 +240,17 @@ export default function ProjectSettings() {
 
         {/* Job Types List */}
         {loading ? (
-          <div className="p-8 text-center text-black/50">Loading...</div>
+          <div className="p-8 text-center text-black">Loading...</div>
         ) : jobTypes.length === 0 ? (
           <div className="p-8 text-center">
-            <p className="text-black/50 mb-2">No job types configured</p>
-            <p className="text-sm text-black/30">Add job types to categorize your projects</p>
+            <p className="text-black mb-2">No job types configured</p>
+            <p className="text-sm text-black">Add job types to categorize your projects</p>
           </div>
         ) : (
           <div className="divide-y divide-black/[0.06]">
             {jobTypes.map((jt) => (
               <div key={jt.id} className={`p-4 flex items-center gap-3 ${!jt.is_active ? 'opacity-50' : ''}`}>
-                <GripVertical size={16} className="text-black/20" />
+                <GripVertical size={16} className="text-black/50" />
                 
                 <div
                   className="w-4 h-4 rounded"
@@ -288,7 +288,7 @@ export default function ProjectSettings() {
                 ) : (
                   <>
                     <span className="flex-1 font-medium">{jt.label}</span>
-                    <span className="text-xs text-black/30">{jt.is_active ? 'Active' : 'Inactive'}</span>
+                    <span className="text-xs text-black">{jt.is_active ? 'Active' : 'Inactive'}</span>
                     <button
                       onClick={() => toggleActive(jt)}
                       className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-white text-black'}`}
@@ -297,7 +297,7 @@ export default function ProjectSettings() {
                     </button>
                     <button
                       onClick={() => setEditingId(jt.id)}
-                      className="p-1.5 hover:bg-black/[0.05] rounded text-black/50"
+                      className="p-1.5 hover:bg-black/[0.05] rounded text-black"
                     >
                       <Edit2 size={14} />
                     </button>

@@ -88,7 +88,7 @@ export default function QCDashboard() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-black/10">
@@ -96,20 +96,20 @@ export default function QCDashboard() {
             <Bug size={24} className="text-[#4285F4]" />
             <div>
               <h2 className="font-bold">Quality Control Dashboard</h2>
-              <p className="text-xs text-black/50">Internal tools for monitoring and debugging</p>
+              <p className="text-xs text-black">Internal tools for monitoring and debugging</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={loadData}
-              className="p-2 rounded-lg hover:bg-black/5"
+              className="p-2 rounded-lg hover:bg-black/10"
               title="Refresh"
             >
               <RefreshCw size={18} />
             </button>
             <button
               onClick={exportData}
-              className="p-2 rounded-lg hover:bg-black/5"
+              className="p-2 rounded-lg hover:bg-black/10"
               title="Export Data"
             >
               <Download size={18} />
@@ -122,14 +122,14 @@ export default function QCDashboard() {
             </button>
             <button
               onClick={clearAll}
-              className="p-2 rounded-lg hover:bg-black/5 text-red-500"
+              className="p-2 rounded-lg hover:bg-black/10 text-red-500"
               title="Clear All Data"
             >
               <Trash2 size={18} />
             </button>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-lg hover:bg-black/5"
+              className="p-2 rounded-lg hover:bg-black/10"
             >
               <X size={18} />
             </button>
@@ -183,7 +183,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
       className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition border-b-2 ${
         active 
           ? 'border-[#4285F4] text-[#4285F4]' 
-          : 'border-transparent text-black/50 hover:text-black/70'
+          : 'border-transparent text-black hover:text-black/70'
       }`}
     >
       {icon}
@@ -239,20 +239,20 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
                 )}
               </div>
               <div className="font-medium">{check.label}</div>
-              <div className="text-xs text-black/50">{check.description}</div>
+              <div className="text-xs text-black">{check.description}</div>
             </div>
           )
         })}
       </div>
 
       {status?.responseTime && (
-        <div className="mt-4 p-3 bg-black/5 rounded-lg">
+        <div className="mt-4 p-3 bg-black/10 rounded-lg">
           <div className="flex items-center gap-2 text-sm">
             <Clock size={14} />
             <span>Last check response time:</span>
             <span className="font-mono font-medium">{Math.round(status.responseTime)}ms</span>
           </div>
-          <div className="text-xs text-black/50 mt-1">
+          <div className="text-xs text-black mt-1">
             Last checked: {new Date(status.lastChecked).toLocaleString()}
           </div>
         </div>
@@ -276,8 +276,8 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
           {Object.entries(stats.byLevel).map(([level, count]) => (
-            <div key={level} className="p-3 bg-black/5 rounded-lg">
-              <div className="text-xs text-black/50 capitalize">{level}</div>
+            <div key={level} className="p-3 bg-black/10 rounded-lg">
+              <div className="text-xs text-black capitalize">{level}</div>
               <div className="text-xl font-bold">{count as number}</div>
             </div>
           ))}
@@ -286,7 +286,7 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
 
       {/* Filter */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-sm text-black/50">Filter:</span>
+        <span className="text-sm text-black">Filter:</span>
         {['all', 'debug', 'info', 'warn', 'error', 'critical'].map((level) => (
           <button
             key={level}
@@ -294,7 +294,7 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
             className={`px-2 py-1 rounded text-xs font-medium ${
               filterLevel === level 
                 ? 'bg-[#4285F4] text-white' 
-                : 'bg-black/5 hover:bg-black/10'
+                : 'bg-black/10 hover:bg-black/10'
             }`}
           >
             {level === 'all' ? 'All' : level.charAt(0).toUpperCase() + level.slice(1)}
@@ -305,7 +305,7 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
       {/* Log List */}
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {logs.length === 0 ? (
-          <div className="text-center py-8 text-black/40">
+          <div className="text-center py-8 text-black">
             <Activity size={32} className="mx-auto mb-2" />
             <p>No logs recorded</p>
           </div>
@@ -316,16 +316,16 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${levelColors[log.level]}`}>
                   {log.level}
                 </span>
-                <span className="text-xs text-black/40">
+                <span className="text-xs text-black">
                   {new Date(log.timestamp).toLocaleTimeString()}
                 </span>
-                <span className="text-xs text-black/40">{log.page}</span>
+                <span className="text-xs text-black">{log.page}</span>
               </div>
               <div className="font-medium">{log.message}</div>
               {log.context && Object.keys(log.context).length > 0 && (
                 <details className="mt-2">
-                  <summary className="text-xs text-black/50 cursor-pointer">Context</summary>
-                  <pre className="mt-1 p-2 bg-black/5 rounded text-xs overflow-x-auto">
+                  <summary className="text-xs text-black cursor-pointer">Context</summary>
+                  <pre className="mt-1 p-2 bg-black/10 rounded text-xs overflow-x-auto">
                     {JSON.stringify(log.context, null, 2)}
                   </pre>
                 </details>
@@ -366,14 +366,14 @@ function PerformanceTab() {
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="p-4 bg-black/5 rounded-xl">
-          <div className="text-sm text-black/50 mb-1">Average API Response</div>
+        <div className="p-4 bg-black/10 rounded-xl">
+          <div className="text-sm text-black mb-1">Average API Response</div>
           <div className={`text-2xl font-bold ${avgApi > 3000 ? 'text-red-500' : avgApi > 1000 ? 'text-amber-500' : 'text-green-500'}`}>
             {Math.round(avgApi)}ms
           </div>
         </div>
-        <div className="p-4 bg-black/5 rounded-xl">
-          <div className="text-sm text-black/50 mb-1">Average Render Time</div>
+        <div className="p-4 bg-black/10 rounded-xl">
+          <div className="text-sm text-black mb-1">Average Render Time</div>
           <div className={`text-2xl font-bold ${avgRender > 500 ? 'text-red-500' : avgRender > 100 ? 'text-amber-500' : 'text-green-500'}`}>
             {Math.round(avgRender)}ms
           </div>
@@ -416,7 +416,7 @@ function ReportsTab({ reports }: { reports: any[] }) {
   return (
     <div>
       {reports.length === 0 ? (
-        <div className="text-center py-12 text-black/40">
+        <div className="text-center py-12 text-black">
           <AlertTriangle size={32} className="mx-auto mb-2" />
           <p>No issues reported</p>
           <p className="text-xs mt-1">Use "Report Issue" to document problems</p>
@@ -431,8 +431,8 @@ function ReportsTab({ reports }: { reports: any[] }) {
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${severityColors[report.severity]}`}>
                       {report.severity}
                     </span>
-                    <span className="text-xs text-black/40">{report.type}</span>
-                    <span className="flex items-center gap-1 text-xs text-black/40">
+                    <span className="text-xs text-black">{report.type}</span>
+                    <span className="flex items-center gap-1 text-xs text-black">
                       {statusIcons[report.status]}
                       {report.status}
                     </span>
@@ -440,7 +440,7 @@ function ReportsTab({ reports }: { reports: any[] }) {
                   <div className="font-medium">{report.title}</div>
                   <div className="text-sm text-black/60 mt-1">{report.description}</div>
                 </div>
-                <div className="text-xs text-black/40 text-right">
+                <div className="text-xs text-black text-right">
                   {new Date(report.createdAt).toLocaleDateString()}
                 </div>
               </div>

@@ -182,7 +182,7 @@ export default function OrganizationPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Organization</h1>
-            <p className="text-sm text-black/50">Manage departments and teams</p>
+            <p className="text-sm text-black">Manage departments and teams</p>
           </div>
         </div>
         {isAdmin && (
@@ -225,13 +225,13 @@ export default function OrganizationPage() {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
         ) : departments.length === 0 ? (
-          <div className="p-12 text-center text-black/40">
-            <Building2 size={48} className="mx-auto mb-4 text-black/20" />
+          <div className="p-12 text-center text-black">
+            <Building2 size={48} className="mx-auto mb-4 text-black/50" />
             <p className="font-medium mb-2">No departments yet</p>
             <p className="text-sm">Create your first department to get started</p>
           </div>
@@ -288,7 +288,7 @@ function StatCard({ title, value, icon, color }: any) {
         {icon}
       </div>
       <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm text-black/50">{title}</div>
+      <div className="text-sm text-black">{title}</div>
     </div>
   )
 }
@@ -310,9 +310,9 @@ function DepartmentRow({
 
   return (
     <div>
-      <div className="flex items-center gap-4 p-4 hover:bg-black/[0.02]">
+      <div className="flex items-center gap-4 p-4 hover:bg-black/10">
         {/* Expand Button */}
-        <button onClick={onToggle} className="p-1 hover:bg-black/5 rounded">
+        <button onClick={onToggle} className="p-1 hover:bg-black/10 rounded">
           {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
         </button>
 
@@ -330,7 +330,7 @@ function DepartmentRow({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="font-medium">{department.name}</div>
-          <div className="flex items-center gap-2 text-sm text-black/50">
+          <div className="flex items-center gap-2 text-sm text-black">
             <span>{department.code}</span>
             {department.head_id && <span>• Manager assigned</span>}
           </div>
@@ -340,19 +340,19 @@ function DepartmentRow({
         <div className="hidden md:flex items-center gap-6 text-sm">
           <div className="text-center">
             <div className="font-medium">{teamCount}</div>
-            <div className="text-black/50">Teams</div>
+            <div className="text-black">Teams</div>
           </div>
           <div className="text-center">
             <div className="font-medium">{staffCount}</div>
-            <div className="text-black/50">Staff</div>
+            <div className="text-black">Staff</div>
           </div>
         </div>
 
         {/* Actions */}
         {isAdmin && (
           <div className="flex items-center gap-1">
-            <button onClick={onEdit} className="p-2 hover:bg-black/5 rounded-lg">
-              <Edit2 size={16} className="text-black/50" />
+            <button onClick={onEdit} className="p-2 hover:bg-black/10 rounded-lg">
+              <Edit2 size={16} className="text-black" />
             </button>
             <button onClick={onDelete} className="p-2 hover:bg-red-50 rounded-lg">
               <Trash2 size={16} className="text-red-500" />
@@ -387,11 +387,11 @@ function TeamRow({ team, onEdit, onDelete, isAdmin }: { team: Team; onEdit: () =
       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: team.color || '#10B981' }} />
       <Users size={16} className="text-emerald-500" />
       <div className="flex-1 font-medium text-sm">{team.name}</div>
-      {team.code && <span className="text-xs text-black/40">{team.code}</span>}
+      {team.code && <span className="text-xs text-black">{team.code}</span>}
       {isAdmin && (
         <div className="flex items-center gap-1">
-          <button onClick={onEdit} className="p-1 hover:bg-black/5 rounded">
-            <Edit2 size={14} className="text-black/40" />
+          <button onClick={onEdit} className="p-1 hover:bg-black/10 rounded">
+            <Edit2 size={14} className="text-black" />
           </button>
           <button onClick={onDelete} className="p-1 hover:bg-red-50 rounded">
             <Trash2 size={14} className="text-red-400" />
@@ -430,7 +430,7 @@ function OrgModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="p-6 border-b border-black/[0.06]">
           <h2 className="text-lg font-bold">

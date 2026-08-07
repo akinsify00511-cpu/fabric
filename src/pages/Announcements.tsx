@@ -197,7 +197,7 @@ export default function AnnouncementsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Announcements</h1>
-            <p className="text-sm text-black/50">Company updates and notifications</p>
+            <p className="text-sm text-black">Company updates and notifications</p>
           </div>
         </div>
         {isAdmin && (
@@ -231,7 +231,7 @@ export default function AnnouncementsPage() {
       {/* Pinned Section */}
       {(isAdmin ? announcements : userAnnouncements).filter(a => a.is_pinned && a.status === 'active').length > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-black/50 mb-3 flex items-center gap-2">
+          <h3 className="text-sm font-medium text-black mb-3 flex items-center gap-2">
             <Pin size={14} />
             Pinned
           </h3>
@@ -256,13 +256,13 @@ export default function AnnouncementsPage() {
       {/* All Announcements */}
       <div className="space-y-3">
         {loading ? (
-          <div className="text-center py-12 text-black/40">
+          <div className="text-center py-12 text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
         ) : filteredAnnouncements.length === 0 ? (
-          <div className="text-center py-12 text-black/40 bg-white rounded-2xl border border-black/[0.06]">
-            <Megaphone size={48} className="mx-auto mb-4 text-black/20" />
+          <div className="text-center py-12 text-black bg-white rounded-2xl border border-black/[0.06]">
+            <Megaphone size={48} className="mx-auto mb-4 text-black/50" />
             <p className="font-medium mb-2">No announcements</p>
             <p className="text-sm">
               {isAdmin ? 'Create your first announcement' : 'No new announcements'}
@@ -333,7 +333,7 @@ function AnnouncementCard({
               <span className={`px-2 py-0.5 rounded text-xs font-medium uppercase ${priority.bg} ${priority.text}`}>
                 {announcement.priority}
               </span>
-              <span className="text-xs text-black/40">
+              <span className="text-xs text-black">
                 {new Date(announcement.created_at).toLocaleDateString()}
               </span>
             </div>
@@ -356,7 +356,7 @@ function AnnouncementCard({
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {announcement.author && (
-              <div className="flex items-center gap-2 text-sm text-black/50">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
                   {announcement.author.full_name?.charAt(0) || 'U'}
                 </div>
@@ -364,7 +364,7 @@ function AnnouncementCard({
               </div>
             )}
             {isAdmin && (
-              <span className="flex items-center gap-1 text-xs text-black/40">
+              <span className="flex items-center gap-1 text-xs text-black">
                 <Eye size={12} />
                 {announcement.view_count || 0} views
               </span>
@@ -375,18 +375,18 @@ function AnnouncementCard({
             {isUserAnn && announcement.is_dismissible && !isUserAnn.is_dismissed && (
               <button
                 onClick={(e) => { e.stopPropagation(); onDismiss() }}
-                className="px-3 py-1.5 rounded-lg bg-black/5 text-sm hover:bg-black/10"
+                className="px-3 py-1.5 rounded-lg bg-black/10 text-sm hover:bg-black/10"
               >
                 Dismiss
               </button>
             )}
             {isAdmin && (
               <>
-                <button onClick={onTogglePin} className="p-1.5 rounded hover:bg-black/5">
-                  <Pin size={16} className={announcement.is_pinned ? 'text-amber-500' : 'text-black/30'} />
+                <button onClick={onTogglePin} className="p-1.5 rounded hover:bg-black/10">
+                  <Pin size={16} className={announcement.is_pinned ? 'text-amber-500' : 'text-black'} />
                 </button>
-                <button onClick={onEdit} className="p-1.5 rounded hover:bg-black/5">
-                  <Edit2 size={16} className="text-black/50" />
+                <button onClick={onEdit} className="p-1.5 rounded hover:bg-black/10">
+                  <Edit2 size={16} className="text-black" />
                 </button>
                 <button onClick={onDelete} className="p-1.5 rounded hover:bg-red-50">
                   <Trash2 size={16} className="text-red-500" />
@@ -431,7 +431,7 @@ function AnnouncementModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-black/[0.06]">
           <h2 className="text-lg font-bold">

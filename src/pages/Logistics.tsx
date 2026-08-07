@@ -38,7 +38,7 @@ export default function Logistics() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Delivery & Logistics</h1>
-          <p className="text-sm text-black/50">Track orders and deliveries</p>
+          <p className="text-sm text-black">Track orders and deliveries</p>
         </div>
       </div>
 
@@ -46,26 +46,26 @@ export default function Logistics() {
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
           <div className="text-2xl font-bold text-amber-600">{pendingCount}</div>
-          <div className="text-sm text-black/50">Pending</div>
+          <div className="text-sm text-black">Pending</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
           <div className="text-2xl font-bold text-blue-600">{inTransitCount}</div>
-          <div className="text-sm text-black/50">In Transit</div>
+          <div className="text-sm text-black">In Transit</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
           <div className="text-2xl font-bold text-green-600">{deliveredCount}</div>
-          <div className="text-sm text-black/50">Delivered</div>
+          <div className="text-sm text-black">Delivered</div>
         </div>
       </div>
 
       {/* Deliveries List */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
       ) : deliveries.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Truck size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No deliveries yet</p>
-          <p className="text-sm text-black/30 mt-1">Track orders and delivery status</p>
+          <Truck size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No deliveries yet</p>
+          <p className="text-sm text-black mt-1">Track orders and delivery status</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -86,7 +86,7 @@ export default function Logistics() {
                   </div>
                   <div>
                     <h3 className="font-medium">{delivery.order_reference || 'Delivery'}</h3>
-                    <p className="text-sm text-black/50">{delivery.client_name}</p>
+                    <p className="text-sm text-black">{delivery.client_name}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full ${
@@ -112,12 +112,12 @@ export default function Logistics() {
               )}
               
               <div className="flex items-center justify-between pt-3 border-t border-black/5">
-                <div className="flex items-center gap-2 text-xs text-black/40">
+                <div className="flex items-center gap-2 text-xs text-black">
                   <Clock size={14} />
                   <span>{delivery.scheduled_date ? new Date(delivery.scheduled_date).toLocaleDateString() : 'No date'}</span>
                 </div>
                 {delivery.delivery_type && (
-                  <span className="text-xs bg-black/5 px-2 py-1 rounded capitalize">{delivery.delivery_type}</span>
+                  <span className="text-xs bg-black/10 px-2 py-1 rounded capitalize">{delivery.delivery_type}</span>
                 )}
               </div>
             </div>

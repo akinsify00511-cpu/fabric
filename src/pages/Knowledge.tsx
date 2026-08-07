@@ -303,7 +303,7 @@ export default function Knowledge() {
           className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition ${
             selectedPage?.id === page.id
               ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
-              : 'hover:bg-black/[0.02] text-black/60'
+              : 'hover:bg-black/10 text-black/60'
           }`}
           style={{ paddingLeft: `${12 + depth * 16}px` }}
         >
@@ -318,11 +318,11 @@ export default function Knowledge() {
           {page.icon_emoji ? (
             <span className="text-sm">{page.icon_emoji}</span>
           ) : (
-            <FileText size={14} className="text-black/30" />
+            <FileText size={14} className="text-black" />
           )}
           <span className="truncate flex-1 text-left">{page.title || 'Untitled'}</span>
           {page.children && page.children.length > 0 && (
-            <span className="text-xs text-black/30">{page.children.length}</span>
+            <span className="text-xs text-black">{page.children.length}</span>
           )}
         </button>
         {expandedPages.has(page.id) && page.children && (
@@ -339,7 +339,7 @@ export default function Knowledge() {
         {/* Search */}
         <div className="p-3 border-b border-black/[0.06]">
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -352,7 +352,7 @@ export default function Knowledge() {
         {/* Spaces */}
         <div className="border-b border-black/[0.06]">
           <div className="px-3 py-2 flex items-center justify-between">
-            <span className="text-xs font-medium text-black/40 uppercase tracking-wide">Spaces</span>
+            <span className="text-xs font-medium text-black uppercase tracking-wide">Spaces</span>
             <button
               onClick={async () => {
                 const name = prompt('Space name:')
@@ -376,7 +376,7 @@ export default function Knowledge() {
                   }
                 }
               }}
-              className="p-1 hover:bg-black/[0.05] rounded text-black/30 hover:text-black/50"
+              className="p-1 hover:bg-black/[0.05] rounded text-black hover:text-black"
             >
               <Plus size={14} />
             </button>
@@ -388,7 +388,7 @@ export default function Knowledge() {
               className={`w-full px-3 py-2 flex items-center gap-2 text-sm transition ${
                 selectedSpace?.id === space.id
                   ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
-                  : 'hover:bg-black/[0.02] text-black/60'
+                  : 'hover:bg-black/10 text-black/60'
               }`}
             >
               <span>{space.icon_emoji}</span>
@@ -400,18 +400,18 @@ export default function Knowledge() {
         {/* Pages Tree */}
         <div className="flex-1 overflow-y-auto py-2">
           <div className="px-3 py-2 flex items-center justify-between">
-            <span className="text-xs font-medium text-black/40 uppercase tracking-wide">Pages</span>
+            <span className="text-xs font-medium text-black uppercase tracking-wide">Pages</span>
             <button
               onClick={() => setShowNewPage(true)}
-              className="p-1 hover:bg-black/[0.05] rounded text-black/30 hover:text-black/50"
+              className="p-1 hover:bg-black/[0.05] rounded text-black hover:text-black"
             >
               <Plus size={14} />
             </button>
           </div>
           {loading ? (
-            <div className="px-3 py-4 text-xs text-black/30 text-center">Loading...</div>
+            <div className="px-3 py-4 text-xs text-black text-center">Loading...</div>
           ) : pages.length === 0 ? (
-            <div className="px-3 py-4 text-xs text-black/30 text-center">
+            <div className="px-3 py-4 text-xs text-black text-center">
               No pages yet.<br />Create your first page!
             </div>
           ) : (
@@ -425,9 +425,9 @@ export default function Knowledge() {
         {searchQuery ? (
           /* Search Results */
           <div className="flex-1 overflow-y-auto p-6">
-            <h2 className="text-sm font-medium text-black/40 mb-4">Search results for "{searchQuery}"</h2>
+            <h2 className="text-sm font-medium text-black mb-4">Search results for "{searchQuery}"</h2>
             {searchResults.length === 0 ? (
-              <p className="text-sm text-black/40">No pages found</p>
+              <p className="text-sm text-black">No pages found</p>
             ) : (
               <div className="space-y-2">
                 {searchResults.map((page) => (
@@ -445,7 +445,7 @@ export default function Knowledge() {
                       {page.icon_emoji && <span>{page.icon_emoji}</span>}
                       <span className="font-medium text-black">{page.title}</span>
                     </div>
-                    <p className="text-xs text-black/40">in {(page as any).kb_spaces?.name}</p>
+                    <p className="text-xs text-black">in {(page as any).kb_spaces?.name}</p>
                   </button>
                 ))}
               </div>
@@ -458,27 +458,27 @@ export default function Knowledge() {
             <div className="px-6 py-3 bg-white border-b border-black/[0.06] flex items-center gap-2">
               <button
                 onClick={() => { setSelectedPage(null); setEditingPage(null) }}
-                className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60 md:hidden"
+                className="p-2 hover:bg-black/[0.05] rounded-lg text-black hover:text-black/60 md:hidden"
               >
                 <ArrowLeft size={18} />
               </button>
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60 hidden md:block"
+                className="p-2 hover:bg-black/[0.05] rounded-lg text-black hover:text-black/60 hidden md:block"
               >
                 <Book size={18} />
               </button>
               <div className="flex-1" />
               <button
                 onClick={() => duplicatePage(selectedPage)}
-                className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
+                className="p-2 hover:bg-black/[0.05] rounded-lg text-black hover:text-black/60"
                 title="Duplicate"
               >
                 <Copy size={16} />
               </button>
               <button
                 onClick={() => setShowHistory(true)}
-                className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
+                className="p-2 hover:bg-black/[0.05] rounded-lg text-black hover:text-black/60"
                 title="History"
               >
                 <Clock size={16} />
@@ -508,7 +508,7 @@ export default function Knowledge() {
                   value={editingPage.title}
                   onChange={(e) => setEditingPage((prev) => prev ? { ...prev, title: e.target.value } : null)}
                   placeholder="Untitled"
-                  className="w-full text-3xl font-bold text-black mb-8 border-none outline-none placeholder:text-black/20"
+                  className="w-full text-3xl font-bold text-black mb-8 border-none outline-none placeholder:text-black/50"
                 />
 
                 {/* Simple Editor UI */}
@@ -555,12 +555,12 @@ export default function Knowledge() {
                       setEditingPage((prev) => prev ? { ...prev, content: newContent } : null)
                     }}
                     placeholder="Start writing, or type '/' for commands..."
-                    className="w-full min-h-[400px] text-base text-black/80 resize-none outline-none placeholder:text-black/30"
+                    className="w-full min-h-[400px] text-base text-black resize-none outline-none placeholder:text-black"
                   />
                 </div>
 
                 {/* Meta */}
-                <div className="mt-8 pt-4 border-t border-black/[0.06] flex items-center gap-4 text-xs text-black/40">
+                <div className="mt-8 pt-4 border-t border-black/[0.06] flex items-center gap-4 text-xs text-black">
                   <span className="flex items-center gap-1">
                     <User size={12} />
                     Last edited {new Date(selectedPage.updated_at).toLocaleDateString()}
@@ -577,7 +577,7 @@ export default function Knowledge() {
                 📚
               </div>
               <h2 className="text-xl font-semibold text-black mb-2">Knowledge Base</h2>
-              <p className="text-sm text-black/50 mb-6">
+              <p className="text-sm text-black mb-6">
                 Your team's documentation hub. Create pages, organize with spaces, and keep everything in one place.
               </p>
               <button
@@ -594,7 +594,7 @@ export default function Knowledge() {
 
       {/* New Page Modal */}
       {showNewPage && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
             <h3 className="text-lg font-semibold text-black mb-4">Create new page</h3>
             <input
@@ -608,7 +608,7 @@ export default function Knowledge() {
             <div className="flex gap-3">
               <button
                 onClick={() => { setShowNewPage(false); setNewPageTitle(''); setNewPageParent(null) }}
-                className="flex-1 px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+                className="flex-1 px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
               >
                 Cancel
               </button>
@@ -634,12 +634,12 @@ export default function Knowledge() {
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {history.length === 0 ? (
-              <p className="text-sm text-black/40 text-center py-8">No history yet</p>
+              <p className="text-sm text-black text-center py-8">No history yet</p>
             ) : (
               history.map((v, i) => (
                 <div key={i} className="p-3 rounded-xl bg-black/[0.02]">
                   <p className="text-sm font-medium text-black">{v.title}</p>
-                  <p className="text-xs text-black/40 mt-1">Version {history.length - i}</p>
+                  <p className="text-xs text-black mt-1">Version {history.length - i}</p>
                   <button
                     onClick={() => {
                       setEditingPage((prev) => prev ? { ...prev, content: v.content } : null)

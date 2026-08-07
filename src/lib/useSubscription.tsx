@@ -91,7 +91,7 @@ export function FeatureGate({ feature, children, fallback }: FeatureLockProps) {
         </svg>
       </div>
       <h3 className="text-lg font-semibold mb-2">Upgrade to Unlock</h3>
-      <p className="text-sm text-black/50 mb-4 max-w-xs">
+      <p className="text-sm text-black mb-4 max-w-xs">
         This feature is available on our Pro plan and above.
       </p>
       <a

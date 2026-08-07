@@ -142,7 +142,7 @@ export default function Monitoring() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Monitoring</h1>
-          <p className="text-sm text-black/50 mt-0.5">System health and incident management</p>
+          <p className="text-sm text-black mt-0.5">System health and incident management</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -228,12 +228,12 @@ export default function Monitoring() {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{monitor.name}</p>
-                        <p className="text-xs text-black/40">{monitor.target_url || monitor.monitor_type}</p>
+                        <p className="text-xs text-black">{monitor.target_url || monitor.monitor_type}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={`text-sm font-medium ${config.color}`}>{config.label}</p>
-                      <p className="text-xs text-black/40">{monitor.response_time_ms}ms</p>
+                      <p className="text-xs text-black">{monitor.response_time_ms}ms</p>
                     </div>
                   </div>
                 )
@@ -259,7 +259,7 @@ export default function Monitoring() {
                           {config.label}
                         </span>
                       </div>
-                      <p className="text-xs text-black/50 mt-1">
+                      <p className="text-xs text-black mt-1">
                         {incident.status === 'resolved' 
                           ? `Resolved ${timeSince(incident.resolved_at!)}`
                           : `Started ${timeSince(incident.started_at)}`}
@@ -284,7 +284,7 @@ export default function Monitoring() {
                       background: uptime >= 99.9 ? '#10B981' : uptime >= 99 ? '#F59E0B' : '#EF4444'
                     }}
                   />
-                  <span className="text-xs text-black/40">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
+                  <span className="text-xs text-black">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
                 </div>
               ))}
             </div>
@@ -296,7 +296,7 @@ export default function Monitoring() {
             <div className="flex items-center justify-center h-40">
               <div className="text-center">
                 <p className="text-5xl font-bold text-indigo-600">127ms</p>
-                <p className="text-sm text-black/50 mt-2">-12% from last week</p>
+                <p className="text-sm text-black mt-2">-12% from last week</p>
                 <TrendingDown className="mx-auto mt-2 text-green-600" size={24} />
               </div>
             </div>
@@ -324,21 +324,21 @@ export default function Monitoring() {
                           {config.label}
                         </span>
                       </div>
-                      <p className="text-sm text-black/50">{monitor.target_url || monitor.monitor_type}</p>
+                      <p className="text-sm text-black">{monitor.target_url || monitor.monitor_type}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6 text-right">
                     <div>
                       <p className="text-sm font-medium">{monitor.response_time_ms}ms</p>
-                      <p className="text-xs text-black/40">Response</p>
+                      <p className="text-xs text-black">Response</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">{monitor.uptime_percent.toFixed(2)}%</p>
-                      <p className="text-xs text-black/40">Uptime</p>
+                      <p className="text-xs text-black">Uptime</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">{timeSince(monitor.last_check_at)}</p>
-                      <p className="text-xs text-black/40">Last check</p>
+                      <p className="text-xs text-black">Last check</p>
                     </div>
                     <button className="p-2 hover:bg-black/[0.05] rounded-lg">
                       <Settings size={16} />
@@ -365,7 +365,7 @@ export default function Monitoring() {
                     </div>
                     <div>
                       <h3 className="font-medium">{incident.title}</h3>
-                      <p className="text-sm text-black/50">
+                      <p className="text-sm text-black">
                         Started {new Date(incident.started_at).toLocaleString()}
                       </p>
                     </div>
@@ -385,7 +385,7 @@ export default function Monitoring() {
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div>
-                    <span className="text-black/40">Duration:</span>{' '}
+                    <span className="text-black">Duration:</span>{' '}
                     <span className="font-medium">
                       {incident.resolved_at
                         ? formatDuration(incident.duration_seconds)
@@ -394,7 +394,7 @@ export default function Monitoring() {
                   </div>
                   {incident.affected_users > 0 && (
                     <div>
-                      <span className="text-black/40">Affected:</span>{' '}
+                      <span className="text-black">Affected:</span>{' '}
                       <span className="font-medium">{incident.affected_users} users</span>
                     </div>
                   )}
@@ -426,7 +426,7 @@ export default function Monitoring() {
                   </div>
                   <div>
                     <h3 className="font-medium">{heartbeat.name}</h3>
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black">
                       Every {heartbeat.check_interval_seconds / 60} minutes
                     </p>
                   </div>
@@ -440,7 +440,7 @@ export default function Monitoring() {
                       {heartbeat.status === 'healthy' ? 'Healthy' :
                        heartbeat.status === 'late' ? 'Late' : 'Missed'}
                     </p>
-                    <p className="text-xs text-black/40">
+                    <p className="text-xs text-black">
                       Last: {timeSince(heartbeat.last_heartbeat_at)}
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export default function Monitoring() {
 
       {/* Create Monitor Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Add Monitor</h2>

@@ -37,7 +37,7 @@ export default function More() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black mb-1">All modules</h1>
-          <p className="text-sm text-black/50">Your complete business operating system</p>
+          <p className="text-sm text-black">Your complete business operating system</p>
         </div>
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
           plan === 'enterprise' ? 'bg-purple-100 text-purple-700' :
@@ -65,7 +65,7 @@ export default function More() {
               </div>
               <div>
                 <span className="text-sm font-medium text-black">{item.label}</span>
-                <p className="text-xs text-black/40">{item.desc}</p>
+                <p className="text-xs text-black">{item.desc}</p>
               </div>
               <Link
                 to="/upgrade"
@@ -85,7 +85,7 @@ export default function More() {
               </div>
               <div>
                 <span className="text-sm font-medium text-black">{item.label}</span>
-                <p className="text-xs text-black/40">{item.desc}</p>
+                <p className="text-xs text-black">{item.desc}</p>
               </div>
             </Link>
           )

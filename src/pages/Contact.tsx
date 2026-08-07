@@ -71,7 +71,7 @@ export default function Contact() {
               </button>
               <Link
                 to="/"
-                className="px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/5 transition"
+                className="px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/10 transition"
               >
                 Back to Home
               </Link>

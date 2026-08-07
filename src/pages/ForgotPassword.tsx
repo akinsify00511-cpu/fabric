@@ -39,7 +39,7 @@ export default function ForgotPassword() {
           <p className="text-sm text-black/60">
             We sent a password reset link to <span className="font-medium">{email}</span>
           </p>
-          <p className="text-xs text-black/40">
+          <p className="text-xs text-black">
             Didn't receive it? Check your spam folder or{' '}
             <button onClick={() => setSuccess(false)} className="text-[#4F46E5] hover:underline">
               try again
@@ -64,7 +64,7 @@ export default function ForgotPassword() {
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <h2 className="text-xl font-semibold">Reset password</h2>
-          <p className="text-sm text-black/50 mt-1">
+          <p className="text-sm text-black mt-1">
             Enter your email and we'll send you a reset link
           </p>
         </div>

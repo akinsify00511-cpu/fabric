@@ -158,7 +158,7 @@ export default function Merit() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Merit Points</h1>
-          <p className="text-sm text-black/50 mt-0.5">Recognize and reward great work</p>
+          <p className="text-sm text-black mt-0.5">Recognize and reward great work</p>
         </div>
         <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full">
           <Star size={14} />
@@ -183,7 +183,7 @@ export default function Merit() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -241,7 +241,7 @@ export default function Merit() {
                 Award {points} Merit Points
               </button>
               {!canAward && (
-                <p className="text-xs text-center text-black/40">
+                <p className="text-xs text-center text-black">
                   Only managers and owners can award points
                 </p>
               )}
@@ -262,16 +262,16 @@ export default function Merit() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-black">
                       <span className="font-medium">{e.staff_name}</span>
-                      <span className="text-black/40"> earned </span>
+                      <span className="text-black"> earned </span>
                       <span className="font-medium text-yellow-600">{e.points} pts</span>
                     </p>
-                    {e.reason && <p className="text-xs text-black/40 truncate">{e.reason}</p>}
+                    {e.reason && <p className="text-xs text-black truncate">{e.reason}</p>}
                   </div>
-                  <span className="text-xs text-black/30">{new Date(e.created_at).toLocaleDateString()}</span>
+                  <span className="text-xs text-black">{new Date(e.created_at).toLocaleDateString()}</span>
                 </div>
               ))}
               {entries.length === 0 && (
-                <p className="px-4 py-6 text-sm text-black/40 text-center">No recognition yet. Be the first!</p>
+                <p className="px-4 py-6 text-sm text-black text-center">No recognition yet. Be the first!</p>
               )}
             </div>
           </div>
@@ -291,17 +291,17 @@ export default function Merit() {
                     </div>
                     <div>
                       <p className="text-sm text-black font-medium">{e.staff_name}</p>
-                      <p className="text-xs text-black/40">{e.reason || 'Merit recognition'}</p>
+                      <p className="text-xs text-black">{e.reason || 'Merit recognition'}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-black/30">by {e.awarded_by_name}</p>
-                    <p className="text-xs text-black/30">{new Date(e.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-black">by {e.awarded_by_name}</p>
+                    <p className="text-xs text-black">{new Date(e.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))}
               {entries.length === 0 && (
-                <p className="px-4 py-6 text-sm text-black/40 text-center">No recognition history yet.</p>
+                <p className="px-4 py-6 text-sm text-black text-center">No recognition history yet.</p>
               )}
             </div>
           </div>
@@ -318,22 +318,22 @@ export default function Merit() {
                   index === 0 ? 'avenize-gradient text-white' :
                   index === 1 ? 'bg-white text-black' :
                   index === 2 ? 'bg-amber-100 text-amber-700' :
-                  'bg-black/[0.05] text-black/40'
+                  'bg-black/[0.05] text-black'
                 }`}>
                   {index + 1}
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-black">{entry.staff_name}</p>
-                  <p className="text-xs text-black/40">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
+                  <p className="text-xs text-black">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold text-yellow-600">{entry.total_points}</p>
-                  <p className="text-xs text-black/40">points</p>
+                  <p className="text-xs text-black">points</p>
                 </div>
               </div>
             ))}
             {leaderboard.length === 0 && (
-              <div className="text-center py-12 text-black/40">
+              <div className="text-center py-12 text-black">
                 <Award size={32} className="mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No points awarded yet</p>
               </div>

@@ -57,7 +57,7 @@ export default function LabQC() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Lab & Quality Control</h1>
-          <p className="text-sm text-black/50">Samples, tests & QC reports</p>
+          <p className="text-sm text-black">Samples, tests & QC reports</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -120,12 +120,12 @@ export default function LabQC() {
 
       {/* Samples List */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
       ) : samples.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <FlaskConical size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No samples registered</p>
-          <p className="text-sm text-black/30 mt-1">Register your first lab sample</p>
+          <FlaskConical size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No samples registered</p>
+          <p className="text-sm text-black mt-1">Register your first lab sample</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -148,7 +148,7 @@ export default function LabQC() {
                   </div>
                   <div>
                     <h3 className="font-medium">{sample.sample_id}</h3>
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black">
                       {sample.client_name || 'No client'} • {sample.sample_type || 'No type'}
                     </p>
                   </div>
@@ -163,7 +163,7 @@ export default function LabQC() {
                 </span>
               </div>
               <div className="flex items-center justify-between pt-3 border-t border-black/5">
-                <span className="text-xs text-black/40">
+                <span className="text-xs text-black">
                   Registered: {new Date(sample.created_at).toLocaleDateString()}
                 </span>
                 <button 

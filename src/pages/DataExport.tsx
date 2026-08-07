@@ -233,7 +233,7 @@ export default function DataExportPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Data Export</h1>
-            <p className="text-sm text-black/50">Export your data in various formats</p>
+            <p className="text-sm text-black">Export your data in various formats</p>
           </div>
         </div>
         <button
@@ -260,7 +260,7 @@ export default function DataExportPage() {
               <DownloadCloud size={20} className="text-emerald-500" />
             </div>
             <div className="font-medium text-sm">{entity.label}</div>
-            <div className="text-xs text-black/40 mt-1">Quick export</div>
+            <div className="text-xs text-black mt-1">Quick export</div>
           </button>
         ))}
       </div>
@@ -272,12 +272,12 @@ export default function DataExportPage() {
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading exports...
           </div>
         ) : exports.length === 0 ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <Download size={32} className="mx-auto mb-2" />
             <p>No exports yet</p>
             <p className="text-sm mt-1">Create your first export to get started</p>
@@ -289,7 +289,7 @@ export default function DataExportPage() {
               const status = statusConfig[exp.status] || statusConfig.pending
 
               return (
-                <div key={exp.id} className="p-4 hover:bg-black/[0.02] transition">
+                <div key={exp.id} className="p-4 hover:bg-black/10 transition">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
                       <Icon size={24} className="text-blue-500" />
@@ -302,7 +302,7 @@ export default function DataExportPage() {
                           {status.text}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-black/50">
+                      <div className="flex items-center gap-4 mt-1 text-sm text-black">
                         <span className="uppercase">{exp.export_type}</span>
                         <span>•</span>
                         <span>{exp.record_count?.toLocaleString() || 0} records</span>
@@ -331,11 +331,11 @@ export default function DataExportPage() {
 
       {/* Export Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-xl font-bold">Export Data</h2>
-              <p className="text-sm text-black/50 mt-1">Select what you want to export</p>
+              <p className="text-sm text-black mt-1">Select what you want to export</p>
             </div>
 
             <div className="p-6 space-y-6">
@@ -370,9 +370,9 @@ export default function DataExportPage() {
                             : 'border-black/10 hover:border-black/20'
                         }`}
                       >
-                        <Icon size={24} className={isSelected ? 'text-[#4285F4]' : 'text-black/40'} />
+                        <Icon size={24} className={isSelected ? 'text-[#4285F4]' : 'text-black'} />
                         <div className="font-medium mt-2">{format.label}</div>
-                        <div className="text-xs text-black/40 mt-1">{format.desc}</div>
+                        <div className="text-xs text-black mt-1">{format.desc}</div>
                       </button>
                     )
                   })}

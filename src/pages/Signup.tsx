@@ -240,7 +240,7 @@ export default function Signup() {
           </div>
         </div>
 
-        <div className="relative z-10 text-white/40 text-sm">
+        <div className="relative z-10 text-white/80 text-sm">
           © 2026 Avenize. Built for Nigerian businesses.
         </div>
       </div>

@@ -206,8 +206,8 @@ Each code can only be used once!`
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/5 rounded w-48" />
-        <div className="h-64 bg-black/5 rounded" />
+        <div className="h-8 bg-black/10 rounded w-48" />
+        <div className="h-64 bg-black/10 rounded" />
       </div>
     )
   }
@@ -217,7 +217,7 @@ Each code can only be used once!`
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Security</h1>
-          <p className="text-sm text-black/50 mt-0.5">Protect your account and monitor activity</p>
+          <p className="text-sm text-black mt-0.5">Protect your account and monitor activity</p>
         </div>
       </div>
 
@@ -227,7 +227,7 @@ Each code can only be used once!`
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'security'
               ? 'avenize-gradient text-white'
-              : 'text-black/50 hover:text-black'
+              : 'text-black hover:text-black'
           }`}
         >
           Security
@@ -237,7 +237,7 @@ Each code can only be used once!`
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'audit'
               ? 'avenize-gradient text-white'
-              : 'text-black/50 hover:text-black'
+              : 'text-black hover:text-black'
           }`}
         >
           Audit Log
@@ -260,7 +260,7 @@ Each code can only be used once!`
                 </div>
                 <div className="flex-1">
                   <h2 className="text-lg font-medium">Two-Factor Authentication</h2>
-                  <p className="text-sm text-black/50">
+                  <p className="text-sm text-black">
                     {mfa?.enabled
                       ? 'Your account is protected with 2FA'
                       : 'Add an extra layer of security to your account'}
@@ -286,7 +286,7 @@ Each code can only be used once!`
                       <Smartphone className="w-5 h-5 text-green-600" />
                       <div>
                         <p className="text-sm font-medium">Authenticator App</p>
-                        <p className="text-xs text-black/50">Enabled on {new Date(mfa.totp_confirmed_at!).toLocaleDateString()}</p>
+                        <p className="text-xs text-black">Enabled on {new Date(mfa.totp_confirmed_at!).toLocaleDateString()}</p>
                       </div>
                     </div>
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -294,10 +294,10 @@ Each code can only be used once!`
 
                   <div className="flex items-center justify-between p-4 rounded-xl bg-black/[0.02]">
                     <div className="flex items-center gap-3">
-                      <Key className="w-5 h-5 text-black/40" />
+                      <Key className="w-5 h-5 text-black" />
                       <div>
                         <p className="text-sm font-medium">Backup Codes</p>
-                        <p className="text-xs text-black/50">
+                        <p className="text-xs text-black">
                           {10 - mfa.backup_codes_used} of 10 remaining
                         </p>
                       </div>
@@ -338,14 +338,14 @@ Each code can only be used once!`
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
                           <Smartphone className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Authenticator App</h3>
-                          <p className="text-xs text-black/50">
+                          <p className="text-xs text-black">
                             Use Google Authenticator, Authy, or any TOTP app
                           </p>
                         </div>
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
                           <Key className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Backup Codes</h3>
-                          <p className="text-xs text-black/50">
+                          <p className="text-xs text-black">
                             10 one-time use codes for emergency access
                           </p>
                         </div>
@@ -372,9 +372,9 @@ Each code can only be used once!`
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm">Last changed</p>
-                <p className="text-xs text-black/50">Never</p>
+                <p className="text-xs text-black">Never</p>
               </div>
-              <button className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]">
+              <button className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10">
                 Change Password
               </button>
             </div>
@@ -394,7 +394,7 @@ Each code can only be used once!`
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">Current Device</p>
-                  <p className="text-xs text-black/50">Active now</p>
+                  <p className="text-xs text-black">Active now</p>
                 </div>
                 <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">Active</span>
               </div>
@@ -407,11 +407,11 @@ Each code can only be used once!`
         <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
           <div className="p-4 border-b border-black/[0.06]">
             <h2 className="text-sm font-medium">Activity Log</h2>
-            <p className="text-xs text-black/50">Recent actions on your account</p>
+            <p className="text-xs text-black">Recent actions on your account</p>
           </div>
           <div className="divide-y divide-black/[0.04]">
             {auditLogs.length === 0 ? (
-              <div className="p-8 text-center text-black/40">
+              <div className="p-8 text-center text-black">
                 <Shield className="w-8 h-8 mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No activity recorded yet</p>
               </div>
@@ -438,7 +438,7 @@ Each code can only be used once!`
                       <span className="text-black/60">{log.resource_type}</span>
                       {log.resource_name && `: ${log.resource_name}`}
                     </p>
-                    <p className="text-xs text-black/40">
+                    <p className="text-xs text-black">
                       {new Date(log.created_at).toLocaleString()}
                       {log.ip_address && ` • ${log.ip_address}`}
                     </p>
@@ -451,11 +451,11 @@ Each code can only be used once!`
       )}
 
       {showSetup2FA && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-semibold">Set Up 2FA</h2>
-              <p className="text-sm text-black/50">
+              <p className="text-sm text-black">
                 {setupStep === 'verify' && 'Enter the 6-digit code from your authenticator app'}
                 {setupStep === 'backup' && 'Save your backup codes'}
               </p>
@@ -482,7 +482,7 @@ Each code can only be used once!`
                       maxLength={6}
                       autoFocus
                     />
-                    <p className="text-xs text-black/40 mt-2 text-center">
+                    <p className="text-xs text-black mt-2 text-center">
                       Enter the 6-digit code from your authenticator app
                     </p>
                   </div>
@@ -547,7 +547,7 @@ Each code can only be used once!`
                   setShowSetup2FA(false)
                   setVerifyCode('')
                 }}
-                className="w-full text-center text-sm text-black/50 hover:text-black"
+                className="w-full text-center text-sm text-black hover:text-black"
               >
                 Cancel
               </button>

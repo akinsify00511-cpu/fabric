@@ -28,7 +28,7 @@ export default function SalesPerformance() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Sales Performance</h1>
-          <p className="text-sm text-black/50">Targets, commissions & analytics</p>
+          <p className="text-sm text-black">Targets, commissions & analytics</p>
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export default function SalesPerformance() {
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
               activeTab === tab.id
                 ? 'avenize-gradient text-white'
-                : 'bg-white text-black/60 hover:bg-black/5'
+                : 'bg-white text-black/60 hover:bg-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -163,12 +163,12 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : targets.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Target size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No targets set yet</p>
-          <p className="text-sm text-black/30 mt-1">Set your first sales target</p>
+          <Target size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No targets set yet</p>
+          <p className="text-sm text-black mt-1">Set your first sales target</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -182,13 +182,13 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
                       {target.status}
                     </span>
                   </div>
-                  <p className="text-sm text-black/50">
+                  <p className="text-sm text-black">
                     {new Date(target.period_start).toLocaleDateString()} - {new Date(target.period_end).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold">₦{target.revenue_target.toLocaleString()}</p>
-                  <p className="text-sm text-black/50">₦{target.actual_revenue?.toLocaleString() || 0} achieved</p>
+                  <p className="text-sm text-black">₦{target.actual_revenue?.toLocaleString() || 0} achieved</p>
                 </div>
               </div>
             </div>
@@ -283,8 +283,8 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
 
       {rules.length === 0 ? (
         <div className="text-center py-8 bg-white rounded-2xl border border-black/[0.06] mb-6">
-          <Award size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No commission rules yet</p>
+          <Award size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No commission rules yet</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -297,7 +297,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
                 </span>
               </div>
               <p className="text-2xl font-bold text-green-600">{rule.rate_percentage}%</p>
-              <p className="text-sm text-black/50">Min deal: ₦{rule.min_deal_value?.toLocaleString()}</p>
+              <p className="text-sm text-black">Min deal: ₦{rule.min_deal_value?.toLocaleString()}</p>
             </div>
           ))}
         </div>
@@ -306,11 +306,11 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
       {/* My Commissions */}
       <h2 className="font-medium mb-4">My Commissions</h2>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : commissions.length === 0 ? (
         <div className="text-center py-8 bg-white rounded-2xl border border-black/[0.06]">
-          <Gift size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No commissions yet</p>
+          <Gift size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No commissions yet</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -318,7 +318,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
             <div key={comm.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center justify-between">
               <div>
                 <p className="font-medium">₦{comm.commission_amount?.toLocaleString()}</p>
-                <p className="text-sm text-black/50">Deal: ₦{comm.deal_value?.toLocaleString()}</p>
+                <p className="text-sm text-black">Deal: ₦{comm.deal_value?.toLocaleString()}</p>
               </div>
               <span className={`text-xs px-3 py-1 rounded-full ${
                 comm.status === 'paid' ? 'bg-green-100 text-green-700' :
@@ -357,19 +357,19 @@ function ForecastingTab({ businessId }: { businessId?: string }) {
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Total Pipeline</p>
+          <p className="text-sm text-black">Total Pipeline</p>
           <h2 className="text-xl font-bold">₦{(forecasts.reduce((sum, f) => sum + f.pipeline, 0) / 1000000).toFixed(1)}M</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Commit</p>
+          <p className="text-sm text-black">Commit</p>
           <h2 className="text-xl font-bold text-green-600">₦{(forecasts.reduce((sum, f) => sum + f.commit, 0) / 1000000).toFixed(1)}M</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Best Case</p>
+          <p className="text-sm text-black">Best Case</p>
           <h2 className="text-xl font-bold text-blue-600">₦{(forecasts.reduce((sum, f) => sum + f.best, 0) / 1000000).toFixed(1)}M</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Worst Case</p>
+          <p className="text-sm text-black">Worst Case</p>
           <h2 className="text-xl font-bold text-amber-600">₦{(forecasts.reduce((sum, f) => sum + f.worst, 0) / 1000000).toFixed(1)}M</h2>
         </div>
       </div>
@@ -377,7 +377,7 @@ function ForecastingTab({ businessId }: { businessId?: string }) {
       {/* Forecast Table */}
       <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
         <table className="w-full">
-          <thead className="bg-black/5">
+          <thead className="bg-black/10">
             <tr>
               <th className="text-left px-4 py-3 text-sm font-medium text-black/60">Period</th>
               <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Pipeline</th>
@@ -434,11 +434,11 @@ function WinLossTab({ businessId }: { businessId?: string }) {
           <h2 className="text-4xl font-bold">{winRate.toFixed(0)}%</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6 text-center">
-          <p className="text-sm text-black/50">Deals Won</p>
+          <p className="text-sm text-black">Deals Won</p>
           <h2 className="text-3xl font-bold text-green-600">{wonDeals.length}</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6 text-center">
-          <p className="text-sm text-black/50">Deals Lost</p>
+          <p className="text-sm text-black">Deals Lost</p>
           <h2 className="text-3xl font-bold text-red-600">{lostDeals.length}</h2>
         </div>
       </div>
@@ -446,7 +446,7 @@ function WinLossTab({ businessId }: { businessId?: string }) {
       {/* Analytics List */}
       <h2 className="font-medium mb-4">Win/Loss Analysis</h2>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : (
         <div className="space-y-3">
           {analytics.map((item) => (
@@ -461,7 +461,7 @@ function WinLossTab({ businessId }: { businessId?: string }) {
                   <div>
                     <h3 className="font-medium">{item.deal_name}</h3>
                     {item.outcome === 'lost' && (
-                      <p className="text-sm text-black/50">Lost to: {item.lost_to_competitor}</p>
+                      <p className="text-sm text-black">Lost to: {item.lost_to_competitor}</p>
                     )}
                     {item.loss_reason && (
                       <p className="text-sm text-red-600">Reason: {item.loss_reason}</p>
@@ -472,7 +472,7 @@ function WinLossTab({ businessId }: { businessId?: string }) {
                   <p className={`font-semibold ${item.outcome === 'won' ? 'text-green-600' : 'text-red-600'}`}>
                     ₦{(item.final_value / 1000000).toFixed(1)}M
                   </p>
-                  <p className="text-xs text-black/40">{item.days_to_close} days to close</p>
+                  <p className="text-xs text-black">{item.days_to_close} days to close</p>
                 </div>
               </div>
             </div>

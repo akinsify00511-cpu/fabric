@@ -159,7 +159,7 @@ export default function CookiePolicy() {
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             to="/privacy"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/5 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/10 transition"
           >
             <Settings size={18} />
             Privacy Policy

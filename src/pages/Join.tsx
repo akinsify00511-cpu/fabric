@@ -122,7 +122,7 @@ export default function Join() {
             <span className="text-white font-bold text-2xl">A</span>
           </div>
           <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-black/50 mt-4">Loading invitation...</p>
+          <p className="text-sm text-black mt-4">Loading invitation...</p>
         </div>
       </div>
     )
@@ -211,7 +211,7 @@ export default function Join() {
               <span className="text-white font-bold text-3xl">A</span>
             </div>
             <h2 className="text-xl font-bold">Create your account</h2>
-            <p className="text-sm text-black/50 mt-1">
+            <p className="text-sm text-black mt-1">
               Join <span className="font-semibold">{info.business_name}</span> as <span className="font-semibold capitalize">{info.role}</span>
             </p>
           </div>
@@ -239,7 +239,7 @@ export default function Join() {
                 type="email"
                 value={info.email}
                 disabled
-                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm bg-white text-black/50"
+                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm bg-white text-black"
               />
             </div>
             <div>
@@ -260,7 +260,7 @@ export default function Join() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/50"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -287,7 +287,7 @@ export default function Join() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/50"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                 >
                   {showConfirmPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -323,14 +323,14 @@ export default function Join() {
           <div className="text-center">
             <button 
               onClick={() => setStep('review')}
-              className="text-sm text-black/50 hover:text-black"
+              className="text-sm text-black hover:text-black"
             >
               ← Back to invitation
             </button>
           </div>
 
           <div className="pt-4 border-t border-black/5 text-center">
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Already have an account?{' '}
               <Link to="/login" className="text-[#4285F4] font-medium hover:underline">
                 Sign in
@@ -352,7 +352,7 @@ export default function Join() {
             <span className="text-white font-bold text-3xl">A</span>
           </div>
           <h1 className="text-2xl font-bold">Avenize</h1>
-          <p className="text-sm text-black/50 mt-1">You're invited!</p>
+          <p className="text-sm text-black mt-1">You're invited!</p>
         </div>
 
         {/* Invitation Card */}
@@ -364,19 +364,19 @@ export default function Join() {
           
           <div className="flex items-center justify-center gap-8 pt-4 border-t border-black/10">
             <div className="text-center">
-              <p className="text-xs text-black/50 uppercase tracking-wide mb-1">Role</p>
+              <p className="text-xs text-black uppercase tracking-wide mb-1">Role</p>
               <p className="font-semibold capitalize">{info.role}</p>
             </div>
             {info.invited_by_name && (
               <div className="text-center">
-                <p className="text-xs text-black/50 uppercase tracking-wide mb-1">Invited by</p>
+                <p className="text-xs text-black uppercase tracking-wide mb-1">Invited by</p>
                 <p className="font-semibold">{info.invited_by_name}</p>
               </div>
             )}
           </div>
 
           {info.expires_at && (
-            <p className="text-xs text-center text-black/40">
+            <p className="text-xs text-center text-black">
               Expires {new Date(info.expires_at).toLocaleDateString()}
             </p>
           )}
@@ -399,7 +399,7 @@ export default function Join() {
           </button>
           
           <div className="text-center">
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Already have an account?{' '}
               <Link to="/login" className="text-[#4285F4] font-medium hover:underline">
                 Sign in

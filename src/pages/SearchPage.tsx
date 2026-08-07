@@ -186,7 +186,7 @@ export default function SearchPage() {
       {/* Search Header */}
       <div className="sticky top-0 bg-white z-10 pb-4 mb-6">
         <div className="relative">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" />
+          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-black" />
           <input
             ref={inputRef}
             type="text"
@@ -202,17 +202,17 @@ export default function SearchPage() {
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-black/5"
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-black/10"
             >
-              <X size={20} className="text-black/40" />
+              <X size={20} className="text-black" />
             </button>
           )}
           
           {/* Keyboard Shortcuts Hint */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-2 text-xs text-black/30">
-            <kbd className="px-1.5 py-0.5 bg-black/5 rounded border border-black/10">↑↓</kbd>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-2 text-xs text-black">
+            <kbd className="px-1.5 py-0.5 bg-black/10 rounded border border-black/10">↑↓</kbd>
             <span>navigate</span>
-            <kbd className="px-1.5 py-0.5 bg-black/5 rounded border border-black/10 ml-2">↵</kbd>
+            <kbd className="px-1.5 py-0.5 bg-black/10 rounded border border-black/10 ml-2">↵</kbd>
             <span>select</span>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function SearchPage() {
         {showSuggestions && suggestions.length > 0 && (
           <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl border border-black/10 shadow-xl overflow-hidden">
             <div className="p-2">
-              <div className="text-xs text-black/40 px-2 py-1 flex items-center gap-1">
+              <div className="text-xs text-black px-2 py-1 flex items-center gap-1">
                 <Sparkles size={10} />
                 Suggestions
               </div>
@@ -235,12 +235,12 @@ export default function SearchPage() {
                       handleSearch(suggestion.text)
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition ${
-                      selectedIndex === idx ? 'bg-[#4285F4]/10 text-[#4285F4]' : 'hover:bg-black/5'
+                      selectedIndex === idx ? 'bg-[#4285F4]/10 text-[#4285F4]' : 'hover:bg-black/10'
                     }`}
                   >
-                    <Icon size={16} className="text-black/40" />
+                    <Icon size={16} className="text-black" />
                     <span className="flex-1 truncate">{suggestion.text}</span>
-                    <CornerDownLeft size={14} className="text-black/30" />
+                    <CornerDownLeft size={14} className="text-black" />
                   </button>
                 )
               })}
@@ -251,7 +251,7 @@ export default function SearchPage() {
         {/* Entity Filters */}
         {results.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-3">
-            <span className="text-sm text-black/50 py-1">Filter:</span>
+            <span className="text-sm text-black py-1">Filter:</span>
             {entityTypes.map(type => {
               const isActive = entityFilter.includes(type)
               const Icon = ENTITY_ICONS[type] || FileText
@@ -266,7 +266,7 @@ export default function SearchPage() {
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm transition ${
                     isActive 
                       ? 'bg-[#4285F4] text-white' 
-                      : 'bg-black/5 text-black/60 hover:bg-black/10'
+                      : 'bg-black/10 text-black/60 hover:bg-black/10'
                   }`}
                 >
                   <Icon size={12} />
@@ -282,18 +282,18 @@ export default function SearchPage() {
       {loading ? (
         <div className="text-center py-20">
           <div className="w-12 h-12 mx-auto rounded-full border-4 border-black/10 border-t-[#4285F4] animate-spin mb-4" />
-          <p className="text-black/50">Searching...</p>
+          <p className="text-black">Searching...</p>
         </div>
       ) : results.length > 0 ? (
         <div className="space-y-3">
           {/* Result Actions */}
           <div className="flex items-center justify-between">
-            <span className="text-sm text-black/50">
+            <span className="text-sm text-black">
               {results.length} results{entityFilter.length > 0 && ` in ${entityFilter.join(', ')}`}
             </span>
             <button
               onClick={() => setShowSaveModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/5 text-sm hover:bg-black/10"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/10 text-sm hover:bg-black/10"
             >
               <Bookmark size={14} />
               Save Search
@@ -323,7 +323,7 @@ export default function SearchPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs px-2 py-0.5 rounded bg-black/5 text-black/50 uppercase">
+                      <span className="text-xs px-2 py-0.5 rounded bg-black/10 text-black uppercase">
                         {result.entityType}
                       </span>
                       {result.rank > 0.8 && (
@@ -344,11 +344,11 @@ export default function SearchPage() {
                         result.title
                       )}
                     </div>
-                    <div className="text-sm text-black/50 line-clamp-2 mt-1">
+                    <div className="text-sm text-black line-clamp-2 mt-1">
                       {result.content?.slice(0, 150)}...
                     </div>
                   </div>
-                  <ChevronRight size={16} className="text-black/30 shrink-0 mt-3" />
+                  <ChevronRight size={16} className="text-black shrink-0 mt-3" />
                 </div>
               </button>
             )
@@ -356,11 +356,11 @@ export default function SearchPage() {
         </div>
       ) : query.trim() ? (
         <div className="text-center py-20">
-          <Search size={48} className="mx-auto text-black/20 mb-4" />
+          <Search size={48} className="mx-auto text-black/50 mb-4" />
           <h3 className="text-lg font-medium mb-2">No results found</h3>
-          <p className="text-black/50">Try different keywords or check your filters</p>
+          <p className="text-black">Try different keywords or check your filters</p>
           {query.length < 3 && (
-            <p className="text-sm text-black/30 mt-2">Tip: Try using more characters for fuzzy matching</p>
+            <p className="text-sm text-black mt-2">Tip: Try using more characters for fuzzy matching</p>
           )}
         </div>
       ) : (
@@ -368,7 +368,7 @@ export default function SearchPage() {
           {/* Saved Searches */}
           {savedSearches.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-black/50 mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium text-black mb-3 flex items-center gap-2">
                 <Bookmark size={14} />
                 Saved Searches
               </h3>
@@ -381,11 +381,11 @@ export default function SearchPage() {
                   >
                     <div>
                       <div className="font-medium">{saved.name}</div>
-                      <div className="text-xs text-black/40">
+                      <div className="text-xs text-black">
                         Used {saved.use_count} times
                       </div>
                     </div>
-                    <Tag size={14} className="text-black/30" />
+                    <Tag size={14} className="text-black" />
                   </button>
                 ))}
               </div>
@@ -395,7 +395,7 @@ export default function SearchPage() {
           {/* Recent Searches */}
           {recentSearches.length > 0 && (
             <div>
-              <h3 className="text-sm font-medium text-black/50 mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium text-black mb-3 flex items-center gap-2">
                 <Clock size={14} />
                 Recent Searches
               </h3>
@@ -415,7 +415,7 @@ export default function SearchPage() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-medium text-black/50 mb-3">Quick Access</h3>
+            <h3 className="text-sm font-medium text-black mb-3">Quick Access</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
                 { icon: User, label: 'Contacts', color: 'bg-blue-50 text-blue-500' },
@@ -455,7 +455,7 @@ export default function SearchPage() {
 
       {/* Save Search Modal */}
       {showSaveModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
             <h2 className="text-lg font-bold mb-4">Save Search</h2>
             <input

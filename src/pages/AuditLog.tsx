@@ -27,7 +27,7 @@ function VisualDiff({ oldValues, newValues, changedFields }: {
 
   if (displayKeys.length === 0) {
     return (
-      <div className="text-center py-4 text-black/40">
+      <div className="text-center py-4 text-black">
         No field changes to display
       </div>
     )
@@ -35,7 +35,7 @@ function VisualDiff({ oldValues, newValues, changedFields }: {
 
   return (
     <div className="space-y-2">
-      <div className="text-xs font-medium text-black/50 mb-3">Field Changes</div>
+      <div className="text-xs font-medium text-black mb-3">Field Changes</div>
       {displayKeys.map(key => {
         const oldVal = oldValues?.[key]
         const newVal = newValues?.[key]
@@ -58,7 +58,7 @@ function VisualDiff({ oldValues, newValues, changedFields }: {
           >
             {/* Old Value */}
             <div className="text-sm">
-              <div className="text-xs text-black/40 mb-0.5">{key}</div>
+              <div className="text-xs text-black mb-0.5">{key}</div>
               <div className={`font-mono ${hasChanged ? 'text-red-600 line-through opacity-60' : 'text-black/70'}`}>
                 {formatValue(oldVal)}
               </div>
@@ -71,7 +71,7 @@ function VisualDiff({ oldValues, newValues, changedFields }: {
             
             {/* New Value */}
             <div className="text-sm">
-              <div className="text-xs text-black/40 mb-0.5">&nbsp;</div>
+              <div className="text-xs text-black mb-0.5">&nbsp;</div>
               <div className={`font-mono ${hasChanged ? 'text-green-600 font-medium' : 'text-black/70'}`}>
                 {formatValue(newVal)}
               </div>
@@ -197,7 +197,7 @@ export default function AuditLogPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Audit Log</h1>
-            <p className="text-sm text-black/50">Track all changes and activity</p>
+            <p className="text-sm text-black">Track all changes and activity</p>
           </div>
         </div>
         <button
@@ -215,7 +215,7 @@ export default function AuditLogPage() {
           {/* Search */}
           <div className="flex-1 min-w-[200px]">
             <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/40" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
               <input
                 type="text"
                 placeholder="Search logs..."
@@ -316,25 +316,25 @@ export default function AuditLogPage() {
           <table className="w-full">
             <thead className="bg-black/[0.02]">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black/50 uppercase tracking-wider">Time</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black/50 uppercase tracking-wider">Action</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black/50 uppercase tracking-wider">Entity</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black/50 uppercase tracking-wider">User</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black/50 uppercase tracking-wider">Changes</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-black/50 uppercase tracking-wider">Details</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Time</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Action</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Entity</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">User</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Changes</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">Details</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black/[0.06]">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-black/40">
+                  <td colSpan={6} className="px-4 py-12 text-center text-black">
                     <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
                     Loading audit logs...
                   </td>
                 </tr>
               ) : filteredLogs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-black/40">
+                  <td colSpan={6} className="px-4 py-12 text-center text-black">
                     <Shield size={32} className="mx-auto mb-2" />
                     No audit logs found
                   </td>
@@ -348,10 +348,10 @@ export default function AuditLogPage() {
 
                   return (
                     <>
-                      <tr key={log.id} className="hover:bg-black/[0.02]">
+                      <tr key={log.id} className="hover:bg-black/10">
                         <td className="px-4 py-3 text-sm">
                           <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-black/30" />
+                            <Clock size={14} className="text-black" />
                             <span>{new Date(log.created_at).toLocaleString()}</span>
                           </div>
                         </td>
@@ -364,7 +364,7 @@ export default function AuditLogPage() {
                         <td className="px-4 py-3 text-sm">
                           <div>
                             <div className="font-medium">{log.entity_type}</div>
-                            <div className="text-xs text-black/40 font-mono">
+                            <div className="text-xs text-black font-mono">
                               {log.entity_id?.slice(0, 8)}...
                             </div>
                           </div>
@@ -372,11 +372,11 @@ export default function AuditLogPage() {
                         <td className="px-4 py-3 text-sm">
                           {log.user_id ? (
                             <span className="flex items-center gap-1.5">
-                              <User size={14} className="text-black/30" />
+                              <User size={14} className="text-black" />
                               {log.user_name || log.user_id.slice(0, 8)}
                             </span>
                           ) : (
-                            <span className="text-black/30">System</span>
+                            <span className="text-black">System</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm">
@@ -397,7 +397,7 @@ export default function AuditLogPage() {
                           {(log.old_values || log.new_values) && (
                             <button
                               onClick={() => setExpandedLog(isExpanded ? null : log.id)}
-                              className="p-1.5 rounded-lg hover:bg-black/5"
+                              className="p-1.5 rounded-lg hover:bg-black/10"
                             >
                               {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                             </button>
@@ -443,7 +443,7 @@ function StatCard({ title, value, icon, color }: any) {
         </div>
       </div>
       <div className="text-2xl font-bold">{value.toLocaleString()}</div>
-      <div className="text-sm text-black/50">{title}</div>
+      <div className="text-sm text-black">{title}</div>
     </div>
   )
 }

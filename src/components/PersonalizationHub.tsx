@@ -161,7 +161,7 @@ export function UserInsightsPanel() {
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold">Achievements</h3>
-          <span className="text-xs text-black/50">
+          <span className="text-xs text-black">
             {achievements.filter(a => a.unlocked).length} / {achievements.length}
           </span>
         </div>
@@ -173,7 +173,7 @@ export function UserInsightsPanel() {
               className={`aspect-square rounded-xl flex items-center justify-center ${
                 achievement.unlocked 
                   ? 'bg-amber-100 text-amber-600' 
-                  : 'bg-black/5 text-black/30'
+                  : 'bg-black/10 text-black'
               }`}
               title={achievement.name}
             >
@@ -189,11 +189,11 @@ export function UserInsightsPanel() {
 function InsightRow({ icon, label, value }: any) {
   return (
     <div className="flex items-center gap-3">
-      <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center text-black/50">
+      <div className="w-8 h-8 rounded-lg bg-black/10 flex items-center justify-center text-black">
         {icon}
       </div>
       <div className="flex-1">
-        <div className="text-xs text-black/50">{label}</div>
+        <div className="text-xs text-black">{label}</div>
         <div className="text-sm font-medium capitalize">{value}</div>
       </div>
     </div>
@@ -210,7 +210,7 @@ export function LearningLoopIndicator() {
   const insights = useLearningInsights(staff?.user_id || '')
 
   return (
-    <div className="flex items-center gap-2 text-xs text-black/40">
+    <div className="flex items-center gap-2 text-xs text-black">
       <div className="flex -space-x-1">
         <div className="w-4 h-4 rounded-full bg-blue-400 flex items-center justify-center text-white text-[8px]">L</div>
         <div className="w-4 h-4 rounded-full bg-green-400 flex items-center justify-center text-white text-[8px]">L</div>
@@ -276,7 +276,7 @@ export function AchievementCelebration({ achievement, onDismiss }: { achievement
   }, [onDismiss])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/100">
       <div className="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center animate-in zoom-in">
         <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
           <Award size={40} className="text-white" />
@@ -320,9 +320,9 @@ export function QuickStatsWidget() {
     <div className="flex items-center gap-3">
       {stats.map((stat) => (
         <div key={stat.label} className="flex items-center gap-1.5 text-xs">
-          <span className="text-black/40">{stat.icon}</span>
+          <span className="text-black">{stat.icon}</span>
           <span className="font-medium">{stat.value}</span>
-          <span className="text-black/40">{stat.label}</span>
+          <span className="text-black">{stat.label}</span>
         </div>
       ))}
     </div>

@@ -162,7 +162,7 @@ export default function AdminAnalytics() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-black">Admin Analytics</h1>
-          <p className="text-sm text-black/50">Monitor all app activity and user engagement</p>
+          <p className="text-sm text-black">Monitor all app activity and user engagement</p>
         </div>
         <div className="flex items-center gap-3">
           <select
@@ -238,7 +238,7 @@ export default function AdminAnalytics() {
                 fill
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-black/30">
+              <div className="flex items-center justify-center h-full text-black">
                 <div className="text-center">
                   <TrendingUp size={32} className="mx-auto mb-2 opacity-30" />
                   <p className="text-sm">No timeline data yet</p>
@@ -263,7 +263,7 @@ export default function AdminAnalytics() {
               />
             </div>
           ) : (
-            <div className="flex items-center justify-center h-40 text-black/30">
+            <div className="flex items-center justify-center h-40 text-black">
               <div className="text-center">
                 <PieChartIcon size={32} className="mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No category data</p>
@@ -287,7 +287,7 @@ export default function AdminAnalytics() {
             horizontal={false}
           />
         ) : (
-          <div className="flex items-center justify-center h-40 text-black/30">
+          <div className="flex items-center justify-center h-40 text-black">
             <div className="text-center">
               <BarChart3 size={32} className="mx-auto mb-2 opacity-30" />
               <p className="text-sm">No feature data</p>
@@ -318,9 +318,9 @@ export default function AdminAnalytics() {
                         <span className="font-medium text-sm capitalize">
                           {cat.category.replace('_', ' ')}
                         </span>
-                        <span className="text-sm text-black/50">{cat.count.toLocaleString()}</span>
+                        <span className="text-sm text-black">{cat.count.toLocaleString()}</span>
                       </div>
-                      <div className="h-2 bg-black/5 rounded-full overflow-hidden">
+                      <div className="h-2 bg-black/10 rounded-full overflow-hidden">
                         <div 
                           className={`h-full rounded-full ${colorClass.replace('100', '500').replace('text-', 'bg-')}`}
                           style={{ width: `${percentage}%` }}
@@ -340,18 +340,18 @@ export default function AdminAnalytics() {
               {analytics?.topFeatures.map((feature, i) => (
                 <div key={feature.action} className="flex items-center gap-4 p-3 bg-black/[0.02] rounded-xl">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold ${
-                    i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-black' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black/50'
+                    i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-black' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black'
                   }`}>
                     #{i + 1}
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-sm">{feature.action}</div>
-                    <div className="text-xs text-black/50">{feature.count} uses</div>
+                    <div className="text-xs text-black">{feature.count} uses</div>
                   </div>
                 </div>
               ))}
               {(!analytics?.topFeatures || analytics.topFeatures.length === 0) && (
-                <div className="text-center py-8 text-black/40">
+                <div className="text-center py-8 text-black">
                   <BarChart3 size={32} className="mx-auto mb-2" />
                   <p>No feature data yet</p>
                 </div>
@@ -364,7 +364,7 @@ export default function AdminAnalytics() {
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">Recent Events</h2>
-            <span className="text-xs text-black/40">{filteredEvents.length} events</span>
+            <span className="text-xs text-black">{filteredEvents.length} events</span>
           </div>
 
           {/* Filter */}
@@ -374,7 +374,7 @@ export default function AdminAnalytics() {
               className={`px-3 py-1 rounded-full text-xs font-medium ${
                 selectedCategory === 'all' 
                   ? 'bg-[#4285F4] text-white' 
-                  : 'bg-black/5 text-black/60'
+                  : 'bg-black/10 text-black/60'
               }`}
             >
               All
@@ -388,7 +388,7 @@ export default function AdminAnalytics() {
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
                     selectedCategory === cat.category
                       ? 'bg-[#4285F4] text-white'
-                      : 'bg-black/5 text-black/60'
+                      : 'bg-black/10 text-black/60'
                   }`}
                 >
                   <Icon size={12} />
@@ -418,21 +418,21 @@ export default function AdminAnalytics() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-sm truncate">{event.event_name}</span>
-                        <span className="text-[10px] text-black/40 shrink-0">
+                        <span className="text-[10px] text-black shrink-0">
                           {new Date(event.created_at).toLocaleTimeString()}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-black/50">{event.page || 'unknown'}</span>
+                        <span className="text-xs text-black">{event.page || 'unknown'}</span>
                         {event.user?.full_name && (
                           <>
-                            <span className="text-black/20">•</span>
-                            <span className="text-xs text-black/50">{event.user.full_name}</span>
+                            <span className="text-black/50">•</span>
+                            <span className="text-xs text-black">{event.user.full_name}</span>
                           </>
                         )}
                       </div>
                       {isExpanded && event.metadata && Object.keys(event.metadata).length > 0 && (
-                        <div className="mt-2 p-2 bg-black/5 rounded text-xs">
+                        <div className="mt-2 p-2 bg-black/10 rounded text-xs">
                           <pre className="whitespace-pre-wrap font-mono">
                             {JSON.stringify(event.metadata, null, 2)}
                           </pre>
@@ -470,8 +470,8 @@ function SummaryCard({ title, value, subtitle, icon, color }: any) {
         </div>
       </div>
       <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm text-black/50">{title}</div>
-      <div className="text-xs text-black/30 mt-1">{subtitle}</div>
+      <div className="text-sm text-black">{title}</div>
+      <div className="text-xs text-black mt-1">{subtitle}</div>
     </div>
   )
 }
@@ -480,7 +480,7 @@ function DatabaseStat({ label, value }: any) {
   return (
     <div className="p-4 bg-black/[0.02] rounded-xl">
       <div className="text-2xl font-bold font-mono">{value?.toLocaleString()}</div>
-      <div className="text-sm text-black/50">{label}</div>
+      <div className="text-sm text-black">{label}</div>
     </div>
   )
 }

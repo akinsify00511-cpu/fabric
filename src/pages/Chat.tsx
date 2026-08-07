@@ -339,7 +339,7 @@ export default function Chat() {
               className={`w-full px-4 py-2 flex items-center gap-2 text-sm transition ${
                 selectedChannel?.id === channel.id
                   ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
-                  : 'text-black/60 hover:bg-black/[0.02]'
+                  : 'text-black/60 hover:bg-black/10'
               }`}
             >
               <Hash size={16} className="shrink-0" />
@@ -371,7 +371,7 @@ export default function Chat() {
           ) : (
             <button
               onClick={() => setCreatingChannel(true)}
-              className="flex items-center gap-2 text-xs text-black/40 hover:text-black/60 transition"
+              className="flex items-center gap-2 text-xs text-black hover:text-black/60 transition"
             >
               <Plus size={14} />
               Add channel
@@ -392,22 +392,22 @@ export default function Chat() {
               <ArrowLeft size={20} />
             </button>
             <div className="flex items-center gap-2">
-              <Hash size={18} className="text-black/40" />
+              <Hash size={18} className="text-black" />
               <span className="font-medium text-black">{selectedChannel.name}</span>
             </div>
             {selectedChannel.description && (
-              <span className="text-sm text-black/40 hidden md:inline">— {selectedChannel.description}</span>
+              <span className="text-sm text-black hidden md:inline">— {selectedChannel.description}</span>
             )}
           </div>
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
             {loading ? (
-              <div className="flex items-center justify-center h-full text-black/40">
+              <div className="flex items-center justify-center h-full text-black">
                 Loading messages...
               </div>
             ) : messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-black/40">
+              <div className="flex flex-col items-center justify-center h-full text-black">
                 <Hash size={48} className="mb-3 opacity-20" />
                 <p className="text-sm">No messages yet</p>
                 <p className="text-xs mt-1">Be the first to say something!</p>
@@ -417,17 +417,17 @@ export default function Chat() {
                 <div key={group.date}>
                   <div className="flex items-center gap-4 my-4">
                     <div className="flex-1 h-px bg-black/[0.06]" />
-                    <span className="text-xs text-black/40 font-medium">{group.date}</span>
+                    <span className="text-xs text-black font-medium">{group.date}</span>
                     <div className="flex-1 h-px bg-black/[0.06]" />
                   </div>
                   {group.messages.map((msg) => (
                     <div key={msg.id} className="group py-1">
                       {msg.message_type === 'system' ? (
-                        <div className="text-center text-xs text-black/40 my-2">
+                        <div className="text-center text-xs text-black my-2">
                           {msg.content}
                         </div>
                       ) : (
-                        <div className="flex items-start gap-3 hover:bg-black/[0.01] px-2 py-1 -mx-2 rounded group-hover:bg-black/[0.02]">
+                        <div className="flex items-start gap-3 hover:bg-black/[0.01] px-2 py-1 -mx-2 rounded group-hover:bg-black/10">
                           <div className="w-9 h-9 rounded-full avenize-gradient flex items-center justify-center text-white text-sm font-medium shrink-0">
                             {(msg.sender_name ?? 'U').charAt(0).toUpperCase()}
                           </div>
@@ -436,7 +436,7 @@ export default function Chat() {
                               <span className="text-sm font-medium text-black">
                                 {msg.sender_name}
                               </span>
-                              <span className="text-xs text-black/30">{formatTime(msg.created_at)}</span>
+                              <span className="text-xs text-black">{formatTime(msg.created_at)}</span>
                               {msg.sender_id === staff?.id && (
                                 <button
                                   onClick={() => deleteMessage(msg.id)}
@@ -446,11 +446,11 @@ export default function Chat() {
                                 </button>
                               )}
                             </div>
-                            <p className="text-sm text-black/80 break-words">{msg.content}</p>
+                            <p className="text-sm text-black break-words">{msg.content}</p>
                             <div className="flex items-center gap-1 mt-1">
                               <button
                                 onClick={() => setShowEmojiPicker(showEmojiPicker === msg.id ? null : msg.id)}
-                                className="text-xs text-black/30 hover:text-black/50 transition"
+                                className="text-xs text-black hover:text-black transition"
                               >
                                 <Smile size={14} />
                               </button>
@@ -510,16 +510,16 @@ export default function Chat() {
                 <Send size={18} />
               </button>
             </div>
-            <p className="text-xs text-black/30 mt-2">Press Enter to send, Shift+Enter for new line</p>
+            <p className="text-xs text-black mt-2">Press Enter to send, Shift+Enter for new line</p>
           </div>
         </div>
       ) : (
         // No channel selected
         <div className="flex-1 flex items-center justify-center bg-[#F8F9FA]">
           <div className="text-center">
-            <Hash size={64} className="mx-auto mb-4 text-black/10" />
+            <Hash size={64} className="mx-auto mb-4 text-black/40" />
             <h2 className="text-lg font-medium text-black">Welcome to Avenize Chat</h2>
-            <p className="text-sm text-black/40 mt-1">Select a channel or create a new one</p>
+            <p className="text-sm text-black mt-1">Select a channel or create a new one</p>
             <button
               onClick={() => setCreatingChannel(true)}
               className="mt-4 rounded-lg avenize-gradient text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition flex items-center gap-2 mx-auto"

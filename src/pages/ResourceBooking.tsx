@@ -166,7 +166,7 @@ export default function ResourceBookingPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Resource Booking</h1>
-            <p className="text-sm text-black/50">Book rooms, equipment, and more</p>
+            <p className="text-sm text-black">Book rooms, equipment, and more</p>
           </div>
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function ResourceBookingPage() {
       {/* Date Navigation */}
       <div className="bg-white rounded-xl border border-black/[0.06] p-4 mb-6">
         <div className="flex items-center justify-between">
-          <button onClick={() => navigateDate(-1)} className="p-2 rounded-lg hover:bg-black/5">
+          <button onClick={() => navigateDate(-1)} className="p-2 rounded-lg hover:bg-black/10">
             <ChevronLeft size={20} />
           </button>
           <div className="text-center">
@@ -183,7 +183,7 @@ export default function ResourceBookingPage() {
             </div>
             {today && <span className="text-xs text-[#4285F4]">Today</span>}
           </div>
-          <button onClick={() => navigateDate(1)} className="p-2 rounded-lg hover:bg-black/5">
+          <button onClick={() => navigateDate(1)} className="p-2 rounded-lg hover:bg-black/10">
             <ChevronRight size={20} />
           </button>
         </div>
@@ -248,11 +248,11 @@ export default function ResourceBookingPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium truncate">{resource.name}</div>
-                  <div className="text-sm text-black/50">
+                  <div className="text-sm text-black">
                     {resource.location || resource.category}
                   </div>
                   {resource.capacity && (
-                    <div className="flex items-center gap-1 mt-1 text-xs text-black/40">
+                    <div className="flex items-center gap-1 mt-1 text-xs text-black">
                       <Users size={12} />
                       {resource.capacity} people
                     </div>
@@ -262,7 +262,7 @@ export default function ResourceBookingPage() {
               {resource.amenities && resource.amenities.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-3">
                   {resource.amenities.slice(0, 3).map((a, i) => (
-                    <span key={i} className="px-2 py-0.5 bg-black/5 rounded text-xs text-black/50">
+                    <span key={i} className="px-2 py-0.5 bg-black/10 rounded text-xs text-black">
                       {a}
                     </span>
                   ))}
@@ -281,11 +281,11 @@ export default function ResourceBookingPage() {
               ? `${resources.find(r => r.id === selectedResource)?.name} - Schedule`
               : 'All Resources - Schedule'}
           </h2>
-          <p className="text-sm text-black/50">Click on a slot to book</p>
+          <p className="text-sm text-black">Click on a slot to book</p>
         </div>
 
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
@@ -294,9 +294,9 @@ export default function ResourceBookingPage() {
             <table className="w-full">
               <thead>
                 <tr className="bg-black/[0.02]">
-                  <th className="p-3 text-left text-xs font-medium text-black/50 w-20">Time</th>
+                  <th className="p-3 text-left text-xs font-medium text-black w-20">Time</th>
                   {(selectedResource ? filteredResources.filter(r => r.id === selectedResource) : filteredResources).map(resource => (
-                    <th key={resource.id} className="p-3 text-center text-xs font-medium text-black/50 min-w-[100px]">
+                    <th key={resource.id} className="p-3 text-center text-xs font-medium text-black min-w-[100px]">
                       {resource.name}
                     </th>
                   ))}
@@ -305,7 +305,7 @@ export default function ResourceBookingPage() {
               <tbody>
                 {hours.map(hour => (
                   <tr key={hour} className="border-t border-black/[0.06]">
-                    <td className="p-3 text-sm text-black/50">
+                    <td className="p-3 text-sm text-black">
                       {hour}:00
                     </td>
                     {(selectedResource ? filteredResources.filter(r => r.id === selectedResource) : filteredResources).map(resource => {
@@ -339,7 +339,7 @@ export default function ResourceBookingPage() {
                           ) : (
                             <button
                               onClick={() => handleBook(resource.id, hour)}
-                              className="w-full h-10 rounded-lg border-2 border-dashed border-black/10 hover:border-[#4285F4] hover:bg-[#4285F4]/5 text-xs text-black/30 hover:text-[#4285F4] transition"
+                              className="w-full h-10 rounded-lg border-2 border-dashed border-black/10 hover:border-[#4285F4] hover:bg-[#4285F4]/5 text-xs text-black hover:text-[#4285F4] transition"
                             >
                               +
                             </button>
@@ -359,14 +359,14 @@ export default function ResourceBookingPage() {
       <div className="mt-6 bg-white rounded-2xl border border-black/[0.06] p-4">
         <h3 className="font-semibold mb-4">My Bookings Today</h3>
         {bookings.filter(b => b.booked_by?.id === staff?.id).length === 0 ? (
-          <p className="text-sm text-black/40">No bookings for today</p>
+          <p className="text-sm text-black">No bookings for today</p>
         ) : (
           <div className="space-y-2">
             {bookings.filter(b => b.booked_by?.id === staff?.id).map(booking => (
               <div key={booking.id} className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
                 <div>
                   <div className="font-medium">{booking.resource?.name}</div>
-                  <div className="text-sm text-black/50">
+                  <div className="text-sm text-black">
                     {new Date(booking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(booking.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
                 </div>

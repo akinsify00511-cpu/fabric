@@ -89,7 +89,7 @@ export default function Reports() {
           </div>
         ))}
       </div>
-      <p className="text-xs text-black/40 mt-4">
+      <p className="text-xs text-black mt-4">
         Deterministic, non-AI view — the natural-language reporting layer comes in a later build phase.
       </p>
 

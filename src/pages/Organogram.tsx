@@ -172,7 +172,7 @@ export default function Organogram() {
                   <p className="font-medium text-sm">{node.full_name}</p>
                   {node.level === 0 && <Crown size={14} className="text-yellow-500" />}
                 </div>
-                <p className="text-xs text-black/50">{node.position_title}</p>
+                <p className="text-xs text-black">{node.position_title}</p>
                 <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-black/[0.05] rounded-full">
                   {node.department}
                 </span>
@@ -180,7 +180,7 @@ export default function Organogram() {
             </div>
 
             {hasChildren && (
-              <div className="mt-2 pt-2 border-t border-black/5 flex items-center justify-between text-xs text-black/40">
+              <div className="mt-2 pt-2 border-t border-black/5 flex items-center justify-between text-xs text-black">
                 <span>{children.length} direct reports</span>
                 <div className="flex items-center gap-1">
                   <Mail size={12} />
@@ -206,7 +206,7 @@ export default function Organogram() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Organogram</h1>
-          <p className="text-sm text-black/50 mt-0.5">Organization structure & reporting channels</p>
+          <p className="text-sm text-black mt-0.5">Organization structure & reporting channels</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -249,7 +249,7 @@ export default function Organogram() {
           {/* Search & Controls */}
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1 max-w-md">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
               <input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -257,7 +257,7 @@ export default function Organogram() {
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-black/10 bg-white"
               />
             </div>
-            <div className="flex items-center gap-2 text-sm text-black/50">
+            <div className="flex items-center gap-2 text-sm text-black">
               <span>{orgChart.length} members</span>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function Organogram() {
               { label: 'Avg Reports', value: (orgChart.reduce((sum, n) => sum + n.direct_report_count, 0) / Math.max(orgChart.filter((n) => n.direct_report_count > 0).length, 1)).toFixed(1), icon: Network },
             ].map((stat, i) => (
               <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4">
-                <div className="flex items-center gap-2 text-black/50 mb-1">
+                <div className="flex items-center gap-2 text-black mb-1">
                   <stat.icon size={14} />
                   <span className="text-xs">{stat.label}</span>
                 </div>
@@ -286,13 +286,13 @@ export default function Organogram() {
               {loading ? (
                 <div className="animate-pulse space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-20 bg-black/5 rounded-xl" />
+                    <div key={i} className="h-20 bg-black/10 rounded-xl" />
                   ))}
                 </div>
               ) : filteredChart.length === 0 ? (
                 <div className="text-center py-12">
-                  <Users className="w-12 h-12 mx-auto text-black/20 mb-3" />
-                  <p className="text-black/50">No team members found</p>
+                  <Users className="w-12 h-12 mx-auto text-black/50 mb-3" />
+                  <p className="text-black">No team members found</p>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -308,7 +308,7 @@ export default function Organogram() {
       {view === 'channels' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-black/50">Automated reporting and sync channels</p>
+            <p className="text-sm text-black">Automated reporting and sync channels</p>
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               New Channel
@@ -324,7 +324,7 @@ export default function Organogram() {
                   </div>
                   <div>
                     <h3 className="font-medium">{channel.name}</h3>
-                    <p className="text-sm text-black/50">{channel.description}</p>
+                    <p className="text-sm text-black">{channel.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full capitalize">
                         {channel.frequency}
@@ -350,7 +350,7 @@ export default function Organogram() {
 
               <div className="mt-4 pt-4 border-t border-black/[0.06] flex items-center justify-between text-sm">
                 <div className="flex items-center gap-4">
-                  <span className="text-black/50">Last generated:</span>
+                  <span className="text-black">Last generated:</span>
                   <span>Today at 9:00 AM</span>
                 </div>
                 <button className="text-indigo-600 font-medium">
@@ -361,9 +361,9 @@ export default function Organogram() {
           ))}
 
           {/* Add channel card */}
-          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/[0.02]">
-            <PlusCircle size={32} className="text-black/30 mb-2" />
-            <p className="text-sm text-black/50">Create new reporting channel</p>
+          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10">
+            <PlusCircle size={32} className="text-black mb-2" />
+            <p className="text-sm text-black">Create new reporting channel</p>
           </div>
         </div>
       )}
@@ -383,7 +383,7 @@ export default function Organogram() {
                   </div>
                   <div>
                     <h3 className="font-medium">{dept}</h3>
-                    <p className="text-xs text-black/50">{members.length} members</p>
+                    <p className="text-xs text-black">{members.length} members</p>
                   </div>
                 </div>
 
@@ -395,7 +395,7 @@ export default function Organogram() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{head.full_name}</p>
-                      <p className="text-xs text-black/50">{head.position_title}</p>
+                      <p className="text-xs text-black">{head.position_title}</p>
                     </div>
                   </div>
                 )}
@@ -411,7 +411,7 @@ export default function Organogram() {
                     </div>
                   ))}
                   {members.length > 4 && (
-                    <p className="text-xs text-black/40">+{members.length - 4} more</p>
+                    <p className="text-xs text-black">+{members.length - 4} more</p>
                   )}
                 </div>
 
@@ -423,16 +423,16 @@ export default function Organogram() {
           })}
 
           {/* Add department card */}
-          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/[0.02] h-fit">
-            <PlusCircle size={32} className="text-black/30 mb-2" />
-            <p className="text-sm text-black/50">Add Department</p>
+          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10 h-fit">
+            <PlusCircle size={32} className="text-black mb-2" />
+            <p className="text-sm text-black">Add Department</p>
           </div>
         </div>
       )}
 
       {/* Selected Node Detail Modal */}
       {selectedNode && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Team Member</h2>
@@ -445,22 +445,22 @@ export default function Organogram() {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">{selectedNode.full_name}</h3>
-                  <p className="text-black/50">{selectedNode.position_title}</p>
+                  <p className="text-black">{selectedNode.position_title}</p>
                   <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full">{selectedNode.department}</span>
                 </div>
               </div>
 
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3 text-sm">
-                  <Mail size={16} className="text-black/30" />
+                  <Mail size={16} className="text-black" />
                   <span>{selectedNode.email}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <Network size={16} className="text-black/30" />
+                  <Network size={16} className="text-black" />
                   <span>{selectedNode.direct_report_count} direct reports</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <ArrowUpRight size={16} className="text-black/30" />
+                  <ArrowUpRight size={16} className="text-black" />
                   <span>Reports to: CEO</span>
                 </div>
               </div>

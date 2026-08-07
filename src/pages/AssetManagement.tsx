@@ -125,7 +125,7 @@ export default function AssetManagementPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Asset Management</h1>
-            <p className="text-sm text-black/50">Track and manage company assets</p>
+            <p className="text-sm text-black">Track and manage company assets</p>
           </div>
         </div>
         {isAdmin && (
@@ -150,7 +150,7 @@ export default function AssetManagementPage() {
       {/* Search and Filters */}
       <div className="flex flex-wrap gap-4 mb-6">
         <div className="flex-1 min-w-[200px] relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/40" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
           <input
             type="text"
             placeholder="Search assets..."
@@ -184,13 +184,13 @@ export default function AssetManagementPage() {
       {/* Assets Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? (
-          <div className="col-span-full text-center py-12 text-black/40">
+          <div className="col-span-full text-center py-12 text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
         ) : filteredAssets.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-black/40 bg-white rounded-2xl border border-black/[0.06]">
-            <Package size={48} className="mx-auto mb-4 text-black/20" />
+          <div className="col-span-full text-center py-12 text-black bg-white rounded-2xl border border-black/[0.06]">
+            <Package size={48} className="mx-auto mb-4 text-black/50" />
             <p className="font-medium mb-2">No assets found</p>
             <p className="text-sm">Add your first asset to get started</p>
           </div>
@@ -226,7 +226,7 @@ function StatCard({ title, value, icon, color }: any) {
         {icon}
       </div>
       <div className="text-2xl font-bold">{value}</div>
-      <div className="text-sm text-black/50">{title}</div>
+      <div className="text-sm text-black">{title}</div>
     </div>
   )
 }
@@ -264,30 +264,30 @@ function AssetCard({
               </span>
             </div>
             <h3 className="font-semibold">{asset.name}</h3>
-            <div className="text-sm text-black/50">{asset.category?.name}</div>
+            <div className="text-sm text-black">{asset.category?.name}</div>
           </div>
           {isAdmin && (
             <div className="relative">
               <button 
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1.5 rounded hover:bg-black/5"
+                className="p-1.5 rounded hover:bg-black/10"
               >
                 <ChevronDown size={16} />
               </button>
               {showMenu && (
                 <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-black/10 py-1 z-10 min-w-[140px]">
                   {asset.status !== 'active' && (
-                    <button onClick={() => handleStatusChange('active')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/5">
+                    <button onClick={() => handleStatusChange('active')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/10">
                       Mark Active
                     </button>
                   )}
                   {asset.status !== 'in_maintenance' && (
-                    <button onClick={() => handleStatusChange('in_maintenance')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/5">
+                    <button onClick={() => handleStatusChange('in_maintenance')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/10">
                       Send to Maintenance
                     </button>
                   )}
                   {asset.status !== 'retired' && (
-                    <button onClick={() => handleStatusChange('retired')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/5">
+                    <button onClick={() => handleStatusChange('retired')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/10">
                       Retire Asset
                     </button>
                   )}
@@ -302,25 +302,25 @@ function AssetCard({
       <div className="p-4 space-y-3">
         {asset.serial_number && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-black/40">S/N:</span>
+            <span className="text-black">S/N:</span>
             <span className="font-mono">{asset.serial_number}</span>
           </div>
         )}
         {asset.location && (
           <div className="flex items-center gap-2 text-sm">
-            <MapPin size={14} className="text-black/40" />
+            <MapPin size={14} className="text-black" />
             <span>{asset.location}</span>
           </div>
         )}
         {asset.assigned_to && (
           <div className="flex items-center gap-2 text-sm">
-            <User size={14} className="text-black/40" />
+            <User size={14} className="text-black" />
             <span>{asset.assigned_to.full_name}</span>
           </div>
         )}
         {(asset.purchase_cost || asset.current_value) && (
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-black/40">Value:</span>
+            <span className="text-black">Value:</span>
             <span className="font-medium">
               ₦{(asset.current_value || asset.purchase_cost)?.toLocaleString()}
             </span>
@@ -329,7 +329,7 @@ function AssetCard({
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 bg-black/[0.02] flex items-center justify-between text-xs text-black/40">
+      <div className="px-4 py-3 bg-black/[0.02] flex items-center justify-between text-xs text-black">
         <span>Added {new Date(asset.created_at).toLocaleDateString()}</span>
         {asset.next_maintenance && (
           <span className="flex items-center gap-1 text-amber-600">
@@ -384,7 +384,7 @@ function AssetModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-black/[0.06]">
           <h2 className="text-lg font-bold">Add New Asset</h2>

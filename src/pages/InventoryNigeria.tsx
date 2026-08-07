@@ -278,7 +278,7 @@ export default function InventoryNigeria() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium">Inventory</h1>
-          <p className="text-sm text-black/50">Track materials across locations</p>
+          <p className="text-sm text-black">Track materials across locations</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -302,19 +302,19 @@ export default function InventoryNigeria() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Total Items</p>
+          <p className="text-xs text-black mb-1">Total Items</p>
           <p className="text-2xl font-bold">{stats.totalItems}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Stock Value</p>
+          <p className="text-xs text-black mb-1">Stock Value</p>
           <p className="text-lg font-bold text-[#4285F4]">{formatCurrency(stats.totalValue)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Low Stock</p>
+          <p className="text-xs text-black mb-1">Low Stock</p>
           <p className="text-2xl font-bold text-orange-600">{stats.lowStock}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Out of Stock</p>
+          <p className="text-xs text-black mb-1">Out of Stock</p>
           <p className="text-2xl font-bold text-red-600">{stats.outOfStock}</p>
         </div>
       </div>
@@ -354,7 +354,7 @@ export default function InventoryNigeria() {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
         <input
           type="text"
           value={searchQuery}
@@ -369,8 +369,8 @@ export default function InventoryNigeria() {
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-5 bg-black/5 rounded w-1/3 mb-2" />
-              <div className="h-4 bg-black/5 rounded w-1/2" />
+              <div className="h-5 bg-black/10 rounded w-1/3 mb-2" />
+              <div className="h-4 bg-black/10 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -380,7 +380,7 @@ export default function InventoryNigeria() {
             <Package size={24} className="text-[#4285F4]" />
           </div>
           <h3 className="font-semibold mb-2">No items found</h3>
-          <p className="text-sm text-black/50 mb-4">
+          <p className="text-sm text-black mb-4">
             {searchQuery ? 'Try adjusting your search' : 'Add your first inventory item'}
           </p>
           {!searchQuery && (
@@ -416,14 +416,14 @@ export default function InventoryNigeria() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs font-mono text-black/40">{item.sku}</span>
+                      <span className="text-xs font-mono text-black">{item.sku}</span>
                       <span className="px-2 py-0.5 rounded text-xs bg-white">
                         {LOCATION_LABELS[item.location].label}
                       </span>
                     </div>
                     <h3 className="font-medium">{item.name}</h3>
                     {item.category && (
-                      <p className="text-xs text-black/50">{item.category}</p>
+                      <p className="text-xs text-black">{item.category}</p>
                     )}
                   </div>
                   <div className="text-right">
@@ -431,7 +431,7 @@ export default function InventoryNigeria() {
                       isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-black'
                     }`}>
                       {item.quantity}
-                      <span className="text-xs font-normal text-black/40 ml-1">
+                      <span className="text-xs font-normal text-black ml-1">
                         {UNIT_LABELS[item.unit]}
                       </span>
                     </p>
@@ -441,7 +441,7 @@ export default function InventoryNigeria() {
                         Reorder at {item.reorder_point}
                       </span>
                     )}
-                    <p className="text-xs text-black/50 mt-1">
+                    <p className="text-xs text-black mt-1">
                       {formatCurrency(item.cost_price)}/{UNIT_LABELS[item.unit]}
                     </p>
                   </div>
@@ -470,10 +470,10 @@ export default function InventoryNigeria() {
                   <p className="text-sm">
                     <span className="font-medium">{m.type}</span>
                     {' '}{m.quantity}x {m.item_name}
-                    {m.reference && <span className="text-black/50"> ({m.reference})</span>}
+                    {m.reference && <span className="text-black"> ({m.reference})</span>}
                   </p>
                 </div>
-                <span className="text-xs text-black/50">
+                <span className="text-xs text-black">
                   {new Date(m.created_at).toLocaleDateString()}
                 </span>
               </div>
@@ -484,7 +484,7 @@ export default function InventoryNigeria() {
 
       {/* New Item Modal */}
       {showNewItem && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Add Inventory Item</h2>
@@ -624,7 +624,7 @@ export default function InventoryNigeria() {
 
       {/* Movement Modal */}
       {showMovement && selectedItem && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Record Movement</h2>
@@ -634,7 +634,7 @@ export default function InventoryNigeria() {
             <div className="p-4 space-y-4">
               <div className="bg-white rounded-xl p-3">
                 <p className="font-medium">{selectedItem.name}</p>
-                <p className="text-sm text-black/50">
+                <p className="text-sm text-black">
                   Current: {selectedItem.quantity} {UNIT_LABELS[selectedItem.unit]}
                 </p>
               </div>

@@ -28,7 +28,7 @@ export default function SSOSettings() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-medium text-black">Single Sign-On</h1>
-            <p className="text-sm text-black/50 mt-0.5">Enterprise identity provider integration</p>
+            <p className="text-sm text-black mt-0.5">Enterprise identity provider integration</p>
           </div>
         </div>
 
@@ -56,12 +56,12 @@ export default function SSOSettings() {
               <div className="flex items-center gap-4">
                 <a
                   href="mailto:hello@riverwayse.com?subject=SSO%20Beta%20Access%20Request"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl text-sm font-medium hover:bg-slate-400 transition"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-xl text-sm font-medium hover:bg-slate-700 transition"
                 >
                   <Sparkles className="w-4 h-4" />
                   Request Beta Access
                 </a>
-                <span className="text-white/50 text-sm">
+                <span className="text-white/80 text-sm">
                   Join the beta program for early access
                 </span>
               </div>
@@ -78,7 +78,7 @@ export default function SSOSettings() {
               </div>
               <h3 className="font-medium">SAML 2.0 & OIDC</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Support for industry-standard SAML 2.0 and OpenID Connect protocols.
               Compatible with Okta, Azure AD, OneLogin, and more.
             </p>
@@ -91,7 +91,7 @@ export default function SSOSettings() {
               </div>
               <h3 className="font-medium">Auto-Provisioning</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Automatically provision and deprovision team members based on
               your IdP groups. No manual invite process needed.
             </p>
@@ -104,7 +104,7 @@ export default function SSOSettings() {
               </div>
               <h3 className="font-medium">Enforced Security</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Mandatory SSO for your team. Users cannot bypass enterprise
               authentication or use password-only login.
             </p>
@@ -117,7 +117,7 @@ export default function SSOSettings() {
               </div>
               <h3 className="font-medium">Multi-Domain</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Support for multiple domains and automatic routing.
               Perfect for organizations with complex structures.
             </p>
@@ -176,7 +176,7 @@ export default function SSOSettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Single Sign-On</h1>
-          <p className="text-sm text-black/50 mt-0.5">Configure your identity provider</p>
+          <p className="text-sm text-black mt-0.5">Configure your identity provider</p>
         </div>
         <BetaBadge />
       </div>
@@ -189,7 +189,7 @@ export default function SSOSettings() {
           </div>
           <div>
             <h2 className="font-medium">SSO Configuration</h2>
-            <p className="text-sm text-black/50">Configure your SAML or OIDC provider</p>
+            <p className="text-sm text-black">Configure your SAML or OIDC provider</p>
           </div>
         </div>
         <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">

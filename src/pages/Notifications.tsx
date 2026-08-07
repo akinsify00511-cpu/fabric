@@ -163,7 +163,7 @@ export default function NotificationSettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-black">Notification Settings</h1>
-          <p className="text-sm text-black/50 mt-1">Choose how you want to be notified</p>
+          <p className="text-sm text-black mt-1">Choose how you want to be notified</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -192,7 +192,7 @@ export default function NotificationSettings() {
           </div>
           <div>
             <h2 className="font-semibold">In-App Notifications</h2>
-            <p className="text-sm text-black/50">Notifications you see inside the app</p>
+            <p className="text-sm text-black">Notifications you see inside the app</p>
           </div>
         </div>
 
@@ -251,7 +251,7 @@ export default function NotificationSettings() {
           </div>
           <div>
             <h2 className="font-semibold">Email Notifications</h2>
-            <p className="text-sm text-black/50">Get important updates delivered to your inbox</p>
+            <p className="text-sm text-black">Get important updates delivered to your inbox</p>
           </div>
         </div>
 
@@ -282,7 +282,7 @@ export default function NotificationSettings() {
           />
           
           <div className="border-t border-black/[0.06] pt-4 mt-4">
-            <p className="text-sm font-medium text-black/50 mb-3">Marketing Emails</p>
+            <p className="text-sm font-medium text-black mb-3">Marketing Emails</p>
             <PreferenceToggle
               label="Weekly Digest"
               description="Summary of your week's activity"
@@ -326,7 +326,7 @@ export default function NotificationSettings() {
           </div>
           <div>
             <h2 className="font-semibold">SMS Notifications</h2>
-            <p className="text-sm text-black/50">Get important updates via text message</p>
+            <p className="text-sm text-black">Get important updates via text message</p>
           </div>
         </div>
 
@@ -371,7 +371,7 @@ export default function NotificationSettings() {
         </div>
 
         <div className="mt-4 pt-4 border-t border-black/[0.06]">
-          <p className="text-xs text-black/50">
+          <p className="text-xs text-black">
             <strong>Note:</strong> SMS charges may apply based on your Termii plan. 
             Configure your SMS settings in <a href="/app/settings?tab=sms" className="text-blue-600 hover:underline">Settings</a>.
           </p>
@@ -404,7 +404,7 @@ function PreferenceToggle({
 }) {
   return (
     <label className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition ${
-      highlight ? 'bg-amber-50/50 hover:bg-amber-50' : 'hover:bg-black/[0.02]'
+      highlight ? 'bg-amber-50/50 hover:bg-amber-50' : 'hover:bg-black/10'
     }`}>
       <div className="relative mt-0.5">
         <input
@@ -423,7 +423,7 @@ function PreferenceToggle({
       </div>
       <div className="flex-1">
         <div className="font-medium text-sm">{label}</div>
-        <div className="text-xs text-black/50">{description}</div>
+        <div className="text-xs text-black">{description}</div>
       </div>
     </label>
   )

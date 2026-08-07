@@ -346,7 +346,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
       {title && (
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">{title}</h3>
-          <span className="text-sm text-black/50">{allItems.length} activities</span>
+          <span className="text-sm text-black">{allItems.length} activities</span>
         </div>
       )}
 
@@ -372,7 +372,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
               {showMentionPopup && mentionSuggestions.length > 0 && (
                 <div className="absolute left-0 right-0 bottom-full mb-1 bg-white rounded-lg border border-black/10 shadow-xl z-20 max-h-48 overflow-auto">
                   <div className="p-2">
-                    <div className="text-xs text-black/40 px-2 py-1 flex items-center gap-1">
+                    <div className="text-xs text-black px-2 py-1 flex items-center gap-1">
                       <AtSign size={10} />
                       Mention someone
                     </div>
@@ -383,7 +383,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                         className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left transition ${
                           selectedMentionIndex === idx 
                             ? 'bg-[#4285F4]/10 text-[#4285F4]' 
-                            : 'hover:bg-black/5'
+                            : 'hover:bg-black/10'
                         }`}
                       >
                         <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
@@ -391,7 +391,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                         </div>
                         <div>
                           <div className="text-sm font-medium">{user.user_name}</div>
-                          <div className="text-xs text-black/40">{user.user_email}</div>
+                          <div className="text-xs text-black">{user.user_email}</div>
                         </div>
                       </button>
                     ))}
@@ -403,15 +403,15 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
                 <button 
-                  className="p-1.5 rounded hover:bg-black/5 text-[#4285F4]"
+                  className="p-1.5 rounded hover:bg-black/10 text-[#4285F4]"
                   title="Type @ to mention someone"
                 >
                   <AtSign size={16} />
                 </button>
-                <button className="p-1.5 rounded hover:bg-black/5 text-black/40">
+                <button className="p-1.5 rounded hover:bg-black/10 text-black">
                   <Paperclip size={16} />
                 </button>
-                <button className="p-1.5 rounded hover:bg-black/5 text-black/40">
+                <button className="p-1.5 rounded hover:bg-black/10 text-black">
                   <Smile size={16} />
                 </button>
               </div>
@@ -430,9 +430,9 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
 
       {/* Timeline */}
       {loading ? (
-        <div className="text-center py-8 text-black/40">Loading...</div>
+        <div className="text-center py-8 text-black">Loading...</div>
       ) : allItems.length === 0 ? (
-        <div className="text-center py-8 text-black/40">
+        <div className="text-center py-8 text-black">
           <MessageSquare size={32} className="mx-auto mb-2" />
           <p>No activity yet</p>
         </div>
@@ -456,15 +456,15 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm">{commentItem.user_name}</span>
                           {commentItem.is_edited && (
-                            <span className="text-xs text-black/40">(edited)</span>
+                            <span className="text-xs text-black">(edited)</span>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-black/40">
+                          <span className="text-xs text-black">
                             {new Date(commentItem.created_at).toLocaleString()}
                           </span>
-                          <button className="p-1 rounded hover:bg-black/5">
-                            <MoreHorizontal size={14} className="text-black/40" />
+                          <button className="p-1 rounded hover:bg-black/10">
+                            <MoreHorizontal size={14} className="text-black" />
                           </button>
                         </div>
                       </div>
@@ -479,7 +479,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                             className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-sm ${
                               users.includes(staff?.user_id || '') 
                                 ? 'bg-[#4285F4]/10 text-[#4285F4]' 
-                                : 'bg-black/5 text-black/60'
+                                : 'bg-black/10 text-black/60'
                             }`}
                           >
                             {emoji} {users.length}
@@ -487,7 +487,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                         ))}
                         <button
                           onClick={() => setReplyingTo(commentItem.id)}
-                          className="px-2 py-0.5 rounded-full text-sm text-black/40 hover:bg-black/5"
+                          className="px-2 py-0.5 rounded-full text-sm text-black hover:bg-black/10"
                         >
                           Reply
                         </button>
@@ -500,18 +500,18 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
               const Icon = activityIcons[timelineItem.activity_type] || Clock
               return (
                 <div key={item.id} className="flex gap-3">
-                  <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                    <Icon size={16} className="text-black/50" />
+                  <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center shrink-0">
+                    <Icon size={16} className="text-black" />
                   </div>
                   <div className="flex-1 py-1">
                     <div className="flex items-center gap-2 text-sm">
                       <span className="font-medium">{timelineItem.user_name || 'System'}</span>
-                      <span className="text-black/50">{timelineItem.title}</span>
+                      <span className="text-black">{timelineItem.title}</span>
                     </div>
                     {timelineItem.description && (
-                      <p className="text-sm text-black/50 mt-1">{timelineItem.description}</p>
+                      <p className="text-sm text-black mt-1">{timelineItem.description}</p>
                     )}
-                    <span className="text-xs text-black/40 mt-1 block">
+                    <span className="text-xs text-black mt-1 block">
                       {new Date(timelineItem.created_at).toLocaleString()}
                     </span>
                   </div>
@@ -571,7 +571,7 @@ export function CommentsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">Comments</h1>
-          <p className="text-sm text-black/50">All your mentions and comments</p>
+          <p className="text-sm text-black">All your mentions and comments</p>
         </div>
         <div className="flex gap-2">
           {(['all', 'mentions', 'own'] as const).map(f => (
@@ -581,7 +581,7 @@ export function CommentsPage() {
               className={`px-3 py-1.5 rounded-lg text-sm ${
                 filter === f 
                   ? 'bg-[#4285F4] text-white' 
-                  : 'bg-black/5 text-black/60'
+                  : 'bg-black/10 text-black/60'
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -591,9 +591,9 @@ export function CommentsPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-20 text-black/40">Loading...</div>
+        <div className="text-center py-20 text-black">Loading...</div>
       ) : comments.length === 0 ? (
-        <div className="text-center py-20 text-black/40">
+        <div className="text-center py-20 text-black">
           <MessageSquare size={48} className="mx-auto mb-4" />
           <p>No comments found</p>
         </div>
@@ -609,11 +609,11 @@ export function CommentsPage() {
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <span className="font-medium">{comment.user_name}</span>
-                      <span className="text-xs px-2 py-0.5 rounded bg-black/5 text-black/50 ml-2 uppercase">
+                      <span className="text-xs px-2 py-0.5 rounded bg-black/10 text-black ml-2 uppercase">
                         {comment.entity_type}
                       </span>
                     </div>
-                    <span className="text-xs text-black/40">
+                    <span className="text-xs text-black">
                       {new Date(comment.created_at).toLocaleString()}
                     </span>
                   </div>

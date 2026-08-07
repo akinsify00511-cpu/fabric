@@ -199,21 +199,21 @@ export default function People() {
            {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 border border-black/[0.06]">
-          <div className="flex items-center gap-2 text-black/50 text-sm mb-1">
+          <div className="flex items-center gap-2 text-black text-sm mb-1">
             <Users size={16} />
             <span>Total Team</span>
           </div>
           <p className="text-2xl font-bold">{members.length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-black/[0.06]">
-          <div className="flex items-center gap-2 text-black/50 text-sm mb-1">
+          <div className="flex items-center gap-2 text-black text-sm mb-1">
             <UserCog size={16} />
             <span>Functional Roles</span>
           </div>
           <p className="text-2xl font-bold">{functionalRoles.length}</p>
         </div>
         <div className="bg-white rounded-xl p-4 border border-black/[0.06] col-span-2">
-          <div className="flex items-center gap-2 text-black/50 text-sm mb-1">
+          <div className="flex items-center gap-2 text-black text-sm mb-1">
             <Search size={16} />
             <span>Search</span>
           </div>
@@ -240,7 +240,7 @@ export default function People() {
           </thead>
           <tbody className="divide-y divide-black/[0.06]">
             {filteredMembers.map((member) => (
-              <tr key={member.id} className="hover:bg-black/[0.02]">
+              <tr key={member.id} className="hover:bg-black/10">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#4285F4] flex items-center justify-center text-white font-medium">
@@ -275,7 +275,7 @@ export default function People() {
                           </span>
                         ))
                       ) : (
-                        <span className="text-sm text-black/40">-</span>
+                        <span className="text-sm text-black">-</span>
                       )}
                       {isAdmin && member.role !== 'owner' && (
                         <button
@@ -283,21 +283,21 @@ export default function People() {
                           className="p-1 hover:bg-black/[0.05] rounded"
                           title="Edit roles"
                         >
-                          <UserCog size={14} className="text-black/30" />
+                          <UserCog size={14} className="text-black" />
                         </button>
                       )}
                     </div>
                   )}
                 </td>
                 <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className="text-sm text-black/40">{new Date(member.joined_at).toLocaleDateString()}</span>
+                  <span className="text-sm text-black">{new Date(member.joined_at).toLocaleDateString()}</span>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         {filteredMembers.length === 0 && (
-          <div className="p-8 text-center text-black/40">
+          <div className="p-8 text-center text-black">
             <Users size={32} className="mx-auto mb-2 opacity-50" />
             <p>No team members found</p>
           </div>
@@ -306,7 +306,7 @@ export default function People() {
 
       {/* Edit Roles Modal */}
       {editingRoles && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Edit Functional Roles</h2>
@@ -319,12 +319,12 @@ export default function People() {
             </p>
             <div className="space-y-2 mb-6">
               {functionalRoles.length === 0 ? (
-                <p className="text-sm text-black/40">No roles configured yet.</p>
+                <p className="text-sm text-black">No roles configured yet.</p>
               ) : (
                 functionalRoles.map((role) => (
                   <label
                     key={role.id}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-black/[0.06] hover:bg-black/[0.02] cursor-pointer"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-black/[0.06] hover:bg-black/10 cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -335,7 +335,7 @@ export default function People() {
                     <div>
                       <p className="font-medium text-sm">{role.name}</p>
                       {role.description && (
-                        <p className="text-xs text-black/50">{role.description}</p>
+                        <p className="text-xs text-black">{role.description}</p>
                       )}
                     </div>
                   </label>
@@ -363,7 +363,7 @@ export default function People() {
 
       {/* Invite Modal */}
       {showInvite && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <h2 className="text-lg font-bold mb-4">Invite Team Member</h2>
             <input

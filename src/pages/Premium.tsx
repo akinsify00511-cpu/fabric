@@ -92,7 +92,7 @@ export default function Premium() {
         </p>
         
         {/* Social Proof */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-black/50 mb-8">
+        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-black mb-8">
           <span className="flex items-center gap-1">
             <Star size={14} className="text-amber-500 fill-amber-500" />
             <strong className="text-black">4.9/5</strong> rating
@@ -111,7 +111,7 @@ export default function Premium() {
         </div>
         
         <h2 className="text-2xl font-bold mb-2">Pro Plan</h2>
-        <p className="text-black/50 text-sm mb-6">Everything you need to scale</p>
+        <p className="text-black text-sm mb-6">Everything you need to scale</p>
         
         {/* Billing Toggle */}
         <div className="flex items-center gap-3 mb-6 p-1 bg-black/[0.04] rounded-xl">
@@ -137,10 +137,10 @@ export default function Premium() {
         <div className="mb-6">
           <div className="flex items-end gap-1">
             <span className="text-5xl font-bold">₦{billingCycle === 'monthly' ? monthlyPrice : yearlyPrice}</span>
-            <span className="text-black/50 mb-2">/month</span>
+            <span className="text-black mb-2">/month</span>
           </div>
           {billingCycle === 'yearly' && (
-            <p className="text-sm text-black/50">Billed as ₦{(yearlyPrice * 12).toLocaleString()} yearly</p>
+            <p className="text-sm text-black">Billed as ₦{(yearlyPrice * 12).toLocaleString()} yearly</p>
           )}
         </div>
         
@@ -149,7 +149,7 @@ export default function Premium() {
           Upgrade Now - Start Free Trial
         </button>
         
-        <p className="text-center text-sm text-black/50">
+        <p className="text-center text-sm text-black">
           14-day free trial • No credit card required • Cancel anytime
         </p>
         
@@ -192,11 +192,11 @@ export default function Premium() {
                     <Icon size={24} className="text-indigo-600" />
                   </div>
                   <h3 className="font-bold text-lg mb-2">{feature.name}</h3>
-                  <p className="text-sm text-black/50 mb-4">{feature.description}</p>
+                  <p className="text-sm text-black mb-4">{feature.description}</p>
                   
                   {/* Preview */}
                   <div className="bg-black/[0.03] rounded-lg p-3">
-                    <p className="text-xs text-black/40 mb-1">Preview:</p>
+                    <p className="text-xs text-black mb-1">Preview:</p>
                     <p className="text-sm font-medium text-indigo-600">{feature.preview}</p>
                   </div>
                 </div>
@@ -295,7 +295,7 @@ export default function Premium() {
                 </div>
                 <div>
                   <p className="font-medium text-sm">{testimonial.name}</p>
-                  <p className="text-xs text-black/50">{testimonial.role}</p>
+                  <p className="text-xs text-black">{testimonial.role}</p>
                 </div>
               </div>
             </div>

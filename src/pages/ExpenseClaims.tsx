@@ -150,7 +150,7 @@ export default function ExpenseClaimsPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Expense Claims</h1>
-            <p className="text-sm text-black/50">Track and manage expenses</p>
+            <p className="text-sm text-black">Track and manage expenses</p>
           </div>
         </div>
         <button
@@ -234,13 +234,13 @@ export default function ExpenseClaimsPage() {
 
           <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
             {loading ? (
-              <div className="p-12 text-center text-black/40">
+              <div className="p-12 text-center text-black">
                 <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
                 Loading...
               </div>
             ) : filteredClaims.length === 0 ? (
-              <div className="p-12 text-center text-black/40">
-                <Receipt size={48} className="mx-auto mb-4 text-black/20" />
+              <div className="p-12 text-center text-black">
+                <Receipt size={48} className="mx-auto mb-4 text-black/50" />
                 <p className="font-medium mb-2">No expenses found</p>
                 <p className="text-sm">Submit your first expense claim</p>
               </div>
@@ -251,7 +251,7 @@ export default function ExpenseClaimsPage() {
                   const StatusIcon = status.icon
 
                   return (
-                    <div key={claim.id} className="p-4 hover:bg-black/[0.02]">
+                    <div key={claim.id} className="p-4 hover:bg-black/10">
                       <div className="flex items-start gap-4">
                         <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
                           <Receipt size={20} className="text-emerald-500" />
@@ -260,7 +260,7 @@ export default function ExpenseClaimsPage() {
                           <div className="flex items-center justify-between">
                             <div>
                               <div className="font-medium">{claim.description}</div>
-                              <div className="text-sm text-black/50">
+                              <div className="text-sm text-black">
                                 {claim.category?.name} • {new Date(claim.expense_date).toLocaleDateString()}
                               </div>
                             </div>
@@ -275,7 +275,7 @@ export default function ExpenseClaimsPage() {
                             </div>
                           </div>
                           {claim.receipt_urls && claim.receipt_urls.length > 0 && (
-                            <div className="mt-2 flex items-center gap-2 text-xs text-black/40">
+                            <div className="mt-2 flex items-center gap-2 text-xs text-black">
                               <Paperclip size={12} />
                               {claim.receipt_urls.length} attachment{claim.receipt_urls.length > 1 ? 's' : ''}
                             </div>
@@ -299,7 +299,7 @@ export default function ExpenseClaimsPage() {
           </div>
 
           {pendingApprovals.length === 0 ? (
-            <div className="p-12 text-center text-black/40">
+            <div className="p-12 text-center text-black">
               <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
               <p className="font-medium mb-2">All caught up!</p>
               <p className="text-sm">No pending expense claims</p>
@@ -316,18 +316,18 @@ export default function ExpenseClaimsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-medium">{claim.staff?.full_name}</div>
-                          <div className="text-sm text-black/50">{claim.staff?.email}</div>
+                          <div className="text-sm text-black">{claim.staff?.email}</div>
                         </div>
                         <div className="text-right">
                           <div className="text-xl font-bold text-emerald-600">
                             {claim.currency} {claim.amount.toLocaleString()}
                           </div>
-                          <div className="text-xs text-black/40">{claim.category?.name}</div>
+                          <div className="text-xs text-black">{claim.category?.name}</div>
                         </div>
                       </div>
                       <div className="mt-2 p-3 bg-black/[0.02] rounded-lg">
                         <div className="font-medium">{claim.description}</div>
-                        <div className="text-sm text-black/50 mt-1">
+                        <div className="text-sm text-black mt-1">
                           {new Date(claim.expense_date).toLocaleDateString()}
                         </div>
                       </div>
@@ -379,7 +379,7 @@ function StatCard({ title, value, icon, color }: any) {
         {icon}
       </div>
       <div className="text-xl font-bold">{value}</div>
-      <div className="text-sm text-black/50">{title}</div>
+      <div className="text-sm text-black">{title}</div>
     </div>
   )
 }
@@ -427,7 +427,7 @@ function ExpenseModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="p-6 border-b border-black/[0.06]">
           <h2 className="text-lg font-bold">New Expense Claim</h2>
@@ -450,7 +450,7 @@ function ExpenseModal({
           <div>
             <label className="block text-sm font-medium mb-2">Amount</label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40">₦</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-black">₦</span>
               <input
                 type="number"
                 value={form.amount}

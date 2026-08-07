@@ -76,8 +76,8 @@ export default class ErrorBoundary extends Component<Props, State> {
             </p>
 
             {this.state.errorId && (
-              <div className="mb-4 p-3 bg-black/5 rounded-lg">
-                <p className="text-xs text-black/50">Reference ID</p>
+              <div className="mb-4 p-3 bg-black/10 rounded-lg">
+                <p className="text-xs text-black">Reference ID</p>
                 <p className="font-mono text-sm text-black/70">{this.state.errorId}</p>
               </div>
             )}

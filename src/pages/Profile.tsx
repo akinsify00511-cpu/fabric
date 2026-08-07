@@ -214,7 +214,7 @@ export default function Profile() {
       <div className="flex items-center gap-3 mb-6">
         <button 
           onClick={() => navigate('/app/settings')}
-          className="text-black/50 hover:text-black"
+          className="text-black hover:text-black"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -230,7 +230,7 @@ export default function Profile() {
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'profile'
               ? 'avenize-gradient text-white'
-              : 'text-black/50 hover:text-black'
+              : 'text-black hover:text-black'
           }`}
         >
           Profile
@@ -240,7 +240,7 @@ export default function Profile() {
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'security'
               ? 'avenize-gradient text-white'
-              : 'text-black/50 hover:text-black'
+              : 'text-black hover:text-black'
           }`}
         >
           Security
@@ -267,12 +267,12 @@ export default function Profile() {
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingAvatar}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full border border-black/10 shadow-sm flex items-center justify-center hover:bg-black/5 transition"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full border border-black/10 shadow-sm flex items-center justify-center hover:bg-black/10 transition"
                 >
                   {uploadingAvatar ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-black/50" />
+                    <Loader2 className="w-4 h-4 animate-spin text-black" />
                   ) : (
-                    <Camera className="w-4 h-4 text-black/50" />
+                    <Camera className="w-4 h-4 text-black" />
                   )}
                 </button>
                 <input
@@ -285,8 +285,8 @@ export default function Profile() {
               </div>
               <div>
                 <h3 className="font-semibold text-lg">{fullName || 'Your Name'}</h3>
-                <p className="text-sm text-black/50">{email}</p>
-                <p className="text-xs text-black/30 mt-1">JPG, PNG or GIF. Max 2MB.</p>
+                <p className="text-sm text-black">{email}</p>
+                <p className="text-xs text-black mt-1">JPG, PNG or GIF. Max 2MB.</p>
               </div>
             </div>
           </div>
@@ -326,9 +326,9 @@ export default function Profile() {
                 type="email"
                 value={email}
                 disabled
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm bg-black/[0.02] text-black/50 cursor-not-allowed"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm bg-black/[0.02] text-black cursor-not-allowed"
               />
-              <p className="text-xs text-black/40 mt-1">Email cannot be changed here</p>
+              <p className="text-xs text-black mt-1">Email cannot be changed here</p>
             </div>
 
             <div>
@@ -389,7 +389,7 @@ export default function Profile() {
           {/* OAuth Account Info */}
           {staff?.user?.app_metadata?.provider && (
             <div className="mt-6 bg-black/[0.02] rounded-xl p-4">
-              <p className="text-xs text-black/50">
+              <p className="text-xs text-black">
                 Signed up with: <span className="capitalize font-medium">{staff.user.app_metadata.provider}</span>
               </p>
             </div>
@@ -443,7 +443,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/50"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                 >
                   {showNewPassword ? '🙈' : '👁'}
                 </button>
@@ -520,7 +520,7 @@ export default function Profile() {
                           setShowDeleteConfirm(false)
                           setDeleteConfirmText('')
                         }}
-                        className="flex-1 py-2 rounded-lg border border-black/10 text-sm font-medium hover:bg-black/[0.02]"
+                        className="flex-1 py-2 rounded-lg border border-black/10 text-sm font-medium hover:bg-black/10"
                       >
                         Cancel
                       </button>

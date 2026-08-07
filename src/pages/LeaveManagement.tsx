@@ -194,7 +194,7 @@ export default function LeaveManagementPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Leave Management</h1>
-            <p className="text-sm text-black/50">Request and manage time off</p>
+            <p className="text-sm text-black">Request and manage time off</p>
           </div>
         </div>
         <button
@@ -218,10 +218,10 @@ export default function LeaveManagementPage() {
               <span className="font-medium text-sm">{bal.leave_type.name}</span>
             </div>
             <div className="text-3xl font-bold mb-1">{bal.available_days}</div>
-            <div className="text-sm text-black/50">
+            <div className="text-sm text-black">
               of {bal.total_days} days available
             </div>
-            <div className="mt-2 flex items-center gap-4 text-xs text-black/40">
+            <div className="mt-2 flex items-center gap-4 text-xs text-black">
               <span>{bal.used_days} used</span>
               {bal.pending_days > 0 && <span className="text-amber-500">{bal.pending_days} pending</span>}
             </div>
@@ -260,13 +260,13 @@ export default function LeaveManagementPage() {
           </div>
 
           {loading ? (
-            <div className="p-12 text-center text-black/40">
+            <div className="p-12 text-center text-black">
               <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
               Loading...
             </div>
           ) : requests.length === 0 ? (
-            <div className="p-12 text-center text-black/40">
-              <Calendar size={48} className="mx-auto mb-4 text-black/20" />
+            <div className="p-12 text-center text-black">
+              <Calendar size={48} className="mx-auto mb-4 text-black/50" />
               <p className="font-medium mb-2">No leave requests</p>
               <p className="text-sm">Request your first leave to get started</p>
             </div>
@@ -277,7 +277,7 @@ export default function LeaveManagementPage() {
                 const StatusIcon = status.icon
 
                 return (
-                  <div key={req.id} className="p-4 hover:bg-black/[0.02]">
+                  <div key={req.id} className="p-4 hover:bg-black/10">
                     <div className="flex items-start gap-4">
                       <div 
                         className="w-10 h-10 rounded-lg flex items-center justify-center text-white"
@@ -299,7 +299,7 @@ export default function LeaveManagementPage() {
                           {req.total_days} day{req.total_days > 1 ? 's' : ''}
                         </div>
                         {req.reason && (
-                          <div className="mt-2 text-sm text-black/50">{req.reason}</div>
+                          <div className="mt-2 text-sm text-black">{req.reason}</div>
                         )}
                         {req.status === 'rejected' && req.rejection_reason && (
                           <div className="mt-2 p-2 bg-red-50 rounded-lg text-sm text-red-600">
@@ -324,7 +324,7 @@ export default function LeaveManagementPage() {
           </div>
 
           {pendingApprovals.length === 0 ? (
-            <div className="p-12 text-center text-black/40">
+            <div className="p-12 text-center text-black">
               <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
               <p className="font-medium mb-2">All caught up!</p>
               <p className="text-sm">No pending leave requests to approve</p>
@@ -345,7 +345,7 @@ export default function LeaveManagementPage() {
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="font-medium">{pending.requester?.full_name}</div>
-                            <div className="text-sm text-black/50">{pending.requester?.email}</div>
+                            <div className="text-sm text-black">{pending.requester?.email}</div>
                           </div>
                           <div 
                             className="px-2 py-1 rounded-full text-xs font-medium text-white"
@@ -470,7 +470,7 @@ function LeaveRequestModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
         <div className="p-6 border-b border-black/[0.06]">
           <h2 className="text-lg font-bold">Request Leave</h2>
@@ -538,7 +538,7 @@ function LeaveRequestModal({
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'morning' 
                         ? 'bg-[#4285F4] text-white' 
-                        : 'bg-black/5'
+                        : 'bg-black/10'
                     }`}
                   >
                     Morning
@@ -549,7 +549,7 @@ function LeaveRequestModal({
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'afternoon' 
                         ? 'bg-[#4285F4] text-white' 
-                        : 'bg-black/5'
+                        : 'bg-black/10'
                     }`}
                   >
                     Afternoon

@@ -79,7 +79,7 @@ export default function CashFlow() {
             <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
               <TrendingUp size={20} className="text-green-600" />
             </div>
-            <span className="text-sm text-black/50">Income</span>
+            <span className="text-sm text-black">Income</span>
           </div>
           <div className="text-2xl font-bold text-green-600">{formatCurrency(totalIncome)}</div>
         </div>
@@ -89,7 +89,7 @@ export default function CashFlow() {
             <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
               <TrendingDown size={20} className="text-red-600" />
             </div>
-            <span className="text-sm text-black/50">Expenses</span>
+            <span className="text-sm text-black">Expenses</span>
           </div>
           <div className="text-2xl font-bold text-red-600">{formatCurrency(totalExpenses)}</div>
         </div>
@@ -99,7 +99,7 @@ export default function CashFlow() {
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
               <DollarSign size={20} className="text-blue-600" />
             </div>
-            <span className="text-sm text-black/50">Net Flow</span>
+            <span className="text-sm text-black">Net Flow</span>
           </div>
           <div className={`text-2xl font-bold ${netFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             {netFlow >= 0 ? '+' : ''}{formatCurrency(netFlow)}
@@ -113,7 +113,7 @@ export default function CashFlow() {
           <h2 className="font-semibold">Recent Transactions</h2>
         </div>
         {entries.length === 0 ? (
-          <div className="p-8 text-center text-black/40">
+          <div className="p-8 text-center text-black">
             No transactions recorded yet
           </div>
         ) : (
@@ -122,7 +122,7 @@ export default function CashFlow() {
               <div key={entry.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">{entry.description}</div>
-                  <div className="text-xs text-black/40">{entry.category} \u2022 {new Date(entry.date).toLocaleDateString()}</div>
+                  <div className="text-xs text-black">{entry.category} \u2022 {new Date(entry.date).toLocaleDateString()}</div>
                 </div>
                 <div className={`font-semibold ${entry.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                   {entry.type === 'income' ? '+' : '-'}{formatCurrency(entry.amount)}

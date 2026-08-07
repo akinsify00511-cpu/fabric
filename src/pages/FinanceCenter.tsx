@@ -30,7 +30,7 @@ export default function FinanceCenter() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Finance Center</h1>
-          <p className="text-sm text-black/50">Tax, Banking & Receivables</p>
+          <p className="text-sm text-black">Tax, Banking & Receivables</p>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ export default function FinanceCenter() {
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
               activeTab === tab.id
                 ? 'avenize-gradient text-white'
-                : 'bg-white text-black/60 hover:bg-black/5'
+                : 'bg-white text-black/60 hover:bg-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -98,7 +98,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
 
   return (
     <div>
@@ -110,7 +110,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.totalDebtors / 1000000).toFixed(1)}M</div>
-              <div className="text-xs text-black/50">Debtors (Receivable)</div>
+              <div className="text-xs text-black">Debtors (Receivable)</div>
             </div>
           </div>
         </div>
@@ -121,7 +121,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.totalCreditors / 1000000).toFixed(1)}M</div>
-              <div className="text-xs text-black/50">Creditors (Payable)</div>
+              <div className="text-xs text-black">Creditors (Payable)</div>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.pendingVAT / 1000).toFixed(0)}K</div>
-              <div className="text-xs text-black/50">Pending VAT</div>
+              <div className="text-xs text-black">Pending VAT</div>
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.bankBalance / 1000000).toFixed(1)}M</div>
-              <div className="text-xs text-black/50">Bank Balance</div>
+              <div className="text-xs text-black">Bank Balance</div>
             </div>
           </div>
         </div>
@@ -230,11 +230,11 @@ function BankingTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : accounts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Banknote size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No bank accounts added</p>
+          <Banknote size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No bank accounts added</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -246,12 +246,12 @@ function BankingTab({ businessId }: { businessId?: string }) {
                 </div>
                 <div>
                   <h3 className="font-medium">{account.bank_name}</h3>
-                  <p className="text-sm text-black/50">{account.account_name} - {account.account_number}</p>
+                  <p className="text-sm text-black">{account.account_name} - {account.account_number}</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="font-semibold">₦{account.balance?.toLocaleString()}</p>
-                <span className="text-xs bg-black/5 px-2 py-0.5 rounded capitalize">{account.account_type}</span>
+                <span className="text-xs bg-black/10 px-2 py-0.5 rounded capitalize">{account.account_type}</span>
               </div>
             </div>
           ))}
@@ -312,7 +312,7 @@ function VATTab({ businessId }: { businessId?: string }) {
           <h2 className="text-2xl font-bold">₦{totalVAT.toLocaleString()}</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Pending Filing</p>
+          <p className="text-sm text-black">Pending Filing</p>
           <h2 className="text-2xl font-bold">{records.filter(r => r.status === 'pending').length}</h2>
         </div>
       </div>
@@ -344,11 +344,11 @@ function VATTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : records.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <FileText size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No VAT records</p>
+          <FileText size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No VAT records</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -359,7 +359,7 @@ function VATTab({ businessId }: { businessId?: string }) {
                   <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'sales' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
                     {record.record_type}
                   </span>
-                  <span className="text-sm text-black/50">{record.invoice_number}</span>
+                  <span className="text-sm text-black">{record.invoice_number}</span>
                 </div>
                 <p className="font-medium mt-1">{record.client_name}</p>
               </div>
@@ -451,11 +451,11 @@ function WHTTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : records.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Receipt size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No WHT records</p>
+          <Receipt size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No WHT records</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -466,10 +466,10 @@ function WHTTab({ businessId }: { businessId?: string }) {
                   <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'withheld' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
                     {record.record_type}
                   </span>
-                  <span className="text-sm text-black/50">{record.service_type}</span>
+                  <span className="text-sm text-black">{record.service_type}</span>
                 </div>
                 <p className="font-medium mt-1">{record.beneficiary_name}</p>
-                <p className="text-sm text-black/50">₦{record.gross_amount?.toLocaleString()} @ {record.withholding_rate}%</p>
+                <p className="text-sm text-black">₦{record.gross_amount?.toLocaleString()} @ {record.withholding_rate}%</p>
               </div>
               <div className="text-right">
                 <p className="font-semibold text-amber-600">₦{record.withholding_amount?.toLocaleString()}</p>
@@ -537,7 +537,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
           <h2 className="text-2xl font-bold">₦{totalOutstanding.toLocaleString()}</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <p className="text-sm text-black/50">Overdue</p>
+          <p className="text-sm text-black">Overdue</p>
           <h2 className="text-2xl font-bold text-red-600">{overdueCount}</h2>
         </div>
       </div>
@@ -567,11 +567,11 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : debtors.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
           <CheckCircle2 size={48} className="mx-auto text-green-500 mb-3" />
-          <p className="text-black/50">No outstanding debtors!</p>
+          <p className="text-black">No outstanding debtors!</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -580,7 +580,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">{debtor.client_name}</h3>
-                  <p className="text-sm text-black/50">{debtor.invoice_number}</p>
+                  <p className="text-sm text-black">{debtor.invoice_number}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-red-600">₦{debtor.outstanding_amount?.toLocaleString()}</p>
@@ -591,7 +591,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
                   )}
                 </div>
               </div>
-              {debtor.due_date && <p className="text-sm text-black/40 mt-2">Due: {new Date(debtor.due_date).toLocaleDateString()}</p>}
+              {debtor.due_date && <p className="text-sm text-black mt-2">Due: {new Date(debtor.due_date).toLocaleDateString()}</p>}
             </div>
           ))}
         </div>
@@ -671,11 +671,11 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : creditors.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <CreditCard size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No creditors</p>
+          <CreditCard size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No creditors</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -684,7 +684,7 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">{creditor.supplier_name}</h3>
-                  <p className="text-sm text-black/50">{creditor.invoice_number}</p>
+                  <p className="text-sm text-black">{creditor.invoice_number}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-amber-600">₦{creditor.outstanding_amount?.toLocaleString()}</p>

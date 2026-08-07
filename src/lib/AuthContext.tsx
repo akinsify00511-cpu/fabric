@@ -48,7 +48,7 @@ export const ROLE_CONFIG: Record<UserRole, { label: string; color: string }> = {
   admin: { label: 'Admin', color: 'purple' },
   manager: { label: 'Manager', color: 'blue' },
   team_lead: { label: 'Team Lead', color: 'emerald' },
-  staff: { label: 'Staff', color: 'slate' },
+  staff: { label: 'Staff', color: 'blue' },
 }
 
 type AuthContextValue = {

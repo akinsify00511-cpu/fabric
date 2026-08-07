@@ -81,7 +81,7 @@ export default function UpdatePassword() {
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <h2 className="text-xl font-semibold">Create new password</h2>
-          <p className="text-sm text-black/50 mt-1">
+          <p className="text-sm text-black mt-1">
             Enter your new password below
           </p>
         </div>
@@ -119,7 +119,7 @@ export default function UpdatePassword() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/50"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
               >
                 {showPassword ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +154,7 @@ export default function UpdatePassword() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-black/30 hover:text-black/50"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
               >
                 {showConfirmPassword ? (
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

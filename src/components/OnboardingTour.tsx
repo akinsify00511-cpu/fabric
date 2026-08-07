@@ -197,7 +197,7 @@ export default function OnboardingTour({
             {!isFirstStep && (
               <button
                 onClick={goPrev}
-                className="flex-1 flex items-center justify-center gap-1 py-3 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/[0.02] transition-colors"
+                className="flex-1 flex items-center justify-center gap-1 py-3 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10 transition-colors"
               >
                 <ChevronLeft size={16} />
                 Back
@@ -215,7 +215,7 @@ export default function OnboardingTour({
           {/* Skip */}
           <button
             onClick={onClose}
-            className="w-full mt-3 text-xs text-black/40 hover:text-black/60 transition-colors"
+            className="w-full mt-3 text-xs text-black hover:text-black/60 transition-colors"
           >
             Skip tour
           </button>

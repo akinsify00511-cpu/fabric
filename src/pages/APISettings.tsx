@@ -198,8 +198,8 @@ export default function APISettings() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/5 rounded w-32" />
-        <div className="h-64 bg-black/5 rounded" />
+        <div className="h-8 bg-black/10 rounded w-32" />
+        <div className="h-64 bg-black/10 rounded" />
       </div>
     )
   }
@@ -209,7 +209,7 @@ export default function APISettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">API & Integrations</h1>
-          <p className="text-sm text-black/50 mt-0.5">Connect Avenize to your tools</p>
+          <p className="text-sm text-black mt-0.5">Connect Avenize to your tools</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -271,16 +271,16 @@ export default function APISettings() {
 
             {apiKeys.length === 0 ? (
               <div className="p-8 text-center">
-                <Key className="w-12 h-12 mx-auto text-black/20 mb-3" />
-                <p className="text-black/50">No API keys yet</p>
-                <p className="text-xs text-black/30 mt-1">Create a key to access the REST API</p>
+                <Key className="w-12 h-12 mx-auto text-black/50 mb-3" />
+                <p className="text-black">No API keys yet</p>
+                <p className="text-xs text-black mt-1">Create a key to access the REST API</p>
               </div>
             ) : (
               <div className="divide-y divide-black/[0.04]">
                 {apiKeys.map((key) => (
                   <div key={key.id} className="p-4 flex items-center gap-4">
                     <div className="w-10 h-10 rounded-xl bg-black/[0.05] flex items-center justify-center">
-                      <Key size={18} className="text-black/40" />
+                      <Key size={18} className="text-black" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -291,10 +291,10 @@ export default function APISettings() {
                           {key.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
-                      <p className="text-sm text-black/50 font-mono">
+                      <p className="text-sm text-black font-mono">
                         {key.key_prefix}••••••••••••••
                       </p>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-black/30">
+                      <div className="flex items-center gap-4 mt-1 text-xs text-black">
                         <span>Created {new Date(key.created_at).toLocaleDateString()}</span>
                         {key.last_used_at && (
                           <span>Last used {new Date(key.last_used_at).toLocaleDateString()}</span>
@@ -375,9 +375,9 @@ export default function APISettings() {
 
             {webhooks.length === 0 ? (
               <div className="p-8 text-center">
-                <Webhook className="w-12 h-12 mx-auto text-black/20 mb-3" />
-                <p className="text-black/50">No webhooks yet</p>
-                <p className="text-xs text-black/30 mt-1">Create a webhook to receive event notifications</p>
+                <Webhook className="w-12 h-12 mx-auto text-black/50 mb-3" />
+                <p className="text-black">No webhooks yet</p>
+                <p className="text-xs text-black mt-1">Create a webhook to receive event notifications</p>
               </div>
             ) : (
               <div className="divide-y divide-black/[0.04]">
@@ -391,7 +391,7 @@ export default function APISettings() {
                           {webhook.is_active ? (
                             <CheckCircle2 size={18} className="text-green-600" />
                           ) : (
-                            <AlertTriangle size={18} className="text-black/40" />
+                            <AlertTriangle size={18} className="text-black" />
                           )}
                         </div>
                         <div>
@@ -403,7 +403,7 @@ export default function APISettings() {
                               {webhook.is_active ? 'Active' : 'Paused'}
                             </span>
                           </div>
-                          <p className="text-sm text-black/50 font-mono truncate max-w-md">
+                          <p className="text-sm text-black font-mono truncate max-w-md">
                             {webhook.url}
                           </p>
                         </div>
@@ -432,7 +432,7 @@ export default function APISettings() {
                         </span>
                       ))}
                     </div>
-                    <div className="mt-2 flex items-center gap-4 text-xs text-black/30">
+                    <div className="mt-2 flex items-center gap-4 text-xs text-black">
                       {webhook.last_triggered_at && (
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
@@ -458,7 +458,7 @@ export default function APISettings() {
             <div className="grid md:grid-cols-3 gap-4">
               {['CRM', 'Tasks', 'Finance', 'Team', 'Support'].map((category) => (
                 <div key={category}>
-                  <h3 className="text-xs font-medium text-black/40 uppercase mb-2">{category}</h3>
+                  <h3 className="text-xs font-medium text-black uppercase mb-2">{category}</h3>
                   <div className="space-y-1">
                     {WEBHOOK_EVENTS.filter((e) => e.category === category).map((event) => (
                       <div key={event.name} className="text-sm text-black/70">
@@ -475,7 +475,7 @@ export default function APISettings() {
 
       {/* New API Key Modal */}
       {showNewKeyModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Create API Key</h2>
@@ -500,7 +500,7 @@ export default function APISettings() {
                       </code>
                       <button
                         onClick={() => copyToClipboard(newKey)}
-                        className="px-3 py-2 rounded-xl border border-black/10 hover:bg-black/[0.02]"
+                        className="px-3 py-2 rounded-xl border border-black/10 hover:bg-black/10"
                       >
                         <Copy size={16} />
                       </button>
@@ -517,7 +517,7 @@ export default function APISettings() {
                       placeholder="Zapier Integration"
                       className="w-full px-4 py-3 rounded-xl border border-black/10"
                     />
-                    <p className="text-xs text-black/40 mt-1">
+                    <p className="text-xs text-black mt-1">
                       Give it a descriptive name to remember its purpose
                     </p>
                   </div>
@@ -547,7 +547,7 @@ export default function APISettings() {
 
       {/* New Webhook Modal */}
       {showNewWebhookModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Create Webhook</h2>
@@ -573,7 +573,7 @@ export default function APISettings() {
                   placeholder="https://hooks.zapier.com/hooks/catch/..."
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                 />
-                <p className="text-xs text-black/40 mt-1">Must use HTTPS</p>
+                <p className="text-xs text-black mt-1">Must use HTTPS</p>
               </div>
               <div>
                 <label className="text-sm font-medium block mb-2">Events</label>
@@ -588,7 +588,7 @@ export default function APISettings() {
                       />
                       <div>
                         <span className="text-sm">{event.label}</span>
-                        <span className="text-xs text-black/30 ml-2">({event.category})</span>
+                        <span className="text-xs text-black ml-2">({event.category})</span>
                       </div>
                     </label>
                   ))}

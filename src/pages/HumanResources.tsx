@@ -35,7 +35,7 @@ export default function HumanResources() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Human Resources</h1>
-          <p className="text-sm text-black/50">Staff management & HR operations</p>
+          <p className="text-sm text-black">Staff management & HR operations</p>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export default function HumanResources() {
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
               activeTab === tab.id
                 ? 'avenize-gradient text-white'
-                : 'bg-white text-black/60 hover:bg-black/5'
+                : 'bg-white text-black/60 hover:bg-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -108,7 +108,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
 
   const cards = [
     { label: 'Total Staff', value: stats.totalStaff, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
@@ -126,7 +126,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
               <card.icon size={20} className={card.color} />
             </div>
             <div className="text-2xl font-semibold">{card.value}</div>
-            <div className="text-sm text-black/50">{card.label}</div>
+            <div className="text-sm text-black">{card.label}</div>
           </div>
         ))}
       </div>
@@ -135,15 +135,15 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <h3 className="font-medium mb-3">Quick Actions</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
               <Calendar size={20} className="text-amber-500" />
               <span>Request Leave</span>
             </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
               <Clock size={20} className="text-blue-500" />
               <span>Check In Today</span>
             </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
               <Award size={20} className="text-purple-500" />
               <span>View My Reviews</span>
             </button>
@@ -157,14 +157,14 @@ function OverviewTab({ businessId }: { businessId?: string }) {
               <Calendar size={20} className="text-amber-500" />
               <div>
                 <div className="text-sm font-medium">Public Holiday</div>
-                <div className="text-xs text-black/50">Tomorrow</div>
+                <div className="text-xs text-black">Tomorrow</div>
               </div>
             </div>
             <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
               <Award size={20} className="text-blue-500" />
               <div>
                 <div className="text-sm font-medium">Performance Review</div>
-                <div className="text-xs text-black/50">Due in 5 days</div>
+                <div className="text-xs text-black">Due in 5 days</div>
               </div>
             </div>
           </div>
@@ -302,11 +302,11 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : requests.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Calendar size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No leave requests</p>
+          <Calendar size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No leave requests</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -315,16 +315,16 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-medium">{leaveTypes.find(l => l.id === req.leave_type_id)?.label || 'Leave'}</span>
-                  <p className="text-sm text-black/50">
+                  <p className="text-sm text-black">
                     {new Date(req.start_date).toLocaleDateString()} - {new Date(req.end_date).toLocaleDateString()}
                   </p>
-                  <p className="text-sm text-black/40">{req.days_requested} day(s)</p>
+                  <p className="text-sm text-black">{req.days_requested} day(s)</p>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full ${statusColors[req.status]}`}>
                   {req.status}
                 </span>
               </div>
-              {req.reason && <p className="text-sm text-black/50 mt-2">{req.reason}</p>}
+              {req.reason && <p className="text-sm text-black mt-2">{req.reason}</p>}
             </div>
           ))}
         </div>
@@ -397,7 +397,7 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="text-center">
           <div className="text-4xl font-bold mb-2">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-          <div className="text-black/50 mb-4">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+          <div className="text-black mb-4">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
           {!isCheckedIn ? (
             <button
               onClick={handleCheckIn}
@@ -425,15 +425,15 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
       {todayRecord && (
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
-            <div className="text-sm text-black/50">Check In</div>
+            <div className="text-sm text-black">Check In</div>
             <div className="text-lg font-semibold">{todayRecord.check_in || '--:--'}</div>
           </div>
           <div className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
-            <div className="text-sm text-black/50">Check Out</div>
+            <div className="text-sm text-black">Check Out</div>
             <div className="text-lg font-semibold">{todayRecord.check_out || '--:--'}</div>
           </div>
           <div className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
-            <div className="text-sm text-black/50">Status</div>
+            <div className="text-sm text-black">Status</div>
             <div className={`text-lg font-semibold capitalize ${
               todayRecord.status === 'present' ? 'text-green-600' :
               todayRecord.status === 'late' ? 'text-amber-600' :
@@ -446,16 +446,16 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
       {/* Recent Records */}
       <h3 className="font-medium mb-3">Recent Attendance</h3>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : (
         <div className="space-y-2">
           {records.slice(0, 14).map((record) => (
             <div key={record.id} className="bg-white rounded-xl border border-black/[0.06] p-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Calendar size={16} className="text-black/30" />
+                <Calendar size={16} className="text-black" />
                 <span className="text-sm font-medium">{new Date(record.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
               </div>
-              <div className="flex items-center gap-4 text-sm text-black/50">
+              <div className="flex items-center gap-4 text-sm text-black">
                 <span>In: {record.check_in || '--'}</span>
                 <span>Out: {record.check_out || '--'}</span>
                 <span className={`capitalize ${
@@ -494,11 +494,11 @@ function PerformanceTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : reviews.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Award size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No performance reviews yet</p>
+          <Award size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No performance reviews yet</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -513,32 +513,32 @@ function PerformanceTab({ businessId }: { businessId?: string }) {
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                <div className="bg-black/5 rounded-lg p-2">
-                  <div className="text-xs text-black/50">Quality</div>
+                <div className="bg-black/10 rounded-lg p-2">
+                  <div className="text-xs text-black">Quality</div>
                   <div className="font-medium">{review.rating_quality || 0}/5</div>
                 </div>
-                <div className="bg-black/5 rounded-lg p-2">
-                  <div className="text-xs text-black/50">Productivity</div>
+                <div className="bg-black/10 rounded-lg p-2">
+                  <div className="text-xs text-black">Productivity</div>
                   <div className="font-medium">{review.rating_productivity || 0}/5</div>
                 </div>
-                <div className="bg-black/5 rounded-lg p-2">
-                  <div className="text-xs text-black/50">Communication</div>
+                <div className="bg-black/10 rounded-lg p-2">
+                  <div className="text-xs text-black">Communication</div>
                   <div className="font-medium">{review.rating_communication || 0}/5</div>
                 </div>
-                <div className="bg-black/5 rounded-lg p-2">
-                  <div className="text-xs text-black/50">Teamwork</div>
+                <div className="bg-black/10 rounded-lg p-2">
+                  <div className="text-xs text-black">Teamwork</div>
                   <div className="font-medium">{review.rating_teamwork || 0}/5</div>
                 </div>
               </div>
               {review.strengths && (
                 <div className="mb-2">
-                  <div className="text-xs text-black/50 mb-1">Strengths</div>
+                  <div className="text-xs text-black mb-1">Strengths</div>
                   <p className="text-sm text-black/70">{review.strengths}</p>
                 </div>
               )}
               {review.improvements && (
                 <div>
-                  <div className="text-xs text-black/50 mb-1">Areas for Improvement</div>
+                  <div className="text-xs text-black mb-1">Areas for Improvement</div>
                   <p className="text-sm text-black/70">{review.improvements}</p>
                 </div>
               )}
@@ -669,7 +669,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (
@@ -677,7 +677,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-medium">{job.title}</h3>
-                  <p className="text-sm text-black/50">
+                  <p className="text-sm text-black">
                     {job.department && `${job.department} • `}{job.location}
                   </p>
                 </div>
@@ -697,13 +697,13 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-medium">{app.full_name}</h4>
-                      <p className="text-sm text-black/50">{app.job_postings?.title || 'Position'}</p>
+                      <p className="text-sm text-black">{app.job_postings?.title || 'Position'}</p>
                     </div>
                     <span className={`text-xs px-3 py-1 rounded-full ${statusColors[app.status]}`}>
                       {app.status}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-black/40">
+                  <div className="flex items-center gap-4 mt-2 text-sm text-black">
                     {app.email && <span>{app.email}</span>}
                     {app.phone && <span>{app.phone}</span>}
                   </div>
@@ -745,11 +745,11 @@ function ContractsTab({ businessId }: { businessId?: string }) {
       <h2 className="font-medium mb-4">My Contracts</h2>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : contracts.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <FileText size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No contracts found</p>
+          <FileText size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No contracts found</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -766,12 +766,12 @@ function ContractsTab({ businessId }: { businessId?: string }) {
                 </div>
                 {contract.salary_amount && (
                   <div className="text-right">
-                    <div className="text-sm text-black/50">Salary</div>
+                    <div className="text-sm text-black">Salary</div>
                     <div className="font-semibold">₦{contract.salary_amount.toLocaleString()}/{contract.salary_frequency}</div>
                   </div>
                 )}
               </div>
-              <div className="mt-2 flex items-center gap-4 text-sm text-black/50">
+              <div className="mt-2 flex items-center gap-4 text-sm text-black">
                 <span>Probation: {contract.probation_months} months</span>
                 <span>Notice: {contract.notice_period_days} days</span>
               </div>
@@ -819,18 +819,18 @@ function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         {Object.entries(departmentStats).map(([dept, count]) => (
           <div key={dept} className="bg-white rounded-xl border border-black/[0.06] p-3">
-            <div className="text-xs text-black/50">{dept}</div>
+            <div className="text-xs text-black">{dept}</div>
             <div className="text-xl font-semibold">{count as number}</div>
           </div>
         ))}
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : employees.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Users size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No employees found</p>
+          <Users size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No employees found</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -842,11 +842,11 @@ function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any 
                 </div>
                 <div className="flex-1">
                   <div className="font-medium">{emp.full_name || emp.name}</div>
-                  <div className="text-sm text-black/50">{emp.department || 'No department'} • {emp.role}</div>
+                  <div className="text-sm text-black">{emp.department || 'No department'} • {emp.role}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-medium">{emp.email}</div>
-                  {emp.phone && <div className="text-xs text-black/40">{emp.phone}</div>}
+                  {emp.phone && <div className="text-xs text-black">{emp.phone}</div>}
                 </div>
               </div>
             </div>
@@ -887,25 +887,25 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : payslips.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Wallet size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No payslips available</p>
-          <p className="text-sm text-black/40 mt-1">Payslips will appear after payroll processing</p>
+          <Wallet size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No payslips available</p>
+          <p className="text-sm text-black mt-1">Payslips will appear after payroll processing</p>
         </div>
       ) : (
         <div className="space-y-3">
           {payslips.map((payslip) => (
             <div 
               key={payslip.id} 
-              className="bg-white rounded-2xl border border-black/[0.06] p-4 cursor-pointer hover:bg-black/[0.02]"
+              className="bg-white rounded-2xl border border-black/[0.06] p-4 cursor-pointer hover:bg-black/10"
               onClick={() => setSelectedPayslip(payslip)}
             >
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium">{new Date(payslip.pay_period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
-                  <div className="text-sm text-black/50">
+                  <div className="text-sm text-black">
                     Basic: {formatCurrency(payslip.basic_salary)} • Net: {formatCurrency(payslip.net_pay)}
                   </div>
                 </div>
@@ -915,7 +915,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
                   }`}>
                     {payslip.status}
                   </span>
-                  <Download size={16} className="text-black/30" />
+                  <Download size={16} className="text-black" />
                 </div>
               </div>
             </div>
@@ -925,18 +925,18 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
 
       {/* Payslip Detail Modal */}
       {selectedPayslip && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-auto">
             <div className="p-4 border-b border-black/[0.06] flex items-center justify-between">
               <h3 className="font-semibold">Payslip - {new Date(selectedPayslip.pay_period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>
-              <button onClick={() => setSelectedPayslip(null)} className="p-1 hover:bg-black/5 rounded">
+              <button onClick={() => setSelectedPayslip(null)} className="p-1 hover:bg-black/10 rounded">
                 <X size={20} />
               </button>
             </div>
             <div className="p-4 space-y-4">
               {/* Earnings */}
               <div>
-                <h4 className="text-sm font-medium text-black/50 mb-2">EARNINGS</h4>
+                <h4 className="text-sm font-medium text-black mb-2">EARNINGS</h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Basic Salary</span>
@@ -975,7 +975,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
 
               {/* Deductions */}
               <div>
-                <h4 className="text-sm font-medium text-black/50 mb-2">DEDUCTIONS</h4>
+                <h4 className="text-sm font-medium text-black mb-2">DEDUCTIONS</h4>
                 <div className="space-y-2">
                   {selectedPayslip.tax_deduction > 0 && (
                     <div className="flex justify-between">
@@ -1073,7 +1073,7 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
               </div>
               <div>
                 <div className="font-medium">{benefit.name}</div>
-                <div className="text-xs text-black/50">{benefit.provider}</div>
+                <div className="text-xs text-black">{benefit.provider}</div>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -1219,12 +1219,12 @@ function TrainingTab({ businessId }: { businessId?: string }) {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : trainings.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <GraduationCap size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No training records</p>
-          <p className="text-sm text-black/40 mt-1">Add your completed trainings and certifications</p>
+          <GraduationCap size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No training records</p>
+          <p className="text-sm text-black mt-1">Add your completed trainings and certifications</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -1232,10 +1232,10 @@ function TrainingTab({ businessId }: { businessId?: string }) {
             <div key={training.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <GraduationCap size={20} className="text-black/30" />
+                  <GraduationCap size={20} className="text-black" />
                   <div>
                     <div className="font-medium">{training.title}</div>
-                    <div className="text-sm text-black/50">{training.provider}</div>
+                    <div className="text-sm text-black">{training.provider}</div>
                   </div>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${typeColors[training.type]}`}>
@@ -1243,7 +1243,7 @@ function TrainingTab({ businessId }: { businessId?: string }) {
                 </span>
               </div>
               <div className="flex items-center justify-between mt-2">
-                <span className="text-xs text-black/40">
+                <span className="text-xs text-black">
                   {training.start_date && new Date(training.start_date).toLocaleDateString()}
                   {training.end_date && ` - ${new Date(training.end_date).toLocaleDateString()}`}
                 </span>

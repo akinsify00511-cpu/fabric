@@ -219,8 +219,8 @@ export default function SMSSettings() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/5 rounded w-48" />
-        <div className="h-64 bg-black/5 rounded" />
+        <div className="h-8 bg-black/10 rounded w-48" />
+        <div className="h-64 bg-black/10 rounded" />
       </div>
     )
   }
@@ -230,7 +230,7 @@ export default function SMSSettings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">SMS Settings</h1>
-          <p className="text-sm text-black/50 mt-0.5">Configure Termii SMS for notifications</p>
+          <p className="text-sm text-black mt-0.5">Configure Termii SMS for notifications</p>
         </div>
         {balance !== null && (
           <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg">
@@ -258,7 +258,7 @@ export default function SMSSettings() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -289,12 +289,12 @@ export default function SMSSettings() {
                   <button
                     type="button"
                     onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black/40 hover:text-black"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   >
                     {showApiKey ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-                <p className="text-xs text-black/50 mt-1.5">
+                <p className="text-xs text-black mt-1.5">
                   Get your API key from <a href="https://termii.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">termii.com <ExternalLink size={10} className="inline" /></a>
                 </p>
               </div>
@@ -309,7 +309,7 @@ export default function SMSSettings() {
                   maxLength={11}
                   className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none"
                 />
-                <p className="text-xs text-black/50 mt-1.5">
+                <p className="text-xs text-black mt-1.5">
                   Alphanumeric sender ID (up to 11 characters)
                 </p>
               </div>
@@ -323,7 +323,7 @@ export default function SMSSettings() {
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition ${
                         settings.channel === channel.value
                           ? 'border-[#4285F4] bg-[#4285F4]/5'
-                          : 'border-black/10 hover:bg-black/[0.02]'
+                          : 'border-black/10 hover:bg-black/10'
                       }`}
                     >
                       <input
@@ -336,7 +336,7 @@ export default function SMSSettings() {
                       />
                       <div>
                         <div className="font-medium text-sm">{channel.label}</div>
-                        <div className="text-xs text-black/50">{channel.description}</div>
+                        <div className="text-xs text-black">{channel.description}</div>
                       </div>
                     </label>
                   ))}
@@ -355,7 +355,7 @@ export default function SMSSettings() {
                 <button
                   onClick={checkBalance}
                   disabled={checkingBalance || !settings.apiKey}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 hover:bg-black/[0.02] disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 hover:bg-black/10 disabled:opacity-50"
                 >
                   <RefreshCw size={16} className={checkingBalance ? 'animate-spin' : ''} />
                   {checkingBalance ? 'Checking...' : 'Check Balance'}
@@ -389,10 +389,10 @@ export default function SMSSettings() {
                   className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none resize-none"
                 />
                 <div className="flex justify-between mt-1.5">
-                  <p className="text-xs text-black/50">
+                  <p className="text-xs text-black">
                     Estimated segments: {SMSUtils.calculateSMSCount(testMessage)}
                   </p>
-                  <p className="text-xs text-black/50">
+                  <p className="text-xs text-black">
                     {testMessage.length} / 160 characters
                   </p>
                 </div>
@@ -427,9 +427,9 @@ export default function SMSSettings() {
           </div>
 
           {historyLoading ? (
-            <div className="p-8 text-center text-black/50">Loading...</div>
+            <div className="p-8 text-center text-black">Loading...</div>
           ) : smsHistory.length === 0 ? (
-            <div className="p-8 text-center text-black/50">
+            <div className="p-8 text-center text-black">
               <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
               <p>No SMS history yet</p>
             </div>
@@ -437,7 +437,7 @@ export default function SMSSettings() {
             <>
               <table className="w-full">
                 <thead className="bg-black/[0.02]">
-                  <tr className="text-left text-xs font-medium text-black/50 uppercase">
+                  <tr className="text-left text-xs font-medium text-black uppercase">
                     <th className="px-4 py-3">Recipient</th>
                     <th className="px-4 py-3">Message</th>
                     <th className="px-4 py-3">Status</th>
@@ -446,13 +446,13 @@ export default function SMSSettings() {
                 </thead>
                 <tbody className="divide-y divide-black/[0.06]">
                   {smsHistory.map((sms) => (
-                    <tr key={sms.id} className="hover:bg-black/[0.02]">
+                    <tr key={sms.id} className="hover:bg-black/10">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-sm">{sms.recipient}</span>
                           <button
                             onClick={() => copyToClipboard(sms.recipient)}
-                            className="text-black/30 hover:text-black"
+                            className="text-black hover:text-black"
                           >
                             <Copy size={12} />
                           </button>
@@ -474,7 +474,7 @@ export default function SMSSettings() {
                           {SMSUtils.getStatusName(sms.status)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-black/50">
+                      <td className="px-4 py-3 text-sm text-black">
                         {SMSUtils.formatSMSTime(sms.created_at)}
                       </td>
                     </tr>
@@ -487,17 +487,17 @@ export default function SMSSettings() {
                 <button
                   onClick={() => setHistoryPage(Math.max(0, historyPage - 1))}
                   disabled={historyPage === 0}
-                  className="px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02] disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/10 disabled:opacity-50"
                 >
                   Previous
                 </button>
-                <span className="text-sm text-black/50">
+                <span className="text-sm text-black">
                   Page {historyPage + 1}
                 </span>
                 <button
                   onClick={() => setHistoryPage(historyPage + 1)}
                   disabled={smsHistory.length < historyPerPage}
-                  className="px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02] disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/10 disabled:opacity-50"
                 >
                   Next
                 </button>
@@ -521,7 +521,7 @@ export default function SMSSettings() {
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="font-medium">{template.name}</h3>
-                  <p className="text-xs text-black/50">Slug: {template.slug}</p>
+                  <p className="text-xs text-black">Slug: {template.slug}</p>
                 </div>
                 <button
                   onClick={() => copyToClipboard(template.message)}

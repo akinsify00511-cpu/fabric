@@ -214,7 +214,7 @@ export default function Tasks() {
             }`}
           >
             <p className="text-2xl font-bold">{stat.value}</p>
-            <p className="text-xs text-black/50">{stat.label}</p>
+            <p className="text-xs text-black">{stat.label}</p>
           </button>
         ))}
       </div>
@@ -241,7 +241,7 @@ export default function Tasks() {
 
       <div className="bg-white rounded-xl border border-black/[0.06] overflow-hidden">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-black/40">
+          <div className="p-8 text-center text-black">
             <Circle size={32} className="mx-auto mb-2 opacity-50" />
             <p>No tasks yet</p>
           </div>
@@ -250,7 +250,7 @@ export default function Tasks() {
             {filtered.map(task => {
               const StatusIcon = STATUS_ICONS[task.status]
               return (
-                <div key={task.id} className="flex items-center gap-3 p-4 hover:bg-black/[0.02] group">
+                <div key={task.id} className="flex items-center gap-3 p-4 hover:bg-black/10 group">
                   <button
                     onClick={() => toggleStatus(task.id)}
                     disabled={isDemo}
@@ -266,14 +266,14 @@ export default function Tasks() {
                     {task.status === 'in_progress' && <Clock size={12} />}
                   </button>
                   <div className="flex-1">
-                    <p className={`text-sm ${task.status === 'done' ? 'line-through text-black/40' : ''}`}>
+                    <p className={`text-sm ${task.status === 'done' ? 'line-through text-black' : ''}`}>
                       {task.title}
                     </p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${PRIORITY_COLORS[task.priority]}`}>
                     {task.priority}
                   </span>
-                  <span className="text-xs text-black/30">
+                  <span className="text-xs text-black">
                     {new Date(task.created_at).toLocaleDateString()}
                   </span>
                   <button

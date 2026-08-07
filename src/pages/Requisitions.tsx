@@ -257,7 +257,7 @@ export default function Requisitions() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Requisitions</h1>
-          <p className="text-sm text-black/50 mt-0.5">Request approvals for purchases and expenses</p>
+          <p className="text-sm text-black mt-0.5">Request approvals for purchases and expenses</p>
         </div>
         <button
           onClick={openNewModal}
@@ -289,7 +289,7 @@ export default function Requisitions() {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
         <input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
@@ -303,13 +303,13 @@ export default function Requisitions() {
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-black/5 rounded-xl" />
+              <div key={i} className="h-24 bg-black/10 rounded-xl" />
             ))}
           </div>
         ) : filteredReqs.length === 0 ? (
           <div className="bg-white rounded-2xl border border-black/[0.06] p-8 text-center">
-            <FileText className="w-12 h-12 mx-auto text-black/20 mb-3" />
-            <p className="text-black/50">No requisitions found</p>
+            <FileText className="w-12 h-12 mx-auto text-black/50 mb-3" />
+            <p className="text-black">No requisitions found</p>
           </div>
         ) : (
           filteredReqs.map((req) => {
@@ -330,9 +330,9 @@ export default function Requisitions() {
                           {req.priority}
                         </span>
                       </div>
-                      <p className="text-sm text-black/50">{req.requester?.full_name || 'Unknown'}</p>
+                      <p className="text-sm text-black">{req.requester?.full_name || 'Unknown'}</p>
                       {req.category && (
-                        <span className="text-xs text-black/40">{req.category.name}</span>
+                        <span className="text-xs text-black">{req.category.name}</span>
                       )}
                     </div>
                   </div>
@@ -342,7 +342,7 @@ export default function Requisitions() {
                         {req.currency} {req.amount.toLocaleString()}
                       </p>
                     )}
-                    <p className="text-xs text-black/40">
+                    <p className="text-xs text-black">
                       {new Date(req.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -422,7 +422,7 @@ export default function Requisitions() {
 
       {/* New/Edit Modal */}
       {showNewModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">{selectedReq ? 'Edit Request' : 'New Requisition'}</h2>
@@ -457,7 +457,7 @@ export default function Requisitions() {
                 <div>
                   <label className="text-sm font-medium block mb-1">Amount</label>
                   <div className="relative">
-                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
                     <input
                       value={formData.amount}
                       onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
@@ -486,7 +486,7 @@ export default function Requisitions() {
               <div>
                 <label className="text-sm font-medium block mb-1">Needed By</label>
                 <div className="relative">
-                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
                   <input
                     value={formData.needed_by}
                     onChange={(e) => setFormData({ ...formData, needed_by: e.target.value })}
@@ -539,7 +539,7 @@ export default function Requisitions() {
 
       {/* Detail Modal */}
       {showDetailModal && selectedReq && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Requisition Details</h2>
@@ -563,21 +563,21 @@ export default function Requisitions() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-black/40">Amount</p>
+                  <p className="text-black">Amount</p>
                   <p className="font-medium">
                     {selectedReq.currency} {selectedReq.amount?.toLocaleString() || '—'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-black/40">Priority</p>
+                  <p className="text-black">Priority</p>
                   <p className="font-medium capitalize">{selectedReq.priority}</p>
                 </div>
                 <div>
-                  <p className="text-black/40">Requested By</p>
+                  <p className="text-black">Requested By</p>
                   <p className="font-medium">{selectedReq.requester?.full_name || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-black/40">Needed By</p>
+                  <p className="text-black">Needed By</p>
                   <p className="font-medium">
                     {selectedReq.needed_by ? new Date(selectedReq.needed_by).toLocaleDateString() : '—'}
                   </p>
@@ -586,7 +586,7 @@ export default function Requisitions() {
 
               {selectedReq.reason && (
                 <div className="p-4 rounded-xl bg-black/[0.02]">
-                  <p className="text-sm text-black/40 mb-1">Business Justification</p>
+                  <p className="text-sm text-black mb-1">Business Justification</p>
                   <p className="text-sm">{selectedReq.reason}</p>
                 </div>
               )}

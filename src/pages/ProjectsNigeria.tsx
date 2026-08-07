@@ -97,7 +97,7 @@ interface Variation {
 }
 
 const PIPELINE_STAGES: { key: PipelineStage; label: string; color: string }[] = [
-  { key: 'enquiry', label: 'Enquiry', color: 'slate' },
+  { key: 'enquiry', label: 'Enquiry', color: 'blue' },
   { key: 'quoted', label: 'Quoted', color: 'yellow' },
   { key: 'approved', label: 'Approved', color: 'blue' },
   { key: 'materials_allocated', label: 'Materials Ready', color: 'indigo' },
@@ -345,12 +345,12 @@ export default function ProjectsNigeria() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium">Jobs & Projects</h1>
-          <p className="text-sm text-black/50">Track projects, restoration, real estate, and paint production</p>
+          <p className="text-sm text-black">Track projects, restoration, real estate, and paint production</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             to="/app/settings/projects"
-            className="p-2 hover:bg-black/[0.05] rounded-lg text-black/50"
+            className="p-2 hover:bg-black/[0.05] rounded-lg text-black"
             title="Project Settings"
           >
             <Settings size={18} />
@@ -368,19 +368,19 @@ export default function ProjectsNigeria() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Total Jobs</p>
+          <p className="text-xs text-black mb-1">Total Jobs</p>
           <p className="text-2xl font-bold">{stats.total}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Active</p>
+          <p className="text-xs text-black mb-1">Active</p>
           <p className="text-2xl font-bold text-purple-600">{stats.active}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Total Value</p>
+          <p className="text-xs text-black mb-1">Total Value</p>
           <p className="text-lg font-bold text-[#4285F4]">{formatCurrency(stats.value)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Overdue</p>
+          <p className="text-xs text-black mb-1">Overdue</p>
           <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
         </div>
       </div>
@@ -411,7 +411,7 @@ export default function ProjectsNigeria() {
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
         <div className="flex-1 min-w-[200px] relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
           <input
             type="text"
             value={searchQuery}
@@ -447,8 +447,8 @@ export default function ProjectsNigeria() {
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-5 bg-black/5 rounded w-1/3 mb-2" />
-              <div className="h-4 bg-black/5 rounded w-1/2" />
+              <div className="h-5 bg-black/10 rounded w-1/3 mb-2" />
+              <div className="h-4 bg-black/10 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -458,7 +458,7 @@ export default function ProjectsNigeria() {
             <Wrench size={24} className="text-[#4285F4]" />
           </div>
           <h3 className="font-semibold mb-2">No jobs found</h3>
-          <p className="text-sm text-black/50 mb-4">
+          <p className="text-sm text-black mb-4">
             {searchQuery || typeFilter !== 'all' || stageFilter !== 'all'
               ? 'Try adjusting your filters'
               : 'Create your first job to get started'}
@@ -484,13 +484,13 @@ export default function ProjectsNigeria() {
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono text-black/40">{job.job_number}</span>
+                    <span className="text-xs font-mono text-black">{job.job_number}</span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${getJobTypeColorClass(job.type)}`}>
                       {getJobTypeLabel(job.type)}
                     </span>
                   </div>
                   <h3 className="font-medium">{job.title}</h3>
-                  <p className="text-sm text-black/50">{job.client_name}</p>
+                  <p className="text-sm text-black">{job.client_name}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-semibold text-[#4285F4]">{formatCurrency(job.value)}</p>
@@ -505,7 +505,7 @@ export default function ProjectsNigeria() {
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 text-xs text-black/50 mt-3 pt-3 border-t border-black/5">
+              <div className="flex items-center gap-4 text-xs text-black mt-3 pt-3 border-t border-black/5">
                 {job.location && (
                   <span className="flex items-center gap-1">
                     <MapPin size={12} />
@@ -528,7 +528,7 @@ export default function ProjectsNigeria() {
 
       {/* New Job Modal */}
       {showNewJob && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">New Job</h2>
@@ -658,11 +658,11 @@ export default function ProjectsNigeria() {
 
       {/* Job Detail Modal */}
       {selectedJob && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl mb-8">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <div>
-                <span className="text-xs font-mono text-black/40">{selectedJob.job_number}</span>
+                <span className="text-xs font-mono text-black">{selectedJob.job_number}</span>
                 <h2 className="font-semibold text-lg">{selectedJob.title}</h2>
               </div>
               <div className="flex items-center gap-2">
@@ -726,16 +726,16 @@ export default function ProjectsNigeria() {
               {/* Job Details */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-white rounded-xl p-3">
-                  <p className="text-xs text-black/50">Value</p>
+                  <p className="text-xs text-black">Value</p>
                   <p className="font-semibold text-[#4285F4]">{formatCurrency(selectedJob.value)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-3">
-                  <p className="text-xs text-black/50">Type</p>
+                  <p className="text-xs text-black">Type</p>
                   <p className="font-medium">{getJobTypeLabel(selectedJob.type)}</p>
                 </div>
                 {selectedJob.location && (
                   <div className="bg-white rounded-xl p-3 col-span-2">
-                    <p className="text-xs text-black/50">Location</p>
+                    <p className="text-xs text-black">Location</p>
                     <p className="font-medium flex items-center gap-1">
                       <MapPin size={14} />
                       {selectedJob.location}
@@ -744,7 +744,7 @@ export default function ProjectsNigeria() {
                 )}
                 {selectedJob.end_date && (
                   <div className="bg-white rounded-xl p-3">
-                    <p className="text-xs text-black/50">Due Date</p>
+                    <p className="text-xs text-black">Due Date</p>
                     <p className={`font-medium ${
                       new Date(selectedJob.end_date) < new Date() && selectedJob.stage !== 'paid'
                         ? 'text-red-600'

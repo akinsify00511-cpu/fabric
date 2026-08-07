@@ -34,7 +34,7 @@ export default function Operations() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Operations</h1>
-          <p className="text-sm text-black/50">Processes, compliance & organization</p>
+          <p className="text-sm text-black">Processes, compliance & organization</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ export default function Operations() {
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
               activeTab === tab.id
                 ? 'avenize-gradient text-white'
-                : 'bg-white text-black/60 hover:bg-black/5'
+                : 'bg-white text-black/60 hover:bg-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -106,7 +106,7 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
     setLoading(false)
   }
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
 
   return (
     <div>
@@ -119,7 +119,7 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
             </div>
             <div className="text-2xl font-bold">{stats.openIssues}</div>
           </div>
-          <div className="text-sm text-black/50">Open Issues</div>
+          <div className="text-sm text-black">Open Issues</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
@@ -128,7 +128,7 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
             </div>
             <div className="text-2xl font-bold">{stats.pendingCompliance}</div>
           </div>
-          <div className="text-sm text-black/50">Compliance Items</div>
+          <div className="text-sm text-black">Compliance Items</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
@@ -137,7 +137,7 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
             </div>
             <div className="text-2xl font-bold">{stats.activeSOPs}</div>
           </div>
-          <div className="text-sm text-black/50">Active SOPs</div>
+          <div className="text-sm text-black">Active SOPs</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
@@ -146,7 +146,7 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
             </div>
             <div className="text-2xl font-bold">{stats.pendingApprovals}</div>
           </div>
-          <div className="text-sm text-black/50">Pending Approvals</div>
+          <div className="text-sm text-black">Pending Approvals</div>
         </div>
       </div>
 
@@ -155,19 +155,19 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <h3 className="font-medium mb-3">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-2">
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <Plus size={18} className="text-[#4285F4]" />
               <span className="text-sm">Report Issue</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <Bell size={18} className="text-[#4285F4]" />
               <span className="text-sm">Announcement</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <FileText size={18} className="text-[#4285F4]" />
               <span className="text-sm">New SOP</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
+            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <ScrollText size={18} className="text-[#4285F4]" />
               <span className="text-sm">Compliance</span>
             </button>
@@ -178,17 +178,17 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <h3 className="font-medium mb-3">Recent Announcements</h3>
           {recentAnnouncements.length === 0 ? (
-            <p className="text-sm text-black/40 py-4 text-center">No announcements yet</p>
+            <p className="text-sm text-black py-4 text-center">No announcements yet</p>
           ) : (
             <div className="space-y-3">
               {recentAnnouncements.map((ann) => (
-                <div key={ann.id} className="p-3 bg-black/5 rounded-xl">
+                <div key={ann.id} className="p-3 bg-black/10 rounded-xl">
                   <div className="flex items-center gap-2">
                     {ann.priority === 'urgent' && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Urgent</span>}
                     {ann.is_pinned && <Pin size={12} className="text-amber-500" />}
                   </div>
                   <p className="font-medium text-sm mt-1">{ann.title}</p>
-                  <p className="text-xs text-black/50 mt-1">{new Date(ann.created_at).toLocaleDateString()}</p>
+                  <p className="text-xs text-black mt-1">{new Date(ann.created_at).toLocaleDateString()}</p>
                 </div>
               ))}
             </div>
@@ -306,11 +306,11 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : announcements.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Bell size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No announcements yet</p>
+          <Bell size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No announcements yet</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -321,11 +321,11 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
                   <div className="flex items-center gap-2 mb-1">
                     {ann.is_pinned && <Pin size={14} className="text-amber-500" />}
                     <span className={`text-xs px-2 py-0.5 rounded-full ${priorityColors[ann.priority]}`}>{ann.priority}</span>
-                    <span className="text-xs bg-black/5 px-2 py-0.5 rounded-full text-black/50 capitalize">{ann.category}</span>
+                    <span className="text-xs bg-black/10 px-2 py-0.5 rounded-full text-black capitalize">{ann.category}</span>
                   </div>
                   <h3 className="font-medium">{ann.title}</h3>
                   <p className="text-sm text-black/60 mt-2">{ann.content}</p>
-                  <p className="text-xs text-black/40 mt-3">{new Date(ann.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                  <p className="text-xs text-black mt-3">{new Date(ann.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 </div>
               </div>
             </div>
@@ -420,12 +420,12 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
       )}
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : issues.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
           <CheckCircle2 size={48} className="mx-auto text-green-500 mb-3" />
-          <p className="text-black/50">No open issues!</p>
-          <p className="text-sm text-black/30 mt-1">Everything is running smoothly</p>
+          <p className="text-black">No open issues!</p>
+          <p className="text-sm text-black mt-1">Everything is running smoothly</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -436,7 +436,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${priorityColors[issue.priority]}`}>{issue.priority}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[issue.status]}`}>{issue.status.replace('_', ' ')}</span>
-                    <span className="text-xs text-black/40 capitalize">{issue.issue_type}</span>
+                    <span className="text-xs text-black capitalize">{issue.issue_type}</span>
                   </div>
                   <h3 className="font-medium">{issue.title}</h3>
                   <p className="text-sm text-black/60 mt-1">{issue.description}</p>
@@ -494,11 +494,11 @@ function SOPsTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : sops.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <BookOpen size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No SOPs created yet</p>
+          <BookOpen size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No SOPs created yet</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -512,11 +512,11 @@ function SOPsTab({ businessId }: { businessId?: string }) {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs bg-black/5 px-2 py-0.5 rounded text-black/50 capitalize">{sop.category}</span>
+                      <span className="text-xs bg-black/10 px-2 py-0.5 rounded text-black capitalize">{sop.category}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[sop.status]}`}>{sop.status}</span>
                     </div>
                     <h3 className="font-medium">{sop.title}</h3>
-                    {sop.description && <p className="text-sm text-black/50 mt-1">{sop.description}</p>}
+                    {sop.description && <p className="text-sm text-black mt-1">{sop.description}</p>}
                   </div>
                 </div>
               </div>
@@ -559,11 +559,11 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : workflows.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <GitBranch size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No workflows created</p>
+          <GitBranch size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No workflows created</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -577,11 +577,11 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs bg-black/5 px-2 py-0.5 rounded text-black/50 capitalize">{wf.workflow_type}</span>
+                      <span className="text-xs bg-black/10 px-2 py-0.5 rounded text-black capitalize">{wf.workflow_type}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
                     <h3 className="font-medium mt-1">{wf.name}</h3>
-                    {wf.description && <p className="text-sm text-black/50 mt-1">{wf.description}</p>}
+                    {wf.description && <p className="text-sm text-black mt-1">{wf.description}</p>}
                   </div>
                 </div>
               </div>
@@ -627,11 +627,11 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : items.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Scale size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No compliance items</p>
+          <Scale size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No compliance items</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -640,12 +640,12 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs bg-black/5 px-2 py-0.5 rounded text-black/50 capitalize">{item.compliance_type}</span>
+                    <span className="text-xs bg-black/10 px-2 py-0.5 rounded text-black capitalize">{item.compliance_type}</span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[item.status]}`}>{item.status.replace('_', ' ')}</span>
                     {item.regulation && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">{item.regulation}</span>}
                   </div>
                   <h3 className="font-medium">{item.requirement}</h3>
-                  {item.due_date && <p className="text-sm text-black/50 mt-1">Due: {new Date(item.due_date).toLocaleDateString()}</p>}
+                  {item.due_date && <p className="text-sm text-black mt-1">Due: {new Date(item.due_date).toLocaleDateString()}</p>}
                 </div>
                 <button onClick={async () => {
                   await supabase.from('compliance_items').update({ status: 'compliant', reviewed_at: new Date().toISOString() }).eq('id', item.id)
@@ -686,7 +686,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     report: 'bg-green-500/10 text-green-500',
     legal: 'bg-white0/10 text-black',
     training: 'bg-teal-500/10 text-teal-500',
-    other: 'bg-black/10 text-black/50',
+    other: 'bg-black/10 text-black',
   }
 
   return (
@@ -699,11 +699,11 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : documents.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Archive size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No documents uploaded</p>
+          <Archive size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No documents uploaded</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -756,11 +756,11 @@ function DepartmentsTab({ businessId }: { businessId?: string }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : departments.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Building2 size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No departments created</p>
+          <Building2 size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No departments created</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -772,11 +772,11 @@ function DepartmentsTab({ businessId }: { businessId?: string }) {
                 </div>
                 <div>
                   <h3 className="font-medium">{dept.name}</h3>
-                  {dept.code && <p className="text-xs text-black/40">{dept.code}</p>}
+                  {dept.code && <p className="text-xs text-black">{dept.code}</p>}
                 </div>
               </div>
-              {dept.description && <p className="text-sm text-black/50">{dept.description}</p>}
-              <div className="flex items-center gap-4 mt-3 text-sm text-black/40">
+              {dept.description && <p className="text-sm text-black">{dept.description}</p>}
+              <div className="flex items-center gap-4 mt-3 text-sm text-black">
                 {dept.headcount > 0 && <span>{dept.headcount} staff</span>}
                 {dept.budget && <span>₦{dept.budget.toLocaleString()}</span>}
               </div>

@@ -266,7 +266,7 @@ export default function Campaigns() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Email Marketing</h1>
-          <p className="text-sm text-black/50 mt-0.5">Campaigns, contacts, and automations</p>
+          <p className="text-sm text-black mt-0.5">Campaigns, contacts, and automations</p>
         </div>
         <button
           onClick={() => setShowBuilder(true)}
@@ -291,7 +291,7 @@ export default function Campaigns() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -309,28 +309,28 @@ export default function Campaigns() {
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Send size={14} className="text-[#8B5CF6]" />
-                <span className="text-xs text-black/50 uppercase tracking-wide">Sent</span>
+                <span className="text-xs text-black uppercase tracking-wide">Sent</span>
               </div>
               <p className="text-2xl font-bold text-black">{stats.totalSent.toLocaleString()}</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <MousePointer size={14} className="text-blue-500" />
-                <span className="text-xs text-black/50 uppercase tracking-wide">Open Rate</span>
+                <span className="text-xs text-black uppercase tracking-wide">Open Rate</span>
               </div>
               <p className="text-2xl font-bold text-black">{stats.avgOpenRate}%</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp size={14} className="text-green-500" />
-                <span className="text-xs text-black/50 uppercase tracking-wide">Click Rate</span>
+                <span className="text-xs text-black uppercase tracking-wide">Click Rate</span>
               </div>
               <p className="text-2xl font-bold text-black">{stats.avgClickRate}%</p>
             </div>
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Mail size={14} className="text-black/30" />
-                <span className="text-xs text-black/50 uppercase tracking-wide">Campaigns</span>
+                <Mail size={14} className="text-black" />
+                <span className="text-xs text-black uppercase tracking-wide">Campaigns</span>
               </div>
               <p className="text-2xl font-bold text-black">{stats.total}</p>
             </div>
@@ -341,16 +341,16 @@ export default function Campaigns() {
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
-                  <div className="h-4 bg-black/5 rounded w-48 mb-2" />
-                  <div className="h-3 bg-black/5 rounded w-32" />
+                  <div className="h-4 bg-black/10 rounded w-48 mb-2" />
+                  <div className="h-3 bg-black/10 rounded w-32" />
                 </div>
               ))}
             </div>
           ) : campaigns.length === 0 ? (
             <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
-              <Mail size={48} className="mx-auto mb-4 text-black/10" />
+              <Mail size={48} className="mx-auto mb-4 text-black/40" />
               <h3 className="text-lg font-medium text-black mb-2">No campaigns yet</h3>
-              <p className="text-sm text-black/50 mb-4">Create your first email campaign to connect with your audience</p>
+              <p className="text-sm text-black mb-4">Create your first email campaign to connect with your audience</p>
               <button
                 onClick={() => setShowBuilder(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
@@ -371,7 +371,7 @@ export default function Campaigns() {
                           {STATUS_CONFIG[campaign.status].label}
                         </span>
                       </div>
-                      <p className="text-sm text-black/50 truncate">{campaign.subject}</p>
+                      <p className="text-sm text-black truncate">{campaign.subject}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {campaign.status === 'draft' && (
@@ -394,20 +394,20 @@ export default function Campaigns() {
 
                   {/* Stats Bar */}
                   <div className="flex items-center gap-6 mt-3 pt-3 border-t border-black/[0.06]">
-                    <div className="flex items-center gap-1.5 text-xs text-black/50">
+                    <div className="flex items-center gap-1.5 text-xs text-black">
                       <Users size={12} />
                       <span>{campaign.sent_count?.toLocaleString() || 0} sent</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-black/50">
+                    <div className="flex items-center gap-1.5 text-xs text-black">
                       <Eye size={12} />
                       <span>{getOpenRate(campaign)}% opens</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-black/50">
+                    <div className="flex items-center gap-1.5 text-xs text-black">
                       <MousePointer size={12} />
                       <span>{getClickRate(campaign)}% clicks</span>
                     </div>
                     {campaign.sent_at && (
-                      <span className="text-xs text-black/30 ml-auto">
+                      <span className="text-xs text-black ml-auto">
                         {new Date(campaign.sent_at).toLocaleDateString()}
                       </span>
                     )}
@@ -423,10 +423,10 @@ export default function Campaigns() {
       {activeTab === 'contacts' && (
         <>
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-black/50">{contacts.length} contacts</p>
+            <p className="text-sm text-black">{contacts.length} contacts</p>
             <button
               onClick={addContact}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/10"
             >
               <Plus size={14} />
               Add Contact
@@ -438,7 +438,7 @@ export default function Campaigns() {
               <div key={contact.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-black">{contact.email}</p>
-                  <p className="text-xs text-black/40">
+                  <p className="text-xs text-black">
                     {contact.first_name || contact.last_name
                       ? `${contact.first_name || ''} ${contact.last_name || ''}`.trim()
                       : 'No name'}
@@ -446,7 +446,7 @@ export default function Campaigns() {
                 </div>
                 <div className="flex items-center gap-2">
                   {contact.tags?.map((tag) => (
-                    <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-black/[0.05] text-black/50">
+                    <span key={tag} className="text-xs px-2 py-0.5 rounded-full bg-black/[0.05] text-black">
                       {tag}
                     </span>
                   ))}
@@ -459,7 +459,7 @@ export default function Campaigns() {
               </div>
             ))}
             {contacts.length === 0 && (
-              <div className="px-4 py-8 text-center text-black/40">
+              <div className="px-4 py-8 text-center text-black">
                 <Users size={32} className="mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No contacts yet. Add your first contact!</p>
               </div>
@@ -470,7 +470,7 @@ export default function Campaigns() {
 
       {/* Builder Modal */}
       {showBuilder && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="text-lg font-semibold">New Campaign</h2>
@@ -522,10 +522,10 @@ export default function Campaigns() {
 
               <div className="bg-black/[0.02] rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Users size={14} className="text-black/40" />
+                  <Users size={14} className="text-black" />
                   <span className="text-sm font-medium">Recipients</span>
                 </div>
-                <p className="text-xs text-black/50">
+                <p className="text-xs text-black">
                   This campaign will be sent to all active contacts.
                   Add more contacts in the Contacts tab.
                 </p>
@@ -536,7 +536,7 @@ export default function Campaigns() {
             <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
               <button
                 onClick={resetBuilder}
-                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
               >
                 Cancel
               </button>

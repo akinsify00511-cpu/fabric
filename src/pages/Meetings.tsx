@@ -295,7 +295,7 @@ export default function Meetings() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Meetings</h1>
-          <p className="text-sm text-black/50 mt-0.5">
+          <p className="text-sm text-black mt-0.5">
             Voice memo recording • AI transcription & summaries coming soon
           </p>
         </div>
@@ -326,7 +326,7 @@ export default function Meetings() {
 
       {/* Recording Modal */}
       {showRecorder && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-semibold text-lg">New Recording</h2>
@@ -371,7 +371,7 @@ export default function Meetings() {
                 {formatDuration(recordingTime)}
               </p>
 
-              <p className="text-sm text-black/50 mb-6">
+              <p className="text-sm text-black mb-6">
                 {isRecording
                   ? 'Recording in progress...'
                   : 'Click to start recording'}
@@ -394,7 +394,7 @@ export default function Meetings() {
 
       {/* Search */}
       <div className="relative mb-6">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
         <input
           type="text"
           value={searchQuery}
@@ -409,8 +409,8 @@ export default function Meetings() {
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-5 bg-black/5 rounded w-3/4 mb-3" />
-              <div className="h-4 bg-black/5 rounded w-1/2" />
+              <div className="h-5 bg-black/10 rounded w-3/4 mb-3" />
+              <div className="h-4 bg-black/10 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -420,7 +420,7 @@ export default function Meetings() {
             <Mic size={24} className="text-[#4285F4]" />
           </div>
           <h3 className="font-semibold mb-2">No meetings yet</h3>
-          <p className="text-sm text-black/50 mb-6">
+          <p className="text-sm text-black mb-6">
             Start recording voice memos. AI-powered notes coming soon!
           </p>
           <button
@@ -470,7 +470,7 @@ export default function Meetings() {
                       {meeting.title}
                     </h3>
                   )}
-                  <div className="flex items-center gap-3 mt-1 text-xs text-black/50">
+                  <div className="flex items-center gap-3 mt-1 text-xs text-black">
                     <span className="flex items-center gap-1">
                       <Clock size={12} />
                       {formatDuration(meeting.duration)}
@@ -491,7 +491,7 @@ export default function Meetings() {
                   {getStatusBadge(meeting.status)}
                   <button
                     onClick={() => deleteMeeting(meeting.id)}
-                    className="p-1.5 hover:bg-red-50 rounded-lg text-black/30 hover:text-red-500 transition-colors"
+                    className="p-1.5 hover:bg-red-50 rounded-lg text-black hover:text-red-500 transition-colors"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -527,12 +527,12 @@ export default function Meetings() {
 
       {/* Meeting Detail Modal */}
       {selectedMeeting && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-3xl mb-20">
             <div className="flex items-center justify-between p-6 border-b border-black/5">
               <div>
                 <h2 className="font-semibold text-lg">{selectedMeeting.title}</h2>
-                <p className="text-sm text-black/50">
+                <p className="text-sm text-black">
                   {new Date(selectedMeeting.date).toLocaleString()} • {formatDuration(selectedMeeting.duration)}
                 </p>
               </div>
@@ -552,7 +552,7 @@ export default function Meetings() {
                     AI Summary
                   </h3>
                   <div className="p-4 bg-gradient-to-br from-[#4285F4]/5 to-[#0D9488]/5 rounded-xl">
-                    <pre className="text-sm whitespace-pre-wrap text-black/80 font-sans">
+                    <pre className="text-sm whitespace-pre-wrap text-black font-sans">
                       {selectedMeeting.summary}
                     </pre>
                   </div>
@@ -577,7 +577,7 @@ export default function Meetings() {
                 <div className="flex justify-end">
                   <button
                     onClick={() => transcribeMeeting(selectedMeeting)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 text-black/60 text-sm font-medium opacity-60 cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/10 text-black/60 text-sm font-medium opacity-60 cursor-not-allowed"
                     disabled
                     title="Coming Soon"
                   >

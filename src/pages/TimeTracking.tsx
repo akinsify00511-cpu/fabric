@@ -259,7 +259,7 @@ export default function TimeTracking() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Time Tracking</h1>
-          <p className="text-sm text-black/50 mt-0.5">Track your work hours and request time off</p>
+          <p className="text-sm text-black mt-0.5">Track your work hours and request time off</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -307,7 +307,7 @@ export default function TimeTracking() {
             )}
           </div>
           {activeEntry && (
-            <p className="text-sm text-black/50 mt-3">
+            <p className="text-sm text-black mt-3">
               {activeEntry.description || 'Tracking time...'}
             </p>
           )}
@@ -343,11 +343,11 @@ export default function TimeTracking() {
               isToday ? 'avenize-gradient text-white' : 'bg-white border border-black/[0.06]'
             }`}
           >
-            <p className={`text-xs ${isToday ? 'text-white/80' : 'text-black/40'}`}>
+            <p className={`text-xs ${isToday ? 'text-white/80' : 'text-black'}`}>
               {WEEKDAYS[date.getDay()]}
             </p>
             <p className="text-lg font-bold">{date.getDate()}</p>
-            <p className={`text-xs ${isToday ? 'text-white/80' : 'text-black/50'}`}>
+            <p className={`text-xs ${isToday ? 'text-white/80' : 'text-black'}`}>
               {summary ? `${Math.round(summary.total_minutes / 60)}h` : '—'}
             </p>
             {summary?.goal_met && (
@@ -360,21 +360,21 @@ export default function TimeTracking() {
       {/* Week Summary */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <div className="flex items-center gap-2 text-black/50 mb-1">
+          <div className="flex items-center gap-2 text-black mb-1">
             <Clock size={16} />
             <span className="text-xs">Total Hours</span>
           </div>
           <p className="text-2xl font-bold">{(weekTotal / 60).toFixed(1)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <div className="flex items-center gap-2 text-black/50 mb-1">
+          <div className="flex items-center gap-2 text-black mb-1">
             <Target size={16} />
             <span className="text-xs">Target</span>
           </div>
           <p className="text-2xl font-bold">40h</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <div className="flex items-center gap-2 text-black/50 mb-1">
+          <div className="flex items-center gap-2 text-black mb-1">
             <TrendingUp size={16} />
             <span className="text-xs">Progress</span>
           </div>
@@ -389,8 +389,8 @@ export default function TimeTracking() {
       <div className="space-y-2">
         {entries.length === 0 ? (
           <div className="bg-white rounded-xl border border-black/[0.06] p-6 text-center">
-            <Clock className="w-10 h-10 mx-auto text-black/20 mb-2" />
-            <p className="text-black/50">No time entries this week</p>
+            <Clock className="w-10 h-10 mx-auto text-black/50 mb-2" />
+            <p className="text-black">No time entries this week</p>
           </div>
         ) : (
           entries.map((entry) => (
@@ -402,7 +402,7 @@ export default function TimeTracking() {
                   </div>
                   <div>
                     <p className="font-medium">{entry.description || 'No description'}</p>
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black">
                       {new Date(entry.start_time).toLocaleDateString()} •{' '}
                       {new Date(entry.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -{' '}
                       {entry.end_time ? new Date(entry.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'now'}
@@ -427,7 +427,7 @@ export default function TimeTracking() {
 
       {/* Manual Entry Modal */}
       {showManualModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Add Manual Entry</h2>
@@ -495,7 +495,7 @@ export default function TimeTracking() {
 
       {/* Time Off Modal */}
       {showTimeOffModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Request Time Off</h2>

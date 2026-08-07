@@ -241,7 +241,7 @@ export default function Tickets() {
             </button>
           </div>
           <div className="relative mb-3">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -277,11 +277,11 @@ export default function Tickets() {
           {loading ? (
             <div className="p-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-20 bg-black/5 rounded-xl animate-pulse" />
+                <div key={i} className="h-20 bg-black/10 rounded-xl animate-pulse" />
               ))}
             </div>
           ) : filteredTickets.length === 0 ? (
-            <div className="p-8 text-center text-black/40">
+            <div className="p-8 text-center text-black">
               <Ticket size={32} className="mx-auto mb-2 opacity-30" />
               <p className="text-sm">No tickets found</p>
             </div>
@@ -295,7 +295,7 @@ export default function Tickets() {
                   className={`w-full p-4 text-left border-b border-black/[0.04] transition ${
                     selectedTicket?.id === ticket.id
                       ? 'bg-[#8B5CF6]/5'
-                      : 'hover:bg-black/[0.02]'
+                      : 'hover:bg-black/10'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
@@ -307,7 +307,7 @@ export default function Tickets() {
                     )}
                   </div>
                   <p className="text-sm font-medium text-black line-clamp-1">{ticket.subject}</p>
-                  <p className="text-xs text-black/40 mt-1">
+                  <p className="text-xs text-black mt-1">
                     {ticket.customer_name ?? 'Unknown'} · {new Date(ticket.created_at).toLocaleDateString()}
                   </p>
                 </button>
@@ -330,7 +330,7 @@ export default function Tickets() {
             </button>
             <div className="flex-1 min-w-0">
               <h2 className="font-medium text-black truncate">{selectedTicket.subject}</h2>
-              <p className="text-xs text-black/40">
+              <p className="text-xs text-black">
                 #{selectedTicket.id.slice(0, 8)} · {selectedTicket.customer_name ?? 'Unknown customer'}
               </p>
             </div>
@@ -357,7 +357,7 @@ export default function Tickets() {
                 </div>
                 <div>
                   <p className="text-sm font-medium">{selectedTicket.customer_name ?? 'Customer'}</p>
-                  <p className="text-xs text-black/40">{new Date(selectedTicket.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-black">{new Date(selectedTicket.created_at).toLocaleString()}</p>
                 </div>
                 <div className="ml-auto flex items-center gap-2">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${PRIORITY_CONFIG[selectedTicket.priority].color} bg-current/10`}>
@@ -365,7 +365,7 @@ export default function Tickets() {
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-black/80 whitespace-pre-wrap">{selectedTicket.description}</p>
+              <p className="text-sm text-black whitespace-pre-wrap">{selectedTicket.description}</p>
             </div>
 
             {/* Replies */}
@@ -391,10 +391,10 @@ export default function Tickets() {
                         <span className="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">Internal</span>
                       )}
                     </p>
-                    <p className="text-xs text-black/40">{new Date(reply.created_at).toLocaleString()}</p>
+                    <p className="text-xs text-black">{new Date(reply.created_at).toLocaleString()}</p>
                   </div>
                 </div>
-                <p className="text-sm text-black/80 whitespace-pre-wrap">{reply.content}</p>
+                <p className="text-sm text-black whitespace-pre-wrap">{reply.content}</p>
               </div>
             ))}
           </div>
@@ -415,7 +415,7 @@ export default function Tickets() {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-1.5 text-xs text-black/50 cursor-pointer">
+                <label className="flex items-center gap-1.5 text-xs text-black cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isInternal}
@@ -441,16 +441,16 @@ export default function Tickets() {
         /* Empty State */
         <div className="hidden md:flex flex-1 items-center justify-center bg-[#F8F9FA]">
           <div className="text-center">
-            <Ticket size={64} className="mx-auto mb-4 text-black/10" />
+            <Ticket size={64} className="mx-auto mb-4 text-black/40" />
             <h2 className="text-lg font-medium text-black">Select a ticket</h2>
-            <p className="text-sm text-black/40 mt-1">Choose a ticket from the list to view details</p>
+            <p className="text-sm text-black mt-1">Choose a ticket from the list to view details</p>
           </div>
         </div>
       )}
 
       {/* New Ticket Modal */}
       {showNewTicket && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="text-lg font-semibold">New Ticket</h2>
@@ -512,7 +512,7 @@ export default function Tickets() {
             <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
               <button
                 onClick={() => setShowNewTicket(false)}
-                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
               >
                 Cancel
               </button>

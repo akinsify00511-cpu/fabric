@@ -319,7 +319,7 @@ export default function Integrations() {
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'social' 
               ? 'bg-white text-black shadow-sm' 
-              : 'text-black/50 hover:text-black/70'
+              : 'text-black hover:text-black/70'
           }`}
         >
           <Share2 size={16} />
@@ -330,7 +330,7 @@ export default function Integrations() {
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             activeTab === 'sms' 
               ? 'bg-white text-black shadow-sm' 
-              : 'text-black/50 hover:text-black/70'
+              : 'text-black hover:text-black/70'
           }`}
         >
           <MessageSquare size={16} />
@@ -369,11 +369,11 @@ export default function Integrations() {
                     )}
                   </div>
                   {platform.connected ? (
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black">
                       {platform.account_name} • {platform.followers_count?.toLocaleString() || 0} followers
                     </p>
                   ) : (
-                    <p className="text-sm text-black/50">Not connected</p>
+                    <p className="text-sm text-black">Not connected</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
@@ -381,7 +381,7 @@ export default function Integrations() {
                     <>
                       <button
                         onClick={() => connectSocialPlatform(platform)}
-                        className="p-2 hover:bg-black/[0.05] rounded-lg text-black/50"
+                        className="p-2 hover:bg-black/[0.05] rounded-lg text-black"
                         title="Settings"
                       >
                         <Settings size={18} />
@@ -441,12 +441,12 @@ export default function Integrations() {
                     )}
                   </div>
                   {provider.connected ? (
-                    <p className="text-sm text-black/50">
+                    <p className="text-sm text-black">
                       {provider.phone_number || provider.sender_id ? `${provider.phone_number || provider.sender_id}` : 'Configured'}
                       {provider.configured_at && ` • Connected ${new Date(provider.configured_at).toLocaleDateString()}`}
                     </p>
                   ) : (
-                    <p className="text-sm text-black/50">Not configured</p>
+                    <p className="text-sm text-black">Not configured</p>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
@@ -480,11 +480,11 @@ export default function Integrations() {
 
       {/* Twilio Configuration Modal */}
       {showTwilioModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-semibold">Configure Twilio</h2>
-              <p className="text-sm text-black/50 mt-1">Enter your Twilio credentials</p>
+              <p className="text-sm text-black mt-1">Enter your Twilio credentials</p>
             </div>
             <div className="p-6 space-y-4">
               <div>
@@ -549,11 +549,11 @@ export default function Integrations() {
 
       {/* Africa&apos;s Talking Configuration Modal */}
       {showAtModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-semibold">Configure Africa&apos;s Talking</h2>
-              <p className="text-sm text-black/50 mt-1">Enter your Africa&apos;s Talking credentials</p>
+              <p className="text-sm text-black mt-1">Enter your Africa&apos;s Talking credentials</p>
             </div>
             <div className="p-6 space-y-4">
               <div>
@@ -608,11 +608,11 @@ export default function Integrations() {
 
       {/* Termii Configuration Modal */}
       {showTermiiModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="text-lg font-semibold">Configure Termii</h2>
-              <p className="text-sm text-black/50 mt-1">Enter your Termii credentials</p>
+              <p className="text-sm text-black mt-1">Enter your Termii credentials</p>
             </div>
             <div className="p-6 space-y-4">
               <div>

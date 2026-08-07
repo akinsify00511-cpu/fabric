@@ -132,9 +132,9 @@ export default function NotificationBell() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg hover:bg-black/5 transition"
+        className="relative p-2 rounded-lg hover:bg-black/10 transition"
       >
-        <Bell size={20} className={unreadCount > 0 ? 'text-[#4285F4]' : 'text-black/50'} />
+        <Bell size={20} className={unreadCount > 0 ? 'text-[#4285F4]' : 'text-black'} />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -150,7 +150,7 @@ export default function NotificationBell() {
             <div>
               <h3 className="font-semibold">Notifications</h3>
               {unreadCount > 0 && (
-                <p className="text-xs text-black/50">{unreadCount} unread</p>
+                <p className="text-xs text-black">{unreadCount} unread</p>
               )}
             </div>
             {unreadCount > 0 && (
@@ -167,14 +167,14 @@ export default function NotificationBell() {
           {/* Notification List */}
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="p-8 text-center text-black/40">
+              <div className="p-8 text-center text-black">
                 <div className="animate-spin w-6 h-6 border-2 border-current border-t-transparent rounded-full mx-auto" />
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <Bell size={32} className="mx-auto text-black/20 mb-2" />
-                <p className="text-sm text-black/50">No notifications yet</p>
-                <p className="text-xs text-black/40 mt-1">
+                <Bell size={32} className="mx-auto text-black/50 mb-2" />
+                <p className="text-sm text-black">No notifications yet</p>
+                <p className="text-xs text-black mt-1">
                   We'll notify you when something important happens
                 </p>
               </div>
@@ -187,7 +187,7 @@ export default function NotificationBell() {
                   return (
                     <div
                       key={notification.id}
-                      className={`p-4 hover:bg-black/[0.02] transition ${
+                      className={`p-4 hover:bg-black/10 transition ${
                         !notification.read ? 'bg-[#4285F4]/5' : ''
                       }`}
                       onClick={() => !notification.read && markAsRead(notification.id)}
@@ -205,11 +205,11 @@ export default function NotificationBell() {
                               <span className="w-2 h-2 bg-[#4285F4] rounded-full shrink-0 mt-1" />
                             )}
                           </div>
-                          <p className="text-xs text-black/50 mt-0.5 line-clamp-2">
+                          <p className="text-xs text-black mt-0.5 line-clamp-2">
                             {notification.message}
                           </p>
                           <div className="flex items-center justify-between mt-2">
-                            <span className="text-[10px] text-black/40">
+                            <span className="text-[10px] text-black">
                               {formatTime(notification.created_at)}
                             </span>
                             {notification.action_url && (

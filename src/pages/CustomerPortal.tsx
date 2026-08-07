@@ -151,8 +151,8 @@ export default function CustomerPortal() {
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/5 rounded w-48" />
-        <div className="h-64 bg-black/5 rounded" />
+        <div className="h-8 bg-black/10 rounded w-48" />
+        <div className="h-64 bg-black/10 rounded" />
       </div>
     )
   }
@@ -162,7 +162,7 @@ export default function CustomerPortal() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Customer Portal</h1>
-          <p className="text-sm text-black/50 mt-0.5">Give clients self-service access</p>
+          <p className="text-sm text-black mt-0.5">Give clients self-service access</p>
         </div>
         <button
           onClick={() => {
@@ -210,9 +210,9 @@ export default function CustomerPortal() {
 
         {invitations.length === 0 ? (
           <div className="p-8 text-center">
-            <Users className="w-12 h-12 mx-auto text-black/20 mb-3" />
-            <p className="text-black/50">No client invitations yet</p>
-            <p className="text-xs text-black/30 mt-1">Invite clients to give them portal access</p>
+            <Users className="w-12 h-12 mx-auto text-black/50 mb-3" />
+            <p className="text-black">No client invitations yet</p>
+            <p className="text-xs text-black mt-1">Invite clients to give them portal access</p>
           </div>
         ) : (
           <div className="divide-y divide-black/[0.04]">
@@ -232,7 +232,7 @@ export default function CustomerPortal() {
                       ) : invitation.status === 'pending' ? (
                         <Mail className="w-5 h-5 text-yellow-600" />
                       ) : (
-                        <X className="w-5 h-5 text-black/40" />
+                        <X className="w-5 h-5 text-black" />
                       )}
                     </div>
                     <div>
@@ -250,7 +250,7 @@ export default function CustomerPortal() {
                           {invitation.status}
                         </span>
                       </div>
-                      <p className="text-sm text-black/50">{invitation.email}</p>
+                      <p className="text-sm text-black">{invitation.email}</p>
                       <div className="flex items-center gap-2 mt-1">
                         {invitation.can_view_invoices && (
                           <span className="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
@@ -296,7 +296,7 @@ export default function CustomerPortal() {
 
       {/* Invite Modal */}
       {showInviteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">
@@ -334,7 +334,7 @@ export default function CustomerPortal() {
                       </code>
                       <button
                         onClick={() => copyLink(newInvitation.token)}
-                        className="px-3 py-2 rounded-xl border border-black/10 hover:bg-black/[0.02]"
+                        className="px-3 py-2 rounded-xl border border-black/10 hover:bg-black/10"
                       >
                         <Copy size={16} />
                       </button>
@@ -362,7 +362,7 @@ export default function CustomerPortal() {
                             className={`px-3 py-1.5 rounded-full text-sm border transition ${
                               email === contact.email
                                 ? 'avenize-gradient text-white border-transparent'
-                                : 'border-black/10 hover:bg-black/[0.02]'
+                                : 'border-black/10 hover:bg-black/10'
                             }`}
                           >
                             {contact.name || contact.email}
@@ -406,7 +406,7 @@ export default function CustomerPortal() {
                         />
                         <div>
                           <span className="text-sm">View Invoices</span>
-                          <p className="text-xs text-black/40">Allow viewing and downloading invoices</p>
+                          <p className="text-xs text-black">Allow viewing and downloading invoices</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer">
@@ -418,7 +418,7 @@ export default function CustomerPortal() {
                         />
                         <div>
                           <span className="text-sm">View Quotes</span>
-                          <p className="text-xs text-black/40">Allow viewing proposals and quotes</p>
+                          <p className="text-xs text-black">Allow viewing proposals and quotes</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer">
@@ -430,7 +430,7 @@ export default function CustomerPortal() {
                         />
                         <div>
                           <span className="text-sm">View Projects</span>
-                          <p className="text-xs text-black/40">Allow tracking project progress</p>
+                          <p className="text-xs text-black">Allow tracking project progress</p>
                         </div>
                       </label>
                       <label className="flex items-center gap-3 cursor-pointer">
@@ -442,7 +442,7 @@ export default function CustomerPortal() {
                         />
                         <div>
                           <span className="text-sm">Submit Tickets</span>
-                          <p className="text-xs text-black/40">Allow creating support requests</p>
+                          <p className="text-xs text-black">Allow creating support requests</p>
                         </div>
                       </label>
                     </div>

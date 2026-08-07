@@ -129,7 +129,7 @@ export default function NotificationsCenterPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Notifications</h1>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
             </p>
           </div>
@@ -144,8 +144,8 @@ export default function NotificationsCenterPage() {
               Mark all read
             </button>
           )}
-          <button className="p-2 rounded-lg hover:bg-black/5">
-            <Settings size={20} className="text-black/50" />
+          <button className="p-2 rounded-lg hover:bg-black/10">
+            <Settings size={20} className="text-black" />
           </button>
         </div>
       </div>
@@ -185,13 +185,13 @@ export default function NotificationsCenterPage() {
       {/* Notifications List */}
       <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
         {loading ? (
-          <div className="p-12 text-center text-black/40">
+          <div className="p-12 text-center text-black">
             <RefreshCw size={24} className="mx-auto animate-spin mb-2" />
             Loading...
           </div>
         ) : filteredNotifications.length === 0 ? (
-          <div className="p-12 text-center text-black/40">
-            <Bell size={48} className="mx-auto mb-4 text-black/20" />
+          <div className="p-12 text-center text-black">
+            <Bell size={48} className="mx-auto mb-4 text-black/50" />
             <p className="font-medium mb-2">No notifications</p>
             <p className="text-sm">You're all caught up!</p>
           </div>
@@ -204,7 +204,7 @@ export default function NotificationsCenterPage() {
               return (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-black/[0.02] transition ${
+                  className={`p-4 hover:bg-black/10 transition ${
                     !notification.is_read ? 'bg-blue-50/50' : ''
                   }`}
                 >
@@ -224,7 +224,7 @@ export default function NotificationsCenterPage() {
                       {notification.message && (
                         <p className="text-sm text-black/60 line-clamp-2">{notification.message}</p>
                       )}
-                      <div className="flex items-center gap-2 mt-2 text-xs text-black/40">
+                      <div className="flex items-center gap-2 mt-2 text-xs text-black">
                         <Clock size={12} />
                         {new Date(notification.created_at).toLocaleString()}
                       </div>
@@ -233,10 +233,10 @@ export default function NotificationsCenterPage() {
                       {!notification.is_read && (
                         <button
                           onClick={() => markAsRead(notification.id)}
-                          className="p-2 hover:bg-black/5 rounded-lg"
+                          className="p-2 hover:bg-black/10 rounded-lg"
                           title="Mark as read"
                         >
-                          <Check size={16} className="text-black/50" />
+                          <Check size={16} className="text-black" />
                         </button>
                       )}
                       <button

@@ -73,11 +73,11 @@ export function FeatureComingSoon({
 }) {
   return (
     <div className={`p-6 rounded-xl border border-dashed border-black/10 text-center ${className}`}>
-      <div className="w-12 h-12 rounded-full bg-black/5 flex items-center justify-center mx-auto mb-3">
-        <Lock size={20} className="text-black/30" />
+      <div className="w-12 h-12 rounded-full bg-black/10 flex items-center justify-center mx-auto mb-3">
+        <Lock size={20} className="text-black" />
       </div>
       <h3 className="font-medium text-black/60 mb-1">{featureName}</h3>
-      <p className="text-sm text-black/40">
+      <p className="text-sm text-black">
         This feature is not yet available for your account.
       </p>
     </div>
@@ -105,7 +105,7 @@ export function BetaOnlyPage({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-medium text-black">{title}</h1>
-            <p className="text-sm text-black/50 mt-0.5">{description}</p>
+            <p className="text-sm text-black mt-0.5">{description}</p>
           </div>
           <BetaBadge />
         </div>

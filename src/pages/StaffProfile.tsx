@@ -83,7 +83,7 @@ export default function StaffProfile() {
       case 'admin': return 'bg-purple-100 text-purple-800'
       case 'manager': return 'bg-blue-100 text-blue-800'
       case 'team_lead': return 'bg-emerald-100 text-emerald-800'
-      default: return 'bg-slate-400 text-black'
+      default: return 'bg-slate-700 text-black'
     }
   }
 
@@ -136,8 +136,8 @@ export default function StaffProfile() {
     return (
       <div className="pb-20">
         <div className="animate-pulse space-y-4">
-          <div className="h-32 bg-black/5 rounded-2xl"></div>
-          <div className="h-48 bg-black/5 rounded-2xl"></div>
+          <div className="h-32 bg-black/10 rounded-2xl"></div>
+          <div className="h-48 bg-black/10 rounded-2xl"></div>
         </div>
       </div>
     )
@@ -147,7 +147,7 @@ export default function StaffProfile() {
     return (
       <div className="pb-20">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-8 text-center">
-          <p className="text-black/50">Profile not found</p>
+          <p className="text-black">Profile not found</p>
           <button 
             onClick={() => navigate(-1)}
             className="mt-4 px-4 py-2 bg-black text-white rounded-lg text-sm"
@@ -204,7 +204,7 @@ export default function StaffProfile() {
             <div className="w-px h-5 bg-[#E8E8E8]"></div>
             {focusAreas.map((area, i) => (
               <span key={i} className="inline-flex items-center gap-1.5 bg-[#F7F7F5] rounded-lg px-3 py-1.5 text-[13px]">
-                <area.icon size={14} className="text-black/40" />
+                <area.icon size={14} className="text-black" />
                 {area.label}
               </span>
             ))}
@@ -217,15 +217,15 @@ export default function StaffProfile() {
             <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[16px] font-medium">{role.title}</span>
-                <span className="text-[11px] bg-[#F7F7F5] rounded-lg px-2.5 py-1 text-black/50">
+                <span className="text-[11px] bg-[#F7F7F5] rounded-lg px-2.5 py-1 text-black">
                   {role.period}
                 </span>
               </div>
-              <p className="text-[12px] text-black/50 mb-2.5">{role.workspace}</p>
+              <p className="text-[12px] text-black mb-2.5">{role.workspace}</p>
               <div className="border-t border-black/[0.05] pt-2.5 space-y-1.5">
                 {role.achievements.map((achievement, j) => (
                   <div key={j} className="flex items-start gap-2 text-[13px]">
-                    <span className="text-black/30">•</span>
+                    <span className="text-black">•</span>
                     <span className="text-black/70">{achievement}</span>
                   </div>
                 ))}
@@ -249,7 +249,7 @@ export default function StaffProfile() {
                     />
                     <span className="text-[13px]">{ws.name}</span>
                   </div>
-                  <span className="text-[11px] text-black/50">{ws.access}</span>
+                  <span className="text-[11px] text-black">{ws.access}</span>
                 </div>
               ))}
             </div>
@@ -261,7 +261,7 @@ export default function StaffProfile() {
             <div className="grid grid-cols-2 gap-2.5">
               <div>
                 <div className="text-[20px] font-medium">14</div>
-                <div className="text-[11px] text-black/50">Deals closed</div>
+                <div className="text-[11px] text-black">Deals closed</div>
               </div>
               <div>
                 <div className="text-[20px] font-medium">112%</div>
@@ -282,7 +282,7 @@ export default function StaffProfile() {
                 to={link.href}
                 className="inline-flex items-center gap-1.5 bg-[#F7F7F5] rounded-lg px-3 py-1.5 text-[13px] hover:bg-[#E8E8E8] transition-colors"
               >
-                <link.icon size={14} className="text-black/40" />
+                <link.icon size={14} className="text-black" />
                 {link.label}
               </Link>
             ))}
@@ -299,7 +299,7 @@ export default function StaffProfile() {
                 href={`mailto:${profile.email}`}
                 className="inline-flex items-center gap-1.5 bg-[#F7F7F5] rounded-lg px-3 py-1.5 text-[13px] hover:bg-[#E8E8E8] transition-colors"
               >
-                <Mail size={14} className="text-black/40" />
+                <Mail size={14} className="text-black" />
                 {profile.email}
               </a>
             )}
@@ -308,7 +308,7 @@ export default function StaffProfile() {
                 href={`tel:${profile.phone}`}
                 className="inline-flex items-center gap-1.5 bg-[#F7F7F5] rounded-lg px-3 py-1.5 text-[13px] hover:bg-[#E8E8E8] transition-colors"
               >
-                <Phone size={14} className="text-black/40" />
+                <Phone size={14} className="text-black" />
                 {profile.phone}
               </a>
             )}

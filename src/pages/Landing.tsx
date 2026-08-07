@@ -582,7 +582,7 @@ function ProblemsSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 md:mb-16 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-700 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
             The Problem
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6 leading-tight">
@@ -603,7 +603,7 @@ function ProblemsSection() {
               style={{ animationDelay: `${i * 50}ms` }}
             >
               {/* Number Badge */}
-              <div className="w-10 h-10 rounded-lg bg-slate-400 flex items-center justify-center mb-4">
+              <div className="w-10 h-10 rounded-lg bg-slate-700 flex items-center justify-center mb-4">
                 <span className="text-lg font-bold text-black">{problem.num}</span>
               </div>
               
@@ -888,7 +888,7 @@ function DashboardsSection() {
 
         {/* Active Dashboard Display */}
         <div className="animate-on-scroll">
-          <div className="bg-black/50 backdrop-blur border border-black rounded-3xl p-8 md:p-12">
+          <div className="bg-black/100 backdrop-blur border border-black rounded-3xl p-8 md:p-12">
             {/* Dashboard Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
               <div className="flex items-center gap-4">
@@ -904,7 +904,7 @@ function DashboardsSection() {
               {/* Key Metrics */}
               <div className="flex flex-wrap gap-3">
                 {DASHBOARDS[activeTab].metrics.map((metric, i) => (
-                  <div key={i} className="px-4 py-2 bg-black/50 rounded-lg border border-black">
+                  <div key={i} className="px-4 py-2 bg-black/100 rounded-lg border border-black">
                     <p className="text-xs text-black uppercase tracking-wider">{metric}</p>
                   </div>
                 ))}
@@ -916,7 +916,7 @@ function DashboardsSection() {
               {DASHBOARDS[activeTab].features.map((feature, i) => (
                 <div 
                   key={i} 
-                  className="flex items-start gap-3 p-4 bg-black/50 rounded-xl border border-black hover:border-black transition-colors"
+                  className="flex items-start gap-3 p-4 bg-black/100 rounded-xl border border-black hover:border-black transition-colors"
                 >
                   <span className="text-emerald-400 text-xl mt-0.5">✓</span>
                   <span className="text-black">{feature}</span>
@@ -988,7 +988,7 @@ function PricingSection() {
               </div>
               <div className="text-xl md:text-2xl font-bold font-mono mb-1">
                 {plan.price}
-                <small className="block text-xs font-normal text-white/50 mt-1">{plan.sub}</small>
+                <small className="block text-xs font-normal text-white/80 mt-1">{plan.sub}</small>
               </div>
               <ul className="mt-4 space-y-2">
                 {plan.features.map((feature, j) => (
@@ -1025,7 +1025,7 @@ function FAQSection() {
       <div className="max-w-3xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-400 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-700 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
             Real Questions
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-black mb-4">
@@ -1081,7 +1081,7 @@ function StatsSection() {
   ]
 
   return (
-    <section className="py-12 md:py-16 bg-slate-400">
+    <section className="py-12 md:py-16 bg-slate-700">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, i) => (
@@ -1154,7 +1154,7 @@ function CTASection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="bg-slate-950 text-white/50 py-12 border-t border-black">
+    <footer className="bg-slate-950 text-white/80 py-12 border-t border-black">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">

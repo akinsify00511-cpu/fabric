@@ -31,7 +31,7 @@ export default function BusinessInfrastructure() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Business Infrastructure</h1>
-          <p className="text-sm text-black/50">HR, Payroll & Financial Assets</p>
+          <p className="text-sm text-black">HR, Payroll & Financial Assets</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export default function BusinessInfrastructure() {
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition ${
               activeTab === tab.id
                 ? 'avenize-gradient text-white'
-                : 'bg-white text-black/60 hover:bg-black/5'
+                : 'bg-white text-black/60 hover:bg-black/10'
             }`}
           >
             <tab.icon size={16} />
@@ -107,7 +107,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
 
   const cards = [
     { label: 'Branches', value: stats.branches, icon: MapPin, color: 'text-blue-500' },
@@ -124,7 +124,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
           <div key={card.label} className="bg-white rounded-2xl border border-black/[0.06] p-4">
             <card.icon size={24} className={`${card.color} mb-3`} />
             <div className="text-2xl font-semibold">{card.value}</div>
-            <div className="text-sm text-black/50">{card.label}</div>
+            <div className="text-sm text-black">{card.label}</div>
           </div>
         ))}
       </div>
@@ -192,9 +192,9 @@ function BranchesTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : branches.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><MapPin size={40} className="mx-auto mb-2 opacity-30" /><p>No branches yet</p></div>
+        <div className="text-center py-8 text-black"><MapPin size={40} className="mx-auto mb-2 opacity-30" /><p>No branches yet</p></div>
       ) : (
         <div className="space-y-3">
           {branches.map((branch) => (
@@ -204,8 +204,8 @@ function BranchesTab({ businessId }: { businessId?: string }) {
                 <div className="flex items-center gap-2"><span className="font-medium">{branch.name}</span>
                   {branch.is_headquarters && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">HQ</span>}
                 </div>
-                {branch.address && <p className="text-sm text-black/50">{branch.address}</p>}
-                {branch.phone && <p className="text-sm text-black/40">{branch.phone}</p>}
+                {branch.address && <p className="text-sm text-black">{branch.address}</p>}
+                {branch.phone && <p className="text-sm text-black">{branch.phone}</p>}
               </div>
             </div>
           ))}
@@ -243,9 +243,9 @@ function PayrollTab({ businessId }: { businessId?: string }) {
         </button>
       </div>
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : runs.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><DollarSign size={40} className="mx-auto mb-2 opacity-30" /><p>No payroll runs yet</p><p className="text-sm mt-1">Create your first payroll to get started</p></div>
+        <div className="text-center py-8 text-black"><DollarSign size={40} className="mx-auto mb-2 opacity-30" /><p>No payroll runs yet</p><p className="text-sm mt-1">Create your first payroll to get started</p></div>
       ) : (
         <div className="space-y-3">
           {runs.map((run) => (
@@ -255,9 +255,9 @@ function PayrollTab({ businessId }: { businessId?: string }) {
                 <span className={`text-xs px-2 py-1 rounded-full ${statusColors[run.status]}`}>{run.status}</span>
               </div>
               <div className="grid grid-cols-3 gap-4 text-sm">
-                <div><span className="text-black/40">Gross</span><div className="font-medium">₦{run.total_gross?.toLocaleString()}</div></div>
-                <div><span className="text-black/40">Deductions</span><div className="font-medium text-red-600">-₦{run.total_deductions?.toLocaleString()}</div></div>
-                <div><span className="text-black/40">Net Pay</span><div className="font-medium text-green-600">₦{run.total_net?.toLocaleString()}</div></div>
+                <div><span className="text-black">Gross</span><div className="font-medium">₦{run.total_gross?.toLocaleString()}</div></div>
+                <div><span className="text-black">Deductions</span><div className="font-medium text-red-600">-₦{run.total_deductions?.toLocaleString()}</div></div>
+                <div><span className="text-black">Net Pay</span><div className="font-medium text-green-600">₦{run.total_net?.toLocaleString()}</div></div>
               </div>
             </div>
           ))}
@@ -333,9 +333,9 @@ function LoansTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : loans.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><Landmark size={40} className="mx-auto mb-2 opacity-30" /><p>No loans recorded</p></div>
+        <div className="text-center py-8 text-black"><Landmark size={40} className="mx-auto mb-2 opacity-30" /><p>No loans recorded</p></div>
       ) : (
         <div className="space-y-3">
           {loans.map((loan) => (
@@ -345,10 +345,10 @@ function LoansTab({ businessId }: { businessId?: string }) {
                 <span className={`text-xs px-2 py-1 rounded-full ${statusColors[loan.status]}`}>{loan.status.replace('_', ' ')}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><span className="text-black/40">Principal</span><div className="font-medium">₦{loan.principal_amount?.toLocaleString()}</div></div>
-                <div><span className="text-black/40">Outstanding</span><div className="font-medium">₦{loan.outstanding_balance?.toLocaleString()}</div></div>
+                <div><span className="text-black">Principal</span><div className="font-medium">₦{loan.principal_amount?.toLocaleString()}</div></div>
+                <div><span className="text-black">Outstanding</span><div className="font-medium">₦{loan.outstanding_balance?.toLocaleString()}</div></div>
               </div>
-              {loan.interest_rate > 0 && <p className="text-xs text-black/40 mt-2">{loan.interest_rate}% p.a.</p>}
+              {loan.interest_rate > 0 && <p className="text-xs text-black mt-2">{loan.interest_rate}% p.a.</p>}
             </div>
           ))}
         </div>
@@ -412,9 +412,9 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : commissions.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><Percent size={40} className="mx-auto mb-2 opacity-30" /><p>No commissions recorded</p></div>
+        <div className="text-center py-8 text-black"><Percent size={40} className="mx-auto mb-2 opacity-30" /><p>No commissions recorded</p></div>
       ) : (
         <div className="space-y-3">
           {commissions.map((comm) => (
@@ -424,7 +424,7 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
                 <span className={`text-xs px-2 py-1 rounded-full ${statusColors[comm.status]}`}>{comm.status}</span>
               </div>
               <div className="text-2xl font-semibold text-green-600">₦{comm.amount?.toLocaleString()}</div>
-              {comm.description && <p className="text-sm text-black/50 mt-1">{comm.description}</p>}
+              {comm.description && <p className="text-sm text-black mt-1">{comm.description}</p>}
             </div>
           ))}
         </div>
@@ -470,7 +470,7 @@ function AssetsTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-black/50">Total Asset Value</div>
+        <div className="text-sm text-black">Total Asset Value</div>
         <div className="text-xl font-semibold">₦{totalValue.toLocaleString()}</div>
       </div>
 
@@ -500,9 +500,9 @@ function AssetsTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : assets.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><Building2 size={40} className="mx-auto mb-2 opacity-30" /><p>No assets recorded</p></div>
+        <div className="text-center py-8 text-black"><Building2 size={40} className="mx-auto mb-2 opacity-30" /><p>No assets recorded</p></div>
       ) : (
         <div className="space-y-3">
           {assets.map((asset) => (
@@ -512,8 +512,8 @@ function AssetsTab({ businessId }: { businessId?: string }) {
                 <span className="text-xs bg-white text-black px-2 py-1 rounded capitalize">{asset.asset_type}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><span className="text-black/40">Purchase</span><div className="font-medium">₦{asset.purchase_price?.toLocaleString()}</div></div>
-                <div><span className="text-black/40">Current Value</span><div className="font-medium">₦{asset.current_value?.toLocaleString()}</div></div>
+                <div><span className="text-black">Purchase</span><div className="font-medium">₦{asset.purchase_price?.toLocaleString()}</div></div>
+                <div><span className="text-black">Current Value</span><div className="font-medium">₦{asset.current_value?.toLocaleString()}</div></div>
               </div>
             </div>
           ))}
@@ -560,7 +560,7 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-black/50">Total Liabilities</div>
+        <div className="text-sm text-black">Total Liabilities</div>
         <div className="text-xl font-semibold text-red-600">₦{totalBalance.toLocaleString()}</div>
       </div>
 
@@ -589,9 +589,9 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : liabilities.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><CreditCard size={40} className="mx-auto mb-2 opacity-30" /><p>No liabilities recorded</p></div>
+        <div className="text-center py-8 text-black"><CreditCard size={40} className="mx-auto mb-2 opacity-30" /><p>No liabilities recorded</p></div>
       ) : (
         <div className="space-y-3">
           {liabilities.map((liability) => (
@@ -601,8 +601,8 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
                 <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded capitalize">{liability.liability_type.replace('_', ' ')}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><span className="text-black/40">Original</span><div className="font-medium">₦{liability.original_amount?.toLocaleString()}</div></div>
-                <div><span className="text-black/40">Balance</span><div className="font-medium text-red-600">₦{liability.current_balance?.toLocaleString()}</div></div>
+                <div><span className="text-black">Original</span><div className="font-medium">₦{liability.original_amount?.toLocaleString()}</div></div>
+                <div><span className="text-black">Balance</span><div className="font-medium text-red-600">₦{liability.current_balance?.toLocaleString()}</div></div>
               </div>
             </div>
           ))}
@@ -645,7 +645,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-sm text-black/50">Monthly Recurring</div>
+        <div className="text-sm text-black">Monthly Recurring</div>
         <div className="text-xl font-semibold">₦{monthlyTotal.toLocaleString()}</div>
       </div>
 
@@ -679,9 +679,9 @@ function RecurringTab({ businessId }: { businessId?: string }) {
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : expenses.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><Receipt size={40} className="mx-auto mb-2 opacity-30" /><p>No recurring expenses</p></div>
+        <div className="text-center py-8 text-black"><Receipt size={40} className="mx-auto mb-2 opacity-30" /><p>No recurring expenses</p></div>
       ) : (
         <div className="space-y-3">
           {expenses.map((expense) => (
@@ -690,7 +690,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
                 <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center"><Receipt size={18} className="text-orange-500" /></div>
                 <div>
                   <span className="font-medium">{expense.name}</span>
-                  <p className="text-sm text-black/50 capitalize">{expense.category} • {expense.frequency}</p>
+                  <p className="text-sm text-black capitalize">{expense.category} • {expense.frequency}</p>
                 </div>
               </div>
               <div className="text-right">
@@ -740,11 +740,11 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
     <div>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <div className="text-sm text-black/50">Total Hours</div>
+          <div className="text-sm text-black">Total Hours</div>
           <div className="text-2xl font-semibold">{totalHours}h</div>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <div className="text-sm text-black/50">Billable Hours</div>
+          <div className="text-sm text-black">Billable Hours</div>
           <div className="text-2xl font-semibold text-green-600">{billableHours}h</div>
         </div>
       </div>
@@ -768,9 +768,9 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
         </form>
       )}
 
-      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black/30" /></div>
+      {loading ? <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
        : entries.length === 0 ? (
-        <div className="text-center py-8 text-black/40"><Clock size={40} className="mx-auto mb-2 opacity-30" /><p>No time entries yet</p></div>
+        <div className="text-center py-8 text-black"><Clock size={40} className="mx-auto mb-2 opacity-30" /><p>No time entries yet</p></div>
       ) : (
         <div className="space-y-3">
           {entries.map((entry) => (
@@ -779,9 +779,9 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
                 <div className="flex items-center gap-2"><span className="font-medium">{entry.hours}h</span>
                   {entry.billable && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Billable</span>}
                 </div>
-                <p className="text-sm text-black/50">{entry.description || 'No description'}</p>
+                <p className="text-sm text-black">{entry.description || 'No description'}</p>
               </div>
-              <div className="text-sm text-black/40">{new Date(entry.date).toLocaleDateString()}</div>
+              <div className="text-sm text-black">{new Date(entry.date).toLocaleDateString()}</div>
             </div>
           ))}
         </div>

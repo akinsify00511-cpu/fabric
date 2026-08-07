@@ -356,7 +356,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
                 </div>
               </div>
             )}
-            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-white text-xs">
+            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/100 rounded text-white text-xs">
               {staff?.full_name || 'You'} (You)
             </div>
           </div>
@@ -434,7 +434,7 @@ function VideoParticipant({ participant }: { participant: Participant }) {
           </div>
         </div>
       )}
-      <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 rounded text-white text-xs flex items-center gap-1">
+      <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/100 rounded text-white text-xs flex items-center gap-1">
         {!participant.audioEnabled && <MicOff size={10} />}
         {participant.name}
       </div>

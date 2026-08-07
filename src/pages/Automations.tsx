@@ -204,7 +204,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-xl font-medium text-black">Automations</h1>
-            <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
+            <p className="text-sm text-black mt-0.5">Make your workflow smarter — when this happens, do that</p>
           </div>
         </div>
 
@@ -234,7 +234,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   <Sparkles className="w-4 h-4" />
                   Request Beta Access
                 </a>
-                <span className="text-white/50 text-sm">
+                <span className="text-white/80 text-sm">
                   Join the beta program for early access
                 </span>
               </div>
@@ -251,7 +251,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
               </div>
               <h3 className="font-medium">Smart Triggers</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Fire automations on deal won, task completed, invoice paid, staff joined, and more events.
             </p>
           </div>
@@ -263,7 +263,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
               </div>
               <h3 className="font-medium">Multiple Actions</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Send notifications, create tasks, update deals, award merit, or post to chat.
             </p>
           </div>
@@ -275,7 +275,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
               </div>
               <h3 className="font-medium">Activity Log</h3>
             </div>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-black">
               Track every automation run with success/failure status and error details.
             </p>
           </div>
@@ -324,7 +324,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Automations</h1>
-          <p className="text-sm text-black/50 mt-0.5">Make your workflow smarter — when this happens, do that</p>
+          <p className="text-sm text-black mt-0.5">Make your workflow smarter — when this happens, do that</p>
         </div>
         <button
           onClick={() => {
@@ -343,7 +343,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <Activity size={14} className="text-green-500" />
-            <span className="text-xs text-black/50 uppercase tracking-wide">Active</span>
+            <span className="text-xs text-black uppercase tracking-wide">Active</span>
           </div>
           <p className="text-2xl font-bold text-black">
             {automations.filter((a) => a.enabled).length}
@@ -352,7 +352,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <Zap size={14} className="text-[#8B5CF6]" />
-            <span className="text-xs text-black/50 uppercase tracking-wide">Total runs</span>
+            <span className="text-xs text-black uppercase tracking-wide">Total runs</span>
           </div>
           <p className="text-2xl font-bold text-black">
             {automations.reduce((sum, a) => sum + a.run_count, 0)}
@@ -360,8 +360,8 @@ const [automations, setAutomations] = useState<Automation[]>([])
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Clock size={14} className="text-black/30" />
-            <span className="text-xs text-black/50 uppercase tracking-wide">Last run</span>
+            <Clock size={14} className="text-black" />
+            <span className="text-xs text-black uppercase tracking-wide">Last run</span>
           </div>
           <p className="text-sm font-medium text-black">
             {automations.filter((a) => a.last_run_at).length > 0
@@ -376,8 +376,8 @@ const [automations, setAutomations] = useState<Automation[]>([])
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-4 bg-black/5 rounded w-32 mb-2" />
-              <div className="h-3 bg-black/5 rounded w-48" />
+              <div className="h-4 bg-black/10 rounded w-32 mb-2" />
+              <div className="h-3 bg-black/10 rounded w-48" />
             </div>
           ))}
         </div>
@@ -387,7 +387,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             🤖
           </div>
           <h3 className="text-lg font-medium text-black mb-2">No automations yet</h3>
-          <p className="text-sm text-black/50 mb-4 max-w-sm mx-auto">
+          <p className="text-sm text-black mb-4 max-w-sm mx-auto">
             Create your first automation to streamline your workflow. For example: when a deal is won, create a task to follow up.
           </p>
           <button
@@ -417,7 +417,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
                     <span className="text-xl">{trigger?.icon || '⚡'}</span>
                     <div>
-                      <div className="text-xs text-black/50">When</div>
+                      <div className="text-xs text-black">When</div>
                       <div className="text-sm font-medium">{trigger?.name || auto.trigger_type}</div>
                     </div>
                   </div>
@@ -431,7 +431,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
                     <span className="text-xl">{action?.icon || '⚡'}</span>
                     <div>
-                      <div className="text-xs text-black/50">Do</div>
+                      <div className="text-xs text-black">Do</div>
                       <div className="text-sm font-medium">{action?.name || auto.action_type}</div>
                     </div>
                   </div>
@@ -452,7 +452,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                       )}
                     </div>
                     {auto.description && (
-                      <p className="text-xs text-black/50">{auto.description}</p>
+                      <p className="text-xs text-black">{auto.description}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-1">
@@ -461,7 +461,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                         setSelectedAutomation(auto)
                         setShowRuns(true)
                       }}
-                      className="p-2 hover:bg-black/[0.05] rounded-lg text-black/40 hover:text-black/60"
+                      className="p-2 hover:bg-black/[0.05] rounded-lg text-black hover:text-black/60"
                       title="View runs"
                     >
                       <Activity size={16} />
@@ -483,12 +483,12 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   </div>
                 </div>
                 <div className="flex items-center gap-4 mt-3 pt-3 border-t border-black/[0.06]">
-                  <span className="flex items-center gap-1 text-xs text-black/30">
+                  <span className="flex items-center gap-1 text-xs text-black">
                     <Activity size={12} />
                     {auto.run_count} runs
                   </span>
                   {auto.last_run_at && (
-                    <span className="text-xs text-black/30">
+                    <span className="text-xs text-black">
                       Last: {new Date(auto.last_run_at).toLocaleString()}
                     </span>
                   )}
@@ -501,7 +501,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
       {/* Builder Modal */}
       {showBuilder && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="text-lg font-semibold">New Automation</h2>
@@ -558,7 +558,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                         <span>{trigger.icon}</span>
                         <span className="text-sm font-medium">{trigger.name}</span>
                       </div>
-                      <p className="text-xs text-black/40">{trigger.description}</p>
+                      <p className="text-xs text-black">{trigger.description}</p>
                     </button>
                   ))}
                 </div>
@@ -589,7 +589,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                         <span>{action.icon}</span>
                         <span className="text-sm font-medium">{action.name}</span>
                       </div>
-                      <p className="text-xs text-black/40">{action.description}</p>
+                      <p className="text-xs text-black">{action.description}</p>
                     </button>
                   ))}
                 </div>
@@ -678,7 +678,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                       className="w-full px-3 py-2 rounded-lg border border-black/10 text-sm"
                     />
                   )}
-                  <p className="text-xs text-black/30 mt-2">
+                  <p className="text-xs text-black mt-2">
                     Use {"{{variable}}"} for dynamic values (deal_title, value, contact_name)
                   </p>
                 </div>
@@ -688,7 +688,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
               <button
                 onClick={resetBuilder}
-                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
               >
                 Cancel
               </button>
@@ -706,12 +706,12 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
       {/* Runs Panel */}
       {showRuns && selectedAutomation && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-50">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-end z-50">
           <div className="bg-white h-full w-full max-w-lg shadow-xl flex flex-col">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <div>
                 <h2 className="font-semibold">Automation Runs</h2>
-                <p className="text-sm text-black/50">{selectedAutomation.name}</p>
+                <p className="text-sm text-black">{selectedAutomation.name}</p>
               </div>
               <button onClick={() => { setShowRuns(false); setSelectedAutomation(null) }} className="p-2 hover:bg-black/[0.05] rounded-lg">
                 <X size={20} />
@@ -719,7 +719,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               {getRecentRunsForAutomation(selectedAutomation.id).length === 0 ? (
-                <div className="text-center py-12 text-black/40">
+                <div className="text-center py-12 text-black">
                   <Activity size={32} className="mx-auto mb-2 opacity-30" />
                   <p className="text-sm">No runs yet</p>
                 </div>
@@ -734,7 +734,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                           <XCircle size={14} className="text-red-500" />
                         )}
                         <span className="text-sm font-medium capitalize">{run.status}</span>
-                        <span className="text-xs text-black/30">
+                        <span className="text-xs text-black">
                           {new Date(run.executed_at).toLocaleString()}
                         </span>
                       </div>

@@ -68,12 +68,12 @@ interface Payment {
 }
 
 const STATUS_LABELS: Record<InvoiceStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'slate' },
+  draft: { label: 'Draft', color: 'blue' },
   sent: { label: 'Sent', color: 'blue' },
   partially_paid: { label: 'Partially Paid', color: 'yellow' },
   paid: { label: 'Paid', color: 'green' },
   overdue: { label: 'Overdue', color: 'red' },
-  cancelled: { label: 'Cancelled', color: 'slate' },
+  cancelled: { label: 'Cancelled', color: 'blue' },
 }
 
 const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNode }> = {
@@ -358,7 +358,7 @@ export default function FinanceNigeria() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium">Finance & Invoicing</h1>
-          <p className="text-sm text-black/50">Track invoices, payments, and cash flow</p>
+          <p className="text-sm text-black">Track invoices, payments, and cash flow</p>
         </div>
         <button
           onClick={() => setShowNewInvoice(true)}
@@ -372,19 +372,19 @@ export default function FinanceNigeria() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Total Receivable</p>
+          <p className="text-xs text-black mb-1">Total Receivable</p>
           <p className="text-xl font-bold text-[#4285F4]">{formatCurrency(stats.totalReceivable)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Overdue</p>
+          <p className="text-xs text-black mb-1">Overdue</p>
           <p className="text-xl font-bold text-red-600">{formatCurrency(stats.overdueAmount)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">Total Collected</p>
+          <p className="text-xs text-black mb-1">Total Collected</p>
           <p className="text-xl font-bold text-green-600">{formatCurrency(stats.totalPaid)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
-          <p className="text-xs text-black/50 mb-1">This Month</p>
+          <p className="text-xs text-black mb-1">This Month</p>
           <p className="text-xl font-bold">{formatCurrency(stats.thisMonth)}</p>
         </div>
       </div>
@@ -413,7 +413,7 @@ export default function FinanceNigeria() {
       {activeTab === 'invoices' && (
         <div className="flex flex-wrap gap-3 mb-4">
           <div className="flex-1 min-w-[200px] relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black/30" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
             <input
               type="text"
               value={searchQuery}
@@ -441,8 +441,8 @@ export default function FinanceNigeria() {
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-                <div className="h-5 bg-black/5 rounded w-1/3 mb-2" />
-                <div className="h-4 bg-black/5 rounded w-1/2" />
+                <div className="h-5 bg-black/10 rounded w-1/3 mb-2" />
+                <div className="h-4 bg-black/10 rounded w-1/2" />
               </div>
             ))}
           </div>
@@ -452,7 +452,7 @@ export default function FinanceNigeria() {
               <Receipt size={24} className="text-[#4285F4]" />
             </div>
             <h3 className="font-semibold mb-2">No invoices found</h3>
-            <p className="text-sm text-black/50 mb-4">Create your first invoice to get started</p>
+            <p className="text-sm text-black mb-4">Create your first invoice to get started</p>
             <button
               onClick={() => setShowNewInvoice(true)}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
@@ -476,7 +476,7 @@ export default function FinanceNigeria() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-mono text-black/40">{inv.invoice_number}</span>
+                        <span className="text-xs font-mono text-black">{inv.invoice_number}</span>
                         {inv.is_proforma && (
                           <span className="px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-700">
                             Proforma
@@ -485,7 +485,7 @@ export default function FinanceNigeria() {
                       </div>
                       <h3 className="font-medium">{inv.client_name}</h3>
                       {inv.job_reference && (
-                        <p className="text-xs text-black/50">{inv.job_reference}</p>
+                        <p className="text-xs text-black">{inv.job_reference}</p>
                       )}
                     </div>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -502,7 +502,7 @@ export default function FinanceNigeria() {
                   <div className="flex items-center justify-between pt-3 border-t border-black/5">
                     <div className="flex items-center gap-4">
                       <div className="text-sm">
-                        <span className="text-black/50">Due: </span>
+                        <span className="text-black">Due: </span>
                         <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
                           {new Date(inv.due_date).toLocaleDateString()}
                         </span>
@@ -521,7 +521,7 @@ export default function FinanceNigeria() {
                     <div className="text-right">
                       <p className="font-semibold">{formatCurrency(inv.total)}</p>
                       {inv.amount_paid > 0 && (
-                        <p className="text-xs text-black/50">
+                        <p className="text-xs text-black">
                           Paid: {formatCurrency(inv.amount_paid)} | Balance: {formatCurrency(inv.balance)}
                         </p>
                       )}
@@ -539,7 +539,7 @@ export default function FinanceNigeria() {
         <div className="bg-white rounded-xl border border-black/[0.06] divide-y divide-black/5">
           {payments.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-black/50">No payments recorded yet</p>
+              <p className="text-black">No payments recorded yet</p>
             </div>
           ) : (
             payments.map((pay) => (
@@ -549,7 +549,7 @@ export default function FinanceNigeria() {
                 </span>
                 <div className="flex-1">
                   <p className="font-medium">{formatCurrency(pay.amount)}</p>
-                  <p className="text-xs text-black/50 flex items-center gap-1">
+                  <p className="text-xs text-black flex items-center gap-1">
                     {METHOD_LABELS[pay.method].icon}
                     {METHOD_LABELS[pay.method].label}
                     {pay.reference && ` • ${pay.reference}`}
@@ -557,9 +557,9 @@ export default function FinanceNigeria() {
                 </div>
                 <div className="text-right">
                   {pay.invoice_number && (
-                    <p className="text-xs text-black/50">{pay.invoice_number}</p>
+                    <p className="text-xs text-black">{pay.invoice_number}</p>
                   )}
-                  <p className="text-xs text-black/50">
+                  <p className="text-xs text-black">
                     {new Date(pay.date).toLocaleDateString()}
                   </p>
                 </div>
@@ -571,7 +571,7 @@ export default function FinanceNigeria() {
 
       {/* New Invoice Modal */}
       {showNewInvoice && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">New Invoice</h2>
@@ -724,7 +724,7 @@ export default function FinanceNigeria() {
 
       {/* Record Payment Modal */}
       {showRecordPayment && selectedInvoice && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Record Payment</h2>
@@ -734,7 +734,7 @@ export default function FinanceNigeria() {
             <div className="p-4 space-y-4">
               <div className="bg-white rounded-xl p-4">
                 <p className="font-medium">{selectedInvoice.client_name}</p>
-                <p className="text-sm text-black/50">{selectedInvoice.invoice_number}</p>
+                <p className="text-sm text-black">{selectedInvoice.invoice_number}</p>
                 <p className="text-sm mt-2">
                   Balance Due: <span className="font-semibold text-[#4285F4]">{formatCurrency(selectedInvoice.balance)}</span>
                 </p>
@@ -813,11 +813,11 @@ export default function FinanceNigeria() {
 
       {/* Invoice Detail Modal */}
       {selectedInvoice && !showRecordPayment && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl mb-8">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <div>
-                <span className="text-xs font-mono text-black/40">{selectedInvoice.invoice_number}</span>
+                <span className="text-xs font-mono text-black">{selectedInvoice.invoice_number}</span>
                 <h2 className="font-semibold text-lg">{selectedInvoice.client_name}</h2>
               </div>
               <button

@@ -57,7 +57,7 @@ export default function Equipment() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-black">Equipment & Maintenance</h1>
-          <p className="text-sm text-black/50">Track assets and maintenance schedules</p>
+          <p className="text-sm text-black">Track assets and maintenance schedules</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -131,12 +131,12 @@ export default function Equipment() {
 
       {/* Equipment List */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black/30" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
       ) : equipment.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Wrench size={48} className="mx-auto text-black/20 mb-3" />
-          <p className="text-black/50">No equipment registered</p>
-          <p className="text-sm text-black/30 mt-1">Add your first piece of equipment</p>
+          <Wrench size={48} className="mx-auto text-black/50 mb-3" />
+          <p className="text-black">No equipment registered</p>
+          <p className="text-sm text-black mt-1">Add your first piece of equipment</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -157,7 +157,7 @@ export default function Equipment() {
                   </div>
                   <div>
                     <h3 className="font-medium">{item.name}</h3>
-                    <p className="text-sm text-black/50 capitalize">{item.equipment_type}</p>
+                    <p className="text-sm text-black capitalize">{item.equipment_type}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full capitalize ${
@@ -171,19 +171,19 @@ export default function Equipment() {
               </div>
               
               {item.serial_number && (
-                <div className="text-sm text-black/50 mb-2">
+                <div className="text-sm text-black mb-2">
                   <span className="font-medium">S/N:</span> {item.serial_number}
                 </div>
               )}
               
               {item.location && (
-                <div className="text-sm text-black/50">
+                <div className="text-sm text-black">
                   <span className="font-medium">Location:</span> {item.location}
                 </div>
               )}
               
               {item.warranty_expiry && (
-                <div className="flex items-center gap-2 mt-3 text-xs text-black/40">
+                <div className="flex items-center gap-2 mt-3 text-xs text-black">
                   <Calendar size={14} />
                   <span>Warranty: {new Date(item.warranty_expiry).toLocaleDateString()}</span>
                 </div>

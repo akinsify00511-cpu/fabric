@@ -224,12 +224,12 @@ export default function RoleSettings() {
 
       {/* Roles List */}
       {loading ? (
-        <div className="text-center py-12 text-black/50">Loading roles...</div>
+        <div className="text-center py-12 text-black">Loading roles...</div>
       ) : roles.length === 0 ? (
         <div className="text-center py-12">
-          <Users size={48} className="mx-auto text-black/20 mb-4" />
-          <p className="text-black/50">No roles configured</p>
-          <p className="text-sm text-black/30 mt-1">Add roles to manage tool access</p>
+          <Users size={48} className="mx-auto text-black/50 mb-4" />
+          <p className="text-black">No roles configured</p>
+          <p className="text-sm text-black mt-1">Add roles to manage tool access</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -237,7 +237,7 @@ export default function RoleSettings() {
             <div key={role.id} className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
               {/* Role Header */}
               <div 
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-black/[0.02]"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-black/10"
                 onClick={() => setExpandedRole(expandedRole === role.id ? null : role.id)}
               >
                 <div className="flex items-center gap-3">
@@ -251,7 +251,7 @@ export default function RoleSettings() {
                         <span className="px-2 py-0.5 rounded-full bg-white text-black text-xs">Default</span>
                       )}
                     </div>
-                    <p className="text-sm text-black/50">{role.tools.length} tools assigned</p>
+                    <p className="text-sm text-black">{role.tools.length} tools assigned</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -264,7 +264,7 @@ export default function RoleSettings() {
                   </button>
                   <ChevronRight 
                     size={20} 
-                    className={`text-black/30 transition-transform ${expandedRole === role.id ? 'rotate-90' : ''}`}
+                    className={`text-black transition-transform ${expandedRole === role.id ? 'rotate-90' : ''}`}
                   />
                 </div>
               </div>
@@ -278,7 +278,7 @@ export default function RoleSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {TOOL_CATEGORIES.map((category) => (
                       <div key={category.key} className="bg-white rounded-xl p-3">
-                        <p className="text-xs font-medium text-black/50 uppercase tracking-wide mb-2">
+                        <p className="text-xs font-medium text-black uppercase tracking-wide mb-2">
                           {category.label}
                         </p>
                         <div className="space-y-2">
@@ -288,7 +288,7 @@ export default function RoleSettings() {
                             return (
                               <label
                                 key={toolKey}
-                                className="flex items-center gap-2 cursor-pointer hover:bg-black/[0.02] p-1 rounded"
+                                className="flex items-center gap-2 cursor-pointer hover:bg-black/10 p-1 rounded"
                               >
                                 <input
                                   type="checkbox"

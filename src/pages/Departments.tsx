@@ -253,22 +253,22 @@ export default function Departments() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-black/5 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 mb-6 bg-black/10 p-1 rounded-xl w-fit">
         <button
           onClick={() => setView('departments')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'departments' ? 'bg-white shadow-sm' : 'text-black/50'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'departments' ? 'bg-white shadow-sm' : 'text-black'}`}
         >
           Departments
         </button>
         <button
           onClick={() => setView('teams')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'teams' ? 'bg-white shadow-sm' : 'text-black/50'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'teams' ? 'bg-white shadow-sm' : 'text-black'}`}
         >
           Teams
         </button>
         <button
           onClick={() => setView('positions')}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'positions' ? 'bg-white shadow-sm' : 'text-black/50'}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'positions' ? 'bg-white shadow-sm' : 'text-black'}`}
         >
           Positions
         </button>
@@ -279,9 +279,9 @@ export default function Departments() {
         <div className="space-y-3">
           {departments.length === 0 ? (
             <div className="bg-white rounded-2xl p-8 border border-black/[0.06] text-center">
-              <Building2 size={48} className="mx-auto mb-4 text-black/20" />
+              <Building2 size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No departments yet</h3>
-              <p className="text-sm text-black/50 mb-4">Create your first department to organize your team</p>
+              <p className="text-sm text-black mb-4">Create your first department to organize your team</p>
               <button
                 onClick={() => openAddModal('department')}
                 className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium"
@@ -301,24 +301,24 @@ export default function Departments() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold">{dept.name}</h3>
                         {dept.code && (
-                          <span className="px-2 py-0.5 rounded bg-black/5 text-xs text-black/50">{dept.code}</span>
+                          <span className="px-2 py-0.5 rounded bg-black/10 text-xs text-black">{dept.code}</span>
                         )}
                       </div>
                       {dept.description && (
-                        <p className="text-sm text-black/50 mt-0.5">{dept.description}</p>
+                        <p className="text-sm text-black mt-0.5">{dept.description}</p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       <div className="text-sm font-medium">{getTeamCount(dept.id)}</div>
-                      <div className="text-xs text-black/40">Teams</div>
+                      <div className="text-xs text-black">Teams</div>
                     </div>
                     <button
                       onClick={() => openEditModal('department', dept)}
-                      className="p-2 hover:bg-black/5 rounded-lg"
+                      className="p-2 hover:bg-black/10 rounded-lg"
                     >
-                      <Edit3 size={18} className="text-black/40" />
+                      <Edit3 size={18} className="text-black" />
                     </button>
                     <button
                       onClick={() => handleDelete('departments', dept.id)}
@@ -347,9 +347,9 @@ export default function Departments() {
           </div>
           {teams.length === 0 ? (
             <div className="bg-white rounded-2xl p-8 border border-black/[0.06] text-center">
-              <Users size={48} className="mx-auto mb-4 text-black/20" />
+              <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No teams yet</h3>
-              <p className="text-sm text-black/50">Create teams to organize your staff</p>
+              <p className="text-sm text-black">Create teams to organize your staff</p>
             </div>
           ) : (
             teams.map(team => (
@@ -363,10 +363,10 @@ export default function Departments() {
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold">{team.name}</h3>
                         {team.code && (
-                          <span className="px-2 py-0.5 rounded bg-black/5 text-xs text-black/50">{team.code}</span>
+                          <span className="px-2 py-0.5 rounded bg-black/10 text-xs text-black">{team.code}</span>
                         )}
                       </div>
-                      <p className="text-sm text-black/50 mt-0.5">
+                      <p className="text-sm text-black mt-0.5">
                         {getDepartmentName(team.department_id)}
                         {team.description && ` - ${team.description}`}
                       </p>
@@ -375,9 +375,9 @@ export default function Departments() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEditModal('team', team)}
-                      className="p-2 hover:bg-black/5 rounded-lg"
+                      className="p-2 hover:bg-black/10 rounded-lg"
                     >
-                      <Edit3 size={18} className="text-black/40" />
+                      <Edit3 size={18} className="text-black" />
                     </button>
                     <button
                       onClick={() => handleDelete('teams', team.id)}
@@ -406,9 +406,9 @@ export default function Departments() {
           </div>
           {positions.length === 0 ? (
             <div className="bg-white rounded-2xl p-8 border border-black/[0.06] text-center">
-              <Briefcase size={48} className="mx-auto mb-4 text-black/20" />
+              <Briefcase size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No positions yet</h3>
-              <p className="text-sm text-black/50">Create positions for your organization</p>
+              <p className="text-sm text-black">Create positions for your organization</p>
             </div>
           ) : (
             positions.map(pos => (
@@ -423,7 +423,7 @@ export default function Departments() {
                         <h3 className="font-semibold">{pos.title}</h3>
                         <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs capitalize">{pos.level}</span>
                       </div>
-                      <p className="text-sm text-black/50 mt-0.5">
+                      <p className="text-sm text-black mt-0.5">
                         {getDepartmentName(pos.department_id) || 'No department'}
                         {pos.description && ` - ${pos.description}`}
                       </p>
@@ -432,9 +432,9 @@ export default function Departments() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEditModal('position', pos)}
-                      className="p-2 hover:bg-black/5 rounded-lg"
+                      className="p-2 hover:bg-black/10 rounded-lg"
                     >
-                      <Edit3 size={18} className="text-black/40" />
+                      <Edit3 size={18} className="text-black" />
                     </button>
                     <button
                       onClick={() => handleDelete('positions', pos.id)}
@@ -452,13 +452,13 @@ export default function Departments() {
 
       {/* Add/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
+        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">
                 {editingItem ? 'Edit' : 'Add'} {modalType === 'department' ? 'Department' : modalType === 'team' ? 'Team' : 'Position'}
               </h3>
-              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-black/5 rounded-lg">
+              <button onClick={() => setShowModal(false)} className="p-2 hover:bg-black/10 rounded-lg">
                 <X size={20} />
               </button>
             </div>

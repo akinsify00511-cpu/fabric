@@ -476,7 +476,7 @@ function CTASection() {
           Start free setup
         </a>
 
-        <p className="mt-6 text-sm text-white/50 font-mono uppercase tracking-wider">
+        <p className="mt-6 text-sm text-white/80 font-mono uppercase tracking-wider">
           Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in
         </p>
       </div>
@@ -489,7 +489,7 @@ function CTASection() {
 // ============================================
 function Footer() {
   return (
-    <footer className="bg-[#0a0a0a] text-white/50 py-8 border-t border-white/10">
+    <footer className="bg-[#0a0a0a] text-white/80 py-8 border-t border-white/10">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">

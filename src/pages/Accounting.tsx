@@ -204,12 +204,12 @@ export default function Accounting() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-medium text-black">Accounting</h1>
-          <p className="text-sm text-black/50 mt-0.5">Double-entry bookkeeping</p>
+          <p className="text-sm text-black mt-0.5">Double-entry bookkeeping</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setShowNewAccount(true)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/[0.02]"
+            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
           >
             <Plus size={14} />
             Account
@@ -239,7 +239,7 @@ export default function Accounting() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black/50 hover:text-black'
+                  : 'text-black hover:text-black'
               }`}
             >
               <Icon size={14} />
@@ -257,16 +257,16 @@ export default function Accounting() {
               <div className={`px-4 py-3 ${type.bg} flex items-center gap-2`}>
                 <type.icon size={16} className={type.color} />
                 <span className={`text-sm font-medium ${type.color}`}>{type.label}</span>
-                <span className="text-xs text-black/40 ml-auto">{type.accounts.length} accounts</span>
+                <span className="text-xs text-black ml-auto">{type.accounts.length} accounts</span>
               </div>
               {type.accounts.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-black/40">No accounts</p>
+                <p className="px-4 py-3 text-sm text-black">No accounts</p>
               ) : (
                 <div className="divide-y divide-black/[0.04]">
                   {type.accounts.map((account) => (
                     <div key={account.id} className="px-4 py-2 flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-black/30 w-12">{account.code}</span>
+                        <span className="text-xs text-black w-12">{account.code}</span>
                         <span className="text-black">{account.name}</span>
                       </div>
                       <span className="text-black/60 font-mono">
@@ -292,19 +292,19 @@ export default function Accounting() {
               <button
                 key={entry.id}
                 onClick={() => setSelectedEntry(entry)}
-                className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/[0.02] transition"
+                className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/10 transition"
               >
                 <div>
                   <p className="text-sm font-medium text-black">{entry.entry_number}</p>
-                  <p className="text-xs text-black/40">{entry.description || 'No description'}</p>
+                  <p className="text-xs text-black">{entry.description || 'No description'}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs text-black/40">{new Date(entry.date).toLocaleDateString()}</span>
+                  <span className="text-xs text-black">{new Date(entry.date).toLocaleDateString()}</span>
                 </div>
               </button>
             ))}
             {entries.length === 0 && (
-              <div className="px-4 py-8 text-center text-black/40">
+              <div className="px-4 py-8 text-center text-black">
                 <FileText size={32} className="mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No journal entries yet</p>
               </div>
@@ -321,7 +321,7 @@ export default function Accounting() {
             <button
               onClick={() => setReportType('balance')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'balance' ? 'avenize-gradient text-white' : 'text-black/50'
+                reportType === 'balance' ? 'avenize-gradient text-white' : 'text-black'
               }`}
             >
               Balance Sheet
@@ -329,7 +329,7 @@ export default function Accounting() {
             <button
               onClick={() => setReportType('income')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'income' ? 'avenize-gradient text-white' : 'text-black/50'
+                reportType === 'income' ? 'avenize-gradient text-white' : 'text-black'
               }`}
             >
               Income Statement
@@ -341,7 +341,7 @@ export default function Accounting() {
             <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
               <div className="px-6 py-4 border-b border-black/[0.06]">
                 <h2 className="text-lg font-semibold">Balance Sheet</h2>
-                <p className="text-xs text-black/40">As of {new Date().toLocaleDateString()}</p>
+                <p className="text-xs text-black">As of {new Date().toLocaleDateString()}</p>
               </div>
 
               {/* Assets */}
@@ -396,7 +396,7 @@ export default function Accounting() {
             <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
               <div className="px-6 py-4 border-b border-black/[0.06]">
                 <h2 className="text-lg font-semibold">Income Statement</h2>
-                <p className="text-xs text-black/40">For the period ending {new Date().toLocaleDateString()}</p>
+                <p className="text-xs text-black">For the period ending {new Date().toLocaleDateString()}</p>
               </div>
 
               {/* Revenue */}
@@ -443,7 +443,7 @@ export default function Accounting() {
 
       {/* New Account Modal */}
       {showNewAccount && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">New Account</h2>
@@ -502,7 +502,7 @@ export default function Accounting() {
 
       {/* New Journal Entry Modal */}
       {showNewEntry && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">New Journal Entry</h2>
@@ -538,7 +538,7 @@ export default function Accounting() {
                   <button onClick={addLine} className="text-xs text-[#8B5CF6]">+ Add Line</button>
                 </div>
                 <div className="space-y-2">
-                  <div className="grid grid-cols-12 gap-2 text-xs text-black/40 font-medium px-1">
+                  <div className="grid grid-cols-12 gap-2 text-xs text-black font-medium px-1">
                     <span className="col-span-5">Account</span>
                     <span className="col-span-3 text-right">Debit</span>
                     <span className="col-span-3 text-right">Credit</span>
@@ -583,8 +583,8 @@ export default function Accounting() {
 
               <div className="flex justify-end gap-4 pt-4 border-t border-black/[0.06]">
                 <div className="text-right">
-                  <div className="text-sm text-black/50">Debit: <span className="font-mono">{totalDebit.toFixed(2)}</span></div>
-                  <div className="text-sm text-black/50">Credit: <span className="font-mono">{totalCredit.toFixed(2)}</span></div>
+                  <div className="text-sm text-black">Debit: <span className="font-mono">{totalDebit.toFixed(2)}</span></div>
+                  <div className="text-sm text-black">Credit: <span className="font-mono">{totalCredit.toFixed(2)}</span></div>
                   {Math.abs(totalDebit - totalCredit) > 0.01 && (
                     <div className="text-xs text-red-500 mt-1">⚠️ Debits must equal credits</div>
                   )}

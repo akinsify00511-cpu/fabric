@@ -105,7 +105,7 @@ export default function CookieConsent() {
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
-                  className="p-2 hover:bg-black/5 rounded-lg transition"
+                  className="p-2 hover:bg-black/10 rounded-lg transition"
                 >
                   <X className="w-5 h-5 text-black" />
                 </button>
@@ -221,14 +221,14 @@ export default function CookieConsent() {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => setShowSettings(true)}
-                      className="px-4 py-2 bg-white border border-black/10 text-black rounded-lg text-sm font-medium hover:bg-black/5 transition flex items-center justify-center gap-2"
+                      className="px-4 py-2 bg-white border border-black/10 text-black rounded-lg text-sm font-medium hover:bg-black/10 transition flex items-center justify-center gap-2"
                     >
                       <Settings className="w-4 h-4" />
                       Customize
                     </button>
                     <button
                       onClick={handleRejectAll}
-                      className="px-4 py-2 bg-white border border-black/10 text-black rounded-lg text-sm font-medium hover:bg-black/5 transition"
+                      className="px-4 py-2 bg-white border border-black/10 text-black rounded-lg text-sm font-medium hover:bg-black/10 transition"
                     >
                       Reject All
                     </button>
@@ -242,7 +242,7 @@ export default function CookieConsent() {
                 </div>
                 <button
                   onClick={handleRejectAll}
-                  className="p-2 hover:bg-black/5 rounded-lg transition shrink-0"
+                  className="p-2 hover:bg-black/10 rounded-lg transition shrink-0"
                 >
                   <X className="w-5 h-5 text-black" />
                 </button>

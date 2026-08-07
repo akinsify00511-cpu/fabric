@@ -342,7 +342,7 @@ export function PieChart({
                 <div className="flex-1 min-w-0">
                   <div className="text-xs truncate">{item.label}</div>
                 </div>
-                <div className="text-xs text-black/50">{percentage}%</div>
+                <div className="text-xs text-black">{percentage}%</div>
               </div>
             )
           })}

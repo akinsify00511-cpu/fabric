@@ -28,7 +28,7 @@ export default function Settings() {
           </div>
           <div>
             <p className="font-semibold text-lg">{staff?.full_name || staff?.name || 'User'}</p>
-            <p className="text-sm text-black/50">{staff?.email}</p>
+            <p className="text-sm text-black">{staff?.email}</p>
             <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-black/[0.05] text-xs capitalize">
               {staff?.role || 'Staff'}
             </span>
@@ -44,16 +44,16 @@ export default function Settings() {
             <Link
               key={item.to}
               to={item.to}
-              className="flex items-center gap-3 p-4 rounded-xl border border-black/[0.06] hover:bg-black/[0.02] transition-colors"
+              className="flex items-center gap-3 p-4 rounded-xl border border-black/[0.06] hover:bg-black/10 transition-colors"
             >
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
                 <Icon size={18} />
               </div>
               <div className="flex-1">
                 <p className="font-medium">{item.label}</p>
-                <p className="text-xs text-black/50">{item.desc}</p>
+                <p className="text-xs text-black">{item.desc}</p>
               </div>
-              <ChevronRight size={16} className="text-black/30" />
+              <ChevronRight size={16} className="text-black" />
             </Link>
           )
         })}

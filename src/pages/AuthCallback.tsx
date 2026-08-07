@@ -168,7 +168,7 @@ export default function AuthCallback() {
             <span className="text-white font-bold text-2xl">A</span>
           </div>
           <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-black/50 mt-4">{message || 'Completing sign in...'}</p>
+          <p className="text-sm text-black mt-4">{message || 'Completing sign in...'}</p>
         </div>
       </div>
     )
@@ -208,7 +208,7 @@ export default function AuthCallback() {
           </svg>
         </div>
         <h2 className="text-xl font-semibold mt-6">Success!</h2>
-        <p className="text-sm text-black/50 mt-2">{message || 'Redirecting...'}</p>
+        <p className="text-sm text-black mt-2">{message || 'Redirecting...'}</p>
       </div>
     </div>
   )
