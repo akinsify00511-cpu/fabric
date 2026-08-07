@@ -84,21 +84,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const user = JSON.parse(demoUser)
         setIsDemo(true)
-        setStaff({
+        const demoStaff: Staff = {
           id: user.id,
           user_id: user.id,
           business_id: user.business_id,
           business_name: user.business_name,
           full_name: user.name,
+          name: user.name,
           email: user.email,
-          role: 'owner',
+          role: 'owner' as const,
           job_title: 'Business Owner',
-        } as Staff)
+        }
+        console.log('Demo login successful:', demoStaff)
+        setStaff(demoStaff)
         setStaffChecked(true)
         setLoading(false)
         return
       } catch (e) {
-        console.warn('Failed to parse demo user')
+        console.warn('Failed to parse demo user', e)
       }
     }
 

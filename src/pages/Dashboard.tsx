@@ -100,7 +100,8 @@ export default function Dashboard() {
   }, [staff, isDemo])
 
   const loadDashboardData = async () => {
-    if (isDemo || !staff) {
+    // Show mock data if in demo mode or no staff data
+    if (isDemo || !staff?.business_id) {
       const mockData = getMockData()
       setStats(mockData.stats)
       setActivities(mockData.activities)
