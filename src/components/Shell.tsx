@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -21,6 +21,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/social': 'social',
   '/app/projects': 'projects',
   '/app/finance': 'finance',
+  '/app/e-invoicing': 'finance',
   '/app/budgets': 'finance',
   '/app/hr': 'people',
   '/app/recruitment': 'people',
@@ -56,6 +57,7 @@ const NAV_ITEMS = [
   { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
   { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
   { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
+  { to: '/app/e-invoicing', label: 'e-Invoicing', icon: FileTextIcon, toolKey: 'finance' },
   { to: '/app/budgets', label: 'Budgets', icon: Target, toolKey: 'finance' },
   { to: '/app/hr', label: 'HR', icon: Contact, toolKey: 'people' },
   { to: '/app/recruitment', label: 'Recruit', icon: Briefcase, toolKey: 'people' },

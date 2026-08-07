@@ -56,6 +56,7 @@ const SMSBroadcast = lazy(() => import('./pages/SMSBroadcast'))
 const LiveChat = lazy(() => import('./pages/LiveChat'))
 const WhatsAppIntegration = lazy(() => import('./pages/WhatsAppIntegration'))
 const PublicAppointments = lazy(() => import('./pages/PublicAppointments'))
+const EInvoicing = lazy(() => import('./pages/EInvoicing'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const ProjectSettings = lazy(() => import('./pages/ProjectSettings'))
@@ -310,6 +311,7 @@ function AppRoutes() {
         <Route path="sms" element={<SMSBroadcast />} />
         <Route path="live-chat" element={<LiveChat />} />
         <Route path="whatsapp" element={<WhatsAppIntegration />} />
+        <Route path="e-invoicing" element={<EInvoicing />} />
         <Route path="api" element={<APISettings />} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
