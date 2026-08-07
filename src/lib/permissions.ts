@@ -1,6 +1,32 @@
 /**
  * AVENIZE ROLE-BASED ACCESS CONTROL (RBAC)
- * Granular permissions system with role hierarchy
+ * 
+ * This file defines the CORE ROLE PERMISSIONS matrix.
+ * 
+ * TWO-SYSTEM ARCHITECTURE:
+ * 
+ * 1. Core Roles (this file) - Used for:
+ *    - Staff.role field (owner, admin, manager, staff, etc.)
+ *    - UI-level permission checks (canCreate, canEdit, etc.)
+ *    - RLS policy enforcement at database level
+ * 
+ * 2. Functional Roles (database tables) - Used for:
+ *    - Business-configurable roles (Sales, Marketing, Finance, etc.)
+ *    - Tool-level access control via useToolAccess hook
+ *    - Per-business customization
+ *    - See: functional_roles, functional_role_tools, staff_functional_roles tables
+ * 
+ * RECONCILIATION:
+ * - Core roles are the SECURITY BOUNDARY (enforced by RLS)
+ * - Functional roles are the UX LAYER (tool visibility in navigation)
+ * - owner/admin roles bypass functional role filtering (see useToolAccess.ts)
+ * 
+ * TOOL_KEY MAPPING (for useToolAccess.ts):
+ * - dashboard, crm, projects, finance, quotes, payments, accounting
+ * - people, inventory, reports, tasks, campaigns, social
+ * - automations, tickets, chat, approvals, requisitions, meetings
+ * - knowledge, calendar, events, time-tracking, cashflow
+ * - merit, social-recognition, integrations, api, branding, settings
  */
 
 export type Role = 'super_admin' | 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff' | 'accountant' | 'sales' | 'hr' | 'viewer'
@@ -179,6 +205,29 @@ const PERMISSIONS: PermissionMatrix = {
     meetings: ['view'], documents: ['view'],
     purchases: ['view'], analytics: ['view'],
   },
+}
+
+// Module to tool_key mapping for useToolAccess.ts integration
+export const MODULE_TO_TOOL_KEY: Record<Module, string> = {
+  dashboard: 'dashboard',
+  tasks: 'tasks',
+  projects: 'projects',
+  invoices: 'finance',
+  expenses: 'finance',
+  inventory: 'inventory',
+  clients: 'crm',
+  leads: 'crm',
+  deals: 'crm',
+  staff: 'people',
+  payroll: 'people',
+  leave: 'people',
+  reports: 'reports',
+  meetings: 'meetings',
+  documents: 'knowledge',
+  settings: 'settings',
+  purchases: 'requisitions',
+  approvals: 'approvals',
+  analytics: 'reports',
 }
 
 export function hasPermission(role: Role, module: Module, permission: Permission): boolean {
