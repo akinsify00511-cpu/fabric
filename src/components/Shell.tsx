@@ -81,15 +81,17 @@ export default function Shell() {
   const companyName = branding.custom_name || staff?.business_name || 'My Company'
   const displayLogo = branding.logo_url || branding.brand_name ? null : <AvenizeMark size={22} />
   
-  // Get branding colors
-  const bgColor = branding.background_color || '#0D0C0B'
-  const textColor = branding.text_color || '#F7F4EE'
-  const isDarkBg = bgColor === '#111111' || bgColor === '#0D0C0B' || bgColor === '#000000'
+  // Get branding colors - use actual branding values
+  const bgColor = branding.background_color
+  const textColor = branding.text_color
+  // Check for dark backgrounds (light backgrounds are white/light gray)
+  const isLightBg = bgColor === '#FAFAFA' || bgColor === '#F8F9FA' || bgColor === '#FFFFFF' || bgColor === '#F3F4F6'
+  const isDarkBg = !isLightBg
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: bgColor }}>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 shrink-0 border-r flex-col fixed inset-y-0 left-0" style={{ backgroundColor: isDarkBg ? '#17150F' : '#FFFFFF', borderColor: isDarkBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
+      <aside className="hidden md:flex w-56 shrink-0 border-r flex-col fixed inset-y-0 left-0" style={{ backgroundColor: isLightBg ? '#17150F' : '#FFFFFF', borderColor: isLightBg ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)' }}>
         <div className="px-5 py-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {displayLogo}
