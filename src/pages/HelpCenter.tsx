@@ -15,8 +15,8 @@ const FAQ_ITEMS = [
     a: "No — and it won't pretend to. We track invoicing, payments, VAT and WHT, and export cleanly to your accounting software. Your accountant still files; we just make sure they're working from real numbers."
   },
   {
-    q: "My team lives on WhatsApp. Won't they just ignore this?",
-    a: "Department groups, photo sharing, and one-tap task creation are designed to feel as fast as WhatsApp — but every message links back to a real job, invoice, or stock item instead of disappearing into a chat history nobody can search."
+    q: "My team uses chat apps. Won't they just ignore this?",
+    a: "Department groups, photo sharing, and one-tap task creation are designed to feel as fast as your current tools — but every message links back to a real job, invoice, or stock item instead of disappearing into a chat history nobody can search."
   },
   {
     q: "What happens to my price after the first year?",

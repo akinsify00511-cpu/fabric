@@ -388,7 +388,7 @@ function WhyPricingSection() {
             Compared to what you're already paying for chaos.
           </h2>
           <p className="text-[#6B6B6B] max-w-lg">
-            WhatsApp, Excel, and memory aren't free — they cost you in errors, missed payments, and material waste.
+            Spreadsheets, chat apps, and memory aren't free — they cost you in errors, missed payments, and material waste.
           </p>
         </div>
 

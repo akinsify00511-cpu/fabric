@@ -363,7 +363,7 @@ function DailyWorkflowSection() {
   )
 }
 
-// Productivity Tools Section - Asana/ClickUp style features
+// Productivity Tools Section
 function ProductivityToolsSection() {
   return (
     <section className="py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -374,7 +374,7 @@ function ProductivityToolsSection() {
             <span>Productivity Suite</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything Your Team Needs to Ship Faster</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">All-in-one workspace replacing Asana, ClickUp, Slack, and Google Meet. No more app switching.</p>
+          <p className="text-slate-400 max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
         </div>
         
         {/* Task Features Mini Showcase */}
@@ -383,9 +383,9 @@ function ProductivityToolsSection() {
             <div className="flex-1">
               <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
                 <ListTodo size={28} className="text-blue-400" />
-                Task Management Like Asana & ClickUp
+                Powerful Task Management
               </h3>
-              <p className="text-slate-400 mb-6">Manage tasks with the same power as Asana and ClickUp, but simpler and integrated with your business data.</p>
+              <p className="text-slate-400 mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {TASK_FEATURES.map((feat, i) => {
                   const Icon = feat.icon

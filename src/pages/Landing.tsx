@@ -28,11 +28,11 @@ const FAQ_DATA = [
   },
   {
     q: "My accountant already does my books. Why do I need this?",
-    a: "We don't replace your accountant — we make sure they work from real data. Invoices get sent. Payments get recorded. VAT and WHT get tracked. By month-end, your accountant isn't chasing receipts in WhatsApp — the numbers are already there."
+    a: "We don't replace your accountant — we make sure they work from real data. Invoices get sent. Payments get recorded. VAT and WHT get tracked. By month-end, your the accountant has everything they need — the numbers are already there."
   },
   {
     q: "My team will say this is one more app to check. They'll ignore it.",
-    a: "Fair. But Avenize isn't another app to check — it's where work already happens. Site updates, stock requests, payment alerts. Same speed as WhatsApp, but the message disappears into a job that actually gets tracked, not a group chat nobody can search."
+    a: "Fair. But Avenize isn't another app to check — it's where work already happens. Site updates, stock requests, payment alerts. Same speed as your current tools, but the disappears into a tracked job that actually gets done."
   },
   {
     q: "What if my business grows past the plan or shrinks during a slow season?",

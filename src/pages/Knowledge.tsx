@@ -511,7 +511,7 @@ export default function Knowledge() {
                   className="w-full text-3xl font-bold text-[var(--avenize-black)] mb-8 border-none outline-none placeholder:text-black/20"
                 />
 
-                {/* Simple Editor UI - mimics Notion */}
+                {/* Simple Editor UI */}
                 <div className="space-y-4">
                   {/* Toolbar */}
                   <div className="flex items-center gap-1 pb-4 border-b border-black/[0.06]">
