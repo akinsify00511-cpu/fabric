@@ -264,7 +264,7 @@ function AppRoutes() {
         <Route path="premium" element={<Premium />} />
         <Route path="staff/:staffId" element={<StaffProfile />} />
         <Route path="infrastructure" element={<BusinessInfrastructure />} />
-        <Route path="home" element={<CompanyHome />} />
+        <Route path="home" element={<Dashboard />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
