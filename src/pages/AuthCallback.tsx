@@ -162,12 +162,12 @@ export default function AuthCallback() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <div className="w-8 h-8 border-2 border-[var(--avenize-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm text-black/50 mt-4">{message || 'Completing sign in...'}</p>
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function AuthCallback() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto">
             <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,7 +200,7 @@ export default function AuthCallback() {
 
   // Success state while redirecting
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <div className="text-center">
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
           <svg className="w-8 h-8 text-green-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">

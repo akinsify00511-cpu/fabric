@@ -177,7 +177,7 @@ export default function Quotes() {
   }
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
+    draft: 'bg-gray-100 text-gray-900',
     sent: 'bg-blue-100 text-blue-700',
     accepted: 'bg-green-100 text-green-700',
     rejected: 'bg-red-100 text-red-700',
@@ -194,7 +194,7 @@ export default function Quotes() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Quotes</h1>
-          <p className="text-gray-500">Create and manage quotes for your deals</p>
+          <p className="text-gray-900">Create and manage quotes for your deals</p>
         </div>
         <button
           onClick={() => setShowNewQuote(true)}
@@ -213,7 +213,7 @@ export default function Quotes() {
               <div key={deal.id} className="flex items-center justify-between p-3 rounded-lg border border-gray-100 hover:border-indigo-200 transition">
                 <div>
                   <p className="font-medium text-gray-900 text-sm">{deal.title}</p>
-                  <p className="text-xs text-gray-500">₦{deal.value.toLocaleString()}</p>
+                  <p className="text-xs text-gray-900">₦{deal.value.toLocaleString()}</p>
                 </div>
                 <button
                   onClick={() => convertDealToQuote(deal)}
@@ -233,7 +233,7 @@ export default function Quotes() {
         {quotes.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="w-12 h-12 mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500 mb-4">No quotes yet. Create your first quote!</p>
+            <p className="text-gray-900 mb-4">No quotes yet. Create your first quote!</p>
             <button
               onClick={() => setShowNewQuote(true)}
               className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition"
@@ -254,8 +254,8 @@ export default function Quotes() {
                       </span>
                     </div>
                     <p className="font-medium text-gray-900">{quote.title}</p>
-                    <p className="text-sm text-gray-500">{quote.client_name}</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                    <p className="text-sm text-gray-900">{quote.client_name}</p>
+                    <div className="flex items-center gap-4 mt-2 text-xs text-gray-900">
                       <span>Valid until: {new Date(quote.valid_until).toLocaleDateString('en-NG')}</span>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ export default function Quotes() {
                   )}
                   <button 
                     onClick={async () => await generateQuotePDF({ ...quote, business_id: staff?.business_id })}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-900 rounded-lg text-xs font-medium hover:bg-gray-200 transition"
                   >
                     <Download size={14} /> PDF
                   </button>
@@ -312,23 +312,23 @@ export default function Quotes() {
             <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Client Name *</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Client Name *</label>
                   <input type="text" value={newQuote.client_name} onChange={(e) => setNewQuote({ ...newQuote, client_name: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2" placeholder="Client name" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Email</label>
                   <input type="email" value={newQuote.client_email} onChange={(e) => setNewQuote({ ...newQuote, client_email: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2" placeholder="client@company.com" />
                 </div>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quote Title *</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Quote Title *</label>
                 <input type="text" value={newQuote.title} onChange={(e) => setNewQuote({ ...newQuote, title: e.target.value })} className="w-full rounded-lg border border-gray-300 px-3 py-2" placeholder="e.g. Software License" />
               </div>
               
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">Items</label>
+                  <label className="text-sm font-medium text-gray-900">Items</label>
                   <button onClick={addItem} className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">+ Add Item</button>
                 </div>
                 
@@ -345,7 +345,7 @@ export default function Quotes() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Valid For (Days)</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Valid For (Days)</label>
                 <select value={newQuote.valid_days} onChange={(e) => setNewQuote({ ...newQuote, valid_days: parseInt(e.target.value) })} className="w-full rounded-lg border border-gray-300 px-3 py-2">
                   <option value={7}>7 days</option>
                   <option value={14}>14 days</option>
@@ -357,11 +357,11 @@ export default function Quotes() {
               
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-900">Subtotal</span>
                   <span>{formatCurrency(newQuote.items.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0))}</span>
                 </div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">VAT (7.5%)</span>
+                  <span className="text-gray-900">VAT (7.5%)</span>
                   <span>{formatCurrency(newQuote.items.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0) * 0.075)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">

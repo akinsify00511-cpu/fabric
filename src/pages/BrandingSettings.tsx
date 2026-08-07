@@ -131,7 +131,7 @@ export default function BrandingSettings() {
                   onClick={() => updateBranding({ primary_color: theme.primary, accent_color: theme.accent })}
                   className={`p-4 rounded-xl border-2 transition ${
                     branding.primary_color === theme.primary
-                      ? 'border-[var(--avenize-accent-end)]'
+                      ? 'border-[#8B5CF6]'
                       : 'border-transparent bg-black/[0.02]'
                   }`}
                 >
@@ -321,7 +321,7 @@ export default function BrandingSettings() {
               {/* Current Logo */}
               <div
                 className="w-32 h-32 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden"
-                style={{ borderColor: 'var(--avenize-accent-end)' }}
+                style={{ borderColor: '#8B5CF6' }}
               >
                 {branding.logo_url ? (
                   <img src={branding.logo_url} alt="Logo" className="w-full h-full object-contain p-2" />
@@ -406,11 +406,11 @@ export default function BrandingSettings() {
                     onClick={() => updateBranding({ theme_mode: option.value as any })}
                     className={`p-4 rounded-xl border-2 transition flex flex-col items-center gap-2 ${
                       branding.theme_mode === option.value
-                        ? 'border-[var(--avenize-accent-end)] avenize-gradient bg-opacity-10'
+                        ? 'border-[#8B5CF6] avenize-gradient bg-opacity-10'
                         : 'border-transparent bg-black/[0.02]'
                     }`}
                   >
-                    <Icon size={24} className={branding.theme_mode === option.value ? 'text-[var(--avenize-accent-end)]' : ''} />
+                    <Icon size={24} className={branding.theme_mode === option.value ? 'text-[#8B5CF6]' : ''} />
                     <span className="text-sm font-medium">{option.label}</span>
                   </button>
                 )
@@ -428,7 +428,7 @@ export default function BrandingSettings() {
                   onClick={() => updateBranding({ border_radius: option.value as any })}
                   className={`p-3 rounded-xl border-2 transition ${
                     branding.border_radius === option.value
-                      ? 'border-[var(--avenize-accent-end)]'
+                      ? 'border-[#8B5CF6]'
                       : 'border-transparent bg-black/[0.02]'
                   }`}
                 >

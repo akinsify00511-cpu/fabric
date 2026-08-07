@@ -31,7 +31,7 @@ export default function Contact() {
   ]
 
   return (
-    <div className="min-h-screen bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen bg-[#F8F9FA]">
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -53,7 +53,7 @@ export default function Contact() {
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h2>
-            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            <p className="text-gray-900 mb-6 max-w-md mx-auto">
               Thank you for contacting us. Our team will get back to you within 24 hours.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -65,7 +65,7 @@ export default function Contact() {
                   setSubject('')
                   setMessage('')
                 }}
-                className="px-6 py-3 bg-[var(--avenize-black)] text-white rounded-xl font-medium hover:bg-black/90 transition"
+                className="px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
               >
                 Send Another Message
               </button>
@@ -94,10 +94,10 @@ export default function Contact() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-gray-400'}`} />
+                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-gray-900'}`} />
                       <div>
                         <p className="font-medium text-gray-900">{option.label}</p>
-                        <p className="text-xs text-gray-500">{option.desc}</p>
+                        <p className="text-xs text-gray-900">{option.desc}</p>
                       </div>
                     </div>
                   </button>
@@ -108,36 +108,36 @@ export default function Contact() {
               <div className="mt-8 space-y-4">
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Mail className="w-5 h-5 text-gray-400" />
+                    <Mail className="w-5 h-5 text-gray-900" />
                     <div>
-                      <p className="text-gray-500">Email</p>
+                      <p className="text-gray-900">Email</p>
                       <a href="mailto:hello@avenize.com" className="text-indigo-600 hover:underline">hello@avenize.com</a>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Phone className="w-5 h-5 text-gray-400" />
+                    <Phone className="w-5 h-5 text-gray-900" />
                     <div>
-                      <p className="text-gray-500">Phone</p>
+                      <p className="text-gray-900">Phone</p>
                       <a href="tel:+14155551234" className="text-indigo-600 hover:underline">(415) 555-1234</a>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <Clock className="w-5 h-5 text-gray-400" />
+                    <Clock className="w-5 h-5 text-gray-900" />
                     <div>
-                      <p className="text-gray-500">Support Hours</p>
+                      <p className="text-gray-900">Support Hours</p>
                       <p className="text-gray-900">Mon-Fri, 9am-6pm PST</p>
                     </div>
                   </div>
                 </div>
                 <div className="bg-white rounded-xl border border-black/5 p-4">
                   <div className="flex items-center gap-3 text-sm">
-                    <MapPin className="w-5 h-5 text-gray-400" />
+                    <MapPin className="w-5 h-5 text-gray-900" />
                     <div>
-                      <p className="text-gray-500">Address</p>
+                      <p className="text-gray-900">Address</p>
                       <p className="text-gray-900">San Francisco, CA</p>
                     </div>
                   </div>
@@ -154,7 +154,7 @@ export default function Contact() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-1">Name</label>
                       <input
                         type="text"
                         required
@@ -165,7 +165,7 @@ export default function Contact() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                      <label className="block text-sm font-medium text-gray-900 mb-1">Email</label>
                       <input
                         type="email"
                         required
@@ -177,7 +177,7 @@ export default function Contact() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-1">Subject</label>
                     <input
                       type="text"
                       required
@@ -188,7 +188,7 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-1">Message</label>
                     <textarea
                       required
                       value={message}
@@ -201,7 +201,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full sm:w-auto px-8 py-3 bg-[var(--avenize-black)] text-white rounded-xl font-medium hover:bg-black/90 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto px-8 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -220,7 +220,7 @@ export default function Contact() {
                 <HelpCircle className="w-6 h-6 text-indigo-600 shrink-0" />
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Need quick answers?</h3>
-                  <p className="text-sm text-gray-600 mb-3">
+                  <p className="text-sm text-gray-900 mb-3">
                     Check our Help Center for guides, tutorials, and frequently asked questions.
                   </p>
                   <Link

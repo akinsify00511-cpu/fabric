@@ -377,7 +377,7 @@ export default function Events() {
               <div key={i} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                    <User size={18} className="text-gray-500" />
+                    <User size={18} className="text-gray-900" />
                   </div>
                   <div>
                     <p className="font-medium">{reg.name}</p>

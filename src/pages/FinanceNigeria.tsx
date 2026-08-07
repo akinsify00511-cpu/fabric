@@ -373,7 +373,7 @@ export default function FinanceNigeria() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black/50 mb-1">Total Receivable</p>
-          <p className="text-xl font-bold text-[var(--avenize-primary)]">{formatCurrency(stats.totalReceivable)}</p>
+          <p className="text-xl font-bold text-[#4285F4]">{formatCurrency(stats.totalReceivable)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black/50 mb-1">Overdue</p>
@@ -448,8 +448,8 @@ export default function FinanceNigeria() {
           </div>
         ) : filteredInvoices.length === 0 ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 rounded-2xl bg-[var(--avenize-primary)]/10 flex items-center justify-center mx-auto mb-4">
-              <Receipt size={24} className="text-[var(--avenize-primary)]" />
+            <div className="w-16 h-16 rounded-2xl bg-[#4285F4]/10 flex items-center justify-center mx-auto mb-4">
+              <Receipt size={24} className="text-[#4285F4]" />
             </div>
             <h3 className="font-semibold mb-2">No invoices found</h3>
             <p className="text-sm text-black/50 mb-4">Create your first invoice to get started</p>
@@ -471,7 +471,7 @@ export default function FinanceNigeria() {
                 <div
                   key={inv.id}
                   onClick={() => setSelectedInvoice(inv)}
-                  className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[var(--avenize-primary)]/20 cursor-pointer transition-colors"
+                  className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[#4285F4]/20 cursor-pointer transition-colors"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -493,7 +493,7 @@ export default function FinanceNigeria() {
                       inv.status === 'overdue' || isOverdue ? 'bg-red-100 text-red-700' :
                       inv.status === 'partially_paid' ? 'bg-yellow-100 text-yellow-700' :
                       inv.status === 'sent' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-700'
+                      'bg-gray-100 text-gray-900'
                     }`}>
                       {isOverdue && inv.status !== 'paid' ? 'Overdue' : STATUS_LABELS[inv.status].label}
                     </span>
@@ -640,7 +640,7 @@ export default function FinanceNigeria() {
                   <button
                     type="button"
                     onClick={addInvoiceItem}
-                    className="text-xs text-[var(--avenize-primary)] font-medium"
+                    className="text-xs text-[#4285F4] font-medium"
                   >
                     + Add Item
                   </button>
@@ -699,7 +699,7 @@ export default function FinanceNigeria() {
                 )}
                 <div className="flex justify-between font-semibold text-lg pt-2 border-t border-black/10">
                   <span>Total</span>
-                  <span className="text-[var(--avenize-primary)]">{formatCurrency(totals.total)}</span>
+                  <span className="text-[#4285F4]">{formatCurrency(totals.total)}</span>
                 </div>
               </div>
 
@@ -736,7 +736,7 @@ export default function FinanceNigeria() {
                 <p className="font-medium">{selectedInvoice.client_name}</p>
                 <p className="text-sm text-black/50">{selectedInvoice.invoice_number}</p>
                 <p className="text-sm mt-2">
-                  Balance Due: <span className="font-semibold text-[var(--avenize-primary)]">{formatCurrency(selectedInvoice.balance)}</span>
+                  Balance Due: <span className="font-semibold text-[#4285F4]">{formatCurrency(selectedInvoice.balance)}</span>
                 </p>
               </div>
               

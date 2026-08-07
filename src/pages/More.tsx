@@ -43,7 +43,7 @@ export default function More() {
           plan === 'enterprise' ? 'bg-purple-100 text-purple-700' :
           plan === 'pro' ? 'bg-indigo-100 text-indigo-700' :
           plan === 'starter' ? 'bg-blue-100 text-blue-700' :
-          'bg-gray-100 text-gray-600'
+          'bg-gray-100 text-gray-900'
         }`}>
           {plan.charAt(0).toUpperCase() + plan.slice(1)} Plan
         </div>
@@ -61,7 +61,7 @@ export default function More() {
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.tint}`}>
                   <item.icon size={18} strokeWidth={2} />
                 </div>
-                <Lock size={14} className="text-gray-400" />
+                <Lock size={14} className="text-gray-900" />
               </div>
               <div>
                 <span className="text-sm font-medium text-gray-900">{item.label}</span>

@@ -338,14 +338,14 @@ export default function Chat() {
               }}
               className={`w-full px-4 py-2 flex items-center gap-2 text-sm transition ${
                 selectedChannel?.id === channel.id
-                  ? 'bg-[var(--avenize-accent-end)]/10 text-[var(--avenize-accent-end)]'
+                  ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
                   : 'text-black/60 hover:bg-black/[0.02]'
               }`}
             >
               <Hash size={16} className="shrink-0" />
               <span className="flex-1 text-left truncate">{channel.name}</span>
               {channel.unread_count > 0 && (
-                <span className="w-5 h-5 rounded-full bg-[var(--avenize-accent-end)] text-white text-xs flex items-center justify-center">
+                <span className="w-5 h-5 rounded-full bg-[#8B5CF6] text-white text-xs flex items-center justify-center">
                   {channel.unread_count > 9 ? '9+' : channel.unread_count}
                 </span>
               )}
@@ -364,7 +364,7 @@ export default function Chat() {
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && createChannel()}
               />
-              <button onClick={createChannel} className="text-xs text-[var(--avenize-accent-end)]">
+              <button onClick={createChannel} className="text-xs text-[#8B5CF6]">
                 Create
               </button>
             </div>
@@ -487,7 +487,7 @@ export default function Chat() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder={`Message #${selectedChannel.name}`}
-                  className="w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                   rows={1}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -515,7 +515,7 @@ export default function Chat() {
         </div>
       ) : (
         // No channel selected
-        <div className="flex-1 flex items-center justify-center bg-[var(--avenize-offwhite)]">
+        <div className="flex-1 flex items-center justify-center bg-[#F8F9FA]">
           <div className="text-center">
             <Hash size={64} className="mx-auto mb-4 text-black/10" />
             <h2 className="text-lg font-medium text-gray-900">Welcome to Avenize Chat</h2>

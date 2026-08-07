@@ -35,7 +35,7 @@ export default function SSOSettings() {
         {/* Beta Access Banner */}
         <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 mb-6 text-white">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-xl bg-gray-300 flex items-center justify-center">
               <Lock className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
@@ -43,7 +43,7 @@ export default function SSOSettings() {
                 <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium">
                   Beta Feature
                 </span>
-                <span className="px-3 py-1 rounded-full bg-white/10 text-white/70 text-xs">
+                <span className="px-3 py-1 rounded-full bg-gray-300 text-white/70 text-xs">
                   Enterprise Feature
                 </span>
               </div>

@@ -101,7 +101,7 @@ export default function AdminAnalytics() {
       <div className="flex flex-col items-center justify-center py-20">
         <AlertTriangle size={48} className="text-amber-500 mb-4" />
         <h1 className="text-xl font-bold text-gray-900 mb-2">Access Restricted</h1>
-        <p className="text-gray-500">This page is only visible to administrators.</p>
+        <p className="text-gray-900">This page is only visible to administrators.</p>
       </div>
     )
   }
@@ -127,7 +127,7 @@ export default function AdminAnalytics() {
     error: 'bg-red-100 text-red-600',
     payment: 'bg-emerald-100 text-emerald-600',
     notification: 'bg-indigo-100 text-indigo-600',
-    auth: 'bg-gray-100 text-gray-600',
+    auth: 'bg-gray-100 text-gray-900',
     performance: 'bg-orange-100 text-orange-600',
     engagement: 'bg-pink-100 text-pink-600',
   }
@@ -177,7 +177,7 @@ export default function AdminAnalytics() {
           </select>
           <button
             onClick={loadAnalytics}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
           >
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             Refresh
@@ -305,7 +305,7 @@ export default function AdminAnalytics() {
             <div className="space-y-3">
               {analytics?.eventsByCategory.map((cat) => {
                 const Icon = categoryIcons[cat.category] || Activity
-                const colorClass = categoryColors[cat.category] || 'bg-gray-100 text-gray-600'
+                const colorClass = categoryColors[cat.category] || 'bg-gray-100 text-gray-900'
                 const percentage = totalCategoryCount > 0 ? ((cat.count / totalCategoryCount) * 100).toFixed(1) : '0'
                 
                 return (
@@ -373,7 +373,7 @@ export default function AdminAnalytics() {
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
                 selectedCategory === 'all' 
-                  ? 'bg-[var(--avenize-primary)] text-white' 
+                  ? 'bg-[#4285F4] text-white' 
                   : 'bg-black/5 text-black/60'
               }`}
             >
@@ -387,7 +387,7 @@ export default function AdminAnalytics() {
                   onClick={() => setSelectedCategory(cat.category)}
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
                     selectedCategory === cat.category
-                      ? 'bg-[var(--avenize-primary)] text-white'
+                      ? 'bg-[#4285F4] text-white'
                       : 'bg-black/5 text-black/60'
                   }`}
                 >
@@ -402,7 +402,7 @@ export default function AdminAnalytics() {
           <div className="space-y-2 max-h-[600px] overflow-y-auto">
             {filteredEvents.slice(0, 50).map((event) => {
               const Icon = categoryIcons[event.category] || Activity
-              const colorClass = categoryColors[event.category] || 'bg-gray-100 text-gray-600'
+              const colorClass = categoryColors[event.category] || 'bg-gray-100 text-gray-900'
               const isExpanded = expandedEvent === event.id
               
               return (

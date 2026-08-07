@@ -209,7 +209,7 @@ function BankingTab({ businessId }: { businessId?: string }) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Bank Accounts</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Account
         </button>
       </div>
@@ -225,7 +225,7 @@ function BankingTab({ businessId }: { businessId?: string }) {
             <option value="domiciliary">Domiciliary</option>
           </select>
           <input type="number" placeholder="Current Balance (₦)" value={form.balance} onChange={(e) => setForm({ ...form, balance: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Add Account</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Add Account</button>
         </form>
       )}
 
@@ -319,7 +319,7 @@ function VATTab({ businessId }: { businessId?: string }) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">VAT Records</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Record
         </button>
       </div>
@@ -339,7 +339,7 @@ function VATTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Base Amount (₦)" value={form.base_amount} onChange={(e) => setForm({ ...form, base_amount: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
             <input type="number" placeholder="VAT Amount (₦)" value={form.vat_amount} onChange={(e) => setForm({ ...form, vat_amount: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Add Record</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Add Record</button>
         </form>
       )}
 
@@ -429,7 +429,7 @@ function WHTTab({ businessId }: { businessId?: string }) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Withholding Tax Records</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Record
         </button>
       </div>
@@ -446,7 +446,7 @@ function WHTTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Gross Amount (₦)" value={form.gross_amount} onChange={(e) => setForm({ ...form, gross_amount: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
             <input type="number" placeholder="WHT Rate (%)" value={form.withholding_rate} onChange={(e) => setForm({ ...form, withholding_rate: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Add Record</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Add Record</button>
         </form>
       )}
 
@@ -544,7 +544,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Debtors (Money Owed to You)</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Debtor
         </button>
       </div>
@@ -562,7 +562,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Outstanding (₦)" value={form.outstanding_amount} onChange={(e) => setForm({ ...form, outstanding_amount: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           </div>
           <input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Add Debtor</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Add Debtor</button>
         </form>
       )}
 
@@ -651,7 +651,7 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
 
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Creditors (Money You Owe)</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Creditor
         </button>
       </div>
@@ -666,7 +666,7 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
             <input type="number" placeholder="Outstanding (₦)" value={form.outstanding_amount} onChange={(e) => setForm({ ...form, outstanding_amount: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           </div>
           <input type="date" value={form.due_date} onChange={(e) => setForm({ ...form, due_date: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Add Creditor</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Add Creditor</button>
         </form>
       )}
 

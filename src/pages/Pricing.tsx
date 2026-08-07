@@ -535,7 +535,7 @@ export default function Pricing() {
           </p>
 
           {/* Billing Toggle */}
-          <div className="inline-flex bg-white/10 rounded-lg p-1">
+          <div className="inline-flex bg-gray-300 rounded-lg p-1">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${

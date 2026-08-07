@@ -184,7 +184,7 @@ function HeroSection() {
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
           </div>
           <div className="text-left">
-            <span className="text-3xl font-semibold text-gray-800">Avenize</span>
+            <span className="text-3xl font-semibold text-gray-900">Avenize</span>
             <div className="flex items-center gap-2 text-xs text-gray-900">
               <Clock size={12} />
               <span>Lagos • </span>
@@ -203,13 +203,13 @@ function HeroSection() {
         <div className="max-w-2xl mx-auto mb-8">
           <div className="relative bg-white rounded-full shadow-md hover:shadow-lg transition-shadow border border-gray-200 overflow-hidden">
             <div className="flex items-center px-6 py-4">
-              <svg className="w-5 h-5 text-gray-800 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-900 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input 
                 type="text" 
                 placeholder="Search features, modules, pricing..." 
-                className="flex-1 text-lg text-gray-700 outline-none placeholder-gray-400"
+                className="flex-1 text-lg text-gray-900 outline-none placeholder-gray-400"
               />
               <div className="flex items-center gap-2 ml-4">
                 <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -249,7 +249,7 @@ function HeroSection() {
           <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-blue-500 text-white font-medium text-lg hover:bg-blue-600 hover:shadow-lg transition-all">
             Get Started Free
           </Link>
-          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-gray-300 text-gray-700 font-medium text-lg hover:bg-gray-50 transition-all">
+          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-gray-300 text-gray-900 font-medium text-lg hover:bg-gray-50 transition-all">
             Sign In
           </Link>
         </div>
@@ -344,7 +344,7 @@ function DailyWorkflowSection() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="text-xs font-mono text-gray-800 bg-gray-200 px-2 py-0.5 rounded">{item.time}</span>
+                    <span className="text-xs font-mono text-gray-900 bg-gray-200 px-2 py-0.5 rounded">{item.time}</span>
                     <h3 className="font-semibold text-gray-900">{item.action}</h3>
                   </div>
                   <p className="text-sm text-gray-900">{item.desc}</p>
@@ -429,7 +429,7 @@ function ProductivityToolsSection() {
           {PRODUCTIVITY_TOOLS.map((tool, i) => {
             const Icon = tool.icon
             return (
-              <div key={i} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-gray-200 hover:bg-white/10 transition-colors">
+              <div key={i} className="bg-gray-200 backdrop-blur-sm rounded-xl p-6 border border-gray-200 hover:bg-gray-300 transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
                     <Icon size={22} style={{ color: tool.color }} />
@@ -438,7 +438,7 @@ function ProductivityToolsSection() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {tool.features.map((feat, j) => (
-                    <div key={j} className="flex items-center gap-2 text-sm text-gray-800">
+                    <div key={j} className="flex items-center gap-2 text-sm text-gray-900">
                       <Check size={14} className="text-green-400 shrink-0" />
                       {feat}
                     </div>
@@ -451,8 +451,8 @@ function ProductivityToolsSection() {
         
         {/* Integration Banner */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-gray-200">
-            <span className="text-sm text-gray-800">Also includes:</span>
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-gray-200 rounded-full border border-gray-200">
+            <span className="text-sm text-gray-900">Also includes:</span>
             <span className="text-sm font-medium">File Storage</span>
             <span className="text-slate-600">•</span>
             <span className="text-sm font-medium">Time Tracking</span>
@@ -507,7 +507,7 @@ function ModulesSection() {
                     <h3 className="font-bold text-gray-900 mb-1">{module.title}</h3>
                     <p className="text-sm text-blue-600 font-medium mb-2">{module.tagline}</p>
                     <p className="text-sm text-gray-900 mb-3">{module.desc}</p>
-                    <p className="text-xs text-gray-800">{module.stats}</p>
+                    <p className="text-xs text-gray-900">{module.stats}</p>
                   </div>
                 </div>
               </div>
@@ -533,13 +533,13 @@ function TestimonialsSection() {
             <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
               <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="text-amber-400 fill-amber-400" />)}</div>
               <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
-              <p className="text-gray-700 mb-4 leading-relaxed">"{t.quote}"</p>
+              <p className="text-gray-900 mb-4 leading-relaxed">"{t.quote}"</p>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 via-indigo-400 to-purple-400 flex items-center justify-center text-white font-bold text-lg shadow-md">{t.name.charAt(0)}</div>
                 <div>
                   <div className="font-semibold text-gray-900">{t.name}</div>
                   <div className="text-sm text-gray-900">{t.role}</div>
-                  <div className="text-xs text-gray-800">{t.business}</div>
+                  <div className="text-xs text-gray-900">{t.business}</div>
                 </div>
               </div>
             </div>
@@ -570,7 +570,7 @@ function PricingSection() {
               <p className="text-sm text-gray-900 mb-3">{plan.desc}</p>
               <div className="mb-4"><span className="text-3xl font-bold text-gray-900">{plan.price}</span><span className="text-gray-900 text-sm">{plan.period}</span></div>
               <ul className="space-y-2 mb-4">
-                {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-gray-700"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
+                {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-gray-900"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
               </ul>
               <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>{plan.cta}</Link>
               <p className="text-xs text-gray-900 mt-3 text-center">{plan.seats}</p>
@@ -594,7 +594,7 @@ function FAQSection() {
             <div key={i} className="bg-gray-50 rounded-xl p-4 hover:shadow-sm transition-shadow">
               <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full flex items-center justify-between text-left">
                 <span className="font-medium text-gray-900 pr-4">{faq.q}</span>
-                <span className={`text-2xl text-gray-800 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+                <span className={`text-2xl text-gray-900 flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && <p className="mt-3 text-gray-900 text-sm leading-relaxed">{faq.a}</p>}
             </div>
@@ -631,7 +631,7 @@ function Footer() {
           </div>
           <div className="text-center md:text-right text-sm">
             <p>© 2024 Avenize. Built for Nigerian businesses.</p>
-            <p className="text-gray-800 mt-1">Running from Lagos 🇳🇬</p>
+            <p className="text-gray-900 mt-1">Running from Lagos 🇳🇬</p>
           </div>
         </div>
       </div>

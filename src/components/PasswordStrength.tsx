@@ -60,7 +60,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
   }
 
   const textClasses: Record<string, string> = {
-    gray: 'text-gray-500',
+    gray: 'text-gray-900',
     red: 'text-red-600',
     yellow: 'text-yellow-600',
     blue: 'text-blue-600',
@@ -101,7 +101,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
             ) : (
               <X className="w-3.5 h-3.5 text-gray-300 shrink-0" />
             )}
-            <span className={requirements[key as keyof typeof requirements] ? 'text-gray-700' : 'text-gray-400'}>
+            <span className={requirements[key as keyof typeof requirements] ? 'text-gray-900' : 'text-gray-900'}>
               {label}
             </span>
           </div>

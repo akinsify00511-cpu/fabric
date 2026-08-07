@@ -156,19 +156,19 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
           <h3 className="font-medium mb-3">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-2">
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
-              <Plus size={18} className="text-[var(--avenize-primary)]" />
+              <Plus size={18} className="text-[#4285F4]" />
               <span className="text-sm">Report Issue</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
-              <Bell size={18} className="text-[var(--avenize-primary)]" />
+              <Bell size={18} className="text-[#4285F4]" />
               <span className="text-sm">Announcement</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
-              <FileText size={18} className="text-[var(--avenize-primary)]" />
+              <FileText size={18} className="text-[#4285F4]" />
               <span className="text-sm">New SOP</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/5 text-left">
-              <ScrollText size={18} className="text-[var(--avenize-primary)]" />
+              <ScrollText size={18} className="text-[#4285F4]" />
               <span className="text-sm">Compliance</span>
             </button>
           </div>
@@ -243,7 +243,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
   }
 
   const priorityColors: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-600',
+    low: 'bg-gray-100 text-gray-900',
     normal: 'bg-blue-100 text-blue-700',
     high: 'bg-amber-100 text-amber-700',
     urgent: 'bg-red-100 text-red-700',
@@ -255,7 +255,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
         <h2 className="font-medium">Company Announcements</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} /> New Announcement
         </button>
@@ -299,7 +299,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
               Pin to top
             </label>
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
             Publish Announcement
           </button>
         </form>
@@ -372,7 +372,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
   }
 
   const priorityColors: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-600',
+    low: 'bg-gray-100 text-gray-900',
     medium: 'bg-blue-100 text-blue-700',
     high: 'bg-amber-100 text-amber-700',
     critical: 'bg-red-100 text-red-700',
@@ -383,7 +383,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
     acknowledged: 'bg-amber-100 text-amber-700',
     in_progress: 'bg-blue-100 text-blue-700',
     resolved: 'bg-green-100 text-green-700',
-    closed: 'bg-gray-100 text-gray-600',
+    closed: 'bg-gray-100 text-gray-900',
   }
 
   return (
@@ -473,11 +473,11 @@ function SOPsTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-600',
+    draft: 'bg-gray-100 text-gray-900',
     review: 'bg-amber-100 text-amber-700',
     approved: 'bg-blue-100 text-blue-700',
     active: 'bg-green-100 text-green-700',
-    archived: 'bg-gray-100 text-gray-400',
+    archived: 'bg-gray-100 text-gray-900',
   }
 
   const categoryIcons: Record<string, any> = {
@@ -488,7 +488,7 @@ function SOPsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Standard Operating Procedures</h2>
-        <button onClick={() => showToast('SOP creation coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => showToast('SOP creation coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> New SOP
         </button>
       </div>
@@ -553,7 +553,7 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Process Workflows</h2>
-        <button onClick={() => showToast('Workflow builder coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => showToast('Workflow builder coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> New Workflow
         </button>
       </div>
@@ -578,7 +578,7 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-xs bg-black/5 px-2 py-0.5 rounded text-black/50 capitalize">{wf.workflow_type}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
                     <h3 className="font-medium mt-1">{wf.name}</h3>
                     {wf.description && <p className="text-sm text-black/50 mt-1">{wf.description}</p>}
@@ -621,7 +621,7 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Compliance Tracking</h2>
-        <button onClick={() => showToast('Add compliance item coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => showToast('Add compliance item coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Requirement
         </button>
       </div>
@@ -684,7 +684,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     contract: 'bg-purple-500/10 text-purple-500',
     template: 'bg-amber-500/10 text-amber-500',
     report: 'bg-green-500/10 text-green-500',
-    legal: 'bg-gray-500/10 text-gray-500',
+    legal: 'bg-gray-500/10 text-gray-900',
     training: 'bg-teal-500/10 text-teal-500',
     other: 'bg-black/10 text-black/50',
   }
@@ -693,7 +693,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Company Documents</h2>
-        <button onClick={() => showToast('Document upload coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => showToast('Document upload coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Upload Document
         </button>
       </div>
@@ -716,7 +716,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs px-2 py-0.5 rounded ${typeColors[doc.document_type]}`}>{doc.document_type}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>v{doc.version}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>v{doc.version}</span>
                   </div>
                   <h3 className="font-medium">{doc.title}</h3>
                 </div>
@@ -750,7 +750,7 @@ function DepartmentsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Departments</h2>
-        <button onClick={() => showToast('Department management coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => showToast('Department management coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Department
         </button>
       </div>

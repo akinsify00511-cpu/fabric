@@ -24,7 +24,7 @@ const categoryConfig: Record<NotificationCategory, { icon: typeof Bell; color: s
   reminder: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-100' },
   marketing: { icon: Sparkles, color: 'text-pink-500', bg: 'bg-pink-100' },
   social: { icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-100' },
-  system: { icon: AlertCircle, color: 'text-gray-500', bg: 'bg-gray-100' },
+  system: { icon: AlertCircle, color: 'text-gray-900', bg: 'bg-gray-100' },
 }
 
 export default function NotificationBell() {
@@ -134,7 +134,7 @@ export default function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 rounded-lg hover:bg-black/5 transition"
       >
-        <Bell size={20} className={unreadCount > 0 ? 'text-[var(--avenize-primary)]' : 'text-black/50'} />
+        <Bell size={20} className={unreadCount > 0 ? 'text-[#4285F4]' : 'text-black/50'} />
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -156,7 +156,7 @@ export default function NotificationBell() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-xs text-[var(--avenize-primary)] hover:underline flex items-center gap-1"
+                className="text-xs text-[#4285F4] hover:underline flex items-center gap-1"
               >
                 <CheckCheck size={14} />
                 Mark all read
@@ -188,7 +188,7 @@ export default function NotificationBell() {
                     <div
                       key={notification.id}
                       className={`p-4 hover:bg-black/[0.02] transition ${
-                        !notification.read ? 'bg-[var(--avenize-primary)]/5' : ''
+                        !notification.read ? 'bg-[#4285F4]/5' : ''
                       }`}
                       onClick={() => !notification.read && markAsRead(notification.id)}
                     >
@@ -202,7 +202,7 @@ export default function NotificationBell() {
                               {notification.title}
                             </p>
                             {!notification.read && (
-                              <span className="w-2 h-2 bg-[var(--avenize-primary)] rounded-full shrink-0 mt-1" />
+                              <span className="w-2 h-2 bg-[#4285F4] rounded-full shrink-0 mt-1" />
                             )}
                           </div>
                           <p className="text-xs text-black/50 mt-0.5 line-clamp-2">
@@ -216,7 +216,7 @@ export default function NotificationBell() {
                               <Link
                                 to={notification.action_url}
                                 onClick={(e) => e.stopPropagation()}
-                                className="text-xs text-[var(--avenize-primary)] hover:underline"
+                                className="text-xs text-[#4285F4] hover:underline"
                               >
                                 {notification.action_text || 'View'}
                               </Link>
@@ -237,7 +237,7 @@ export default function NotificationBell() {
               <Link
                 to="/app/notifications"
                 onClick={() => setIsOpen(false)}
-                className="text-xs text-[var(--avenize-primary)] hover:underline"
+                className="text-xs text-[#4285F4] hover:underline"
               >
                 View all notifications
               </Link>

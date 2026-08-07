@@ -51,9 +51,9 @@ export default function OwnerInsights() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Owner Insights</h1>
-          <p className="text-gray-500">Your business command center</p>
+          <p className="text-gray-900">Your business command center</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-gray-900">
           <Clock size={16} />
           <span>Last updated: {new Date().toLocaleTimeString()}</span>
         </div>
@@ -71,7 +71,7 @@ export default function OwnerInsights() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
               }`}
             >
               <Icon size={16} />
@@ -97,8 +97,8 @@ export default function OwnerInsights() {
                 <div key={i} className="text-center p-4 bg-gray-50 rounded-lg">
                   <CheckCircle size={24} className="text-green-500 mx-auto mb-2" />
                   <div className="text-xl font-bold text-gray-900">{p.value}</div>
-                  <div className="text-sm text-gray-500">{p.metric}</div>
-                  <div className="text-xs text-gray-400 mt-1">Target: {p.target}</div>
+                  <div className="text-sm text-gray-900">{p.metric}</div>
+                  <div className="text-xs text-gray-900 mt-1">Target: {p.target}</div>
                 </div>
               ))}
             </div>
@@ -117,10 +117,10 @@ export default function OwnerInsights() {
                     }`} />
                     <div>
                       <p className="text-sm font-medium text-gray-900">{item.action}</p>
-                      <p className="text-xs text-gray-500">by {item.user}</p>
+                      <p className="text-xs text-gray-900">by {item.user}</p>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400">{item.time}</span>
+                  <span className="text-xs text-gray-900">{item.time}</span>
                 </div>
               ))}
             </div>
@@ -141,24 +141,24 @@ export default function OwnerInsights() {
             <h2 className="text-lg font-bold text-gray-900 mb-4">Sarah Performance</h2>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-500 mb-4">Week-over-Week</p>
+                <p className="text-sm text-gray-900 mb-4">Week-over-Week</p>
                 <div className="flex items-center gap-4">
                   <div className="text-center">
                     <div className="text-3xl font-bold text-gray-900">1,247</div>
-                    <div className="text-sm text-gray-500">This week</div>
+                    <div className="text-sm text-gray-900">This week</div>
                   </div>
                   <div className="flex items-center gap-1 text-green-600">
                     <ArrowUp size={20} />
                     <span className="font-bold">14.5%</span>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-400">1,089</div>
-                    <div className="text-sm text-gray-400">Last week</div>
+                    <div className="text-2xl font-bold text-gray-900">1,089</div>
+                    <div className="text-sm text-gray-900">Last week</div>
                   </div>
                 </div>
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-4">Resolution Rate</p>
+                <p className="text-sm text-gray-900 mb-4">Resolution Rate</p>
                 <div className="flex items-center gap-3">
                   <div className="w-full bg-gray-100 rounded-full h-4">
                     <div className="bg-green-500 h-4 rounded-full" style={{ width: '95%' }} />
@@ -182,7 +182,7 @@ export default function OwnerInsights() {
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-gray-900">{item.count}</div>
-                    <div className="text-xs text-gray-500">queries</div>
+                    <div className="text-xs text-gray-900">queries</div>
                   </div>
                 </div>
               ))}
@@ -197,7 +197,7 @@ export default function OwnerInsights() {
             <h2 className="text-lg font-bold text-gray-900 mb-4">Module Usage Across Team</h2>
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr className="text-left text-sm text-gray-500 border-b">
+                <tr className="text-left text-sm text-gray-900 border-b">
                   <th className="pb-3">Module</th>
                   <th className="pb-3 text-center">Active Users</th>
                   <th className="pb-3 text-center">Sessions</th>
@@ -254,7 +254,7 @@ function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { 
         </span>
       </div>
       <div className="text-2xl font-bold text-gray-900 mb-1">{prefix}{value}</div>
-      <div className="text-sm text-gray-500">{label}</div>
+      <div className="text-sm text-gray-900">{label}</div>
     </div>
   )
 }

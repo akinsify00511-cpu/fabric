@@ -136,7 +136,7 @@ export default function HelpCenter() {
             </Link>
             <a
               href="mailto:hello@avenize.com"
-              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition"
+              className="inline-flex items-center gap-2 px-6 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-gray-300 transition"
             >
               <Phone size={18} />
               hello@avenize.com
@@ -147,12 +147,12 @@ export default function HelpCenter() {
 
       {/* Footer */}
       <footer className="py-8 px-4 bg-gray-900">
-        <div className="max-w-4xl mx-auto text-center text-gray-800 text-sm">
+        <div className="max-w-4xl mx-auto text-center text-gray-900 text-sm">
           <p>&copy; {new Date().getFullYear()} Avenize. All rights reserved.</p>
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Link to="/privacy" className="hover:text-gray-700">Privacy</Link>
-            <Link to="/terms" className="hover:text-gray-700">Terms</Link>
-            <Link to="/cookies" className="hover:text-gray-700">Cookies</Link>
+            <Link to="/privacy" className="hover:text-gray-900">Privacy</Link>
+            <Link to="/terms" className="hover:text-gray-900">Terms</Link>
+            <Link to="/cookies" className="hover:text-gray-900">Cookies</Link>
           </div>
         </div>
       </footer>

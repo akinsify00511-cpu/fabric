@@ -202,7 +202,7 @@ export default function AttendancePage() {
     half_day: { bg: 'bg-blue-100', text: 'text-blue-600', icon: Clock },
     on_leave: { bg: 'bg-purple-100', text: 'text-purple-600', icon: Calendar },
     holiday: { bg: 'bg-indigo-100', text: 'text-indigo-600', icon: Calendar },
-    weekend: { bg: 'bg-gray-100', text: 'text-gray-600', icon: Calendar },
+    weekend: { bg: 'bg-gray-100', text: 'text-gray-900', icon: Calendar },
   }
 
   return (

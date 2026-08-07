@@ -43,7 +43,7 @@ const STATUS_CONFIG = {
   up: { label: 'Operational', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-100' },
   down: { label: 'Down', icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },
   degraded: { label: 'Degraded', icon: AlertTriangle, color: 'text-yellow-600', bg: 'bg-yellow-100' },
-  unknown: { label: 'Unknown', icon: Clock, color: 'text-gray-600', bg: 'bg-gray-100' },
+  unknown: { label: 'Unknown', icon: Clock, color: 'text-gray-900', bg: 'bg-gray-100' },
 }
 
 const SEVERITY_CONFIG = {

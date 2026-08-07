@@ -183,7 +183,7 @@ export default function ProjectSettings() {
             {!showNewForm && (
               <button
                 onClick={() => setShowNewForm(true)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--avenize-primary)] text-white rounded-lg text-sm font-medium"
+                className="flex items-center gap-2 px-3 py-1.5 bg-[#4285F4] text-white rounded-lg text-sm font-medium"
               >
                 <Plus size={16} />
                 Add Type
@@ -291,7 +291,7 @@ export default function ProjectSettings() {
                     <span className="text-xs text-black/30">{jt.is_active ? 'Active' : 'Inactive'}</span>
                     <button
                       onClick={() => toggleActive(jt)}
-                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-500'}`}
+                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-900'}`}
                     >
                       {jt.is_active ? 'Disable' : 'Enable'}
                     </button>

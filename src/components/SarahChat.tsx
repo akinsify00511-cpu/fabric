@@ -288,14 +288,14 @@ export default function SarahChat() {
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     msg.role === 'assistant' 
                       ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' 
-                      : 'bg-gray-200 text-gray-600'
+                      : 'bg-gray-200 text-gray-900'
                   }`}>
                     {msg.role === 'assistant' ? <Bot size={16} /> : <User size={16} />}
                   </div>
                   <div>
                     <div className={`rounded-2xl px-4 py-3 text-sm ${
                       msg.role === 'assistant'
-                        ? 'bg-gray-100 text-gray-800'
+                        ? 'bg-gray-100 text-gray-900'
                         : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
@@ -323,7 +323,7 @@ export default function SarahChat() {
                       </div>
                     )}
                     
-                    <p className="text-[10px] text-gray-400 mt-1 px-1">
+                    <p className="text-[10px] text-gray-900 mt-1 px-1">
                       {msg.role === 'assistant' ? 'Sarah' : 'You'} • {msg.time}
                     </p>
                   </div>

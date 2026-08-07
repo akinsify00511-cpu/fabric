@@ -39,11 +39,11 @@ export default function FeatureSuggestions({ suggestions, title = "You might als
               <span className="text-sm font-medium text-gray-900 group-hover:text-indigo-700">
                 {suggestion.label}
               </span>
-              <span className="text-xs text-gray-500 ml-2">
+              <span className="text-xs text-gray-900 ml-2">
                 {suggestion.description}
               </span>
             </div>
-            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition" />
+            <ArrowRight className="w-4 h-4 text-gray-900 group-hover:text-indigo-500 transition" />
           </button>
         ))}
       </div>

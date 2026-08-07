@@ -316,7 +316,7 @@ export default function Merit() {
               <div key={entry.staff_id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
                   index === 0 ? 'avenize-gradient text-white' :
-                  index === 1 ? 'bg-gray-200 text-gray-600' :
+                  index === 1 ? 'bg-gray-200 text-gray-900' :
                   index === 2 ? 'bg-amber-100 text-amber-700' :
                   'bg-black/[0.05] text-black/40'
                 }`}>

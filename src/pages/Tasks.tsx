@@ -27,7 +27,7 @@ const DEMO_TASKS: Task[] = [
 ]
 
 const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-600',
+  low: 'bg-gray-100 text-gray-900',
   medium: 'bg-amber-100 text-amber-600',
   high: 'bg-red-100 text-red-600',
 }
@@ -210,7 +210,7 @@ export default function Tasks() {
             key={stat.key}
             onClick={() => setFilter(stat.key as any)}
             className={`bg-white rounded-xl p-3 border text-center transition ${
-              filter === stat.key ? 'border-[var(--avenize-primary)] ring-2 ring-[var(--avenize-primary)]/20' : 'border-black/[0.06]'
+              filter === stat.key ? 'border-[#4285F4] ring-2 ring-[#4285F4]/20' : 'border-black/[0.06]'
             }`}
           >
             <p className="text-2xl font-bold">{stat.value}</p>
@@ -231,7 +231,7 @@ export default function Tasks() {
           <button
             onClick={addTask}
             disabled={isDemo}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm disabled:opacity-50"
           >
             <Plus size={16} />
             Add

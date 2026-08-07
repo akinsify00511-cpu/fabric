@@ -53,7 +53,7 @@ export default function EntitlementGate({
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         {featureInfo?.label} requires a higher plan
       </h3>
-      <p className="text-sm text-gray-500 mb-6 max-w-xs">
+      <p className="text-sm text-gray-900 mb-6 max-w-xs">
         Your current {plan} plan doesn't include this feature. Upgrade to unlock it.
       </p>
       <div className="flex gap-3">
@@ -82,7 +82,7 @@ export default function EntitlementGate({
             onClick={() => navigate('/app/settings')}
             className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded"
           >
-            <X size={20} className="text-gray-400" />
+            <X size={20} className="text-gray-900" />
           </button>
           <UpgradePrompt />
         </div>

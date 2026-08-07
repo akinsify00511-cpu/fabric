@@ -301,7 +301,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
         <div className="bg-white rounded-2xl p-6 max-w-md text-center">
           <VideoOff size={48} className="mx-auto mb-4 text-red-500" />
           <h2 className="text-xl font-bold mb-2">Unable to Start Video Call</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-900 mb-4">{error}</p>
           <button
             onClick={onLeave}
             className="px-6 py-2 bg-indigo-500 text-white rounded-lg font-medium"
@@ -322,10 +322,10 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
             <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
             <span className="text-white font-medium">In Call</span>
           </div>
-          <span className="text-gray-400">{formatDuration(callDuration)}</span>
+          <span className="text-gray-900">{formatDuration(callDuration)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-gray-400 text-sm">{participants.length} participant{participants.length !== 1 ? 's' : ''}</span>
+          <span className="text-gray-900 text-sm">{participants.length} participant{participants.length !== 1 ? 's' : ''}</span>
         </div>
       </div>
 

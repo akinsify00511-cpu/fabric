@@ -129,7 +129,7 @@ export default function ExpenseClaimsPage() {
   }
 
   const statusConfig: Record<string, { bg: string; text: string; icon: any }> = {
-    draft: { bg: 'bg-gray-100', text: 'text-gray-600', icon: FileText },
+    draft: { bg: 'bg-gray-100', text: 'text-gray-900', icon: FileText },
     pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: Clock },
     approved: { bg: 'bg-green-100', text: 'text-green-600', icon: CheckCircle },
     rejected: { bg: 'bg-red-100', text: 'text-red-600', icon: XCircle },
@@ -155,7 +155,7 @@ export default function ExpenseClaimsPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} />
           New Expense
@@ -196,7 +196,7 @@ export default function ExpenseClaimsPage() {
           <button
             onClick={() => setTab('my')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              tab === 'my' ? 'bg-[var(--avenize-primary)] text-white' : 'bg-white border border-black/10'
+              tab === 'my' ? 'bg-[#4285F4] text-white' : 'bg-white border border-black/10'
             }`}
           >
             My Expenses ({claims.length})
@@ -204,7 +204,7 @@ export default function ExpenseClaimsPage() {
           <button
             onClick={() => setTab('approvals')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              tab === 'approvals' ? 'bg-[var(--avenize-primary)] text-white' : 'bg-white border border-black/10'
+              tab === 'approvals' ? 'bg-[#4285F4] text-white' : 'bg-white border border-black/10'
             }`}
           >
             Approvals ({pendingApprovals.length})
@@ -223,7 +223,7 @@ export default function ExpenseClaimsPage() {
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${
                   filter === f 
-                    ? 'bg-[var(--avenize-primary)] text-white' 
+                    ? 'bg-[#4285F4] text-white' 
                     : 'bg-white border border-black/10'
                 }`}
               >
@@ -495,7 +495,7 @@ function ExpenseModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium disabled:opacity-50">
               {submitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>

@@ -61,7 +61,7 @@ export default function Equipment() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} /> Add Equipment
         </button>
@@ -123,7 +123,7 @@ export default function Equipment() {
               className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
             />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
             Add Equipment
           </button>
         </form>
@@ -164,7 +164,7 @@ export default function Equipment() {
                   item.status === 'operational' ? 'bg-green-100 text-green-700' :
                   item.status === 'maintenance' ? 'bg-amber-100 text-amber-700' :
                   item.status === 'broken' ? 'bg-red-100 text-red-700' :
-                  'bg-gray-100 text-gray-600'
+                  'bg-gray-100 text-gray-900'
                 }`}>
                   {item.status}
                 </span>

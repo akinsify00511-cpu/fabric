@@ -61,7 +61,7 @@ export default function LabQC() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} /> Register Sample
         </button>
@@ -112,7 +112,7 @@ export default function LabQC() {
               className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
             />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">
             Register Sample
           </button>
         </form>
@@ -143,7 +143,7 @@ export default function LabQC() {
                       sample.status === 'reported' ? 'text-green-500' :
                       sample.status === 'completed' ? 'text-blue-500' :
                       sample.status === 'testing' ? 'text-amber-500' :
-                      'text-gray-500'
+                      'text-gray-900'
                     } />
                   </div>
                   <div>
@@ -157,7 +157,7 @@ export default function LabQC() {
                   sample.status === 'reported' ? 'bg-green-100 text-green-700' :
                   sample.status === 'completed' ? 'bg-blue-100 text-blue-700' :
                   sample.status === 'testing' ? 'bg-amber-100 text-amber-700' :
-                  'bg-gray-100 text-gray-600'
+                  'bg-gray-100 text-gray-900'
                 }`}>
                   {sample.status}
                 </span>
@@ -174,7 +174,7 @@ export default function LabQC() {
                     showToast(`Status updated to ${nextStatus}`, 'success')
                     loadSamples()
                   }}
-                  className="text-xs text-[var(--avenize-primary)] hover:underline"
+                  className="text-xs text-[#4285F4] hover:underline"
                 >
                   Update Status →
                 </button>

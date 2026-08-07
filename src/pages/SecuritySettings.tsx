@@ -302,7 +302,7 @@ Each code can only be used once!`
                         </p>
                       </div>
                     </div>
-                    <button className="text-sm text-[var(--avenize-accent-end)] hover:underline">
+                    <button className="text-sm text-[#8B5CF6] hover:underline">
                       View Codes
                     </button>
                   </div>
@@ -336,14 +336,14 @@ Each code can only be used once!`
                     <>
                       <div className="flex gap-4">
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
-                          <Smartphone className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
+                          <Smartphone className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Authenticator App</h3>
                           <p className="text-xs text-black/50">
                             Use Google Authenticator, Authy, or any TOTP app
                           </p>
                         </div>
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
-                          <Key className="w-6 h-6 text-[var(--avenize-accent-end)] mb-2" />
+                          <Key className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Backup Codes</h3>
                           <p className="text-xs text-black/50">
                             10 one-time use codes for emergency access
@@ -389,8 +389,8 @@ Each code can only be used once!`
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-3 rounded-xl bg-black/[0.02]">
-                <div className="w-10 h-10 rounded-lg bg-[var(--avenize-accent-end)]/10 flex items-center justify-center">
-                  <Smartphone className="w-5 h-5 text-[var(--avenize-accent-end)]" />
+                <div className="w-10 h-10 rounded-lg bg-[#8B5CF6]/10 flex items-center justify-center">
+                  <Smartphone className="w-5 h-5 text-[#8B5CF6]" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">Current Device</p>

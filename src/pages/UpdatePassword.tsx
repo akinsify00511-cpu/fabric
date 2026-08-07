@@ -49,7 +49,7 @@ export default function UpdatePassword() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
         <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-5">
           <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
             <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,7 +74,7 @@ export default function UpdatePassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <div className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5">
         <div className="text-center">
           <div className="w-12 h-12 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">

@@ -980,7 +980,7 @@ function PricingSection() {
               className={`snap-card rounded-xl p-4 md:p-5 border opacity-0 translate-y-6 transition-all hover:border-indigo-500/50 ${
                 plan.featured
                   ? 'bg-indigo-500/10 border-indigo-500'
-                  : 'bg-white/5 border-white/10'
+                  : 'bg-gray-200 border-white/10'
               }`}
             >
               <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-3 min-h-[20px]">

@@ -214,7 +214,7 @@ export default function RoleSettings() {
         ) : (
           <button
             onClick={() => setShowNewForm(true)}
-            className="flex items-center gap-2 text-[var(--avenize-primary)] font-medium text-sm"
+            className="flex items-center gap-2 text-[#4285F4] font-medium text-sm"
           >
             <Plus size={18} />
             Add Role
@@ -248,7 +248,7 @@ export default function RoleSettings() {
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{role.name}</p>
                       {role.is_default && (
-                        <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">Default</span>
+                        <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-900 text-xs">Default</span>
                       )}
                     </div>
                     <p className="text-sm text-black/50">{role.tools.length} tools assigned</p>
@@ -295,7 +295,7 @@ export default function RoleSettings() {
                                   checked={hasTool}
                                   onChange={() => toggleTool(role.id, toolKey, role.tools)}
                                   disabled={saving}
-                                  className="w-4 h-4 rounded border-black/20 text-[var(--avenize-primary)] focus:ring-[var(--avenize-primary)]"
+                                  className="w-4 h-4 rounded border-black/20 text-[#4285F4] focus:ring-[#4285F4]"
                                 />
                                 <span className="text-sm">{tool?.label || toolKey}</span>
                               </label>

@@ -49,7 +49,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
             <CheckCircle size={40} className="text-green-500" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-900 mb-6">
             We've received your information. One of our sales representatives will contact you within 24 hours.
           </p>
           <div className="bg-indigo-50 rounded-xl p-4 text-left">
@@ -64,7 +64,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
           <button
             onClick={() => window.close()}
-            className="mt-6 text-gray-500 hover:text-gray-700 text-sm"
+            className="mt-6 text-gray-900 hover:text-gray-900 text-sm"
           >
             Close this page
           </button>
@@ -81,14 +81,14 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Get Started with Avenize</h1>
-          <p className="text-gray-600 mt-2">Tell us about your business and we'll help you get started</p>
+          <p className="text-gray-900 mt-2">Tell us about your business and we'll help you get started</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Full Name *</label>
             <div className="relative">
-              <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" />
               <input
                 type="text"
                 required
@@ -101,9 +101,9 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Company Name *</label>
             <div className="relative">
-              <Building2 size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Building2 size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" />
               <input
                 type="text"
                 required
@@ -116,9 +116,9 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Email *</label>
             <div className="relative">
-              <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" />
               <input
                 type="email"
                 required
@@ -131,9 +131,9 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Phone Number</label>
             <div className="relative">
-              <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-900" />
               <input
                 type="tel"
                 value={form.phone}
@@ -145,7 +145,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Interested In</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Interested In</label>
             <select
               value={form.interested_in}
               onChange={(e) => setForm({ ...form, interested_in: e.target.value })}
@@ -158,9 +158,9 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1">Message</label>
             <div className="relative">
-              <MessageSquare size={18} className="absolute left-3 top-3 text-gray-400" />
+              <MessageSquare size={18} className="absolute left-3 top-3 text-gray-900" />
               <textarea
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
@@ -190,7 +190,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-gray-900 mt-6">
           By submitting, you agree to our privacy policy and terms of service.
         </p>
       </div>

@@ -189,7 +189,7 @@ export default function OrganizationPage() {
           <div className="flex gap-2">
             <button
               onClick={() => { setEditingItem(null); setShowModal('dept') }}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
             >
               <Plus size={16} />
               Add Department
@@ -519,7 +519,7 @@ function OrgModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium">
+            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium">
               {data ? 'Update' : 'Create'}
             </button>
           </div>

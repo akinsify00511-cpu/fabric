@@ -94,7 +94,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm bg-white rounded-2xl border border-black/[0.06] p-8 space-y-5"

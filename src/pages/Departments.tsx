@@ -232,7 +232,7 @@ export default function Departments() {
       <div className="max-w-6xl">
         <h1 className="text-xl font-medium text-gray-900 mb-6">Departments & Teams</h1>
         <div className="animate-pulse space-y-4">
-          {[1, 2, 3].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl"></div>)}
+          {[1, 2, 3].map(i => <div key={i} className="h-16 bg-gray-200 rounded-xl"></div>)}
         </div>
       </div>
     )
@@ -245,7 +245,7 @@ export default function Departments() {
         <div className="flex gap-2">
           <button
             onClick={() => openAddModal('department')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-black)] text-white text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#202124] text-white text-sm font-medium"
           >
             <Plus size={18} /> Add Department
           </button>
@@ -284,7 +284,7 @@ export default function Departments() {
               <p className="text-sm text-black/50 mb-4">Create your first department to organize your team</p>
               <button
                 onClick={() => openAddModal('department')}
-                className="px-4 py-2 rounded-lg bg-[var(--avenize-black)] text-white text-sm font-medium"
+                className="px-4 py-2 rounded-lg bg-[#202124] text-white text-sm font-medium"
               >
                 Add Department
               </button>
@@ -340,7 +340,7 @@ export default function Departments() {
           <div className="flex justify-end mb-3">
             <button
               onClick={() => openAddModal('team')}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-black)] text-white text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#202124] text-white text-sm font-medium"
             >
               <Plus size={18} /> Add Team
             </button>
@@ -399,7 +399,7 @@ export default function Departments() {
           <div className="flex justify-end mb-3">
             <button
               onClick={() => openAddModal('position')}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-black)] text-white text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#202124] text-white text-sm font-medium"
             >
               <Plus size={18} /> Add Position
             </button>
@@ -533,7 +533,7 @@ export default function Departments() {
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-black)] text-white font-medium"
+                className="flex-1 px-4 py-3 rounded-xl bg-[#202124] text-white font-medium"
               >
                 {editingItem ? 'Update' : 'Create'}
               </button>

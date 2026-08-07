@@ -238,7 +238,7 @@ export default function DataExportPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} />
           New Export
@@ -254,7 +254,7 @@ export default function DataExportPage() {
               setExportForm({ ...exportForm, entityType: entity.value })
               setShowModal(true)
             }}
-            className="p-4 bg-white rounded-xl border border-black/[0.06] hover:border-[var(--avenize-primary)] hover:shadow-lg transition text-left"
+            className="p-4 bg-white rounded-xl border border-black/[0.06] hover:border-[#4285F4] hover:shadow-lg transition text-left"
           >
             <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mb-3">
               <DownloadCloud size={20} className="text-emerald-500" />
@@ -314,7 +314,7 @@ export default function DataExportPage() {
                       {exp.status === 'completed' && (
                         <button 
                           onClick={() => handleDownload(exp)}
-                          className="px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm flex items-center gap-2 hover:bg-[var(--avenize-primary)]/90 transition"
+                          className="px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm flex items-center gap-2 hover:bg-[#4285F4]/90 transition"
                         >
                           <Download size={16} />
                           Download
@@ -366,11 +366,11 @@ export default function DataExportPage() {
                         onClick={() => setExportForm({ ...exportForm, format: format.value as ExportOptions['format'] })}
                         className={`p-4 rounded-xl border-2 text-left transition ${
                           isSelected 
-                            ? 'border-[var(--avenize-primary)] bg-[var(--avenize-primary)]/5' 
+                            ? 'border-[#4285F4] bg-[#4285F4]/5' 
                             : 'border-black/10 hover:border-black/20'
                         }`}
                       >
-                        <Icon size={24} className={isSelected ? 'text-[var(--avenize-primary)]' : 'text-black/40'} />
+                        <Icon size={24} className={isSelected ? 'text-[#4285F4]' : 'text-black/40'} />
                         <div className="font-medium mt-2">{format.label}</div>
                         <div className="text-xs text-black/40 mt-1">{format.desc}</div>
                       </button>
@@ -397,7 +397,7 @@ export default function DataExportPage() {
               <button
                 onClick={handleExport}
                 disabled={exporting}
-                className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium flex items-center justify-center gap-2"
               >
                 {exporting ? (
                   <>

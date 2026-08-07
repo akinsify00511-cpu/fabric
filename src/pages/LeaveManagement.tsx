@@ -181,7 +181,7 @@ export default function LeaveManagementPage() {
     pending: { bg: 'bg-amber-50', text: 'text-amber-600', icon: Clock },
     approved: { bg: 'bg-green-50', text: 'text-green-600', icon: CheckCircle },
     rejected: { bg: 'bg-red-50', text: 'text-red-600', icon: XCircle },
-    cancelled: { bg: 'bg-gray-50', text: 'text-gray-600', icon: XCircle },
+    cancelled: { bg: 'bg-gray-50', text: 'text-gray-900', icon: XCircle },
   }
 
   return (
@@ -199,7 +199,7 @@ export default function LeaveManagementPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} />
           Request Leave
@@ -242,7 +242,7 @@ export default function LeaveManagementPage() {
               onClick={() => setTab(t.key as any)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 tab === t.key 
-                  ? 'bg-[var(--avenize-primary)] text-white' 
+                  ? 'bg-[#4285F4] text-white' 
                   : 'bg-white border border-black/10'
               }`}
             >
@@ -537,7 +537,7 @@ function LeaveRequestModal({
                     onClick={() => setForm({ ...form, half_day_period: 'morning' })}
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'morning' 
-                        ? 'bg-[var(--avenize-primary)] text-white' 
+                        ? 'bg-[#4285F4] text-white' 
                         : 'bg-black/5'
                     }`}
                   >
@@ -548,7 +548,7 @@ function LeaveRequestModal({
                     onClick={() => setForm({ ...form, half_day_period: 'afternoon' })}
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'afternoon' 
-                        ? 'bg-[var(--avenize-primary)] text-white' 
+                        ? 'bg-[#4285F4] text-white' 
                         : 'bg-black/5'
                     }`}
                   >
@@ -583,7 +583,7 @@ function LeaveRequestModal({
             <button 
               type="submit" 
               disabled={submitting || totalDays === 0}
-              className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium disabled:opacity-50"
+              className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium disabled:opacity-50"
             >
               {submitting ? 'Submitting...' : 'Submit Request'}
             </button>

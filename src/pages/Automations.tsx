@@ -211,7 +211,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
         {/* Beta Request Banner */}
         <div className="bg-gradient-to-br from-blue-800 to-blue-900 rounded-2xl p-8 mb-6 text-white">
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-xl bg-gray-300 flex items-center justify-center">
               <Zap className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
@@ -351,7 +351,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Zap size={14} className="text-[var(--avenize-accent-end)]" />
+            <Zap size={14} className="text-[#8B5CF6]" />
             <span className="text-xs text-black/50 uppercase tracking-wide">Total runs</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
@@ -424,7 +424,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   
                   {/* Arrow */}
                   <div className="flex items-center">
-                    <ArrowRight className="text-[var(--avenize-primary)]" size={20} />
+                    <ArrowRight className="text-[#4285F4]" size={20} />
                   </div>
                   
                   {/* Action */}
@@ -442,7 +442,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="text-sm font-medium text-gray-900">{auto.name}</h3>
                       {!auto.enabled && (
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">Paused</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-900">Paused</span>
                       )}
                       {auto.enabled && (
                         <span className="flex items-center gap-1 text-xs text-green-600">
@@ -518,7 +518,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Won deal → Create follow-up task"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
 
@@ -529,7 +529,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="What does this automation do?"
-                  className="w-full px-4 py-2 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-2 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
 
@@ -550,7 +550,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                       }}
                       className={`p-3 rounded-xl border text-left transition ${
                         triggerType === trigger.type
-                          ? 'border-[var(--avenize-accent-end)] bg-[var(--avenize-accent-end)]/5'
+                          ? 'border-[#8B5CF6] bg-[#8B5CF6]/5'
                           : 'border-black/[0.08] hover:border-black/[0.15]'
                       }`}
                     >
@@ -581,7 +581,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                       }}
                       className={`p-3 rounded-xl border text-left transition ${
                         actionType === action.type
-                          ? 'border-[var(--avenize-accent-end)] bg-[var(--avenize-accent-end)]/5'
+                          ? 'border-[#8B5CF6] bg-[#8B5CF6]/5'
                           : 'border-black/[0.08] hover:border-black/[0.15]'
                       }`}
                     >

@@ -116,12 +116,12 @@ export default function Join() {
 
   if (loadingInfo) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <div className="w-8 h-8 border-2 border-[var(--avenize-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm text-black/50 mt-4">Loading invitation...</p>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function Join() {
 
   if (!info?.valid) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto">
             <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,7 +150,7 @@ export default function Join() {
             >
               Sign up for a new account
             </Link>
-            <Link to="/login" className="block text-sm text-[var(--avenize-primary)] hover:underline">
+            <Link to="/login" className="block text-sm text-[#4285F4] hover:underline">
               Already have an account? Sign in
             </Link>
           </div>
@@ -161,7 +161,7 @@ export default function Join() {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
             <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,27 +173,27 @@ export default function Join() {
             <p className="text-black/60 mt-2">
               We sent a confirmation link to
             </p>
-            <p className="font-semibold text-[var(--avenize-primary)] mt-1">{info.email}</p>
+            <p className="font-semibold text-[#4285F4] mt-1">{info.email}</p>
           </div>
           
-          <div className="bg-gradient-to-br from-[var(--avenize-primary)]/5 to-[var(--avenize-accent)]/5 rounded-2xl p-5 text-left">
+          <div className="bg-gradient-to-br from-[#4285F4]/5 to-[#0D9488]/5 rounded-2xl p-5 text-left">
             <p className="text-sm text-black/70">
               <strong>Next steps:</strong>
             </p>
             <ol className="text-sm text-black/60 mt-3 space-y-2">
               <li className="flex gap-2">
-                <span className="w-5 h-5 rounded-full bg-[var(--avenize-primary)] text-white text-xs flex items-center justify-center flex-shrink-0">1</span>
+                <span className="w-5 h-5 rounded-full bg-[#4285F4] text-white text-xs flex items-center justify-center flex-shrink-0">1</span>
                 Click the confirmation link in your email
               </li>
               <li className="flex gap-2">
-                <span className="w-5 h-5 rounded-full bg-[var(--avenize-primary)] text-white text-xs flex items-center justify-center flex-shrink-0">2</span>
+                <span className="w-5 h-5 rounded-full bg-[#4285F4] text-white text-xs flex items-center justify-center flex-shrink-0">2</span>
                 You'll automatically join <strong>{info.business_name}</strong>
               </li>
             </ol>
           </div>
 
           <div className="pt-4 border-t border-black/5">
-            <Link to="/login" className="text-sm text-[var(--avenize-primary)] hover:underline font-medium">
+            <Link to="/login" className="text-sm text-[#4285F4] hover:underline font-medium">
               ← Back to sign in
             </Link>
           </div>
@@ -204,7 +204,7 @@ export default function Join() {
 
   if (step === 'account') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4 py-8">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 py-8">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 space-y-6">
           <div className="text-center">
             <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
@@ -230,7 +230,7 @@ export default function Join() {
                 placeholder="Your full name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/30"
+                className="w-full rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
               />
             </div>
             <div>
@@ -255,7 +255,7 @@ export default function Join() {
                     setPassword(e.target.value)
                     if (confirmPassword) validatePassword()
                   }}
-                  className="w-full rounded-xl border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/30"
+                  className="w-full rounded-xl border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 />
                 <button
                   type="button"
@@ -282,7 +282,7 @@ export default function Join() {
                     setConfirmPassword(e.target.value)
                     if (password) validatePassword()
                   }}
-                  className={`w-full rounded-xl border ${passwordError ? 'border-red-500' : 'border-black/10'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/30`}
+                  className={`w-full rounded-xl border ${passwordError ? 'border-red-500' : 'border-black/10'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30`}
                 />
                 <button
                   type="button"
@@ -332,7 +332,7 @@ export default function Join() {
           <div className="pt-4 border-t border-black/5 text-center">
             <p className="text-sm text-black/50">
               Already have an account?{' '}
-              <Link to="/login" className="text-[var(--avenize-primary)] font-medium hover:underline">
+              <Link to="/login" className="text-[#4285F4] font-medium hover:underline">
                 Sign in
               </Link>
             </p>
@@ -344,7 +344,7 @@ export default function Join() {
 
   // Review invitation screen
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)] px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 space-y-6">
         {/* Header */}
         <div className="text-center">
@@ -356,7 +356,7 @@ export default function Join() {
         </div>
 
         {/* Invitation Card */}
-        <div className="bg-gradient-to-br from-[var(--avenize-primary)]/5 to-[var(--avenize-accent)]/5 rounded-2xl p-6 space-y-4">
+        <div className="bg-gradient-to-br from-[#4285F4]/5 to-[#0D9488]/5 rounded-2xl p-6 space-y-4">
           <div className="text-center">
             <p className="text-sm text-black/60 mb-2">You've been invited to join</p>
             <h2 className="text-xl font-bold text-gray-900">{info.business_name}</h2>
@@ -401,7 +401,7 @@ export default function Join() {
           <div className="text-center">
             <p className="text-sm text-black/50">
               Already have an account?{' '}
-              <Link to="/login" className="text-[var(--avenize-primary)] font-medium hover:underline">
+              <Link to="/login" className="text-[#4285F4] font-medium hover:underline">
                 Sign in
               </Link>
             </p>

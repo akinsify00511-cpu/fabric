@@ -3,7 +3,7 @@ import { ArrowLeft, Cookie, Settings } from 'lucide-react'
 
 export default function CookiePolicy() {
   return (
-    <div className="min-h-screen bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen bg-[#F8F9FA]">
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -25,7 +25,7 @@ export default function CookiePolicy() {
               <Cookie className="w-8 h-8 text-amber-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Cookie Policy</h1>
-            <p className="text-gray-500">Last updated: August 3, 2026</p>
+            <p className="text-gray-900">Last updated: August 3, 2026</p>
           </div>
 
           {/* Quick Summary */}
@@ -121,7 +121,7 @@ export default function CookiePolicy() {
                 <li>Block third-party cookies</li>
                 <li>Clear all cookies when you close the browser</li>
               </ul>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-900">
                 Note: Blocking essential cookies may affect website functionality.
               </p>
 
@@ -166,7 +166,7 @@ export default function CookiePolicy() {
           </Link>
           <Link
             to="/contact"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[var(--avenize-black)] text-white rounded-xl font-medium hover:bg-black/90 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
           >
             Contact Us
           </Link>
@@ -174,9 +174,9 @@ export default function CookiePolicy() {
 
         {/* Footer Links */}
         <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm">
-          <Link to="/terms" className="text-gray-500 hover:text-gray-700">Terms of Service</Link>
-          <Link to="/privacy" className="text-gray-500 hover:text-gray-700">Privacy Policy</Link>
-          <Link to="/contact" className="text-gray-500 hover:text-gray-700">Contact Us</Link>
+          <Link to="/terms" className="text-gray-900 hover:text-gray-900">Terms of Service</Link>
+          <Link to="/privacy" className="text-gray-900 hover:text-gray-900">Privacy Policy</Link>
+          <Link to="/contact" className="text-gray-900 hover:text-gray-900">Contact Us</Link>
         </div>
       </main>
     </div>

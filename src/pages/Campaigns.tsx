@@ -39,7 +39,7 @@ type Template = {
 }
 
 const STATUS_CONFIG = {
-  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-600' },
+  draft: { label: 'Draft', color: 'bg-gray-100 text-gray-900' },
   scheduled: { label: 'Scheduled', color: 'bg-blue-100 text-blue-700' },
   sending: { label: 'Sending', color: 'bg-yellow-100 text-yellow-700' },
   sent: { label: 'Sent', color: 'bg-green-100 text-green-700' },
@@ -308,7 +308,7 @@ export default function Campaigns() {
           <div className="grid grid-cols-4 gap-3 mb-6">
             <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Send size={14} className="text-[var(--avenize-accent-end)]" />
+                <Send size={14} className="text-[#8B5CF6]" />
                 <span className="text-xs text-black/50 uppercase tracking-wide">Sent</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">{stats.totalSent.toLocaleString()}</p>
@@ -451,7 +451,7 @@ export default function Campaigns() {
                     </span>
                   ))}
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    contact.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    contact.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'
                   }`}>
                     {contact.status}
                   </span>
@@ -486,7 +486,7 @@ export default function Campaigns() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Summer Sale Announcement"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
 
@@ -496,7 +496,7 @@ export default function Campaigns() {
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
                   placeholder="e.g., Don't miss our summer collection!"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
 
@@ -516,7 +516,7 @@ export default function Campaigns() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Write your email content here..."
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30 min-h-[200px]"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30 min-h-[200px]"
                 />
               </div>
 

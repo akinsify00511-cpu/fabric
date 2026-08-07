@@ -397,7 +397,7 @@ export default function Integrations() {
                   ) : (
                     <button
                       onClick={() => connectSocialPlatform(platform)}
-                      className="flex items-center gap-2 px-4 py-2 bg-[var(--avenize-primary)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                     >
                       Connect
                       <ChevronRight size={16} />
@@ -465,7 +465,7 @@ export default function Integrations() {
                         else if (provider.provider === 'africastalking') setShowAtModal(true)
                         else if (provider.provider === 'termii') setShowTermiiModal(true)
                       }}
-                      className="flex items-center gap-2 px-4 py-2 bg-[var(--avenize-primary)] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                     >
                       Configure
                       <ChevronRight size={16} />
@@ -494,7 +494,7 @@ export default function Integrations() {
                   value={twilioConfig.account_sid}
                   onChange={(e) => setTwilioConfig(prev => ({ ...prev, account_sid: e.target.value }))}
                   placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -504,7 +504,7 @@ export default function Integrations() {
                   value={twilioConfig.auth_token}
                   onChange={(e) => setTwilioConfig(prev => ({ ...prev, auth_token: e.target.value }))}
                   placeholder="Your Twilio Auth Token"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -514,7 +514,7 @@ export default function Integrations() {
                   value={twilioConfig.phone_number}
                   onChange={(e) => setTwilioConfig(prev => ({ ...prev, phone_number: e.target.value }))}
                   placeholder="+1234567890"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -524,7 +524,7 @@ export default function Integrations() {
                   value={twilioConfig.sender_id}
                   onChange={(e) => setTwilioConfig(prev => ({ ...prev, sender_id: e.target.value }))}
                   placeholder="Your Brand Name"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
             </div>
@@ -538,7 +538,7 @@ export default function Integrations() {
               <button
                 onClick={saveTwilioConfig}
                 disabled={saving}
-                className="px-4 py-2 bg-[var(--avenize-primary)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[#4285F4] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Configuration'}
               </button>
@@ -563,7 +563,7 @@ export default function Integrations() {
                   value={atConfig.username}
                   onChange={(e) => setAtConfig(prev => ({ ...prev, username: e.target.value }))}
                   placeholder="Your Africa&apos;s Talking username"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -573,7 +573,7 @@ export default function Integrations() {
                   value={atConfig.api_key}
                   onChange={(e) => setAtConfig(prev => ({ ...prev, api_key: e.target.value }))}
                   placeholder="Your Africa&apos;s Talking API key"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -583,7 +583,7 @@ export default function Integrations() {
                   value={atConfig.sender_id}
                   onChange={(e) => setAtConfig(prev => ({ ...prev, sender_id: e.target.value }))}
                   placeholder="Your Brand Name"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
             </div>
@@ -597,7 +597,7 @@ export default function Integrations() {
               <button
                 onClick={saveAtConfig}
                 disabled={saving}
-                className="px-4 py-2 bg-[var(--avenize-primary)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[#4285F4] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Configuration'}
               </button>
@@ -622,7 +622,7 @@ export default function Integrations() {
                   value={termiiConfig.api_key}
                   onChange={(e) => setTermiiConfig(prev => ({ ...prev, api_key: e.target.value }))}
                   placeholder="Your Termii API key"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
               <div>
@@ -632,7 +632,7 @@ export default function Integrations() {
                   value={termiiConfig.sender_id}
                   onChange={(e) => setTermiiConfig(prev => ({ ...prev, sender_id: e.target.value }))}
                   placeholder="Your Brand Name"
-                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--avenize-primary)]/20"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4285F4]/20"
                 />
               </div>
             </div>
@@ -646,7 +646,7 @@ export default function Integrations() {
               <button
                 onClick={saveTermiiConfig}
                 disabled={saving}
-                className="px-4 py-2 bg-[var(--avenize-primary)] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 bg-[#4285F4] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save Configuration'}
               </button>

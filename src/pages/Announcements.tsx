@@ -174,7 +174,7 @@ export default function AnnouncementsPage() {
   }
 
   const priorityConfig: Record<string, { bg: string; text: string; border: string; icon: any }> = {
-    low: { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200', icon: Info },
+    low: { bg: 'bg-gray-50', text: 'text-gray-900', border: 'border-gray-200', icon: Info },
     normal: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: Info },
     high: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', icon: AlertTriangle },
     urgent: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle },
@@ -203,7 +203,7 @@ export default function AnnouncementsPage() {
         {isAdmin && (
           <button
             onClick={() => { setEditing(null); setShowModal(true) }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--avenize-primary)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#4285F4] text-white text-sm"
           >
             <Plus size={16} />
             New Announcement
@@ -219,7 +219,7 @@ export default function AnnouncementsPage() {
             onClick={() => setFilter(f as any)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${
               filter === f 
-                ? 'bg-[var(--avenize-primary)] text-white' 
+                ? 'bg-[#4285F4] text-white' 
                 : 'bg-white border border-black/10'
             }`}
           >
@@ -345,7 +345,7 @@ function AnnouncementCard({
             {announcement.content.length > 200 && (
               <button
                 onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
-                className="text-sm text-[var(--avenize-primary)] mt-2"
+                className="text-sm text-[#4285F4] mt-2"
               >
                 {expanded ? 'Show less' : 'Read more'}
               </button>
@@ -513,7 +513,7 @@ function AnnouncementModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[var(--avenize-primary)] text-white font-medium">
+            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[#4285F4] text-white font-medium">
               {announcement ? 'Update' : 'Publish'}
             </button>
           </div>

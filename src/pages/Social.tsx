@@ -283,7 +283,7 @@ export default function Social() {
               <div className="flex gap-2">
                 <button
                   onClick={createPost}
-                  className="rounded-lg bg-[var(--avenize-black)] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                  className="rounded-lg bg-[#202124] text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                 >
                   {isScheduled ? 'Schedule' : 'Save Draft'}
                 </button>
@@ -320,7 +320,7 @@ export default function Social() {
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
                         post.status === 'published' ? 'bg-green-100 text-green-700' :
                         post.status === 'scheduled' ? 'bg-blue-100 text-blue-700' :
-                        'bg-gray-100 text-gray-600'
+                        'bg-gray-100 text-gray-900'
                       }`}>
                         {post.status}
                       </span>

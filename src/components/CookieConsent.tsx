@@ -100,14 +100,14 @@ export default function CookieConsent() {
             <div className="bg-white rounded-2xl shadow-2xl border border-black/5 p-6 animate-slide-up">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <Settings className="w-5 h-5 text-gray-800" />
+                  <Settings className="w-5 h-5 text-gray-900" />
                   <h3 className="font-semibold text-gray-900">Cookie Preferences</h3>
                 </div>
                 <button
                   onClick={() => setShowSettings(false)}
                   className="p-2 hover:bg-black/5 rounded-lg transition"
                 >
-                  <X className="w-5 h-5 text-gray-800" />
+                  <X className="w-5 h-5 text-gray-900" />
                 </button>
               </div>
 
@@ -184,7 +184,7 @@ export default function CookieConsent() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleSavePreferences}
-                  className="flex-1 px-6 py-3 bg-[var(--avenize-black)] text-white rounded-xl font-medium hover:bg-black/90 transition"
+                  className="flex-1 px-6 py-3 bg-[#202124] text-white rounded-xl font-medium hover:bg-black/90 transition"
                 >
                   Save Preferences
                 </button>
@@ -196,7 +196,7 @@ export default function CookieConsent() {
                 </button>
               </div>
 
-              <p className="text-xs text-gray-800 text-center mt-4">
+              <p className="text-xs text-gray-900 text-center mt-4">
                 By clicking "Accept All", you consent to all cookies. You can update your preferences at any time.
               </p>
             </div>
@@ -244,7 +244,7 @@ export default function CookieConsent() {
                   onClick={handleRejectAll}
                   className="p-2 hover:bg-black/5 rounded-lg transition shrink-0"
                 >
-                  <X className="w-5 h-5 text-gray-800" />
+                  <X className="w-5 h-5 text-gray-900" />
                 </button>
               </div>
             </div>

@@ -318,7 +318,7 @@ export default function Calendar() {
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
                 className={`min-h-[100px] border-b border-r border-black/[0.04] p-1 cursor-pointer hover:bg-black/[0.02] transition-colors ${
-                  isSelected ? 'bg-[var(--avenize-accent-end)]/5' : ''
+                  isSelected ? 'bg-[#8B5CF6]/5' : ''
                 }`}
               >
                 <div className="flex justify-between items-start">
@@ -378,7 +378,7 @@ export default function Calendar() {
             </h2>
             <button
               onClick={() => openNewEvent(selectedDate)}
-              className="text-sm text-[var(--avenize-accent-end)] hover:underline"
+              className="text-sm text-[#8B5CF6] hover:underline"
             >
               + Add event
             </button>
@@ -397,7 +397,7 @@ export default function Calendar() {
                   <button
                     key={event.id}
                     onClick={() => openEditEvent(event)}
-                    className="w-full flex items-start gap-3 p-3 rounded-xl border border-black/[0.06] hover:border-[var(--avenize-accent-end)] transition-colors text-left"
+                    className="w-full flex items-start gap-3 p-3 rounded-xl border border-black/[0.06] hover:border-[#8B5CF6] transition-colors text-left"
                   >
                     <div className={`w-1 h-full min-h-[40px] rounded-full ${color.bg.replace('100', '500')}`} />
                     <div className="flex-1">

@@ -60,7 +60,7 @@ export default function Reports() {
         <h1 className="text-xl font-medium text-gray-900 mb-6">Reports</h1>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-16 bg-white/5 rounded-xl"></div>
+            <div key={i} className="h-16 bg-gray-200 rounded-xl"></div>
           ))}
         </div>
       </div>

@@ -18,12 +18,12 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
   }
 
   const statusColors: Record<string, string> = {
-    draft: 'bg-gray-100 text-gray-700',
+    draft: 'bg-gray-100 text-gray-900',
     sent: 'bg-blue-100 text-blue-700',
     partially_paid: 'bg-yellow-100 text-yellow-700',
     paid: 'bg-green-100 text-green-700',
     overdue: 'bg-red-100 text-red-700',
-    cancelled: 'bg-gray-100 text-gray-500',
+    cancelled: 'bg-gray-100 text-gray-900',
   }
 
   return (
@@ -36,7 +36,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
               {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
             </span>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500">
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg text-gray-900">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -69,7 +69,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
             <div className="flex justify-between items-start mb-8">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">INVOICE</h1>
-                <p className="text-gray-500 text-sm mt-1">{invoice.invoice_number}</p>
+                <p className="text-gray-900 text-sm mt-1">{invoice.invoice_number}</p>
                 {invoice.is_proforma && <span className="inline-block mt-2 px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded">PROFORMA</span>}
               </div>
               <div className="text-right">
@@ -77,26 +77,26 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
                   <img src={branding.logo_url} alt="Logo" className="h-10 w-auto object-contain mb-2 ml-auto" />
                 ) : null}
                 <h2 className="font-bold text-xl">{companyName}</h2>
-                {branding.custom_tagline && <p className="text-gray-500 text-sm">{branding.custom_tagline}</p>}
-                {branding.address && <p className="text-gray-500 text-sm">{branding.address}</p>}
+                {branding.custom_tagline && <p className="text-gray-900 text-sm">{branding.custom_tagline}</p>}
+                {branding.address && <p className="text-gray-900 text-sm">{branding.address}</p>}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-8 mb-8">
               <div>
-                <p className="text-sm text-gray-500 mb-1">Bill To</p>
+                <p className="text-sm text-gray-900 mb-1">Bill To</p>
                 <p className="font-semibold text-gray-900">{invoice.client_name}</p>
-                {invoice.client_address && <p className="text-gray-600 text-sm">{invoice.client_address}</p>}
-                {invoice.client_email && <p className="text-gray-600 text-sm">{invoice.client_email}</p>}
-                {invoice.job_reference && <p className="text-gray-500 text-sm mt-2">Job Ref: {invoice.job_reference}</p>}
+                {invoice.client_address && <p className="text-gray-900 text-sm">{invoice.client_address}</p>}
+                {invoice.client_email && <p className="text-gray-900 text-sm">{invoice.client_email}</p>}
+                {invoice.job_reference && <p className="text-gray-900 text-sm mt-2">Job Ref: {invoice.job_reference}</p>}
               </div>
               <div className="text-right">
                 <div className="mb-2">
-                  <p className="text-sm text-gray-500">Issue Date</p>
+                  <p className="text-sm text-gray-900">Issue Date</p>
                   <p className="font-medium">{new Date(invoice.issue_date).toLocaleDateString('en-NG')}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Due Date</p>
+                  <p className="text-sm text-gray-900">Due Date</p>
                   <p className="font-medium">{new Date(invoice.due_date).toLocaleDateString('en-NG')}</p>
                 </div>
               </div>
@@ -105,18 +105,18 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
             <table className="w-full mb-8">
               <thead>
                 <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-3 text-sm font-semibold text-gray-700">Description</th>
-                  <th className="text-center py-3 text-sm font-semibold text-gray-700 w-20">Qty</th>
-                  <th className="text-right py-3 text-sm font-semibold text-gray-700 w-32">Unit Price</th>
-                  <th className="text-right py-3 text-sm font-semibold text-gray-700 w-32">Total</th>
+                  <th className="text-left py-3 text-sm font-semibold text-gray-900">Description</th>
+                  <th className="text-center py-3 text-sm font-semibold text-gray-900 w-20">Qty</th>
+                  <th className="text-right py-3 text-sm font-semibold text-gray-900 w-32">Unit Price</th>
+                  <th className="text-right py-3 text-sm font-semibold text-gray-900 w-32">Total</th>
                 </tr>
               </thead>
               <tbody>
                 {invoice.items.map((item, i) => (
                   <tr key={i} className="border-b border-gray-100">
                     <td className="py-3 text-sm text-gray-900">{item.description}</td>
-                    <td className="py-3 text-sm text-gray-600 text-center">{item.quantity}</td>
-                    <td className="py-3 text-sm text-gray-600 text-right">{formatCurrency(item.unit_price)}</td>
+                    <td className="py-3 text-sm text-gray-900 text-center">{item.quantity}</td>
+                    <td className="py-3 text-sm text-gray-900 text-right">{formatCurrency(item.unit_price)}</td>
                     <td className="py-3 text-sm text-gray-900 text-right font-medium">{formatCurrency(item.total)}</td>
                   </tr>
                 ))}
@@ -126,16 +126,16 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
             <div className="flex justify-end mb-8">
               <div className="w-64">
                 <div className="flex justify-between py-2 text-sm">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-900">Subtotal</span>
                   <span className="text-gray-900">{formatCurrency(invoice.subtotal)}</span>
                 </div>
                 <div className="flex justify-between py-2 text-sm">
-                  <span className="text-gray-600">VAT (7.5%)</span>
+                  <span className="text-gray-900">VAT (7.5%)</span>
                   <span className="text-gray-900">{formatCurrency(invoice.vat_amount)}</span>
                 </div>
                 {invoice.wht_amount > 0 && (
                   <div className="flex justify-between py-2 text-sm">
-                    <span className="text-gray-600">WHT ({invoice.wht_rate * 100}%)</span>
+                    <span className="text-gray-900">WHT ({invoice.wht_rate * 100}%)</span>
                     <span className="text-gray-900">-{formatCurrency(invoice.wht_amount)}</span>
                   </div>
                 )}
@@ -146,7 +146,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
                 {invoice.amount_paid > 0 && (
                   <>
                     <div className="flex justify-between py-2 text-sm">
-                      <span className="text-gray-600">Paid</span>
+                      <span className="text-gray-900">Paid</span>
                       <span className="text-green-600">-{formatCurrency(invoice.amount_paid)}</span>
                     </div>
                     <div className="flex justify-between py-2 text-sm font-bold">
@@ -160,12 +160,12 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
 
             {invoice.notes && (
               <div className="border-t border-gray-200 pt-4">
-                <p className="text-sm text-gray-500 mb-1">Notes</p>
-                <p className="text-sm text-gray-700">{invoice.notes}</p>
+                <p className="text-sm text-gray-900 mb-1">Notes</p>
+                <p className="text-sm text-gray-900">{invoice.notes}</p>
               </div>
             )}
 
-            <div className="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-400">
+            <div className="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-900">
               <p>Thank you for your business!</p>
               {branding.website && <p className="mt-1">{branding.website}</p>}
             </div>

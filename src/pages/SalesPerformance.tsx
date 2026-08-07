@@ -139,7 +139,7 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
         <h2 className="font-medium">Sales Targets</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm"
         >
           <Plus size={16} /> Set Target
         </button>
@@ -158,7 +158,7 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
           </div>
           <input type="number" placeholder="Revenue Target (₦)" value={form.revenue_target} onChange={(e) => setForm({ ...form, revenue_target: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           <input type="number" placeholder="Deal Count Target" value={form.deal_count_target} onChange={(e) => setForm({ ...form, deal_count_target: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" required />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Create Target</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Create Target</button>
         </form>
       )}
 
@@ -262,7 +262,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
       {/* Commission Rules */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Commission Rules</h2>
-        <button onClick={() => setShowRuleForm(!showRuleForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--avenize-primary)] text-white text-sm">
+        <button onClick={() => setShowRuleForm(!showRuleForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4285F4] text-white text-sm">
           <Plus size={16} /> Add Rule
         </button>
       </div>
@@ -277,7 +277,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
           </select>
           <input type="number" placeholder="Rate (%)" value={ruleForm.rate_percentage} onChange={(e) => setRuleForm({ ...ruleForm, rate_percentage: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" required />
           <input type="number" placeholder="Min Deal Value (₦)" value={ruleForm.min_deal_value} onChange={(e) => setRuleForm({ ...ruleForm, min_deal_value: e.target.value })} className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm" />
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--avenize-primary)] text-white">Create Rule</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[#4285F4] text-white">Create Rule</button>
         </form>
       )}
 
@@ -292,7 +292,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
             <div key={rule.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{rule.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>
                   {rule.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>

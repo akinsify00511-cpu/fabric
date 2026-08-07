@@ -111,7 +111,7 @@ const Departments = lazy(() => import('./pages/Departments'))
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--avenize-offwhite)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-3 border-indigo-600/20 border-t-indigo-600 rounded-full animate-spin" />
         <p className="text-sm text-black/50">Loading...</p>

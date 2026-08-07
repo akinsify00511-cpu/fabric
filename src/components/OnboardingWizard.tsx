@@ -146,11 +146,11 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                   index < currentStep ? 'bg-green-500 text-white' :
                   index === currentStep ? 'bg-indigo-500 text-white' :
-                  'bg-gray-100 text-gray-400'
+                  'bg-gray-100 text-gray-900'
                 }`}>
                   {index < currentStep ? <Check size={20} /> : <s.icon size={20} />}
                 </div>
-                <span className="text-xs mt-2 font-medium text-gray-500">{s.title}</span>
+                <span className="text-xs mt-2 font-medium text-gray-900">{s.title}</span>
               </div>
             ))}
           </div>
@@ -158,7 +158,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
           {/* Step content */}
           <div className="text-center mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-2">{step.title}</h2>
-            <p className="text-gray-500">{step.description}</p>
+            <p className="text-gray-900">{step.description}</p>
           </div>
 
           {/* Step forms */}
@@ -166,7 +166,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             {step.id === 'business' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Business Name</label>
                   <input
                     type="text"
                     value={businessName}
@@ -176,7 +176,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Industry</label>
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
@@ -194,7 +194,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             {step.id === 'profile' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Full Name</label>
                   <input
                     type="text"
                     value={fullName}
@@ -204,7 +204,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Job Title</label>
                   <input
                     type="text"
                     value={jobTitle}
@@ -220,15 +220,15 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
               <>
                 <div className="bg-indigo-50 rounded-xl p-6 text-center">
                   <Users size={48} className="mx-auto text-indigo-500 mb-4" />
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-900 mb-4">
                     You can invite team members from the People page later.
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-900">
                     For now, let's skip this step and get you started!
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Team Size (optional)</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Team Size (optional)</label>
                   <select
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
@@ -248,7 +248,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             {step.id === 'first' && (
               <div className="bg-green-50 rounded-xl p-6 text-center">
                 <FileText size={48} className="mx-auto text-green-500 mb-4" />
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-900 mb-4">
                   You're all set! Go to the Finance page to create your first invoice.
                 </p>
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full text-green-700 text-sm">
@@ -264,7 +264,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
         <div className="px-8 py-6 bg-gray-50 flex items-center justify-between">
           <button
             onClick={skipOnboarding}
-            className="text-gray-500 hover:text-gray-700 text-sm"
+            className="text-gray-900 hover:text-gray-900 text-sm"
           >
             Skip for now
           </button>
@@ -273,7 +273,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             {currentStep > 0 && (
               <button
                 onClick={handleBack}
-                className="flex items-center gap-1 px-4 py-2 text-gray-600 hover:text-gray-900"
+                className="flex items-center gap-1 px-4 py-2 text-gray-900 hover:text-gray-900"
               >
                 <ChevronLeft size={16} />
                 Back

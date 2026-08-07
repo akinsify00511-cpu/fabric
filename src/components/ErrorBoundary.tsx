@@ -71,7 +71,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               <AlertTriangle size={32} className="text-red-500" />
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-900 mb-6">
               We encountered an unexpected error. This has been logged automatically.
             </p>
 
@@ -92,7 +92,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => window.location.href = '/app'}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition"
               >
                 <Home size={18} />
                 Go to Dashboard

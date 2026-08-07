@@ -154,7 +154,7 @@ export default function Signup() {
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 text-left space-y-3">
-            <p className="text-sm font-medium text-gray-700">Next steps:</p>
+            <p className="text-sm font-medium text-gray-900">Next steps:</p>
             <ol className="text-sm text-gray-900 space-y-2">
               {[
                 'Click the confirmation link in your email',
@@ -170,7 +170,7 @@ export default function Signup() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-gray-800">Didn&apos;t receive the email? Check your spam folder.</p>
+            <p className="text-xs text-gray-900">Didn&apos;t receive the email? Check your spam folder.</p>
             <button 
               onClick={handleResendEmail}
               className="text-sm text-blue-600 hover:underline font-medium"
@@ -181,7 +181,7 @@ export default function Signup() {
 
           <Link 
             to="/login" 
-            className="text-sm text-gray-900 hover:text-gray-700 font-medium flex items-center justify-center gap-1 pt-4 border-t border-gray-100"
+            className="text-sm text-gray-900 hover:text-gray-900 font-medium flex items-center justify-center gap-1 pt-4 border-t border-gray-100"
           >
             ← Back to sign in
           </Link>
@@ -194,8 +194,8 @@ export default function Signup() {
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-12 flex-col justify-between relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gray-200 rounded-full -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-200 rounded-full translate-y-1/2 -translate-x-1/2" />
         
         <div className="relative z-10">
           <div className="flex items-center gap-3">
@@ -219,7 +219,7 @@ export default function Signup() {
           <div className="space-y-4">
             {FEATURES.map((feature, i) => (
               <div key={i} className="flex items-center gap-4 text-white/90">
-                <div className="w-10 h-10 rounded-lg bg-white/10 backdrop-blur flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-gray-300 backdrop-blur flex items-center justify-center flex-shrink-0">
                   <feature.icon size={20} />
                 </div>
                 <span className="text-lg">{feature.text}</span>
@@ -265,7 +265,7 @@ export default function Signup() {
           <div className="space-y-3">
             <button
               onClick={() => handleOAuthSignIn('google')}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -278,7 +278,7 @@ export default function Signup() {
 
             <button
               onClick={() => handleOAuthSignIn('github')}
-              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
+              className="w-full flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-3 px-4 text-sm font-medium text-gray-900 hover:bg-gray-50 hover:border-gray-300 transition shadow-sm"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -292,7 +292,7 @@ export default function Signup() {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-gray-50 px-4 text-sm text-gray-800">or</span>
+              <span className="bg-gray-50 px-4 text-sm text-gray-900">or</span>
             </div>
           </div>
 
@@ -305,7 +305,7 @@ export default function Signup() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
                   Business Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -318,8 +318,8 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Industry <span className="text-gray-800 font-normal">(optional)</span>
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
+                  Industry <span className="text-gray-900 font-normal">(optional)</span>
                 </label>
                 <select
                   value={industry}
@@ -337,7 +337,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
                   Full Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -350,7 +350,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
                   Work Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -364,7 +364,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -383,7 +383,7 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-900"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -398,7 +398,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -416,7 +416,7 @@ export default function Signup() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800 hover:text-gray-900"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-900 hover:text-gray-900"
                   >
                     {showConfirmPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
@@ -447,7 +447,7 @@ export default function Signup() {
               ) : 'Create Business'}
             </button>
 
-            <p className="text-xs text-center text-gray-800">
+            <p className="text-xs text-center text-gray-900">
               By signing up, you agree to our{' '}
               <a href="/terms" className="text-blue-600 hover:underline">Terms</a>
               {' '}and{' '}

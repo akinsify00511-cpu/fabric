@@ -47,11 +47,11 @@ const STATUS_CONFIG = {
   in_progress: { label: 'In Progress', color: 'bg-yellow-100 text-yellow-700', icon: RefreshCw },
   waiting: { label: 'Waiting', color: 'bg-orange-100 text-orange-700', icon: Clock },
   resolved: { label: 'Resolved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  closed: { label: 'Closed', color: 'bg-gray-100 text-gray-600', icon: CheckCircle2 },
+  closed: { label: 'Closed', color: 'bg-gray-100 text-gray-900', icon: CheckCircle2 },
 }
 
 const PRIORITY_CONFIG = {
-  low: { label: 'Low', color: 'text-gray-400' },
+  low: { label: 'Low', color: 'text-gray-900' },
   medium: { label: 'Medium', color: 'text-blue-500' },
   high: { label: 'High', color: 'text-orange-500' },
   urgent: { label: 'Urgent', color: 'text-red-500' },
@@ -294,7 +294,7 @@ export default function Tickets() {
                   onClick={() => loadTicketDetails(ticket)}
                   className={`w-full p-4 text-left border-b border-black/[0.04] transition ${
                     selectedTicket?.id === ticket.id
-                      ? 'bg-[var(--avenize-accent-end)]/5'
+                      ? 'bg-[#8B5CF6]/5'
                       : 'hover:bg-black/[0.02]'
                   }`}
                 >
@@ -319,7 +319,7 @@ export default function Tickets() {
 
       {/* Ticket Detail */}
       {selectedTicket ? (
-        <div className="flex-1 flex flex-col min-w-0 bg-[var(--avenize-offwhite)]">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA]">
           {/* Header */}
           <div className="px-4 py-3 bg-white border-b border-black/[0.06] flex items-center gap-3">
             <button
@@ -406,7 +406,7 @@ export default function Tickets() {
                 value={newReply}
                 onChange={(e) => setNewReply(e.target.value)}
                 placeholder="Type your reply..."
-                className="flex-1 resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                className="flex-1 resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 rows={2}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && e.ctrlKey) sendReply()
@@ -439,7 +439,7 @@ export default function Tickets() {
         </div>
       ) : (
         /* Empty State */
-        <div className="hidden md:flex flex-1 items-center justify-center bg-[var(--avenize-offwhite)]">
+        <div className="hidden md:flex flex-1 items-center justify-center bg-[#F8F9FA]">
           <div className="text-center">
             <Ticket size={64} className="mx-auto mb-4 text-black/10" />
             <h2 className="text-lg font-medium text-gray-900">Select a ticket</h2>
@@ -465,7 +465,7 @@ export default function Tickets() {
                   value={newSubject}
                   onChange={(e) => setNewSubject(e.target.value)}
                   placeholder="Brief description of the issue"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
               <div>
@@ -474,7 +474,7 @@ export default function Tickets() {
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="Detailed description..."
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--avenize-accent-end)]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                   rows={4}
                 />
               </div>

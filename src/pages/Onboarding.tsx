@@ -243,7 +243,7 @@ export default function Onboarding() {
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <h1 className="text-xl font-bold text-gray-900">Welcome to Avenize</h1>
-          <p className="text-sm text-gray-500 mt-1">Let's set up your business</p>
+          <p className="text-sm text-gray-900 mt-1">Let's set up your business</p>
         </div>
 
         <div className="flex-1 px-8">
@@ -252,15 +252,15 @@ export default function Onboarding() {
               <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                 i < step ? 'bg-green-500 text-white' :
                 i === step ? 'bg-blue-600 text-white' :
-                'bg-gray-100 text-gray-400'
+                'bg-gray-100 text-gray-900'
               }`}>
                 {i < step ? <Check size={16} /> : <s.icon size={16} />}
               </div>
               <div>
-                <p className={`font-medium text-sm ${i === step ? 'text-gray-900' : 'text-gray-400'}`}>
+                <p className={`font-medium text-sm ${i === step ? 'text-gray-900' : 'text-gray-900'}`}>
                   {s.title}
                 </p>
-                <p className="text-xs text-gray-400">{s.description}</p>
+                <p className="text-xs text-gray-900">{s.description}</p>
               </div>
             </div>
           ))}
@@ -269,7 +269,7 @@ export default function Onboarding() {
         <div className="p-8 border-t border-gray-200">
           <button 
             onClick={signOut}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-900 hover:text-gray-900"
           >
             Sign out
           </button>
@@ -282,8 +282,8 @@ export default function Onboarding() {
           {/* Mobile Progress */}
           <div className="md:hidden mb-8">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Step {step + 1} of {STEPS.length}</span>
-              <span className="text-sm text-gray-500">{Math.round(((step + 1) / STEPS.length) * 100)}%</span>
+              <span className="text-sm font-medium text-gray-900">Step {step + 1} of {STEPS.length}</span>
+              <span className="text-sm text-gray-900">{Math.round(((step + 1) / STEPS.length) * 100)}%</span>
             </div>
             <div className="h-2 bg-gray-200 rounded-full">
               <div 
@@ -304,7 +304,7 @@ export default function Onboarding() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">What's your business called?</h2>
-                <p className="text-gray-500 mt-2">This will be your workspace name in Avenize.</p>
+                <p className="text-gray-900 mt-2">This will be your workspace name in Avenize.</p>
               </div>
               <input
                 type="text"
@@ -322,7 +322,7 @@ export default function Onboarding() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">And your name?</h2>
-                <p className="text-gray-500 mt-2">How should we address you?</p>
+                <p className="text-gray-900 mt-2">How should we address you?</p>
               </div>
               <input
                 type="text"
@@ -340,7 +340,7 @@ export default function Onboarding() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Choose your theme</h2>
-                <p className="text-gray-500 mt-2">Pick a background color for your workspace.</p>
+                <p className="text-gray-900 mt-2">Pick a background color for your workspace.</p>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 {BRAND_COLORS.map((color) => (
@@ -393,7 +393,7 @@ export default function Onboarding() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">What industry are you in?</h2>
-                <p className="text-gray-500 mt-2">This helps us customize Avenize for you.</p>
+                <p className="text-gray-900 mt-2">This helps us customize Avenize for you.</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {INDUSTRIES.map((ind) => (
@@ -402,7 +402,7 @@ export default function Onboarding() {
                     onClick={() => setIndustry(ind.id)}
                     className={`p-4 rounded-xl border-2 text-left transition-all ${
                       industry === ind.id
-                        ? 'border-[var(--avenize-primary)] bg-[var(--avenize-primary)]/5'
+                        ? 'border-[#4285F4] bg-[#4285F4]/5'
                         : 'border-black/10 hover:border-black/20'
                     }`}
                   >
@@ -422,13 +422,13 @@ export default function Onboarding() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">You're all set!</h2>
-                <p className="text-gray-500 mt-2">
+                <p className="text-gray-900 mt-2">
                   {businessName} is ready. Let's build something great.
                 </p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4 text-left">
-                <p className="text-sm font-medium text-gray-700 mb-2">What you get with Avenize:</p>
-                <ul className="space-y-2 text-sm text-gray-600">
+                <p className="text-sm font-medium text-gray-900 mb-2">What you get with Avenize:</p>
+                <ul className="space-y-2 text-sm text-gray-900">
                   <li className="flex items-center gap-2">
                     <Check size={16} className="text-green-500" />
                     Job & project tracking
@@ -455,7 +455,7 @@ export default function Onboarding() {
             {step > 0 && (
               <button
                 onClick={() => setStep(step - 1)}
-                className="px-6 py-3 rounded-lg border-2 border-gray-200 font-medium text-gray-700 hover:bg-gray-50 transition-colors bg-white"
+                className="px-6 py-3 rounded-lg border-2 border-gray-200 font-medium text-gray-900 hover:bg-gray-50 transition-colors bg-white"
               >
                 Back
               </button>

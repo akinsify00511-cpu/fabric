@@ -35,7 +35,7 @@ const LEAVE_TYPES = [
   { value: 'vacation', label: 'Vacation', icon: Plane, color: 'bg-blue-100 text-blue-600' },
   { value: 'sick', label: 'Sick Leave', icon: Heart, color: 'bg-red-100 text-red-600' },
   { value: 'personal', label: 'Personal', icon: User, color: 'bg-purple-100 text-purple-600' },
-  { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-gray-100 text-gray-600' },
+  { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-gray-100 text-gray-900' },
 ]
 
 // Demo data
@@ -414,7 +414,7 @@ export default function TimeTracking() {
                     {entry.duration_minutes ? `${Math.round(entry.duration_minutes / 60 * 10) / 10}h` : 'Active'}
                   </p>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    entry.billable ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    entry.billable ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'
                   }`}>
                     {entry.billable ? 'Billable' : 'Non-billable'}
                   </span>
