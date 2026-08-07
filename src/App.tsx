@@ -123,35 +123,26 @@ function PageLoader() {
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, isDemo } = useAuth()
 
-  // Wait for auth to be fully resolved
-  useEffect(() => {
-    // Prevent scrolling while auth is loading
-    if (loading || !staffChecked) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [loading, staffChecked])
-
-  // Show loading only if session exists but staff not checked yet
-  if (loading) {
+  // While any auth check is pending, show loading
+  if (loading || !staffChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Loading...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
+            <span className="text-white font-bold text-xl">A</span>
+          </div>
+          <div className="w-8 h-8 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
         </div>
       </div>
     )
   }
 
-  // No session - redirect to login
+  // No session and not demo - redirect to login
   if (!session && !isDemo) {
     return <Navigate to="/login" replace />
   }
 
-  // Demo mode - allow access
+  // Demo mode - allow access immediately
   if (isDemo) {
     return (
       <>
@@ -163,24 +154,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Staff not checked yet - wait
-  if (!staffChecked) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-          <p className="text-sm text-gray-500">Checking...</p>
-        </div>
-      </div>
-    )
-  }
-
-  // No staff record - send to onboarding
+  // User has a session - check onboarding status
+  // If no staff record exists, send to onboarding
   if (!staff) {
     return <Navigate to="/onboarding" replace />
   }
 
-  // Check if onboarding is complete
+  // Check if onboarding is complete (either localStorage or database)
   const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
   const staffOnboarding = staff?.onboarding_completed
 
@@ -188,6 +168,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <Navigate to="/onboarding" replace />
   }
 
+  // User is fully authenticated and onboarded - show app
   return (
     <>
       <TrialBanner />

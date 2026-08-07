@@ -115,6 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchStaff = useCallback(async () => {
+    // Don't reset staffChecked here - causes flickering
     if (!session?.user?.id) {
       setStaff(null)
       setStaffChecked(true)
@@ -147,9 +148,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session, isDemo])
 
   useEffect(() => {
-    setStaffChecked(false)
-    fetchStaff()
-  }, [fetchStaff])
+    // Only reset and fetch if we have a session
+    if (session) {
+      fetchStaff()
+    } else {
+      setStaff(null)
+      setStaffChecked(true)
+    }
+  }, [fetchStaff, session])
 
   // Update Sentry context when staff changes
   useEffect(() => {
