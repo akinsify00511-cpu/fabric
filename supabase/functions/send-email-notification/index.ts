@@ -1,5 +1,6 @@
 // Supabase Edge Function: Send Email Notification
 // Handles sending email notifications from the notifications queue
+// Uses Resend for email delivery
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -9,14 +10,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Email template styles
+// Email template styles - Avenize brand
 const emailStyles = `
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
   .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-  .header { background: linear-gradient(135deg, #4F46E5 0%, #8B5CF6 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
+  .header { background: linear-gradient(135deg, #4285F4 0%, #8B5CF6 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
   .content { background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
   .footer { background: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #6b7280; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none; }
-  .button { display: inline-block; padding: 12px 24px; background: #4F46E5; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 20px; }
+  .button { display: inline-block; padding: 12px 24px; background: #4285F4; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 20px; }
   .button-secondary { background: #f3f4f6; color: #374151; }
   .alert { padding: 16px; border-radius: 8px; margin: 16px 0; }
   .alert-warning { background: #fef3c7; border: 1px solid #fbbf24; color: #92400e; }
@@ -30,14 +31,14 @@ function generateEmailHTML(notification: any, user: any, appUrl: string): string
   const categoryColors: Record<string, string> = {
     onboarding: '#8B5CF6',
     task: '#10B981',
-    payment: '#3B82F6',
+    payment: '#4285F4',
     reminder: '#F59E0B',
     marketing: '#EC4899',
     social: '#6366F1',
     system: '#6B7280',
   }
 
-  const accentColor = categoryColors[notification.category] || '#4F46E5'
+  const accentColor = categoryColors[notification.category] || '#4285F4'
 
   return `
 <!DOCTYPE html>
@@ -103,6 +104,60 @@ function generateEmailHTML(notification: any, user: any, appUrl: string): string
   `.trim()
 }
 
+// Send email via Resend API
+async function sendEmailViaResend(
+  apiKey: string,
+  to: string,
+  subject: string,
+  html: string
+): Promise<{ success: boolean; message?: string; error?: string }> {
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        from: 'Avenize <notifications@avenize.com>',
+        to: to,
+        subject: subject,
+        html: html,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      return { success: true, message: data.id || 'Email sent' }
+    } else {
+      return { success: false, error: data.message || 'Failed to send email' }
+    }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+// Get email configuration from settings
+async function getEmailConfig(supabase: any) {
+  const { data: apiKey } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'resend_api_key')
+    .single()
+  
+  const { data: fromEmail } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'email_from_address')
+    .single()
+
+  return {
+    apiKey: apiKey?.value || Deno.env.get('RESEND_API_KEY'),
+    fromEmail: fromEmail?.value || 'notifications@avenize.com',
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -120,11 +175,24 @@ serve(async (req) => {
     // Parse request body
     const { notificationId, userId, testMode } = await req.json()
 
+    // Get email configuration
+    const emailConfig = await getEmailConfig(supabase)
+
+    if (!emailConfig.apiKey && testMode) {
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Resend API key not configured. Set RESEND_API_KEY environment variable or resend_api_key in settings.',
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     if (testMode) {
-      // Test mode - send a test email
+      // Test mode - return success if configured
       return new Response(JSON.stringify({ 
         success: true, 
-        message: 'Test email would be sent',
+        message: 'Test email would be sent' + (emailConfig.apiKey ? ' via Resend' : ' (no API key configured)'),
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -195,7 +263,7 @@ serve(async (req) => {
       social: 'email_tasks',
       system: 'email_tasks',
     }
-
+	
     const emailPref = categoryToPref[notification.category]
     if (preferences && emailPref && !preferences[emailPref]) {
       // User has opted out
@@ -216,12 +284,25 @@ serve(async (req) => {
     const emailHtml = generateEmailHTML(notification, user, appUrl)
     const emailSubject = notification.title.replace(/[\p{Emoji}]/gu, '').trim()
 
-    // TODO: Integrate with actual email service (Resend, SendGrid, etc.)
-    // For now, log the email
-    console.log('📧 Email notification:')
-    console.log('To:', user.email)
-    console.log('Subject:', emailSubject)
-    console.log('Category:', notification.category)
+    // Send email via Resend if configured
+    if (emailConfig.apiKey) {
+      const result = await sendEmailViaResend(
+        emailConfig.apiKey,
+        user.email,
+        emailSubject,
+        emailHtml
+      )
+
+      if (!result.success) {
+        console.error('Failed to send email via Resend:', result.error)
+      } else {
+        console.log('📧 Email sent via Resend:', result.message)
+      }
+    } else {
+      console.log('📧 Email notification (no API key configured):')
+      console.log('To:', user.email)
+      console.log('Subject:', emailSubject)
+    }
 
     // Mark notification as sent
     await supabase
@@ -237,6 +318,7 @@ serve(async (req) => {
       to: user.email,
       subject: emailSubject,
       notificationId: notification.id,
+      provider: emailConfig.apiKey ? 'resend' : 'none',
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
