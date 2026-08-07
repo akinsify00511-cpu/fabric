@@ -79,6 +79,7 @@ const Leads = lazy(() => import('./pages/Leads'))
 const Recruitment = lazy(() => import('./pages/Recruitment'))
 const Webhooks = lazy(() => import('./pages/Webhooks'))
 const Appraisals = lazy(() => import('./pages/Appraisals'))
+const Payroll = lazy(() => import('./pages/Payroll'))
 const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
@@ -260,6 +261,7 @@ function AppRoutes() {
         <Route path="hr" element={<HumanResources />} />
         <Route path="recruitment" element={<Recruitment />} />
         <Route path="appraisals" element={<Appraisals />} />
+        <Route path="payroll" element={<Payroll />} />
         <Route path="operations" element={<Operations />} />
         <Route path="sales-performance" element={<SalesPerformance />} />
         <Route path="logistics" element={<Logistics />} />
