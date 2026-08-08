@@ -120,7 +120,7 @@ export default function CookieConsent() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-black">Always on</span>
-                    <div className="w-11 h-6 bg-[#4285F4] rounded-full relative">
+                    <div className="w-11 h-6 bg-[var(--av-primary)] rounded-full relative">
                       <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
                     </div>
                   </div>
@@ -135,7 +135,7 @@ export default function CookieConsent() {
                   <button
                     onClick={() => setPreferences(p => ({ ...p, analytics: !p.analytics }))}
                     className={`w-11 h-6 rounded-full relative transition-colors ${
-                      preferences.analytics ? 'bg-[#4285F4]' : 'bg-white'
+                      preferences.analytics ? 'bg-[var(--av-primary)]' : 'bg-white'
                     }`}
                   >
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -153,7 +153,7 @@ export default function CookieConsent() {
                   <button
                     onClick={() => setPreferences(p => ({ ...p, marketing: !p.marketing }))}
                     className={`w-11 h-6 rounded-full relative transition-colors ${
-                      preferences.marketing ? 'bg-[#4285F4]' : 'bg-white'
+                      preferences.marketing ? 'bg-[var(--av-primary)]' : 'bg-white'
                     }`}
                   >
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -171,7 +171,7 @@ export default function CookieConsent() {
                   <button
                     onClick={() => setPreferences(p => ({ ...p, functional: !p.functional }))}
                     className={`w-11 h-6 rounded-full relative transition-colors ${
-                      preferences.functional ? 'bg-[#4285F4]' : 'bg-white'
+                      preferences.functional ? 'bg-[var(--av-primary)]' : 'bg-white'
                     }`}
                   >
                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
@@ -190,7 +190,7 @@ export default function CookieConsent() {
                 </button>
                 <button
                   onClick={handleAcceptAll}
-                  className="flex-1 px-6 py-3 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+                  className="flex-1 px-6 py-3 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
                 >
                   Accept All
                 </button>
@@ -214,7 +214,7 @@ export default function CookieConsent() {
                   <p className="text-sm text-black mb-4">
                     We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
                     {' '}
-                    <Link to="/cookies" className="text-[#4285F4] hover:underline">
+                    <Link to="/cookies" className="text-[var(--av-primary)] hover:underline">
                       Learn more
                     </Link>
                   </p>
@@ -234,7 +234,7 @@ export default function CookieConsent() {
                     </button>
                     <button
                       onClick={handleAcceptAll}
-                      className="px-4 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:bg-[#3367D6] transition"
+                      className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] transition"
                     >
                       Accept All
                     </button>

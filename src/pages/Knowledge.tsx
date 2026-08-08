@@ -302,7 +302,7 @@ export default function Knowledge() {
           onClick={() => selectPage(page)}
           className={`w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition ${
             selectedPage?.id === page.id
-              ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
+              ? 'bg-[var(--av-accent)]/10 text-[var(--av-accent)]'
               : 'hover:bg-black/10 text-black/60'
           }`}
           style={{ paddingLeft: `${12 + depth * 16}px` }}
@@ -344,7 +344,7 @@ export default function Knowledge() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search pages..."
-              className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+              className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-black/10 focus:outline-none focus:ring-2 focus:ring-[var(--av-accent)]/30"
             />
           </div>
         </div>
@@ -387,7 +387,7 @@ export default function Knowledge() {
               onClick={() => setSelectedSpace(space)}
               className={`w-full px-3 py-2 flex items-center gap-2 text-sm transition ${
                 selectedSpace?.id === space.id
-                  ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]'
+                  ? 'bg-[var(--av-accent)]/10 text-[var(--av-accent)]'
                   : 'hover:bg-black/10 text-black/60'
               }`}
             >
@@ -601,7 +601,7 @@ export default function Knowledge() {
               value={newPageTitle}
               onChange={(e) => setNewPageTitle(e.target.value)}
               placeholder="Page title"
-              className="w-full px-4 py-3 rounded-xl border border-black/10 mb-3 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+              className="w-full px-4 py-3 rounded-xl border border-black/10 mb-3 focus:outline-none focus:ring-2 focus:ring-[var(--av-accent)]/30"
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && createPage()}
             />
@@ -645,7 +645,7 @@ export default function Knowledge() {
                       setEditingPage((prev) => prev ? { ...prev, content: v.content } : null)
                       setShowHistory(false)
                     }}
-                    className="text-xs text-[#8B5CF6] mt-2"
+                    className="text-xs text-[var(--av-accent)] mt-2"
                   >
                     Restore this version
                   </button>

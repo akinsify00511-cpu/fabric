@@ -10,18 +10,18 @@ import SarahChat from '../components/SarahChat'
 
 // AVENIZE BRAND COLORS - Use these, NOT hardcoded values
 const BRAND = {
-  primary: '#4285F4',
-  primaryHover: '#3367D6',
+  primary: 'var(--av-primary)',
+  primaryHover: 'var(--av-primary-hover)',
   primarySoft: 'rgba(66, 133, 244, 0.08)',
-  gradient: 'linear-gradient(135deg, #4285F4 0%, #4285F4 50%, #34A853 100%)',
-  amber: '#FBBC05',
+  gradient: 'linear-gradient(135deg, var(--av-primary) 0%, var(--av-primary) 50%, var(--av-success) 100%)',
+  amber: 'var(--av-warning)',
   surface: '#F8F9FA',
   surface2: '#F1F3F4',
   text: '#202124',
   textSecondary: '#5F6368',
   textMuted: '#9AA0A6',
   border: '#E8EAED',
-  success: '#34A853',
+  success: 'var(--av-success)',
   purple: '#7C3AED',
   pink: '#BE185D',
 }

@@ -16,7 +16,7 @@ const ENTITY_COLORS: Record<string, string> = {
   invoices: 'bg-amber-100 text-amber-600',
   quotes: 'bg-teal-100 text-teal-600',
   projects: 'bg-pink-100 text-pink-600',
-  documents: 'bg-[#4285F4]/10 text-[#4285F4]',
+  documents: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
   payments: 'bg-emerald-100 text-emerald-600',
   inventory: 'bg-orange-100 text-orange-600',
 }
@@ -196,7 +196,7 @@ export default function SearchPage() {
             onKeyDown={handleKeyDown}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            className="w-full pl-12 pr-12 py-4 rounded-2xl border border-black/10 text-lg focus:outline-none focus:border-[var(--av-primary, #4285F4)]"
+            className="w-full pl-12 pr-12 py-4 rounded-2xl border border-black/10 text-lg focus:outline-none focus:border-[var(--av-primary, var(--av-primary))]"
             autoFocus
           />
           {query && (
@@ -235,7 +235,7 @@ export default function SearchPage() {
                       handleSearch(suggestion.text)
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition ${
-                      selectedIndex === idx ? 'bg-[var(--av-primary, #4285F4)]/10 text-[var(--av-primary, #4285F4)]' : 'hover:bg-black/10'
+                      selectedIndex === idx ? 'bg-[var(--av-primary, var(--av-primary))]/10 text-[var(--av-primary, var(--av-primary))]' : 'hover:bg-black/10'
                     }`}
                   >
                     <Icon size={16} className="text-black" />
@@ -265,7 +265,7 @@ export default function SearchPage() {
                   )}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-sm transition ${
                     isActive 
-                      ? 'bg-[var(--av-primary, #4285F4)] text-white' 
+                      ? 'bg-[var(--av-primary, var(--av-primary))] text-white' 
                       : 'bg-black/10 text-black/60 hover:bg-black/10'
                   }`}
                 >
@@ -281,7 +281,7 @@ export default function SearchPage() {
       {/* Results / Empty State */}
       {loading ? (
         <div className="text-center py-20">
-          <div className="w-12 h-12 mx-auto rounded-full border-4 border-black/10 border-t-[var(--av-primary, #4285F4)] animate-spin mb-4" />
+          <div className="w-12 h-12 mx-auto rounded-full border-4 border-black/10 border-t-[var(--av-primary, var(--av-primary))] animate-spin mb-4" />
           <p className="text-black">Searching...</p>
         </div>
       ) : results.length > 0 ? (
@@ -313,8 +313,8 @@ export default function SearchPage() {
                 onMouseEnter={() => setSelectedIndex(suggestions.length + idx)}
                 className={`w-full p-4 rounded-xl border transition text-left ${
                   selectedIndex === suggestions.length + idx 
-                    ? 'border-[var(--av-primary, #4285F4)] bg-[var(--av-primary, #4285F4)]/5 shadow-md' 
-                    : 'border-black/[0.06] hover:border-[var(--av-primary, #4285F4)] hover:shadow-lg'
+                    ? 'border-[var(--av-primary, var(--av-primary))] bg-[var(--av-primary, var(--av-primary))]/5 shadow-md' 
+                    : 'border-black/[0.06] hover:border-[var(--av-primary, var(--av-primary))] hover:shadow-lg'
                 }`}
               >
                 <div className="flex items-start gap-3">
@@ -425,7 +425,7 @@ export default function SearchPage() {
                 { icon: Briefcase, label: 'Staff', color: 'bg-purple-50 text-purple-500' },
                 { icon: Tag, label: 'Inventory', color: 'bg-orange-50 text-orange-500' },
                 { icon: Calendar, label: 'Calendar', color: 'bg-teal-50 text-teal-500' },
-                { icon: TrendingUp, label: 'Reports', color: 'bg-[#4285F4]/5 text-[#4285F4]' },
+                { icon: TrendingUp, label: 'Reports', color: 'bg-[var(--av-primary)]/5 text-[var(--av-primary)]' },
               ].map((item, i) => (
                 <button
                   key={i}
@@ -475,7 +475,7 @@ export default function SearchPage() {
               </button>
               <button
                 onClick={handleSaveSearch}
-                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium"
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, var(--av-primary))] text-white font-medium"
               >
                 Save
               </button>

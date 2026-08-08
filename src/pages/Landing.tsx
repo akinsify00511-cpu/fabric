@@ -152,7 +152,7 @@ const DASHBOARDS = [
   {
     role: "Marketing",
     icon: "📣",
-    color: "to-[#4285F4] to-blue-500",
+    color: "to-[var(--av-primary)] to-blue-500",
     tagline: "Know what's working. Double down on it.",
     features: [
       "Campaign tracking: leads generated, deals closed",
@@ -334,7 +334,7 @@ function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[#4285F4] via-[#4285F4] to-[#7C3AED] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-[var(--av-primary)] via-[var(--av-primary)] to-[#7C3AED] flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
             </div>
             <span className="font-semibold text-white text-lg">Avenize</span>
@@ -398,10 +398,10 @@ function HeroSection() {
           {/* Left Content */}
           <div>
             {/* Eyebrow */}
-            <div className="hero-badge inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#4285F4]/20 border border-[#4285F4]/30 text-[#4285F4] text-xs font-semibold uppercase tracking-wider mb-6">
+            <div className="hero-badge inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[var(--av-primary)]/20 border border-[var(--av-primary)]/30 text-[var(--av-primary)] text-xs font-semibold uppercase tracking-wider mb-6">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4285F4] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4285F4]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--av-primary)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--av-primary)]"></span>
               </span>
               Built for Nigerian Businesses
             </div>
@@ -410,7 +410,7 @@ function HeroSection() {
             <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               <span className="text-white">Stop running your business.</span>
               <br />
-              <span className="text-[#4285F4]">
+              <span className="text-[var(--av-primary)]">
                 Start leading it.
               </span>
             </h1>
@@ -428,7 +428,7 @@ function HeroSection() {
             <div className="hero-cta flex flex-wrap gap-3 mb-8">
               <Link
                 to="/signup"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#4285F4] text-white font-semibold hover:bg-[#3367D6] transition-colors"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--av-primary)] text-white font-semibold hover:bg-[var(--av-primary-hover)] transition-colors"
               >
                 Stop the chaos
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -532,9 +532,9 @@ function HeroSection() {
 function AlertCard({ tag, message, action }: { tag: string; message: string; action: string }) {
   return (
     <div className="bg-[#222] border border-white/10 rounded-lg p-4">
-      <span className="block text-xs font-mono text-[#4285F4] uppercase tracking-wider mb-2">{tag}</span>
+      <span className="block text-xs font-mono text-[var(--av-primary)] uppercase tracking-wider mb-2">{tag}</span>
       <p className="text-sm text-white/80 leading-relaxed mb-3">{message}</p>
-      <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[#4285F4] text-white">
+      <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[var(--av-primary)] text-white">
         {action}
       </span>
     </div>
@@ -608,7 +608,7 @@ function ProblemsSection() {
               </div>
               
               {/* Problem Title */}
-              <h3 className="text-lg font-bold text-black mb-3 group-hover:text-[#4285F4] transition-colors">
+              <h3 className="text-lg font-bold text-black mb-3 group-hover:text-[var(--av-primary)] transition-colors">
                 {problem.problem}
               </h3>
               
@@ -629,11 +629,11 @@ function ProblemsSection() {
 
         {/* Transformation CTA */}
         <div className="mt-12 md:mt-16 text-center animate-on-scroll">
-          <div className="inline-block bg-[#4285F4] rounded-2xl px-8 py-6">
+          <div className="inline-block bg-[var(--av-primary)] rounded-2xl px-8 py-6">
             <p className="text-xl md:text-2xl font-bold text-white mb-2">
               It doesn't have to be this way.
             </p>
-            <p className="text-[#4285F4]/20">
+            <p className="text-[var(--av-primary)]/20">
               Avenize was built for exactly these moments. See how below.
             </p>
           </div>
@@ -691,7 +691,7 @@ function FeaturesSection() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 md:mb-16 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4285F4]/5 border border-[#4285F4]/10 text-[#4285F4] text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--av-primary)]/5 border border-[var(--av-primary)]/10 text-[var(--av-primary)] text-xs font-semibold uppercase tracking-wider mb-6">
             The Solution
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6">
@@ -743,7 +743,7 @@ function FeaturesSection() {
             {/* Visual */}
             <div className="feature-visual">
               <div className="relative">
-                <div className="absolute -inset-4 bg-[#4285F4]/5 rounded-3xl blur-xl" />
+                <div className="absolute -inset-4 bg-[var(--av-primary)]/5 rounded-3xl blur-xl" />
                 <div className="relative bg-white rounded-2xl p-4 md:p-6 shadow-lg">
                   {feature.visual === 'pipeline' && <PipelineMockup />}
                   {feature.visual === 'alerts' && <AlertsMockup />}
@@ -779,7 +779,7 @@ function PipelineMockup() {
           key={i}
           className={`flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-mono ${
             stage.active
-              ? 'bg-[#4285F4] text-white'
+              ? 'bg-[var(--av-primary)] text-white'
               : stage.done
               ? 'bg-emerald-100 text-emerald-700'
               : 'bg-[#E8E8E8] text-[#6B6B6B]'
@@ -800,14 +800,14 @@ function AlertsMockup() {
   return (
     <div className="space-y-3">
       <div className="bg-[#222] border border-white/10 rounded-lg p-4">
-        <span className="block text-xs font-mono text-[#4285F4] uppercase tracking-wider mb-2">Stock Alert</span>
+        <span className="block text-xs font-mono text-[var(--av-primary)] uppercase tracking-wider mb-2">Stock Alert</span>
         <p className="text-sm text-white/80 mb-3">Resin at 180L. Last order: Chemical Plus, ₦4,200/L. Reorder now or production stops Tuesday.</p>
-        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[#4285F4] text-white">Create PO →</span>
+        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[var(--av-primary)] text-white">Create PO →</span>
       </div>
       <div className="bg-[#222] border border-white/10 rounded-lg p-4">
-        <span className="block text-xs font-mono text-[#4285F4] uppercase tracking-wider mb-2">Payment: 7 days overdue</span>
+        <span className="block text-xs font-mono text-[var(--av-primary)] uppercase tracking-wider mb-2">Payment: 7 days overdue</span>
         <p className="text-sm text-white/80 mb-3">Alhaji Saka — ₦680,000 for Lekki Villa job. Called twice. No answer.</p>
-        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[#4285F4] text-white">Send reminder →</span>
+        <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[var(--av-primary)] text-white">Send reminder →</span>
       </div>
     </div>
   )
@@ -818,7 +818,7 @@ function AlertsMockup() {
 // ============================================
 function ChatMockup() {
   const messages = [
-    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Project 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "#4285F4" },
+    { initials: "SC", name: "Site Crew", role: "IKM Project", message: "Project 90% done. Inspector photo attached. Awaiting your sign-off to invoice Alhaji.", color: "var(--av-primary)" },
     { initials: "WH", name: "Warehouse", role: "", message: "Chimic Plus delivered 500L resin. Stock updated. Factory notified.", color: "#EC4899" },
     { initials: "FN", name: "Finance", role: "", message: "GTBank alert: ₦450,000 received from ABC Holdings. Matches Invoice #147.", color: "#10B981" }
   ]
@@ -952,21 +952,21 @@ function PricingSection() {
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="mb-12 animate-on-scroll text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#4285F4]/20 border border-[#4285F4]/30 text-[#4285F4] text-xs font-semibold uppercase tracking-wider mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--av-primary)]/20 border border-[var(--av-primary)]/30 text-[var(--av-primary)] text-xs font-semibold uppercase tracking-wider mb-6">
             Founding Rate - Locked In
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             Less than your data bundle.<br />
-            <span className="text-[#4285F4]">Runs your whole business.</span>
+            <span className="text-[var(--av-primary)]">Runs your whole business.</span>
           </h2>
           <p className="text-lg text-black max-w-2xl mx-auto mb-8">
             Five tiers, no sales calls, no consultants — from one person to 100 seats.
           </p>
-          <div className="inline-block bg-[#4285F4] rounded-2xl px-8 py-5">
+          <div className="inline-block bg-[var(--av-primary)] rounded-2xl px-8 py-5">
             <p className="text-lg font-bold text-white mb-1">
               Founding rate locked for 12 months.
             </p>
-            <p className="text-[#4285F4]/20">
+            <p className="text-[var(--av-primary)]/20">
               Your price stays yours — even when list price goes up. Pay annually, get 2 months free.
             </p>
           </div>
@@ -977,13 +977,13 @@ function PricingSection() {
           {PRICING_SNAPSHOT.map((plan, i) => (
             <div
               key={i}
-              className={`snap-card rounded-xl p-4 md:p-5 border opacity-0 translate-y-6 transition-all hover:border-[#4285F4]/50 ${
+              className={`snap-card rounded-xl p-4 md:p-5 border opacity-0 translate-y-6 transition-all hover:border-[var(--av-primary)]/50 ${
                 plan.featured
-                  ? 'bg-[#4285F4]/10 border-[#4285F4]'
+                  ? 'bg-[var(--av-primary)]/10 border-[var(--av-primary)]'
                   : 'bg-white border-white/10'
               }`}
             >
-              <div className="text-xs font-mono text-[#4285F4] uppercase tracking-wider mb-3 min-h-[20px]">
+              <div className="text-xs font-mono text-[var(--av-primary)] uppercase tracking-wider mb-3 min-h-[20px]">
                 {plan.plan}
               </div>
               <div className="text-xl md:text-2xl font-bold font-mono mb-1">
@@ -1003,7 +1003,7 @@ function PricingSection() {
         <div className="mt-8 text-center">
           <Link
             to="/pricing"
-            className="inline-flex items-center gap-2 text-[#4285F4] hover:text-[#4285F4]/30 font-medium"
+            className="inline-flex items-center gap-2 text-[var(--av-primary)] hover:text-[var(--av-primary)]/30 font-medium"
           >
             View all plans and pricing details
             <ArrowRight size={16} />
@@ -1045,7 +1045,7 @@ function FAQSection() {
                 className="w-full flex items-center justify-between py-5 text-left"
               >
                 <span className="font-semibold text-black pr-4">{item.q}</span>
-                <span className={`text-[#4285F4] text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+                <span className={`text-[var(--av-primary)] text-xl font-mono flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
               </button>
               {openIndex === i && (
                 <div className="pb-5 text-black leading-relaxed">
@@ -1086,7 +1086,7 @@ function StatsSection() {
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center animate-on-scroll">
-              <span className="block text-3xl md:text-4xl font-bold text-[#4285F4] mb-2">{stat.value}</span>
+              <span className="block text-3xl md:text-4xl font-bold text-[var(--av-primary)] mb-2">{stat.value}</span>
               <p className="text-black text-sm md:text-base leading-relaxed max-w-xs mx-auto">{stat.label}</p>
             </div>
           ))}
@@ -1111,14 +1111,14 @@ function CTASection() {
           </p>
           
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
-            <span className="text-[#4285F4]">
+            <span className="text-[var(--av-primary)]">
               Tomorrow doesn't have to be like today.
             </span>
           </p>
         </div>
 
         {/* Emotional Hook */}
-        <div className="mb-8 p-6 bg-[#4285F4]/10 border border-[#4285F4]/30 rounded-2xl">
+        <div className="mb-8 p-6 bg-[var(--av-primary)]/10 border border-[var(--av-primary)]/30 rounded-2xl">
           <p className="text-base md:text-lg text-black">
             <span className="text-white font-semibold">Avenize was built for exactly this moment.</span><br />
             The moment before it becomes urgent. The moment you wish you'd known sooner.
@@ -1127,7 +1127,7 @@ function CTASection() {
 
         <Link
           to="/signup"
-          className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#4285F4] text-white font-semibold text-lg hover:bg-[#3367D6] transition-colors"
+          className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--av-primary)] text-white font-semibold text-lg hover:bg-[var(--av-primary-hover)] transition-colors"
         >
           Stop the chaos. Start Avenize.
           <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -1158,7 +1158,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 via-pink-500 to-[#8B5CF6]/50 flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 via-pink-500 to-[var(--av-accent)]/50 flex items-center justify-center shadow-lg shadow-orange-500/20">
               <span className="text-white font-bold text-lg">A</span>
             </div>
             <div>

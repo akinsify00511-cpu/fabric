@@ -203,7 +203,7 @@ export default function AnnouncementsPage() {
         {isAdmin && (
           <button
             onClick={() => { setEditing(null); setShowModal(true) }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, var(--av-primary))] text-white text-sm"
           >
             <Plus size={16} />
             New Announcement
@@ -219,7 +219,7 @@ export default function AnnouncementsPage() {
             onClick={() => setFilter(f as any)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${
               filter === f 
-                ? 'bg-[var(--av-primary, #4285F4)] text-white' 
+                ? 'bg-[var(--av-primary, var(--av-primary))] text-white' 
                 : 'bg-white border border-black/10'
             }`}
           >
@@ -345,7 +345,7 @@ function AnnouncementCard({
             {announcement.content.length > 200 && (
               <button
                 onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
-                className="text-sm text-[var(--av-primary, #4285F4)] mt-2"
+                className="text-sm text-[var(--av-primary, var(--av-primary))] mt-2"
               >
                 {expanded ? 'Show less' : 'Read more'}
               </button>
@@ -357,7 +357,7 @@ function AnnouncementCard({
           <div className="flex items-center gap-2">
             {announcement.author && (
               <div className="flex items-center gap-2 text-sm text-black">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-[#8B5CF6]/50 flex items-center justify-center text-white text-xs">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-[var(--av-accent)]/50 flex items-center justify-center text-white text-xs">
                   {announcement.author.full_name?.charAt(0) || 'U'}
                 </div>
                 {announcement.author.full_name}
@@ -513,7 +513,7 @@ function AnnouncementModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium">
+            <button type="submit" className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, var(--av-primary))] text-white font-medium">
               {announcement ? 'Update' : 'Publish'}
             </button>
           </div>

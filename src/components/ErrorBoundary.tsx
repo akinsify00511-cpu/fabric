@@ -85,7 +85,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="space-y-3">
               <button
                 onClick={this.handleRetry}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#4285F4] text-white rounded-lg font-medium hover:bg-[#3367D6] transition"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[var(--av-primary)] text-white rounded-lg font-medium hover:bg-[var(--av-primary-hover)] transition"
               >
                 <RefreshCw size={18} />
                 Try Again

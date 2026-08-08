@@ -33,10 +33,10 @@ interface Signer {
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
-  pending: 'bg-[#FBBC05]/10 text-[#FBBC05]',
-  viewed: 'bg-[#4285F4]/10 text-[#4285F4]',
-  signed: 'bg-[#34A853]/10 text-[#34A853]',
-  declined: 'bg-[#EA4335]/10 text-[#EA4335]',
+  pending: 'bg-[var(--av-warning)]/10 text-[var(--av-warning)]',
+  viewed: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
+  signed: 'bg-[var(--av-success)]/10 text-[var(--av-success)]',
+  declined: 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]',
   expired: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
 }
 
@@ -251,7 +251,7 @@ export default function ElectronicSignatures() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -268,7 +268,7 @@ export default function ElectronicSignatures() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
         >
           <Plus size={18} />
           New Request
@@ -279,8 +279,8 @@ export default function ElectronicSignatures() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
-              <FileSignature size={20} className="text-[#4285F4]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-primary)]/10 flex items-center justify-center">
+              <FileSignature size={20} className="text-[var(--av-primary)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.total}</p>
@@ -290,8 +290,8 @@ export default function ElectronicSignatures() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#FBBC05]/10 flex items-center justify-center">
-              <Clock size={20} className="text-[#FBBC05]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-warning)]/10 flex items-center justify-center">
+              <Clock size={20} className="text-[var(--av-warning)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.pending}</p>
@@ -301,8 +301,8 @@ export default function ElectronicSignatures() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#34A853]/10 flex items-center justify-center">
-              <CheckCircle size={20} className="text-[#34A853]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-success)]/10 flex items-center justify-center">
+              <CheckCircle size={20} className="text-[var(--av-success)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.signed}</p>
@@ -333,13 +333,13 @@ export default function ElectronicSignatures() {
               placeholder="Search signature requests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
           >
             <option value="all">All Status</option>
             <option value="draft">Draft</option>
@@ -391,7 +391,7 @@ export default function ElectronicSignatures() {
                         {request.signers.slice(0, 3).map((signer, i) => (
                           <div
                             key={signer.id}
-                            className="w-8 h-8 rounded-full bg-[#4285F4]/10 flex items-center justify-center text-xs font-medium text-[#4285F4] border-2 border-white"
+                            className="w-8 h-8 rounded-full bg-[var(--av-primary)]/10 flex items-center justify-center text-xs font-medium text-[var(--av-primary)] border-2 border-white"
                             title={signer.name}
                           >
                             {signer.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
@@ -420,10 +420,10 @@ export default function ElectronicSignatures() {
                       {request.status === 'draft' && (
                         <button
                           onClick={() => updateStatus(request.id, 'pending')}
-                          className="p-2 hover:bg-[#4285F4]/10 rounded-lg transition"
+                          className="p-2 hover:bg-[var(--av-primary)]/10 rounded-lg transition"
                           title="Send for signing"
                         >
-                          <Send size={16} className="text-[#4285F4]" />
+                          <Send size={16} className="text-[var(--av-primary)]" />
                         </button>
                       )}
                       <button className="p-2 hover:bg-black/5 rounded-lg transition">
@@ -462,7 +462,7 @@ export default function ElectronicSignatures() {
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="e.g., Service Agreement"
             />
           </div>
@@ -473,7 +473,7 @@ export default function ElectronicSignatures() {
               rows={2}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="Brief description of the document..."
             />
           </div>
@@ -485,7 +485,7 @@ export default function ElectronicSignatures() {
               required
               value={formData.document_name}
               onChange={(e) => setFormData({ ...formData, document_name: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="e.g., contract-2025.pdf"
             />
           </div>
@@ -498,7 +498,7 @@ export default function ElectronicSignatures() {
               max="90"
               value={formData.expires_in_days}
               onChange={(e) => setFormData({ ...formData, expires_in_days: parseInt(e.target.value) || 7 })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             />
           </div>
 
@@ -508,7 +508,7 @@ export default function ElectronicSignatures() {
               <button
                 type="button"
                 onClick={addSigner}
-                className="text-sm text-[#4285F4] hover:underline"
+                className="text-sm text-[var(--av-primary)] hover:underline"
               >
                 + Add Signer
               </button>
@@ -520,14 +520,14 @@ export default function ElectronicSignatures() {
                     type="text"
                     value={signer.name}
                     onChange={(e) => updateSigner(index, 'name', e.target.value)}
-                    className="flex-1 px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                    className="flex-1 px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
                     placeholder="Signer name"
                   />
                   <input
                     type="email"
                     value={signer.email}
                     onChange={(e) => updateSigner(index, 'email', e.target.value)}
-                    className="flex-1 px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                    className="flex-1 px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
                     placeholder="signer@email.com"
                   />
                   {formData.signers.length > 1 && (
@@ -557,7 +557,7 @@ export default function ElectronicSignatures() {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+              className="flex-1 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
             >
               Create Request
             </button>

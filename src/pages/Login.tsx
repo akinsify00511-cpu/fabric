@@ -5,8 +5,8 @@ import { AvenizeMark } from '../components/AvenizeMark'
 
 // GOOGLE STANDARD BRAND COLORS
 const BRAND = {
-  primary: '#4285F4',
-  primaryHover: '#3367D6',
+  primary: 'var(--av-primary)',
+  primaryHover: 'var(--av-primary-hover)',
   primaryActive: '#2A5DB0',
   primarySoft: 'rgba(66, 133, 244, 0.08)',
   surface: '#F8F9FA',
@@ -17,8 +17,8 @@ const BRAND = {
   textMuted: '#9AA0A6',
   border: '#E8EAED',
   borderMedium: '#DADCE0',
-  success: '#34A853',
-  danger: '#EA4335',
+  success: 'var(--av-success)',
+  danger: 'var(--av-danger)',
   dangerSoft: 'rgba(234, 67, 53, 0.08)',
 }
 

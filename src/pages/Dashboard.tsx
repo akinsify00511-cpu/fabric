@@ -14,10 +14,10 @@ import {
 
 // AVENIZE BRAND COLORS - Muted & Professional
 const BRAND = {
-  primary: '#4285F4',           // Slate-600
-  primaryHover: '#3367D6',       // Slate-700
+  primary: 'var(--av-primary)',           // Slate-600
+  primaryHover: 'var(--av-primary-hover)',       // Slate-700
   primarySoft: 'rgba(66, 133, 244, 0.08)',
-  gradient: 'linear-gradient(135deg, #4285F4 0%, #4285F4 100%)',
+  gradient: 'linear-gradient(135deg, var(--av-primary) 0%, var(--av-primary) 100%)',
   surface: '#F8F9FA',
   surface2: '#F1F3F4',
   surfaceElevated: '#FFFFFF',
@@ -25,11 +25,11 @@ const BRAND = {
   textSecondary: '#5F6368',
   textMuted: '#9AA0A6',
   border: '#E8EAED',
-  success: '#34A853',          // Green-700
+  success: 'var(--av-success)',          // Green-700
   successSoft: 'rgba(52, 168, 83, 0.08)',
-  warning: '#FBBC05',          // Amber-700
+  warning: 'var(--av-warning)',          // Amber-700
   warningSoft: 'rgba(251, 188, 5, 0.08)',
-  danger: '#EA4335',           // Red-700
+  danger: 'var(--av-danger)',           // Red-700
   dangerSoft: 'rgba(234, 67, 53, 0.08)',
   info: '#0369A1',             // Sky-700
   infoSoft: 'rgba(3, 105, 161, 0.08)',
@@ -40,8 +40,8 @@ const BRAND = {
 // Module colors - Muted & Professional
 const MODULE_COLORS = {
   crm: { color: '#64748B', bg: 'rgba(100, 116, 139, 0.08)', icon: Users },
-  finance: { color: '#34A853', bg: 'rgba(52, 168, 83, 0.08)', icon: DollarSign },
-  projects: { color: '#FBBC05', bg: 'rgba(251, 188, 5, 0.08)', icon: Target },
+  finance: { color: 'var(--av-success)', bg: 'rgba(52, 168, 83, 0.08)', icon: DollarSign },
+  projects: { color: 'var(--av-warning)', bg: 'rgba(251, 188, 5, 0.08)', icon: Target },
   people: { color: '#7C3AED', bg: 'rgba(124, 58, 237, 0.08)', icon: Building2 },
 }
 

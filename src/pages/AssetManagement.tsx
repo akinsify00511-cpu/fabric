@@ -120,7 +120,7 @@ export default function AssetManagementPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br to-[var(--av-primary)] to-[var(--av-accent)] flex items-center justify-center">
             <Package size={24} className="text-white" />
           </div>
           <div>
@@ -131,7 +131,7 @@ export default function AssetManagementPage() {
         {isAdmin && (
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, var(--av-primary))] text-white text-sm"
           >
             <Plus size={16} />
             Add Asset
@@ -141,7 +141,7 @@ export default function AssetManagementPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <StatCard title="Total Assets" value={totalAssets.toString()} icon={<Package size={18} />} color="bg-[#4285F4]" />
+        <StatCard title="Total Assets" value={totalAssets.toString()} icon={<Package size={18} />} color="bg-[var(--av-primary)]" />
         <StatCard title="Active" value={activeAssets.toString()} icon={<CheckCircle size={18} />} color="bg-green-500" />
         <StatCard title="In Maintenance" value={inMaintenance.toString()} icon={<Wrench size={18} />} color="bg-amber-500" />
         <StatCard title="Total Value" value={`₦${totalValue.toLocaleString()}`} icon={<Package size={18} />} color="bg-purple-500" />
@@ -255,7 +255,7 @@ function AssetCard({
   return (
     <div className="bg-white rounded-xl  overflow-hidden hover:shadow-lg transition">
       {/* Header */}
-      <div className="p-4 bg-gradient-to-r to-[#4285F4]/5 to-[#8B5CF6]/5">
+      <div className="p-4 bg-gradient-to-r to-[var(--av-primary)]/5 to-[var(--av-accent)]/5">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -482,7 +482,7 @@ function AssetModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, var(--av-primary))] text-white font-medium disabled:opacity-50">
               {submitting ? 'Adding...' : 'Add Asset'}
             </button>
           </div>

@@ -53,17 +53,17 @@ const CATEGORY_ICONS: Record<string, string> = {
 
 const PRIORITY_COLORS: Record<string, string> = {
   low: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
-  medium: 'bg-[#4285F4]/10 text-[#4285F4]',
-  high: 'bg-[#FBBC05]/10 text-[#FBBC05]',
-  urgent: 'bg-[#EA4335]/10 text-[#EA4335]',
+  medium: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
+  high: 'bg-[var(--av-warning)]/10 text-[var(--av-warning)]',
+  urgent: 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  reported: 'bg-[#EA4335]/10 text-[#EA4335]',
-  assigned: 'bg-[#4285F4]/10 text-[#4285F4]',
-  in_progress: 'bg-[#FBBC05]/10 text-[#FBBC05]',
-  pending_parts: 'bg-[#8B5CF6]/10 text-[#8B5CF6]',
-  completed: 'bg-[#34A853]/10 text-[#34A853]',
+  reported: 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]',
+  assigned: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
+  in_progress: 'bg-[var(--av-warning)]/10 text-[var(--av-warning)]',
+  pending_parts: 'bg-[var(--av-accent)]/10 text-[var(--av-accent)]',
+  completed: 'bg-[var(--av-success)]/10 text-[var(--av-success)]',
   cancelled: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
 }
 
@@ -197,7 +197,7 @@ export default function MaintenanceRequests() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -214,7 +214,7 @@ export default function MaintenanceRequests() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
         >
           <Plus size={18} />
           New Request
@@ -225,8 +225,8 @@ export default function MaintenanceRequests() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
-              <Wrench size={20} className="text-[#4285F4]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-primary)]/10 flex items-center justify-center">
+              <Wrench size={20} className="text-[var(--av-primary)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.total}</p>
@@ -236,8 +236,8 @@ export default function MaintenanceRequests() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#EA4335]/10 flex items-center justify-center">
-              <AlertTriangle size={20} className="text-[#EA4335]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-danger)]/10 flex items-center justify-center">
+              <AlertTriangle size={20} className="text-[var(--av-danger)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.urgent}</p>
@@ -247,8 +247,8 @@ export default function MaintenanceRequests() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#FBBC05]/10 flex items-center justify-center">
-              <Clock size={20} className="text-[#FBBC05]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-warning)]/10 flex items-center justify-center">
+              <Clock size={20} className="text-[var(--av-warning)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.inProgress}</p>
@@ -258,8 +258,8 @@ export default function MaintenanceRequests() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#34A853]/10 flex items-center justify-center">
-              <CheckCircle size={20} className="text-[#34A853]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-success)]/10 flex items-center justify-center">
+              <CheckCircle size={20} className="text-[var(--av-success)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.completed}</p>
@@ -279,13 +279,13 @@ export default function MaintenanceRequests() {
               placeholder="Search requests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             />
           </div>
           <select
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
-            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
           >
             <option value="all">All Priorities</option>
             <option value="urgent">Urgent</option>
@@ -296,7 +296,7 @@ export default function MaintenanceRequests() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+            className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
           >
             <option value="all">All Status</option>
             <option value="reported">Reported</option>
@@ -363,7 +363,7 @@ export default function MaintenanceRequests() {
                   {request.status === 'reported' && (
                     <button
                       onClick={() => updateStatus(request.id, 'assigned')}
-                      className="px-3 py-1.5 bg-[#4285F4]/10 text-[#4285F4] rounded-lg text-sm font-medium hover:bg-[#4285F4]/20 transition"
+                      className="px-3 py-1.5 bg-[var(--av-primary)]/10 text-[var(--av-primary)] rounded-lg text-sm font-medium hover:bg-[var(--av-primary)]/20 transition"
                     >
                       Assign
                     </button>
@@ -371,7 +371,7 @@ export default function MaintenanceRequests() {
                   {request.status === 'assigned' && (
                     <button
                       onClick={() => updateStatus(request.id, 'in_progress')}
-                      className="px-3 py-1.5 bg-[#FBBC05]/10 text-[#FBBC05] rounded-lg text-sm font-medium hover:bg-[#FBBC05]/20 transition"
+                      className="px-3 py-1.5 bg-[var(--av-warning)]/10 text-[var(--av-warning)] rounded-lg text-sm font-medium hover:bg-[var(--av-warning)]/20 transition"
                     >
                       Start Work
                     </button>
@@ -379,7 +379,7 @@ export default function MaintenanceRequests() {
                   {(request.status === 'in_progress' || request.status === 'pending_parts') && (
                     <button
                       onClick={() => updateStatus(request.id, 'completed')}
-                      className="px-3 py-1.5 bg-[#34A853]/10 text-[#34A853] rounded-lg text-sm font-medium hover:bg-[#34A853]/20 transition"
+                      className="px-3 py-1.5 bg-[var(--av-success)]/10 text-[var(--av-success)] rounded-lg text-sm font-medium hover:bg-[var(--av-success)]/20 transition"
                     >
                       Mark Complete
                     </button>
@@ -408,7 +408,7 @@ export default function MaintenanceRequests() {
               required
               value={formData.property_id}
               onChange={(e) => setFormData({ ...formData, property_id: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             >
               <option value="">Select Property</option>
               <option value="demo-property-1">3 Bedroom Flat - Victoria Island</option>
@@ -423,7 +423,7 @@ export default function MaintenanceRequests() {
                 required
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value as MaintenanceRequest['category'] })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               >
                 <option value="plumbing">Plumbing</option>
                 <option value="electrical">Electrical</option>
@@ -444,7 +444,7 @@ export default function MaintenanceRequests() {
                 required
                 value={formData.priority}
                 onChange={(e) => setFormData({ ...formData, priority: e.target.value as MaintenanceRequest['priority'] })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -461,7 +461,7 @@ export default function MaintenanceRequests() {
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="Brief description of the issue"
             />
           </div>
@@ -473,7 +473,7 @@ export default function MaintenanceRequests() {
               rows={4}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="Provide detailed information about the issue..."
             />
           </div>
@@ -491,7 +491,7 @@ export default function MaintenanceRequests() {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+              className="flex-1 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
             >
               Submit Request
             </button>

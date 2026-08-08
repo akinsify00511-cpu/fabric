@@ -266,7 +266,7 @@ export default function DocumentsHub() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -291,7 +291,7 @@ export default function DocumentsHub() {
           </button>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
           >
             <Upload size={18} />
             Upload
@@ -304,7 +304,7 @@ export default function DocumentsHub() {
         <div className="flex items-center gap-2 mb-4 text-sm">
           <button
             onClick={() => navigateToFolder(null)}
-            className="text-[#4285F4] hover:underline"
+            className="text-[var(--av-primary)] hover:underline"
           >
             All Documents
           </button>
@@ -317,8 +317,8 @@ export default function DocumentsHub() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
-              <File size={20} className="text-[#4285F4]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-primary)]/10 flex items-center justify-center">
+              <File size={20} className="text-[var(--av-primary)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.totalDocs}</p>
@@ -371,7 +371,7 @@ export default function DocumentsHub() {
               placeholder="Search documents..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             />
           </div>
           <div className="flex items-center gap-1 bg-[#F8F9FA] rounded-xl p-1">
@@ -379,13 +379,13 @@ export default function DocumentsHub() {
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition ${viewMode === 'grid' ? 'bg-white shadow-sm' : ''}`}
             >
-              <Grid size={18} className={viewMode === 'grid' ? 'text-[#4285F4]' : 'text-black/40'} />
+              <Grid size={18} className={viewMode === 'grid' ? 'text-[var(--av-primary)]' : 'text-black/40'} />
             </button>
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition ${viewMode === 'list' ? 'bg-white shadow-sm' : ''}`}
             >
-              <List size={18} className={viewMode === 'list' ? 'text-[#4285F4]' : 'text-black/40'} />
+              <List size={18} className={viewMode === 'list' ? 'text-[var(--av-primary)]' : 'text-black/40'} />
             </button>
           </div>
         </div>
@@ -434,8 +434,8 @@ export default function DocumentsHub() {
                 className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition group"
               >
                 <div className="flex items-start justify-between mb-2">
-                  <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
-                    <Icon size={24} className="text-[#4285F4]" />
+                  <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)]/10 flex items-center justify-center">
+                    <Icon size={24} className="text-[var(--av-primary)]" />
                   </div>
                   <div className="flex items-center gap-1">
                     <button
@@ -508,7 +508,7 @@ export default function DocumentsHub() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <Icon size={20} className="text-[#4285F4]" />
+                        <Icon size={20} className="text-[var(--av-primary)]" />
                         <span className="font-medium text-black">{doc.name}</span>
                         {doc.is_starred && <Star size={14} className="text-[#FBBC05] fill-[#FBBC05]" />}
                       </div>
@@ -553,7 +553,7 @@ export default function DocumentsHub() {
               required
               value={newFolderName}
               onChange={(e) => setNewFolderName(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               placeholder="e.g., Contracts 2025"
               autoFocus
             />
@@ -568,7 +568,7 @@ export default function DocumentsHub() {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+              className="flex-1 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
             >
               Create
             </button>
@@ -583,8 +583,8 @@ export default function DocumentsHub() {
         title="Upload Documents"
       >
         <div className="p-6">
-          <div className="border-2 border-dashed border-[#4285F4]/30 rounded-xl p-8 text-center hover:border-[#4285F4]/50 transition cursor-pointer">
-            <Upload size={48} className="mx-auto text-[#4285F4] mb-4" />
+          <div className="border-2 border-dashed border-[var(--av-primary)]/30 rounded-xl p-8 text-center hover:border-[var(--av-primary)]/50 transition cursor-pointer">
+            <Upload size={48} className="mx-auto text-[var(--av-primary)] mb-4" />
             <p className="font-medium text-black mb-2">Drop files here or click to upload</p>
             <p className="text-sm text-black/60">Supports PDF, DOC, DOCX, XLS, XLSX, PNG, JPG up to 50MB</p>
           </div>

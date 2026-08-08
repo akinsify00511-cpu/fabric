@@ -535,7 +535,7 @@ export default function Accounting() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium">Journal Lines</label>
-                  <button onClick={addLine} className="text-xs text-[#8B5CF6]">+ Add Line</button>
+                  <button onClick={addLine} className="text-xs text-[var(--av-accent)]">+ Add Line</button>
                 </div>
                 <div className="space-y-2">
                   <div className="grid grid-cols-12 gap-2 text-xs text-black font-medium px-1">

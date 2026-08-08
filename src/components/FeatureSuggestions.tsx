@@ -23,27 +23,27 @@ export default function FeatureSuggestions({ suggestions, title = "You might als
   if (filteredSuggestions.length === 0) return null
 
   return (
-    <div className={`bg-gradient-to-r to-[#4285F4]/5 to-[#8B5CF6]/5 rounded-xl p-4 border border-[#4285F4]/10 ${className}`}>
+    <div className={`bg-gradient-to-r to-[var(--av-primary)]/5 to-[var(--av-accent)]/5 rounded-xl p-4 border border-[var(--av-primary)]/10 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-4 h-4 text-[#4285F4]" />
-        <span className="text-sm font-medium text-[#4285F4]">{title}</span>
+        <Sparkles className="w-4 h-4 text-[var(--av-primary)]" />
+        <span className="text-sm font-medium text-[var(--av-primary)]">{title}</span>
       </div>
       <div className="grid gap-2">
         {filteredSuggestions.slice(0, 4).map((suggestion, idx) => (
           <button
             key={idx}
             onClick={() => navigate(suggestion.path)}
-            className="flex items-center gap-3 p-3 bg-white hover:bg-[#4285F4]/5 rounded-lg border border-[#4285F4]/10 hover:border-[#4285F4]/20 transition group"
+            className="flex items-center gap-3 p-3 bg-white hover:bg-[var(--av-primary)]/5 rounded-lg border border-[var(--av-primary)]/10 hover:border-[var(--av-primary)]/20 transition group"
           >
             <div className="flex-1 text-left">
-              <span className="text-sm font-medium text-black group-hover:text-[#4285F4]">
+              <span className="text-sm font-medium text-black group-hover:text-[var(--av-primary)]">
                 {suggestion.label}
               </span>
               <span className="text-xs text-black ml-2">
                 {suggestion.description}
               </span>
             </div>
-            <ArrowRight className="w-4 h-4 text-black group-hover:text-[#4285F4] transition" />
+            <ArrowRight className="w-4 h-4 text-black group-hover:text-[var(--av-primary)] transition" />
           </button>
         ))}
       </div>

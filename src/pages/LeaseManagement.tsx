@@ -59,18 +59,18 @@ interface RentPayment {
 
 const STATUS_COLORS: Record<string, string> = {
   draft: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
-  pending_signature: 'bg-[#FBBC05]/10 text-[#FBBC05]',
-  active: 'bg-[#34A853]/10 text-[#34A853]',
-  renewed: 'bg-[#4285F4]/10 text-[#4285F4]',
-  terminated: 'bg-[#EA4335]/10 text-[#EA4335]',
+  pending_signature: 'bg-[var(--av-warning)]/10 text-[var(--av-warning)]',
+  active: 'bg-[var(--av-success)]/10 text-[var(--av-success)]',
+  renewed: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
+  terminated: 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]',
   expired: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
 }
 
 const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-[#FBBC05]/10 text-[#FBBC05]',
-  paid: 'bg-[#34A853]/10 text-[#34A853]',
-  partial: 'bg-[#4285F4]/10 text-[#4285F4]',
-  overdue: 'bg-[#EA4335]/10 text-[#EA4335]',
+  pending: 'bg-[var(--av-warning)]/10 text-[var(--av-warning)]',
+  paid: 'bg-[var(--av-success)]/10 text-[var(--av-success)]',
+  partial: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
+  overdue: 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]',
   waived: 'bg-[#9AA0A6]/10 text-[#9AA0A6]',
 }
 
@@ -237,7 +237,7 @@ export default function LeaseManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -254,7 +254,7 @@ export default function LeaseManagement() {
         </div>
         <button
           onClick={() => setShowLeaseModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
         >
           <Plus size={18} />
           New Lease
@@ -265,8 +265,8 @@ export default function LeaseManagement() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center">
-              <FileText size={20} className="text-[#4285F4]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-primary)]/10 flex items-center justify-center">
+              <FileText size={20} className="text-[var(--av-primary)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{leases.length}</p>
@@ -276,8 +276,8 @@ export default function LeaseManagement() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#34A853]/10 flex items-center justify-center">
-              <CheckCircle size={20} className="text-[#34A853]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-success)]/10 flex items-center justify-center">
+              <CheckCircle size={20} className="text-[var(--av-success)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">
@@ -289,8 +289,8 @@ export default function LeaseManagement() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#EA4335]/10 flex items-center justify-center">
-              <AlertCircle size={20} className="text-[#EA4335]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-danger)]/10 flex items-center justify-center">
+              <AlertCircle size={20} className="text-[var(--av-danger)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{overduePayments.length}</p>
@@ -300,8 +300,8 @@ export default function LeaseManagement() {
         </div>
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#FBBC05]/10 flex items-center justify-center">
-              <Clock size={20} className="text-[#FBBC05]" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-warning)]/10 flex items-center justify-center">
+              <Clock size={20} className="text-[var(--av-warning)]" />
             </div>
             <div>
               <p className="text-2xl font-bold">{pendingPayments.length}</p>
@@ -317,7 +317,7 @@ export default function LeaseManagement() {
           onClick={() => setActiveTab('leases')}
           className={`px-4 py-2 rounded-xl font-medium transition ${
             activeTab === 'leases'
-              ? 'bg-[#4285F4] text-white'
+              ? 'bg-[var(--av-primary)] text-white'
               : 'bg-white text-black/60 hover:bg-[#F8F9FA]'
           }`}
         >
@@ -327,7 +327,7 @@ export default function LeaseManagement() {
           onClick={() => setActiveTab('payments')}
           className={`px-4 py-2 rounded-xl font-medium transition ${
             activeTab === 'payments'
-              ? 'bg-[#4285F4] text-white'
+              ? 'bg-[var(--av-primary)] text-white'
               : 'bg-white text-black/60 hover:bg-[#F8F9FA]'
           }`}
         >
@@ -346,13 +346,13 @@ export default function LeaseManagement() {
                 placeholder="Search leases..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full pl-10 pr-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               />
             </div>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[#4285F4] transition"
+              className="px-4 py-2 bg-[#F8F9FA] rounded-xl border-0 focus:ring-2 focus:ring-[var(--av-primary)] transition"
             >
               <option value="all">All Status</option>
               <option value="draft">Draft</option>
@@ -409,7 +409,7 @@ export default function LeaseManagement() {
                       <p className="text-xs text-black/60">{lease.duration_months} months</p>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-[#4285F4]">{formatCurrency(lease.monthly_rent)}</p>
+                      <p className="font-medium text-[var(--av-primary)]">{formatCurrency(lease.monthly_rent)}</p>
                       <p className="text-xs text-black/60">Due day {lease.rent_due_day}</p>
                     </td>
                     <td className="px-4 py-3">
@@ -462,7 +462,7 @@ export default function LeaseManagement() {
                         {formatDate(payment.due_date)}
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-medium text-[#4285F4]">{formatCurrency(payment.amount)}</p>
+                        <p className="font-medium text-[var(--av-primary)]">{formatCurrency(payment.amount)}</p>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-lg text-xs font-medium ${PAYMENT_STATUS_COLORS[payment.status]}`}>
@@ -473,7 +473,7 @@ export default function LeaseManagement() {
                         {payment.status === 'pending' || payment.status === 'overdue' ? (
                           <button
                             onClick={() => handleMarkPaid(payment)}
-                            className="px-3 py-1 bg-[#34A853] text-white rounded-lg text-xs font-medium hover:bg-[#2D8F47] transition"
+                            className="px-3 py-1 bg-[var(--av-success)] text-white rounded-lg text-xs font-medium hover:bg-[#2D8F47] transition"
                           >
                             Mark Paid
                           </button>
@@ -510,7 +510,7 @@ export default function LeaseManagement() {
                 required
                 value={leaseForm.property_id}
                 onChange={(e) => setLeaseForm({ ...leaseForm, property_id: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               >
                 <option value="">Select Property</option>
                 <option value="demo-property-1">3 Bedroom Flat - Victoria Island</option>
@@ -524,7 +524,7 @@ export default function LeaseManagement() {
                 required
                 value={leaseForm.tenant_id}
                 onChange={(e) => setLeaseForm({ ...leaseForm, tenant_id: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               >
                 <option value="">Select Tenant</option>
                 <option value="demo-tenant-1">John Adeyemi</option>
@@ -537,7 +537,7 @@ export default function LeaseManagement() {
               <select
                 value={leaseForm.lease_type}
                 onChange={(e) => setLeaseForm({ ...leaseForm, lease_type: e.target.value as Lease['lease_type'] })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               >
                 <option value="residential">Residential</option>
                 <option value="commercial">Commercial</option>
@@ -554,7 +554,7 @@ export default function LeaseManagement() {
                 min="0"
                 value={leaseForm.monthly_rent}
                 onChange={(e) => setLeaseForm({ ...leaseForm, monthly_rent: parseInt(e.target.value) || 0 })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
                 placeholder="e.g., 500000"
               />
             </div>
@@ -566,7 +566,7 @@ export default function LeaseManagement() {
                 required
                 value={leaseForm.start_date}
                 onChange={(e) => setLeaseForm({ ...leaseForm, start_date: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               />
             </div>
 
@@ -577,7 +577,7 @@ export default function LeaseManagement() {
                 required
                 value={leaseForm.end_date}
                 onChange={(e) => setLeaseForm({ ...leaseForm, end_date: e.target.value })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               />
             </div>
 
@@ -589,7 +589,7 @@ export default function LeaseManagement() {
                 max="28"
                 value={leaseForm.rent_due_day}
                 onChange={(e) => setLeaseForm({ ...leaseForm, rent_due_day: parseInt(e.target.value) || 1 })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
               />
             </div>
 
@@ -600,7 +600,7 @@ export default function LeaseManagement() {
                 min="0"
                 value={leaseForm.security_deposit}
                 onChange={(e) => setLeaseForm({ ...leaseForm, security_deposit: parseInt(e.target.value) || 0 })}
-                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[#4285F4] transition"
+                className="w-full px-4 py-2 rounded-xl border border-black/10 focus:ring-2 focus:ring-[var(--av-primary)] transition"
                 placeholder="e.g., 1000000"
               />
             </div>
@@ -619,7 +619,7 @@ export default function LeaseManagement() {
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#3367D6] transition"
+              className="flex-1 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
             >
               Create Lease
             </button>
