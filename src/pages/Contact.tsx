@@ -35,7 +35,7 @@ export default function Contact() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-[#4285F4] transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
@@ -89,12 +89,12 @@ export default function Contact() {
                     onClick={() => setContactType(option.id)}
                     className={`w-full text-left p-4 rounded-xl transition ${
                       contactType === option.id
-                        ? 'bg-indigo-50 border-2 border-indigo-500'
+                        ? 'bg-[#4285F4]/5 border-2 border-[#4285F4]'
                         : 'bg-white border border-black/5 hover:border-black/20'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-indigo-600' : 'text-black'}`} />
+                      <option.icon className={`w-5 h-5 ${contactType === option.id ? 'text-[#4285F4]' : 'text-black'}`} />
                       <div>
                         <p className="font-medium text-black">{option.label}</p>
                         <p className="text-xs text-black">{option.desc}</p>
@@ -111,7 +111,7 @@ export default function Contact() {
                     <Mail className="w-5 h-5 text-black" />
                     <div>
                       <p className="text-black">Email</p>
-                      <a href="mailto:hello@avenize.com" className="text-indigo-600 hover:underline">hello@avenize.com</a>
+                      <a href="mailto:hello@avenize.com" className="text-[#4285F4] hover:underline">hello@avenize.com</a>
                     </div>
                   </div>
                 </div>
@@ -120,7 +120,7 @@ export default function Contact() {
                     <Phone className="w-5 h-5 text-black" />
                     <div>
                       <p className="text-black">Phone</p>
-                      <a href="tel:+14155551234" className="text-indigo-600 hover:underline">(415) 555-1234</a>
+                      <a href="tel:+14155551234" className="text-[#4285F4] hover:underline">(415) 555-1234</a>
                     </div>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ export default function Contact() {
                         required
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition"
+                        className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none transition"
                         placeholder="Your name"
                       />
                     </div>
@@ -171,7 +171,7 @@ export default function Contact() {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition"
+                        className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none transition"
                         placeholder="you@company.com"
                       />
                     </div>
@@ -183,7 +183,7 @@ export default function Contact() {
                       required
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition"
+                      className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none transition"
                       placeholder="Brief description"
                     />
                   </div>
@@ -194,7 +194,7 @@ export default function Contact() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       rows={6}
-                      className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none transition resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-black/10 focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 outline-none transition resize-none"
                       placeholder="Tell us how we can help..."
                     />
                   </div>
@@ -216,8 +216,8 @@ export default function Contact() {
               </div>
 
               {/* FAQ Link */}
-              <div className="mt-6 bg-indigo-50 rounded-2xl p-6 flex items-start gap-4">
-                <HelpCircle className="w-6 h-6 text-indigo-600 shrink-0" />
+              <div className="mt-6 bg-[#4285F4]/5 rounded-2xl p-6 flex items-start gap-4">
+                <HelpCircle className="w-6 h-6 text-[#4285F4] shrink-0" />
                 <div>
                   <h3 className="font-semibold text-black mb-1">Need quick answers?</h3>
                   <p className="text-sm text-black mb-3">
@@ -225,7 +225,7 @@ export default function Contact() {
                   </p>
                   <Link
                     to="/knowledge"
-                    className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                    className="inline-flex items-center gap-1 text-sm text-[#4285F4] font-medium hover:text-[#4285F4]"
                   >
                     Visit Help Center →
                   </Link>

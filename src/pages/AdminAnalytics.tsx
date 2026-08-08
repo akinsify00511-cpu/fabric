@@ -126,7 +126,7 @@ export default function AdminAnalytics() {
     search: 'bg-amber-100 text-amber-600',
     error: 'bg-red-100 text-red-600',
     payment: 'bg-emerald-100 text-emerald-600',
-    notification: 'bg-indigo-100 text-indigo-600',
+    notification: 'bg-[#4285F4]/10 text-[#4285F4]',
     auth: 'bg-white text-black',
     performance: 'bg-orange-100 text-orange-600',
     engagement: 'bg-pink-100 text-pink-600',

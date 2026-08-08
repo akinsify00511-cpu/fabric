@@ -158,7 +158,7 @@ export default function MeetingsV2() {
         
         <button
           onClick={() => setShowStartModal(true)}
-          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:opacity-90 transition shadow-lg shadow-blue-500/25"
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-[#4285F4] text-white rounded-xl font-medium hover:opacity-90 transition shadow-lg shadow-blue-500/25"
         >
           <Video size={20} />
           Start Meeting
@@ -169,7 +169,7 @@ export default function MeetingsV2() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <button
           onClick={() => handleStartMeeting(`avenize-${Date.now().toString(36)}`, displayName, true)}
-          className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white text-left hover:opacity-90 transition"
+          className="bg-gradient-to-br from-blue-500 to-[#4285F4] rounded-2xl p-6 text-white text-left hover:opacity-90 transition"
         >
           <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
             <Video size={24} />

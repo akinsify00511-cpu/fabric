@@ -153,7 +153,7 @@ export default function Signup() {
             <p className="font-semibold text-blue-600 mt-1">{email}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 text-left space-y-3">
+          <div className="bg-gradient-to-br from-blue-50 to-[#4285F4]/5 rounded-xl p-5 text-left space-y-3">
             <p className="text-sm font-medium text-black">Next steps:</p>
             <ol className="text-sm text-black space-y-2">
               {[
@@ -193,7 +193,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-[#4285F4] to-[#8B5CF6] p-12 flex-col justify-between relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
         
@@ -250,7 +250,7 @@ export default function Signup() {
         <div className="w-full max-w-md space-y-8">
           <div className="lg:hidden text-center">
             <div className="inline-flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-[#8B5CF6] flex items-center justify-center">
                 <span className="text-white font-bold text-xl">A</span>
               </div>
               <span className="text-xl font-bold text-black">Avenize</span>
@@ -434,7 +434,7 @@ export default function Signup() {
             <button
               type="submit"
               disabled={loading || !businessName || !fullName || !email || !password || !confirmPassword}
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3.5 text-sm font-semibold hover:from-blue-700 hover:to-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
+              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-[#4285F4] text-white py-3.5 text-sm font-semibold hover:from-blue-700 hover:to-[#3367D6] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">

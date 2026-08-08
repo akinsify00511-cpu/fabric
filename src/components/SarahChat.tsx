@@ -244,7 +244,7 @@ export default function SarahChat() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 md:bottom-4 right-4 w-14 h-14 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 z-50 flex items-center justify-center"
+          className="fixed bottom-20 md:bottom-4 right-4 w-14 h-14 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 z-50 flex items-center justify-center"
         >
           <MessageCircle size={24} />
           <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -255,7 +255,7 @@ export default function SarahChat() {
 
       {isOpen && (
         <div className="fixed bottom-20 md:bottom-4 right-4 w-[calc(100vw-32px)] md:w-96 h-[70vh] md:h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-black overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-4 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                 <Bot size={20} />
@@ -273,7 +273,7 @@ export default function SarahChat() {
             </button>
           </div>
 
-          <div className="bg-indigo-50 px-4 py-2 text-xs text-indigo-700 flex items-center gap-2">
+          <div className="bg-[#4285F4]/5 px-4 py-2 text-xs text-[#4285F4] flex items-center gap-2">
             <Bot size={12} />
             <span>Ask me anything about Avenize features, pricing, or how to get started.</span>
           </div>
@@ -287,7 +287,7 @@ export default function SarahChat() {
                 <div className={`flex gap-2 max-w-[85%] ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     msg.role === 'assistant' 
-                      ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' 
+                      ? 'bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white' 
                       : 'bg-white text-black'
                   }`}>
                     {msg.role === 'assistant' ? <Bot size={16} /> : <User size={16} />}
@@ -296,7 +296,7 @@ export default function SarahChat() {
                     <div className={`rounded-2xl px-4 py-3 text-sm ${
                       msg.role === 'assistant'
                         ? 'bg-white text-black'
-                        : 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
+                        : 'bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white'
                     }`}>
                       <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                     </div>
@@ -304,7 +304,7 @@ export default function SarahChat() {
                     {/* Feature Suggestions */}
                     {msg.role === 'assistant' && msg.suggestions && msg.suggestions.length > 0 && (
                       <div className="mt-2 space-y-1.5">
-                        <p className="text-[10px] text-indigo-600 font-medium px-1 flex items-center gap-1">
+                        <p className="text-[10px] text-[#4285F4] font-medium px-1 flex items-center gap-1">
                           <Lightbulb size={10} />
                           Suggested features:
                         </p>
@@ -312,10 +312,10 @@ export default function SarahChat() {
                           <button
                             key={idx}
                             onClick={() => handleSuggestionClick(suggestion.path)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs rounded-lg transition w-full text-left"
+                            className="flex items-center gap-2 px-3 py-1.5 bg-[#4285F4]/5 hover:bg-[#4285F4]/10 text-[#4285F4] text-xs rounded-lg transition w-full text-left"
                           >
                             <span className="font-medium">{suggestion.label}</span>
-                            <span className="text-indigo-500">-</span>
+                            <span className="text-[#4285F4]">-</span>
                             <span>{suggestion.description}</span>
                             <ArrowRight size={12} className="ml-auto shrink-0" />
                           </button>
@@ -334,7 +334,7 @@ export default function SarahChat() {
             {isTyping && (
               <div className="flex justify-start">
                 <div className="flex gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white flex items-center justify-center">
                     <Bot size={16} />
                   </div>
                   <div className="bg-white rounded-2xl px-4 py-3">
@@ -354,25 +354,25 @@ export default function SarahChat() {
             <div className="flex gap-2 overflow-x-auto pb-2">
               <button
                 onClick={() => handleQuickReply("What are the new features?")}
-                className="shrink-0 px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs rounded-full hover:bg-indigo-100 transition"
+                className="shrink-0 px-3 py-1.5 bg-[#4285F4]/5 text-[#4285F4] text-xs rounded-full hover:bg-[#4285F4]/10 transition"
               >
                 What's new?
               </button>
               <button
                 onClick={() => handleQuickReply("Tell me about CRM")}
-                className="shrink-0 px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs rounded-full hover:bg-indigo-100 transition"
+                className="shrink-0 px-3 py-1.5 bg-[#4285F4]/5 text-[#4285F4] text-xs rounded-full hover:bg-[#4285F4]/10 transition"
               >
                 CRM features
               </button>
               <button
                 onClick={() => handleQuickReply("How much does it cost?")}
-                className="shrink-0 px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs rounded-full hover:bg-indigo-100 transition"
+                className="shrink-0 px-3 py-1.5 bg-[#4285F4]/5 text-[#4285F4] text-xs rounded-full hover:bg-[#4285F4]/10 transition"
               >
                 Pricing
               </button>
               <button
                 onClick={() => handleQuickReply("How do I get started?")}
-                className="shrink-0 px-3 py-1.5 bg-indigo-50 text-indigo-600 text-xs rounded-full hover:bg-indigo-100 transition"
+                className="shrink-0 px-3 py-1.5 bg-[#4285F4]/5 text-[#4285F4] text-xs rounded-full hover:bg-[#4285F4]/10 transition"
               >
                 Get started
               </button>
@@ -387,12 +387,12 @@ export default function SarahChat() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Ask Sarah anything..."
-                className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim()}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition"
+                className="w-10 h-10 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition"
               >
                 <Send size={18} />
               </button>

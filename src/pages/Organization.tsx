@@ -177,7 +177,7 @@ export default function OrganizationPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-[#8B5CF6] flex items-center justify-center">
             <Building2 size={24} className="text-white" />
           </div>
           <div>

@@ -77,6 +77,16 @@ async function handleChargeSuccess(
   data: Record<string, unknown>
 ) {
   const reference = data.reference as string;
+  const metadata = (data.metadata ?? {}) as Record<string, unknown>;
+
+  // Subscription checkouts (from subscription-management's create_checkout)
+  // carry business_id + plan_code in metadata and have no payments_paystack
+  // row — route them to their own handler so paying actually activates
+  // the subscription instead of silently no-op'ing here.
+  if (metadata.business_id && metadata.plan_code) {
+    await handleSubscriptionChargeSuccess(supabase, data, metadata);
+    return;
+  }
 
   // Find the payment record
   const { data: payment, error: findErr } = await supabase
@@ -160,6 +170,98 @@ async function handleChargeSuccess(
     // Don't throw - the payment is already recorded
   } else {
     console.log("Accounting entry created for:", reference);
+  }
+}
+
+async function handleSubscriptionChargeSuccess(
+  supabase: ReturnType<typeof createClient>,
+  data: Record<string, unknown>,
+  metadata: Record<string, unknown>
+) {
+  const reference = data.reference as string;
+  const businessId = metadata.business_id as string;
+  const planCode = metadata.plan_code as string;
+  const planName = (metadata.plan_name as string) ?? planCode;
+  const billingCycle = (metadata.billing_cycle as string) === "yearly" ? "yearly" : "monthly";
+  const amountKobo = (data.amount as number) ?? 0;
+  const paidAt = (data.paid_at as string) ?? new Date().toISOString();
+
+  const cycleDays = billingCycle === "yearly" ? 365 : 30;
+  const nextBillingDate = new Date(Date.now() + cycleDays * 24 * 60 * 60 * 1000).toISOString();
+
+  // Idempotency guard — a payment we've already logged for this reference
+  // means this webhook fired more than once; don't activate/charge twice.
+  const { data: existingPayment } = await supabase
+    .from("subscription_payments")
+    .select("id")
+    .eq("provider_payment_id", reference)
+    .maybeSingle();
+
+  if (existingPayment) {
+    console.log("Subscription payment already processed:", reference);
+    return;
+  }
+
+  // This is the actual "pay = no more trial" transition: status becomes
+  // active and trial_ends_at is cleared so nothing in the UI can show
+  // "Trial" for a business that has just paid.
+  const { data: subscription, error: subErr } = await supabase
+    .from("business_subscriptions")
+    .upsert(
+      {
+        business_id: businessId,
+        provider: "paystack",
+        plan_code: planCode,
+        plan_name: planName,
+        status: "active",
+        billing_cycle: billingCycle,
+        amount_cents: amountKobo,
+        currency: "NGN",
+        next_billing_date: nextBillingDate,
+        trial_ends_at: null,
+        cancelled_at: null,
+      },
+      { onConflict: "business_id" }
+    )
+    .select()
+    .single();
+
+  if (subErr) {
+    console.error("Failed to activate subscription:", subErr);
+    throw subErr;
+  }
+
+  console.log("Subscription activated for business:", businessId, "plan:", planCode);
+
+  const { error: paymentErr } = await supabase.from("subscription_payments").insert({
+    business_id: businessId,
+    subscription_id: subscription?.id ?? null,
+    provider: "paystack",
+    provider_payment_id: reference,
+    amount_cents: amountKobo,
+    currency: "NGN",
+    status: "successful",
+    description: `${planName} plan (${billingCycle})`,
+    paid_at: paidAt,
+  });
+
+  if (paymentErr) {
+    console.error("Failed to log subscription payment:", paymentErr);
+  }
+
+  // Also log to general accounting income, same as invoice payments
+  const { error: accountingErr } = await supabase.from("payments").insert({
+    business_id: businessId,
+    date: paidAt.slice(0, 10),
+    amount: amountKobo / 100,
+    payment_type: "receive",
+    payment_method: "paystack",
+    reference,
+    notes: `Paystack subscription payment — ${planName} (${billingCycle})`,
+  });
+
+  if (accountingErr) {
+    console.error("Failed to log accounting entry for subscription:", accountingErr);
   }
 }
 

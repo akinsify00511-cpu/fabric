@@ -290,11 +290,11 @@ export default function Events() {
                   key={i}
                   onClick={() => setSelectedDate(day)}
                   className={`min-h-24 p-2 border-b border-r border-black/[0.06] cursor-pointer hover:bg-black/10 ${
-                    isToday ? 'bg-indigo-50' : ''
+                    isToday ? 'bg-[#4285F4]/5' : ''
                   }`}
                 >
                   <div className={`text-sm font-medium mb-1 ${
-                    isToday ? 'w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center' : ''
+                    isToday ? 'w-6 h-6 rounded-full bg-[#4285F4] text-white flex items-center justify-center' : ''
                   }`}>
                     {day.getDate()}
                   </div>
@@ -306,7 +306,7 @@ export default function Events() {
                         setSelectedEvent(event)
                         setShowEventModal(true)
                       }}
-                      className="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700 mb-1 truncate"
+                      className="text-xs px-2 py-1 rounded bg-[#4285F4]/10 text-[#4285F4] mb-1 truncate"
                     >
                       {event.title}
                     </div>
@@ -328,8 +328,8 @@ export default function Events() {
             <div key={event.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-                    <Calendar size={24} className="text-indigo-600" />
+                  <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+                    <Calendar size={24} className="text-[#4285F4]" />
                   </div>
                   <div>
                     <h3 className="font-medium">{event.title}</h3>
@@ -490,7 +490,7 @@ export default function Events() {
                         key={opt.value}
                         onClick={() => setFormData({ ...formData, locationType: opt.value as any })}
                         className={`p-3 rounded-xl border flex flex-col items-center gap-1 ${
-                          formData.locationType === opt.value ? 'border-indigo-500 bg-indigo-50' : 'border-black/10'
+                          formData.locationType === opt.value ? 'border-[#4285F4] bg-[#4285F4]/5' : 'border-black/10'
                         }`}
                       >
                         <Icon size={18} />

@@ -85,7 +85,7 @@ export function FeatureGate({ feature, children, fallback }: FeatureLockProps) {
   
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
-      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-full bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center mb-4">
         <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
@@ -96,7 +96,7 @@ export function FeatureGate({ feature, children, fallback }: FeatureLockProps) {
       </p>
       <a
         href="/app/subscription"
-        className="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition"
+        className="px-6 py-2.5 bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white rounded-xl font-medium hover:shadow-lg transition"
       >
         Upgrade Now
       </a>

@@ -61,8 +61,8 @@ export default function HelpCenter() {
       {/* Hero */}
       <section className="py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 mb-6">
-            <HelpCircle className="w-8 h-8 text-indigo-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#4285F4]/10 mb-6">
+            <HelpCircle className="w-8 h-8 text-[#4285F4]" />
           </div>
           <h1 className="text-4xl font-bold text-black mb-4">
             How can we help you?
@@ -103,10 +103,10 @@ export default function HelpCenter() {
                 <Link
                   key={i}
                   to={resource.link}
-                  className="bg-white rounded-xl p-6 border border-black hover:border-indigo-300 hover:shadow-md transition group"
+                  className="bg-white rounded-xl p-6 border border-black hover:border-[#4285F4]/30 hover:shadow-md transition group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center mb-4 group-hover:bg-indigo-100 transition">
-                    <Icon className="w-5 h-5 text-indigo-600" />
+                  <div className="w-10 h-10 rounded-lg bg-[#4285F4]/5 flex items-center justify-center mb-4 group-hover:bg-[#4285F4]/10 transition">
+                    <Icon className="w-5 h-5 text-[#4285F4]" />
                   </div>
                   <h3 className="font-semibold text-black mb-1">{resource.title}</h3>
                   <p className="text-sm text-black">{resource.description}</p>
@@ -118,18 +118,18 @@ export default function HelpCenter() {
       </section>
 
       {/* Contact */}
-      <section className="py-16 px-4 bg-indigo-600">
+      <section className="py-16 px-4 bg-[#4285F4]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-white mb-4">
             Still need help?
           </h2>
-          <p className="text-indigo-100 mb-8">
+          <p className="text-[#4285F4]/10 mb-8">
             Our team is here to help you get up and running.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-indigo-50 transition"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#4285F4] font-semibold rounded-lg hover:bg-[#4285F4]/5 transition"
             >
               <Mail size={18} />
               Contact Support

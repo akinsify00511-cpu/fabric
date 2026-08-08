@@ -46,7 +46,7 @@ export default function EmptyState({
         {action && (
           <button
             onClick={action.onClick}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-[#4285F4] text-white rounded-lg font-medium hover:bg-[#4285F4] transition"
           >
             <Plus size={18} />
             {action.label}

@@ -102,10 +102,10 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   ]
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl w-full max-w-2xl mx-4 shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+        <div className="bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">Welcome to Avenize! 🎉</h1>
@@ -145,7 +145,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
                   index < currentStep ? 'bg-green-500 text-white' :
-                  index === currentStep ? 'bg-indigo-500 text-white' :
+                  index === currentStep ? 'bg-[#4285F4] text-white' :
                   'bg-white text-black'
                 }`}>
                   {index < currentStep ? <Check size={20} /> : <s.icon size={20} />}
@@ -172,7 +172,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                     value={businessName}
                     onChange={(e) => setBusinessName(e.target.value)}
                     placeholder="e.g., TechBuild Nigeria Ltd"
-                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                   />
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                   <select
                     value={industry}
                     onChange={(e) => setIndustry(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                   >
                     <option value="">Select your industry</option>
                     {industries.map(ind => (
@@ -200,7 +200,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Your full name"
-                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                   />
                 </div>
                 <div>
@@ -210,7 +210,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                     value={jobTitle}
                     onChange={(e) => setJobTitle(e.target.value)}
                     placeholder="e.g., Managing Director"
-                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                   />
                 </div>
               </>
@@ -218,8 +218,8 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
 
             {step.id === 'team' && (
               <>
-                <div className="bg-indigo-50 rounded-xl p-6 text-center">
-                  <Users size={48} className="mx-auto text-indigo-500 mb-4" />
+                <div className="bg-[#4285F4]/5 rounded-xl p-6 text-center">
+                  <Users size={48} className="mx-auto text-[#4285F4] mb-4" />
                   <p className="text-black mb-4">
                     You can invite team members from the People page later.
                   </p>
@@ -232,7 +232,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                   <select
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                   >
                     <option value="">Select team size</option>
                     <option value="1">Just me</option>
@@ -282,7 +282,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
             <button
               onClick={handleNext}
               disabled={loading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-indigo-500 text-white rounded-xl font-medium hover:bg-indigo-600 transition disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#4285F4] text-white rounded-xl font-medium hover:bg-[#4285F4] transition disabled:opacity-50"
             >
               {loading ? 'Saving...' : currentStep === STEPS.length - 1 ? 'Get Started' : 'Continue'}
               {!loading && (currentStep === STEPS.length - 1 ? <Check size={18} /> : <ChevronRight size={18} />)}

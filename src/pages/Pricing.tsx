@@ -240,13 +240,13 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
   return (
     <div className={`relative bg-white border-2 rounded-2xl overflow-hidden transition-all hover:shadow-xl ${
       isMonthly && monthlyPlan.popular 
-        ? 'border-indigo-500 shadow-indigo-500/10' 
+        ? 'border-[#4285F4] shadow-[#4285F4]/10' 
         : 'border-[#E8E8E8]'
     }`}>
       {/* Popular Badge */}
       {isMonthly && monthlyPlan.popular && (
         <div className="absolute -top-0 left-1/2 -translate-x-1/2">
-          <span className="inline-block px-4 py-1.5 rounded-b-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold">
+          <span className="inline-block px-4 py-1.5 rounded-b-lg bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white text-xs font-semibold">
             50-Staff Sweet Spot
           </span>
         </div>
@@ -256,8 +256,8 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
         {/* Header */}
         <div className="mb-6">
           {/* Founding Tag */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-mono uppercase tracking-wider mb-3">
-            <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#4285F4]/10 text-[#4285F4] text-xs font-mono uppercase tracking-wider mb-3">
+            <span className="w-1.5 h-1.5 bg-[#4285F4] rounded-full" />
             Founding rate
           </div>
 
@@ -275,7 +275,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
 
           {/* Price */}
           <div className="mb-2">
-            <span className={`text-3xl font-bold font-mono ${isMonthly && monthlyPlan.popular ? 'text-indigo-600' : 'text-[#111111]'}`}>
+            <span className={`text-3xl font-bold font-mono ${isMonthly && monthlyPlan.popular ? 'text-[#4285F4]' : 'text-[#111111]'}`}>
               {isMonthly ? monthlyPlan.priceLabel : yearlyPlan.priceLabel}
             </span>
             <small className="block text-sm text-[#6B6B6B] mt-1">
@@ -289,7 +289,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
           <ul className="space-y-3 mb-6">
             {monthlyPlan.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-[#4A4A4A]">
-                <Check size={16} className="text-indigo-500 mt-0.5 flex-shrink-0" />
+                <Check size={16} className="text-[#4285F4] mt-0.5 flex-shrink-0" />
                 {feature}
               </li>
             ))}
@@ -315,7 +315,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
             rel="noopener noreferrer"
             className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
               isMonthly && monthlyPlan.popular
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
+                ? 'bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-[#4285F4]/25'
                 : 'bg-[#111111] text-white hover:bg-[#222222]'
             }`}
           >
@@ -325,7 +325,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
           <button
             className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
               isMonthly && monthlyPlan.popular
-                ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:opacity-90 shadow-lg shadow-indigo-500/25'
+                ? 'bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white hover:opacity-90 shadow-lg shadow-[#4285F4]/25'
                 : 'bg-[#111111] text-white hover:bg-[#222222]'
             }`}
           >
@@ -343,7 +343,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
 function SampleInvoice() {
   return (
     <div className="mt-10 bg-[#111111] rounded-2xl p-6 text-white">
-      <div className="text-xs font-mono text-indigo-400 uppercase tracking-wider mb-4">
+      <div className="text-xs font-mono text-[#4285F4] uppercase tracking-wider mb-4">
         Sample invoice — 100-seat company on Scale (founding rate)
       </div>
       <div className="space-y-3 text-sm">
@@ -361,7 +361,7 @@ function SampleInvoice() {
         </div>
         <div className="flex justify-between py-2 border-b border-white/10">
           <span className="text-white/60">Rate locked</span>
-          <span className="text-indigo-400">12 months, then grandfathered</span>
+          <span className="text-[#4285F4]">12 months, then grandfathered</span>
         </div>
         <div className="flex justify-between py-2">
           <span className="text-white/60">Setup required to start</span>
@@ -464,14 +464,14 @@ function CTASection() {
       <div className="relative max-w-3xl mx-auto px-6">
         <blockquote className="text-xl md:text-2xl font-bold leading-tight mb-8">
           Your crews are on sites you can't visit daily. Your factory runs out of resin without warning.{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-violet-400">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r to-[#4285F4] to-violet-400">
             Find out before it's an emergency.
           </span>
         </blockquote>
 
         <a
           href="https://app.avenize.com/signup"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#4285F4] via-[#4285F4] to-[#7C3AED] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-indigo-500/25"
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[#4285F4] via-[#4285F4] to-[#7C3AED] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-[#4285F4]/25"
         >
           Start free setup
         </a>
@@ -493,7 +493,7 @@ function Footer() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
+            <div className="w-6 h-6 rounded bg-gradient-to-br to-[#4285F4] to-violet-500 flex items-center justify-center">
               <span className="text-white text-xs font-bold">A</span>
             </div>
             <span className="font-semibold text-white">Avenize</span>
@@ -519,8 +519,8 @@ export default function Pricing() {
       <section className="bg-[#111111] text-white pt-24 pb-16 px-6">
         <div className="max-w-6xl mx-auto">
           {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/40 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-6">
-            <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#4285F4]/40 text-[#4285F4] text-xs font-mono uppercase tracking-wider mb-6">
+            <span className="w-1.5 h-1.5 bg-[#4285F4] rounded-full animate-pulse" />
             Pricing — Job Ticket AV-2026
           </div>
 
@@ -576,9 +576,9 @@ export default function Pricing() {
             </p>
 
             {/* Founding Banner */}
-            <div className="inline-block bg-indigo-100 border border-indigo-200 rounded-lg p-4 text-sm">
-              <strong className="text-indigo-700">Founding rate:</strong>{' '}
-              <span className="text-indigo-600">
+            <div className="inline-block bg-[#4285F4]/10 border border-[#4285F4]/20 rounded-lg p-4 text-sm">
+              <strong className="text-[#4285F4]">Founding rate:</strong>{' '}
+              <span className="text-[#4285F4]">
                 every price below is locked for your first 12 months — and stays locked for as long as you keep your subscription active, even after list price rises for new signups.
               </span>
             </div>

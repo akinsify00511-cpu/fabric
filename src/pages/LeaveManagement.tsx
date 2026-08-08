@@ -338,7 +338,7 @@ export default function LeaveManagementPage() {
                 return (
                   <div key={pending.id} className="p-4">
                     <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-medium">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-[#8B5CF6]/50 flex items-center justify-center text-white text-sm font-medium">
                         {pending.requester?.full_name?.charAt(0) || 'U'}
                       </div>
                       <div className="flex-1">

@@ -187,8 +187,8 @@ export default function NotificationSettings() {
       {/* In-App Notifications */}
       <section className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Bell size={20} className="text-indigo-600" />
+          <div className="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+            <Bell size={20} className="text-[#4285F4]" />
           </div>
           <div>
             <h2 className="font-semibold">In-App Notifications</h2>

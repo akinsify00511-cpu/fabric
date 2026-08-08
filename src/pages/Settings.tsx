@@ -7,7 +7,7 @@ export default function Settings() {
 
   const SETTINGS_ITEMS = [
     { to: '/app/settings/profile', icon: User, label: 'Profile', desc: 'Your account details', color: 'bg-purple-50 text-purple-500' },
-    { to: '/app/subscription', icon: CreditCard, label: 'Subscription & Billing', desc: 'Plan, payments, invoices', color: 'bg-indigo-50 text-indigo-500' },
+    { to: '/app/subscription', icon: CreditCard, label: 'Subscription & Billing', desc: 'Plan, payments, invoices', color: 'bg-[#4285F4]/5 text-[#4285F4]' },
     { to: '/app/branding', icon: Palette, label: 'Branding', desc: 'Colors, logo, theme', color: 'bg-pink-50 text-pink-500' },
     { to: '/app/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-red-50 text-red-500' },
     { to: '/app/sso', icon: Key, label: 'Single Sign-On', desc: 'SAML, OIDC, Okta, Azure', color: 'bg-blue-50 text-blue-500' },

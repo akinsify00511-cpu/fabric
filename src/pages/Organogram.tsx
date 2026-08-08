@@ -123,7 +123,7 @@ export default function Organogram() {
 
   const getNodeStyle = (level: number) => {
     const colors = [
-      { bg: 'from-indigo-500 to-purple-600', border: 'border-indigo-500' },
+      { bg: 'to-[#4285F4] to-[#8B5CF6]', border: 'border-[#4285F4]' },
       { bg: 'from-blue-500 to-cyan-600', border: 'border-blue-500' },
       { bg: 'from-green-500 to-emerald-600', border: 'border-green-500' },
       { bg: 'from-white0 to-black', border: 'border-white0' },
@@ -157,7 +157,7 @@ export default function Organogram() {
             onClick={() => setSelectedNode(node)}
             className={`ml-2 mb-3 p-4 rounded-xl bg-white border-2 cursor-pointer hover:shadow-lg transition-all ${
               style.border
-            } ${selectedNode?.staff_id === node.staff_id ? 'ring-2 ring-indigo-500' : ''}`}
+            } ${selectedNode?.staff_id === node.staff_id ? 'ring-2 ring-[#4285F4]' : ''}`}
           >
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${style.bg} flex items-center justify-center text-white font-bold text-sm`}>
@@ -319,8 +319,8 @@ export default function Organogram() {
             <div key={channel.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-                    <MessageSquare size={24} className="text-indigo-600" />
+                  <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+                    <MessageSquare size={24} className="text-[#4285F4]" />
                   </div>
                   <div>
                     <h3 className="font-medium">{channel.name}</h3>
@@ -353,7 +353,7 @@ export default function Organogram() {
                   <span className="text-black">Last generated:</span>
                   <span>Today at 9:00 AM</span>
                 </div>
-                <button className="text-indigo-600 font-medium">
+                <button className="text-[#4285F4] font-medium">
                   View Reports →
                 </button>
               </div>
@@ -378,8 +378,8 @@ export default function Organogram() {
             return (
               <div key={dept} className="bg-white rounded-2xl border border-black/[0.06] p-5">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-                    <Building2 size={20} className="text-indigo-600" />
+                  <div className="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+                    <Building2 size={20} className="text-[#4285F4]" />
                   </div>
                   <div>
                     <h3 className="font-medium">{dept}</h3>
@@ -390,7 +390,7 @@ export default function Organogram() {
                 {/* Department head */}
                 {head && (
                   <div className="flex items-center gap-3 p-3 rounded-xl bg-black/[0.02] mb-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br to-[#4285F4] to-[#8B5CF6]/50 flex items-center justify-center text-white text-xs font-bold">
                       {head.full_name.split(' ').map((n) => n[0]).join('')}
                     </div>
                     <div>
@@ -440,7 +440,7 @@ export default function Organogram() {
             </div>
             <div className="p-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br to-[#4285F4] to-[#8B5CF6]/50 flex items-center justify-center text-white text-xl font-bold">
                   {selectedNode.full_name.split(' ').map((n) => n[0]).join('')}
                 </div>
                 <div>

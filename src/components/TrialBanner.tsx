@@ -49,7 +49,7 @@ export default function TrialBanner() {
   const hasPaidFeatures = plan !== 'free'
 
   return (
-    <div className="fixed bottom-12 md:bottom-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 z-40">
+    <div className="fixed bottom-12 md:bottom-0 left-0 right-0 bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white py-3 px-4 z-40">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 text-sm">
           {hasPaidFeatures ? (
@@ -73,7 +73,7 @@ export default function TrialBanner() {
           {!hasPaidFeatures && (
             <Link
               to="/app/subscription"
-              className="px-4 py-1.5 bg-white text-indigo-600 text-sm font-medium rounded-lg hover:bg-white/90 transition"
+              className="px-4 py-1.5 bg-white text-[#4285F4] text-sm font-medium rounded-lg hover:bg-white/90 transition"
             >
               Upgrade Now
             </Link>

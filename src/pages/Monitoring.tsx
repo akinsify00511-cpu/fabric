@@ -295,7 +295,7 @@ export default function Monitoring() {
             <h3 className="font-medium mb-4">Avg Response Time</h3>
             <div className="flex items-center justify-center h-40">
               <div className="text-center">
-                <p className="text-5xl font-bold text-indigo-600">127ms</p>
+                <p className="text-5xl font-bold text-[#4285F4]">127ms</p>
                 <p className="text-sm text-black mt-2">-12% from last week</p>
                 <TrendingDown className="mx-auto mt-2 text-green-600" size={24} />
               </div>
@@ -398,7 +398,7 @@ export default function Monitoring() {
                       <span className="font-medium">{incident.affected_users} users</span>
                     </div>
                   )}
-                  <button className="ml-auto text-indigo-600 text-sm flex items-center gap-1">
+                  <button className="ml-auto text-[#4285F4] text-sm flex items-center gap-1">
                     View details <ChevronRight size={14} />
                   </button>
                 </div>

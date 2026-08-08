@@ -78,7 +78,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg animate-slide-in ${
               t.type === 'success' ? 'bg-green-500 text-white' :
               t.type === 'error' ? 'bg-red-500 text-white' :
-              'bg-indigo-500 text-white'
+              'bg-[#4285F4] text-white'
             }`}
           >
             {t.type === 'success' && <CheckCircle size={20} />}

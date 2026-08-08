@@ -53,7 +53,7 @@ export default function StartMeetingModal({ isOpen, onClose, onStartMeeting }: S
       {/* Modal */}
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 text-center">
+        <div className="bg-gradient-to-r from-[#4285F4] to-[#6366F1] px-6 py-8 text-center">
           <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <Video size={32} className="text-white" />
           </div>
@@ -144,7 +144,7 @@ export default function StartMeetingModal({ isOpen, onClose, onStartMeeting }: S
                 </button>
                 <button
                   onClick={handleStartInstant}
-                  className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:opacity-90 transition flex items-center justify-center gap-2"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-[#4285F4] to-[#6366F1] text-white rounded-xl font-medium hover:opacity-90 transition flex items-center justify-center gap-2"
                 >
                   <Video size={18} />
                   Start Now
@@ -197,7 +197,7 @@ export default function StartMeetingModal({ isOpen, onClose, onStartMeeting }: S
               {/* Actions */}
               <button
                 onClick={onClose}
-                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:opacity-90 transition"
+                className="w-full py-3 px-4 bg-gradient-to-r from-[#4285F4] to-[#6366F1] text-white rounded-xl font-medium hover:opacity-90 transition"
               >
                 Schedule Meeting
               </button>

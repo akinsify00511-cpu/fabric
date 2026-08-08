@@ -304,7 +304,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
           <p className="text-black mb-4">{error}</p>
           <button
             onClick={onLeave}
-            className="px-6 py-2 bg-indigo-500 text-white rounded-lg font-medium"
+            className="px-6 py-2 bg-[#4285F4] text-white rounded-lg font-medium"
           >
             Go Back
           </button>
@@ -351,7 +351,7 @@ export default function VideoCall({ roomId, onLeave }: VideoCallProps) {
             />
             {!isVideoEnabled && (
               <div className="absolute inset-0 flex items-center justify-center bg-black">
-                <div className="w-20 h-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 rounded-full bg-[#4285F4] flex items-center justify-center text-white text-2xl font-bold">
                   {staff?.full_name?.charAt(0) || 'Y'}
                 </div>
               </div>
@@ -429,7 +429,7 @@ function VideoParticipant({ participant }: { participant: Participant }) {
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-black">
-          <div className="w-20 h-20 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl font-bold">
+          <div className="w-20 h-20 rounded-full bg-[#4285F4] flex items-center justify-center text-white text-2xl font-bold">
             {participant.name.charAt(0)}
           </div>
         </div>

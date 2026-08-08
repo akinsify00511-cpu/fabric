@@ -29,7 +29,7 @@ export default function PersonalizationHub() {
   return (
     <div className="fixed bottom-24 right-4 z-40 w-80 bg-white rounded-2xl shadow-2xl border border-black/[0.06] overflow-hidden animate-in slide-in-from-bottom">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[var(--av-primary, #0891B2)] to-purple-500 p-4 text-white">
+      <div className="bg-gradient-to-r from-[var(--av-primary, #0891B2)] to-[#8B5CF6]/50 p-4 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Lightbulb size={18} />
@@ -107,7 +107,7 @@ export function UserInsightsPanel() {
   return (
     <div className="space-y-6">
       {/* Engagement Score */}
-      <div className="bg-gradient-to-br from-[var(--av-primary, #0891B2)] to-purple-600 rounded-2xl p-6 text-white">
+      <div className="bg-gradient-to-br from-[var(--av-primary, #0891B2)] to-[#8B5CF6] rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Crown size={20} />

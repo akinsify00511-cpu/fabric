@@ -7,7 +7,7 @@ export default function CookiePolicy() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-[#4285F4] transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
@@ -149,7 +149,7 @@ export default function CookiePolicy() {
                 For questions about our use of cookies, please contact us:
               </p>
               <p className="mt-2">
-                <strong>Email:</strong> <a href="mailto:privacy@avenize.com" className="text-indigo-600 hover:underline">privacy@avenize.com</a>
+                <strong>Email:</strong> <a href="mailto:privacy@avenize.com" className="text-[#4285F4] hover:underline">privacy@avenize.com</a>
               </p>
             </section>
           </div>

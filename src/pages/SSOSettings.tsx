@@ -73,8 +73,8 @@ export default function SSOSettings() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-indigo-600" />
+              <div className="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-[#4285F4]" />
               </div>
               <h3 className="font-medium">SAML 2.0 & OIDC</h3>
             </div>
@@ -184,8 +184,8 @@ export default function SSOSettings() {
       {/* SSO Configuration UI would go here */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <Settings className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
+            <Settings className="w-6 h-6 text-[#4285F4]" />
           </div>
           <div>
             <h2 className="font-medium">SSO Configuration</h2>

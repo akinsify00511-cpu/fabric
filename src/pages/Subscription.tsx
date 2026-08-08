@@ -105,7 +105,7 @@ export default function Subscription() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#4285F4]" />
       </div>
     )
   }
@@ -115,7 +115,7 @@ export default function Subscription() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center">
             <CreditCard className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -223,8 +223,8 @@ export default function Subscription() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-indigo-600" />
+              <div className="w-16 h-16 rounded-full bg-[#4285F4]/10 flex items-center justify-center mx-auto mb-4">
+                <Star className="w-8 h-8 text-[#4285F4]" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Free Plan</h3>
               <p className="text-sm text-black mb-4 max-w-sm mx-auto">
@@ -232,7 +232,7 @@ export default function Subscription() {
               </p>
               <Link
                 to="/upgrade"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white font-medium rounded-xl hover:shadow-lg transition"
               >
                 <ArrowUpCircle className="w-5 h-5" />
                 Upgrade Now
@@ -273,7 +273,7 @@ export default function Subscription() {
               {availablePlans.map((plan) => (
                 <div
                   key={plan.code}
-                  className="border border-black/[0.08] rounded-xl p-4 hover:border-indigo-200 transition"
+                  className="border border-black/[0.08] rounded-xl p-4 hover:border-[#4285F4]/20 transition"
                 >
                   <h3 className="font-semibold text-lg mb-1">{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-4">
@@ -292,7 +292,7 @@ export default function Subscription() {
                   <button
                     onClick={() => handleUpgrade(plan.code)}
                     disabled={processingPlan === plan.code}
-                    className="w-full py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                    className="w-full py-2.5 bg-[#4285F4] text-white text-sm font-medium rounded-lg hover:bg-[#3367D6] transition disabled:opacity-50"
                   >
                     {processingPlan === plan.code ? (
                       <Loader2 className="w-4 h-4 animate-spin mx-auto" />
@@ -361,7 +361,7 @@ export default function Subscription() {
           </div>
           {payments.length > 5 && (
             <div className="p-4 text-center border-t border-black/[0.06]">
-              <button className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+              <button className="text-sm text-[#4285F4] hover:text-[#4285F4] font-medium">
                 View all {payments.length} payments
               </button>
             </div>
@@ -382,8 +382,8 @@ export default function Subscription() {
             {invoices.map((invoice) => (
               <div key={invoice.id} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-indigo-600" />
+                  <div className="w-10 h-10 rounded-full bg-[#4285F4]/10 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-[#4285F4]" />
                   </div>
                   <div>
                     <p className="font-medium">{invoice.invoice_number}</p>

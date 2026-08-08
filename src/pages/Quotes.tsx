@@ -198,7 +198,7 @@ export default function Quotes() {
         </div>
         <button
           onClick={() => setShowNewQuote(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-600 transition"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-lg font-medium hover:bg-[#4285F4] transition"
         >
           <Plus size={18} />
           New Quote
@@ -210,14 +210,14 @@ export default function Quotes() {
           <h2 className="font-bold text-black mb-4">Convert Deals to Quotes</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
             {deals.filter(d => !['won', 'lost'].includes(d.stage)).slice(0, 6).map((deal) => (
-              <div key={deal.id} className="flex items-center justify-between p-3 rounded-lg border border-white hover:border-indigo-200 transition">
+              <div key={deal.id} className="flex items-center justify-between p-3 rounded-lg border border-white hover:border-[#4285F4]/20 transition">
                 <div>
                   <p className="font-medium text-black text-sm">{deal.title}</p>
                   <p className="text-xs text-black">₦{deal.value.toLocaleString()}</p>
                 </div>
                 <button
                   onClick={() => convertDealToQuote(deal)}
-                  className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-medium hover:bg-indigo-100 transition"
+                  className="px-3 py-1 bg-[#4285F4]/5 text-[#4285F4] rounded-lg text-xs font-medium hover:bg-[#4285F4]/10 transition"
                 >
                   Quote
                 </button>
@@ -236,7 +236,7 @@ export default function Quotes() {
             <p className="text-black mb-4">No quotes yet. Create your first quote!</p>
             <button
               onClick={() => setShowNewQuote(true)}
-              className="px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition"
+              className="px-4 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:bg-[#4285F4] transition"
             >
               Create Quote
             </button>
@@ -260,7 +260,7 @@ export default function Quotes() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold text-indigo-600">{formatCurrency(quote.total)}</p>
+                    <p className="text-xl font-bold text-[#4285F4]">{formatCurrency(quote.total)}</p>
                   </div>
                 </div>
                 
@@ -329,7 +329,7 @@ export default function Quotes() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-black">Items</label>
-                  <button onClick={addItem} className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">+ Add Item</button>
+                  <button onClick={addItem} className="text-sm text-[#4285F4] hover:text-[#4285F4] font-medium">+ Add Item</button>
                 </div>
                 
                 <div className="space-y-2">
@@ -366,14 +366,14 @@ export default function Quotes() {
                 </div>
                 <div className="flex justify-between font-bold text-lg pt-2 border-t border-black">
                   <span>Total</span>
-                  <span className="text-indigo-600">{formatCurrency(newQuote.items.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0) * 1.075)}</span>
+                  <span className="text-[#4285F4]">{formatCurrency(newQuote.items.reduce((sum, i) => sum + (i.unit_price * i.quantity), 0) * 1.075)}</span>
                 </div>
               </div>
             </div>
             
             <div className="flex gap-3 p-4 border-t border-white">
               <button onClick={() => { setShowNewQuote(false); setConvertingDeal(null); }} className="flex-1 px-4 py-2 border border-black rounded-lg hover:bg-white">Cancel</button>
-              <button onClick={createQuote} className="flex-1 px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 font-medium">Create Quote</button>
+              <button onClick={createQuote} className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-lg hover:bg-[#4285F4] font-medium">Create Quote</button>
             </div>
           </div>
         </div>

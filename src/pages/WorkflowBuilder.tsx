@@ -43,7 +43,7 @@ const ACTION_TYPES = [
   { value: 'update_record', label: 'Update Record', icon: Database, color: 'bg-green-100 text-green-600' },
   { value: 'create_task', label: 'Create Task', icon: FileText, color: 'bg-purple-100 text-purple-600' },
   { value: 'assign_user', label: 'Assign User', icon: User, color: 'bg-pink-100 text-pink-600' },
-  { value: 'webhook', label: 'Webhook', icon: Zap, color: 'bg-indigo-100 text-indigo-600' },
+  { value: 'webhook', label: 'Webhook', icon: Zap, color: 'bg-[#4285F4]/10 text-[#4285F4]' },
 ]
 
 const ENTITY_TYPES = [
@@ -194,7 +194,7 @@ export default function WorkflowBuilderPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-[#8B5CF6] flex items-center justify-center">
             <GitBranch size={24} className="text-white" />
           </div>
           <div>

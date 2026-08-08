@@ -170,10 +170,10 @@ export default function Premium() {
             <span>Unlock Your Business Potential</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-black mb-4">
-            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Plan</span>
+            Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r to-[#4285F4] to-[#8B5CF6]">Plan</span>
           </h1>
           <p className="text-xl text-black/60 max-w-2xl mx-auto mb-8">
-            Select the perfect plan for your team. All plans include a 14-day free trial.
+            Select the perfect plan for your team. All plans include a 7-day free trial.
           </p>
           
           {/* Billing Toggle */}
@@ -182,7 +182,7 @@ export default function Premium() {
               onClick={() => setBillingCycle('monthly')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 billingCycle === 'monthly' 
-                  ? 'bg-indigo-600 text-white shadow-sm' 
+                  ? 'bg-[#4285F4] text-white shadow-sm' 
                   : 'text-black/60 hover:text-black'
               }`}
             >
@@ -192,7 +192,7 @@ export default function Premium() {
               onClick={() => setBillingCycle('yearly')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
                 billingCycle === 'yearly' 
-                  ? 'bg-indigo-600 text-white shadow-sm' 
+                  ? 'bg-[#4285F4] text-white shadow-sm' 
                   : 'text-black/60 hover:text-black'
               }`}
             >
@@ -214,13 +214,13 @@ export default function Premium() {
                 onClick={() => handleSelectPlan(plan)}
                 className={`bg-white rounded-2xl border-2 p-5 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 ${
                   plan.popular 
-                    ? 'border-indigo-500 shadow-indigo-100 relative' 
-                    : 'border-black/5 hover:border-indigo-200'
+                    ? 'border-[#4285F4] shadow-[#4285F4]/10 relative' 
+                    : 'border-black/5 hover:border-[#4285F4]/20'
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="px-3 py-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-semibold rounded-full">
+                    <span className="px-3 py-1 bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white text-xs font-semibold rounded-full">
                       Most Popular
                     </span>
                   </div>
@@ -228,7 +228,7 @@ export default function Premium() {
                 
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
                   plan.color === 'blue' ? 'bg-blue-100 text-blue-600' :
-                  plan.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+                  plan.color === 'indigo' ? 'bg-[#4285F4]/10 text-[#4285F4]' :
                   plan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
                   plan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
                   'bg-amber-100 text-amber-600'
@@ -252,7 +252,7 @@ export default function Premium() {
                 
                 <button className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all ${
                   plan.popular
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg'
+                    ? 'bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white hover:shadow-lg'
                     : 'bg-black/5 text-black hover:bg-black/10'
                 }`}>
                   Select Plan
@@ -275,7 +275,7 @@ export default function Premium() {
                   <th className="text-left p-4 font-medium text-black">Feature</th>
                   {PLANS.map(plan => (
                     <th key={plan.id} className={`p-4 text-center font-medium ${
-                      plan.popular ? 'bg-indigo-50 text-indigo-700' : 'text-black'
+                      plan.popular ? 'bg-[#4285F4]/5 text-[#4285F4]' : 'text-black'
                     }`}>
                       {plan.name}
                     </th>
@@ -289,7 +289,7 @@ export default function Premium() {
                     const price = billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyMonthly
                     return (
                       <td key={plan.id} className={`p-4 text-center font-bold ${
-                        plan.popular ? 'bg-indigo-50' : ''
+                        plan.popular ? 'bg-[#4285F4]/5' : ''
                       }`}>
                         {formatCurrency(price)}<span className="text-sm font-normal text-black">/mo</span>
                       </td>
@@ -298,66 +298,66 @@ export default function Premium() {
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Team Members</td>
-                  <td className="p-4 text-center bg-indigo-50">5</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">5</td>
                   <td className="p-4 text-center">15</td>
                   <td className="p-4 text-center">30</td>
-                  <td className="p-4 text-center bg-indigo-50">75</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">75</td>
                   <td className="p-4 text-center">Unlimited</td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Job & Project Tracking</td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Invoicing & VAT/WHT</td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Inventory Management</td>
-                  <td className="p-4 text-center bg-indigo-50">Single</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">Single</td>
                   <td className="p-4 text-center">Single</td>
                   <td className="p-4 text-center">Multi</td>
-                  <td className="p-4 text-center bg-indigo-50">Multi</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">Multi</td>
                   <td className="p-4 text-center">Multi</td>
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Advanced Analytics</td>
-                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">❌</td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">API Access</td>
-                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">❌</td>
                   <td className="p-4 text-center">❌</td>
                   <td className="p-4 text-center">❌</td>
-                  <td className="p-4 text-center bg-indigo-50"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[#4285F4]/5"><Check size={18} className="mx-auto text-green-500" /></td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Custom Branding</td>
-                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">❌</td>
                   <td className="p-4 text-center">❌</td>
                   <td className="p-4 text-center">❌</td>
-                  <td className="p-4 text-center bg-indigo-50">❌</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">❌</td>
                   <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Support</td>
-                  <td className="p-4 text-center bg-indigo-50">Email</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">Email</td>
                   <td className="p-4 text-center">Priority</td>
                   <td className="p-4 text-center">Priority</td>
-                  <td className="p-4 text-center bg-indigo-50">Dedicated</td>
+                  <td className="p-4 text-center bg-[#4285F4]/5">Dedicated</td>
                   <td className="p-4 text-center">Custom SLA</td>
                 </tr>
               </tbody>
@@ -380,7 +380,7 @@ export default function Premium() {
               },
               {
                 q: "Is there a free trial?",
-                a: "Yes! All paid plans come with a 14-day free trial. No credit card required to start."
+                a: "Yes! All paid plans come with a 7-day free trial. No credit card required to start."
               },
               {
                 q: "What happens if I cancel?",
@@ -422,10 +422,10 @@ export default function Premium() {
 
       {/* Plan Summary Card */}
       <div className="bg-white rounded-2xl border border-black/5 overflow-hidden mb-6">
-        <div className="p-6 border-b border-black/5 bg-gradient-to-r from-indigo-50 to-violet-50">
+        <div className="p-6 border-b border-black/5 bg-gradient-to-r to-[#4285F4]/5 to-violet-50">
           <div className="flex items-center gap-4">
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
-              selectedPlan.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' :
+              selectedPlan.color === 'indigo' ? 'bg-[#4285F4]/10 text-[#4285F4]' :
               selectedPlan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
               selectedPlan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
               selectedPlan.color === 'amber' ? 'bg-amber-100 text-amber-600' :
@@ -452,7 +452,7 @@ export default function Premium() {
                 onClick={() => setBillingCycle('monthly')}
                 className={`flex-1 p-4 rounded-xl border-2 transition-all ${
                   billingCycle === 'monthly'
-                    ? 'border-indigo-500 bg-indigo-50'
+                    ? 'border-[#4285F4] bg-[#4285F4]/5'
                     : 'border-black/5 hover:border-black/10'
                 }`}
               >
@@ -463,7 +463,7 @@ export default function Premium() {
                 onClick={() => setBillingCycle('yearly')}
                 className={`flex-1 p-4 rounded-xl border-2 transition-all ${
                   billingCycle === 'yearly'
-                    ? 'border-indigo-500 bg-indigo-50'
+                    ? 'border-[#4285F4] bg-[#4285F4]/5'
                     : 'border-black/5 hover:border-black/10'
                 }`}
               >
@@ -525,7 +525,7 @@ export default function Premium() {
           <button
             onClick={handleCheckout}
             disabled={processing}
-            className="w-full py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold text-lg hover:shadow-lg hover:shadow-indigo-500/30 transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-xl bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white font-semibold text-lg hover:shadow-lg hover:shadow-[#4285F4]/30 transition disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {processing ? (
               <>
@@ -534,7 +534,7 @@ export default function Premium() {
               </>
             ) : (
               <>
-                Start 14-Day Free Trial
+                Start 7-Day Free Trial
                 <ChevronRight size={20} />
               </>
             )}

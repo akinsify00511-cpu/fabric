@@ -108,7 +108,7 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
     <div>
       {/* Current Target Progress */}
       {currentTarget && (
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white mb-6">
+        <div className="bg-gradient-to-br from-purple-500 to-[#8B5CF6] rounded-2xl p-6 text-white mb-6">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm opacity-80">
@@ -253,7 +253,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
           <p className="text-sm opacity-80">Pending Commission</p>
           <h2 className="text-2xl font-bold">₦{pendingCommission.toLocaleString()}</h2>
         </div>
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 text-white">
+        <div className="bg-gradient-to-br from-purple-500 to-[#8B5CF6] rounded-2xl p-4 text-white">
           <p className="text-sm opacity-80">Total Earned</p>
           <h2 className="text-2xl font-bold">₦{totalCommission.toLocaleString()}</h2>
         </div>

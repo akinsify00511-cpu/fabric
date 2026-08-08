@@ -3,7 +3,7 @@ import { Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as Se
 import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
-  { to: '/app/subscription', label: 'Billing', icon: CreditCard, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Plan & payments', feature: null },
+  { to: '/app/subscription', label: 'Billing', icon: CreditCard, tint: 'bg-[#4285F4]/10 text-[#4285F4]', desc: 'Plan & payments', feature: null },
   { to: '/chat', label: 'Chat', icon: MessageSquare, tint: 'bg-[#4285F4]/10 text-[#4285F4]', desc: 'Team messaging', feature: 'chat' },
   { to: '/knowledge', label: 'Docs', icon: Book, tint: 'bg-orange-500/10 text-orange-500', desc: 'Knowledge base', feature: 'knowledge' },
   { to: '/tickets', label: 'Support', icon: Headphones, tint: 'bg-teal-500/10 text-teal-500', desc: 'Help desk', feature: 'tickets' },
@@ -15,7 +15,7 @@ const ITEMS = [
   { to: '/sales-performance', label: 'Sales Perf', icon: Target, tint: 'bg-red-500/10 text-red-500', desc: 'Targets & Commissions', feature: null },
   { to: '/social', label: 'Social', icon: Share2, tint: 'bg-pink-500/10 text-pink-500', desc: 'Posts & branding', feature: 'social' },
   { to: '/tasks', label: 'Tasks', icon: CheckSquare, tint: 'bg-cyan-500/10 text-cyan-500', desc: 'Assign & track', feature: 'tasks' },
-  { to: '/projects', label: 'Projects', icon: FolderKanban, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Project management', feature: 'projects' },
+  { to: '/projects', label: 'Projects', icon: FolderKanban, tint: 'bg-[#4285F4]/10 text-[#4285F4]', desc: 'Project management', feature: 'projects' },
   { to: '/cashflow', label: 'Cash Flow', icon: DollarSign, tint: 'bg-[#FF7A59]/10 text-[#FF7A59]', desc: 'Income & expenses', feature: 'cashflow' },
   { to: '/people', label: 'People', icon: Contact, tint: 'bg-emerald-500/10 text-emerald-500', desc: 'Team & invites', feature: 'people' },
   { to: '/hr', label: 'Human Resources', icon: Users, tint: 'bg-teal-500/10 text-teal-500', desc: 'Leave, Attendance', feature: null },
@@ -42,7 +42,7 @@ export default function More() {
         </div>
         <div className={`px-3 py-1 rounded-full text-xs font-medium ${
           plan === 'enterprise' ? 'bg-purple-100 text-purple-700' :
-          plan === 'pro' ? 'bg-indigo-100 text-indigo-700' :
+          plan === 'pro' ? 'bg-[#4285F4]/10 text-[#4285F4]' :
           plan === 'starter' ? 'bg-blue-100 text-blue-700' :
           'bg-white text-black'
         }`}>
@@ -70,7 +70,7 @@ export default function More() {
               </div>
               <Link
                 to="/upgrade"
-                className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                className="text-xs text-[#4285F4] hover:text-[#4285F4] font-medium"
               >
                 Upgrade to unlock →
               </Link>

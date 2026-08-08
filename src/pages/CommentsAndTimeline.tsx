@@ -353,7 +353,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
       {/* Comment Input */}
       <div className="bg-white rounded-xl border border-black/[0.06] p-4 relative">
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--av-primary, #4285F4)] to-purple-500 flex items-center justify-center text-white text-sm font-medium shrink-0">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--av-primary, #4285F4)] to-[#8B5CF6]/50 flex items-center justify-center text-white text-sm font-medium shrink-0">
             {staff?.full_name?.charAt(0) || 'U'}
           </div>
           <div className="flex-1">
@@ -386,7 +386,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                             : 'hover:bg-black/10'
                         }`}
                       >
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-[#8B5CF6]/50 flex items-center justify-center text-white text-xs">
                           {user.user_name?.charAt(0) || '?'}
                         </div>
                         <div>

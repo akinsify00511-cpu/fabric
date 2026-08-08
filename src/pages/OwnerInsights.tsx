@@ -71,7 +71,7 @@ export default function OwnerInsights() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-white text-black hover:bg-white'
+                activeTab === tab.id ? 'bg-[#4285F4] text-white' : 'bg-white text-black hover:bg-white'
               }`}
             >
               <Icon size={16} />
@@ -112,7 +112,7 @@ export default function OwnerInsights() {
                   <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${
                       item.type === 'finance' ? 'bg-green-500' :
-                      item.type === 'crm' ? 'bg-indigo-500' :
+                      item.type === 'crm' ? 'bg-[#4285F4]' :
                       item.type === 'project' ? 'bg-amber-500' : 'bg-purple-500'
                     }`} />
                     <div>
@@ -174,7 +174,7 @@ export default function OwnerInsights() {
             <div className="space-y-3">
               {SARAH_STATS.top_questions.map((item, i) => (
                 <div key={i} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-[#4285F4]/10 flex items-center justify-center text-[#4285F4] font-bold text-sm">
                     {i + 1}
                   </div>
                   <div className="flex-1">
@@ -209,7 +209,7 @@ export default function OwnerInsights() {
                 {MODULE_USAGE.map((m, i) => (
                   <tr key={i} className="border-b border-white last:border-0">
                     <td className="py-4">
-                      <Link to={`/app/${m.module.toLowerCase().split('/')[0]}`} className="flex items-center gap-2 text-black font-medium hover:text-indigo-600">
+                      <Link to={`/app/${m.module.toLowerCase().split('/')[0]}`} className="flex items-center gap-2 text-black font-medium hover:text-[#4285F4]">
                         {m.module}
                         <ChevronRight size={16} />
                       </Link>
@@ -237,7 +237,7 @@ export default function OwnerInsights() {
 function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { label: string, value: string, change: number, icon: any, color: string, prefix?: string }) {
   const colorClasses: Record<string, string> = {
     green: 'bg-green-50 text-green-600',
-    indigo: 'bg-indigo-50 text-indigo-600',
+    indigo: 'bg-[#4285F4]/5 text-[#4285F4]',
     purple: 'bg-purple-50 text-purple-600',
     blue: 'bg-blue-50 text-blue-600',
     amber: 'bg-amber-50 text-amber-600',

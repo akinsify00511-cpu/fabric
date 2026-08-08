@@ -66,7 +66,7 @@ export default function FieldLocation() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === tab.id ? 'bg-indigo-500 text-white' : 'bg-white text-black'
+                activeTab === tab.id ? 'bg-[#4285F4] text-white' : 'bg-white text-black'
               }`}
             >
               <Icon size={16} />
@@ -80,7 +80,7 @@ export default function FieldLocation() {
       {activeTab === 'map' && (
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Map Placeholder */}
-          <div className="lg:col-span-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl h-[500px] flex items-center justify-center relative overflow-hidden">
+          <div className="lg:col-span-2 bg-gradient-to-br to-[#4285F4]/10 to-purple-100 rounded-2xl h-[500px] flex items-center justify-center relative overflow-hidden">
             {/* Grid pattern to simulate map */}
             <div className="absolute inset-0 opacity-20">
               <svg width="100%" height="100%">
@@ -93,7 +93,7 @@ export default function FieldLocation() {
             
             {/* Simulated map content */}
             <div className="text-center z-10">
-              <MapPin size={64} className="text-indigo-500 mx-auto mb-4" />
+              <MapPin size={64} className="text-[#4285F4] mx-auto mb-4" />
               <h3 className="text-xl font-bold text-black mb-2">Interactive Map</h3>
               <p className="text-black mb-4">Live location of all field team members</p>
               <div className="flex flex-wrap justify-center gap-3">
@@ -137,12 +137,12 @@ export default function FieldLocation() {
               {FIELD_TEAMS.map((member) => (
                 <div
                   key={member.id}
-                  className={`p-4 hover:bg-white cursor-pointer transition ${selectedTeam === member.id ? 'bg-indigo-50' : ''}`}
+                  className={`p-4 hover:bg-white cursor-pointer transition ${selectedTeam === member.id ? 'bg-[#4285F4]/5' : ''}`}
                   onClick={() => setSelectedTeam(member.id)}
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
+                      <div className="w-10 h-10 rounded-full bg-[#4285F4]/10 flex items-center justify-center text-[#4285F4] font-bold">
                         {member.name.charAt(0)}
                       </div>
                       <span className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${getStatusColor(member.status)} border-2 border-white`} />
@@ -172,7 +172,7 @@ export default function FieldLocation() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                    <div className="w-12 h-12 rounded-full bg-[#4285F4]/10 flex items-center justify-center text-[#4285F4] font-bold text-lg">
                       {member.name.charAt(0)}
                     </div>
                     <span className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${getStatusColor(member.status)} border-2 border-white`} />
@@ -203,16 +203,16 @@ export default function FieldLocation() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-black">
                   <Phone size={14} />
-                  <a href={`tel:${member.phone}`} className="text-indigo-600 hover:underline">{member.phone}</a>
+                  <a href={`tel:${member.phone}`} className="text-[#4285F4] hover:underline">{member.phone}</a>
                 </div>
               </div>
 
               <div className="flex gap-2 mt-4">
-                <button className="flex-1 py-2 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium hover:bg-indigo-100 transition flex items-center justify-center gap-1">
+                <button className="flex-1 py-2 bg-[#4285F4]/5 text-[#4285F4] rounded-lg text-sm font-medium hover:bg-[#4285F4]/10 transition flex items-center justify-center gap-1">
                   <Navigation size={14} />
                   Track
                 </button>
-                <button className="flex-1 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition flex items-center justify-center gap-1">
+                <button className="flex-1 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:bg-[#4285F4] transition flex items-center justify-center gap-1">
                   <Phone size={14} />
                   Call
                 </button>
@@ -263,9 +263,9 @@ export default function FieldLocation() {
             </div>
           ))}
 
-          <div className="bg-indigo-50 rounded-xl p-6 border border-indigo-100">
+          <div className="bg-[#4285F4]/5 rounded-xl p-6 border border-[#4285F4]/10">
             <div className="flex items-center gap-3 mb-3">
-              <Zap size={24} className="text-indigo-600" />
+              <Zap size={24} className="text-[#4285F4]" />
               <h3 className="font-bold text-black">Pro Tip</h3>
             </div>
             <p className="text-sm text-black">

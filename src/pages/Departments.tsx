@@ -195,7 +195,7 @@ export default function Departments() {
             <div key={team.id} className="bg-white rounded-2xl p-5 border border-black/10 hover:border-black/20 transition">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-[#4285F4] flex items-center justify-center text-white">
                     <Users size={24} />
                   </div>
                   <div>

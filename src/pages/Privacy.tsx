@@ -7,7 +7,7 @@ export default function Privacy() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 text-black hover:text-indigo-600 transition">
+          <Link to="/" className="flex items-center gap-2 text-black hover:text-[#4285F4] transition">
             <ArrowLeft size={20} />
             <span className="font-medium">Back</span>
           </Link>
@@ -21,8 +21,8 @@ export default function Privacy() {
         <div className="bg-white rounded-2xl border border-black/5 p-8 md:p-12">
           {/* Title */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
-              <Shield className="w-8 h-8 text-indigo-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#4285F4]/10 rounded-full mb-4">
+              <Shield className="w-8 h-8 text-[#4285F4]" />
             </div>
             <h1 className="text-3xl font-bold text-black mb-2">Privacy Policy</h1>
             <p className="text-black">Last updated: August 3, 2026</p>
@@ -133,7 +133,7 @@ export default function Privacy() {
                 <li><strong>Restrict:</strong> Request restricted processing</li>
               </ul>
               <p>
-                To exercise these rights, contact us at <a href="mailto:privacy@avenize.com" className="text-indigo-600 hover:underline">privacy@avenize.com</a>.
+                To exercise these rights, contact us at <a href="mailto:privacy@avenize.com" className="text-[#4285F4] hover:underline">privacy@avenize.com</a>.
               </p>
             </section>
 
@@ -175,7 +175,7 @@ export default function Privacy() {
                 <p>123 Business Avenue, Suite 400</p>
                 <p>San Francisco, CA 94105</p>
                 <p className="mt-2">
-                  <a href="mailto:privacy@avenize.com" className="text-indigo-600 hover:underline inline-flex items-center gap-1">
+                  <a href="mailto:privacy@avenize.com" className="text-[#4285F4] hover:underline inline-flex items-center gap-1">
                     <Mail size={14} />
                     privacy@avenize.com
                   </a>

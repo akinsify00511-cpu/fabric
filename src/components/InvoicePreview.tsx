@@ -44,7 +44,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
         </div>
 
         <div className="flex items-center gap-2 p-4 border-b border-white bg-white">
-          <button onClick={onDownloadPDF} className="flex items-center gap-2 px-4 py-2 bg-indigo-500 text-white rounded-lg text-sm font-medium hover:bg-indigo-600 transition">
+          <button onClick={onDownloadPDF} className="flex items-center gap-2 px-4 py-2 bg-[#4285F4] text-white rounded-lg text-sm font-medium hover:bg-[#4285F4] transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
@@ -141,7 +141,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
                 )}
                 <div className="flex justify-between py-3 border-t-2 border-black font-bold text-lg">
                   <span>Total</span>
-                  <span className="text-indigo-600">{formatCurrency(invoice.total)}</span>
+                  <span className="text-[#4285F4]">{formatCurrency(invoice.total)}</span>
                 </div>
                 {invoice.amount_paid > 0 && (
                   <>

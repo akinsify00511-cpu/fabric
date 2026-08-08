@@ -71,7 +71,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
             <CheckCircle size={40} className="text-green-500" />
@@ -80,11 +80,11 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           <p className="text-black mb-6">
             We've received your information. One of our sales representatives will contact you within 24 hours.
           </p>
-          <div className="bg-indigo-50 rounded-xl p-4 text-left">
-            <p className="text-sm text-indigo-700">
+          <div className="bg-[#4285F4]/5 rounded-xl p-4 text-left">
+            <p className="text-sm text-[#4285F4]">
               <strong>What happens next:</strong>
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-indigo-600">
+            <ul className="mt-2 space-y-1 text-sm text-[#4285F4]">
               <li>1. Our team will review your requirements</li>
               <li>2. We'll schedule a quick call to understand your needs</li>
               <li>3. You'll get a personalized demo</li>
@@ -102,10 +102,10 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-indigo-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 rounded-xl bg-[#4285F4] flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-xl">A</span>
           </div>
           <h1 className="text-2xl font-bold text-black">Get Started with Avenize</h1>
@@ -122,7 +122,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
                 required
                 value={form.full_name}
                 onChange={(e) => setForm({ ...form, full_name: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                 placeholder="Chinedu Okafor"
               />
             </div>
@@ -137,7 +137,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
                 required
                 value={form.company_name}
                 onChange={(e) => setForm({ ...form, company_name: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                 placeholder="TechCorp Nigeria Ltd"
               />
             </div>
@@ -152,7 +152,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                 placeholder="chinedu@techcorp.ng"
               />
             </div>
@@ -166,7 +166,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
                 type="tel"
                 value={form.phone}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                 placeholder="08012345678"
               />
             </div>
@@ -177,7 +177,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
             <select
               value={form.interested_in}
               onChange={(e) => setForm({ ...form, interested_in: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full px-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
             >
               {interests.map(i => (
                 <option key={i.value} value={i.value}>{i.label}</option>
@@ -193,7 +193,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 rows={3}
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-black focus:ring-2 focus:ring-[#4285F4] focus:border-[#4285F4]"
                 placeholder="Tell us about your business needs..."
               />
             </div>
@@ -202,7 +202,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transition disabled:opacity-50"
+            className="w-full py-3 bg-gradient-to-r to-[#4285F4] to-[#8B5CF6] text-white font-semibold rounded-xl hover:shadow-lg transition disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

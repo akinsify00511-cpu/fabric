@@ -23,7 +23,7 @@ const categoryConfig: Record<NotificationCategory, { icon: typeof Bell; color: s
   payment: { icon: CreditCard, color: 'text-blue-500', bg: 'bg-blue-100' },
   reminder: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-100' },
   marketing: { icon: Sparkles, color: 'text-pink-500', bg: 'bg-pink-100' },
-  social: { icon: Users, color: 'text-indigo-500', bg: 'bg-indigo-100' },
+  social: { icon: Users, color: 'text-[#4285F4]', bg: 'bg-[#4285F4]/10' },
   system: { icon: AlertCircle, color: 'text-black', bg: 'bg-white' },
 }
 

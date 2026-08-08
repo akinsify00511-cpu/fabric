@@ -196,7 +196,7 @@ export default function ProjectsNigeria() {
     const color = getJobTypeColor(typeId)
     // Map colors to Tailwind bg/text classes
     const colorMap: Record<string, string> = {
-      '#6366F1': 'bg-indigo-100 text-indigo-700', // indigo
+      '#6366F1': 'bg-[#4285F4]/10 text-[#4285F4]', // indigo
       '#10B981': 'bg-green-100 text-green-700',   // green
       '#F59E0B': 'bg-amber-100 text-amber-700',  // amber
       '#8B5CF6': 'bg-purple-100 text-purple-700', // purple

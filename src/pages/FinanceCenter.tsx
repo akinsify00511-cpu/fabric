@@ -150,7 +150,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
       </div>
 
       {/* Net Position */}
-      <div className="mt-6 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white">
+      <div className="mt-6 bg-gradient-to-br from-purple-500 to-[#8B5CF6] rounded-2xl p-6 text-white">
         <p className="text-sm opacity-80 mb-2">Net Working Capital</p>
         <h2 className="text-3xl font-bold">₦{((stats.totalDebtors - stats.totalCreditors) / 1000000).toFixed(1)}M</h2>
         <p className="text-sm opacity-80 mt-2">Debtors - Creditors</p>

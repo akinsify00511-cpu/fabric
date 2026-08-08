@@ -155,7 +155,7 @@ export default function Shell() {
         <div className="px-3 pb-3">
           <a
             href="/upgrade"
-            className="flex items-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-sm font-medium hover:shadow-lg transition"
+            className="flex items-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-r to-[#4285F4] to-[#8B5CF6]/50 text-white text-sm font-medium hover:shadow-lg transition"
           >
             <Crown size={16} />
             <span>Upgrade to Pro</span>

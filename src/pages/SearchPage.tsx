@@ -16,7 +16,7 @@ const ENTITY_COLORS: Record<string, string> = {
   invoices: 'bg-amber-100 text-amber-600',
   quotes: 'bg-teal-100 text-teal-600',
   projects: 'bg-pink-100 text-pink-600',
-  documents: 'bg-indigo-100 text-indigo-600',
+  documents: 'bg-[#4285F4]/10 text-[#4285F4]',
   payments: 'bg-emerald-100 text-emerald-600',
   inventory: 'bg-orange-100 text-orange-600',
 }
@@ -425,7 +425,7 @@ export default function SearchPage() {
                 { icon: Briefcase, label: 'Staff', color: 'bg-purple-50 text-purple-500' },
                 { icon: Tag, label: 'Inventory', color: 'bg-orange-50 text-orange-500' },
                 { icon: Calendar, label: 'Calendar', color: 'bg-teal-50 text-teal-500' },
-                { icon: TrendingUp, label: 'Reports', color: 'bg-indigo-50 text-indigo-500' },
+                { icon: TrendingUp, label: 'Reports', color: 'bg-[#4285F4]/5 text-[#4285F4]' },
               ].map((item, i) => (
                 <button
                   key={i}

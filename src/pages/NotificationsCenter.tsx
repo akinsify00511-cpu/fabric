@@ -38,7 +38,7 @@ const notificationColors: Record<string, string> = {
   payment: 'bg-green-500',
   leave: 'bg-purple-500',
   task: 'bg-amber-500',
-  mention: 'bg-indigo-500',
+  mention: 'bg-[#4285F4]',
   reminder: 'bg-cyan-500',
   alert: 'bg-red-500',
   staff: 'bg-pink-500',
@@ -124,7 +124,7 @@ export default function NotificationsCenterPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-[#8B5CF6] flex items-center justify-center">
             <Bell size={24} className="text-white" />
           </div>
           <div>

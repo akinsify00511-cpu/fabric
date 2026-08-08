@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="text-center max-w-md">
         {/* 404 Graphic */}
         <div className="mb-8">
-          <div className="text-[120px] font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-500 to-purple-600 leading-none" style={{ WebkitTextStroke: '2px #E0E7FF' }}>
+          <div className="text-[120px] font-bold text-transparent bg-clip-text bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] leading-none" style={{ WebkitTextStroke: '2px #E0E7FF' }}>
             404
           </div>
           <div className="flex justify-center gap-2 -mt-4">
@@ -46,7 +46,7 @@ export default function NotFound() {
           <p className="text-sm text-black mb-2">Need help finding something?</p>
           <a
             href="/app"
-            className="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            className="inline-flex items-center gap-2 text-sm text-[#4285F4] hover:text-[#4285F4] font-medium"
           >
             <Search size={14} />
             Browse all features

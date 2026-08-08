@@ -157,7 +157,7 @@ export default function Approvals() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -356,9 +356,9 @@ export default function Approvals() {
               </div>
 
               {selectedRequest.amount && (
-                <div className="bg-indigo-50 rounded-xl p-4">
-                  <p className="text-xs text-indigo-500 mb-1">Amount</p>
-                  <p className="text-2xl font-bold text-indigo-900">{formatCurrency(selectedRequest.amount)}</p>
+                <div className="bg-[#4285F4]/5 rounded-xl p-4">
+                  <p className="text-xs text-[#4285F4] mb-1">Amount</p>
+                  <p className="text-2xl font-bold text-[#4285F4]">{formatCurrency(selectedRequest.amount)}</p>
                 </div>
               )}
 
@@ -370,7 +370,7 @@ export default function Approvals() {
                   value={actionComment}
                   onChange={e => setActionComment(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
                   placeholder="Add a note..."
                 />
               </div>

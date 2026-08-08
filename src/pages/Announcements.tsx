@@ -357,7 +357,7 @@ function AnnouncementCard({
           <div className="flex items-center gap-2">
             {announcement.author && (
               <div className="flex items-center gap-2 text-sm text-black">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-[#8B5CF6]/50 flex items-center justify-center text-white text-xs">
                   {announcement.author.full_name?.charAt(0) || 'U'}
                 </div>
                 {announcement.author.full_name}
