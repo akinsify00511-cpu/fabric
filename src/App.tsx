@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
@@ -381,33 +381,31 @@ export default function App() {
         <GamificationProvider>
           <BrandingProvider>
             <LocaleProvider>
-              <BrowserRouter>
-                <CookieConsent />
-                <AppRoutes />
-                {/* Command Palette - Like Slack/Notion Cmd+K */}
-                <CommandPaletteComponent />
-                {/* Keyboard Shortcuts Modal */}
-                <KeyboardShortcutsModal
-                  isOpen={showShortcuts}
-                  onClose={() => setShowShortcuts(false)}
-                />
-                {/* Offline indicator banner */}
-                {isOffline && (
-                  <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 px-4 py-3 bg-amber-500 text-white rounded-xl shadow-lg flex items-center gap-3">
-                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
-                    </svg>
-                    <div>
-                      <p className="font-medium text-sm">You're offline</p>
-                      <p className="text-xs opacity-90">Changes will sync when you're back online</p>
-                    </div>
+              <CookieConsent />
+              <AppRoutes />
+              {/* Command Palette - Like Slack/Notion Cmd+K */}
+              <CommandPaletteComponent />
+              {/* Keyboard Shortcuts Modal */}
+              <KeyboardShortcutsModal
+                isOpen={showShortcuts}
+                onClose={() => setShowShortcuts(false)}
+              />
+              {/* Offline indicator banner */}
+              {isOffline && (
+                <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 px-4 py-3 bg-amber-500 text-white rounded-xl shadow-lg flex items-center gap-3">
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
+                  </svg>
+                  <div>
+                    <p className="font-medium text-sm">You're offline</p>
+                    <p className="text-xs opacity-90">Changes will sync when you're back online</p>
                   </div>
-                )}
-                {/* Quality Control Dashboard - visible in dev mode */}
-                {import.meta.env.DEV && <QCDashboard />}
-                {/* Personalization Hub - suggestions based on user behavior */}
-                <PersonalizationHub />
-              </BrowserRouter>
+                </div>
+              )}
+              {/* Quality Control Dashboard - visible in dev mode */}
+              {import.meta.env.DEV && <QCDashboard />}
+              {/* Personalization Hub - suggestions based on user behavior */}
+              <PersonalizationHub />
             </LocaleProvider>
           </BrandingProvider>
         </GamificationProvider>
