@@ -215,7 +215,7 @@ export default function APISettings() {
           <button
             onClick={() => setActiveTab('keys')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === 'keys' ? 'avenize-gradient text-white' : 'border border-black/10'
+              activeTab === 'keys' ? 'bg-[var(--av-primary)] text-white' : 'border border-black/10'
             }`}
           >
             <Key size={14} className="inline mr-1" />
@@ -224,7 +224,7 @@ export default function APISettings() {
           <button
             onClick={() => setActiveTab('webhooks')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === 'webhooks' ? 'avenize-gradient text-white' : 'border border-black/10'
+              activeTab === 'webhooks' ? 'bg-[var(--av-primary)] text-white' : 'border border-black/10'
             }`}
           >
             <Webhook size={14} className="inline mr-1" />
@@ -262,7 +262,7 @@ export default function APISettings() {
                   setNewKeyName('')
                   setShowNewKeyModal(true)
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg avenize-gradient text-white text-sm font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--av-primary)] text-white text-sm font-medium"
               >
                 <Plus size={14} />
                 New Key
@@ -366,7 +366,7 @@ export default function APISettings() {
                   setWebhookEvents([])
                   setShowNewWebhookModal(true)
                 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg avenize-gradient text-white text-sm font-medium"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--av-primary)] text-white text-sm font-medium"
               >
                 <Plus size={14} />
                 New Webhook
@@ -535,7 +535,7 @@ export default function APISettings() {
                 <button
                   onClick={createApiKey}
                   disabled={saving}
-                  className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
+                  className="px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white font-medium disabled:opacity-50"
                 >
                   {saving ? 'Creating...' : 'Create Key'}
                 </button>
@@ -605,7 +605,7 @@ export default function APISettings() {
               <button
                 onClick={createWebhook}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white font-medium disabled:opacity-50"
               >
                 {saving ? 'Creating...' : 'Create Webhook'}
               </button>

@@ -192,7 +192,7 @@ export default function AuditLogPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br to-[var(--av-primary)] to-[var(--av-accent)] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)] flex items-center justify-center">
             <Shield size={24} className="text-white" />
           </div>
           <div>

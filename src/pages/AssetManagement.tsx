@@ -120,7 +120,7 @@ export default function AssetManagementPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br to-[var(--av-primary)] to-[var(--av-accent)] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)] flex items-center justify-center">
             <Package size={24} className="text-white" />
           </div>
           <div>
@@ -255,7 +255,7 @@ function AssetCard({
   return (
     <div className="bg-white rounded-xl  overflow-hidden hover:shadow-lg transition">
       {/* Header */}
-      <div className="p-4 bg-gradient-to-r to-[var(--av-primary)]/5 to-[var(--av-accent)]/5">
+      <div className="p-4 bg-[var(--av-primary)]/5">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">

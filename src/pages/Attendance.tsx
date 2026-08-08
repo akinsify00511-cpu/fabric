@@ -210,7 +210,7 @@ export default function AttendancePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-success)] flex items-center justify-center">
             <Fingerprint size={24} className="text-white" />
           </div>
           <div>

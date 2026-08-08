@@ -229,7 +229,7 @@ export default function Profile() {
           onClick={() => setActiveTab('profile')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'profile'
-              ? 'avenize-gradient text-white'
+              ? 'bg-[var(--av-primary)] text-white'
               : 'text-black hover:text-black'
           }`}
         >
@@ -239,7 +239,7 @@ export default function Profile() {
           onClick={() => setActiveTab('security')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'security'
-              ? 'avenize-gradient text-white'
+              ? 'bg-[var(--av-primary)] text-white'
               : 'text-black hover:text-black'
           }`}
         >
@@ -373,7 +373,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={profileLoading}
-              className="w-full rounded-lg avenize-gradient text-white py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+              className="w-full rounded-lg bg-[var(--av-primary)] text-white py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
             >
               {profileLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -466,7 +466,7 @@ export default function Profile() {
             <button
               type="submit"
               disabled={securityLoading || !currentPassword || !newPassword || !confirmPassword}
-              className="w-full rounded-lg avenize-gradient text-white py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
+              className="w-full rounded-lg bg-[var(--av-primary)] text-white py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-50"
             >
               {securityLoading ? (
                 <span className="flex items-center justify-center gap-2">

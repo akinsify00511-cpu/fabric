@@ -192,7 +192,7 @@ export default function AnnouncementsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-accent)] flex items-center justify-center">
             <Megaphone size={24} className="text-white" />
           </div>
           <div>
@@ -357,7 +357,7 @@ function AnnouncementCard({
           <div className="flex items-center gap-2">
             {announcement.author && (
               <div className="flex items-center gap-2 text-sm text-black">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-[var(--av-accent)]/50 flex items-center justify-center text-white text-xs">
+                <div className="w-6 h-6 rounded-full bg-[var(--av-primary)] flex items-center justify-center text-white text-xs">
                   {announcement.author.full_name?.charAt(0) || 'U'}
                 </div>
                 {announcement.author.full_name}
