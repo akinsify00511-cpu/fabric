@@ -189,7 +189,7 @@ export default function AssetManagementPage() {
             Loading...
           </div>
         ) : filteredAssets.length === 0 ? (
-          <div className="col-span-full text-center py-12 text-black bg-white rounded-2xl border border-black/[0.06]">
+          <div className="col-span-full text-center py-12 text-black bg-white rounded-2xl ">
             <Package size={48} className="mx-auto mb-4 text-black/50" />
             <p className="font-medium mb-2">No assets found</p>
             <p className="text-sm">Add your first asset to get started</p>
@@ -221,7 +221,7 @@ export default function AssetManagementPage() {
 
 function StatCard({ title, value, icon, color }: any) {
   return (
-    <div className="bg-white rounded-xl border border-black/[0.06] p-4">
+    <div className="bg-white rounded-xl  p-4">
       <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center text-white mb-3`}>
         {icon}
       </div>
@@ -253,7 +253,7 @@ function AssetCard({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-black/[0.06] overflow-hidden hover:shadow-lg transition">
+    <div className="bg-white rounded-xl  overflow-hidden hover:shadow-lg transition">
       {/* Header */}
       <div className="p-4 bg-gradient-to-r to-[#4285F4]/5 to-[#8B5CF6]/5">
         <div className="flex items-start justify-between">
@@ -275,7 +275,7 @@ function AssetCard({
                 <ChevronDown size={16} />
               </button>
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-black/10 py-1 z-10 min-w-[140px]">
+                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
                   {asset.status !== 'active' && (
                     <button onClick={() => handleStatusChange('active')} className="w-full px-3 py-2 text-left text-sm hover:bg-black/10">
                       Mark Active

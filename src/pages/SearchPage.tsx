@@ -219,7 +219,7 @@ export default function SearchPage() {
 
         {/* Autocomplete Suggestions */}
         {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl border border-black/10 shadow-xl overflow-hidden">
+          <div className="absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-xl overflow-hidden">
             <div className="p-2">
               <div className="text-xs text-black px-2 py-1 flex items-center gap-1">
                 <Sparkles size={10} />

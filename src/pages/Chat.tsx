@@ -455,7 +455,7 @@ export default function Chat() {
                                 <Smile size={14} />
                               </button>
                               {showEmojiPicker === msg.id && (
-                                <div className="absolute bg-white rounded-lg shadow-lg border border-black/[0.08] p-1 flex gap-0.5 z-10">
+                                <div className="absolute bg-white rounded-lg shadow-lg p-1 flex gap-0.5 z-10">
                                   {EMOJIS.map((emoji) => (
                                     <button
                                       key={emoji}

@@ -244,7 +244,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
         {/* Feature Preview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-white rounded-2xl  p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
                 <Zap className="w-5 h-5 text-amber-600" />
@@ -256,7 +256,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-white rounded-2xl  p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
                 <Settings className="w-5 h-5 text-[#4285F4]" />
@@ -268,7 +268,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-white rounded-2xl  p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center">
                 <Activity className="w-5 h-5 text-emerald-600" />
@@ -340,7 +340,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+        <div className="bg-white rounded-2xl  p-4">
           <div className="flex items-center gap-2 mb-2">
             <Activity size={14} className="text-green-500" />
             <span className="text-xs text-black uppercase tracking-wide">Active</span>
@@ -349,7 +349,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             {automations.filter((a) => a.enabled).length}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+        <div className="bg-white rounded-2xl  p-4">
           <div className="flex items-center gap-2 mb-2">
             <Zap size={14} className="text-[#8B5CF6]" />
             <span className="text-xs text-black uppercase tracking-wide">Total runs</span>
@@ -358,7 +358,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             {automations.reduce((sum, a) => sum + a.run_count, 0)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+        <div className="bg-white rounded-2xl  p-4">
           <div className="flex items-center gap-2 mb-2">
             <Clock size={14} className="text-black" />
             <span className="text-xs text-black uppercase tracking-wide">Last run</span>
@@ -375,14 +375,14 @@ const [automations, setAutomations] = useState<Automation[]>([])
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-2xl border border-black/[0.06] p-4 animate-pulse">
+            <div key={i} className="bg-white rounded-2xl  p-4 animate-pulse">
               <div className="h-4 bg-black/10 rounded w-32 mb-2" />
               <div className="h-3 bg-black/10 rounded w-48" />
             </div>
           ))}
         </div>
       ) : automations.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-12 text-center">
+        <div className="bg-white rounded-2xl  p-12 text-center">
           <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center text-white text-2xl mx-auto mb-4">
             🤖
           </div>
@@ -407,14 +407,14 @@ const [automations, setAutomations] = useState<Automation[]>([])
             return (
               <div
                 key={auto.id}
-                className={`bg-white rounded-2xl border border-black/[0.06] p-4 transition hover:shadow-md ${
+                className={`bg-white rounded-2xl  p-4 transition hover:shadow-md ${
                   !auto.enabled ? 'opacity-60' : ''
                 }`}
               >
                 {/* Visual Flow Preview */}
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 via-purple-50 to-green-50 mb-3">
                   {/* Trigger */}
-                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm">
                     <span className="text-xl">{trigger?.icon || '⚡'}</span>
                     <div>
                       <div className="text-xs text-black">When</div>
@@ -428,7 +428,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   </div>
                   
                   {/* Action */}
-                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-black/10 shadow-sm">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-sm">
                     <span className="text-xl">{action?.icon || '⚡'}</span>
                     <div>
                       <div className="text-xs text-black">Do</div>

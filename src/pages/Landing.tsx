@@ -460,7 +460,7 @@ function HeroSection() {
 
           {/* Right Content - Dashboard Preview */}
           <div className="relative mt-8 lg:mt-0">
-            <div className="relative bg-black border border-black rounded-2xl p-4 md:p-5 shadow-2xl">
+            <div className="relative bg-black rounded-2xl p-4 md:p-5 shadow-2xl">
               {/* Device Header */}
               <div className="flex items-center justify-between pb-4 border-b border-black mb-4">
                 <div className="flex items-center gap-2">
@@ -599,7 +599,7 @@ function ProblemsSection() {
           {PROBLEMS.map((problem, i) => (
             <div 
               key={i} 
-              className="problem-card group bg-white border border-black rounded-xl p-5 hover:border-black hover:shadow-lg transition-all duration-300 opacity-0 translate-y-4"
+              className="problem-card group bg-white rounded-xl p-5 hover:shadow-lg transition-all duration-300 opacity-0 translate-y-4"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               {/* Number Badge */}
@@ -744,7 +744,7 @@ function FeaturesSection() {
             <div className="feature-visual">
               <div className="relative">
                 <div className="absolute -inset-4 bg-[#4285F4]/5 rounded-3xl blur-xl" />
-                <div className="relative bg-white border border-black rounded-2xl p-4 md:p-6 shadow-lg">
+                <div className="relative bg-white rounded-2xl p-4 md:p-6 shadow-lg">
                   {feature.visual === 'pipeline' && <PipelineMockup />}
                   {feature.visual === 'alerts' && <AlertsMockup />}
                   {feature.visual === 'chat' && <ChatMockup />}

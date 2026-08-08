@@ -370,7 +370,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
               
               {/* @Mention Autocomplete Popup */}
               {showMentionPopup && mentionSuggestions.length > 0 && (
-                <div className="absolute left-0 right-0 bottom-full mb-1 bg-white rounded-lg border border-black/10 shadow-xl z-20 max-h-48 overflow-auto">
+                <div className="absolute left-0 right-0 bottom-full mb-1 bg-white rounded-lg shadow-xl z-20 max-h-48 overflow-auto">
                   <div className="p-2">
                     <div className="text-xs text-black px-2 py-1 flex items-center gap-1">
                       <AtSign size={10} />

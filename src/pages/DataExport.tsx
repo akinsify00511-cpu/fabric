@@ -254,7 +254,7 @@ export default function DataExportPage() {
               setExportForm({ ...exportForm, entityType: entity.value })
               setShowModal(true)
             }}
-            className="p-4 bg-white rounded-xl border border-black/[0.06] hover:border-[var(--av-primary, #4285F4)] hover:shadow-lg transition text-left"
+            className="p-4 bg-white rounded-xl hover:shadow-lg transition text-left"
           >
             <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center mb-3">
               <DownloadCloud size={20} className="text-emerald-500" />

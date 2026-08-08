@@ -237,23 +237,23 @@ export default function CRM() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-        <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+        <div className="bg-white rounded-2xl p-4 ">
           <div className="text-2xl font-bold">{stats.totalDeals}</div>
           <div className="text-xs text-black">Total Deals</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+        <div className="bg-white rounded-2xl p-4 ">
           <div className="text-2xl font-bold">\u20a6{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div>
           <div className="text-xs text-black">Pipeline Value</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+        <div className="bg-white rounded-2xl p-4 ">
           <div className="text-2xl font-bold text-red-500">{stats.hotDeals}</div>
           <div className="text-xs text-black">Hot Deals</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+        <div className="bg-white rounded-2xl p-4 ">
           <div className="text-2xl font-bold text-green-500">{stats.wonDeals}</div>
           <div className="text-xs text-black">Won</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+        <div className="bg-white rounded-2xl p-4 ">
           <div className="text-2xl font-bold">{stats.conversionRate}%</div>
           <div className="text-xs text-black">Conversion</div>
         </div>
@@ -276,7 +276,7 @@ export default function CRM() {
       {viewMode === 'deals' && (
         <div className="space-y-4">
           {filteredDeals.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8 border border-black/[0.06] text-center">
+            <div className="bg-white rounded-2xl p-8  text-center">
               <Users size={48} className="mx-auto mb-4 text-black/50" />
               <h3 className="font-semibold mb-2">No deals yet</h3>
               <p className="text-sm text-black mb-4">Create your first deal to start tracking</p>
@@ -286,7 +286,7 @@ export default function CRM() {
             filteredDeals.map(deal => {
               const stage = STAGES.find(s => s.key === deal.stage)
               return (
-                <div key={deal.id} className="bg-white rounded-2xl p-5 border border-black/[0.06] hover:shadow-md transition cursor-pointer" onClick={() => setEditingDeal(deal)}>
+                <div key={deal.id} className="bg-white rounded-2xl p-5  hover:shadow-md transition cursor-pointer" onClick={() => setEditingDeal(deal)}>
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -309,7 +309,7 @@ export default function CRM() {
       )}
 
       {viewMode === 'contacts' && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
+        <div className="bg-white rounded-2xl  overflow-hidden">
           {filteredContacts.length === 0 ? (
             <div className="p-8 text-center">
               <Users size={48} className="mx-auto mb-4 text-black/50" />
@@ -361,7 +361,7 @@ export default function CRM() {
               </div>
               <div className="space-y-2">
                 {(dealsByStage[stage.key] || []).map(deal => (
-                  <div key={deal.id} className="bg-white rounded-xl p-3 border border-black/[0.06] cursor-pointer hover:shadow" onClick={() => setEditingDeal(deal)}>
+                  <div key={deal.id} className="bg-white rounded-xl p-3  cursor-pointer hover:shadow" onClick={() => setEditingDeal(deal)}>
                     <div className="font-medium text-sm mb-1">{deal.title}</div>
                     <div className="text-xs text-black">{deal.contact_name}</div>
                     <div className="text-sm font-bold mt-2">\u20a6{(deal.value || 0).toLocaleString()}</div>

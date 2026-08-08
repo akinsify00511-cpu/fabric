@@ -177,7 +177,7 @@ export default function Premium() {
           </p>
           
           {/* Billing Toggle */}
-          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm border border-black/5">
+          <div className="inline-flex bg-white rounded-xl p-1 shadow-sm ">
             <button
               onClick={() => setBillingCycle('monthly')}
               className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
@@ -214,7 +214,7 @@ export default function Premium() {
                 onClick={() => handleSelectPlan(plan)}
                 className={`bg-white rounded-2xl border-2 p-5 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 ${
                   plan.popular 
-                    ? 'border-[#4285F4] shadow-[#4285F4]/10 relative' 
+                    ? 'border-[var(--av-primary)] shadow-[var(--av-primary)]/10 relative' 
                     : 'border-black/5 hover:border-[#4285F4]/20'
                 }`}
               >
@@ -263,7 +263,7 @@ export default function Premium() {
         </div>
 
         {/* All Plans Comparison */}
-        <div className="bg-white rounded-2xl border border-black/5 overflow-hidden mx-4">
+        <div className="bg-white rounded-2xl  overflow-hidden mx-4">
           <div className="p-6 border-b border-black/5">
             <h2 className="text-xl font-bold text-black">Compare All Plans</h2>
             <p className="text-sm text-black mt-1">See what's included in each plan</p>
@@ -387,7 +387,7 @@ export default function Premium() {
                 a: "You can cancel anytime. You'll retain access to your current plan features until the end of your billing period."
               }
             ].map((faq, i) => (
-              <details key={i} className="bg-white rounded-xl border border-black/5 group">
+              <details key={i} className="bg-white rounded-xl  group">
                 <summary className="p-4 cursor-pointer font-medium text-black flex items-center justify-between">
                   {faq.q}
                   <ChevronRight size={18} className="text-black transition-transform group-open:rotate-90" />
@@ -421,7 +421,7 @@ export default function Premium() {
       </div>
 
       {/* Plan Summary Card */}
-      <div className="bg-white rounded-2xl border border-black/5 overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl  overflow-hidden mb-6">
         <div className="p-6 border-b border-black/5 bg-gradient-to-r to-[#4285F4]/5 to-violet-50">
           <div className="flex items-center gap-4">
             <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${

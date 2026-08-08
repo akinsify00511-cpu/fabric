@@ -103,7 +103,7 @@ export default function HelpCenter() {
                 <Link
                   key={i}
                   to={resource.link}
-                  className="bg-white rounded-xl p-6 border border-black hover:border-[#4285F4]/30 hover:shadow-md transition group"
+                  className="bg-white rounded-xl p-6 hover:shadow-md transition group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[#4285F4]/5 flex items-center justify-center mb-4 group-hover:bg-[#4285F4]/10 transition">
                     <Icon className="w-5 h-5 text-[#4285F4]" />

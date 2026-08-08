@@ -439,7 +439,7 @@ export default function Knowledge() {
                       if (space) setSelectedSpace(space)
                       selectPage(page)
                     }}
-                    className="w-full text-left bg-white rounded-xl p-4 border border-black/[0.06] hover:border-black/[0.12] transition"
+                    className="w-full text-left bg-white rounded-xl p-4  hover:border-black/[0.12] transition"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       {page.icon_emoji && <span>{page.icon_emoji}</span>}
@@ -502,7 +502,7 @@ export default function Knowledge() {
 
             {/* Editor */}
             <div className="flex-1 overflow-y-auto px-6 py-8">
-              <div className="max-w-3xl mx-auto bg-white rounded-2xl border border-black/[0.06] p-8 shadow-sm">
+              <div className="max-w-3xl mx-auto bg-white rounded-2xl  p-8 shadow-sm">
                 {/* Title */}
                 <input
                   value={editingPage.title}
@@ -625,7 +625,7 @@ export default function Knowledge() {
 
       {/* History Sidebar */}
       {showHistory && (
-        <div className="fixed right-0 top-0 bottom-0 w-80 bg-white border-l border-black/[0.06] shadow-xl z-50 flex flex-col">
+        <div className="fixed right-0 top-0 bottom-0 w-80 bg-white  shadow-xl z-50 flex flex-col">
           <div className="px-4 py-3 border-b border-black/[0.06] flex items-center justify-between">
             <h3 className="font-medium">Page History</h3>
             <button onClick={() => setShowHistory(false)} className="p-1 hover:bg-black/[0.05] rounded">

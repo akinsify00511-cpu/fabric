@@ -215,7 +215,7 @@ function HeroSection() {
         
         {/* Google-style search bar - THE ICONIC ELEMENT */}
         <div className="max-w-2xl mx-auto mb-8">
-          <div className="relative bg-white rounded-full shadow-md hover:shadow-lg transition-shadow border border-black overflow-hidden">
+          <div className="relative bg-white rounded-full shadow-md hover:shadow-lg transition-shadow ">
             <div className="flex items-center px-6 py-4">
               <svg className="w-5 h-5 text-black mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -263,7 +263,7 @@ function HeroSection() {
           <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-blue-500 text-white font-medium text-lg hover:bg-blue-600 hover:shadow-lg transition-all">
             Get Started Free
           </Link>
-          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-black text-black font-medium text-lg hover:bg-white transition-all">
+          <Link to="/login" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full  text-black font-medium text-lg hover:bg-white transition-all">
             Sign In
           </Link>
         </div>
@@ -392,7 +392,7 @@ function ProductivityToolsSection() {
         </div>
         
         {/* Task Features Mini Showcase */}
-        <div className="bg-white rounded-2xl p-8 mb-12 shadow-sm border border-black">
+        <div className="bg-white rounded-2xl p-8 mb-12 shadow-sm ">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
@@ -418,7 +418,7 @@ function ProductivityToolsSection() {
             
             {/* Mini Kanban Preview */}
             <div className="flex-1">
-              <div className="bg-white rounded-xl p-4 border border-black">
+              <div className="bg-white rounded-xl p-4 ">
                 <div className="text-xs text-black mb-3 font-mono">PROJECT: Website Redesign</div>
                 <div className="space-y-3">
                   {[
@@ -443,7 +443,7 @@ function ProductivityToolsSection() {
           {PRODUCTIVITY_TOOLS.map((tool, i) => {
             const Icon = tool.icon
             return (
-              <div key={i} className="bg-white backdrop-blur-sm rounded-xl p-6 border border-black hover:bg-white transition-colors">
+              <div key={i} className="bg-white backdrop-blur-sm rounded-xl p-6  hover:bg-white transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
                     <Icon size={22} style={{ color: tool.color }} />
@@ -465,7 +465,7 @@ function ProductivityToolsSection() {
         
         {/* Integration Banner */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full border border-black">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full ">
             <span className="text-sm text-black">Also includes:</span>
             <span className="text-sm font-medium">File Storage</span>
             <span className="text-black">•</span>
@@ -489,7 +489,7 @@ function ModulesSection() {
           <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Everything Your Business Needs</h2>
           <p className="text-black max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
-        <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg border border-black">
+        <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg ">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm mb-3">⭐ Most Popular</div>

@@ -349,14 +349,14 @@ export default function Onboarding() {
                     onClick={() => setSelectedColor(color)}
                     className={`relative p-4 rounded-xl border-2 transition-all hover:scale-105 ${
                       selectedColor?.id === color.id
-                        ? 'border-blue-600 shadow-lg ring-2 ring-blue-600 ring-offset-2'
-                        : 'border-black hover:border-black hover:shadow-md'
+                        ? 'shadow-lg ring-2 ring-blue-600 ring-offset-2'
+                        : 'hover:shadow-md'
                     }`}
                     style={{ backgroundColor: color.hex }}
                   >
                     {/* Preview Card */}
                     <div 
-                      className="w-full h-12 rounded-lg mb-2 flex items-center justify-center text-lg font-bold border shadow-sm"
+                      className="w-full h-12 rounded-lg mb-2 flex items-center justify-center text-lg font-bold shadow-sm"
                       style={{ 
                         backgroundColor: color.previewBg,
                         color: color.previewText,
