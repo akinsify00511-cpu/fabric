@@ -252,6 +252,19 @@
         <div class="loading-spinner"></div>
       </div>
     </div>
+    <!-- Fallback: Remove loading screen if React fails to mount -->
+    <script>
+      window._removeLoadingScreen = function() {
+        var el = document.querySelector('.loading-screen');
+        if (el) el.style.display = 'none';
+      };
+      // Fallback: remove after 8 seconds if React hasn't removed it
+      setTimeout(window._removeLoadingScreen, 8000);
+      // Remove immediately if DOM is already ready
+      if (document.readyState !== 'loading') {
+        window._removeLoadingScreen();
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
       // Register Service Worker
