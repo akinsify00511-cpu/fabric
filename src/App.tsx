@@ -80,6 +80,8 @@ const TrialBanner = lazy(() => import('./components/TrialBanner'))
 const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
 const LeaseManagement = lazy(() => import('./pages/LeaseManagement'))
 const MaintenanceRequests = lazy(() => import('./pages/MaintenanceRequests'))
+const ElectronicSignatures = lazy(() => import('./pages/ElectronicSignatures'))
+const DocumentsHub = lazy(() => import('./pages/DocumentsHub'))
 const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
 const Leads = lazy(() => import('./pages/Leads'))
@@ -290,6 +292,8 @@ function AppRoutes() {
         <Route path="properties" element={<Properties />} />
         <Route path="leases" element={<LeaseManagement />} />
         <Route path="maintenance" element={<MaintenanceRequests />} />
+        <Route path="signatures" element={<ElectronicSignatures />} />
+        <Route path="documents" element={<DocumentsHub />} />
         <Route path="budgets" element={<Budgets />} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />
