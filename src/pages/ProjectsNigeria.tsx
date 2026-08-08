@@ -377,7 +377,7 @@ export default function ProjectsNigeria() {
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Total Value</p>
-          <p className="text-lg font-bold text-[var(--av-primary, #0891B2)]">{formatCurrency(stats.value)}</p>
+          <p className="text-lg font-bold text-[var(--av-primary, #475569)]">{formatCurrency(stats.value)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Overdue</p>
@@ -454,8 +454,8 @@ export default function ProjectsNigeria() {
         </div>
       ) : filteredJobs.length === 0 ? (
         <div className="text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-[var(--av-primary, #0891B2)]/10 flex items-center justify-center mx-auto mb-4">
-            <Wrench size={24} className="text-[var(--av-primary, #0891B2)]" />
+          <div className="w-16 h-16 rounded-2xl bg-[var(--av-primary, #475569)]/10 flex items-center justify-center mx-auto mb-4">
+            <Wrench size={24} className="text-[var(--av-primary, #475569)]" />
           </div>
           <h3 className="font-semibold mb-2">No jobs found</h3>
           <p className="text-sm text-black mb-4">
@@ -478,7 +478,7 @@ export default function ProjectsNigeria() {
           {filteredJobs.map((job) => (
             <div
               key={job.id}
-              className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[var(--av-primary, #0891B2)]/20 transition-colors cursor-pointer"
+              className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[var(--av-primary, #475569)]/20 transition-colors cursor-pointer"
               onClick={() => setSelectedJob(job)}
             >
               <div className="flex items-start justify-between mb-2">
@@ -493,7 +493,7 @@ export default function ProjectsNigeria() {
                   <p className="text-sm text-black">{job.client_name}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-[var(--av-primary, #0891B2)]">{formatCurrency(job.value)}</p>
+                  <p className="font-semibold text-[var(--av-primary, #475569)]">{formatCurrency(job.value)}</p>
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mt-1 ${
                     PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'green' ? 'bg-green-100 text-green-700' :
                     PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'red' ? 'bg-red-100 text-red-700' :
@@ -727,7 +727,7 @@ export default function ProjectsNigeria() {
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-white rounded-xl p-3">
                   <p className="text-xs text-black">Value</p>
-                  <p className="font-semibold text-[var(--av-primary, #0891B2)]">{formatCurrency(selectedJob.value)}</p>
+                  <p className="font-semibold text-[var(--av-primary, #475569)]">{formatCurrency(selectedJob.value)}</p>
                 </div>
                 <div className="bg-white rounded-xl p-3">
                   <p className="text-xs text-black">Type</p>

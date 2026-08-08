@@ -177,7 +177,7 @@ export default function AdminAnalytics() {
           </select>
           <button
             onClick={loadAnalytics}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
           >
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
             Refresh
@@ -373,7 +373,7 @@ export default function AdminAnalytics() {
               onClick={() => setSelectedCategory('all')}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
                 selectedCategory === 'all' 
-                  ? 'bg-[var(--av-primary, #0891B2)] text-white' 
+                  ? 'bg-[var(--av-primary, #475569)] text-white' 
                   : 'bg-black/10 text-black/60'
               }`}
             >
@@ -387,7 +387,7 @@ export default function AdminAnalytics() {
                   onClick={() => setSelectedCategory(cat.category)}
                   className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
                     selectedCategory === cat.category
-                      ? 'bg-[var(--av-primary, #0891B2)] text-white'
+                      ? 'bg-[var(--av-primary, #475569)] text-white'
                       : 'bg-black/10 text-black/60'
                   }`}
                 >

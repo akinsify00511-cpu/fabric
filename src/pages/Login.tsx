@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AvenizeMark } from '../components/AvenizeMark'
 
-// AVENIZE BRAND COLORS
+// AVENIZE BRAND COLORS - Muted & Professional
 const BRAND = {
-  primary: '#0891B2',
-  primarySoft: 'rgba(8, 145, 178, 0.08)',
-  gradient: 'linear-gradient(135deg, #0891B2 0%, #0D9488 50%, #059669 100%)',
+  primary: '#475569',
+  primaryHover: '#334155',
+  primarySoft: 'rgba(71, 85, 105, 0.08)',
+  gradient: 'linear-gradient(135deg, #475569 0%, #475569 100%)',
   surface: '#FAFAF9',
   surface2: '#F5F5F4',
   surfaceElevated: '#FFFFFF',
@@ -15,9 +16,9 @@ const BRAND = {
   textSecondary: '#52525B',
   textMuted: '#A1A1AA',
   border: '#E7E5E4',
-  success: '#059669',
-  danger: '#DC2626',
-  dangerSoft: 'rgba(220, 38, 38, 0.08)',
+  success: '#15803D',
+  danger: '#B91C1C',
+  dangerSoft: 'rgba(185, 28, 28, 0.08)',
 }
 
 export default function Login() {
@@ -143,6 +144,7 @@ export default function Login() {
             className="w-full flex items-center justify-center gap-3 rounded-lg border py-2.5 text-sm font-medium transition disabled:opacity-50"
             style={{ 
               borderColor: BRAND.border,
+              backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text
             }}
           >
@@ -169,6 +171,7 @@ export default function Login() {
             className="w-full flex items-center justify-center gap-3 rounded-lg border py-2.5 text-sm font-medium transition disabled:opacity-50"
             style={{ 
               borderColor: BRAND.border,
+              backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text
             }}
           >
@@ -232,7 +235,7 @@ export default function Login() {
         <div className="flex items-center justify-between">
           <Link 
             to="/forgot-password" 
-            className="text-xs transition hover:underline"
+            className="text-xs transition hover:opacity-80"
             style={{ color: BRAND.primary }}
           >
             Forgot password?
@@ -243,7 +246,7 @@ export default function Login() {
           type="submit"
           disabled={loading}
           className="w-full rounded-lg text-white py-2 text-sm font-medium transition disabled:opacity-50"
-          style={{ background: BRAND.gradient }}
+          style={{ backgroundColor: BRAND.primary }}
         >
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
@@ -252,11 +255,11 @@ export default function Login() {
         <button
           type="button"
           onClick={handleDemoLogin}
-          className="w-full rounded-lg border-2 border-dashed py-3 text-sm font-medium transition"
+          className="w-full rounded-lg border py-3 text-sm font-medium transition hover:opacity-90"
           style={{ 
-            borderColor: BRAND.primary,
-            color: BRAND.primary,
-            backgroundColor: BRAND.primarySoft
+            borderColor: BRAND.border,
+            color: BRAND.textSecondary,
+            backgroundColor: BRAND.surface
           }}
         >
           🎯 Try Demo Account
@@ -266,7 +269,7 @@ export default function Login() {
           New here?{' '}
           <Link 
             to="/signup" 
-            className="transition hover:underline"
+            className="transition hover:opacity-80"
             style={{ color: BRAND.primary }}
           >
             Set up your business

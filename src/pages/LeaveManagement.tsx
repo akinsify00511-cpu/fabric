@@ -199,7 +199,7 @@ export default function LeaveManagementPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
         >
           <Plus size={16} />
           Request Leave
@@ -242,7 +242,7 @@ export default function LeaveManagementPage() {
               onClick={() => setTab(t.key as any)}
               className={`px-4 py-2 rounded-lg text-sm font-medium ${
                 tab === t.key 
-                  ? 'bg-[var(--av-primary, #0891B2)] text-white' 
+                  ? 'bg-[var(--av-primary, #475569)] text-white' 
                   : 'bg-white border border-black/10'
               }`}
             >
@@ -537,7 +537,7 @@ function LeaveRequestModal({
                     onClick={() => setForm({ ...form, half_day_period: 'morning' })}
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'morning' 
-                        ? 'bg-[var(--av-primary, #0891B2)] text-white' 
+                        ? 'bg-[var(--av-primary, #475569)] text-white' 
                         : 'bg-black/10'
                     }`}
                   >
@@ -548,7 +548,7 @@ function LeaveRequestModal({
                     onClick={() => setForm({ ...form, half_day_period: 'afternoon' })}
                     className={`flex-1 py-2 rounded-lg text-sm ${
                       form.half_day_period === 'afternoon' 
-                        ? 'bg-[var(--av-primary, #0891B2)] text-white' 
+                        ? 'bg-[var(--av-primary, #475569)] text-white' 
                         : 'bg-black/10'
                     }`}
                   >
@@ -583,7 +583,7 @@ function LeaveRequestModal({
             <button 
               type="submit" 
               disabled={submitting || totalDays === 0}
-              className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium disabled:opacity-50"
+              className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #475569)] text-white font-medium disabled:opacity-50"
             >
               {submitting ? 'Submitting...' : 'Submit Request'}
             </button>

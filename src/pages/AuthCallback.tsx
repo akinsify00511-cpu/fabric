@@ -167,7 +167,7 @@ export default function AuthCallback() {
           <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
-          <div className="w-8 h-8 border-2 border-[var(--av-primary, #0891B2)] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-8 h-8 border-2 border-[var(--av-primary, #475569)] border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-sm text-black mt-4">{message || 'Completing sign in...'}</p>
         </div>
       </div>

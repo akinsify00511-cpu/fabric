@@ -61,7 +61,7 @@ export default function Equipment() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #0891B2)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm"
         >
           <Plus size={16} /> Add Equipment
         </button>
@@ -123,7 +123,7 @@ export default function Equipment() {
               className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
             />
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white">
             Add Equipment
           </button>
         </form>

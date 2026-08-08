@@ -181,7 +181,7 @@ export default function ResourceBookingPage() {
             <div className="text-lg font-semibold">
               {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </div>
-            {today && <span className="text-xs text-[var(--av-primary, #0891B2)]">Today</span>}
+            {today && <span className="text-xs text-[var(--av-primary, #475569)]">Today</span>}
           </div>
           <button onClick={() => navigateDate(1)} className="p-2 rounded-lg hover:bg-black/10">
             <ChevronRight size={20} />
@@ -190,7 +190,7 @@ export default function ResourceBookingPage() {
         <div className="flex justify-center gap-2 mt-3">
           <button
             onClick={() => setSelectedDate(new Date())}
-            className="px-3 py-1.5 rounded-lg text-sm bg-[var(--av-primary, #0891B2)] text-white"
+            className="px-3 py-1.5 rounded-lg text-sm bg-[var(--av-primary, #475569)] text-white"
           >
             Today
           </button>
@@ -208,7 +208,7 @@ export default function ResourceBookingPage() {
         <button
           onClick={() => setFilterType('all')}
           className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap ${
-            filterType === 'all' ? 'bg-[var(--av-primary, #0891B2)] text-white' : 'bg-white border border-black/10'
+            filterType === 'all' ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
           }`}
         >
           All
@@ -218,7 +218,7 @@ export default function ResourceBookingPage() {
             key={type}
             onClick={() => setFilterType(type)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap capitalize ${
-              filterType === type ? 'bg-[var(--av-primary, #0891B2)] text-white' : 'bg-white border border-black/10'
+              filterType === type ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
             }`}
           >
             {type}s
@@ -238,8 +238,8 @@ export default function ResourceBookingPage() {
               onClick={() => setSelectedResource(isSelected ? null : resource.id)}
               className={`bg-white rounded-xl border p-4 cursor-pointer transition ${
                 isSelected 
-                  ? 'border-[var(--av-primary, #0891B2)] ring-2 ring-[var(--av-primary, #0891B2)]/20' 
-                  : 'border-black/[0.06] hover:border-[var(--av-primary, #0891B2)]'
+                  ? 'border-[var(--av-primary, #475569)] ring-2 ring-[var(--av-primary, #475569)]/20' 
+                  : 'border-black/[0.06] hover:border-[var(--av-primary, #475569)]'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -339,7 +339,7 @@ export default function ResourceBookingPage() {
                           ) : (
                             <button
                               onClick={() => handleBook(resource.id, hour)}
-                              className="w-full h-10 rounded-lg border-2 border-dashed border-black/10 hover:border-[var(--av-primary, #0891B2)] hover:bg-[var(--av-primary, #0891B2)]/5 text-xs text-black hover:text-[var(--av-primary, #0891B2)] transition"
+                              className="w-full h-10 rounded-lg border-2 border-dashed border-black/10 hover:border-[var(--av-primary, #475569)] hover:bg-[var(--av-primary, #475569)]/5 text-xs text-black hover:text-[var(--av-primary, #475569)] transition"
                             >
                               +
                             </button>

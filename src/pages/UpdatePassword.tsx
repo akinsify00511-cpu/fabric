@@ -114,7 +114,7 @@ export default function UpdatePassword() {
                   setPassword(e.target.value)
                   if (confirmPassword) validatePassword()
                 }}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#0891B2]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
               />
               <button
                 type="button"
@@ -149,7 +149,7 @@ export default function UpdatePassword() {
                   setConfirmPassword(e.target.value)
                   if (password) validatePassword()
                 }}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#0891B2]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
               />
               <button
                 type="button"

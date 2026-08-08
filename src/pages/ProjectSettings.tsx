@@ -183,7 +183,7 @@ export default function ProjectSettings() {
             {!showNewForm && (
               <button
                 onClick={() => setShowNewForm(true)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--av-primary, #0891B2)] text-white rounded-lg text-sm font-medium"
+                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--av-primary, #475569)] text-white rounded-lg text-sm font-medium"
               >
                 <Plus size={16} />
                 Add Type

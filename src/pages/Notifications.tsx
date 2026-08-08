@@ -176,7 +176,7 @@ export default function NotificationSettings() {
           <button
             onClick={savePreferences}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm disabled:opacity-50"
           >
             <Save size={16} />
             {saving ? 'Saving...' : 'Save Changes'}
@@ -415,7 +415,7 @@ function PreferenceToggle({
         />
         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition ${
           checked 
-            ? 'bg-[var(--av-primary, #0891B2)] border-[var(--av-primary, #0891B2)]' 
+            ? 'bg-[var(--av-primary, #475569)] border-[var(--av-primary, #475569)]' 
             : 'border-black/20'
         }`}>
           {checked && <Check size={12} className="text-white" />}

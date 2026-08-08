@@ -16,10 +16,10 @@ import {
 
 // AVENIZE BRAND COLORS - Single source of truth
 const BRAND = {
-  primary: '#0891B2',
-  primaryHover: '#0E7490',
-  primarySoft: 'rgba(8, 145, 178, 0.08)',
-  gradient: 'linear-gradient(135deg, #0891B2 0%, #0D9488 50%, #059669 100%)',
+  primary: '#475569',
+  primaryHover: '#334155',
+  primarySoft: 'rgba(71, 85, 105, 0.08)',
+  gradient: 'linear-gradient(135deg, #475569 0%, #475569 50%, #15803D 100%)',
   surface: '#FAFAF9',
   surface2: '#F5F5F4',
   surfaceElevated: '#FFFFFF',
@@ -27,18 +27,18 @@ const BRAND = {
   textSecondary: '#52525B',
   textMuted: '#A1A1AA',
   border: '#E7E5E4',
-  success: '#059669',
-  successSoft: 'rgba(5, 150, 105, 0.08)',
-  warning: '#D97706',
-  warningSoft: 'rgba(217, 119, 6, 0.08)',
-  danger: '#DC2626',
-  dangerSoft: 'rgba(220, 38, 38, 0.08)',
+  success: '#15803D',
+  successSoft: 'rgba(21, 128, 61, 0.08)',
+  warning: '#B45309',
+  warningSoft: 'rgba(180, 83, 9, 0.08)',
+  danger: '#B91C1C',
+  dangerSoft: 'rgba(185, 28, 28, 0.08)',
   purple: '#7C3AED',
   purpleSoft: 'rgba(124, 58, 237, 0.08)',
-  pink: '#DB2777',
-  pinkSoft: 'rgba(219, 39, 119, 0.08)',
-  amber: '#D97706',
-  amberSoft: 'rgba(217, 119, 6, 0.08)',
+  pink: '#BE185D',
+  pinkSoft: 'rgba(190, 24, 93, 0.08)',
+  amber: '#B45309',
+  amberSoft: 'rgba(180, 83, 9, 0.08)',
 }
 
 // Current month name

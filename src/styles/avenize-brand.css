@@ -1,648 +1,109 @@
-/**
- * Avenize Design System v5
- * Boutique SaaS Design Language
- * 
- * Positioned as: Premium B2B OS (not Google Workspace clone)
- * Visual references: Linear × Notion × Stripe (clean, ownable, premium)
- * 
- * Key principles:
- * - Warm, approachable surfaces (not cold Google whites)
- * - Teal primary (distinctive, not blue-4285F4)
- * - Premium typography with Inter
- * - Generous whitespace and soft shadows
- * - Subtle motion, not Google animations
- */
-
 /* ============================================
-   CSS CUSTOM PROPERTIES (Design Tokens)
-   Single source of truth - use tokens, not hex codes
+   AVENIZE DESIGN SYSTEM v2.0
+   Premium • Professional • Muted
+   Inspired by Linear × Stripe × Notion
    ============================================ */
 
 :root {
-  /* === AVENIZE SIGNATURE COLORS === */
-  /* Primary: Rich Teal - owns a space Google/others don't */
-  --av-primary: #0891B2;
-  --av-primary-hover: #0E7490;
-  --av-primary-active: #155E75;
-  --av-primary-soft: rgba(8, 145, 178, 0.08);
-  --av-primary-subtle: rgba(8, 145, 178, 0.04);
+  /* ========== PRIMARY - Slate Blue (Muted, Professional) ========== */
+  --av-primary: #475569;           /* Slate-600 - Primary actions */
+  --av-primary-hover: #334155;     /* Slate-700 */
+  --av-primary-active: #1E293B;     /* Slate-800 */
+  --av-primary-soft: rgba(71, 85, 105, 0.08);
+  --av-primary-subtle: rgba(71, 85, 105, 0.04);
   
-  /* Secondary: Warm Amber for accents */
-  --av-amber: #D97706;
-  --av-amber-hover: #B45309;
-  --av-amber-soft: rgba(217, 119, 6, 0.08);
+  /* ========== SURFACE - Warm Neutrals ========== */
+  --av-surface: #FAFAF9;           /* Warm white - Page bg */
+  --av-surface-2: #F5F5F4;         /* Stone-100 - Cards */
+  --av-surface-3: #E7E5E4;         /* Stone-200 - Borders */
+  --av-surface-elevated: #FFFFFF;  /* Pure white - Elevated cards */
   
-  /* Signature gradient - Avenize-only, not generic purple-blue */
-  --av-gradient-start: #0891B2;
-  --av-gradient-mid: #0D9488;
-  --av-gradient-end: #059669;
-  --av-gradient: linear-gradient(135deg, var(--av-gradient-start) 0%, var(--av-gradient-mid) 50%, var(--av-gradient-end) 100%);
+  /* ========== TEXT - Slate Tones ========== */
+  --av-text: #18181B;              /* Zinc-900 - Primary text */
+  --av-text-secondary: #52525B;    /* Zinc-600 - Secondary */
+  --av-text-muted: #A1A1AA;       /* Zinc-400 - Muted */
+  --av-text-disabled: #D4D4D8;    /* Zinc-300 - Disabled */
   
-  /* === AVENIZE SURFACE SYSTEM === */
-  /* Warm surfaces - not cold Google whites */
-  --av-black: #18181B;
-  --av-white: #FFFFFF;
-  --av-surface: #FAFAF9;
-  --av-surface-2: #F5F5F4;    /* Warm gray background */
-  --av-surface-3: #E7E5E4;    /* Tertiary surface */
-  --av-surface-elevated: #FFFFFF;
+  /* ========== BORDER ========== */
+  --av-border: #E7E5E4;            /* Stone-200 */
+  --av-border-strong: #D6D3D1;     /* Stone-300 */
   
-  /* === AVENIZE TEXT HIERARCHY === */
-  /* Near-black text - Linear-style clarity */
-  --av-text: #18181B;
-  --av-text-secondary: #52525B;
-  --av-text-muted: #A1A1AA;
-  --av-text-disabled: #D4D4D8;
+  /* ========== SEMANTIC - Muted, Professional ========== */
+  --av-success: #15803D;           /* Green-700 - Success */
+  --av-success-soft: rgba(21, 128, 61, 0.08);
   
-  /* === AVENIZE BORDER SYSTEM === */
-  /* Subtle borders - not Google-heavy */
-  --av-border: #E7E5E4;
-  --av-border-strong: #D4D4D8;
-  --av-border-focus: rgba(8, 145, 178, 0.5);
+  --av-warning: #B45309;          /* Amber-700 - Warning */
+  --av-warning-soft: rgba(180, 83, 9, 0.08);
   
-  /* === AVENIZE ELEVATION SYSTEM === */
-  /* Soft, premium shadows - not Material */
-  --av-elevation-0: none;
-  --av-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --av-elevation-2: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --av-elevation-3: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --av-elevation-4: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --av-elevation-5: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --av-danger: #B91C1C;           /* Red-700 - Danger */
+  --av-danger-soft: rgba(185, 28, 28, 0.08);
   
-  /* Legacy shadow names */
-  --av-shadow-sm: var(--av-elevation-1);
-  --av-shadow-md: var(--av-elevation-2);
-  --av-shadow-lg: var(--av-elevation-3);
-  --av-shadow-glow: 0 0 20px rgba(8, 145, 178, 0.2);
+  --av-info: #0369A1;            /* Sky-700 - Info */
+  --av-info-soft: rgba(3, 105, 161, 0.08);
   
-  /* === MODULE COLORS === */
-  /* Distinctive, not Google Workspace colors */
-  --av-crm: #0891B2;
-  --av-crm-bg: rgba(8, 145, 178, 0.08);
-  --av-sales: #059669;
-  --av-sales-bg: rgba(5, 150, 105, 0.08);
-  --av-finance: #7C3AED;
-  --av-finance-bg: rgba(124, 58, 237, 0.08);
-  --av-projects: #D97706;
-  --av-projects-bg: rgba(217, 119, 6, 0.08);
-  --av-hr: #DB2777;
-  --av-hr-bg: rgba(219, 39, 119, 0.08);
-  --av-support: #0891B2;
-  --av-support-bg: rgba(8, 145, 178, 0.08);
+  /* ========== ACCENT - Subtle Purple for special elements ========== */
+  --av-accent: #7C3AED;           /* Violet-600 */
+  --av-accent-soft: rgba(124, 58, 237, 0.08);
   
-  /* === SEMANTIC COLORS === */
-  --av-success: #059669;
-  --av-success-bg: rgba(5, 150, 105, 0.08);
-  --av-success-border: rgba(5, 150, 105, 0.2);
-  --av-warning: #D97706;
-  --av-warning-bg: rgba(217, 119, 6, 0.08);
-  --av-warning-border: rgba(217, 119, 6, 0.2);
-  --av-danger: #DC2626;
-  --av-danger-bg: rgba(220, 38, 38, 0.08);
-  --av-danger-border: rgba(220, 38, 38, 0.2);
-  --av-info: #0891B2;
-  --av-info-bg: rgba(8, 145, 178, 0.08);
-  --av-info-border: rgba(8, 145, 178, 0.2);
+  /* ========== GRADIENT - Ultra Subtle ========== */
+  --av-gradient: linear-gradient(135deg, #475569 0%, #475569 100%);
   
-  /* === SPACING === */
-  --av-space-0: 0;
-  --av-space-1: 4px;
-  --av-space-2: 8px;
-  --av-space-3: 12px;
-  --av-space-4: 16px;
-  --av-space-5: 20px;
-  --av-space-6: 24px;
-  --av-space-7: 32px;
-  --av-space-8: 40px;
-  --av-space-9: 48px;
-  --av-space-10: 64px;
+  /* ========== SHADOWS - Soft, Premium ========== */
+  --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --av-shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --av-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
   
-  /* Gap aliases */
-  --av-gap-xs: var(--av-space-2);
-  --av-gap-sm: var(--av-space-3);
-  --av-gap-md: var(--av-space-4);
-  --av-gap-lg: var(--av-space-6);
-  --av-gap-xl: var(--av-space-8);
+  /* ========== TYPOGRAPHY ========== */
+  --av-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
-  /* === RADIUS === */
-  /* Generous, friendly radii - Linear/Stripe style */
-  --av-radius-none: 0;
+  /* ========== RADII ========== */
   --av-radius-sm: 6px;
   --av-radius-md: 8px;
   --av-radius-lg: 12px;
   --av-radius-xl: 16px;
-  --av-radius-2xl: 24px;
   --av-radius-full: 9999px;
   
-  /* Legacy */
-  --av-radius: var(--av-radius-lg);
-  
-  /* === TYPOGRAPHY === */
-  /* Inter - clean, modern, premium */
-  --av-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --av-font-numeric: 'Inter', var(--av-font-sans);
-  
-  /* Type scale */
-  --av-text-xs: 11px;
-  --av-text-sm: 13px;
-  --av-text-base: 14px;
-  --av-text-md: 15px;
-  --av-text-lg: 18px;
-  --av-text-xl: 20px;
-  --av-text-2xl: 24px;
-  --av-text-3xl: 30px;
-  --av-text-4xl: 36px;
-  
-  /* === MOTION === */
-  /* Subtle, premium motion */
-  --av-duration-instant: 50ms;
-  --av-duration-fast: 100ms;
-  --av-duration-normal: 150ms;
-  --av-duration-slow: 200ms;
-  --av-duration-slower: 300ms;
-  
-  /* Ease curves */
-  --av-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --av-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-  --av-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --av-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  
-  /* Transitions */
-  --av-transition-fast: var(--av-duration-fast) var(--av-ease-out);
-  --av-transition-normal: var(--av-duration-normal) var(--av-ease-out);
-  --av-transition-slow: var(--av-duration-slow) var(--av-ease-out);
-  
-  /* === GLASS === */
-  --av-glass-bg: rgba(255, 255, 255, 0.8);
-  --av-glass-border: rgba(255, 255, 255, 0.2);
-  --av-glass-blur: blur(12px);
+  /* ========== TRANSITIONS ========== */
+  --av-transition-fast: 100ms ease;
+  --av-transition-normal: 150ms ease;
 }
 
-/* Dark mode - sophisticated dark theme */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --av-black: #FAFAFA;
-    --av-white: #18181B;
-    --av-surface: #27272A;
-    --av-surface-2: #3F3F46;
-    --av-surface-3: #52525B;
+    --av-surface: #18181B;
+    --av-surface-2: #27272A;
+    --av-surface-3: #3F3F46;
     --av-surface-elevated: #27272A;
-    
     --av-text: #FAFAFA;
     --av-text-secondary: #A1A1AA;
     --av-text-muted: #71717A;
     --av-text-disabled: #52525B;
-    
-    --av-border: rgba(255, 255, 255, 0.1);
-    --av-border-strong: rgba(255, 255, 255, 0.2);
-    
-    --av-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --av-elevation-2: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
-    --av-elevation-3: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
-    --av-elevation-4: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
-    
-    --av-glass-bg: rgba(39, 39, 42, 0.8);
+    --av-border: #3F3F46;
+    --av-border-strong: #52525B;
+    --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --av-shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+    --av-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
   }
 }
 
-/* ============================================
-   BASE STYLES
-   ============================================ */
-
-.av-body {
+/* Base styles */
+body {
   font-family: var(--av-font-sans);
   background-color: var(--av-surface);
   color: var(--av-text);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
 }
 
-.av-num,
-.num {
-  font-family: var(--av-font-numeric);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ============================================
-   CARDS
-   Premium card system with subtle shadows
-   ============================================ */
-
-.av-card {
-  background: var(--av-surface-elevated);
-  border-radius: var(--av-radius-lg);
-  padding: var(--av-space-5);
-  box-shadow: var(--av-elevation-1);
-  border: 1px solid var(--av-border);
-  transition: 
-    box-shadow var(--av-transition-normal),
-    border-color var(--av-transition-normal),
-    transform var(--av-transition-normal);
-}
-
-.av-card-interactive {
-  cursor: pointer;
-}
-
-.av-card-interactive:hover {
-  box-shadow: var(--av-elevation-2);
-  border-color: var(--av-border-strong);
-}
-
-.av-card-interactive:active {
-  transform: translateY(1px);
-}
-
-.av-card-hero {
-  position: relative;
-  background: var(--av-surface-elevated);
-  border-radius: var(--av-radius-xl);
-  padding: var(--av-space-6);
-  overflow: hidden;
-  box-shadow: var(--av-elevation-2);
-  border: 1px solid var(--av-border);
-}
-
-/* Avenize signature accent - teal bar */
-.av-card-hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--av-gradient);
-}
-
-.av-card-hero > * {
-  position: relative;
-  z-index: 1;
-}
-
-.av-card-flat {
-  background: var(--av-surface);
-  border-radius: var(--av-radius-lg);
-  padding: var(--av-space-5);
-  border: 1px solid var(--av-border);
-}
-
-/* ============================================
-   STATS / METRICS
-   ============================================ */
-
-.av-stat {
-  position: relative;
-  padding-left: var(--av-space-5);
-}
-
-.av-stat::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 60%;
-  border-radius: var(--av-radius-full);
-  background: var(--av-primary);
-}
-
-.av-stat-default::before { background: var(--av-text-secondary); }
-.av-stat-crm::before { background: var(--av-crm); }
-.av-stat-sales::before { background: var(--av-sales); }
-.av-stat-finance::before { background: var(--av-finance); }
-.av-stat-projects::before { background: var(--av-projects); }
-.av-stat-hr::before { background: var(--av-hr); }
-
-.av-stat-value {
-  font-size: 24px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  font-family: var(--av-font-numeric);
-  color: var(--av-text);
-}
-
-.av-stat-label {
-  font-size: 13px;
-  color: var(--av-text-secondary);
-  margin-top: 2px;
-}
-
-.av-stat-delta {
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.av-stat-delta-up { color: var(--av-success); }
-.av-stat-delta-down { color: var(--av-danger); }
-
-/* ============================================
-   BUTTONS
-   Premium button system
-   ============================================ */
-
-.av-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--av-space-2);
-  padding: 10px 16px;
-  font-family: var(--av-font-sans);
-  font-size: var(--av-text-sm);
-  font-weight: 500;
-  line-height: 1;
-  border: none;
-  border-radius: var(--av-radius-md);
-  cursor: pointer;
-  transition: 
-    background var(--av-transition-fast),
-    color var(--av-transition-fast),
-    box-shadow var(--av-transition-fast),
-    transform var(--av-transition-fast);
-  white-space: nowrap;
-}
-
-.av-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Primary button - Teal */
-.av-btn-primary {
-  background: var(--av-primary);
-  color: white;
-}
-
-.av-btn-primary:hover:not(:disabled) {
-  background: var(--av-primary-hover);
-}
-
-.av-btn-primary:active:not(:disabled) {
-  background: var(--av-primary-active);
-  transform: translateY(1px);
-}
-
-/* Secondary button - Outlined */
-.av-btn-secondary {
-  background: transparent;
-  color: var(--av-text);
-  border: 1px solid var(--av-border);
-}
-
-.av-btn-secondary:hover:not(:disabled) {
-  background: var(--av-surface-2);
-  border-color: var(--av-border-strong);
-}
-
-/* Ghost button - Text only */
-.av-btn-ghost {
-  background: transparent;
-  color: var(--av-text-secondary);
-}
-
-.av-btn-ghost:hover:not(:disabled) {
-  background: var(--av-surface-2);
-  color: var(--av-text);
-}
-
-/* Danger button */
-.av-btn-danger {
-  background: var(--av-danger);
-  color: white;
-}
-
-.av-btn-danger:hover:not(:disabled) {
-  background: #B91C1C;
-}
-
-/* Icon button */
-.av-btn-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  background: transparent;
-  color: var(--av-text-secondary);
-  border: none;
-  border-radius: var(--av-radius-md);
-  cursor: pointer;
-  transition: 
-    background var(--av-transition-fast),
-    color var(--av-transition-fast);
-}
-
-.av-btn-icon:hover {
-  background: var(--av-surface-2);
-  color: var(--av-text);
-}
-
-/* Sizes */
-.av-btn-lg {
-  padding: 12px 20px;
-  font-size: var(--av-text-base);
-}
-
-.av-btn-sm {
-  padding: 6px 12px;
-  font-size: var(--av-text-xs);
-}
-
-/* ============================================
-   FORM ELEMENTS
-   Premium input system
-   ============================================ */
-
-.av-input {
-  display: block;
-  width: 100%;
-  padding: 10px 12px;
-  font-family: var(--av-font-sans);
-  font-size: var(--av-text-sm);
-  color: var(--av-text);
-  background: var(--av-surface-elevated);
-  border: 1px solid var(--av-border);
-  border-radius: var(--av-radius-md);
-  transition: 
-    border-color var(--av-transition-fast),
-    box-shadow var(--av-transition-fast);
-}
-
-.av-input::placeholder {
-  color: var(--av-text-muted);
-}
-
-.av-input:focus {
-  outline: none;
-  border-color: var(--av-primary);
-  box-shadow: 0 0 0 3px var(--av-primary-soft);
-}
-
-.av-input:disabled {
-  background: var(--av-surface-2);
-  color: var(--av-text-disabled);
-  cursor: not-allowed;
-}
-
-/* Select */
-.av-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 40px;
-}
-
-/* ============================================
-   BADGES
-   Premium badge system
-   ============================================ */
-
-.av-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 1.4;
-  border-radius: var(--av-radius-full);
-}
-
-.av-badge-default {
-  background: var(--av-surface-2);
-  color: var(--av-text-secondary);
-}
-
-.av-badge-primary {
-  background: var(--av-primary-soft);
-  color: var(--av-primary);
-}
-
-.av-badge-success {
-  background: var(--av-success-bg);
-  color: var(--av-success);
-}
-
-.av-badge-warning {
-  background: var(--av-warning-bg);
-  color: var(--av-warning);
-}
-
-.av-badge-danger {
-  background: var(--av-danger-bg);
-  color: var(--av-danger);
-}
-
-/* ============================================
-   ANIMATIONS
-   Premium motion system
-   ============================================ */
-
-@keyframes av-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes av-slide-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes av-slide-down {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes av-scale-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes av-spin {
-  to { transform: rotate(360deg); }
-}
-
-.av-animate-fade-in {
-  animation: av-fade-in var(--av-duration-normal) var(--av-ease-out) forwards;
-}
-
-.av-animate-slide-up {
-  animation: av-slide-up var(--av-duration-normal) var(--av-ease-out) forwards;
-}
-
-.av-animate-scale-in {
-  animation: av-scale-in var(--av-duration-normal) var(--av-ease-spring) forwards;
-}
-
-.av-animate-spin {
-  animation: av-spin 1s linear infinite;
-}
-
-/* Stagger animations */
-.av-stagger > * {
-  opacity: 0;
-  animation: av-slide-up var(--av-duration-normal) var(--av-ease-out) forwards;
-}
-
-.av-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.av-stagger > *:nth-child(2) { animation-delay: 50ms; }
-.av-stagger > *:nth-child(3) { animation-delay: 100ms; }
-.av-stagger > *:nth-child(4) { animation-delay: 150ms; }
-.av-stagger > *:nth-child(5) { animation-delay: 200ms; }
-.av-stagger > *:nth-child(6) { animation-delay: 250ms; }
-.av-stagger > *:nth-child(7) { animation-delay: 300ms; }
-.av-stagger > *:nth-child(8) { animation-delay: 350ms; }
-
-/* ============================================
-   RESPONSIVE UTILITIES
-   ============================================ */
-
-@media (max-width: 860px) {
-  .av-bento { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 520px) {
-  .av-bento { grid-template-columns: 1fr; }
-}
-
-/* ============================================
-   REDUCED MOTION
-   ============================================ */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
-
-/* ============================================
-   UTILITY CLASSES
-   ============================================ */
-
-/* Focus visible */
-.av-focus:focus-visible {
-  outline: 2px solid var(--av-primary);
-  outline-offset: 2px;
-}
-
-.av-focus:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* Text utilities */
-.av-text-primary { color: var(--av-primary); }
+/* Utility classes */
+.av-surface { background-color: var(--av-surface); }
+.av-surface-2 { background-color: var(--av-surface-2); }
+.av-surface-elevated { background-color: var(--av-surface-elevated); }
+.av-text { color: var(--av-text); }
 .av-text-secondary { color: var(--av-text-secondary); }
 .av-text-muted { color: var(--av-text-muted); }
-.av-text-success { color: var(--av-success); }
-.av-text-warning { color: var(--av-warning); }
-.av-text-danger { color: var(--av-danger); }
-
-/* Background utilities */
-.av-bg-surface { background-color: var(--av-surface); }
-.av-bg-surface-2 { background-color: var(--av-surface-2); }
-.av-bg-primary { background-color: var(--av-primary); }
+.av-border { border-color: var(--av-border); }
+.av-primary { color: var(--av-primary); }
+.av-primary-bg { background-color: var(--av-primary); }
+.av-success { color: var(--av-success); }
+.av-warning { color: var(--av-warning); }
+.av-danger { color: var(--av-danger); }

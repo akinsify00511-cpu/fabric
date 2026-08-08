@@ -1,5 +1,5 @@
 // ============================================
-// AVENIZE DASHBOARD - Follows AVENIZE-DESIGN-SPECIFICATION.md
+// AVENIZE DASHBOARD v2 - Muted & Professional
 // ============================================
 
 import { useState, useEffect } from 'react'
@@ -12,11 +12,12 @@ import {
   ArrowRight, Calendar, Clock
 } from 'lucide-react'
 
-// AVENIZE BRAND COLORS
+// AVENIZE BRAND COLORS - Muted & Professional
 const BRAND = {
-  primary: '#0891B2',
-  primarySoft: 'rgba(8, 145, 178, 0.08)',
-  gradient: 'linear-gradient(135deg, #0891B2 0%, #0D9488 50%, #059669 100%)',
+  primary: '#475569',           // Slate-600
+  primaryHover: '#334155',       // Slate-700
+  primarySoft: 'rgba(71, 85, 105, 0.08)',
+  gradient: 'linear-gradient(135deg, #475569 0%, #475569 100%)',
   surface: '#FAFAF9',
   surface2: '#F5F5F4',
   surfaceElevated: '#FFFFFF',
@@ -24,26 +25,24 @@ const BRAND = {
   textSecondary: '#52525B',
   textMuted: '#A1A1AA',
   border: '#E7E5E4',
-  success: '#059669',
-  successSoft: 'rgba(5, 150, 105, 0.08)',
-  warning: '#D97706',
-  warningSoft: 'rgba(217, 119, 6, 0.08)',
-  danger: '#DC2626',
-  dangerSoft: 'rgba(220, 38, 38, 0.08)',
-  purple: '#7C3AED',
-  purpleSoft: 'rgba(124, 58, 237, 0.08)',
-  pink: '#DB2777',
-  pinkSoft: 'rgba(219, 39, 119, 0.08)',
-  amber: '#D97706',
-  amberSoft: 'rgba(217, 119, 6, 0.08)',
+  success: '#15803D',          // Green-700
+  successSoft: 'rgba(21, 128, 61, 0.08)',
+  warning: '#B45309',          // Amber-700
+  warningSoft: 'rgba(180, 83, 9, 0.08)',
+  danger: '#B91C1C',           // Red-700
+  dangerSoft: 'rgba(185, 28, 28, 0.08)',
+  info: '#0369A1',             // Sky-700
+  infoSoft: 'rgba(3, 105, 161, 0.08)',
+  accent: '#7C3AED',           // Violet-600
+  accentSoft: 'rgba(124, 58, 237, 0.08)',
 }
 
-// Module colors (consistent across app)
+// Module colors - Muted & Professional
 const MODULE_COLORS = {
-  crm: { color: BRAND.primary, bg: BRAND.primarySoft, icon: Users },
-  finance: { color: BRAND.success, bg: BRAND.successSoft, icon: DollarSign },
-  projects: { color: BRAND.amber, bg: BRAND.amberSoft, icon: Target },
-  people: { color: BRAND.purple, bg: BRAND.purpleSoft, icon: Building2 },
+  crm: { color: '#64748B', bg: 'rgba(100, 116, 139, 0.08)', icon: Users },
+  finance: { color: '#15803D', bg: 'rgba(21, 128, 61, 0.08)', icon: DollarSign },
+  projects: { color: '#B45309', bg: 'rgba(180, 83, 9, 0.08)', icon: Target },
+  people: { color: '#7C3AED', bg: 'rgba(124, 58, 237, 0.08)', icon: Building2 },
 }
 
 const formatCurrency = (amount: number) => {
@@ -79,16 +78,13 @@ const getMockData = () => ({
 function Card({ children, className = '', accent = false }: { children: React.ReactNode; className?: string; accent?: boolean }) {
   return (
     <div 
-      className={`rounded-xl border overflow-hidden ${className}`}
+      className={`rounded-lg border ${className}`}
       style={{ 
         backgroundColor: BRAND.surfaceElevated, 
         borderColor: BRAND.border,
         position: 'relative'
       }}
     >
-      {accent && (
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: BRAND.gradient }} />
-      )}
       {children}
     </div>
   )
@@ -112,7 +108,7 @@ function StatCard({
   const changeColor = changeType === 'positive' ? BRAND.success : changeType === 'negative' ? BRAND.danger : BRAND.textMuted
   
   return (
-    <Link to={href} className="block transition hover:scale-[1.02]">
+    <Link to={href} className="block transition hover:opacity-90">
       <Card className="p-4 h-full">
         <div className="flex items-center justify-between mb-3">
           <div 
@@ -204,7 +200,7 @@ export default function Dashboard() {
         <div className="animate-pulse space-y-4">
           <div className="h-8 rounded w-48" style={{ backgroundColor: BRAND.surface2 }}></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 rounded-xl" style={{ backgroundColor: BRAND.surfaceElevated }}></div>)}
+            {[1, 2, 3, 4].map(i => <div key={i} className="h-32 rounded-lg" style={{ backgroundColor: BRAND.surfaceElevated }}></div>)}
           </div>
         </div>
       </div>
@@ -213,17 +209,16 @@ export default function Dashboard() {
 
   return (
     <div className="pb-20">
-      {/* Bento Grid Layout */}
       <div className="grid grid-cols-12 gap-4">
         
         {/* Hero: Revenue KPI */}
-        <div className="col-span-12 md:col-span-7" style={{ position: 'relative' }}>
-          <Card accent className="p-6 flex flex-col justify-between min-h-[190px]">
+        <div className="col-span-12 md:col-span-7">
+          <Card className="p-6 flex flex-col justify-between min-h-[190px]">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div 
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ background: BRAND.gradient }}
+                  style={{ backgroundColor: BRAND.primary }}
                 >
                   <span className="text-white font-bold text-sm">A</span>
                 </div>
@@ -249,7 +244,7 @@ export default function Dashboard() {
                   style={{ 
                     height: `${height}%`,
                     width: '10px',
-                    background: i >= revenueData.length - 2 ? BRAND.gradient : BRAND.textMuted,
+                    backgroundColor: i >= revenueData.length - 2 ? BRAND.primary : BRAND.textMuted,
                     opacity: i >= revenueData.length - 2 ? 1 : 0.35
                   }}
                 />
@@ -275,14 +270,14 @@ export default function Dashboard() {
               <Link
                 key={key}
                 to={href}
-                className="block p-4 rounded-xl border transition hover:scale-[1.02] hover:shadow-sm"
+                className="block p-4 rounded-lg border transition hover:opacity-90"
                 style={{ 
                   backgroundColor: BRAND.surfaceElevated,
                   borderColor: BRAND.border
                 }}
               >
                 <div 
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-3"
+                  className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
                   style={{ backgroundColor: mod.bg }}
                 >
                   <Icon size={20} style={{ color: mod.color }} />
@@ -328,8 +323,8 @@ export default function Dashboard() {
             change={`${stats?.tasksChange || 0}`}
             changeType={stats?.tasksChange >= 0 ? 'positive' : 'negative'}
             icon={CheckSquare}
-            iconColor={BRAND.purple}
-            iconBg={BRAND.purpleSoft}
+            iconColor={BRAND.accent}
+            iconBg={BRAND.accentSoft}
           />
         </div>
 

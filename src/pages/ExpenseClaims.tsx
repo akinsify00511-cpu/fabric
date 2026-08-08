@@ -155,7 +155,7 @@ export default function ExpenseClaimsPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #0891B2)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
         >
           <Plus size={16} />
           New Expense
@@ -196,7 +196,7 @@ export default function ExpenseClaimsPage() {
           <button
             onClick={() => setTab('my')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              tab === 'my' ? 'bg-[var(--av-primary, #0891B2)] text-white' : 'bg-white border border-black/10'
+              tab === 'my' ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
             }`}
           >
             My Expenses ({claims.length})
@@ -204,7 +204,7 @@ export default function ExpenseClaimsPage() {
           <button
             onClick={() => setTab('approvals')}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              tab === 'approvals' ? 'bg-[var(--av-primary, #0891B2)] text-white' : 'bg-white border border-black/10'
+              tab === 'approvals' ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
             }`}
           >
             Approvals ({pendingApprovals.length})
@@ -223,7 +223,7 @@ export default function ExpenseClaimsPage() {
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize ${
                   filter === f 
-                    ? 'bg-[var(--av-primary, #0891B2)] text-white' 
+                    ? 'bg-[var(--av-primary, #475569)] text-white' 
                     : 'bg-white border border-black/10'
                 }`}
               >
@@ -495,7 +495,7 @@ function ExpenseModal({
             <button type="button" onClick={onClose} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">
               Cancel
             </button>
-            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #0891B2)] text-white font-medium disabled:opacity-50">
+            <button type="submit" disabled={submitting} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #475569)] text-white font-medium disabled:opacity-50">
               {submitting ? 'Submitting...' : 'Submit'}
             </button>
           </div>
