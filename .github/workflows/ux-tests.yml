@@ -27,7 +27,7 @@ jobs:
       - run: npm ci
       
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium webkit
       
       - name: Run accessibility tests
         run: npx playwright test tests/ux/accessibility.spec.ts
