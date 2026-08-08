@@ -148,6 +148,7 @@ export default function Login() {
               border: 'none',
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
+              minHeight: '44px',
               boxShadow: '0 1px 2px rgba(0,0,0,.1)',
             }}
           >
@@ -176,6 +177,7 @@ export default function Login() {
               border: 'none',
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
+              minHeight: '44px',
               boxShadow: '0 1px 2px rgba(0,0,0,.1)',
             }}
           >
@@ -214,11 +216,12 @@ export default function Login() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
+            className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none"
             style={{ 
               border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
+              minHeight: '44px',
             }}
           />
           <input
@@ -227,11 +230,12 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
+            className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none"
             style={{ 
               border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
+              minHeight: '44px',
             }}
           />
         </form>
