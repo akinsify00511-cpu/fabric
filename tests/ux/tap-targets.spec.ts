@@ -117,7 +117,8 @@ test.describe('Tap Target Sizes (Mobile)', () => {
     await page.waitForLoadState('networkidle')
     
     // Find icon buttons (buttons with only icons, no text)
-    const iconButtons = page.locator('button:has(svg):not(:has-text())')
+    // Using :has(svg) and filtering by textContent for WebKit compatibility
+    const iconButtons = page.locator('button:has(svg)').filter({ hasText: /^$/ })
     const buttonCount = await iconButtons.count()
     
     let violations: string[] = []
