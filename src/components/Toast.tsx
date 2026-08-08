@@ -7,6 +7,7 @@ interface Toast {
   id: string
   type: ToastType
   message: string
+  duration?: number
 }
 
 interface ToastContextType {
@@ -71,27 +72,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast, showToast, success, error, info }}>
       {children}
-      <div className="fixed bottom-20 md:bottom-4 right-4 z-50 flex flex-col gap-2">
+      <div className="fixed bottom-20 md:bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
         {toasts.map((t) => (
-          <div
-            key={t.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg animate-slide-in ${
-              t.type === 'success' ? 'bg-green-500 text-white' :
-              t.type === 'error' ? 'bg-red-500 text-white' :
-              'bg-[#4285F4] text-white'
-            }`}
-          >
-            {t.type === 'success' && <CheckCircle size={20} />}
-            {t.type === 'error' && <XCircle size={20} />}
-            {t.type === 'info' && <AlertCircle size={20} />}
-            <span className="text-sm font-medium">{t.message}</span>
-            <button
-              onClick={() => removeToast(t.id)}
-              className="ml-2 hover:opacity-70"
-            >
-              <X size={16} />
-            </button>
-          </div>
+          <ToastItem key={t.id} toast={t} onDismiss={() => removeToast(t.id)} />
         ))}
       </div>
       <style>{`
@@ -99,8 +82,72 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           from { transform: translateX(100%); opacity: 0; }
           to { transform: translateX(0); opacity: 1; }
         }
-        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        @keyframes slide-out {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes progress-shrink {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+        .animate-slide-in { animation: slide-in 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .animate-slide-out { animation: slide-out 0.2s ease-in forwards; }
+        .toast-progress { animation: progress-shrink linear forwards; }
       `}</style>
     </ToastContext.Provider>
+  )
+}
+
+function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
+  const duration = toast.duration || 4000
+  const [isExiting, setIsExiting] = useState(false)
+
+  const handleDismiss = () => {
+    setIsExiting(true)
+    setTimeout(onDismiss, 200)
+  }
+
+  const typeStyles = {
+    success: {
+      bg: '#34A853',
+      icon: <CheckCircle size={20} />,
+    },
+    error: {
+      bg: '#EA4335',
+      icon: <XCircle size={20} />,
+    },
+    info: {
+      bg: '#4285F4',
+      icon: <AlertCircle size={20} />,
+    },
+  }
+
+  const { bg, icon } = typeStyles[toast.type]
+
+  return (
+    <div
+      className={`relative overflow-hidden rounded-xl shadow-lg ${
+        isExiting ? 'animate-slide-out' : 'animate-slide-in'
+      }`}
+      style={{ backgroundColor: bg, color: 'white' }}
+      role="alert"
+      aria-live="polite"
+    >
+      <div className="flex items-center gap-3 px-4 py-3">
+        {icon}
+        <span className="text-sm font-medium flex-1">{toast.message}</span>
+        <button
+          onClick={handleDismiss}
+          className="p-1 rounded hover:bg-white/20 transition-colors"
+          aria-label="Dismiss notification"
+        >
+          <X size={16} />
+        </button>
+      </div>
+      <div
+        className="absolute bottom-0 left-0 h-1 bg-white/30 toast-progress"
+        style={{ animationDuration: `${duration}ms` }}
+      />
+    </div>
   )
 }

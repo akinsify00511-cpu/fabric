@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { Avatar } from '../components/ImageComponents'
 import {
   Users, Calendar, Clock, Award, FileText, Briefcase,
   Plus, ChevronRight, Loader2, Check, X, AlertCircle,
@@ -108,50 +109,63 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin" style={{ color: 'var(--av-text)' }} /></div>
 
   const cards = [
-    { label: 'Total Staff', value: stats.totalStaff, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: 'Pending Leave', value: stats.pendingLeave, icon: Calendar, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    { label: 'Open Positions', value: stats.openPositions, icon: Briefcase, color: 'text-green-500', bg: 'bg-green-500/10' },
-    { label: 'Active Contracts', value: stats.activeContracts, icon: FileText, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+    { label: 'Total Staff', value: stats.totalStaff, icon: Users, color: '#4285F4', bg: 'rgba(66, 133, 244, 0.08)' },
+    { label: 'Pending Leave', value: stats.pendingLeave, icon: Calendar, color: '#FBBC05', bg: 'rgba(251, 188, 5, 0.08)' },
+    { label: 'Open Positions', value: stats.openPositions, icon: Briefcase, color: '#34A853', bg: 'rgba(52, 168, 83, 0.08)' },
+    { label: 'Active Contracts', value: stats.activeContracts, icon: FileText, color: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.08)' },
   ]
 
   return (
     <div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <div className={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center mb-3`}>
-              <card.icon size={20} className={card.color} />
+          <div 
+            key={card.label} 
+            className="rounded-2xl p-5 transition-all hover:-translate-y-0.5"
+            style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+          >
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: card.bg }}>
+              <card.icon size={24} style={{ color: card.color }} />
             </div>
-            <div className="text-2xl font-semibold">{card.value}</div>
-            <div className="text-sm text-black">{card.label}</div>
+            <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{card.value}</div>
+            <div className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>{card.label}</div>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <h3 className="font-medium mb-3">Quick Actions</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Quick Actions */}
+        <div className="rounded-2xl p-6" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <h3 className="font-semibold mb-4" style={{ color: 'var(--av-text)' }}>Quick Actions</h3>
           <div className="space-y-2">
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
-              <Calendar size={20} className="text-amber-500" />
-              <span>Request Leave</span>
+            <button className="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-[var(--av-surface)] text-left transition-colors">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(251, 188, 5, 0.15)' }}>
+                <Calendar size={20} style={{ color: '#FBBC05' }} />
+              </div>
+              <span style={{ color: 'var(--av-text)' }}>Request Leave</span>
             </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
-              <Clock size={20} className="text-blue-500" />
-              <span>Check In Today</span>
+            <button className="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-[var(--av-surface)] text-left transition-colors">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(66, 133, 244, 0.15)' }}>
+                <Clock size={20} style={{ color: '#4285F4' }} />
+              </div>
+              <span style={{ color: 'var(--av-text)' }}>Check In Today</span>
             </button>
-            <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-black/10 text-left">
-              <Award size={20} className="text-purple-500" />
-              <span>View My Reviews</span>
+            <button className="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-[var(--av-surface)] text-left transition-colors">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(139, 92, 246, 0.15)' }}>
+                <Award size={20} style={{ color: '#8B5CF6' }} />
+              </div>
+              <span style={{ color: 'var(--av-text)' }}>View My Reviews</span>
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-          <h3 className="font-medium mb-3">Upcoming</h3>
+        {/* Upcoming Events */}
+        <div className="rounded-2xl p-6" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <h3 className="font-semibold mb-4" style={{ color: 'var(--av-text)' }}>Upcoming</h3>
           <div className="space-y-3">
             <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
               <Calendar size={20} className="text-amber-500" />

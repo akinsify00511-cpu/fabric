@@ -1,54 +1,118 @@
 // ============================================
 // MEETINGS PAGE - AVENIZE
-// AI-powered meeting notes with transcription & summaries
+// Comprehensive Meeting Management System
+// Features: Schedule, Invite, Remind, Record, Attend, Summarize
 // ============================================
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import { Avatar } from '../components/ImageComponents'
 import {
-  Mic, MicOff, Search, Filter, Plus, Clock, Calendar,
-  CheckCircle2, AlertCircle, Loader2, Play, Pause,
-  FileText, Trash2, Download, Eye, MoreVertical,
-  MessageSquare, Users, ChevronRight, Sparkles,
-  Trash, Edit3, Wand2, X, Video
+  AttendeeSelector,
+  AgendaBuilder,
+  AttendanceTaker,
+  MeetingRecorder,
+  MeetingDetailHeader
+} from '../components/MeetingComponents'
+import {
+  Search, Plus, Clock, Calendar, Video, 
+  Users, Trash2, X, ChevronRight, 
+  Edit3, Send, Bell, CheckCircle2, AlertCircle, 
+  Play, Pause, MapPin, Link as LinkIcon, 
+  Loader2, Copy, Check, ExternalLink,
+  Mic, MicOff, Phone, FileText, Sparkles
 } from 'lucide-react'
+
+// AVENIZE BRAND COLORS
+const BRAND = {
+  primary: 'var(--av-primary)',
+  success: '#34A853',
+  warning: '#FBBC05',
+  danger: '#EA4335',
+  surface: '#F8F9FA',
+  surface2: '#F1F3F4',
+  text: '#202124',
+  textSecondary: '#5F6368',
+  textMuted: '#9AA0A6',
+  border: '#E8EAED',
+}
 
 interface Meeting {
   id: string
   title: string
+  description?: string
   date: string
-  duration: number
-  status: 'recorded' | 'transcribed' | 'summarized' | 'processing'
-  transcript?: string
-  summary?: string
-  participants: string[]
-  audio_url?: string
+  start_time: string
+  end_time?: string
+  location?: string
+  meeting_link?: string
+  attendees: MeetingAttendee[]
+  agenda?: string
+  notes?: string
+  recording_url?: string
+  status: 'scheduled' | 'in_progress' | 'completed' | 'cancelled'
   staff_id: string
+  business_id: string
+  created_at: string
 }
+
+interface MeetingAttendee {
+  id: string
+  name: string
+  email: string
+  status: 'pending' | 'accepted' | 'declined' | 'tentative'
+  checked_in?: boolean
+  check_in_time?: string
+}
+
+interface AgendaItem {
+  id: string
+  title: string
+  duration_minutes: number
+  completed: boolean
+  notes?: string
+}
+
+type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 export default function Meetings() {
   const { staff } = useAuth()
   const { showToast } = useToast()
+  
+  // Core state
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [loading, setLoading] = useState(true)
-  const [showRecorder, setShowRecorder] = useState(false)
-  const [isRecording, setIsRecording] = useState(false)
-  const [recordingTime, setRecordingTime] = useState(0)
-  const [meetingTitle, setMeetingTitle] = useState('')
+  const [view, setView] = useState<ViewMode>('list')
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [summarizing, setSummarizing] = useState<string | null>(null)
-  const [editingTitle, setEditingTitle] = useState<string | null>(null)
-  const [newTitle, setNewTitle] = useState('')
+  const [filterStatus, setFilterStatus] = useState<string>('all')
   
-  // Audio recording
+  // Form state
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    date: new Date().toISOString().split('T')[0],
+    start_time: '09:00',
+    end_time: '10:00',
+    location: '',
+    meeting_link: '',
+    notes: '',
+  })
+  const [invitees, setInvitees] = useState<MeetingAttendee[]>([])
+  const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([])
+  const [allStaff, setAllStaff] = useState<any[]>([])
+  
+  // Recording state
+  const [isRecording, setIsRecording] = useState(false)
+  const [recordingTime, setRecordingTime] = useState(0)
+  const [isVideoOn, setIsVideoOn] = useState(false)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const chunksRef = useRef<Blob[]>([])
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Load meetings from Supabase
+  // Load meetings
   const loadMeetings = useCallback(async () => {
     if (!staff?.business_id) return
     
@@ -57,23 +121,47 @@ export default function Meetings() {
       const { data, error } = await supabase
         .from('meetings')
         .select('*')
-        .eq('staff_id', staff.id)
+        .eq('business_id', staff.business_id)
         .order('date', { ascending: false })
-        .limit(50)
+        .order('start_time', { ascending: false })
+        .limit(100)
       
       if (error) throw error
-      setMeetings((data as Meeting[]) ?? [])
+      
+      const transformedMeetings = (data || []).map((m: any) => ({
+        ...m,
+        attendees: typeof m.attendees === 'string' ? JSON.parse(m.attendees) : (m.attendees || [])
+      }))
+      
+      setMeetings(transformedMeetings)
     } catch (err) {
       console.error('Failed to load meetings:', err)
       showToast('Failed to load meetings', 'error')
     } finally {
       setLoading(false)
     }
-  }, [staff?.business_id, staff?.id, showToast])
+  }, [staff?.business_id, showToast])
+
+  // Load staff for invitees
+  const loadStaff = useCallback(async () => {
+    if (!staff?.business_id) return
+    
+    try {
+      const { data } = await supabase
+        .from('staff')
+        .select('id, full_name, email')
+        .eq('business_id', staff.business_id)
+      
+      setAllStaff(data || [])
+    } catch (err) {
+      console.error('Failed to load staff:', err)
+    }
+  }, [staff?.business_id])
 
   useEffect(() => {
     loadMeetings()
-  }, [loadMeetings])
+    loadStaff()
+  }, [loadMeetings, loadStaff])
 
   // Recording timer
   useEffect(() => {
@@ -82,16 +170,15 @@ export default function Meetings() {
         setRecordingTime(t => t + 1)
       }, 1000)
     } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
+      if (timerRef.current) clearInterval(timerRef.current)
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
   }, [isRecording])
 
-  const formatDuration = (seconds: number) => {
+  // Format helpers
+  const formatTime = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600)
     const mins = Math.floor((seconds % 3600) / 60)
     const secs = seconds % 60
@@ -99,100 +186,156 @@ export default function Meetings() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      chunksRef.current = []
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          chunksRef.current.push(e.data)
-        }
-      }
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' })
-        await saveRecording(audioBlob)
-        stream.getTracks().forEach(track => track.stop())
-      }
-
-      mediaRecorder.start()
-      setIsRecording(true)
-      setRecordingTime(0)
-    } catch (err) {
-      console.error('Failed to start recording:', err)
-      showToast('Microphone access denied', 'error')
-    }
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-NG', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
+    })
   }
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
-    }
+  const formatTime12h = (time24: string) => {
+    if (!time24) return ''
+    const [hours, minutes] = time24.split(':')
+    const h = parseInt(hours)
+    const ampm = h >= 12 ? 'PM' : 'AM'
+    const h12 = h % 12 || 12
+    return `${h12}:${minutes} ${ampm}`
   }
 
-  const saveRecording = async (audioBlob: Blob) => {
-    if (!staff?.business_id || !staff?.id) return
+  // Create Meeting
+  const createMeeting = async () => {
+    if (!formData.title.trim() || !staff?.business_id || !staff?.id) {
+      showToast('Please enter meeting title', 'error')
+      return
+    }
 
-    const title = meetingTitle || `Meeting ${new Date().toLocaleDateString()}`
-    
     try {
-      // Upload audio file
-      const fileName = `${staff.id}/${Date.now()}.webm`
-      const { error: uploadError } = await supabase.storage
-        .from('meeting-audio')
-        .upload(fileName, audioBlob)
+      const meetingData = {
+        title: formData.title.trim(),
+        description: formData.description || null,
+        date: formData.date,
+        start_time: formData.start_time,
+        end_time: formData.end_time || null,
+        location: formData.location || null,
+        meeting_link: formData.meeting_link || null,
+        agenda: agendaItems.length > 0 ? JSON.stringify(agendaItems) : null,
+        notes: formData.notes || null,
+        attendees: invitees,
+        status: 'scheduled' as const,
+        staff_id: staff.id,
+        business_id: staff.business_id,
+      }
 
-      if (uploadError) throw uploadError
-
-      const { data: urlData } = supabase.storage
-        .from('meeting-audio')
-        .getPublicUrl(fileName)
-
-      // Create meeting record
-      const { data: newMeeting, error: insertError } = await supabase
+      const { data, error } = await supabase
         .from('meetings')
-        .insert({
-          title,
-          date: new Date().toISOString(),
-          duration: recordingTime,
-          status: 'recorded',
-          staff_id: staff.id,
-          audio_url: urlData.publicUrl,
-          participants: []
-        })
+        .insert(meetingData)
         .select()
         .single()
 
-      if (insertError) throw insertError
+      if (error) throw error
 
-      setMeetings(prev => [newMeeting as Meeting, ...prev])
-      showToast('Recording saved!', 'success')
-      setShowRecorder(false)
-      setMeetingTitle('')
-      setRecordingTime(0)
+      const newMeeting = { ...data, attendees: invitees }
+      setMeetings(prev => [newMeeting, ...prev])
+      showToast('Meeting scheduled!', 'success')
+      resetForm()
+      setView('list')
+      
+      if (invitees.length > 0) {
+        sendInvites(newMeeting)
+      }
     } catch (err) {
-      console.error('Failed to save recording:', err)
-      showToast('Failed to save recording', 'error')
+      console.error('Failed to create meeting:', err)
+      showToast('Failed to create meeting', 'error')
     }
   }
 
-  const deleteMeeting = async (id: string) => {
-    if (!confirm('Delete this meeting?')) return
-    
+  // Update Meeting
+  const updateMeeting = async () => {
+    if (!selectedMeeting || !formData.title.trim()) return
+
     try {
       const { error } = await supabase
         .from('meetings')
-        .delete()
-        .eq('id', id)
+        .update({
+          title: formData.title.trim(),
+          description: formData.description || null,
+          date: formData.date,
+          start_time: formData.start_time,
+          end_time: formData.end_time || null,
+          location: formData.location || null,
+          meeting_link: formData.meeting_link || null,
+          agenda: agendaItems.length > 0 ? JSON.stringify(agendaItems) : null,
+          notes: formData.notes || null,
+          attendees: invitees,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', selectedMeeting.id)
 
+      if (error) throw error
+
+      setMeetings(prev => prev.map(m => 
+        m.id === selectedMeeting.id ? { ...m, ...formData, attendees: invitees } : m
+      ))
+      
+      showToast('Meeting updated!', 'success')
+      setView('detail')
+    } catch (err) {
+      console.error('Failed to update meeting:', err)
+      showToast('Failed to update meeting', 'error')
+    }
+  }
+
+  // Send Invites
+  const sendInvites = async (meeting: Meeting) => {
+    try {
+      for (const attendee of meeting.attendees) {
+        await supabase.from('notifications').insert({
+          business_id: staff?.business_id,
+          staff_id: attendee.id,
+          title: 'Meeting Invitation',
+          message: `You've been invited to: ${meeting.title} on ${formatDate(meeting.date)} at ${formatTime12h(meeting.start_time)}`,
+          type: 'meeting',
+          related_id: meeting.id,
+        })
+      }
+      showToast(`Invitations sent to ${meeting.attendees.length} attendees`, 'success')
+    } catch (err) {
+      console.error('Failed to send invites:', err)
+    }
+  }
+
+  // Send Reminder
+  const sendReminder = async (meeting: Meeting) => {
+    try {
+      for (const attendee of meeting.attendees) {
+        await supabase.from('notifications').insert({
+          business_id: staff?.business_id,
+          staff_id: attendee.id,
+          title: 'Meeting Reminder',
+          message: `Reminder: ${meeting.title} starts at ${formatTime12h(meeting.start_time)}`,
+          type: 'reminder',
+          related_id: meeting.id,
+        })
+      }
+      showToast(`Reminders sent to ${meeting.attendees.length} attendees`, 'success')
+    } catch (err) {
+      console.error('Failed to send reminders:', err)
+      showToast('Failed to send reminders', 'error')
+    }
+  }
+
+  // Delete Meeting
+  const deleteMeeting = async (id: string) => {
+    if (!confirm('Delete this meeting? This cannot be undone.')) return
+    
+    try {
+      const { error } = await supabase.from('meetings').delete().eq('id', id)
       if (error) throw error
       
       setMeetings(prev => prev.filter(m => m.id !== id))
-      if (selectedMeeting?.id === id) setSelectedMeeting(null)
+      setSelectedMeeting(null)
+      setView('list')
       showToast('Meeting deleted', 'success')
     } catch (err) {
       console.error('Failed to delete meeting:', err)
@@ -200,395 +343,739 @@ export default function Meetings() {
     }
   }
 
-  const updateMeetingTitle = async (id: string) => {
-    if (!newTitle.trim()) return
+  // Check In Attendee
+  const checkInAttendee = async (meetingId: string, attendeeId: string) => {
+    const now = new Date().toISOString()
     
-    try {
-      const { error } = await supabase
-        .from('meetings')
-        .update({ title: newTitle.trim() })
-        .eq('id', id)
+    setMeetings(prev => prev.map(m => {
+      if (m.id === meetingId) {
+        return {
+          ...m,
+          attendees: m.attendees.map(a => 
+            a.id === attendeeId 
+              ? { ...a, checked_in: true, check_in_time: now }
+              : a
+          )
+        }
+      }
+      return m
+    }))
 
-      if (error) throw error
+    if (selectedMeeting?.id === meetingId) {
+      setSelectedMeeting(prev => prev ? {
+        ...prev,
+        attendees: prev.attendees.map(a => 
+          a.id === attendeeId 
+            ? { ...a, checked_in: true, check_in_time: now }
+            : a
+        )
+      } : null)
+    }
+  }
+
+  // Recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: true,
+        video: isVideoOn 
+      })
+      
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      chunksRef.current = []
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data)
+      }
+
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(chunksRef.current, { type: 'video/webm' })
+        await saveRecording(blob)
+        stream.getTracks().forEach(track => track.stop())
+      }
+
+      mediaRecorder.start()
+      setIsRecording(true)
+      setRecordingTime(0)
+      showToast('Recording started!', 'success')
+    } catch (err) {
+      console.error('Failed to start recording:', err)
+      showToast('Camera/microphone access denied', 'error')
+    }
+  }
+
+  const stopRecording = async () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
+    }
+  }
+
+  const saveRecording = async (blob: Blob) => {
+    if (!selectedMeeting || !staff?.id) {
+      showToast('No meeting selected', 'error')
+      return
+    }
+
+    try {
+      const fileName = `meetings/${selectedMeeting.id}/${Date.now()}.webm`
+      const { error: uploadError } = await supabase.storage
+        .from('meeting-recordings')
+        .upload(fileName, blob)
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage
+        .from('meeting-recordings')
+        .getPublicUrl(fileName)
+
+      await supabase
+        .from('meetings')
+        .update({ recording_url: urlData.publicUrl })
+        .eq('id', selectedMeeting.id)
 
       setMeetings(prev => prev.map(m => 
-        m.id === id ? { ...m, title: newTitle.trim() } : m
+        m.id === selectedMeeting.id ? { ...m, recording_url: urlData.publicUrl } : m
       ))
-      if (selectedMeeting?.id === id) {
-        setSelectedMeeting(prev => prev ? { ...prev, title: newTitle.trim() } : null)
-      }
-      setEditingTitle(null)
-      showToast('Title updated', 'success')
+      setSelectedMeeting(prev => prev ? { ...prev, recording_url: urlData.publicUrl } : null)
+      
+      showToast('Recording saved!', 'success')
     } catch (err) {
-      console.error('Failed to update title:', err)
-      showToast('Failed to update title', 'error')
+      console.error('Failed to save recording:', err)
+      showToast('Failed to save recording', 'error')
     }
   }
 
-  const transcribeMeeting = async (meeting: Meeting) => {
-    setSummarizing(meeting.id)
-    
-    // Show coming soon message - AI transcription requires OpenAI Whisper API integration
-    showToast('AI Transcription & Summaries coming soon! We\'ll notify you when this feature is ready.', 'info')
-    
-    setSummarizing(null)
+  // Reset Form
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0],
+      start_time: '09:00',
+      end_time: '10:00',
+      location: '',
+      meeting_link: '',
+      notes: '',
+    })
+    setInvitees([])
+    setAgendaItems([])
   }
+
+  // Open Edit Modal
+  const openEditModal = () => {
+    if (!selectedMeeting) return
+    setFormData({
+      title: selectedMeeting.title,
+      description: selectedMeeting.description || '',
+      date: selectedMeeting.date,
+      start_time: selectedMeeting.start_time,
+      end_time: selectedMeeting.end_time || '',
+      location: selectedMeeting.location || '',
+      meeting_link: selectedMeeting.meeting_link || '',
+      notes: selectedMeeting.notes || '',
+    })
+    setInvitees(selectedMeeting.attendees || [])
+    setAgendaItems(selectedMeeting.agenda ? JSON.parse(selectedMeeting.agenda) : [])
+    setView('edit')
+  }
+
+  // Copy Meeting Link
+  const copyMeetingLink = (link: string) => {
+    navigator.clipboard.writeText(link)
+    showToast('Link copied!', 'success')
+  }
+
+  // Get meetings by date
+  const todayStr = new Date().toISOString().split('T')[0]
+  const filteredMeetings = meetings.filter(m => {
+    const matchesSearch = m.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesFilter = filterStatus === 'all' || m.status === filterStatus
+    return matchesSearch && matchesFilter
+  })
+
+  const todayMeetings = filteredMeetings.filter(m => m.date === todayStr)
+  const upcomingMeetings = filteredMeetings.filter(m => m.date > todayStr)
+  const pastMeetings = filteredMeetings.filter(m => m.date < todayStr)
 
   const getStatusBadge = (status: Meeting['status']) => {
-    switch (status) {
-      case 'summarized':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-            <Sparkles size={10} />
-            Summarized
-          </span>
-        )
-      case 'transcribed':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-            <FileText size={10} />
-            Transcribed
-          </span>
-        )
-      case 'processing':
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-            <Loader2 size={10} className="animate-spin" />
-            Processing...
-          </span>
-        )
-      default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-white text-black">
-            <Mic size={10} />
-            Recorded
-          </span>
-        )
+    const styles: Record<string, {bg: string, color: string, icon: any}> = {
+      scheduled: { bg: 'rgba(66, 133, 244, 0.1)', color: '#4285F4', icon: Clock },
+      in_progress: { bg: 'rgba(52, 168, 83, 0.1)', color: '#34A853', icon: Play },
+      completed: { bg: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6', icon: CheckCircle2 },
+      cancelled: { bg: 'rgba(234, 67, 53, 0.1)', color: '#EA4335', icon: AlertCircle },
     }
+    const style = styles[status] || styles.scheduled
+    const Icon = style.icon
+    
+    return (
+      <span 
+        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+        style={{ backgroundColor: style.bg, color: style.color }}
+      >
+        <Icon size={12} />
+        {status.replace('_', ' ')}
+      </span>
+    )
   }
 
-  const filteredMeetings = meetings.filter(m => 
-    m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.transcript?.toLowerCase().includes(searchQuery.toLowerCase())
+  // Render Meeting Card
+  const renderMeetingCard = (meeting: Meeting) => (
+    <div 
+      key={meeting.id}
+      className="p-5 rounded-2xl transition-all hover:-translate-y-0.5 cursor-pointer"
+      style={{ 
+        backgroundColor: 'white',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)'
+      }}
+      onClick={() => {
+        setSelectedMeeting(meeting)
+        setView('detail')
+      }}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-2">
+            {getStatusBadge(meeting.status)}
+            <span className="text-xs" style={{ color: BRAND.textMuted }}>
+              {formatDate(meeting.date)}
+            </span>
+          </div>
+          <h3 className="font-semibold truncate mb-1" style={{ color: BRAND.text }}>
+            {meeting.title}
+          </h3>
+          <div className="flex items-center gap-3 text-sm" style={{ color: BRAND.textSecondary }}>
+            <span className="flex items-center gap-1">
+              <Clock size={14} />
+              {formatTime12h(meeting.start_time)}
+              {meeting.end_time && ` - ${formatTime12h(meeting.end_time)}`}
+            </span>
+            {meeting.location && (
+              <span className="flex items-center gap-1">
+                <MapPin size={14} />
+                {meeting.location}
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {meeting.attendees?.length > 0 && (
+            <div className="flex -space-x-2">
+              {meeting.attendees.slice(0, 3).map((a, i) => (
+                <Avatar key={a.id || i} name={a.name} size={28} style="adventurer" />
+              ))}
+              {meeting.attendees.length > 3 && (
+                <div 
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium"
+                  style={{ backgroundColor: '#4285F4', color: 'white' }}
+                >
+                  +{meeting.attendees.length - 3}
+                </div>
+              )}
+            </div>
+          )}
+          {meeting.recording_url && (
+            <div className="p-1.5 rounded-full" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)' }}>
+              <Video size={14} style={{ color: '#8B5CF6' }} />
+            </div>
+          )}
+          <ChevronRight size={20} style={{ color: BRAND.textMuted }} />
+        </div>
+      </div>
+    </div>
   )
 
-  return (
+  // Render Create/Edit Form
+  const renderForm = () => (
     <div className="pb-20">
-      {/* Coming Soon Banner */}
-      <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-purple-100 rounded-lg">
-            <Video size={20} className="text-purple-600" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-purple-900">AI Transcription: Coming Soon</h3>
-            <p className="text-sm text-purple-700 mt-1">
-              Voice recording is available now. AI transcription and smart summaries using OpenAI Whisper 
-              will be available soon. You'll be able to record meetings and automatically get accurate 
-              transcripts and action items.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-medium text-black">Meetings</h1>
-          <p className="text-sm text-black mt-0.5">
-            Voice memo recording • AI transcription & summaries coming soon
-          </p>
-        </div>
+      <div className="flex items-center gap-4 mb-6">
         <button
-          onClick={() => setShowRecorder(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium"
+          onClick={() => setView('list')}
+          className="p-2 rounded-xl"
+          style={{ backgroundColor: BRAND.surface }}
         >
-          <Mic size={16} />
-          New Recording
+          <X size={20} />
         </button>
+        <h1 className="text-xl font-semibold" style={{ color: BRAND.text }}>
+          {selectedMeeting ? 'Edit Meeting' : 'Schedule New Meeting'}
+        </h1>
       </div>
 
-      {/* AI Features Coming Soon Banner */}
-      <div className="mb-6 p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-            <Sparkles size={16} className="text-amber-600" />
+      <div className="space-y-6">
+        {/* Title */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+            Meeting Title *
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={e => setFormData({...formData, title: e.target.value})}
+            placeholder="Weekly Team Standup"
+            className="w-full px-4 py-3 rounded-xl text-sm"
+            style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+          />
+        </div>
+
+        {/* Date & Time */}
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+              Date *
+            </label>
+            <input
+              type="date"
+              value={formData.date}
+              onChange={e => setFormData({...formData, date: e.target.value})}
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+            />
           </div>
           <div>
-            <h3 className="font-medium text-amber-800 text-sm">AI Transcription & Summaries</h3>
-            <p className="text-xs text-amber-700 mt-0.5">
-              This feature uses OpenAI Whisper for transcription and GPT for meeting summaries. 
-              It's being finalized — stay tuned!
-            </p>
+            <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+              Start Time *
+            </label>
+            <input
+              type="time"
+              value={formData.start_time}
+              onChange={e => setFormData({...formData, start_time: e.target.value})}
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+              End Time
+            </label>
+            <input
+              type="time"
+              value={formData.end_time}
+              onChange={e => setFormData({...formData, end_time: e.target.value})}
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+            />
           </div>
         </div>
-      </div>
 
-      {/* Recording Modal */}
-      {showRecorder && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-semibold text-lg">New Recording</h2>
-              <button
-                onClick={() => {
-                  setShowRecorder(false)
-                  setIsRecording(false)
-                  setRecordingTime(0)
-                  setMeetingTitle('')
-                }}
-                className="p-2 hover:bg-black/[0.05] rounded-lg"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Meeting Title</label>
-              <input
-                type="text"
-                value={meetingTitle}
-                onChange={(e) => setMeetingTitle(e.target.value)}
-                placeholder="e.g., Q4 Planning Session"
-                className="w-full px-4 py-2.5 rounded-xl border border-black/10 text-sm"
-              />
-            </div>
-
-            <div className="flex flex-col items-center py-8">
-              <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-6 transition-all ${
-                isRecording
-                  ? 'bg-red-100 animate-pulse shadow-lg shadow-red-200'
-                  : 'bg-[var(--av-primary, #4285F4)]/10'
-              }`}>
-                {isRecording ? (
-                  <MicOff size={40} className="text-red-500" />
-                ) : (
-                  <Mic size={40} className="text-[var(--av-primary, #4285F4)]" />
-                )}
-              </div>
-
-              <p className="text-3xl font-mono font-bold mb-2 text-black">
-                {formatDuration(recordingTime)}
-              </p>
-
-              <p className="text-sm text-black mb-6">
-                {isRecording
-                  ? 'Recording in progress...'
-                  : 'Click to start recording'}
-              </p>
-
-              <button
-                onClick={isRecording ? stopRecording : startRecording}
-                className={`px-8 py-3 rounded-full font-medium text-white transition-all ${
-                  isRecording
-                    ? 'bg-red-500 hover:bg-red-600'
-                    : 'avenize-gradient hover:opacity-90'
-                }`}
-              >
-                {isRecording ? 'Stop Recording' : 'Start Recording'}
-              </button>
-            </div>
+        {/* Location & Link */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+              Location
+            </label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={e => setFormData({...formData, location: e.target.value})}
+              placeholder="Conference Room A"
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+              Meeting Link
+            </label>
+            <input
+              type="url"
+              value={formData.meeting_link}
+              onChange={e => setFormData({...formData, meeting_link: e.target.value})}
+              placeholder="https://zoom.us/j/..."
+              className="w-full px-4 py-3 rounded-xl text-sm"
+              style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+            />
           </div>
         </div>
-      )}
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search meetings..."
-          className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-black/10 text-sm bg-white"
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+            Description
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={e => setFormData({...formData, description: e.target.value})}
+            placeholder="Meeting agenda or topics to discuss..."
+            rows={3}
+            className="w-full px-4 py-3 rounded-xl text-sm resize-none"
+            style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+          />
+        </div>
+
+        {/* Attendees */}
+        <AttendeeSelector
+          allStaff={allStaff}
+          selectedAttendees={invitees}
+          onAttendeesChange={setInvitees}
         />
-      </div>
 
-      {/* Meetings List */}
-      {loading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4 animate-pulse">
-              <div className="h-5 bg-black/10 rounded w-3/4 mb-3" />
-              <div className="h-4 bg-black/10 rounded w-1/2" />
-            </div>
-          ))}
+        {/* Agenda */}
+        <AgendaBuilder
+          items={agendaItems}
+          onChange={setAgendaItems}
+        />
+
+        {/* Notes */}
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: BRAND.textSecondary }}>
+            Notes
+          </label>
+          <textarea
+            value={formData.notes}
+            onChange={e => setFormData({...formData, notes: e.target.value})}
+            placeholder="Additional notes or preparation..."
+            rows={4}
+            className="w-full px-4 py-3 rounded-xl text-sm resize-none"
+            style={{ border: `1px solid ${BRAND.border}`, color: BRAND.text }}
+          />
         </div>
-      ) : filteredMeetings.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-16 h-16 rounded-2xl bg-[var(--av-primary, #4285F4)]/10 flex items-center justify-center mx-auto mb-4">
-            <Mic size={24} className="text-[var(--av-primary, #4285F4)]" />
-          </div>
-          <h3 className="font-semibold mb-2">No meetings yet</h3>
-          <p className="text-sm text-black mb-6">
-            Start recording voice memos. AI-powered notes coming soon!
-          </p>
+
+        {/* Actions */}
+        <div className="flex gap-3 pt-4">
           <button
-            onClick={() => setShowRecorder(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
+            onClick={() => setView('list')}
+            className="flex-1 py-3 rounded-xl text-sm font-medium"
+            style={{ border: `1px solid ${BRAND.border}`, color: BRAND.textSecondary }}
           >
-            <Mic size={16} />
-            Start Recording
+            Cancel
+          </button>
+          <button
+            onClick={selectedMeeting ? updateMeeting : createMeeting}
+            className="flex-1 py-3 rounded-xl text-white text-sm font-medium"
+            style={{ backgroundColor: '#4285F4' }}
+          >
+            {selectedMeeting ? 'Update Meeting' : 'Schedule Meeting'}
           </button>
         </div>
-      ) : (
-        <div className="space-y-3">
-          {filteredMeetings.map((meeting) => (
-            <div
-              key={meeting.id}
-              className="bg-white rounded-xl border border-black/[0.06] p-4 hover:border-[var(--av-primary, #4285F4)]/20 transition-colors"
+      </div>
+    </div>
+  )
+
+  // Render Detail View
+  const renderDetail = () => {
+    if (!selectedMeeting) return null
+    
+    const agendaItems = selectedMeeting.agenda ? JSON.parse(selectedMeeting.agenda) : []
+    const checkedInCount = selectedMeeting.attendees?.filter(a => a.checked_in).length || 0
+
+    return (
+      <div className="pb-20">
+        {/* Header */}
+        <MeetingDetailHeader
+          title={selectedMeeting.title}
+          date={selectedMeeting.date}
+          startTime={selectedMeeting.start_time}
+          endTime={selectedMeeting.end_time}
+          location={selectedMeeting.location}
+          meetingLink={selectedMeeting.meeting_link}
+          status={selectedMeeting.status}
+          onEdit={openEditModal}
+          onDelete={() => deleteMeeting(selectedMeeting.id)}
+          onSendReminder={() => sendReminder(selectedMeeting)}
+        />
+
+        {/* Quick Actions */}
+        <div className="flex items-center gap-3 mb-6 overflow-x-auto pb-2">
+          <MeetingRecorder
+            isRecording={isRecording}
+            recordingTime={recordingTime}
+            isVideoOn={isVideoOn}
+            onStartRecording={startRecording}
+            onStopRecording={stopRecording}
+            onToggleVideo={() => setIsVideoOn(!isVideoOn)}
+          />
+          {selectedMeeting.meeting_link && (
+            <a
+              href={selectedMeeting.meeting_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-medium"
+              style={{ backgroundColor: '#4285F4' }}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1">
-                  {editingTitle === meeting.id ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={newTitle}
-                        onChange={(e) => setNewTitle(e.target.value)}
-                        className="flex-1 px-2 py-1 border border-black/10 rounded text-sm"
-                        autoFocus
-                      />
-                      <button
-                        onClick={() => updateMeetingTitle(meeting.id)}
-                        className="p-1 text-green-600"
-                      >
-                        <CheckCircle2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => setEditingTitle(null)}
-                        className="p-1 text-black"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <h3 
-                      className="font-medium text-black cursor-pointer hover:text-[var(--av-primary, #4285F4)]"
-                      onClick={() => setSelectedMeeting(meeting)}
-                    >
-                      {meeting.title}
-                    </h3>
-                  )}
-                  <div className="flex items-center gap-3 mt-1 text-xs text-black">
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
-                      {formatDuration(meeting.duration)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
-                      {new Date(meeting.date).toLocaleDateString()}
-                    </span>
-                    {meeting.participants?.length > 0 && (
-                      <span className="flex items-center gap-1">
-                        <Users size={12} />
-                        {meeting.participants.length}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {getStatusBadge(meeting.status)}
-                  <button
-                    onClick={() => deleteMeeting(meeting.id)}
-                    className="p-1.5 hover:bg-red-50 rounded-lg text-black hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              </div>
-
-              {meeting.summary && (
-                <div 
-                  className="mt-3 p-3 bg-[var(--av-primary, #4285F4)]/5 rounded-lg cursor-pointer"
-                  onClick={() => setSelectedMeeting(meeting)}
-                >
-                  <p className="text-xs font-medium text-[var(--av-primary, #4285F4)] mb-1">AI Summary</p>
-                  <p className="text-sm text-black/70 line-clamp-2">{meeting.summary.split('\n')[0]}</p>
-                </div>
-              )}
-
-              {(meeting.status === 'recorded' || meeting.status === 'processing') && (
-                <div className="mt-3 flex items-center gap-2">
-                  <button
-                    onClick={() => transcribeMeeting(meeting)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--av-primary, #4285F4)]/10 text-[var(--av-primary, #4285F4)] text-xs font-medium hover:bg-[var(--av-primary, #4285F4)]/20 transition-colors opacity-60"
-                    title="Coming Soon"
-                  >
-                    <Wand2 size={12} />
-                    AI Summary (Coming Soon)
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+              <Video size={18} />
+              Join Meeting
+            </a>
+          )}
         </div>
-      )}
 
-      {/* Meeting Detail Modal */}
-      {selectedMeeting && (
-        <div className="fixed inset-0 bg-black/100 flex items-start justify-center z-50 p-4 pt-20 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-3xl mb-20">
-            <div className="flex items-center justify-between p-6 border-b border-black/5">
-              <div>
-                <h2 className="font-semibold text-lg">{selectedMeeting.title}</h2>
-                <p className="text-sm text-black">
-                  {new Date(selectedMeeting.date).toLocaleString()} • {formatDuration(selectedMeeting.duration)}
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Description */}
+            {selectedMeeting.description && (
+              <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 className="font-semibold mb-3" style={{ color: BRAND.text }}>Description</h3>
+                <p className="text-sm" style={{ color: BRAND.textSecondary }}>{selectedMeeting.description}</p>
               </div>
-              <button
-                onClick={() => setSelectedMeeting(null)}
-                className="p-2 hover:bg-black/[0.05] rounded-lg"
-              >
-                <X size={20} />
-              </button>
+            )}
+
+            {/* Agenda */}
+            {agendaItems.length > 0 && (
+              <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 className="font-semibold mb-4" style={{ color: BRAND.text }}>Agenda</h3>
+                <div className="space-y-3">
+                  {agendaItems.map((item: AgendaItem, index: number) => (
+                    <div key={item.id} className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium"
+                        style={{ backgroundColor: 'rgba(66, 133, 244, 0.1)', color: '#4285F4' }}
+                      >
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium" style={{ color: BRAND.text }}>{item.title}</div>
+                        <div className="text-xs" style={{ color: BRAND.textMuted }}>{item.duration_minutes} min</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Recording */}
+            {selectedMeeting.recording_url && (
+              <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 className="font-semibold mb-3" style={{ color: BRAND.text }}>Recording</h3>
+                <video 
+                  src={selectedMeeting.recording_url}
+                  controls
+                  className="w-full rounded-xl"
+                  style={{ backgroundColor: '#000' }}
+                />
+              </div>
+            )}
+
+            {/* Notes */}
+            {selectedMeeting.notes && (
+              <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                <h3 className="font-semibold mb-3" style={{ color: BRAND.text }}>Notes</h3>
+                <p className="text-sm whitespace-pre-wrap" style={{ color: BRAND.textSecondary }}>{selectedMeeting.notes}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Attendees */}
+            <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold" style={{ color: BRAND.text }}>Attendees</h3>
+                <span className="text-xs" style={{ color: BRAND.textMuted }}>
+                  {checkedInCount}/{selectedMeeting.attendees?.length || 0} present
+                </span>
+              </div>
+              
+              {selectedMeeting.attendees?.length > 0 ? (
+                <AttendanceTaker
+                  attendees={selectedMeeting.attendees}
+                  onCheckIn={(id) => checkInAttendee(selectedMeeting.id, id)}
+                />
+              ) : (
+                <div className="text-center py-6 text-sm" style={{ color: BRAND.textMuted }}>
+                  No attendees invited
+                </div>
+              )}
             </div>
 
-            <div className="p-6 space-y-6">
-              {selectedMeeting.summary && (
-                <div>
-                  <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <Sparkles size={16} className="text-[var(--av-primary, #4285F4)]" />
-                    AI Summary
-                  </h3>
-                  <div className="p-4 bg-gradient-to-br from-[var(--av-primary, #4285F4)]/5 to-[#4285F4]/5 rounded-xl">
-                    <pre className="text-sm whitespace-pre-wrap text-black font-sans">
-                      {selectedMeeting.summary}
-                    </pre>
+            {/* Meeting Info */}
+            <div className="p-5 rounded-2xl" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+              <h3 className="font-semibold mb-4" style={{ color: BRAND.text }}>Meeting Info</h3>
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center gap-3">
+                  <Calendar size={16} style={{ color: BRAND.textMuted }} />
+                  <span style={{ color: BRAND.textSecondary }}>
+                    {new Date(selectedMeeting.date).toLocaleDateString('en-NG', {
+                      weekday: 'long',
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Clock size={16} style={{ color: BRAND.textMuted }} />
+                  <span style={{ color: BRAND.textSecondary }}>
+                    {formatTime12h(selectedMeeting.start_time)}
+                    {selectedMeeting.end_time && ` - ${formatTime12h(selectedMeeting.end_time)}`}
+                  </span>
+                </div>
+                {selectedMeeting.location && (
+                  <div className="flex items-center gap-3">
+                    <MapPin size={16} style={{ color: BRAND.textMuted }} />
+                    <span style={{ color: BRAND.textSecondary }}>{selectedMeeting.location}</span>
                   </div>
-                </div>
-              )}
-
-              {selectedMeeting.transcript && (
-                <div>
-                  <h3 className="font-medium mb-3 flex items-center gap-2">
-                    <FileText size={16} className="text-[var(--av-primary, #4285F4)]" />
-                    Transcript
-                  </h3>
-                  <div className="p-4 bg-white rounded-xl max-h-96 overflow-y-auto">
-                    <pre className="text-sm whitespace-pre-wrap text-black/70 font-sans">
-                      {selectedMeeting.transcript}
-                    </pre>
+                )}
+                {selectedMeeting.meeting_link && (
+                  <div className="flex items-center gap-3">
+                    <LinkIcon size={16} style={{ color: BRAND.textMuted }} />
+                    <button
+                      onClick={() => copyMeetingLink(selectedMeeting.meeting_link!)}
+                      className="flex items-center gap-1"
+                      style={{ color: '#4285F4' }}
+                    >
+                      Copy Link
+                      <Copy size={12} />
+                    </button>
                   </div>
-                </div>
-              )}
-
-              {selectedMeeting.transcript && (
-                <div className="flex justify-end">
-                  <button
-                    onClick={() => transcribeMeeting(selectedMeeting)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/10 text-black/60 text-sm font-medium opacity-60 cursor-not-allowed"
-                    disabled
-                    title="Coming Soon"
-                  >
-                    <Wand2 size={14} />
-                    Regenerate Summary (Coming Soon)
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    )
+  }
+
+  // Main Render
+  return (
+    <div>
+      {view === 'create' || view === 'edit' ? (
+        renderForm()
+      ) : view === 'detail' ? (
+        <>
+          <button
+            onClick={() => setView('list')}
+            className="flex items-center gap-2 mb-4 text-sm"
+            style={{ color: BRAND.textSecondary }}
+          >
+            ← Back to meetings
+          </button>
+          {renderDetail()}
+        </>
+      ) : (
+        <>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-2xl font-semibold" style={{ color: BRAND.text }}>Meetings</h1>
+              <p className="text-sm mt-1" style={{ color: BRAND.textSecondary }}>
+                {todayMeetings.length} today • {upcomingMeetings.length} upcoming
+              </p>
+            </div>
+            <button
+              onClick={() => { resetForm(); setView('create') }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-medium"
+              style={{ backgroundColor: '#4285F4' }}
+            >
+              <Plus size={18} />
+              New Meeting
+            </button>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(66, 133, 244, 0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#4285F4' }}>{todayMeetings.length}</div>
+              <div className="text-xs" style={{ color: BRAND.textSecondary }}>Today</div>
+            </div>
+            <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(52, 168, 83, 0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#34A853' }}>{upcomingMeetings.length}</div>
+              <div className="text-xs" style={{ color: BRAND.textSecondary }}>Upcoming</div>
+            </div>
+            <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(139, 92, 246, 0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#8B5CF6' }}>{meetings.filter(m => m.recording_url).length}</div>
+              <div className="text-xs" style={{ color: BRAND.textSecondary }}>Recorded</div>
+            </div>
+            <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(251, 188, 5, 0.08)' }}>
+              <div className="text-2xl font-bold" style={{ color: '#FBBC05' }}>{pastMeetings.length}</div>
+              <div className="text-xs" style={{ color: BRAND.textSecondary }}>Past</div>
+            </div>
+          </div>
+
+          {/* Search and Filter */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2" size={18} style={{ color: BRAND.textMuted }} />
+              <input
+                type="text"
+                placeholder="Search meetings..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 rounded-xl text-sm"
+                style={{ 
+                  backgroundColor: 'white',
+                  border: `1px solid ${BRAND.border}`,
+                  color: BRAND.text
+                }}
+              />
+            </div>
+            <select
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value)}
+              className="px-4 py-3 rounded-xl text-sm"
+              style={{ 
+                backgroundColor: 'white',
+                border: `1px solid ${BRAND.border}`,
+                color: BRAND.text
+              }}
+            >
+              <option value="all">All Status</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          {/* Today's Meetings */}
+          {todayMeetings.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-sm font-semibold mb-3" style={{ color: BRAND.textSecondary }}>TODAY</h2>
+              <div className="space-y-3">
+                {todayMeetings.map(renderMeetingCard)}
+              </div>
+            </div>
+          )}
+
+          {/* Upcoming Meetings */}
+          {upcomingMeetings.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-sm font-semibold mb-3" style={{ color: BRAND.textSecondary }}>UPCOMING</h2>
+              <div className="space-y-3">
+                {upcomingMeetings.map(renderMeetingCard)}
+              </div>
+            </div>
+          )}
+
+          {/* Past Meetings */}
+          {pastMeetings.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-sm font-semibold mb-3" style={{ color: BRAND.textSecondary }}>PAST</h2>
+              <div className="space-y-3">
+                {pastMeetings.slice(0, 10).map(renderMeetingCard)}
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {filteredMeetings.length === 0 && !loading && (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'rgba(66, 133, 244, 0.1)' }}>
+                <Video size={32} style={{ color: '#4285F4' }} />
+              </div>
+              <h3 className="font-semibold mb-2" style={{ color: BRAND.text }}>No meetings found</h3>
+              <p className="text-sm mb-4" style={{ color: BRAND.textSecondary }}>
+                Schedule your first meeting to get started
+              </p>
+              <button
+                onClick={() => { resetForm(); setView('create') }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-medium"
+                style={{ backgroundColor: '#4285F4' }}
+              >
+                <Plus size={18} />
+                Schedule Meeting
+              </button>
+            </div>
+          )}
+
+          {/* Loading */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <Loader2 className="animate-spin" size={24} style={{ color: '#4285F4' }} />
+            </div>
+          )}
+        </>
       )}
     </div>
   )

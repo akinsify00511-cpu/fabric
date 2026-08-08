@@ -1,5 +1,48 @@
 # AVENIZE - AI Agent Instructions
 
+## Design Taste Skills
+
+This repository includes premium design taste skills to ensure all UI output looks intentional and professional:
+
+### Available Skills (`.agents/skills/`)
+
+| Skill | Use When | Key Focus |
+|-------|----------|-----------|
+| **taste-skill** | Any frontend work | Anti-slop, 3-dial system (VARIANCE/MOTION/DENSITY), design read first |
+| **soft-skill** | High-end consumer/agency builds | Awwwards-tier, haptic depth, cinematic motion |
+| **minimalist-skill** | Workspace/product UI | Linear/Notion vibes, editorial typography, warm monochrome |
+| **redesign-skill** | Improving existing projects | Audit-first, fix hierarchy, spacing, states |
+
+### Quick Reference: Taste Skill 3 Dials
+
+```
+DESIGN_VARIANCE: 8   (1=Symmetry, 10=Artsy)
+MOTION_INTENSITY: 6  (1=Static, 10=Cinematic)
+VISUAL_DENSITY: 4    (1=Airy, 10=Packed)
+```
+
+For Avenize's workspace/product UI, use: VARIANCE: 5-6, MOTION: 3-4, DENSITY: 2-3
+
+### Design Rules (From taste-skill)
+
+**Anti-patterns to avoid:**
+- ❌ AI-purple gradients, centered hero over dark mesh
+- ❌ Three equal feature cards
+- ❌ Generic glassmorphism on everything
+- ❌ Inter + slate-900 defaults
+- ❌ Fake product previews built from styled divs
+- ❌ AI copywriting clichés ("Elevate", "Seamless", "Game-changer")
+
+**Preferred patterns:**
+- ✅ Phosphor or Lucide icons (standardized stroke)
+- ✅ Motion animations for interactive elements
+- ✅ Skeleton loaders instead of spinners
+- ✅ Realistic content, not "John Doe" placeholders
+- ✅ Google Sans Flex typography
+- ✅ Token-based colors from brand system
+
+---
+
 ## Brand System (Google Standard Edition)
 
 Treat Avenize as if it were built by Google's Workspace team — indistinguishable from Gmail, Calendar, or Admin Console.

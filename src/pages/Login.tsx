@@ -114,11 +114,11 @@ export default function Login() {
       style={{ backgroundColor: BRAND.surface }}
     >
       <div
-        className="w-full max-w-sm p-8"
+        className="w-full max-w-sm p-8 rounded-2xl"
         style={{ 
           backgroundColor: BRAND.surfaceElevated,
-          borderRadius: '16px',
-          boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)',
+          
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04), 0 8px 16px rgba(0,0,0,0.04)',
           border: 'none',
         }}
       >
@@ -148,8 +148,8 @@ export default function Login() {
               border: 'none',
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
-              minHeight: '44px',
-              boxShadow: '0 1px 2px rgba(0,0,0,.1)',
+              minHeight: '48px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)',
             }}
           >
             {oauthLoading === 'google' ? (
@@ -177,8 +177,8 @@ export default function Login() {
               border: 'none',
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
-              minHeight: '44px',
-              boxShadow: '0 1px 2px rgba(0,0,0,.1)',
+              minHeight: '48px',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)',
             }}
           >
             {oauthLoading === 'github' ? (
@@ -221,7 +221,7 @@ export default function Login() {
               border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
-              minHeight: '44px',
+              minHeight: '48px',
             }}
           />
           <input
@@ -235,7 +235,7 @@ export default function Login() {
               border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
               color: BRAND.text,
-              minHeight: '44px',
+              minHeight: '48px',
             }}
           />
         </form>

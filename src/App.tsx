@@ -10,6 +10,11 @@ import BetaFeedbackButton from './components/BetaFeedbackButton'
 import QCDashboard from './components/QCDashboard'
 import PersonalizationHub from './components/PersonalizationHub'
 import { setupGlobalErrorHandlers } from './lib/quality-control'
+import CommandPalette, { useGlobalCommands, useCommandPalette } from './components/CommandPalette'
+import { useKeyboardShortcuts, GLOBAL_SHORTCUTS } from './hooks/useKeyboardShortcuts'
+import { useOnlineStatus } from './hooks/useOnlineStatus'
+import { PageSkeleton } from './components/Skeleton'
+import { KeyboardShortcutsModal } from './components/KeyboardShortcuts'
 
 // Initialize QC system on app load
 setupGlobalErrorHandlers()
@@ -130,11 +135,8 @@ const Budgets = lazy(() => import('./pages/Budgets'))
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-3 border-[#4285F4]/20 border-t-[#4285F4] rounded-full animate-spin" />
-        <p className="text-sm text-black">Loading...</p>
-      </div>
+    <div className="min-h-screen p-6 bg-[#F8F9FA]">
+      <PageSkeleton />
     </div>
   )
 }
@@ -355,6 +357,24 @@ function AppRoutes() {
 }
 
 export default function App() {
+  const globalCommands = useGlobalCommands()
+  const { isOpen, openPalette, closePalette, CommandPaletteComponent } = useCommandPalette(globalCommands)
+  const { isOnline, isOffline } = useOnlineStatus()
+  const [showShortcuts, setShowShortcuts] = useState(false)
+
+  // Global keyboard shortcut to show shortcuts modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd + / to show shortcuts
+      if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+        e.preventDefault()
+        setShowShortcuts(true)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   return (
     <AuthProvider>
       <ToastProvider>
@@ -364,6 +384,25 @@ export default function App() {
               <BrowserRouter>
                 <CookieConsent />
                 <AppRoutes />
+                {/* Command Palette - Like Slack/Notion Cmd+K */}
+                <CommandPaletteComponent />
+                {/* Keyboard Shortcuts Modal */}
+                <KeyboardShortcutsModal
+                  isOpen={showShortcuts}
+                  onClose={() => setShowShortcuts(false)}
+                />
+                {/* Offline indicator banner */}
+                {isOffline && (
+                  <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50 px-4 py-3 bg-amber-500 text-white rounded-xl shadow-lg flex items-center gap-3">
+                    <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
+                    </svg>
+                    <div>
+                      <p className="font-medium text-sm">You're offline</p>
+                      <p className="text-xs opacity-90">Changes will sync when you're back online</p>
+                    </div>
+                  </div>
+                )}
                 {/* Quality Control Dashboard - visible in dev mode */}
                 {import.meta.env.DEV && <QCDashboard />}
                 {/* Personalization Hub - suggestions based on user behavior */}

@@ -4,9 +4,12 @@ import {
   ArrowRight, Check, Menu, X, Star, Users, BarChart3, Briefcase, Zap, Target, UserCheck, 
   BriefcaseBusiness, Clock, TrendingUp, Sparkles, ListTodo, Calendar, MessageSquare, Video,
   Bell, Search, Filter, Folder, FileText, Send, Phone, Mail, UsersRound, LayoutGrid,
-  CheckSquare, Clock3, AlertCircle, Repeat, Flag, MessageCircle, Share2, FilterIcon
+  CheckSquare, Clock3, AlertCircle, Repeat, Flag, MessageCircle, Share2, FilterIcon,
+  ChevronDown, Play, Quote, Building2, Shield, Globe, Headphones
 } from 'lucide-react'
+import { Avatar } from '../components/ImageComponents'
 import SarahChat from '../components/SarahChat'
+import { getPlaceholderImage, getAvatarUrl } from '../lib/images'
 
 // AVENIZE BRAND COLORS - Use these, NOT hardcoded values
 const BRAND = {
@@ -301,22 +304,36 @@ function HeroSection() {
 
 function WhoSection() {
   return (
-    <section className="py-16 px-4 sm:px-6 bg-white">
+    <section className="py-20 px-4 sm:px-6" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Built for Every Team</h2>
-          <p className="text-black max-w-2xl mx-auto">Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <Users size={16} />
+            <span className="font-medium">Built for Teams</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Built for Every Team</h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           {WHO_IT_FOR.map((item, i) => {
             const Icon = item.icon
             return (
-              <div key={i} className="text-center p-5 bg-white rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group">
-                <div className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center transition-transform group-hover:scale-110" style={{ backgroundColor: item.color + '15' }}>
-                  <Icon size={28} style={{ color: item.color }} />
+              <div 
+                key={i} 
+                className="text-center p-6 rounded-2xl transition-all hover:-translate-y-1 cursor-pointer group"
+                style={{ 
+                  backgroundColor: 'white',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)'
+                }}
+              >
+                <div 
+                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center transition-transform group-hover:scale-110" 
+                  style={{ backgroundColor: item.color + '15' }}
+                >
+                  <Icon size={32} style={{ color: item.color }} />
                 </div>
-                <h3 className="font-semibold text-black mb-1 text-sm">{item.role}</h3>
-                <p className="text-xs text-black">{item.benefit}</p>
+                <h3 className="font-semibold mb-2 text-sm" style={{ color: BRAND.text }}>{item.role}</h3>
+                <p className="text-xs" style={{ color: BRAND.textSecondary }}>{item.benefit}</p>
               </div>
             )
           })}
@@ -383,32 +400,32 @@ function ProductivityToolsSection() {
     <section className="py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 rounded-full text-sm mb-6">
-            <LayoutGrid size={16} className="text-blue-600" />
-            <span className="text-blue-700 font-medium">Productivity Suite</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-black">Everything Your Team Needs to Ship Faster</h2>
-          <p className="text-black max-w-2xl mx-auto">All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-6" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <LayoutGrid size={16} />
+            <span className="font-medium">Productivity Suite</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Everything Your Team Needs to Ship Faster</h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
         </div>
         
-        {/* Task Features Mini Showcase */}
-        <div className="bg-white rounded-2xl p-8 mb-12 shadow-sm ">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        {/* Task Features Mini Showcase with Image */}
+        <div className="bg-white rounded-3xl p-8 mb-12 transition-all hover:shadow-lg" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+          <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1">
-              <h3 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                <ListTodo size={28} className="text-blue-600" />
+              <h3 className="text-2xl font-bold mb-4 flex items-center gap-3" style={{ color: BRAND.text }}>
+                <ListTodo size={28} style={{ color: BRAND.primary }} />
                 Powerful Task Management
               </h3>
-              <p className="text-black mb-6">Manage tasks with kanban boards, subtasks, priorities, and deadlines - all integrated with your business data.</p>
+              <p className="mb-6" style={{ color: BRAND.textSecondary }}>Manage tasks with kanban boards, subtasks, priorities, and deadlines — all integrated with your business data.</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {TASK_FEATURES.map((feat, i) => {
                   const Icon = feat.icon
                   return (
-                    <div key={i} className="flex items-center gap-3 p-3 bg-white rounded-lg">
-                      <Icon size={20} className="text-blue-400 shrink-0" />
+                    <div key={i} className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: BRAND.surface }}>
+                      <Icon size={20} className="shrink-0" style={{ color: BRAND.primary }} />
                       <div>
-                        <div className="font-medium text-sm">{feat.label}</div>
-                        <div className="text-xs text-black">{feat.desc}</div>
+                        <div className="font-medium text-sm" style={{ color: BRAND.text }}>{feat.label}</div>
+                        <div className="text-xs" style={{ color: BRAND.textSecondary }}>{feat.desc}</div>
                       </div>
                     </div>
                   )
@@ -416,24 +433,14 @@ function ProductivityToolsSection() {
               </div>
             </div>
             
-            {/* Mini Kanban Preview */}
-            <div className="flex-1">
-              <div className="bg-white rounded-xl p-4 ">
-                <div className="text-xs text-black mb-3 font-mono">PROJECT: Website Redesign</div>
-                <div className="space-y-3">
-                  {[
-                    { title: 'Design mockups', status: 'Todo', color: 'bg-black' },
-                    { title: 'API integration', status: 'In Progress', color: 'bg-blue-500' },
-                    { title: 'Deploy to staging', status: 'Done', color: 'bg-green-500' },
-                  ].map((task, i) => (
-                    <div key={i} className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                      <div className={`w-2 h-2 rounded-full ${task.color}`}></div>
-                      <span className="text-sm flex-1">{task.title}</span>
-                      <span className="text-xs text-black">{task.status}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* Mini Kanban Preview with Real Image */}
+            <div className="flex-1 w-full">
+              <img 
+                src={getPlaceholderImage(600, 400, { seed: 'task,kanban,productivity' })} 
+                alt="Task Management Preview"
+                className="rounded-2xl shadow-lg w-full object-cover"
+                style={{ maxHeight: '280px' }}
+              />
             </div>
           </div>
         </div>
@@ -443,17 +450,21 @@ function ProductivityToolsSection() {
           {PRODUCTIVITY_TOOLS.map((tool, i) => {
             const Icon = tool.icon
             return (
-              <div key={i} className="bg-white backdrop-blur-sm rounded-xl p-6  hover:bg-white transition-colors">
+              <div 
+                key={i} 
+                className="bg-white rounded-2xl p-6 transition-all hover:-translate-y-1"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+              >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: tool.color + '20' }}>
-                    <Icon size={22} style={{ color: tool.color }} />
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: tool.color + '15' }}>
+                    <Icon size={24} style={{ color: tool.color }} />
                   </div>
-                  <h3 className="font-semibold text-lg">{tool.category}</h3>
+                  <h3 className="font-semibold text-lg" style={{ color: BRAND.text }}>{tool.category}</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {tool.features.map((feat, j) => (
-                    <div key={j} className="flex items-center gap-2 text-sm text-black">
-                      <Check size={14} className="text-green-400 shrink-0" />
+                    <div key={j} className="flex items-center gap-2 text-sm" style={{ color: BRAND.textSecondary }}>
+                      <Check size={14} className="shrink-0" style={{ color: BRAND.success }} />
                       {feat}
                     </div>
                   ))}
@@ -465,15 +476,15 @@ function ProductivityToolsSection() {
         
         {/* Integration Banner */}
         <div className="mt-12 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full ">
-            <span className="text-sm text-black">Also includes:</span>
-            <span className="text-sm font-medium">File Storage</span>
-            <span className="text-black">•</span>
-            <span className="text-sm font-medium">Time Tracking</span>
-            <span className="text-black">•</span>
-            <span className="text-sm font-medium">Reporting</span>
-            <span className="text-black">•</span>
-            <span className="text-sm font-medium">Approval Flows</span>
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full" style={{ backgroundColor: BRAND.surface }}>
+            <span className="text-sm" style={{ color: BRAND.textSecondary }}>Also includes:</span>
+            <span className="text-sm font-medium" style={{ color: BRAND.text }}>File Storage</span>
+            <span style={{ color: BRAND.textMuted }}>•</span>
+            <span className="text-sm font-medium" style={{ color: BRAND.text }}>Time Tracking</span>
+            <span style={{ color: BRAND.textMuted }}>•</span>
+            <span className="text-sm font-medium" style={{ color: BRAND.text }}>Reporting</span>
+            <span style={{ color: BRAND.textMuted }}>•</span>
+            <span className="text-sm font-medium" style={{ color: BRAND.text }}>Approval Flows</span>
           </div>
         </div>
       </div>
@@ -483,52 +494,75 @@ function ProductivityToolsSection() {
 
 function ModulesSection() {
   return (
-    <section id="modules" className="py-16 px-4 sm:px-6 bg-white">
+    <section id="modules" className="py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Everything Your Business Needs</h2>
-          <p className="text-black max-w-2xl mx-auto">55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
+        <div className="text-center mb-16">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <Briefcase size={16} />
+            <span className="font-medium">55+ Modules</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Everything Your Business Needs</h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
-        <div className="bg-white rounded-2xl p-8 mb-6 shadow-lg ">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        
+        {/* Featured Module - CRM with Image */}
+        <div className="bg-white rounded-3xl p-8 mb-8 transition-all hover:shadow-xl" style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+          <div className="flex flex-col lg:flex-row items-center gap-8">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-sm mb-3">⭐ Most Popular</div>
-              <h3 className="text-2xl font-bold mb-2">CRM — Customer Relationship Management</h3>
-              <p className="text-black mb-4">Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm mb-4" style={{ backgroundColor: 'rgba(251, 188, 5, 0.15)', color: '#F59E0B' }}>
+                <Star size={14} className="fill-amber-400" />
+                <span className="font-semibold">Most Popular</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-3" style={{ color: BRAND.text }}>CRM — Customer Relationship Management</h3>
+              <p className="mb-4" style={{ color: BRAND.textSecondary }}>Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
               <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Lead Tracking</span>
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Deal Pipeline</span>
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">AI Insights</span>
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm">Follow-up Reminders</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Lead Tracking</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Deal Pipeline</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>AI Insights</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Reminders</span>
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-1">₦2.5B+</div>
-              <div className="text-white/70 text-sm">Deals tracked</div>
+            {/* Real Dashboard Preview Image */}
+            <div className="flex-1 w-full lg:w-auto">
+              <img 
+                src={getPlaceholderImage(600, 400, { seed: 'dashboard,crm,sales' })} 
+                alt="CRM Dashboard Preview"
+                className="rounded-2xl shadow-lg w-full object-cover"
+                style={{ maxHeight: '280px' }}
+              />
             </div>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        {/* Module Cards Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {MODULES.slice(1).map((module, i) => {
             const Icon = module.icon
             return (
-              <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+              <div 
+                key={i} 
+                className="bg-white p-6 rounded-2xl transition-all hover:-translate-y-1 group"
+                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+              >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: module.color + '15' }}>
-                    <Icon size={24} style={{ color: module.color }} />
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110" style={{ backgroundColor: module.color + '15' }}>
+                    <Icon size={28} style={{ color: module.color }} />
                   </div>
-                  <div>
-                    <h3 className="font-bold text-black mb-1">{module.title}</h3>
-                    <p className="text-sm text-blue-600 font-medium mb-2">{module.tagline}</p>
-                    <p className="text-sm text-black mb-3">{module.desc}</p>
-                    <p className="text-xs text-black">{module.stats}</p>
+                  <div className="flex-1">
+                    <h3 className="font-bold mb-1" style={{ color: BRAND.text }}>{module.title}</h3>
+                    <p className="text-sm font-medium mb-2" style={{ color: module.color }}>{module.tagline}</p>
+                    <p className="text-sm mb-3" style={{ color: BRAND.textSecondary }}>{module.desc}</p>
+                    <div className="flex items-center gap-2 text-xs" style={{ color: BRAND.textMuted }}>
+                      <TrendingUp size={12} />
+                      {module.stats}
+                    </div>
                   </div>
                 </div>
               </div>
             )
           })}
         </div>
-        <p className="text-center text-sm text-black mt-8">+ 40 more modules: Tasks, Chat, Calendar, Approvals, Reports, Knowledge, Campaigns, and more...</p>
+        <p className="text-center mt-8" style={{ color: BRAND.textSecondary }}>+ 40 more modules: Tasks, Chat, Calendar, Approvals, Reports, Knowledge, Campaigns...</p>
       </div>
     </section>
   )
@@ -536,24 +570,53 @@ function ModulesSection() {
 
 function TestimonialsSection() {
   return (
-    <section id="testimonials" className="py-16 px-4 sm:px-6 bg-white">
+    <section id="testimonials" className="py-20 px-4 sm:px-6" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Real Businesses. Real Results.</h2>
-          <p className="text-black">See how Nigerian companies use Avenize</p>
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <Quote size={16} />
+            <span className="font-medium">Customer Stories</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Real Businesses. Real Results.</h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>See how Nigerian companies use Avenize to grow their businesses</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <div key={i} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
-              <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="text-amber-400 fill-amber-400" />)}</div>
-              <div className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full mb-4">{t.highlight}</div>
-              <p className="text-black mb-4 leading-relaxed">"{t.quote}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md" style={{ background: BRAND.gradient }}>{t.name.charAt(0)}</div>
+            <div 
+              key={i} 
+              className="bg-white p-6 rounded-2xl transition-all hover:-translate-y-1 hover:shadow-lg"
+              style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+            >
+              {/* Rating Stars */}
+              <div className="flex gap-1 mb-4">
+                {[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="text-amber-400 fill-amber-400" />)}
+              </div>
+              
+              {/* Highlight Badge */}
+              <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+                {t.highlight}
+              </div>
+              
+              {/* Quote */}
+              <p className="mb-6 leading-relaxed" style={{ color: BRAND.textSecondary }}>
+                "{t.quote}"
+              </p>
+              
+              {/* Author with Real Avatar */}
+              <div className="flex items-center gap-3 pt-4 border-t" style={{ borderColor: BRAND.border }}>
+                <Avatar 
+                  name={t.name} 
+                  size={48} 
+                  style="open-peeps"
+                  className="ring-2 ring-white shadow-md"
+                />
                 <div>
-                  <div className="font-semibold text-black">{t.name}</div>
-                  <div className="text-sm text-black">{t.role}</div>
-                  <div className="text-xs text-black">{t.business}</div>
+                  <div className="font-semibold" style={{ color: BRAND.text }}>{t.name}</div>
+                  <div className="text-sm" style={{ color: BRAND.textSecondary }}>{t.role}</div>
+                  <div className="text-xs flex items-center gap-1" style={{ color: BRAND.textMuted }}>
+                    <Building2 size={12} />
+                    {t.business}
+                  </div>
                 </div>
               </div>
             </div>
@@ -566,32 +629,71 @@ function TestimonialsSection() {
 
 function PricingSection() {
   return (
-    <section id="pricing" className="py-16 px-4 sm:px-6 bg-white">
+    <section id="pricing" className="py-20 px-4 sm:px-6" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Simple, Honest Pricing</h2>
-          <p className="text-black">Pay per team size. No hidden fees. No per-feature pricing.</p>
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <BarChart3 size={16} />
+            <span className="font-medium">Pricing</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Simple, Honest Pricing</h2>
+          <p className="text-lg" style={{ color: BRAND.textSecondary }}>Pay per team size. No hidden fees. No per-feature pricing.</p>
         </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 max-w-2xl mx-auto text-center">
-          <p className="text-amber-800 text-sm"><strong>Founding Rate:</strong> Prices locked for 12 months, even when list price changes.</p>
+        <div className="rounded-2xl p-4 mb-8 max-w-2xl mx-auto text-center" style={{ backgroundColor: 'rgba(251, 188, 5, 0.15)' }}>
+          <p className="text-sm" style={{ color: '#B45309' }}>
+            <strong className="font-semibold">Founding Rate:</strong> Prices locked for 12 months, even when list price changes.
+          </p>
         </div>
         <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {PRICING.map((plan, i) => (
-            <div key={i} className={`relative p-5 rounded-xl ${plan.popular ? 'bg-white shadow-lg ring-2 ring-blue-500' : 'bg-white shadow-sm'}`}>
-              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-500 text-white text-xs font-bold">Most Popular</div>}
-              {plan.founding && <div className="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded mb-2 inline-block">Founding Rate</div>}
-              <h3 className="text-xl font-bold text-black mb-1">{plan.name}</h3>
-              <p className="text-sm text-black mb-3">{plan.desc}</p>
-              <div className="mb-4"><span className="text-3xl font-bold text-black">{plan.price}</span><span className="text-black text-sm">{plan.period}</span></div>
+            <div 
+              key={i} 
+              className={`relative p-6 rounded-2xl ${plan.popular ? 'bg-white shadow-xl ring-2' : ''}`}
+              style={{ 
+                boxShadow: plan.popular ? '0 8px 24px rgba(0,0,0,0.12)' : '0 1px 3px rgba(0,0,0,0.08)',
+                ...(plan.popular && { ringColor: BRAND.primary })
+              }}
+            >
+              {plan.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full text-white text-xs font-bold" style={{ backgroundColor: BRAND.primary }}>
+                  Most Popular
+                </div>
+              )}
+              {plan.founding && (
+                <div className="text-xs px-2 py-1 rounded mb-3 inline-block" style={{ backgroundColor: 'rgba(251, 188, 5, 0.15)', color: '#B45309' }}>
+                  Founding Rate
+                </div>
+              )}
+              <h3 className="text-xl font-bold mb-1" style={{ color: BRAND.text }}>{plan.name}</h3>
+              <p className="text-sm mb-3" style={{ color: BRAND.textSecondary }}>{plan.desc}</p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold" style={{ color: BRAND.text }}>{plan.price}</span>
+                <span className="text-sm" style={{ color: BRAND.textSecondary }}>{plan.period}</span>
+              </div>
               <ul className="space-y-2 mb-4">
-                {plan.features.map((feat, j) => (<li key={j} className="flex items-start gap-2 text-xs text-black"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" />{feat}</li>))}
+                {plan.features.map((feat, j) => (
+                  <li key={j} className="flex items-start gap-2 text-sm" style={{ color: BRAND.textSecondary }}>
+                    <Check size={16} className="mt-0.5 flex-shrink-0" style={{ color: BRAND.success }} />
+                    {feat}
+                  </li>
+                ))}
               </ul>
-              <Link to="/signup" className={`block text-center py-2.5 rounded-lg font-semibold text-sm transition ${plan.popular ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md' : 'bg-white text-black hover:bg-white'}`}>{plan.cta}</Link>
-              <p className="text-xs text-black mt-3 text-center">{plan.seats}</p>
+              <Link 
+                to="/signup" 
+                className={`block text-center py-3 rounded-xl font-semibold text-sm transition ${
+                  plan.popular 
+                    ? 'text-white shadow-md' 
+                    : ''
+                }`}
+                style={plan.popular ? { backgroundColor: BRAND.primary } : { backgroundColor: BRAND.surface, color: BRAND.text }}
+              >
+                {plan.cta}
+              </Link>
+              <p className="text-xs mt-3 text-center" style={{ color: BRAND.textMuted }}>{plan.seats}</p>
             </div>
           ))}
         </div>
-        <p className="text-center text-sm text-black mt-8">All plans include 7-day free trial • No credit card required</p>
+        <p className="text-center mt-8" style={{ color: BRAND.textSecondary }}>All plans include 7-day free trial • No credit card required</p>
       </div>
     </section>
   )
@@ -600,17 +702,41 @@ function PricingSection() {
 function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   return (
-    <section id="faq" className="py-16 px-4 sm:px-6 bg-white">
+    <section id="faq" className="py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12"><h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">Frequently Asked Questions</h2></div>
+        <div className="text-center mb-12">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-4" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
+            <AlertCircle size={16} />
+            <span className="font-medium">Help</span>
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold" style={{ color: BRAND.text }}>Frequently Asked Questions</h2>
+        </div>
         <div className="space-y-3">
           {FAQS.map((faq, i) => (
-            <div key={i} className="bg-white rounded-xl p-4 hover:shadow-sm transition-shadow">
-              <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full flex items-center justify-between text-left">
-                <span className="font-medium text-black pr-4">{faq.q}</span>
-                <span className={`text-2xl text-black flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+            <div 
+              key={i} 
+              className="rounded-xl p-5 transition-all"
+              style={{ 
+                backgroundColor: 'white',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
+              }}
+            >
+              <button 
+                onClick={() => setOpenIndex(openIndex === i ? null : i)} 
+                className="w-full flex items-center justify-between text-left"
+              >
+                <span className="font-medium pr-4" style={{ color: BRAND.text }}>{faq.q}</span>
+                <ChevronDown 
+                  size={20} 
+                  className={`flex-shrink-0 transition-transform ${openIndex === i ? 'rotate-180' : ''}`}
+                  style={{ color: BRAND.textSecondary }}
+                />
               </button>
-              {openIndex === i && <p className="mt-3 text-black text-sm leading-relaxed">{faq.a}</p>}
+              {openIndex === i && (
+                <p className="mt-4 text-sm leading-relaxed" style={{ color: BRAND.textSecondary }}>
+                  {faq.a}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -621,14 +747,33 @@ function FAQSection() {
 
 function FinalCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 bg-white border-t border-black">
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-black">Ready to Run Your Business Better?</h2>
-        <p className="text-lg text-black mb-8">Join 2,500+ Nigerian businesses already using Avenize.</p>
-        <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-blue-500 font-semibold text-lg hover:shadow-xl transition hover:-translate-y-0.5">
+    <section className="py-24 px-4 sm:px-6 relative overflow-hidden" style={{ backgroundColor: BRAND.text }}>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <img 
+          src={getPlaceholderImage(1920, 800, { seed: 'abstract,pattern' })} 
+          alt=""
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="max-w-3xl mx-auto text-center relative z-10">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">Ready to Run Your Business Better?</h2>
+        <p className="text-lg mb-8" style={{ color: 'rgba(255,255,255,0.8)' }}>Join 2,500+ Nigerian businesses already using Avenize.</p>
+        <Link 
+          to="/signup" 
+          className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg transition hover:-translate-y-1 hover:shadow-xl"
+          style={{ backgroundColor: BRAND.primary, color: 'white' }}
+        >
           Start Your Free 7-Day Trial <ArrowRight size={20} />
         </Link>
-        <p className="text-sm text-black mt-4">No credit card required • 5-minute setup</p>
+        <div className="flex items-center justify-center gap-6 mt-6">
+          <span className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <Shield size={16} /> No credit card required
+          </span>
+          <span className="flex items-center gap-2 text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <Clock size={16} /> 5-minute setup
+          </span>
+        </div>
       </div>
     </section>
   )
@@ -636,16 +781,29 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="py-12 px-4 sm:px-6 bg-white text-black border-t border-black">
+    <footer className="py-12 px-4 sm:px-6" style={{ backgroundColor: BRAND.surface }}>
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center shadow-md" style={{ background: BRAND.gradient }}><span className="text-white font-bold text-sm">A</span></div>
-            <span className="font-semibold text-black">Avenize</span>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: BRAND.gradient }}>
+              <span className="text-white font-bold text-sm">A</span>
+            </div>
+            <span className="font-semibold" style={{ color: BRAND.text }}>Avenize</span>
           </div>
-          <div className="text-center md:text-right text-sm">
+          <div className="flex items-center gap-6">
+            <a href="#" className="flex items-center gap-2 text-sm" style={{ color: BRAND.textSecondary }}>
+              <Shield size={14} /> Security
+            </a>
+            <a href="#" className="flex items-center gap-2 text-sm" style={{ color: BRAND.textSecondary }}>
+              <Globe size={14} /> Privacy
+            </a>
+            <a href="#" className="flex items-center gap-2 text-sm" style={{ color: BRAND.textSecondary }}>
+              <Headphones size={14} /> Support
+            </a>
+          </div>
+          <div className="text-center md:text-right text-sm" style={{ color: BRAND.textMuted }}>
             <p>© 2024 Avenize. Built for Nigerian businesses.</p>
-            <p className="text-black mt-1">Running from Lagos 🇳🇬</p>
+            <p className="mt-1">Running from Lagos, Nigeria</p>
           </div>
         </div>
       </div>

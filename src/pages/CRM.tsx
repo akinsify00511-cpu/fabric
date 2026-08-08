@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import { Avatar } from '../components/ImageComponents'
 
 type Deal = {
   id: string
@@ -236,26 +237,27 @@ export default function CRM() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-        <div className="bg-white rounded-2xl p-4 ">
-          <div className="text-2xl font-bold">{stats.totalDeals}</div>
-          <div className="text-xs text-black">Total Deals</div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.totalDeals}</div>
+          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Total Deals</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 ">
-          <div className="text-2xl font-bold">\u20a6{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div>
-          <div className="text-xs text-black">Pipeline Value</div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>₦{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div>
+          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Pipeline Value</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 ">
-          <div className="text-2xl font-bold text-red-500">{stats.hotDeals}</div>
-          <div className="text-xs text-black">Hot Deals</div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(234, 67, 53, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <div className="text-2xl font-bold mb-1" style={{ color: '#EA4335' }}>{stats.hotDeals}</div>
+          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Hot Deals</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 ">
-          <div className="text-2xl font-bold text-green-500">{stats.wonDeals}</div>
-          <div className="text-xs text-black">Won</div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(52, 168, 83, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <div className="text-2xl font-bold mb-1" style={{ color: '#34A853' }}>{stats.wonDeals}</div>
+          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Won</div>
         </div>
-        <div className="bg-white rounded-2xl p-4 ">
-          <div className="text-2xl font-bold">{stats.conversionRate}%</div>
-          <div className="text-xs text-black">Conversion</div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.conversionRate}%</div>
+          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Conversion</div>
         </div>
       </div>
 
@@ -274,30 +276,38 @@ export default function CRM() {
       </div>
 
       {viewMode === 'deals' && (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filteredDeals.length === 0 ? (
-            <div className="bg-white rounded-2xl p-8  text-center">
-              <Users size={48} className="mx-auto mb-4 text-black/50" />
-              <h3 className="font-semibold mb-2">No deals yet</h3>
-              <p className="text-sm text-black mb-4">Create your first deal to start tracking</p>
-              <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-lg bg-[var(--av-text)] text-white text-sm font-medium">Add Deal</button>
+            <div className="rounded-2xl p-12 text-center" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
+              <Users size={48} className="mx-auto mb-4" style={{ color: 'var(--av-text-muted)' }} />
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No deals yet</h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p>
+              <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-text)' }}>Add Deal</button>
             </div>
           ) : (
             filteredDeals.map(deal => {
               const stage = STAGES.find(s => s.key === deal.stage)
               return (
-                <div key={deal.id} className="bg-white rounded-2xl p-5  hover:shadow-md transition cursor-pointer" onClick={() => setEditingDeal(deal)}>
+                <div 
+                  key={deal.id} 
+                  className="rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer" 
+                  style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+                  onClick={() => setEditingDeal(deal)}
+                >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold truncate">{deal.title}</h3>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${stage?.color} ${stage?.textColor}`}>{stage?.label}</span>
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <Avatar name={deal.contact_name} size={44} style="adventurer" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-semibold truncate" style={{ color: 'var(--av-text)' }}>{deal.title}</h3>
+                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${stage?.color} ${stage?.textColor}`}>{stage?.label}</span>
+                        </div>
+                        <p className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</p>
+                        {deal.notes && <p className="text-sm mt-1 line-clamp-1" style={{ color: 'var(--av-text-muted)' }}>{deal.notes}</p>}
                       </div>
-                      <p className="text-sm text-black">{deal.contact_name}</p>
-                      {deal.notes && <p className="text-sm text-black mt-1 line-clamp-1">{deal.notes}</p>}
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="font-bold text-lg">\u20a6{(deal.value || 0).toLocaleString()}</div>
+                      <div className="font-bold text-lg" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div>
                       <div className="text-xs text-black">{deal.probability || 50}% likely</div>
                     </div>
                   </div>
@@ -309,40 +319,39 @@ export default function CRM() {
       )}
 
       {viewMode === 'contacts' && (
-        <div className="bg-white rounded-2xl  overflow-hidden">
+        <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
           {filteredContacts.length === 0 ? (
-            <div className="p-8 text-center">
-              <Users size={48} className="mx-auto mb-4 text-black/50" />
-              <h3 className="font-semibold mb-2">No contacts yet</h3>
-              <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-lg bg-[var(--av-text)] text-white text-sm font-medium">Add Contact</button>
+            <div className="p-12 text-center">
+              <Users size={48} className="mx-auto mb-4" style={{ color: 'var(--av-text-muted)' }} />
+              <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No contacts yet</h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--av-text-secondary)' }}>Add your first contact to get started</p>
+              <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-text)' }}>Add Contact</button>
             </div>
           ) : (
             <table className="w-full">
-              <thead className="bg-black/[0.02]">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-black/60">Contact</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-black/60">Company</th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-black/60">Phone</th>
-                  <th className="text-right px-4 py-3 text-sm font-medium text-black/60">Added</th>
+              <thead>
+                <tr className="border-b" style={{ borderColor: 'var(--av-border)' }}>
+                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Contact</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Company</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Phone</th>
+                  <th className="text-right px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Added</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-black/[0.06]">
+              <tbody>
                 {filteredContacts.map(contact => (
-                  <tr key={contact.id} className="hover:bg-black/10">
-                    <td className="px-4 py-3">
+                  <tr key={contact.id} className="border-b transition-colors hover:bg-[var(--av-surface)] cursor-pointer" style={{ borderColor: 'var(--av-border)' }}>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-[var(--av-primary)] flex items-center justify-center text-white text-sm font-bold">
-                          {contact.full_name.charAt(0)}
-                        </div>
+                        <Avatar name={contact.full_name} size={40} style="adventurer" />
                         <div>
-                          <div className="font-medium text-sm">{contact.full_name}</div>
-                          <div className="text-xs text-black">{contact.email}</div>
+                          <div className="font-medium text-sm" style={{ color: 'var(--av-text)' }}>{contact.full_name}</div>
+                          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>{contact.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm">{contact.company || '-'}</td>
-                    <td className="px-4 py-3 text-sm">{contact.phone || '-'}</td>
-                    <td className="px-4 py-3 text-right text-black text-sm">{new Date(contact.created_at).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.company || '-'}</td>
+                    <td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.phone || '-'}</td>
+                    <td className="px-6 py-4 text-right text-sm" style={{ color: 'var(--av-text-muted)' }}>{new Date(contact.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -355,19 +364,29 @@ export default function CRM() {
         <div className="flex gap-4 overflow-x-auto pb-4">
           {STAGES.filter(s => s.key !== 'lost').map(stage => (
             <div key={stage.key} className="min-w-[280px] flex-1">
-              <div className={`px-3 py-2 rounded-lg ${stage.color} ${stage.textColor} font-medium text-sm mb-3 flex items-center justify-between`}>
+              <div className={`px-4 py-3 rounded-xl ${stage.color} ${stage.textColor} font-semibold text-sm mb-4 flex items-center justify-between`}>
                 <span>{stage.label}</span>
-                <span className="opacity-80">\u20a6{(dealsByStage[stage.key] || []).reduce((sum, d) => sum + (d.value || 0), 0).toLocaleString()}</span>
+                <span className="opacity-80">₦{(dealsByStage[stage.key] || []).reduce((sum, d) => sum + (d.value || 0), 0).toLocaleString()}</span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {(dealsByStage[stage.key] || []).map(deal => (
-                  <div key={deal.id} className="bg-white rounded-xl p-3  cursor-pointer hover:shadow" onClick={() => setEditingDeal(deal)}>
-                    <div className="font-medium text-sm mb-1">{deal.title}</div>
-                    <div className="text-xs text-black">{deal.contact_name}</div>
-                    <div className="text-sm font-bold mt-2">\u20a6{(deal.value || 0).toLocaleString()}</div>
+                  <div 
+                    key={deal.id} 
+                    className="rounded-xl p-4 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md" 
+                    style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
+                    onClick={() => setEditingDeal(deal)}
+                  >
+                    <Avatar name={deal.contact_name} size={32} style="bottts" className="mb-2" />
+                    <div className="font-medium text-sm mb-1" style={{ color: 'var(--av-text)' }}>{deal.title}</div>
+                    <div className="text-xs mb-2" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</div>
+                    <div className="text-sm font-bold" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div>
                   </div>
                 ))}
-                {(dealsByStage[stage.key] || []).length === 0 && <div className="text-center py-8 text-black text-sm">No deals</div>}
+                {(dealsByStage[stage.key] || []).length === 0 && (
+                  <div className="text-center py-8 text-sm rounded-xl border-2 border-dashed" style={{ borderColor: 'var(--av-border)', color: 'var(--av-text-muted)' }}>
+                    No deals
+                  </div>
+                )}
               </div>
             </div>
           ))}

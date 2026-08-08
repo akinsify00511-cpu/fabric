@@ -74,14 +74,16 @@ const getMockData = () => ({
   ],
 })
 
-// Reusable Card component
-function Card({ children, className = '', accent = false }: { children: React.ReactNode; className?: string; accent?: boolean }) {
+// Reusable Card component - Google-style with shadow, no border
+function Card({ children, className = '', accent = false, hoverable = false }: { children: React.ReactNode; className?: string; accent?: boolean; hoverable?: boolean }) {
   return (
     <div 
-      className={`rounded-lg border ${className}`}
+      className={`rounded-2xl ${hoverable ? 'transition-all hover:-translate-y-0.5' : ''} ${className}`}
       style={{ 
         backgroundColor: BRAND.surfaceElevated, 
-        borderColor: BRAND.border,
+        boxShadow: hoverable 
+          ? '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' 
+          : '0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
         position: 'relative'
       }}
     >
@@ -270,19 +272,24 @@ export default function Dashboard() {
               <Link
                 key={key}
                 to={href}
-                className="block p-4 rounded-lg border transition hover:opacity-90"
+                className="block p-5 rounded-2xl transition-all hover:-translate-y-0.5"
                 style={{ 
                   backgroundColor: BRAND.surfaceElevated,
-                  borderColor: BRAND.border
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)'
                 }}
               >
                 <div 
-                  className="w-11 h-11 rounded-lg flex items-center justify-center mb-3"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-105"
                   style={{ backgroundColor: mod.bg }}
                 >
-                  <Icon size={20} style={{ color: mod.color }} />
+                  <Icon size={24} style={{ color: mod.color }} />
                 </div>
-                <div className="text-sm font-medium" style={{ color: BRAND.text }}>{label}</div>
+                <div className="text-sm font-semibold" style={{ color: BRAND.text }}>{label}</div>
+                <div className="text-xs mt-1" style={{ color: BRAND.textMuted }}>
+                  {key === 'crm' ? 'Manage relationships' :
+                   key === 'finance' ? 'Track money flow' :
+                   key === 'projects' ? 'Track progress' : 'Team directory'}
+                </div>
               </Link>
             )
           })}
@@ -343,36 +350,35 @@ export default function Dashboard() {
 
         {/* Recent Activity */}
         <div className="col-span-12 md:col-span-7">
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm font-medium" style={{ color: BRAND.text }}>Recent activity</div>
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-sm font-semibold" style={{ color: BRAND.text }}>Recent activity</h3>
               <Link 
                 to="/app/activity"
-                className="text-xs flex items-center gap-1 transition"
+                className="text-xs flex items-center gap-1 transition hover:gap-2"
                 style={{ color: BRAND.primary }}
               >
                 View all <ArrowRight size={12} />
               </Link>
             </div>
-            <div className="space-y-3">
-              {activities.map((activity) => {
+            <div className="space-y-1">
+              {activities.map((activity, i) => {
                 const Icon = activity.icon
                 return (
                   <div 
                     key={activity.id} 
-                    className="flex items-start gap-3 py-2"
-                    style={{ borderBottom: `1px solid ${BRAND.border}` }}
+                    className="flex items-start gap-4 p-3 rounded-xl hover:bg-[var(--av-surface)] transition-colors cursor-pointer"
                   >
                     <div 
-                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                       style={{ backgroundColor: activity.color + '15' }}
                     >
-                      <Icon size={16} style={{ color: activity.color }} />
+                      <Icon size={18} style={{ color: activity.color }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm" style={{ color: BRAND.text }}>{activity.text}</div>
-                      <div className="text-xs mt-0.5 flex items-center gap-1" style={{ color: BRAND.textMuted }}>
-                        <Clock size={10} />
+                      <div className="text-xs mt-1 flex items-center gap-1" style={{ color: BRAND.textMuted }}>
+                        <Clock size={12} />
                         {activity.time}
                       </div>
                     </div>
@@ -385,35 +391,34 @@ export default function Dashboard() {
 
         {/* Upcoming */}
         <div className="col-span-12 md:col-span-5">
-          <Card className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm font-medium" style={{ color: BRAND.text }}>Upcoming</div>
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-sm font-semibold" style={{ color: BRAND.text }}>Upcoming</h3>
               <Link 
                 to="/app/calendar"
-                className="text-xs flex items-center gap-1 transition"
+                className="text-xs flex items-center gap-1 transition hover:gap-2"
                 style={{ color: BRAND.primary }}
               >
                 View calendar <ArrowRight size={12} />
               </Link>
             </div>
-            <div className="space-y-3">
-              {upcoming.map((item) => {
+            <div className="space-y-1">
+              {upcoming.map((item, i) => {
                 const dotColor = item.priority === 'high' ? BRAND.danger : 
                                 item.priority === 'medium' ? BRAND.warning : BRAND.textMuted
                 return (
                   <div 
                     key={item.id} 
-                    className="flex items-center gap-3 py-2"
-                    style={{ borderBottom: `1px solid ${BRAND.border}` }}
+                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-[var(--av-surface)] transition-colors cursor-pointer"
                   >
                     <div 
-                      className="w-2 h-2 rounded-full shrink-0"
+                      className="w-3 h-3 rounded-full shrink-0"
                       style={{ backgroundColor: dotColor }}
                     />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm truncate" style={{ color: BRAND.text }}>{item.text}</div>
-                      <div className="text-xs mt-0.5 flex items-center gap-1" style={{ color: BRAND.textMuted }}>
-                        <Calendar size={10} />
+                      <div className="text-xs mt-1 flex items-center gap-1" style={{ color: BRAND.textMuted }}>
+                        <Calendar size={12} />
                         {item.time}
                       </div>
                     </div>

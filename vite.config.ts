@@ -14,10 +14,20 @@ export default defineConfig({
             if (id.includes('supabase')) return 'vendor-supabase'
             if (id.includes('date-fns') || id.includes('uuid')) return 'vendor-utils'
             if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
+            if (id.includes('lucide')) return 'vendor-icons'
+            if (id.includes('@supabase')) return 'vendor-supabase'
+            if (id.includes('dompurify')) return 'vendor-sanitize'
           }
         },
       },
     },
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 600,
+  },
+  server: {
+    port: 5173,
+    open: false,
+  },
+  preview: {
+    port: 4173,
   },
 })
