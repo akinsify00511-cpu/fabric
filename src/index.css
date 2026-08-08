@@ -1,75 +1,20 @@
 /* Avenize Design System v5 - Google Standard Edition */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Primary font: Google Sans Flex (Open Font License, Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@import "./styles/avenize-tokens.css";
 @import "./styles/avenize-brand.css";
 
 /* ============================================
    GOOGLE STANDARD COMPATIBILITY LAYER
-   Map new tokens to old av-* variables for backward compatibility
+   Map legacy av-* and avenize-* tokens to brand.css definitions
    ============================================ */
 
 :root {
-  /* Map new Google Standard tokens to av-* for existing components */
-  --av-primary: var(--google-blue);
-  --av-primary-hover: var(--google-blue-hover);
-  --av-primary-active: var(--google-blue-active);
-  --av-primary-soft: var(--google-blue-light);
-  --av-primary-subtle: rgba(66, 133, 244, 0.04);
-  
-  /* Surface colors - use existing av-* from brand.css, fallback to new tokens */
-  --av-surface: var(--surface-primary);
-  --av-surface-2: var(--surface-secondary);
-  --av-surface-3: var(--surface-tertiary);
-  --av-surface-elevated: var(--surface-primary);
-  
-  /* Text colors */
-  --av-text: var(--text-primary);
-  --av-text-secondary: var(--text-secondary);
-  --av-text-muted: var(--text-tertiary);
-  --av-text-disabled: var(--text-disabled);
-  
-  /* Semantic colors */
-  --av-success: var(--color-success);
-  --av-warning: var(--color-warning);
-  --av-danger: var(--color-error);
-  --av-info: var(--color-info);
-  --av-success-soft: rgba(52, 168, 83, 0.08);
-  --av-warning-soft: rgba(251, 188, 5, 0.08);
-  --av-danger-soft: rgba(234, 67, 53, 0.08);
-  --av-info-soft: rgba(66, 133, 244, 0.08);
-  
-  /* Gradient - Google Standard */
-  --av-gradient: var(--avenize-gradient);
-  
-  /* Elevation shadows */
-  --av-elevation-1: var(--elevation-1);
-  --av-elevation-2: var(--elevation-2);
-  --av-elevation-3: var(--elevation-3);
-  --av-elevation-4: var(--elevation-4);
-  
-  /* Radius */
-  --av-radius-sm: var(--radius-sm);
-  --av-radius-md: var(--radius-md);
-  --av-radius-lg: var(--radius-lg);
-  --av-radius-xl: var(--radius-xl);
-  --av-radius-full: var(--radius-full);
-  
-  /* Transitions */
-  --av-transition-fast: var(--duration-fast);
-  --av-transition-normal: var(--duration-normal);
-  
-  /* Workspace accents */
-  --av-sales: var(--accent-sales);
-  --av-finance: var(--accent-finance);
-  --av-projects: var(--accent-projects);
-  --av-hr: var(--accent-hr);
-  
-  /* Legacy compatibility aliases */
-  --avenize-black: var(--text-primary);
-  --avenize-white: var(--surface-primary);
-  --avenize-stone: var(--surface-tertiary);
-  --avenize-gray: var(--surface-secondary);
+  /* Legacyavenize-* aliases (for components using old naming) */
+  --avenize-black: var(--av-text);
+  --avenize-white: var(--av-surface);
+  --avenize-stone: var(--av-surface-3);
+  --avenize-gray: var(--av-surface-2);
   
   /* Primary brand gradient */
   --avenize-gradient-start: #4285F4;
@@ -77,23 +22,23 @@
   --avenize-gradient-end: #8B5CF6;
   
   /* Legacy workspace colors */
-  --avenize-sales: var(--accent-sales);
-  --avenize-finance: var(--accent-finance);
-  --avenize-projects: var(--accent-projects);
-  --avenize-hr: var(--accent-hr);
-  --avenize-communication: var(--accent-comms);
-  --avenize-ai: var(--accent-ai);
-  --avenize-automation: var(--accent-automation);
-  --avenize-analytics: var(--accent-analytics);
+  --avenize-sales: #4285F4;
+  --avenize-finance: #34A853;
+  --avenize-projects: #FBBC05;
+  --avenize-hr: #8B5CF6;
+  --avenize-communication: #EC4899;
+  --avenize-ai: #06B6D4;
+  --avenize-automation: #F97316;
+  --avenize-analytics: #6366F1;
   
   /* Legacy gradient alias */
   --avenize-accent-start: var(--avenize-gradient-start);
   --avenize-accent-end: var(--avenize-gradient-end);
 }
 
-/* Body - Warm surface, not cold white */
+/* Body - Google Sans Flex primary, Inter fallback */
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--av-surface);
   color: var(--av-text);
   font-size: 14px;

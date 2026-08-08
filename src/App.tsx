@@ -78,6 +78,8 @@ const FinanceNigeria = lazy(() => import('./pages/FinanceNigeria'))
 const Quotes = lazy(() => import('./pages/Quotes'))
 const TrialBanner = lazy(() => import('./components/TrialBanner'))
 const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
+const LeaseManagement = lazy(() => import('./pages/LeaseManagement'))
+const MaintenanceRequests = lazy(() => import('./pages/MaintenanceRequests'))
 const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
 const Leads = lazy(() => import('./pages/Leads'))
@@ -286,6 +288,8 @@ function AppRoutes() {
         <Route path="settings/webhooks" element={<Webhooks />} />
         <Route path="settings/api-keys" element={<APIKeys />} />
         <Route path="properties" element={<Properties />} />
+        <Route path="leases" element={<LeaseManagement />} />
+        <Route path="maintenance" element={<MaintenanceRequests />} />
         <Route path="budgets" element={<Budgets />} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />

@@ -1,97 +1,90 @@
 /* ============================================
-   AVENIZE DESIGN SYSTEM v2.0
-   Premium • Professional • Muted
-   Inspired by Linear × Stripe × Notion
+   AVENIZE DESIGN SYSTEM v5 - Google Standard Edition
+   Brand guide compliant: https://avenize.com/brand
    ============================================ */
 
 :root {
-  /* ========== PRIMARY - Slate Blue (Muted, Professional) ========== */
-  --av-primary: #475569;           /* Slate-600 - Primary actions */
-  --av-primary-hover: #334155;     /* Slate-700 */
-  --av-primary-active: #1E293B;     /* Slate-800 */
-  --av-primary-soft: rgba(71, 85, 105, 0.08);
-  --av-primary-subtle: rgba(71, 85, 105, 0.04);
+  /* ========== PRIMARY - Google Blue Standard ========== */
+  --av-primary: #4285F4;           /* Google Blue - Primary actions */
+  --av-primary-hover: #3367D6;     /* Google Blue Hover */
+  --av-primary-active: #2A5DB0;     /* Google Blue Active */
+  --av-primary-soft: rgba(66, 133, 244, 0.08);
+  --av-primary-subtle: rgba(66, 133, 244, 0.04);
   
-  /* ========== SURFACE - Warm Neutrals ========== */
-  --av-surface: #FAFAF9;           /* Warm white - Page bg */
-  --av-surface-2: #F5F5F4;         /* Stone-100 - Cards */
-  --av-surface-3: #E7E5E4;         /* Stone-200 - Borders */
-  --av-surface-elevated: #FFFFFF;  /* Pure white - Elevated cards */
+  /* ========== SURFACE - Google Workspace Surface ========== */
+  --av-surface: #FFFFFF;            /* Surface Primary - Page bg */
+  --av-surface-2: #F8F9FA;          /* Surface Secondary - Cards */
+  --av-surface-3: #F1F3F4;          /* Surface Tertiary - Borders */
+  --av-surface-elevated: #FFFFFF;   /* Elevated cards */
   
-  /* ========== TEXT - Slate Tones ========== */
-  --av-text: #18181B;              /* Zinc-900 - Primary text */
-  --av-text-secondary: #52525B;    /* Zinc-600 - Secondary */
-  --av-text-muted: #A1A1AA;       /* Zinc-400 - Muted */
-  --av-text-disabled: #D4D4D8;    /* Zinc-300 - Disabled */
+  /* ========== TEXT - Google Text Tokens ========== */
+  --av-text: #202124;               /* Text Primary */
+  --av-text-secondary: #5F6368;     /* Text Secondary */
+  --av-text-muted: #9AA0A6;        /* Text Tertiary */
+  --av-text-disabled: #DADCE0;      /* Text Disabled */
   
   /* ========== BORDER ========== */
-  --av-border: #E7E5E4;            /* Stone-200 */
-  --av-border-strong: #D6D3D1;     /* Stone-300 */
+  --av-border: #E8EAED;             /* Border Light */
+  --av-border-strong: #DADCE0;      /* Border Medium */
   
-  /* ========== SEMANTIC - Muted, Professional ========== */
-  --av-success: #15803D;           /* Green-700 - Success */
-  --av-success-soft: rgba(21, 128, 61, 0.08);
+  /* ========== SEMANTIC - Google Semantic ========== */
+  --av-success: #34A853;           /* Google Green - Success */
+  --av-success-soft: rgba(52, 168, 83, 0.08);
   
-  --av-warning: #B45309;          /* Amber-700 - Warning */
-  --av-warning-soft: rgba(180, 83, 9, 0.08);
+  --av-warning: #FBBC05;            /* Google Yellow - Warning */
+  --av-warning-soft: rgba(251, 188, 5, 0.08);
   
-  --av-danger: #B91C1C;           /* Red-700 - Danger */
-  --av-danger-soft: rgba(185, 28, 28, 0.08);
+  --av-danger: #EA4335;             /* Google Red - Danger */
+  --av-danger-soft: rgba(234, 67, 53, 0.08);
   
-  --av-info: #0369A1;            /* Sky-700 - Info */
-  --av-info-soft: rgba(3, 105, 161, 0.08);
+  --av-info: #4285F4;               /* Google Blue - Info */
+  --av-info-soft: rgba(66, 133, 244, 0.08);
   
-  /* ========== ACCENT - Subtle Purple for special elements ========== */
-  --av-accent: #7C3AED;           /* Violet-600 */
-  --av-accent-soft: rgba(124, 58, 237, 0.08);
+  /* ========== ACCENT - Workspace Accents ========== */
+  --av-accent: #8B5CF6;            /* Violet - Accent */
+  --av-accent-soft: rgba(139, 92, 246, 0.08);
   
-  /* ========== GRADIENT - Ultra Subtle ========== */
-  --av-gradient: linear-gradient(135deg, #475569 0%, #475569 100%);
+  /* ========== GRADIENT - Google Standard ========== */
+  --av-gradient: linear-gradient(135deg, #4285F4 0%, #6366F1 100%);
   
-  /* ========== SHADOWS - Soft, Premium ========== */
-  --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  --av-shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
-  --av-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  /* ========== SHADOWS - Material Elevation ========== */
+  --av-shadow-sm: 0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06);
+  --av-shadow-md: 0 2px 4px rgba(0,0,0,.1), 0 4px 8px rgba(0,0,0,.06);
+  --av-shadow-lg: 0 4px 8px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.06);
   
   /* ========== TYPOGRAPHY ========== */
-  --av-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Google Sans Flex - Google's official variable font */
+  --av-font-sans: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
-  /* ========== RADII ========== */
-  --av-radius-sm: 6px;
-  --av-radius-md: 8px;
-  --av-radius-lg: 12px;
-  --av-radius-xl: 16px;
+  /* ========== RADII - Google Radius Scale ========== */
+  --av-radius-sm: 8px;
+  --av-radius-md: 12px;
+  --av-radius-lg: 16px;
+  --av-radius-xl: 24px;
   --av-radius-full: 9999px;
   
   /* ========== TRANSITIONS ========== */
-  --av-transition-fast: 100ms ease;
-  --av-transition-normal: 150ms ease;
+  --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
+  --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Dark mode */
+/* Dark mode - Google Workspace Dark */
 @media (prefers-color-scheme: dark) {
   :root {
-    --av-surface: #18181B;
-    --av-surface-2: #27272A;
-    --av-surface-3: #3F3F46;
-    --av-surface-elevated: #27272A;
-    --av-text: #FAFAFA;
-    --av-text-secondary: #A1A1AA;
-    --av-text-muted: #71717A;
-    --av-text-disabled: #52525B;
-    --av-border: #3F3F46;
-    --av-border-strong: #52525B;
-    --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    --av-shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
-    --av-shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --av-surface: #202124;
+    --av-surface-2: #292A2D;
+    --av-surface-3: #3C4043;
+    --av-surface-elevated: #292A2D;
+    --av-text: #E8EAED;
+    --av-text-secondary: #9AA0A6;
+    --av-text-muted: #5F6368;
+    --av-text-disabled: #3C4043;
+    --av-border: #5F6368;
+    --av-border-strong: #9AA0A6;
+    --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+    --av-shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
+    --av-shadow-lg: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
   }
-}
-
-/* Base styles */
-body {
-  font-family: var(--av-font-sans);
-  background-color: var(--av-surface);
-  color: var(--av-text);
 }
 
 /* Utility classes */
