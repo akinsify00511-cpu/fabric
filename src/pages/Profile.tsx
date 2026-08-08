@@ -313,7 +313,7 @@ export default function Profile() {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="Your full name"
               />
             </div>
@@ -339,7 +339,7 @@ export default function Profile() {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="+234..."
               />
             </div>
@@ -352,7 +352,7 @@ export default function Profile() {
                 type="text"
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="e.g. Sales Manager"
               />
             </div>
@@ -365,7 +365,7 @@ export default function Profile() {
                 type="text"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="e.g. Sales, Operations, Finance"
               />
             </div>
@@ -423,7 +423,7 @@ export default function Profile() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="Enter current password"
               />
             </div>
@@ -437,7 +437,7 @@ export default function Profile() {
                   type={showNewPassword ? 'text' : 'password'}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                  className="w-full rounded-lg border border-black/10 px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                   placeholder="Min. 8 characters"
                 />
                 <button
@@ -458,7 +458,7 @@ export default function Profile() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
                 placeholder="Re-enter new password"
               />
             </div>

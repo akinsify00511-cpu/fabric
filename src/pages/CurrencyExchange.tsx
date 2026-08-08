@@ -174,7 +174,7 @@ export default function CurrencyExchangePage() {
         {isAdmin && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
           >
             <TrendingUp size={16} />
             Add Rate
@@ -218,7 +218,7 @@ export default function CurrencyExchangePage() {
           <div className="flex items-center justify-center">
             <button
               onClick={swapCurrencies}
-              className="w-12 h-12 rounded-full bg-[var(--av-primary, #475569)] text-white flex items-center justify-center hover:scale-110 transition"
+              className="w-12 h-12 rounded-full bg-[var(--av-primary, #4285F4)] text-white flex items-center justify-center hover:scale-110 transition"
             >
               <ArrowRightLeft size={20} />
             </button>
@@ -274,7 +274,7 @@ export default function CurrencyExchangePage() {
               onClick={() => setSelectedBase(currency)}
               className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 ${
                 selectedBase === currency 
-                  ? 'border-[var(--av-primary, #475569)] text-[var(--av-primary, #475569)]' 
+                  ? 'border-[var(--av-primary, #4285F4)] text-[var(--av-primary, #4285F4)]' 
                   : 'border-transparent text-black hover:text-black/70'
               }`}
             >
@@ -405,7 +405,7 @@ export default function CurrencyExchangePage() {
               <button
                 onClick={handleAddRate}
                 disabled={!newRate.rate}
-                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #475569)] text-white font-medium disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium disabled:opacity-50"
               >
                 Save Rate
               </button>

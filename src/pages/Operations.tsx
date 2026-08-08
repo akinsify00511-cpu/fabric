@@ -156,19 +156,19 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
           <h3 className="font-medium mb-3">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-2">
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
-              <Plus size={18} className="text-[var(--av-primary, #475569)]" />
+              <Plus size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Report Issue</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
-              <Bell size={18} className="text-[var(--av-primary, #475569)]" />
+              <Bell size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Announcement</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
-              <FileText size={18} className="text-[var(--av-primary, #475569)]" />
+              <FileText size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">New SOP</span>
             </button>
             <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
-              <ScrollText size={18} className="text-[var(--av-primary, #475569)]" />
+              <ScrollText size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Compliance</span>
             </button>
           </div>
@@ -255,7 +255,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
         <h2 className="font-medium">Company Announcements</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm"
         >
           <Plus size={16} /> New Announcement
         </button>
@@ -299,7 +299,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
               Pin to top
             </label>
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white">
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white">
             Publish Announcement
           </button>
         </form>
@@ -488,7 +488,7 @@ function SOPsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Standard Operating Procedures</h2>
-        <button onClick={() => showToast('SOP creation coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm">
+        <button onClick={() => showToast('SOP creation coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> New SOP
         </button>
       </div>
@@ -553,7 +553,7 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Process Workflows</h2>
-        <button onClick={() => showToast('Workflow builder coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm">
+        <button onClick={() => showToast('Workflow builder coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> New Workflow
         </button>
       </div>
@@ -621,7 +621,7 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Compliance Tracking</h2>
-        <button onClick={() => showToast('Add compliance item coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm">
+        <button onClick={() => showToast('Add compliance item coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Add Requirement
         </button>
       </div>
@@ -693,7 +693,7 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Company Documents</h2>
-        <button onClick={() => showToast('Document upload coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm">
+        <button onClick={() => showToast('Document upload coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Upload Document
         </button>
       </div>
@@ -750,7 +750,7 @@ function DepartmentsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Departments</h2>
-        <button onClick={() => showToast('Department management coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #475569)] text-white text-sm">
+        <button onClick={() => showToast('Department management coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Add Department
         </button>
       </div>

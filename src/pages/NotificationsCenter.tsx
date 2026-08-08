@@ -138,7 +138,7 @@ export default function NotificationsCenterPage() {
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
             >
               <CheckCheck size={16} />
               Mark all read
@@ -155,7 +155,7 @@ export default function NotificationsCenterPage() {
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 rounded-lg text-sm font-medium ${
-            filter === 'all' ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
+            filter === 'all' ? 'bg-[var(--av-primary, #4285F4)] text-white' : 'bg-white border border-black/10'
           }`}
         >
           All
@@ -163,7 +163,7 @@ export default function NotificationsCenterPage() {
         <button
           onClick={() => setFilter('unread')}
           className={`px-4 py-2 rounded-lg text-sm font-medium ${
-            filter === 'unread' ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
+            filter === 'unread' ? 'bg-[var(--av-primary, #4285F4)] text-white' : 'bg-white border border-black/10'
           }`}
         >
           Unread {unreadCount > 0 && `(${unreadCount})`}
@@ -174,7 +174,7 @@ export default function NotificationsCenterPage() {
             key={type}
             onClick={() => setFilterType(filterType === type ? 'all' : type)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize ${
-              filterType === type ? 'bg-[var(--av-primary, #475569)] text-white' : 'bg-white border border-black/10'
+              filterType === type ? 'bg-[var(--av-primary, #4285F4)] text-white' : 'bg-white border border-black/10'
             }`}
           >
             {type}

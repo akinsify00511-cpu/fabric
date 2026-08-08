@@ -353,7 +353,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
       {/* Comment Input */}
       <div className="bg-white rounded-xl border border-black/[0.06] p-4 relative">
         <div className="flex gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--av-primary, #475569)] to-purple-500 flex items-center justify-center text-white text-sm font-medium shrink-0">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--av-primary, #4285F4)] to-purple-500 flex items-center justify-center text-white text-sm font-medium shrink-0">
             {staff?.full_name?.charAt(0) || 'U'}
           </div>
           <div className="flex-1">
@@ -364,7 +364,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                 onChange={handleCommentChange}
                 onKeyDown={handleTextareaKeyDown}
                 placeholder={replyingTo ? 'Write a reply... Use @ to mention someone' : 'Add a comment... Use @ to mention someone'}
-                className="w-full p-3 rounded-lg border border-black/10 resize-none text-sm focus:outline-none focus:border-[var(--av-primary, #475569)]"
+                className="w-full p-3 rounded-lg border border-black/10 resize-none text-sm focus:outline-none focus:border-[var(--av-primary, #4285F4)]"
                 rows={3}
               />
               
@@ -382,7 +382,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                         onClick={() => insertMention(user)}
                         className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg text-left transition ${
                           selectedMentionIndex === idx 
-                            ? 'bg-[var(--av-primary, #475569)]/10 text-[var(--av-primary, #475569)]' 
+                            ? 'bg-[var(--av-primary, #4285F4)]/10 text-[var(--av-primary, #4285F4)]' 
                             : 'hover:bg-black/10'
                         }`}
                       >
@@ -403,7 +403,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
                 <button 
-                  className="p-1.5 rounded hover:bg-black/10 text-[var(--av-primary, #475569)]"
+                  className="p-1.5 rounded hover:bg-black/10 text-[var(--av-primary, #4285F4)]"
                   title="Type @ to mention someone"
                 >
                   <AtSign size={16} />
@@ -418,7 +418,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
               <button
                 onClick={handleSubmitComment}
                 disabled={!newComment.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
               >
                 <Send size={14} />
                 {replyingTo ? 'Reply' : 'Comment'}
@@ -478,7 +478,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
                             onClick={() => handleReaction(commentItem.id, emoji)}
                             className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-sm ${
                               users.includes(staff?.user_id || '') 
-                                ? 'bg-[var(--av-primary, #475569)]/10 text-[var(--av-primary, #475569)]' 
+                                ? 'bg-[var(--av-primary, #4285F4)]/10 text-[var(--av-primary, #4285F4)]' 
                                 : 'bg-black/10 text-black/60'
                             }`}
                           >
@@ -580,7 +580,7 @@ export function CommentsPage() {
               onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-lg text-sm ${
                 filter === f 
-                  ? 'bg-[var(--av-primary, #475569)] text-white' 
+                  ? 'bg-[var(--av-primary, #4285F4)] text-white' 
                   : 'bg-black/10 text-black/60'
               }`}
             >

@@ -188,7 +188,7 @@ export default function People() {
           )}
           <button
             onClick={() => canAddTeamMember ? setShowInvite(true) : showToast('Team limit reached. Upgrade your plan to add more members.', 'error')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm font-medium"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm font-medium"
           >
             <Plus size={16} />
             Invite Team
@@ -243,7 +243,7 @@ export default function People() {
               <tr key={member.id} className="hover:bg-black/10">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[var(--av-primary, #475569)] flex items-center justify-center text-white font-medium">
+                    <div className="w-10 h-10 rounded-full bg-[var(--av-primary, #4285F4)] flex items-center justify-center text-white font-medium">
                       {member.name.charAt(0).toUpperCase()}
                     </div>
                     <span className="font-medium">{member.name}</span>
@@ -352,7 +352,7 @@ export default function People() {
               <button
                 onClick={() => saveRoles(editingRoles)}
                 disabled={saving}
-                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm disabled:opacity-50"
+                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
               >
                 {saving ? 'Saving...' : 'Save'}
               </button>
@@ -382,7 +382,7 @@ export default function People() {
               </button>
               <button
                 onClick={sendInvite}
-                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
+                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
               >
                 Send Invite
               </button>

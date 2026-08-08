@@ -4,7 +4,7 @@ import { useSubscription } from '../lib/useSubscription'
 
 const ITEMS = [
   { to: '/app/subscription', label: 'Billing', icon: CreditCard, tint: 'bg-indigo-500/10 text-indigo-500', desc: 'Plan & payments', feature: null },
-  { to: '/chat', label: 'Chat', icon: MessageSquare, tint: 'bg-[#475569]/10 text-[#475569]', desc: 'Team messaging', feature: 'chat' },
+  { to: '/chat', label: 'Chat', icon: MessageSquare, tint: 'bg-[#4285F4]/10 text-[#4285F4]', desc: 'Team messaging', feature: 'chat' },
   { to: '/knowledge', label: 'Docs', icon: Book, tint: 'bg-orange-500/10 text-orange-500', desc: 'Knowledge base', feature: 'knowledge' },
   { to: '/tickets', label: 'Support', icon: Headphones, tint: 'bg-teal-500/10 text-teal-500', desc: 'Help desk', feature: 'tickets' },
   { to: '/automations', label: 'Automations', icon: Zap, tint: 'bg-violet-500/10 text-violet-500', desc: 'Workflow rules', feature: 'automations' },

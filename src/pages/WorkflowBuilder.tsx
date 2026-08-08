@@ -204,7 +204,7 @@ export default function WorkflowBuilderPage() {
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #475569)] text-white text-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
         >
           <Plus size={16} />
           New Workflow
@@ -224,7 +224,7 @@ export default function WorkflowBuilderPage() {
           <p className="text-black mb-4">Create your first workflow to automate tasks</p>
           <button
             onClick={() => setShowModal(true)}
-            className="px-6 py-3 rounded-xl bg-[var(--av-primary, #475569)] text-white font-medium"
+            className="px-6 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium"
           >
             Create Workflow
           </button>
@@ -344,7 +344,7 @@ export default function WorkflowBuilderPage() {
                       onClick={() => setForm({ ...form, triggerType: trigger.value })}
                       className={`p-3 rounded-xl border-2 text-left transition ${
                         form.triggerType === trigger.value
-                          ? 'border-[var(--av-primary, #475569)] bg-[var(--av-primary, #475569)]/5'
+                          ? 'border-[var(--av-primary, #4285F4)] bg-[var(--av-primary, #4285F4)]/5'
                           : 'border-black/10 hover:border-black/20'
                       }`}
                     >
@@ -382,7 +382,7 @@ export default function WorkflowBuilderPage() {
                     const Icon = stepIcons[step.type] || Zap
                     return (
                       <div key={step.id} className="p-4 bg-black/[0.02] rounded-xl flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-[var(--av-primary, #475569)]/10 flex items-center justify-center text-[var(--av-primary, #475569)]">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--av-primary, #4285F4)]/10 flex items-center justify-center text-[var(--av-primary, #4285F4)]">
                           <span className="text-sm font-bold">{index + 1}</span>
                         </div>
                         <div className="flex-1">
@@ -451,7 +451,7 @@ export default function WorkflowBuilderPage() {
               <button
                 onClick={handleSaveWorkflow}
                 disabled={!form.name}
-                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #475569)] text-white font-medium disabled:opacity-50"
+                className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-primary, #4285F4)] text-white font-medium disabled:opacity-50"
               >
                 {editingWorkflow ? 'Update' : 'Create'} Workflow
               </button>

@@ -3,22 +3,23 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AvenizeMark } from '../components/AvenizeMark'
 
-// AVENIZE BRAND COLORS - Muted & Professional
+// GOOGLE STANDARD BRAND COLORS
 const BRAND = {
-  primary: '#475569',
-  primaryHover: '#334155',
-  primarySoft: 'rgba(71, 85, 105, 0.08)',
-  gradient: 'linear-gradient(135deg, #475569 0%, #475569 100%)',
-  surface: '#FAFAF9',
-  surface2: '#F5F5F4',
+  primary: '#4285F4',
+  primaryHover: '#3367D6',
+  primaryActive: '#2A5DB0',
+  primarySoft: 'rgba(66, 133, 244, 0.08)',
+  surface: '#F8F9FA',
+  surface2: '#F1F3F4',
   surfaceElevated: '#FFFFFF',
-  text: '#18181B',
-  textSecondary: '#52525B',
-  textMuted: '#A1A1AA',
-  border: '#E7E5E4',
-  success: '#15803D',
-  danger: '#B91C1C',
-  dangerSoft: 'rgba(185, 28, 28, 0.08)',
+  text: '#202124',
+  textSecondary: '#5F6368',
+  textMuted: '#9AA0A6',
+  border: '#E8EAED',
+  borderMedium: '#DADCE0',
+  success: '#34A853',
+  danger: '#EA4335',
+  dangerSoft: 'rgba(234, 67, 53, 0.08)',
 }
 
 export default function Login() {
@@ -112,40 +113,42 @@ export default function Login() {
       className="min-h-screen flex items-center justify-center"
       style={{ backgroundColor: BRAND.surface }}
     >
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-2xl border p-8 space-y-5"
+      <div
+        className="w-full max-w-sm p-8"
         style={{ 
-          backgroundColor: BRAND.surfaceElevated, 
-          borderColor: BRAND.border 
+          backgroundColor: BRAND.surfaceElevated,
+          borderRadius: '16px',
+          boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)',
+          border: 'none',
         }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-6">
           <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight" style={{ color: BRAND.text }}>Avenize</span>
         </div>
-        <p className="text-sm -mt-3" style={{ color: BRAND.textSecondary }}>Sign in to your workspace</p>
+        <p className="text-sm mb-6" style={{ color: BRAND.textSecondary }}>Sign in to your workspace</p>
 
         {error && (
-          <p 
-            className="text-sm rounded-lg px-3 py-2"
+          <div 
+            className="text-sm rounded-lg px-3 py-2 mb-4"
             style={{ color: BRAND.danger, backgroundColor: BRAND.dangerSoft }}
           >
             {error}
-          </p>
+          </div>
         )}
 
         {/* OAuth Buttons */}
-        <div className="space-y-3">
+        <div className="space-y-3 mb-6">
           <button
             type="button"
             onClick={() => handleOAuthSignIn('google')}
             disabled={!!oauthLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border py-2.5 text-sm font-medium transition disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 rounded-lg py-2.5 text-sm font-medium transition"
             style={{ 
-              borderColor: BRAND.border,
+              border: 'none',
               backgroundColor: BRAND.surfaceElevated,
-              color: BRAND.text
+              color: BRAND.text,
+              boxShadow: '0 1px 2px rgba(0,0,0,.1)',
             }}
           >
             {oauthLoading === 'google' ? (
@@ -156,7 +159,7 @@ export default function Login() {
             ) : (
               <div 
                 className="w-5 h-5 rounded-full flex items-center justify-center"
-                style={{ background: BRAND.gradient }}
+                style={{ backgroundColor: BRAND.primary }}
               >
                 <span className="text-white text-xs font-bold">A</span>
               </div>
@@ -168,11 +171,12 @@ export default function Login() {
             type="button"
             onClick={() => handleOAuthSignIn('github')}
             disabled={!!oauthLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-lg border py-2.5 text-sm font-medium transition disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 rounded-lg py-2.5 text-sm font-medium transition"
             style={{ 
-              borderColor: BRAND.border,
+              border: 'none',
               backgroundColor: BRAND.surfaceElevated,
-              color: BRAND.text
+              color: BRAND.text,
+              boxShadow: '0 1px 2px rgba(0,0,0,.1)',
             }}
           >
             {oauthLoading === 'github' ? (
@@ -189,7 +193,7 @@ export default function Login() {
           </button>
         </div>
 
-        <div className="relative">
+        <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t" style={{ borderColor: BRAND.border }}></div>
           </div>
@@ -203,18 +207,18 @@ export default function Login() {
           </div>
         </div>
 
-        <div className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-3 mb-4">
           <input
             type="email"
             required
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
+            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
             style={{ 
-              borderColor: BRAND.border,
+              border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
-              color: BRAND.text
+              color: BRAND.text,
             }}
           />
           <input
@@ -223,19 +227,19 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2"
+            className="w-full rounded-lg px-3 py-2 text-sm focus:outline-none"
             style={{ 
-              borderColor: BRAND.border,
+              border: `1px solid ${BRAND.border}`,
               backgroundColor: BRAND.surfaceElevated,
-              color: BRAND.text
+              color: BRAND.text,
             }}
           />
-        </div>
+        </form>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <Link 
             to="/forgot-password" 
-            className="text-xs transition hover:opacity-80"
+            className="text-xs transition"
             style={{ color: BRAND.primary }}
           >
             Forgot password?
@@ -244,9 +248,13 @@ export default function Login() {
 
         <button
           type="submit"
+          onClick={handleSubmit}
           disabled={loading}
-          className="w-full rounded-lg text-white py-2 text-sm font-medium transition disabled:opacity-50"
-          style={{ backgroundColor: BRAND.primary }}
+          className="w-full rounded-lg text-white py-2 text-sm font-medium transition"
+          style={{ 
+            backgroundColor: BRAND.primary,
+            border: 'none',
+          }}
         >
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
@@ -255,27 +263,27 @@ export default function Login() {
         <button
           type="button"
           onClick={handleDemoLogin}
-          className="w-full rounded-lg border py-3 text-sm font-medium transition hover:opacity-90"
+          className="w-full rounded-lg py-3 text-sm font-medium transition mt-3"
           style={{ 
-            borderColor: BRAND.border,
+            border: `1px solid ${BRAND.border}`,
             color: BRAND.textSecondary,
-            backgroundColor: BRAND.surface
+            backgroundColor: BRAND.surfaceElevated,
           }}
         >
           🎯 Try Demo Account
         </button>
 
-        <p className="text-xs text-center" style={{ color: BRAND.textSecondary }}>
+        <p className="text-xs text-center mt-4" style={{ color: BRAND.textSecondary }}>
           New here?{' '}
           <Link 
             to="/signup" 
-            className="transition hover:opacity-80"
+            className="transition"
             style={{ color: BRAND.primary }}
           >
             Set up your business
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   )
 }

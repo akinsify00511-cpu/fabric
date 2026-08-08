@@ -41,13 +41,13 @@ export default function ForgotPassword() {
           </p>
           <p className="text-xs text-black">
             Didn't receive it? Check your spam folder or{' '}
-            <button onClick={() => setSuccess(false)} className="text-[#475569] hover:underline">
+            <button onClick={() => setSuccess(false)} className="text-[#4285F4] hover:underline">
               try again
             </button>
           </p>
           <Link 
             to="/login" 
-            className="block text-sm text-[#475569] hover:underline font-medium"
+            className="block text-sm text-[#4285F4] hover:underline font-medium"
           >
             ← Back to sign in
           </Link>
@@ -82,7 +82,7 @@ export default function ForgotPassword() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#475569]/30"
+            className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]/30"
           />
 
           <button
@@ -95,7 +95,7 @@ export default function ForgotPassword() {
         </form>
 
         <p className="text-center">
-          <Link to="/login" className="text-sm text-[#475569] hover:underline">
+          <Link to="/login" className="text-sm text-[#4285F4] hover:underline">
             ← Back to sign in
           </Link>
         </p>
