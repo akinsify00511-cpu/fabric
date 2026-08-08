@@ -1,8 +1,8 @@
-import { ReactNode } from 'react'
+import { ReactNode, ComponentType } from 'react'
 import { Plus } from 'lucide-react'
 
 interface EmptyStateProps {
-  icon?: ReactNode
+  icon?: ComponentType<{ size?: number; className?: string }> | ReactNode
   title: string
   description?: string
   action?: {
@@ -22,11 +22,20 @@ export default function EmptyState({
   action,
   secondary 
 }: EmptyStateProps) {
+  const renderIcon = () => {
+    if (!icon) return null
+    if (typeof icon === 'function' || (typeof icon === 'object' && icon !== null)) {
+      const IconComponent = icon as ComponentType<{ size?: number; className?: string }>
+      return <IconComponent size={24} className="text-black" />
+    }
+    return icon
+  }
+
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
       {icon ? (
         <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 text-black">
-          {icon}
+          {renderIcon()}
         </div>
       ) : (
         <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4">

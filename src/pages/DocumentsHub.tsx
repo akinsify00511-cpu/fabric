@@ -406,8 +406,7 @@ export default function DocumentsHub() {
         <div className="grid grid-cols-4 gap-4">
           {/* Folders */}
           {folders.map(folder => {
-            const Icon = Folder
-            return (
+              return (
               <div
                 key={folder.id}
                 onClick={() => navigateToFolder(folder.id)}
@@ -415,7 +414,7 @@ export default function DocumentsHub() {
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="w-12 h-12 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center">
-                    <Icon size={24} className="text-[#8B5CF6]" />
+                    <Folder size={24} className="text-[#8B5CF6]" />
                   </div>
                   <button className="p-1 opacity-0 group-hover:opacity-100 transition">
                     <MoreVertical size={16} className="text-black/40" />
@@ -424,7 +423,7 @@ export default function DocumentsHub() {
                 <h3 className="font-medium text-black truncate">{folder.name}</h3>
                 <p className="text-xs text-black/60 mt-1">Folder</p>
               </div>
-            )
+              )
           })}
           {/* Documents */}
           {documents.map(doc => {

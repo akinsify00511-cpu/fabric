@@ -171,6 +171,7 @@ export default function ElectronicSignatures() {
           ...newRequest,
           id: Date.now().toString(),
           created_at: new Date().toISOString(),
+          signers: (newRequest.signers || []).map((s, i) => ({ ...s, id: `signer-${i}` })),
         } as SignatureRequest, ...prev])
       }
 
