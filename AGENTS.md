@@ -169,3 +169,16 @@ const BRAND = {
 - `ElectronicSignatures.tsx`: removed demo-data fallback; now does a joined `signature_requests`↔`signature_signers` query and a normalized two-step insert.
 - `PublicAppointments.tsx`: replaced `Math.random()` slot "availability" with a real overlap query against `appointments`.
 - `Services.tsx` (new): admin page to manage the service catalog the public booking page reads from.
+
+## Session 2 (2026-08-09): property + procurement UIs, fake-data purge, drift backfill
+
+- **New management UIs** (all real-DB, RLS-scoped, token design system):
+  - `PropertyOwners.tsx` — CRUD owners with property-count join.
+  - `PropertySales.tsx` — offers/closings tracker; creates approval-gated commissions (inserts `property_commissions` + linked `approvals` row so payouts are manager-approved before Finance pays).
+  - `Vendors.tsx` — CRUD suppliers (contact, payment terms).
+  - `PurchaseOrders.tsx` — multi-line PO creation (auto-fills from product record), draft→sent→received lifecycle, goods-receipt recording that triggers `apply_goods_receipt` (auto-bumps `received_quantity`, advances PO status, increments `products.stock`).
+- **Fake-data purge:** `OwnerInsights.tsx` was entirely hardcoded mock (`SARAH_STATS`, `MODULE_USAGE`, `RECENT_ACTIVITY`, `PERFORMANCE`) — owner saw fabricated revenue/deal numbers. Rewrote to fetch real metrics (invoice revenue w/ MoM delta, deal/staff/property counts) and real activity from `audit_logs`. Sarah/Modules tabs now honestly state they need a dedicated analytics pipeline. `DocumentsHub.tsx` had the same demo-fallback anti-pattern masking the real `documents`/`document_folders` tables (038) — removed.
+- **Migration 046 `046_missing_table_backfill.sql`:** defined 9 tables + 1 view that pages queried but no migration created, each reconciled with the exact columns the page uses:
+  - `e_invoices` (FIRS e-invoicing), `chat_conversations`+`chat_messages` (LiveChat, with a trigger auto-maintaining `last_message`/`unread_count`), `payroll_records`, `training_records`, `sms_templates`, `jobs` (construction pipeline), `cashflow`, `settings` (key-value integration config), `avatars` storage bucket, and `approval_requests` **view** (compat layer over the 039 `approvals` engine).
+- **Approvals page drift fix:** `approval_requests` was a phantom table name; the real engine table is `approvals` (039) with different column names. Created a compatibility VIEW (`current_level`←`current_step`, `type`←`entity_type`, `entity_name`←`description`, `requester`←joined staff name) + `INSTEAD OF UPDATE` trigger so the page works without duplicating the engine. Routed approve/reject writes from `approval_decisions` (017, requisition-only, wrong columns) to `approval_actions` (039, the engine's real action log).
+- **Drift scan method:** `grep -rhoE "\.from\('[a-z_]+'\)" src/pages/*.tsx` → verify each has a backing `CREATE TABLE`/`CREATE VIEW` migration. Run this before shipping any page. Note: `supabase.storage.from('bucket')` is not a table — exclude storage buckets from the scan.
