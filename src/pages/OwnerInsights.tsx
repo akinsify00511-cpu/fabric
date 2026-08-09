@@ -1,59 +1,107 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { BarChart3, Users, DollarSign, Target, TrendingUp, TrendingDown, MessageSquare, Bot, Clock, ArrowUp, ArrowDown, Eye, MousePointer, Calendar, ChevronRight, Activity, Zap, Star, AlertCircle, CheckCircle } from 'lucide-react'
+import { BarChart3, Users, DollarSign, Target, Bot, Clock, ArrowUp, ArrowDown, ChevronRight } from 'lucide-react'
+import { useAuth } from '../lib/AuthContext'
+import { supabase } from '../lib/supabase'
 
-const SARAH_STATS = {
-  total_conversations: 1247,
-  unique_users: 342,
-  avg_response_time: '1.2s',
-  satisfaction: 94,
-  top_questions: [
-    { q: 'How do I send an invoice?', count: 156 },
-    { q: 'How do I add a lead in CRM?', count: 134 },
-    { q: 'Pricing and plans', count: 98 },
-    { q: 'How do I track projects?', count: 87 },
-    { q: 'Getting started guide', count: 76 },
-  ],
-  resolved_queries: 1189,
-  escalation_rate: 4.6,
-  weekly_comparison: { current: 1247, previous: 1089, change: 14.5 },
+interface ActivityItem {
+  id: string
+  action: string
+  entity_type: string
+  created_at: string
+  user_email: string | null
 }
 
-const MODULE_USAGE = [
-  { module: 'CRM', users: 38, sessions: 1247, avg_time: '8.5 min', growth: 15 },
-  { module: 'Finance', users: 32, sessions: 892, avg_time: '6.2 min', growth: 22 },
-  { module: 'Projects', users: 28, sessions: 756, avg_time: '12.3 min', growth: 18 },
-  { module: 'People/HR', users: 24, sessions: 445, avg_time: '4.1 min', growth: 8 },
-  { module: 'Tasks', users: 36, sessions: 1023, avg_time: '5.8 min', growth: 12 },
-  { module: 'Chat', users: 40, sessions: 2156, avg_time: '15.2 min', growth: 25 },
-]
-
-const RECENT_ACTIVITY = [
-  { action: 'Invoice #INV-0045 sent', user: 'Aminat Bello', time: '2 min ago', type: 'finance' },
-  { action: 'New lead added: Alhaji Motors', user: 'Chinedu Okafor', time: '5 min ago', type: 'crm' },
-  { action: 'Project completed: EduFirst Phase 2', user: 'Emeka Nwosu', time: '12 min ago', type: 'project' },
-  { action: 'Staff onboarding: 2 new hires', user: 'Sarah (System)', time: '1 hour ago', type: 'hr' },
-  { action: 'Deal closed: 2.5M - Riverside Construction', user: 'Chinedu Okafor', time: '2 hours ago', type: 'crm' },
-]
-
-const PERFORMANCE = [
-  { metric: 'Page Load Time', value: '1.2s', status: 'good', target: '< 2s' },
-  { metric: 'API Response', value: '245ms', status: 'good', target: '< 500ms' },
-  { metric: 'Uptime', value: '99.9%', status: 'good', target: '> 99.5%' },
-  { metric: 'Error Rate', value: '0.12%', status: 'good', target: '< 1%' },
-]
+interface Metrics {
+  revenueThisMonth: number
+  activeDeals: number
+  teamMembers: number
+  propertyCount: number
+  revenueChange: number | null
+}
 
 export default function OwnerInsights() {
+  const { staff } = useAuth()
   const [activeTab, setActiveTab] = useState<'overview' | 'sarah' | 'modules'>('overview')
+  const [activity, setActivity] = useState<ActivityItem[]>([])
+  const [metrics, setMetrics] = useState<Metrics>({
+    revenueThisMonth: 0,
+    activeDeals: 0,
+    teamMembers: 0,
+    propertyCount: 0,
+    revenueChange: null,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (staff?.business_id) fetchRealData()
+  }, [staff])
+
+  // Pull real business metrics + recent audit-log activity so the owner sees
+  // their actual numbers, not placeholders.
+  async function fetchRealData() {
+    if (!staff?.business_id) return
+    const biz = staff.business_id
+
+    const now = new Date()
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString()
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59).toISOString()
+
+    const [dealsRes, staffRes, propsRes, invThisMonth, invLastMonth, auditRes] = await Promise.all([
+      supabase.from('deals').select('id', { count: 'exact', head: true })
+        .eq('business_id', biz).in('stage', ['prospect', 'qualified', 'proposal', 'negotiation']),
+      supabase.from('staff').select('id', { count: 'exact', head: true }).eq('business_id', biz),
+      supabase.from('properties').select('id', { count: 'exact', head: true }).eq('business_id', biz),
+      supabase.from('invoices').select('total').eq('business_id', biz).gte('created_at', thisMonthStart),
+      supabase.from('invoices').select('total').eq('business_id', biz).gte('created_at', lastMonthStart).lte('created_at', lastMonthEnd),
+      supabase.from('audit_logs')
+        .select('id, action, entity_type, created_at, user_id')
+        .eq('business_id', biz)
+        .order('created_at', { ascending: false })
+        .limit(8),
+    ])
+
+    const thisMonthRevenue = (invThisMonth.data || []).reduce((s: number, i: any) => s + Number(i.total || 0), 0)
+    const lastMonthRevenue = (invLastMonth.data || []).reduce((s: number, i: any) => s + Number(i.total || 0), 0)
+    const change = lastMonthRevenue > 0 ? ((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 : null
+
+    setMetrics({
+      revenueThisMonth: thisMonthRevenue,
+      activeDeals: dealsRes.count || 0,
+      teamMembers: staffRes.count || 0,
+      propertyCount: propsRes.count || 0,
+      revenueChange: change,
+    })
+
+    // Enrich activity with the actor's email when we can.
+    const userIds = [...new Set((auditRes.data || []).map((a: any) => a.user_id).filter(Boolean))]
+    let userEmailMap: Record<string, string> = {}
+    if (userIds.length > 0) {
+      const { data: users } = await supabase.from('staff').select('user_id, full_name').in('user_id', userIds)
+      userEmailMap = Object.fromEntries((users || []).map((u: any) => [u.user_id, u.full_name]))
+    }
+    setActivity((auditRes.data || []).map((a: any) => ({
+      id: a.id,
+      action: `${a.action} ${a.entity_type}`,
+      entity_type: a.entity_type,
+      created_at: a.created_at,
+      user_email: a.user_id ? (userEmailMap[a.user_id] || 'Staff') : 'System',
+    })))
+    setLoading(false)
+  }
+
+  const fmtMoney = (n: number) =>
+    new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(n)
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-black">Owner Insights</h1>
-          <p className="text-black">Your business command center</p>
+          <p className="text-black/60">Your business command center</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-black">
+        <div className="flex items-center gap-2 text-sm text-black/60">
           <Clock size={16} />
           <span>Last updated: {new Date().toLocaleTimeString()}</span>
         </div>
@@ -71,7 +119,7 @@ export default function OwnerInsights() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
-                activeTab === tab.id ? 'bg-[#4285F4] text-white' : 'bg-white text-black hover:bg-white'
+                activeTab === tab.id ? 'bg-[#4285F4] text-white' : 'bg-white text-black hover:bg-black/5'
               }`}
             >
               <Icon size={16} />
@@ -84,149 +132,78 @@ export default function OwnerInsights() {
       {activeTab === 'overview' && (
         <div className="space-y-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <MetricCard label="Revenue This Month" value="2.45M" change={12.4} icon={DollarSign} color="green" prefix="N" />
-            <MetricCard label="Active Deals" value="24" change={5} icon={Target} color="indigo" />
-            <MetricCard label="Team Members" value="42" change={2} icon={Users} color="purple" />
-            <MetricCard label="Sarah Conversations" value="1,247" change={14.5} icon={MessageSquare} color="blue" />
+            <MetricCard label="Revenue This Month" value={fmtMoney(metrics.revenueThisMonth)} change={metrics.revenueChange} icon={DollarSign} color="green" loading={loading} />
+            <MetricCard label="Active Deals" value={String(metrics.activeDeals)} icon={Target} color="indigo" loading={loading} />
+            <MetricCard label="Team Members" value={String(metrics.teamMembers)} icon={Users} color="purple" loading={loading} />
+            <MetricCard label="Properties" value={String(metrics.propertyCount)} icon={BarChart3} color="blue" loading={loading} />
           </div>
 
-          <div className="bg-white rounded-xl p-6 border border-white">
-            <h2 className="text-lg font-bold text-black mb-4">System Performance</h2>
-            <div className="grid md:grid-cols-4 gap-4">
-              {PERFORMANCE.map((p, i) => (
-                <div key={i} className="text-center p-4 bg-white rounded-lg">
-                  <CheckCircle size={24} className="text-green-500 mx-auto mb-2" />
-                  <div className="text-xl font-bold text-black">{p.value}</div>
-                  <div className="text-sm text-black">{p.metric}</div>
-                  <div className="text-xs text-black mt-1">Target: {p.target}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-white">
+          <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-lg font-bold text-black mb-4">Recent Activity</h2>
-            <div className="space-y-3">
-              {RECENT_ACTIVITY.map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-white rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      item.type === 'finance' ? 'bg-green-500' :
-                      item.type === 'crm' ? 'bg-[#4285F4]' :
-                      item.type === 'project' ? 'bg-amber-500' : 'bg-purple-500'
-                    }`} />
-                    <div>
-                      <p className="text-sm font-medium text-black">{item.action}</p>
-                      <p className="text-xs text-black">by {item.user}</p>
+            {activity.length === 0 ? (
+              <p className="text-sm text-black/40 py-8 text-center">No recent activity recorded yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {activity.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between p-3 bg-[#F8F9FA] rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-2 h-2 rounded-full ${
+                        item.entity_type === 'invoice' ? 'bg-green-500' :
+                        item.entity_type === 'deal' ? 'bg-[#4285F4]' :
+                        item.entity_type === 'property' ? 'bg-amber-500' : 'bg-purple-500'
+                      }`} />
+                      <div>
+                        <p className="text-sm font-medium text-black capitalize">{item.action}</p>
+                        <p className="text-xs text-black/50">by {item.user_email}</p>
+                      </div>
                     </div>
+                    <span className="text-xs text-black/40">
+                      {new Date(item.created_at).toLocaleString()}
+                    </span>
                   </div>
-                  <span className="text-xs text-black">{item.time}</span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {activeTab === 'sarah' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <MetricCard label="Total Conversations" value="1,247" change={14.5} icon={MessageSquare} color="blue" />
-            <MetricCard label="Unique Users" value="342" change={8.2} icon={Users} color="purple" />
-            <MetricCard label="Queries Resolved" value="1,189" change={12.1} icon={CheckCircle} color="green" />
-            <MetricCard label="Satisfaction Score" value="94%" change={2.3} icon={Star} color="amber" />
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-white">
-            <h2 className="text-lg font-bold text-black mb-4">Sarah Performance</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <p className="text-sm text-black mb-4">Week-over-Week</p>
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-black">1,247</div>
-                    <div className="text-sm text-black">This week</div>
-                  </div>
-                  <div className="flex items-center gap-1 text-green-600">
-                    <ArrowUp size={20} />
-                    <span className="font-bold">14.5%</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-black">1,089</div>
-                    <div className="text-sm text-black">Last week</div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <p className="text-sm text-black mb-4">Resolution Rate</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-full bg-white rounded-full h-4">
-                    <div className="bg-green-500 h-4 rounded-full" style={{ width: '95%' }} />
-                  </div>
-                  <span className="font-bold text-black">95.4%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 border border-white">
-            <h2 className="text-lg font-bold text-black mb-4">Top Questions Asked</h2>
-            <div className="space-y-3">
-              {SARAH_STATS.top_questions.map((item, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-[#4285F4]/10 flex items-center justify-center text-[#4285F4] font-bold text-sm">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-black">{item.q}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-black">{item.count}</div>
-                    <div className="text-xs text-black">queries</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="bg-white rounded-xl p-8 shadow-sm text-center">
+            <Bot size={40} className="text-[#4285F4] mx-auto mb-3" />
+            <h2 className="text-lg font-bold text-black mb-2">Sarah AI Analytics</h2>
+            <p className="text-sm text-black/60 max-w-md mx-auto">
+              Conversation analytics for the Sarah AI assistant require a dedicated
+              analytics pipeline. Connect your chat event source to populate these metrics.
+            </p>
           </div>
         </div>
       )}
 
       {activeTab === 'modules' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-xl p-6 border border-white overflow-x-auto">
-            <h2 className="text-lg font-bold text-black mb-4">Module Usage Across Team</h2>
-            <table className="w-full min-w-[600px]">
-              <thead>
-                <tr className="text-left text-sm text-black border-b">
-                  <th className="pb-3">Module</th>
-                  <th className="pb-3 text-center">Active Users</th>
-                  <th className="pb-3 text-center">Sessions</th>
-                  <th className="pb-3 text-center">Avg Time</th>
-                  <th className="pb-3 text-center">Growth</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MODULE_USAGE.map((m, i) => (
-                  <tr key={i} className="border-b border-white last:border-0">
-                    <td className="py-4">
-                      <Link to={`/app/${m.module.toLowerCase().split('/')[0]}`} className="flex items-center gap-2 text-black font-medium hover:text-[#4285F4]">
-                        {m.module}
-                        <ChevronRight size={16} />
-                      </Link>
-                    </td>
-                    <td className="py-4 text-center">{m.users}</td>
-                    <td className="py-4 text-center">{m.sessions.toLocaleString()}</td>
-                    <td className="py-4 text-center">{m.avg_time}</td>
-                    <td className="py-4 text-center">
-                      <span className="inline-flex items-center gap-1 text-green-600">
-                        <ArrowUp size={14} />
-                        {m.growth}%
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-white rounded-xl p-8 shadow-sm text-center">
+            <Target size={40} className="text-[#4285F4] mx-auto mb-3" />
+            <h2 className="text-lg font-bold text-black mb-2">Module Usage</h2>
+            <p className="text-sm text-black/60 max-w-md mx-auto">
+              Per-module usage stats (active users, sessions, time) require session tracking.
+              Enable product analytics to see how your team uses each module.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
+              <Link to="/app/crm" className="px-3 py-1.5 bg-[#F8F9FA] rounded-lg text-sm text-black/70 hover:bg-black/5 transition flex items-center gap-1">
+                CRM <ChevronRight size={14} />
+              </Link>
+              <Link to="/app/finance" className="px-3 py-1.5 bg-[#F8F9FA] rounded-lg text-sm text-black/70 hover:bg-black/5 transition flex items-center gap-1">
+                Finance <ChevronRight size={14} />
+              </Link>
+              <Link to="/app/projects" className="px-3 py-1.5 bg-[#F8F9FA] rounded-lg text-sm text-black/70 hover:bg-black/5 transition flex items-center gap-1">
+                Projects <ChevronRight size={14} />
+              </Link>
+              <Link to="/app/properties" className="px-3 py-1.5 bg-[#F8F9FA] rounded-lg text-sm text-black/70 hover:bg-black/5 transition flex items-center gap-1">
+                Properties <ChevronRight size={14} />
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -234,7 +211,7 @@ export default function OwnerInsights() {
   )
 }
 
-function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { label: string, value: string, change: number, icon: any, color: string, prefix?: string }) {
+function MetricCard({ label, value, change, icon: Icon, color, loading }: { label: string, value: string, change?: number | null, icon: any, color: string, loading?: boolean }) {
   const colorClasses: Record<string, string> = {
     green: 'bg-green-50 text-green-600',
     indigo: 'bg-[#4285F4]/5 text-[#4285F4]',
@@ -243,18 +220,22 @@ function MetricCard({ label, value, change, icon: Icon, color, prefix = '' }: { 
     amber: 'bg-amber-50 text-amber-600',
   }
   return (
-    <div className="bg-white rounded-xl p-5 border border-white">
+    <div className="bg-white rounded-xl p-5 shadow-sm">
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center`}>
           <Icon size={20} />
         </div>
-        <span className={`flex items-center gap-1 text-sm font-medium ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {change >= 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-          {Math.abs(change)}%
-        </span>
+        {change !== undefined && change !== null && (
+          <span className={`flex items-center gap-1 text-sm font-medium ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {change >= 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+            {Math.abs(change).toFixed(1)}%
+          </span>
+        )}
       </div>
-      <div className="text-2xl font-bold text-black mb-1">{prefix}{value}</div>
-      <div className="text-sm text-black">{label}</div>
+      <div className="text-2xl font-bold text-black mb-1">
+        {loading ? '—' : value}
+      </div>
+      <div className="text-sm text-black/60">{label}</div>
     </div>
   )
 }

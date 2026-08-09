@@ -80,121 +80,41 @@ export default function DocumentsHub() {
 
   const fetchDocuments = async () => {
     if (!staff?.business_id) return
-    
-    try {
-      const { data, error } = await supabase
-        .from('documents')
-        .select('*')
-        .eq('business_id', staff.business_id)
-        .is('folder_id', currentFolder ? undefined : null)
-        .order('is_starred', { ascending: false })
-        .order('updated_at', { ascending: false })
 
-      if (error) {
-        // Use demo data if table doesn't exist
-        setDocuments(getDemoDocuments())
-      } else {
-        setDocuments(data || [])
-      }
-    } catch (error) {
-      setDocuments(getDemoDocuments())
-    } finally {
-      setLoading(false)
+    const { data, error } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('business_id', staff.business_id)
+      .is('folder_id', currentFolder ? undefined : null)
+      .order('is_starred', { ascending: false })
+      .order('updated_at', { ascending: false })
+
+    if (error) {
+      console.error('Error loading documents:', error)
+      setDocuments([])
+    } else {
+      setDocuments(data || [])
     }
+    setLoading(false)
   }
 
   const fetchFolders = async () => {
     if (!staff?.business_id) return
-    
-    try {
-      const { data, error } = await supabase
-        .from('document_folders')
-        .select('*')
-        .eq('business_id', staff.business_id)
-        .is('parent_id', currentFolder ? undefined : null)
-        .order('name')
 
-      if (error) {
-        setFolders(getDemoFolders())
-      } else {
-        setFolders(data || [])
-      }
-    } catch (error) {
-      setFolders(getDemoFolders())
+    const { data, error } = await supabase
+      .from('document_folders')
+      .select('*')
+      .eq('business_id', staff.business_id)
+      .is('parent_id', currentFolder ? undefined : null)
+      .order('name')
+
+    if (error) {
+      console.error('Error loading folders:', error)
+      setFolders([])
+    } else {
+      setFolders(data || [])
     }
   }
-
-  const getDemoDocuments = (): Document[] => [
-    {
-      id: '1',
-      name: 'Annual Report 2024.pdf',
-      type: 'pdf',
-      size: 2457600,
-      folder_id: null,
-      url: '/docs/annual-report.pdf',
-      mime_type: 'application/pdf',
-      is_starred: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      name: 'Employee Handbook.docx',
-      type: 'docx',
-      size: 524288,
-      folder_id: null,
-      url: '/docs/handbook.docx',
-      mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      is_starred: false,
-      created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: '3',
-      name: 'Q4 Financials.xlsx',
-      type: 'xlsx',
-      size: 1048576,
-      folder_id: null,
-      url: '/docs/q4-financials.xlsx',
-      mime_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      is_starred: true,
-      created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: '4',
-      name: 'Office Photos.zip',
-      type: 'zip',
-      size: 15728640,
-      folder_id: null,
-      url: '/docs/office-photos.zip',
-      mime_type: 'application/zip',
-      is_starred: false,
-      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-      updated_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  ]
-
-  const getDemoFolders = (): FolderItem[] => [
-    {
-      id: 'f1',
-      name: 'Contracts',
-      parent_id: null,
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: 'f2',
-      name: 'HR Documents',
-      parent_id: null,
-      created_at: new Date().toISOString(),
-    },
-    {
-      id: 'f3',
-      name: 'Marketing',
-      parent_id: null,
-      created_at: new Date().toISOString(),
-    },
-  ]
 
   const getFileIcon = (type: string) => {
     return FILE_ICONS[type] || FILE_ICONS.default
