@@ -86,6 +86,7 @@ const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
 const LeaseManagement = lazy(() => import('./pages/LeaseManagement'))
 const MaintenanceRequests = lazy(() => import('./pages/MaintenanceRequests'))
 const ElectronicSignatures = lazy(() => import('./pages/ElectronicSignatures'))
+const SignDocument = lazy(() => import('./pages/SignDocument'))
 const DocumentsHub = lazy(() => import('./pages/DocumentsHub'))
 const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
@@ -240,6 +241,7 @@ function AppRoutes() {
         <Route path="/leads" element={<LeadCapture />} />
         <Route path="/book" element={<PublicAppointments />} />
         <Route path="/book/:slug" element={<PublicAppointments />} />
+        <Route path="/sign/:token" element={<SignDocument />} />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />

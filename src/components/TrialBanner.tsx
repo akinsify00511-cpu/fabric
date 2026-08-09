@@ -3,42 +3,27 @@ import { X, Crown, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useEntitlements } from '../lib/useEntitlement'
 
-const TRIAL_DAYS = 7
-
 export default function TrialBanner() {
   const [visible, setVisible] = useState(false)
-  const [daysLeft, setDaysLeft] = useState(TRIAL_DAYS)
-  const { plan, loading } = useEntitlements()
+  const { plan, loading, trialDaysLeft, inTrial } = useEntitlements()
 
   useEffect(() => {
-    // Don't show trial banner for paid plans or demo users
     if (loading) return
-    
-    // Check if user has a paid plan
+
     const paidPlans = ['starter', 'professional', 'enterprise']
     if (paidPlans.includes(plan)) {
       setVisible(false)
       return
     }
 
-    // Check localStorage trial
-    const trialStart = localStorage.getItem('avenize_trial_start')
-    if (!trialStart) {
-      localStorage.setItem('avenize_trial_start', Date.now().toString())
-      setVisible(true)
-    } else {
-      const daysPassed = Math.floor((Date.now() - parseInt(trialStart)) / (1000 * 60 * 60 * 24))
-      const remaining = TRIAL_DAYS - daysPassed
-      setDaysLeft(Math.max(0, remaining))
-      setVisible(remaining > 0)
-    }
-  }, [loading, plan])
+    // Trial window is tracked server-side on business_entitlements.trial_ends_at
+    setVisible(inTrial)
+  }, [loading, plan, inTrial])
 
   const dismiss = () => setVisible(false)
 
   if (!visible) return null
 
-  // Check if user has any paid features
   const hasPaidFeatures = plan !== 'free'
 
   return (
@@ -56,7 +41,7 @@ export default function TrialBanner() {
             <>
               <Crown size={20} />
               <span>
-                <strong>{daysLeft} days left</strong> in your free trial • 
+                <strong>{trialDaysLeft} {trialDaysLeft === 1 ? 'day' : 'days'} left</strong> in your free trial •
                 Unlock all premium features!
               </span>
             </>

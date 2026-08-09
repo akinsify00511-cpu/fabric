@@ -56,7 +56,6 @@ type AuthContextValue = {
   staff: Staff | null
   loading: boolean
   staffChecked: boolean
-  isDemo: boolean
   signOut: () => Promise<void>
   refreshStaff: () => Promise<void>
   // Helper functions
@@ -73,15 +72,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [loading, setLoading] = useState(true)
   const [staffChecked, setStaffChecked] = useState(false)
-  const [isDemo] = useState(false)
 
   useEffect(() => {
-    // Clear any stale demo-mode flags from previous sessions
-    if (localStorage.getItem('avenize_demo') === 'true') {
-      localStorage.removeItem('avenize_demo')
-      localStorage.removeItem('avenize_demo_user')
-    }
-
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
@@ -95,15 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchStaff = useCallback(async () => {
-    // Don't reset staffChecked here - causes flickering
     if (!session?.user?.id) {
       setStaff(null)
-      setStaffChecked(true)
-      return
-    }
-
-    // Skip for demo mode (already set in useEffect)
-    if (isDemo) {
       setStaffChecked(true)
       return
     }
@@ -114,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select('*')
         .eq('user_id', session.user.id)
         .maybeSingle()
-      
+
       if (data) {
         setStaff({ ...data, user: session.user } as Staff)
       } else {
@@ -125,7 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStaff(null)
     }
     setStaffChecked(true)
-  }, [session, isDemo])
+  }, [session])
 
   useEffect(() => {
     // Only reset and fetch if we have a session
@@ -166,7 +151,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       staff,
       loading,
       staffChecked,
-      isDemo,
       signOut,
       refreshStaff: fetchStaff,
       canManageStaff,

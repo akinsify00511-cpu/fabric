@@ -29,6 +29,7 @@ interface Signer {
   order: number
   status: 'pending' | 'viewed' | 'signed' | 'declined'
   signed_at: string
+  signing_token?: string
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -73,7 +74,7 @@ export default function ElectronicSignatures() {
         .select(`
           *,
           signers:signature_signers (
-            id, name, email, order_index, status, signed_at
+            id, name, email, order_index, status, signed_at, signing_token
           )
         `)
         .eq('business_id', staff.business_id)
@@ -100,6 +101,7 @@ export default function ElectronicSignatures() {
           order: sg.order_index,
           status: sg.status,
           signed_at: sg.signed_at ?? '',
+          signing_token: sg.signing_token,
         })),
       })))
     } catch (error) {
@@ -185,6 +187,13 @@ export default function ElectronicSignatures() {
       console.error('Error updating status:', error)
       alert('Could not update the request status. Please try again.')
     }
+  }
+
+  const copySigningLink = (signer: Signer) => {
+    if (!signer.signing_token) return
+    const url = `${window.location.origin}/sign/${signer.signing_token}`
+    navigator.clipboard.writeText(url)
+    alert(`Signing link copied for ${signer.name}:\n${url}`)
   }
 
   const resetForm = () => {
@@ -422,6 +431,15 @@ export default function ElectronicSignatures() {
                           title="Send for signing"
                         >
                           <Send size={16} className="text-[var(--av-primary)]" />
+                        </button>
+                      )}
+                      {request.status !== 'draft' && request.signers.length > 0 && (
+                        <button
+                          onClick={() => copySigningLink(request.signers[0])}
+                          className="p-2 hover:bg-[var(--av-primary)]/10 rounded-lg transition"
+                          title={`Copy signing link for ${request.signers[0].name}`}
+                        >
+                          <Link size={16} className="text-[var(--av-primary)]" />
                         </button>
                       )}
                       <button className="p-2 hover:bg-black/5 rounded-lg transition">

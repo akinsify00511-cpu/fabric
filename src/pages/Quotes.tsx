@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Download } from 'lucide-react'
 import { useToast } from '../components/Toast'
 import { useAuth } from '../lib/AuthContext'
-import { getDeals } from '../lib/Storage'
+import { supabase } from '../lib/supabase'
 import { generateQuotePDF } from '../lib/PDFGenerator'
 
 type Quote = {
@@ -37,7 +37,7 @@ export default function Quotes() {
   const [deals, setDeals] = useState<any[]>([])
   const [showNewQuote, setShowNewQuote] = useState(false)
   const [convertingDeal, setConvertingDeal] = useState<string | null>(null)
-  
+
   const [newQuote, setNewQuote] = useState({
     client_name: '',
     client_email: '',
@@ -52,20 +52,31 @@ export default function Quotes() {
   }, [])
 
   const loadData = async () => {
-    const loadedDeals = await getDeals()
-    if (loadedDeals.length > 0) {
-      setDeals(loadedDeals)
-    }
-    
-    const storedQuotes = localStorage.getItem('avenize_quotes')
-    if (storedQuotes) {
-      setQuotes(JSON.parse(storedQuotes))
+    if (!staff?.business_id) return
+    try {
+      const { data: dealsData } = await supabase
+        .from('deals')
+        .select('*')
+        .eq('business_id', staff.business_id)
+        .order('created_at', { ascending: false })
+      if (dealsData) setDeals(dealsData)
+
+      const { data: quotesData, error: qErr } = await supabase
+        .from('quotes')
+        .select('*')
+        .eq('business_id', staff.business_id)
+        .order('created_at', { ascending: false })
+      if (qErr) throw qErr
+      if (quotesData) setQuotes(quotesData as Quote[])
+    } catch (err) {
+      console.error('Failed to load quotes:', err)
+      error('Could not load quotes. Please try again.')
     }
   }
 
-  const saveQuotes = (updatedQuotes: Quote[]) => {
-    setQuotes(updatedQuotes)
-    localStorage.setItem('avenize_quotes', JSON.stringify(updatedQuotes))
+  const persistQuote = async (id: string, updates: Partial<Quote>) => {
+    const { error: updErr } = await supabase.from('quotes').update(updates).eq('id', id)
+    if (updErr) console.error('Failed to update quote:', updErr)
   }
 
   const convertDealToQuote = (deal: any) => {
@@ -81,9 +92,13 @@ export default function Quotes() {
     setShowNewQuote(true)
   }
 
-  const createQuote = () => {
+  const createQuote = async () => {
     if (!newQuote.title.trim()) {
       error('Please enter a quote title')
+      return
+    }
+    if (!staff?.business_id) {
+      error('No business context')
       return
     }
 
@@ -91,8 +106,9 @@ export default function Quotes() {
     const vat_amount = subtotal * 0.075
     const total = subtotal + vat_amount
 
+    const quoteId = crypto.randomUUID()
     const quote: Quote = {
-      id: crypto.randomUUID(),
+      id: quoteId,
       quote_number: `QT-${Date.now().toString().slice(-6)}`,
       deal_id: convertingDeal || undefined,
       client_name: newQuote.client_name,
@@ -111,7 +127,28 @@ export default function Quotes() {
       created_at: new Date().toISOString(),
     }
 
-    saveQuotes([quote, ...quotes])
+    const { error: insertErr } = await supabase.from('quotes').insert({
+      id: quoteId,
+      business_id: staff.business_id,
+      quote_number: quote.quote_number,
+      deal_id: quote.deal_id || null,
+      client_name: quote.client_name,
+      client_email: quote.client_email || null,
+      client_address: quote.client_address || null,
+      title: quote.title,
+      items: quote.items,
+      subtotal,
+      vat_amount,
+      total,
+      valid_until: quote.valid_until,
+      status: 'draft',
+    })
+
+    if (insertErr) {
+      error('Failed to create quote')
+      return
+    }
+    setQuotes([quote, ...quotes])
     success('Quote created successfully')
     setShowNewQuote(false)
     setConvertingDeal(null)
@@ -122,31 +159,30 @@ export default function Quotes() {
     })
   }
 
-  const sendQuote = (quoteId: string) => {
-    const updatedQuotes = quotes.map(q => 
-      q.id === quoteId ? { ...q, status: 'sent' as const } : q
-    )
-    saveQuotes(updatedQuotes)
+  const sendQuote = async (quoteId: string) => {
+    await persistQuote(quoteId, { status: 'sent' })
+    setQuotes(quotes.map(q => q.id === quoteId ? { ...q, status: 'sent' as const } : q))
     success('Quote sent to client')
   }
 
-  const acceptQuote = (quoteId: string) => {
-    const updatedQuotes = quotes.map(q => 
-      q.id === quoteId ? { ...q, status: 'accepted' as const } : q
-    )
-    saveQuotes(updatedQuotes)
+  const acceptQuote = async (quoteId: string) => {
+    await persistQuote(quoteId, { status: 'accepted' })
+    setQuotes(quotes.map(q => q.id === quoteId ? { ...q, status: 'accepted' as const } : q))
     success('Quote accepted!')
   }
 
-  const rejectQuote = (quoteId: string) => {
-    const updatedQuotes = quotes.map(q => 
-      q.id === quoteId ? { ...q, status: 'rejected' as const } : q
-    )
-    saveQuotes(updatedQuotes)
+  const rejectQuote = async (quoteId: string) => {
+    await persistQuote(quoteId, { status: 'rejected' })
+    setQuotes(quotes.map(q => q.id === quoteId ? { ...q, status: 'rejected' as const } : q))
   }
 
-  const deleteQuote = (quoteId: string) => {
-    saveQuotes(quotes.filter(q => q.id !== quoteId))
+  const deleteQuote = async (quoteId: string) => {
+    const { error: delErr } = await supabase.from('quotes').delete().eq('id', quoteId)
+    if (delErr) {
+      error('Failed to delete quote')
+      return
+    }
+    setQuotes(quotes.filter(q => q.id !== quoteId))
     success('Quote deleted')
   }
 
@@ -226,7 +262,7 @@ export default function Quotes() {
 
       <div className="bg-white rounded-xl border border-white p-4">
         <h2 className="font-bold text-black mb-4">All Quotes</h2>
-        
+
         {quotes.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="w-12 h-12 mx-auto text-black mb-4" />
@@ -260,7 +296,7 @@ export default function Quotes() {
                     <p className="text-xl font-bold text-[#4285F4]">{formatCurrency(quote.total)}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white">
                   {quote.status === 'draft' && (
                     <button onClick={() => sendQuote(quote.id)} className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600 transition">
@@ -282,7 +318,7 @@ export default function Quotes() {
                       <FileText size={14} /> Convert to Invoice
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={async () => await generateQuotePDF({ ...quote, business_id: staff?.business_id })}
                     className="flex items-center gap-1 px-3 py-1.5 bg-white text-black rounded-lg text-xs font-medium hover:bg-white transition"
                   >
@@ -305,7 +341,7 @@ export default function Quotes() {
               <h3 className="text-lg font-bold">{convertingDeal ? 'Convert Deal to Quote' : 'New Quote'}</h3>
               <button onClick={() => { setShowNewQuote(false); setConvertingDeal(null); }} className="p-2 hover:bg-white rounded-lg"><X size={20} /></button>
             </div>
-            
+
             <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -317,18 +353,18 @@ export default function Quotes() {
                   <input type="email" value={newQuote.client_email} onChange={(e) => setNewQuote({ ...newQuote, client_email: e.target.value })} className="w-full rounded-lg border border-black px-3 py-2" placeholder="client@company.com" />
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Quote Title *</label>
                 <input type="text" value={newQuote.title} onChange={(e) => setNewQuote({ ...newQuote, title: e.target.value })} className="w-full rounded-lg border border-black px-3 py-2" placeholder="e.g. Software License" />
               </div>
-              
+
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-black">Items</label>
                   <button onClick={addItem} className="text-sm text-[#4285F4] hover:text-[#4285F4] font-medium">+ Add Item</button>
                 </div>
-                
+
                 <div className="space-y-2">
                   {newQuote.items.map((item, index) => (
                     <div key={index} className="flex gap-2 items-start">
@@ -340,7 +376,7 @@ export default function Quotes() {
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Valid For (Days)</label>
                 <select value={newQuote.valid_days} onChange={(e) => setNewQuote({ ...newQuote, valid_days: parseInt(e.target.value) })} className="w-full rounded-lg border border-black px-3 py-2">
@@ -351,7 +387,7 @@ export default function Quotes() {
                   <option value={90}>90 days</option>
                 </select>
               </div>
-              
+
               <div className="bg-white rounded-lg p-4">
                 <div className="flex justify-between text-sm mb-2">
                   <span className="text-black">Subtotal</span>
@@ -367,7 +403,7 @@ export default function Quotes() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-3 p-4 border-t border-white">
               <button onClick={() => { setShowNewQuote(false); setConvertingDeal(null); }} className="flex-1 px-4 py-2 border border-black rounded-lg hover:bg-white">Cancel</button>
               <button onClick={createQuote} className="flex-1 px-4 py-2 bg-[#4285F4] text-white rounded-lg hover:bg-[#4285F4] font-medium">Create Quote</button>

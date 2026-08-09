@@ -70,6 +70,8 @@ interface BusinessEntitlement {
   features: Partial<Record<FeatureKey, boolean>>
   team_limit: number
   storage_limit_mb: number
+  trial_ends_at: string | null
+  trial_started_at: string | null
 }
 
 interface UseEntitlementResult {
@@ -256,6 +258,9 @@ export function useEntitlements(): {
   features: Partial<Record<FeatureKey, boolean>>
   teamLimit: number
   loading: boolean
+  trialEndsAt: string | null
+  trialDaysLeft: number
+  inTrial: boolean
 } {
   const { staff } = useAuth()
   const [entitlement, setEntitlement] = useState<BusinessEntitlement | null>(null)
@@ -310,10 +315,19 @@ export function useEntitlements(): {
     enterprise: Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>,
   }
 
+  const trialEndsAt = entitlement?.trial_ends_at ?? null
+  const trialDaysLeft = trialEndsAt
+    ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0
+  const inTrial = plan === 'free' && trialEndsAt !== null && new Date(trialEndsAt) > new Date()
+
   return {
     plan,
     features: { ...defaultFeatures, ...planFeatures[plan], ...entitlement?.features },
     teamLimit: entitlement?.team_limit || 3,
     loading,
+    trialEndsAt,
+    trialDaysLeft,
+    inTrial,
   }
 }

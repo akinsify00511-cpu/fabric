@@ -91,7 +91,7 @@ type Timeout = ReturnType<typeof setTimeout>
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const [branding, setBranding] = useState<Branding>(DEFAULT_BRANDING)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -101,11 +101,6 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
 
   // Load branding from database on mount
   useEffect(() => {
-    if (isDemo) {
-      setLoading(false)
-      return
-    }
-
     const loadBranding = async () => {
       if (!staff?.business_id) {
         setLoading(false)
@@ -176,22 +171,22 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
 
     loadBranding()
-  }, [staff?.business_id, isDemo])
+  }, [staff?.business_id])
 
   // Apply branding to CSS variables
   useEffect(() => {
     if (loading) return
 
     const root = document.documentElement
-    
+
     // Check for locally stored theme colors first
     const localBg = localStorage.getItem('avenize_theme_bg')
     const localText = localStorage.getItem('avenize_theme_text')
-    
+
     // Apply background color (from localStorage or branding)
     const bgColor = localBg || branding.background_color
     const textColor = localText || branding.text_color
-    
+
     root.style.setProperty('--avenize-primary', branding.primary_color)
     root.style.setProperty('--avenize-accent', branding.accent_color)
     root.style.setProperty('--avenize-bg', bgColor)
@@ -212,7 +207,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
 
   // Save branding to database
   const saveBranding = useCallback(async () => {
-    if (isDemo || !businessIdRef.current) return
+    if (!businessIdRef.current) return
 
     setSaving(true)
     setError(null)
@@ -262,7 +257,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     } finally {
       setSaving(false)
     }
-  }, [branding, isDemo])
+  }, [branding])
 
   // Debounced update
   const updateBranding = useCallback(async (updates: Partial<Branding>) => {
@@ -284,15 +279,14 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     file: File,
     type: 'logo' | 'logo_dark' | 'favicon'
   ): Promise<string | null> => {
-    if (isDemo || !businessIdRef.current) {
-      console.warn('Cannot upload logo in demo mode')
+    if (!businessIdRef.current) {
       return null
     }
 
     try {
       const fileExt = file.name.split('.').pop()
       const fileName = `${businessIdRef.current}/${type}/${Date.now()}.${fileExt}`
-      
+
       const { data, error } = await supabase.storage
         .from('brand-assets')
         .upload(fileName, file, {
@@ -323,13 +317,13 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
       console.error('Error uploading logo:', err)
       return null
     }
-  }, [isDemo, updateBranding])
+  }, [updateBranding])
 
   // Reset to defaults
   const resetBranding = useCallback(async () => {
     setBranding(DEFAULT_BRANDING)
-    
-    if (!isDemo && businessIdRef.current) {
+
+    if (businessIdRef.current) {
       try {
         await supabase
           .from('business_branding')
@@ -339,19 +333,19 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
         console.error('Error resetting branding:', err)
       }
     }
-  }, [isDemo])
+  }, [])
 
   return (
-    <BrandingContext.Provider 
-      value={{ 
-        branding, 
-        loading, 
+    <BrandingContext.Provider
+      value={{
+        branding,
+        loading,
         saving,
         error,
-        updateBranding, 
-        uploadLogo, 
+        updateBranding,
+        uploadLogo,
         resetBranding,
-        saveBranding 
+        saveBranding
       }}
     >
       {children}

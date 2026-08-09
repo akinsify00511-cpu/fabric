@@ -30,10 +30,9 @@ export const PLAN_LIMITS: Record<Plan, {
 }
 
 export function useSubscription() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   
-  // Demo users get pro features
-  const plan: Plan = isDemo ? 'pro' : (staff?.plan || 'free')
+  const plan: Plan = staff?.plan || 'free'
   const limits = PLAN_LIMITS[plan]
   
   const hasFeature = (feature: string): boolean => {
