@@ -46,7 +46,7 @@ export interface ApprovalRequest {
   business_id: string
   type: ApprovalType
   requester_id: string
-  requester?: { full_name: string; email: string }
+  requester?: string
   entity_type: string
   entity_id: string
   entity_name: string

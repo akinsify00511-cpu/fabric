@@ -34,7 +34,7 @@ export default function Approvals() {
       // Get pending approvals based on role
       const { data: pendingData } = await supabase
         .from('approval_requests')
-        .select('*, requester:staff(name)')
+        .select('*')
         .eq('business_id', staff.business_id)
         .eq('status', 'pending')
         .order('created_at', { ascending: true })
@@ -42,7 +42,7 @@ export default function Approvals() {
       // Get history
       const { data: historyData } = await supabase
         .from('approval_requests')
-        .select('*, requester:staff(name)')
+        .select('*')
         .eq('business_id', staff.business_id)
         .in('status', ['approved', 'rejected'])
         .order('updated_at', { ascending: false })
@@ -70,12 +70,12 @@ export default function Approvals() {
 
       if (error) throw error
       
-      // Record decision
-      await supabase.from('approval_decisions').insert({
-        request_id: request.id,
+      // Record decision in the approvals engine's action log
+      await supabase.from('approval_actions').insert({
+        approval_id: request.id,
+        step: request.current_level,
         approver_id: staff?.id,
-        level: request.current_level,
-        decision: 'approved',
+        action: 'approve',
         comment: actionComment,
       })
 
@@ -100,11 +100,11 @@ export default function Approvals() {
 
       if (error) throw error
       
-      await supabase.from('approval_decisions').insert({
-        request_id: request.id,
+      await supabase.from('approval_actions').insert({
+        approval_id: request.id,
+        step: request.current_level,
         approver_id: staff?.id,
-        level: request.current_level,
-        decision: 'rejected',
+        action: 'reject',
         comment: actionComment,
       })
 
@@ -213,7 +213,7 @@ export default function Approvals() {
                         <div>
                           <h3 className="font-semibold text-black">{request.entity_name}</h3>
                           <p className="text-sm text-black mt-0.5">
-                            Requested by {request.requester?.full_name || 'Unknown'}
+                            Requested by {request.requester || 'Unknown'}
                           </p>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700`}>
@@ -299,7 +299,7 @@ export default function Approvals() {
                       <p className="text-xs text-black">{APPROVAL_TYPE_LABELS[request.type]}</p>
                     </td>
                     <td className="px-4 py-3 text-sm text-black">
-                      {request.requester?.full_name || 'Unknown'}
+                      {request.requester || 'Unknown'}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-black">
                       {request.amount ? formatCurrency(request.amount) : '-'}
@@ -347,7 +347,7 @@ export default function Approvals() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl p-4">
                   <p className="text-xs text-black mb-1">Requested By</p>
-                  <p className="font-medium text-black">{selectedRequest.requester?.full_name}</p>
+                  <p className="font-medium text-black">{selectedRequest.requester}</p>
                 </div>
                 <div className="bg-white rounded-xl p-4">
                   <p className="text-xs text-black mb-1">Date</p>
