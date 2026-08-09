@@ -9,6 +9,7 @@ import {
   Check, ArrowRight, Sparkles, Users, Zap, Shield,
   CreditCard, Building2, Phone, MessageSquare
 } from 'lucide-react'
+import { useLocale } from '../lib/LocaleContext'
 
 // ============================================
 // PLAN DATA WITH PAYSTACK LINKS
@@ -454,6 +455,9 @@ function FAQSection() {
 // COMPONENT: CTA SECTION
 // ============================================
 function CTASection() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <section className="relative py-20 bg-[#111111] text-white text-center overflow-hidden">
       {/* Background Gradient */}
@@ -463,21 +467,18 @@ function CTASection() {
 
       <div className="relative max-w-3xl mx-auto px-6">
         <blockquote className="text-xl md:text-2xl font-bold leading-tight mb-8">
-          Your crews are on sites you can't visit daily. Your factory runs out of resin without warning.{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r to-[var(--av-primary)] to-violet-400">
-            Find out before it's an emergency.
-          </span>
+          {tr('ctaQuote', "Your crews are on sites you can't visit daily. Your factory runs out of resin without warning. Find out before it's an emergency.")}
         </blockquote>
 
         <a
           href="https://app.avenize.com/signup"
           className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--av-primary)] via-[var(--av-primary)] to-[#7C3AED] text-white font-semibold text-lg hover:opacity-90 transition-opacity shadow-xl shadow-[var(--av-primary)]/25"
         >
-          Start free setup
+          {tr('startFree', 'Start free setup')}
         </a>
 
         <p className="mt-6 text-sm text-white/80 font-mono uppercase tracking-wider">
-          Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in
+          {tr('ctaSubtext', 'Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in')}
         </p>
       </div>
     </section>
@@ -488,6 +489,9 @@ function CTASection() {
 // COMPONENT: FOOTER
 // ============================================
 function Footer() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <footer className="bg-[#0a0a0a] text-white/80 py-8 border-t border-white/10">
       <div className="max-w-6xl mx-auto px-6">
@@ -499,7 +503,7 @@ function Footer() {
             <span className="font-semibold text-white">Avenize</span>
           </div>
           <p className="text-sm font-mono uppercase tracking-wider">
-            The Business Operating System — Lagos, Nigeria
+            {tr('footerTagline', 'The Business Operating System — Lagos, Nigeria')}
           </p>
         </div>
       </div>
@@ -512,6 +516,8 @@ function Footer() {
 // ============================================
 export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
 
   return (
     <div className="min-h-screen bg-[#F7F7F5]">
@@ -521,17 +527,17 @@ export default function Pricing() {
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--av-primary)]/40 text-[var(--av-primary)] text-xs font-mono uppercase tracking-wider mb-6">
             <span className="w-1.5 h-1.5 bg-[var(--av-primary)] rounded-full animate-pulse" />
-            Pricing — Job Ticket AV-2026
+            {tr('pricingEyebrow', 'Pricing — Job Ticket AV-2026')}
           </div>
 
           {/* Headline */}
           <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            Stop running your business from memory.
+            {tr('pricingHeadline', 'Stop running your business from memory.')}
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg text-white/60 max-w-2xl mb-8">
-            One system for your jobs, your inventory, and your money — priced the way your business already thinks: per seat, per month, no IT department required.
+            {tr('pricingSubheadline', 'One system for your jobs, your inventory, and your money — priced the way your business already thinks: per seat, per month, no IT department required.')}
           </p>
 
           {/* Billing Toggle */}
@@ -544,7 +550,7 @@ export default function Pricing() {
                   : 'text-white/70 hover:text-white'
               }`}
             >
-              Monthly
+              {tr('monthly', 'Monthly')}
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
@@ -554,7 +560,7 @@ export default function Pricing() {
                   : 'text-white/70 hover:text-white'
               }`}
             >
-              Yearly <span className="text-emerald-400 ml-1">Save 2 months</span>
+              {tr('yearly', 'Yearly')} <span className="text-emerald-400 ml-1">{tr('save2months', 'Save 2 months')}</span>
             </button>
           </div>
         </div>

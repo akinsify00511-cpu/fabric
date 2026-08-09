@@ -80,6 +80,17 @@ type TranslationKeys = {
   myTasks: string
   completed: string
   pending: string
+  // Pricing
+  pricingEyebrow: string
+  pricingHeadline: string
+  pricingSubheadline: string
+  monthly: string
+  yearly: string
+  save2months: string
+  startFree: string
+  ctaQuote: string
+  ctaSubtext: string
+  footerTagline: string
 }
 
 const translations: Record<string, Partial<TranslationKeys>> = {
@@ -109,6 +120,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'My Tasks',
     completed: 'Completed',
     pending: 'Pending',
+    // Pricing
+    pricingEyebrow: 'Pricing — Job Ticket AV-2026',
+    pricingHeadline: 'Stop running your business from memory.',
+    pricingSubheadline: 'One system for your jobs, your inventory, and your money — priced the way your business already thinks: per seat, per month, no IT department required.',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    save2months: 'Save 2 months',
+    startFree: 'Start free setup',
+    ctaQuote: 'Your crews are on sites you can\'t visit daily. Your factory runs out of resin without warning. Find out before it\'s an emergency.',
+    ctaSubtext: 'Setup: 30 minutes · Works on low-end Android · Naira, VAT & WHT built in',
+    footerTagline: 'The Business Operating System — Lagos, Nigeria',
   },
   yo: {
     dashboard: 'Ẹ̀bù ilé',
@@ -136,6 +158,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'Awọn iṣẹ́ mi',
     completed: 'Ti parí',
     pending: 'Ti fojú',
+    // Pricing
+    pricingEyebrow: 'Iwé Owo — AV-2026',
+    pricingHeadline: 'Ma ṣe tẹ̀siwaju lọ́pọ̀ láti ṣe iṣẹ́ rẹ.',
+    pricingSubheadline: 'Ẹ̀yà kan fún iṣẹ́ rẹ, ipamọ́ra rẹ, àti owó rẹ — owo ti wà ninu àlàáfíà.',
+    monthly: 'Oṣù kọ̀ọ̀kan',
+    yearly: 'Ọdún kọ̀ọ̀kan',
+    save2months: 'Fipamọ́ ọdún méjì',
+    startFree: 'Bẹ̀rẹ̀ setup libre',
+    ctaQuote: 'Ọ̀dọ́ rẹ wà lálú ounjẹ́ lásìkò. Rí i síwájú kí ó jẹ́ ìdádúró.',
+    ctaSubtext: 'Setup: àkókò 30 mins · Nṣiṣẹ́ lórí Android alámu · Naira, VAT & WHT wà nínú',
+    footerTagline: 'Ọ̀pọ̀ Iṣẹ́ Ìdaraya — Lagos, Nigeria',
   },
   ha: {
     dashboard: 'Dashboard',
@@ -163,6 +196,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'Ayyukana',
     completed: 'Anayi cikakke',
     pending: 'Aka jiran',
+    // Pricing
+    pricingEyebrow: 'Kashe Kuɗi — AV-2026',
+    pricingHeadline: 'Ka daina gudanar da kasuwanci da zuciya ka kaɗai.',
+    pricingSubheadline: 'Tsarin guda don ayyukan ka, ajiya, da kuɗin ka — farashin da ake tunani.',
+    monthly: 'Na wata',
+    yearly: 'Na shekara',
+    save2months: 'Ajiye watanni 2',
+    startFree: 'Fara kyauta',
+    ctaQuote: 'Yan uwanku suna wuri da ba za a iya ziyartar su ba. Ka gani kafin ya zama matsala.',
+    ctaSubtext: 'Saiti: minti 30 · Yana aiki akan Android · Naira, VAT & WHT an haɗa su',
+    footerTagline: 'Tsarin Kasuwanci — Lagos, Nigeria',
   },
   ig: {
     dashboard: 'Ncheta',
@@ -190,6 +234,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'M ga eme',
     completed: 'Emechara',
     pending: 'Na-echere',
+    // Pricing
+    pricingEyebrow: 'Nhazi Ọnya — AV-2026',
+    pricingHeadline: 'Kwụsị ịme azụmaahịa gị site na ncheta.',
+    pricingSubheadline: 'Usoro otu maka ọrụ gị, nchekwa, na ego gị — ọnụ ahịa dị ka ị chere ya.',
+    monthly: 'Kwa ọnwa',
+    yearly: 'Kwa afọ',
+    save2months: 'Chekwaa ọnwa 2',
+    startFree: 'Bido nwere obi ụtọ',
+    ctaQuote: 'Ndị otu gị dị na ebe ịnwere ike ịnwale kwa ụbọchị. Chọpụta ya tupu ọ bụrụ nsogbu.',
+    ctaSubtext: 'Nhazi: nkeji 30 · Na-arụ ọrụ na Android · Naira, VAT & WHT edobere',
+    footerTagline: 'Usoro Azụmaahịa — Lagos, Nigeria',
   },
   fr: {
     dashboard: 'Tableau de bord',
@@ -217,6 +272,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'Mes tâches',
     completed: 'Terminées',
     pending: 'En attente',
+    // Pricing
+    pricingEyebrow: 'Tarification — AV-2026',
+    pricingHeadline: 'Arrêtez de gérer votre entreprise de mémoire.',
+    pricingSubheadline: 'Un système pour vos emplois, votre inventaire et votre argent.',
+    monthly: 'Mensuel',
+    yearly: 'Annuel',
+    save2months: 'Économisez 2 mois',
+    startFree: 'Commencer gratuitement',
+    ctaQuote: 'Vos équipes sont sur des sites que vous ne pouvez pas visiter chaque jour.',
+    ctaSubtext: 'Configuration: 30 minutes · Fonctionne sur Android · Naira, TVA et WHT intégrés',
+    footerTagline: 'Le Système d\'Exploitation Métier — Lagos, Nigeria',
   },
   es: {
     dashboard: 'Panel',
@@ -243,7 +309,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     payments: 'Pagos',
     myTasks: 'Mis tareas',
     completed: 'Completadas',
-    pending: 'Pendientes',
+    // Pricing
+    pricingEyebrow: 'Precios — AV-2026',
+    pricingHeadline: 'Deja de gestionar tu negocio desde la memoria.',
+    pricingSubheadline: 'Un sistema para tus trabajos, inventario y dinero.',
+    monthly: 'Mensual',
+    yearly: 'Anual',
+    save2months: 'Ahorra 2 meses',
+    startFree: 'Empezar gratis',
+    ctaQuote: 'Tus equipos están en sitios que no puedes visitar todos los días.',
+    ctaSubtext: 'Configuración: 30 minutos · Funciona en Android · Naira, IVA y WHT integrados',
+    footerTagline: 'El Sistema Operativo de Negocios — Lagos, Nigeria',
   },
   ar: {
     dashboard: 'لوحة القيادة',
@@ -251,6 +327,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     finance: 'المالية',
     tasks: 'المهام',
     projects: 'المشاريع',
+    // Pricing
+    pricingEyebrow: 'التسعير — AV-2026',
+    pricingHeadline: 'توقف عن إدارة عملك من الذاكرة.',
+    pricingSubheadline: 'نظام واحد لعملك ومخزونك وأموالك.',
+    monthly: 'شهري',
+    yearly: 'سنوي',
+    save2months: 'وفر شهرين',
+    startFree: 'ابدأ مجاناً',
+    ctaQuote: 'فريقك في مواقع لا يمكنك زيارتها يومياً.',
+    ctaSubtext: 'الإعداد: 30 دقيقة · يعمل على أندرويد · النيرا والضريبة included',
+    footerTagline: 'نظام تشغيل الأعمال — لاغوس، نيجيريا',
     chat: 'الدردشة',
     people: 'الأشخاص',
     settings: 'الإعدادات',
@@ -291,6 +378,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     todayOverview: 'Visão geral de hoje',
     deals: 'Negócios',
     contacts: 'Contatos',
+    // Pricing
+    pricingEyebrow: 'Preços — AV-2026',
+    pricingHeadline: 'Pare de gerenciar seu negócio pela memória.',
+    pricingSubheadline: 'Um sistema para seus trabalhos, inventário e dinheiro.',
+    monthly: 'Mensal',
+    yearly: 'Anual',
+    save2months: 'Economize 2 meses',
+    startFree: 'Começar grátis',
+    ctaQuote: 'Sua equipe está em locais que você não pode visitar todos os dias.',
+    ctaSubtext: 'Configuração: 30 minutos · Funciona no Android · Naira, IVA e WHT incluídos',
+    footerTagline: 'O Sistema Operacional de Negócios — Lagos, Nigéria',
     pipeline: 'Funil',
     hotDeal: 'Negócio quente',
     invoices: 'Faturas',
@@ -325,6 +423,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: '我的任务',
     completed: '已完成',
     pending: '待处理',
+    // Pricing
+    pricingEyebrow: '定价 — AV-2026',
+    pricingHeadline: '不要再凭记忆经营您的业务。',
+    pricingSubheadline: '一个系统管理您的工作、库存和资金。',
+    monthly: '每月',
+    yearly: '每年',
+    save2months: '节省2个月',
+    startFree: '免费开始',
+    ctaQuote: '您的团队在您无法每天访问的现场工作。',
+    ctaSubtext: '设置: 30分钟 · 适用于Android · 奈拉、增值税和预扣税已包含',
+    footerTagline: '商业操作系统 — 尼日利亚拉各斯',
   },
   hi: {
     dashboard: 'डैशबोर्ड',
@@ -352,6 +461,17 @@ const translations: Record<string, Partial<TranslationKeys>> = {
     myTasks: 'मेरे कार्य',
     completed: 'पूर्ण',
     pending: 'लंबित',
+    // Pricing
+    pricingEyebrow: 'मूल्य निर्धारण — AV-2026',
+    pricingHeadline: 'याददाश्त से अपना व्यापार चलाना बंद करें।',
+    pricingSubheadline: 'अपने काम, इन्वेंट्री और पैसे के लिए एक ही सिस्टम।',
+    monthly: 'मासिक',
+    yearly: 'वार्षिक',
+    save2months: '2 महीने बचाएं',
+    startFree: 'मुफ्त शुरू करें',
+    ctaQuote: 'आपकी टीम उन जगहों पर है जहाँ आप रोज़ नहीं जा सकते।',
+    ctaSubtext: 'सेटअप: 30 मिनट · Android पर काम करता है · नायरा, वैट और डब्ल्यूएचटी शामिल',
+    footerTagline: 'बिज़नेस ऑपरेटिंग सिस्टम — लागोस, नाइजीरिया',
   },
 }
 
@@ -360,6 +480,7 @@ type LocaleContextType = {
   loading: boolean
   setLanguage: (code: string) => void
   t: (key: keyof TranslationKeys, fallback?: string) => string
+  translations: Partial<TranslationKeys>
 }
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined)
@@ -391,8 +512,10 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     return fallback || key
   }, [locale.language])
 
+  const currentTranslations = translations[locale.language] || translations.en
+
   return (
-    <LocaleContext.Provider value={{ locale, loading, setLanguage, t }}>
+    <LocaleContext.Provider value={{ locale, loading, setLanguage, t, translations: currentTranslations }}>
       {children}
     </LocaleContext.Provider>
   )
