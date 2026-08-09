@@ -96,6 +96,8 @@ const Appraisals = lazy(() => import('./pages/Appraisals'))
 const Payroll = lazy(() => import('./pages/Payroll'))
 const APIKeys = lazy(() => import('./pages/APIKeys'))
 const Properties = lazy(() => import('./pages/Properties'))
+const PropertyOwners = lazy(() => import('./pages/PropertyOwners'))
+const PropertySales = lazy(() => import('./pages/PropertySales'))
 const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
 const OnboardingWizard = lazy(() => import('./components/OnboardingWizard'))
 const Premium = lazy(() => import('./pages/Premium'))
@@ -126,6 +128,8 @@ const ExpenseClaims = lazy(() => import('./pages/ExpenseClaims'))
 const AssetManagement = lazy(() => import('./pages/AssetManagement'))
 const ResourceBooking = lazy(() => import('./pages/ResourceBooking'))
 const Services = lazy(() => import('./pages/Services'))
+const PurchaseOrders = lazy(() => import('./pages/PurchaseOrders'))
+const Vendors = lazy(() => import('./pages/Vendors'))
 const Attendance = lazy(() => import('./pages/Attendance'))
 const PaymentSettings = lazy(() => import('./pages/PaymentSettings'))
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'))
@@ -293,6 +297,8 @@ function AppRoutes() {
         <Route path="settings/webhooks" element={<Webhooks />} />
         <Route path="settings/api-keys" element={<APIKeys />} />
         <Route path="properties" element={<Properties />} />
+        <Route path="property-owners" element={<PropertyOwners />} />
+        <Route path="property-sales" element={<PropertySales />} />
         <Route path="leases" element={<LeaseManagement />} />
         <Route path="maintenance" element={<MaintenanceRequests />} />
         <Route path="signatures" element={<ElectronicSignatures />} />
@@ -349,6 +355,8 @@ function AppRoutes() {
         <Route path="assets" element={<AssetManagement />} />
         <Route path="booking" element={<ResourceBooking />} />
         <Route path="services" element={<Services />} />
+        <Route path="purchase-orders" element={<PurchaseOrders />} />
+        <Route path="vendors" element={<Vendors />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="notifications-center" element={<NotificationsCenter />} />
         </Route>
