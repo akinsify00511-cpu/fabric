@@ -110,8 +110,6 @@ export default function ElectronicSignatures() {
     }
   }
 
-  const getDemoRequests = (): SignatureRequest[] => []
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!staff?.business_id) return

@@ -330,3 +330,25 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER approval_requests_update
   INSTEAD OF UPDATE ON public.approval_requests
   FOR EACH ROW EXECUTE FUNCTION public.approval_requests_update();
+
+-- ============================================================================
+-- 10. settings  (key-value store used by EInvoicing, SMS, SMSBroadcast)
+--    Persona: Admin configuring integrations (NRS API keys, SMS providers).
+--    Stores per-business integration config as key/value pairs.
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS public.settings (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id   UUID NOT NULL REFERENCES public.businesses(id) ON DELETE CASCADE,
+  key           TEXT NOT NULL,
+  value         TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (business_id, key)
+);
+ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "settings_business_all" ON public.settings
+  FOR ALL USING (business_id = (SELECT business_id FROM public.get_current_staff()))
+  WITH CHECK (business_id = (SELECT business_id FROM public.get_current_staff()));
+CREATE INDEX IF NOT EXISTS idx_settings_business_key ON public.settings(business_id, key);
+CREATE TRIGGER settings_updated_at BEFORE UPDATE ON public.settings
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
