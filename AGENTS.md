@@ -154,6 +154,48 @@ const BRAND = {
 - Design spec: `AVENIZE-DESIGN-SPECIFICATION.md`
 - Brand doc: `/workspace/Avenize-Brand-System-Google-Standard.md`
 
+---
+
+## Demo Mode Removal (2026-08-09)
+
+### What was done
+- All page-level `DEMO_*` setter fallbacks replaced with `setX([])` (empty arrays)
+- `isDemo` guards removed from pages and `TrialBanner` (AuthContext still exports `isDemo` but it's hardcoded `false` — dead code, safe to ignore)
+- `SarahChat` rebranded as "Help Guide" — no more fake "AI Assistant" claims; `Bot` icon → `HelpCircle`
+- `CompanyHome` birthdays/awards/polls/bestStaff now fetch from `staff`/`merit_entries`/`polls` tables
+- `FieldLocation` field teams/jobs now fetch from `staff`/`tasks` tables with empty states
+- `Knowledge.tsx` `DEMO_PAGES` fallback removed
+- `paystack.ts` `verifyPayment()` security bug fixed (was returning `true` → auto-approve; now returns `false`)
+- `.env.example` cleaned: removed `VITE_PAYSTACK_SECRET_KEY` (must only be in Edge Function secrets), clarified placeholders
+
+### What still has demo code (acceptable)
+- `src/lib/DemoData.ts` still exports `DEMO_USER`/`DEMO_DEALS`/`clearDemoData`/`initDemoData` but is no longer imported anywhere — candidate for deletion
+- `DEMO_*` type-checking constants remain in some pages (unused in runtime paths)
+- `AuthContext.tsx` still has `isDemo` (hardcoded `false`) — dead code
+- `BrandingContext.tsx` / `useSubscription.tsx` have `isDemo` branches (dead since `isDemo` is always `false`)
+
+### What is NOT done (lower priority)
+- `Quotes.tsx` still uses `localStorage('avenize_quotes')` — needs Supabase table migration
+- Trial tracking is client-side `localStorage` — should move to `business_entitlements.trial_ends_at`
+- No public `/sign/:token` page for external document signers
+- Paystack payment verification has no server-side Edge Function (verifyPayment returns false)
+- `SarahChat` responses are still rule-based (not real AI), but honestly branded as Help Guide now
+- Landing page testimonials are marketing content (not verified real customer quotes)
+- No end-to-end testing across the 10 roles has been run
+
+### Architecture gaps (from Avenize-Complete-Architecture.md, not in scope of demo removal)
+- e-Signature engine (Sign) — net new, no signing flow exists
+- Property vertical — net new (records, owners/tenants, sales, leasing, inspection)
+- Website Builder — net new
+- Public Appointments — net new
+- Customer-facing Live Chat — net new (existing chat is internal team chat)
+- Vendor/PO workflow — net new
+- i18n scaffolded but not applied across 60 pages
+- Email/SMS/WhatsApp providers not live
+- pg_net/pg_cron extensions need manual enable
+- Trigger-based audit logging not built
+- Real data export (current returns mock)
+
 ## Architecture & Build (verified, commit 735a612)
 
 - **Stack:** Vite + React 19 + TypeScript, Tailwind v4, Supabase (Postgres + RLS + Edge Functions), no dedicated backend server — the SPA talks to Postgres directly via the Supabase SDK; RLS is the real authorization boundary.
