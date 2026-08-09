@@ -4,7 +4,7 @@
 // ============================================
 
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { 
   Check, ArrowRight, Sparkles, Users, Zap, Shield,
   CreditCard, Building2, Phone, MessageSquare
@@ -233,10 +233,22 @@ const WHY_PRICING = [
 // COMPONENT: PRICING TICKET CARD
 // ============================================
 function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[0] | typeof YEARLY_PLANS[0]; isYearly?: boolean }) {
+  const navigate = useNavigate()
   const monthlyPlan = plan as typeof MONTHLY_PLANS[0]
   const yearlyPlan = plan as typeof YEARLY_PLANS[0]
   const paystackLink = isYearly ? yearlyPlan.paystackLink : monthlyPlan.paystackLink
   const isMonthly = !isYearly && 'features' in plan
+
+  const handleSelectPlan = () => {
+    // Authenticated users go to the in-app subscription page (tracked checkout)
+    // Non-authenticated users go to signup first
+    const hasSession = localStorage.getItem('avenize_onboarding_complete') === 'true'
+    if (hasSession) {
+      navigate('/app/settings/subscription')
+    } else {
+      navigate('/signup')
+    }
+  }
 
   return (
     <div className={`relative bg-white border-2 rounded-2xl overflow-hidden transition-all hover:shadow-xl ${
@@ -309,30 +321,16 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
         </div>
 
         {/* CTA Button */}
-        {paystackLink ? (
-          <a
-            href={paystackLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
-              isMonthly && monthlyPlan.popular
-                ? 'bg-gradient-to-r to-[var(--av-primary)] to-[var(--av-accent)] text-white hover:opacity-90 shadow-lg shadow-[var(--av-primary)]/25'
-                : 'bg-[#111111] text-white hover:bg-[#222222]'
-            }`}
-          >
-            {monthlyPlan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
-          </a>
-        ) : (
-          <button
-            className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
-              isMonthly && monthlyPlan.popular
-                ? 'bg-gradient-to-r to-[var(--av-primary)] to-[var(--av-accent)] text-white hover:opacity-90 shadow-lg shadow-[var(--av-primary)]/25'
-                : 'bg-[#111111] text-white hover:bg-[#222222]'
-            }`}
-          >
-            {monthlyPlan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
-          </button>
-        )}
+        <button
+          onClick={handleSelectPlan}
+          className={`block w-full py-3 rounded-xl text-center font-semibold transition-all ${
+            isMonthly && monthlyPlan.popular
+              ? 'bg-gradient-to-r to-[var(--av-primary)] to-[var(--av-accent)] text-white hover:opacity-90 shadow-lg shadow-[var(--av-primary)]/25'
+              : 'bg-[#111111] text-white hover:bg-[#222222]'
+          }`}
+        >
+          {monthlyPlan.price === 0 ? 'Get Started Free' : 'Start Free Trial'}
+        </button>
       </div>
     </div>
   )

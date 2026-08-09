@@ -40,30 +40,8 @@ type StaffMember = {
 
 const EMOJIS = ['👍', '❤️', '😂', '😮', '😢', '🙏']
 
-// Demo data for when Supabase isn't available
-const DEMO_CHANNELS: Channel[] = [
-  { id: 'demo-1', name: 'general', description: 'General discussions', type: 'public', unread_count: 2, last_message_at: new Date().toISOString() },
-  { id: 'demo-2', name: 'random', description: 'Off-topic chat', type: 'public', unread_count: 0, last_message_at: new Date().toISOString() },
-  { id: 'demo-3', name: 'announcements', description: 'Team announcements', type: 'private', unread_count: 1, last_message_at: new Date().toISOString() },
-]
-
-const DEMO_MESSAGES: Record<string, Message[]> = {
-  'demo-1': [
-    { id: 'dm-1', channel_id: 'demo-1', sender_id: 'demo-user-1', sender_name: 'Sarah Johnson', content: 'Good morning team! Ready for the sprint review today?', message_type: 'text', parent_id: null, created_at: new Date(Date.now() - 3600000).toISOString() },
-    { id: 'dm-2', channel_id: 'demo-1', sender_id: 'demo-user-2', sender_name: 'Michael Okonkwo', content: 'Yes! I have the demo ready. Just polishing the slides.', message_type: 'text', parent_id: null, created_at: new Date(Date.now() - 3000000).toISOString() },
-    { id: 'dm-3', channel_id: 'demo-1', sender_id: 'demo-user-1', sender_name: 'Sarah Johnson', content: 'Perfect. Let\'s meet in the conference room at 2pm.', message_type: 'text', parent_id: null, created_at: new Date(Date.now() - 1800000).toISOString() },
-  ],
-  'demo-2': [
-    { id: 'dm-4', channel_id: 'demo-2', sender_id: 'demo-user-3', sender_name: 'Aisha Bello', content: 'Anyone up for lunch at 12:30?', message_type: 'text', parent_id: null, created_at: new Date(Date.now() - 7200000).toISOString() },
-    { id: 'dm-5', channel_id: 'demo-2', sender_id: 'demo-user-2', sender_name: 'Michael Okonkwo', content: 'Count me in!', message_type: 'text', parent_id: null, created_at: new Date(Date.now() - 5400000).toISOString() },
-  ],
-  'demo-3': [
-    { id: 'dm-6', channel_id: 'demo-3', sender_id: 'demo-admin', sender_name: 'Admin', content: 'New company policy update - please read by end of week.', message_type: 'system', parent_id: null, created_at: new Date(Date.now() - 86400000).toISOString() },
-  ],
-}
-
 export default function Chat() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [channels, setChannels] = useState<Channel[]>([])
   const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null)
@@ -82,8 +60,7 @@ export default function Chat() {
 
   const loadChannels = async () => {
     // Use demo data for demo mode or if Supabase RPC fails
-    if (isDemo || !staff?.business_id) {
-      setChannels(DEMO_CHANNELS)
+    if (!staff?.business_id) {
       setLoading(false)
       return
     }
@@ -100,25 +77,17 @@ export default function Chat() {
           .eq('business_id', staff.business_id)
           .order('created_at', { ascending: true })
         
-        setChannels((channelData as Channel[]) ?? DEMO_CHANNELS)
+        setChannels((channelData as Channel[]) ?? [])
       }
-    } catch {
-      setChannels(DEMO_CHANNELS)
+    } catch (err) {
+      console.error('Failed to load channels:', err)
+      setChannels([])
     }
     setLoading(false)
   }
 
   const loadMessages = async (channelId: string) => {
     setLoading(true)
-
-    // Use demo messages for demo mode or demo channel IDs
-    if (isDemo || channelId.startsWith('demo-')) {
-      const demoMsgs = DEMO_MESSAGES[channelId] || []
-      setMessages(demoMsgs)
-      setLoading(false)
-      setTimeout(scrollToBottom, 100)
-      return
-    }
 
     try {
       const { data: messagesData } = await supabase
@@ -138,7 +107,8 @@ export default function Chat() {
       }))
 
       setMessages(enrichedMessages as Message[])
-    } catch {
+    } catch (err) {
+      console.error('Failed to load messages:', err)
       setMessages([])
     }
     setLoading(false)
@@ -147,7 +117,7 @@ export default function Chat() {
 
   useEffect(() => {
     loadChannels()
-  }, [isDemo, staff?.business_id])
+  }, [staff?.business_id])
 
   useEffect(() => {
     if (!selectedChannel) return
@@ -186,24 +156,6 @@ export default function Chat() {
   const sendMessage = async () => {
     if (!newMessage.trim() || !selectedChannel || !staff) return
 
-    // Demo mode - add to local state only
-    if (isDemo || selectedChannel.id.startsWith('demo-')) {
-      const newMsg: Message = {
-        id: `msg-${Date.now()}`,
-        channel_id: selectedChannel.id,
-        sender_id: staff.id,
-        sender_name: staff.full_name || 'You',
-        content: newMessage.trim(),
-        message_type: 'text',
-        parent_id: null,
-        created_at: new Date().toISOString(),
-      }
-      setMessages((prev) => [...prev, newMsg])
-      setNewMessage('')
-      setTimeout(scrollToBottom, 100)
-      return
-    }
-
     const { error } = await supabase.from('messages').insert({
       channel_id: selectedChannel.id,
       sender_id: staff.id,
@@ -219,32 +171,14 @@ export default function Chat() {
   }
 
   const createChannel = async () => {
-    if (!newChannelName.trim()) return
-
-    // Demo mode - create locally only
-    if (isDemo || !staff?.business_id) {
-      const newChannel: Channel = {
-        id: `demo-${Date.now()}`,
-        name: newChannelName.toLowerCase().replace(/\s+/g, '-'),
-        description: null,
-        type: 'public',
-        unread_count: 0,
-        last_message_at: null,
-      }
-      setChannels((prev) => [...prev, newChannel])
-      setSelectedChannel(newChannel)
-      setNewChannelName('')
-      setCreatingChannel(false)
-      showToast(`#${newChannel.name} created!`, 'success')
-      return
-    }
-
+    if (!newChannelName.trim() || !staff?.business_id) return
     const { data, error } = await supabase
       .from('channels')
       .insert({ 
         name: newChannelName.toLowerCase().replace(/\s+/g, '-'), 
         type: 'public',
         business_id: staff.business_id,
+        created_by: staff.id,
       })
       .select()
       .single()
@@ -263,13 +197,6 @@ export default function Chat() {
   }
 
   const joinChannel = async (channelId: string) => {
-    // Demo channels don't need joining
-    if (isDemo || channelId.startsWith('demo-')) {
-      const channel = channels.find((c) => c.id === channelId)
-      if (channel) setSelectedChannel(channel)
-      return
-    }
-
     await supabase.rpc('join_channel', { p_channel_id: channelId })
     await loadChannels()
     const channel = channels.find((c) => c.id === channelId)

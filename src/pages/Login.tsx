@@ -50,19 +50,6 @@ export default function Login() {
     checkSession()
   }, [navigate])
 
-  const handleDemoLogin = () => {
-    localStorage.setItem('avenize_demo', 'true')
-    localStorage.setItem('avenize_demo_user', JSON.stringify({
-      id: 'demo-user-001',
-      email: 'demo@avenize.ng',
-      name: 'Adebayo Johnson',
-      business_name: 'TechBuild Nigeria Ltd',
-      role: 'Business Owner',
-      business_id: 'demo-business-001'
-    }))
-    navigate('/app')
-  }
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -261,20 +248,6 @@ export default function Login() {
           }}
         >
           {loading ? 'Signing in…' : 'Sign in'}
-        </button>
-
-        {/* Demo Button */}
-        <button
-          type="button"
-          onClick={handleDemoLogin}
-          className="w-full rounded-lg py-3 text-sm font-medium transition mt-3"
-          style={{ 
-            border: `1px solid ${BRAND.border}`,
-            color: BRAND.textSecondary,
-            backgroundColor: BRAND.surfaceElevated,
-          }}
-        >
-          🎯 Try Demo Account
         </button>
 
         <p className="text-xs text-center mt-4" style={{ color: BRAND.textSecondary }}>

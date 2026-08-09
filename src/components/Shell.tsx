@@ -1,10 +1,11 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
+import ToolOnboardingPopup from './ToolOnboardingPopup'
 
 // Map nav routes to tool keys
 const TOOL_KEY_MAP: Record<string, string> = {
@@ -99,6 +100,7 @@ export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
   const { tools: accessibleTools, loading } = useAccessibleTools()
+  const location = useLocation()
   
   // Check if user is admin/owner (they see everything)
   const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
@@ -208,6 +210,9 @@ export default function Shell() {
       <main className="md:ml-56 p-4 md:p-8 pb-28 md:pb-8">
         <Outlet />
       </main>
+
+      {/* First-visit onboarding popup for the current tool */}
+      <ToolOnboardingPopup toolKey={TOOL_KEY_MAP[location.pathname] || ''} />
 
       {/* Mobile bottom navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20 bg-white border-black">

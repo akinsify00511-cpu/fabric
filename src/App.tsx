@@ -147,7 +147,7 @@ function PageLoader() {
 }
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { session, loading, staff, staffChecked, isDemo } = useAuth()
+  const { session, loading, staff, staffChecked } = useAuth()
 
   // While any auth check is pending, show loading
   if (loading || !staffChecked) {
@@ -163,21 +163,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // No session and not demo - redirect to login
-  if (!session && !isDemo) {
+  // No session - redirect to login
+  if (!session) {
     return <Navigate to="/login" replace />
-  }
-
-  // Demo mode - allow access immediately
-  if (isDemo) {
-    return (
-      <>
-        <TrialBanner />
-        <SarahChat />
-        <BetaFeedbackButton />
-        {children}
-      </>
-    )
   }
 
   // Check if onboarding is complete via localStorage first (fast path)
