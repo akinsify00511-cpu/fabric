@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug, Share2, MessageSquare, CreditCard, KeyRound } from 'lucide-react'
+import { useLocale } from '../lib/LocaleContext'
 
 export default function Settings() {
   const { staff } = useAuth()
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
 
   const SETTINGS_ITEMS = [
     { to: '/app/settings/profile', icon: User, label: 'Profile', desc: 'Your account details', color: 'bg-purple-50 text-purple-500' },
@@ -20,7 +23,7 @@ export default function Settings() {
 
   return (
     <div className="pb-20">
-      <h1 className="text-xl font-medium text-black mb-6">Settings</h1>
+      <h1 className="text-xl font-medium text-black mb-6">{tr('settings', 'Settings')}</h1>
 
       {/* User Info */}
       <div className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
@@ -29,10 +32,10 @@ export default function Settings() {
             {staff?.full_name?.charAt(0) || staff?.name?.charAt(0) || '?'}
           </div>
           <div>
-            <p className="font-semibold text-lg">{staff?.full_name || staff?.name || 'User'}</p>
+            <p className="font-semibold text-lg">{staff?.full_name || staff?.name || tr('user', 'User')}</p>
             <p className="text-sm text-black">{staff?.email}</p>
             <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-black/[0.05] text-xs capitalize">
-              {staff?.role || 'Staff'}
+              {staff?.role || tr('staff', 'Staff')}
             </span>
           </div>
         </div>
@@ -52,8 +55,8 @@ export default function Settings() {
                 <Icon size={18} />
               </div>
               <div className="flex-1">
-                <p className="font-medium">{item.label}</p>
-                <p className="text-xs text-black">{item.desc}</p>
+                <p className="font-medium">{tr(`setting_${item.label.toLowerCase().replace(/\s+/g, '_')}`, item.label)}</p>
+                <p className="text-xs text-black">{tr(`setting_${item.label.toLowerCase().replace(/\s+/g, '_')}_desc`, item.desc)}</p>
               </div>
               <ChevronRight size={16} className="text-black" />
             </Link>

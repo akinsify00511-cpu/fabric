@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft, MessageCircle, Mail, Phone, HelpCircle, Book, Video, FileText, ExternalLink } from 'lucide-react'
+import { useLocale } from '../lib/LocaleContext'
 
 const FAQ_ITEMS = [
   {
@@ -46,6 +47,9 @@ const HELP_RESOURCES = [
 ]
 
 export default function HelpCenter() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-white">
       {/* Header */}
@@ -53,7 +57,7 @@ export default function HelpCenter() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <Link to="/" className="inline-flex items-center gap-2 text-black hover:text-black text-sm">
             <ArrowLeft size={16} />
-            Back to Avenize
+            {tr('backToAvenize', 'Back to Avenize')}
           </Link>
         </div>
       </header>
@@ -65,10 +69,10 @@ export default function HelpCenter() {
             <HelpCircle className="w-8 h-8 text-[var(--av-primary)]" />
           </div>
           <h1 className="text-4xl font-bold text-black mb-4">
-            How can we help you?
+            {tr('helpTitle', 'How can we help you?')}
           </h1>
           <p className="text-lg text-black mb-8">
-            Find answers to common questions, or get in touch with our team.
+            {tr('helpSubtitle', 'Find answers to common questions, or get in touch with our team.')}
           </p>
         </div>
       </section>
@@ -77,7 +81,7 @@ export default function HelpCenter() {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-black mb-8 text-center">
-            Frequently Asked Questions
+            {tr('faqTitle', 'Frequently Asked Questions')}
           </h2>
           <div className="space-y-6">
             {FAQ_ITEMS.map((item, i) => (
@@ -94,7 +98,7 @@ export default function HelpCenter() {
       <section className="py-12 px-4">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-black mb-8 text-center">
-            More Resources
+            {tr('resourcesTitle', 'More Resources')}
           </h2>
           <div className="grid md:grid-cols-3 gap-4">
             {HELP_RESOURCES.map((resource, i) => {
@@ -121,10 +125,10 @@ export default function HelpCenter() {
       <section className="py-16 px-4 bg-[var(--av-primary)]">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-white mb-4">
-            Still need help?
+            {tr('stillNeedHelp', 'Still need help?')}
           </h2>
           <p className="text-[var(--av-primary)]/10 mb-8">
-            Our team is here to help you get up and running.
+            {tr('contactSubtitle', 'Our team is here to help you get up and running.')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -132,7 +136,7 @@ export default function HelpCenter() {
               className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[var(--av-primary)] font-semibold rounded-lg hover:bg-[var(--av-primary)]/5 transition"
             >
               <Mail size={18} />
-              Contact Support
+              {tr('contactSupport', 'Contact Support')}
             </Link>
             <a
               href="mailto:hello@avenize.com"
@@ -148,11 +152,11 @@ export default function HelpCenter() {
       {/* Footer */}
       <footer className="py-8 px-4 bg-black">
         <div className="max-w-4xl mx-auto text-center text-black text-sm">
-          <p>&copy; {new Date().getFullYear()} Avenize. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Avenize. {tr('allRights', 'All rights reserved.')}</p>
           <div className="flex items-center justify-center gap-4 mt-4">
-            <Link to="/privacy" className="hover:text-black">Privacy</Link>
-            <Link to="/terms" className="hover:text-black">Terms</Link>
-            <Link to="/cookies" className="hover:text-black">Cookies</Link>
+            <Link to="/privacy" className="hover:text-black">{tr('privacy', 'Privacy')}</Link>
+            <Link to="/terms" className="hover:text-black">{tr('terms', 'Terms')}</Link>
+            <Link to="/cookies" className="hover:text-black">{tr('cookies', 'Cookies')}</Link>
           </div>
         </div>
       </footer>

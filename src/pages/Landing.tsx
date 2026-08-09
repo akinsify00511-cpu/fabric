@@ -10,6 +10,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { 
   ArrowRight, Check, Menu, X
 } from 'lucide-react'
+import { useLocale } from '../lib/LocaleContext'
 
 // GSAP Plugin Registration
 gsap.registerPlugin(ScrollTrigger)
@@ -327,6 +328,8 @@ function useScrollAnimations() {
 // ============================================
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#111111]/90 backdrop-blur-xl border-b border-white/10">
@@ -342,9 +345,9 @@ function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#product" className="text-white/70 hover:text-white text-sm font-medium transition-colors">Product</a>
-            <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium transition-colors">Pricing</a>
-            <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium transition-colors">FAQ</a>
+            <a href="#product" className="text-white/70 hover:text-white text-sm font-medium transition-colors">{tr('navProduct', 'Product')}</a>
+            <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium transition-colors">{tr('navPricing', 'Pricing')}</a>
+            <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium transition-colors">{tr('navFAQ', 'FAQ')}</a>
           </div>
 
           {/* CTA */}
@@ -352,7 +355,7 @@ function Navbar() {
             to="/signup"
             className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#111111] text-sm font-semibold hover:bg-white/90 transition-colors"
           >
-            Get started free
+            {tr('getStarted', 'Get started free')}
           </Link>
 
           {/* Mobile Menu Button */}
@@ -368,14 +371,14 @@ function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-white/10">
             <div className="flex flex-col gap-4">
-              <a href="#product" className="text-white/70 hover:text-white text-sm font-medium">Product</a>
-              <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium">Pricing</a>
-              <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium">FAQ</a>
+              <a href="#product" className="text-white/70 hover:text-white text-sm font-medium">{tr('navProduct', 'Product')}</a>
+              <a href="#pricing" className="text-white/70 hover:text-white text-sm font-medium">{tr('navPricing', 'Pricing')}</a>
+              <a href="#faq" className="text-white/70 hover:text-white text-sm font-medium">{tr('navFAQ', 'FAQ')}</a>
               <Link
                 to="/signup"
                 className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-[#111111] text-sm font-semibold"
               >
-                Get started free
+                {tr('getStarted', 'Get started free')}
               </Link>
             </div>
           </div>
@@ -389,6 +392,9 @@ function Navbar() {
 // COMPONENT: HERO SECTION
 // ============================================
 function HeroSection() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <section className="relative min-h-screen bg-black text-white pt-16 md:pt-20 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-[#1E3A8A]" />
@@ -403,25 +409,25 @@ function HeroSection() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--av-primary)] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--av-primary)]"></span>
               </span>
-              Built for Nigerian Businesses
+              {tr('heroEyebrow', 'Built for Nigerian Businesses')}
             </div>
 
             {/* Headline */}
             <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              <span className="text-white">Stop running your business.</span>
+              <span className="text-white">{tr('heroHeadline1', 'Stop running your business.')}</span>
               <br />
               <span className="text-[var(--av-primary)]">
-                Start leading it.
+                {tr('heroHeadline2', 'Start leading it.')}
               </span>
             </h1>
 
             {/* Subheadline */}
             <p className="hero-cta text-lg md:text-xl text-black mb-6 max-w-xl leading-relaxed">
-              Get alerts before supplies run out, invoices go unpaid, and clients complain. Know first — always.
+              {tr('heroSubheadline', 'Get alerts before supplies run out, invoices go unpaid, and clients complain. Know first — always.')}
             </p>
             
             <p className="text-base text-black mb-8 max-w-xl">
-              Avenize monitors your business 24/7 and notifies you the moment something needs attention.
+              {tr('heroDescription', 'Avenize monitors your business 24/7 and notifies you the moment something needs attention.')}
             </p>
 
             {/* CTAs */}
@@ -430,14 +436,14 @@ function HeroSection() {
                 to="/signup"
                 className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--av-primary)] text-white font-semibold hover:bg-[var(--av-primary-hover)] transition-colors"
               >
-                Stop the chaos
+                {tr('heroCTA1', 'Stop the chaos')}
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <a
                 href="#product"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-black text-white font-medium hover:bg-black transition-colors"
               >
-                See how it works
+                {tr('heroCTA2', 'See how it works')}
               </a>
             </div>
 
@@ -445,15 +451,15 @@ function HeroSection() {
             <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-black">Naira, VAT, WHT built in</span>
+                <span className="text-black">{tr('trustNaira', 'Naira, VAT, WHT built in')}</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-black">Works on low-end Android</span>
+                <span className="text-black">{tr('trustAndroid', 'Works on low-end Android')}</span>
               </span>
               <span className="flex items-center gap-2 text-emerald-400">
                 <Check size={16} />
-                <span className="text-black">Live in 30 minutes</span>
+                <span className="text-black">{tr('trust30min', 'Live in 30 minutes')}</span>
               </span>
             </div>
           </div>
@@ -1100,19 +1106,22 @@ function StatsSection() {
 // COMPONENT: CTA SECTION
 // ============================================
 function CTASection() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <section className="relative py-16 md:py-24 bg-black text-white text-center">
       <div className="relative max-w-4xl mx-auto px-6">
         <div className="mb-8">
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight mb-6">
-            <span className="text-white">Your operations stopped at 9am.</span>
+            <span className="text-white">{tr('ctaHeadline1', 'Your operations stopped at 9am.')}</span>
             <br />
-            <span className="text-black">Your team only told you now.</span>
+            <span className="text-black">{tr('ctaHeadline2', 'Your team only told you now.')}</span>
           </p>
           
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
             <span className="text-[var(--av-primary)]">
-              Tomorrow doesn't have to be like today.
+              {tr('ctaHeadline3', "Tomorrow doesn't have to be like today.")}
             </span>
           </p>
         </div>
@@ -1120,8 +1129,8 @@ function CTASection() {
         {/* Emotional Hook */}
         <div className="mb-8 p-6 bg-[var(--av-primary)]/10 border border-[var(--av-primary)]/30 rounded-2xl">
           <p className="text-base md:text-lg text-black">
-            <span className="text-white font-semibold">Avenize was built for exactly this moment.</span><br />
-            The moment before it becomes urgent. The moment you wish you'd known sooner.
+            <span className="text-white font-semibold">{tr('ctaHook', 'Avenize was built for exactly this moment.')}</span><br />
+            {tr('ctaHookSub', 'The moment before it becomes urgent. The moment you wish you\'d known sooner.')}
           </p>
         </div>
 
@@ -1129,19 +1138,19 @@ function CTASection() {
           to="/signup"
           className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[var(--av-primary)] text-white font-semibold text-lg hover:bg-[var(--av-primary-hover)] transition-colors"
         >
-          Stop the chaos. Start Avenize.
+          {tr('ctaButton', 'Stop the chaos. Start Avenize.')}
           <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
         </Link>
 
         <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-black">
           <span className="flex items-center gap-2">
-            <span className="text-emerald-400">✓</span> Setup in 30 minutes
+            <span className="text-emerald-400">✓</span> {tr('ctaSetup', 'Setup in 30 minutes')}
           </span>
           <span className="flex items-center gap-2">
-            <span className="text-emerald-400">✓</span> Works on low-end Android
+            <span className="text-emerald-400">✓</span> {tr('ctaAndroid', 'Works on low-end Android')}
           </span>
           <span className="flex items-center gap-2">
-            <span className="text-emerald-400">✓</span> No credit card required
+            <span className="text-emerald-400">✓</span> {tr('ctaNoCard', 'No credit card required')}
           </span>
         </div>
       </div>
@@ -1153,6 +1162,9 @@ function CTASection() {
 // COMPONENT: FOOTER
 // ============================================
 function Footer() {
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
   return (
     <footer className="bg-slate-950 text-white/80 py-12 border-t border-black">
       <div className="max-w-6xl mx-auto px-6">
@@ -1163,15 +1175,15 @@ function Footer() {
             </div>
             <div>
               <span className="font-bold text-white text-lg">Avenize</span>
-              <p className="text-xs text-black">The Business Operating System</p>
+              <p className="text-xs text-black">{tr('footerTagline', 'The Business Operating System')}</p>
             </div>
           </div>
           <div className="text-center md:text-right">
             <p className="text-sm text-black">
-              Built for Nigerian businesses. Running from Lagos.
+              {tr('footerBuilt', 'Built for Nigerian businesses. Running from Lagos.')}
             </p>
             <p className="text-xs text-black mt-1">
-              © 2024 Avenize. All rights reserved.
+              © 2024 Avenize. {tr('footerRights', 'All rights reserved.')}
             </p>
           </div>
         </div>
@@ -1185,6 +1197,8 @@ function Footer() {
 // ============================================
 export default function Landing() {
   const containerRef = useScrollAnimations()
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#F7F7F5]">
