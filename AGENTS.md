@@ -153,3 +153,19 @@ const BRAND = {
 - Token file: `src/styles/avenize-tokens.css`
 - Design spec: `AVENIZE-DESIGN-SPECIFICATION.md`
 - Brand doc: `/workspace/Avenize-Brand-System-Google-Standard.md`
+
+## Architecture & Build (verified, commit 735a612)
+
+- **Stack:** Vite + React 19 + TypeScript, Tailwind v4, Supabase (Postgres + RLS + Edge Functions), no dedicated backend server — the SPA talks to Postgres directly via the Supabase SDK; RLS is the real authorization boundary.
+- **Build/verify:** `npm install` → `npx tsc -b --noEmit` (typecheck) → `npx vite build` (production build). Both must pass before committing. No Postgres runtime in the dev container, so DB tests (`tests/database/*.sql`, pgTAP) and Playwright tests run in CI with a live Supabase.
+- **RLS pattern:** business-scoped tables use `business_id = (SELECT business_id FROM public.get_current_staff())` where `get_current_staff()` (defined in `001_initial_schema.sql`) returns the current staff row via `auth.uid()`. Client-side `src/lib/permissions.ts` is UX gating only — never the security control.
+- **Migrations:** `supabase/migrations/*.sql`, numbered `0NN_name.sql`. Use `\set ON_ERROR_STOP on`. `CREATE OR REPLACE FUNCTION` + `CREATE TABLE IF NOT EXISTS` for idempotency. `update_updated_at()` trigger helper lives in `007_automations.sql`.
+- **Two parallel stock models:** `products` (has its own `stock` integer column) and `inventory` (separate table, no `product_id` FK). `stock_movements.inventory_id` FK→`inventory`. Update `products.stock` directly when receiving goods against a PO line that references `products`.
+- **UI↔schema drift is the highest-risk defect class:** several pages (ElectronicSignatures, PublicAppointments) previously queried tables with no migration. When adding a page, confirm every `.from('table')` has a backing migration before shipping.
+
+## Recent work (2026-08)
+
+- Migrations `043_signatures_appointments_schema.sql`, `044_property_vertical_completion.sql`, `045_purchase_vendor_workflow.sql` added the signature/appointments/property-vertical/PO schemas that pages were referencing but missing.
+- `ElectronicSignatures.tsx`: removed demo-data fallback; now does a joined `signature_requests`↔`signature_signers` query and a normalized two-step insert.
+- `PublicAppointments.tsx`: replaced `Math.random()` slot "availability" with a real overlap query against `appointments`.
+- `Services.tsx` (new): admin page to manage the service catalog the public booking page reads from.

@@ -125,6 +125,7 @@ const Announcements = lazy(() => import('./pages/Announcements'))
 const ExpenseClaims = lazy(() => import('./pages/ExpenseClaims'))
 const AssetManagement = lazy(() => import('./pages/AssetManagement'))
 const ResourceBooking = lazy(() => import('./pages/ResourceBooking'))
+const Services = lazy(() => import('./pages/Services'))
 const Attendance = lazy(() => import('./pages/Attendance'))
 const PaymentSettings = lazy(() => import('./pages/PaymentSettings'))
 const NotificationsCenter = lazy(() => import('./pages/NotificationsCenter'))
@@ -347,6 +348,7 @@ function AppRoutes() {
         <Route path="expenses" element={<ExpenseClaims />} />
         <Route path="assets" element={<AssetManagement />} />
         <Route path="booking" element={<ResourceBooking />} />
+        <Route path="services" element={<Services />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="notifications-center" element={<NotificationsCenter />} />
         </Route>

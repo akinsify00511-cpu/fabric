@@ -152,17 +152,46 @@ export default function PublicAppointmentsPage() {
   }
 
   async function loadAvailableSlots() {
-    if (!selectedDate || !form.service_id) return
+    if (!selectedDate || !form.service_id || !business) return
 
     const dateStr = selectedDate.toISOString().split('T')[0]
     const service = services.find(s => s.id === form.service_id)
 
-    // In a real app, this would check existing bookings
-    // For now, simulate availability
-    const slots: TimeSlot[] = TIME_SLOTS.map(time => ({
-      time,
-      available: Math.random() > 0.3 // Simulate 70% availability
-    }))
+    // Real availability: query existing appointments for this business on the
+    // selected date (+ optional staff filter) and mark any slot whose window
+    // overlaps an existing appointment as taken. A booker never sees a slot
+    // they can't actually have.
+    const dayStart = new Date(dateStr + 'T00:00:00')
+    const dayEnd = new Date(dateStr + 'T23:59:59')
+
+    const query = supabase
+      .from('appointments')
+      .select('start_time, end_time, staff_id, status')
+      .eq('business_id', business.id)
+      .gte('start_time', dayStart.toISOString())
+      .lte('start_time', dayEnd.toISOString())
+      .in('status', ['confirmed', 'pending'])
+
+    if (form.staff_id) query.eq('staff_id', form.staff_id)
+
+    const { data: booked } = await query
+
+    const overlaps = (slotStart: Date, slotEnd: Date) =>
+      (booked || []).some(b => {
+        if (b.status === 'cancelled') return false
+        const bs = new Date(b.start_time)
+        const be = new Date(b.end_time)
+        return slotStart < be && bs < slotEnd
+      })
+
+    const duration = service?.duration_minutes || 60
+    const slots: TimeSlot[] = TIME_SLOTS.map(time => {
+      const [h, m] = time.split(':').map(Number)
+      const slotStart = new Date(selectedDate)
+      slotStart.setHours(h, m, 0, 0)
+      const slotEnd = new Date(slotStart.getTime() + duration * 60000)
+      return { time, available: !overlaps(slotStart, slotEnd) }
+    })
 
     setAvailableSlots(slots)
     setForm(prev => ({ ...prev, date: dateStr, time: '', staff_id: prev.staff_id || '' }))

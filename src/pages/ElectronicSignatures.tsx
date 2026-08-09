@@ -64,129 +64,129 @@ export default function ElectronicSignatures() {
 
   const fetchRequests = async () => {
     if (!staff?.business_id) return
-    
+
     try {
-      // Check if signature_requests table exists
+      // Fetch requests with their signers in a single joined query so the
+      // list view shows signer avatars/progress without a second round-trip.
       const { data, error } = await supabase
         .from('signature_requests')
-        .select('*')
+        .select(`
+          *,
+          signers:signature_signers (
+            id, name, email, order_index, status, signed_at
+          )
+        `)
         .eq('business_id', staff.business_id)
         .order('created_at', { ascending: false })
 
-      if (error) {
-        // Table might not exist - use demo data
-        setRequests(getDemoRequests())
-      } else {
-        setRequests(data || [])
-      }
+      if (error) throw error
+
+      // Normalise DB shape (snake_case) into the page's existing UI shape so
+      // the rest of the component keeps working without a wider rewrite.
+      setRequests((data || []).map(r => ({
+        id: r.id,
+        title: r.title,
+        description: r.description ?? '',
+        document_name: r.document_name,
+        document_url: r.document_url,
+        status: r.status,
+        order_index: 1,
+        expires_at: r.expires_at,
+        created_at: r.created_at,
+        signers: (r.signers || []).map((sg: any) => ({
+          id: sg.id,
+          name: sg.name,
+          email: sg.email,
+          order: sg.order_index,
+          status: sg.status,
+          signed_at: sg.signed_at ?? '',
+        })),
+      })))
     } catch (error) {
-      // Use demo data if table doesn't exist
-      setRequests(getDemoRequests())
+      console.error('Error loading signature requests:', error)
+      setRequests([])
     } finally {
       setLoading(false)
     }
   }
 
-  const getDemoRequests = (): SignatureRequest[] => [
-    {
-      id: '1',
-      title: 'Service Agreement - ABC Corp',
-      description: 'Annual service contract for 2025',
-      document_name: 'service-agreement-2025.pdf',
-      document_url: '/docs/service-agreement.pdf',
-      status: 'pending',
-      order_index: 1,
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      created_at: new Date().toISOString(),
-      signers: [
-        { id: '1', name: 'John Adeyemi', email: 'john@abccorp.com', order: 1, status: 'pending', signed_at: '' },
-      ],
-    },
-    {
-      id: '2',
-      title: 'NDA - Tech Startup Ltd',
-      description: 'Non-disclosure agreement for partnership discussions',
-      document_name: 'nda-2025.pdf',
-      document_url: '/docs/nda.pdf',
-      status: 'signed',
-      order_index: 1,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-      signers: [
-        { id: '2', name: 'Sarah Okonkwo', email: 'sarah@techstartup.com', order: 1, status: 'signed', signed_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
-      ],
-    },
-    {
-      id: '3',
-      title: 'Employment Contract - New Hire',
-      description: 'Employment agreement for incoming senior developer',
-      document_name: 'employment-contract.pdf',
-      document_url: '/docs/employment.pdf',
-      status: 'draft',
-      order_index: 1,
-      expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-      signers: [],
-    },
-  ]
+  const getDemoRequests = (): SignatureRequest[] => []
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!staff?.business_id) return
 
+    const validSigners = formData.signers.filter(s => s.name && s.email)
+    if (validSigners.length === 0) {
+      alert('Add at least one signer before creating the request.')
+      return
+    }
+
     const expiresAt = new Date()
     expiresAt.setDate(expiresAt.getDate() + formData.expires_in_days)
 
     try {
-      const newRequest = {
-        title: formData.title,
-        description: formData.description,
-        document_name: formData.document_name,
-        document_url: formData.document_url || '/docs/default.pdf',
+      // Insert the request, then its signers in a normalized two-step write.
+      // (Supabase can't return the parent id in a single nested insert unless
+      // the child FK is exposed, so we read the id back explicitly.)
+      const { data: created, error: reqError } = await supabase
+        .from('signature_requests')
+        .insert({
+          title: formData.title,
+          description: formData.description || null,
+          document_name: formData.document_name,
+          document_url: formData.document_url || '/docs/default.pdf',
+          business_id: staff.business_id,
+          created_by: staff.id,
+          status: 'draft',
+          expires_at: expiresAt.toISOString(),
+        })
+        .select('id')
+        .single()
+
+      if (reqError) throw reqError
+
+      const signerRows = validSigners.map((s, idx) => ({
+        request_id: created.id,
         business_id: staff.business_id,
-        created_by: staff.id,
-        status: 'draft',
-        order_index: 1,
-        expires_at: expiresAt.toISOString(),
-        signers: formData.signers.filter(s => s.name && s.email).map((s, i) => ({
-          name: s.name,
-          email: s.email,
-          order: i + 1,
-          status: 'pending',
-          signed_at: '',
-        })),
-      }
+        name: s.name,
+        email: s.email,
+        order_index: idx + 1,
+        status: 'pending',
+        signer_type: 'external_email',
+      }))
 
-      // Try to insert into database
-      try {
-        const { error } = await supabase
-          .from('signature_requests')
-          .insert([newRequest])
+      const { error: signersError } = await supabase
+        .from('signature_signers')
+        .insert(signerRows)
 
-        if (error) throw error
-      } catch (dbError) {
-        // If DB insert fails, add to local state for demo
-        console.warn('Database insert failed, using demo mode:', dbError)
-        setRequests(prev => [{
-          ...newRequest,
-          id: Date.now().toString(),
-          created_at: new Date().toISOString(),
-          signers: (newRequest.signers || []).map((s, i) => ({ ...s, id: `signer-${i}` })),
-        } as SignatureRequest, ...prev])
-      }
+      if (signersError) throw signersError
 
       setShowModal(false)
       resetForm()
       fetchRequests()
     } catch (error) {
       console.error('Error creating signature request:', error)
+      alert('Could not create the signature request. Please try again.')
     }
   }
 
   const updateStatus = async (id: string, status: SignatureRequest['status']) => {
-    setRequests(prev => prev.map(r => 
-      r.id === id ? { ...r, status } : r
-    ))
+    // Persist the status change so it survives reloads and is visible to
+    // every staff member tracking the request.
+    try {
+      const { error } = await supabase
+        .from('signature_requests')
+        .update({ status })
+        .eq('id', id)
+      if (error) throw error
+      setRequests(prev => prev.map(r =>
+        r.id === id ? { ...r, status } : r
+      ))
+    } catch (error) {
+      console.error('Error updating status:', error)
+      alert('Could not update the request status. Please try again.')
+    }
   }
 
   const resetForm = () => {

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield } from 'lucide-react'
+import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -29,6 +29,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/payroll': 'payroll',
   '/app/inventory': 'inventory',
   '/app/properties': 'projects',
+  '/app/services': 'settings',
   '/app/requisitions': 'requisitions',
   '/app/organogram': 'merit',
   '/app/reports': 'reports',
@@ -65,6 +66,7 @@ const NAV_ITEMS = [
   { to: '/app/payroll', label: 'Payroll', icon: Receipt, toolKey: 'payroll' },
   { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
   { to: '/app/properties', label: 'Properties', icon: Building, toolKey: 'projects' },
+  { to: '/app/services', label: 'Services', icon: Tag, toolKey: 'settings' },
   { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
   { to: '/app/organogram', label: 'Org Chart', icon: Network, toolKey: 'merit' },
   { to: '/app/departments', label: 'Departments', icon: Building2, toolKey: 'merit' },
