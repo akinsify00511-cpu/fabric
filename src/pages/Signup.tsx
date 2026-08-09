@@ -3,16 +3,19 @@ import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PasswordStrength from '../components/PasswordStrength'
 import { Check, Sparkles, Users, Zap, Shield } from 'lucide-react'
+import { useLocale } from '../lib/LocaleContext'
 
 const FEATURES = [
-  { icon: Sparkles, text: 'AI-powered insights for smarter decisions' },
-  { icon: Users, text: 'Manage your team from anywhere in Nigeria' },
-  { icon: Zap, text: 'Automate repetitive tasks and save hours' },
-  { icon: Shield, text: 'Bank-level security for your business data' },
+  { icon: Sparkles, textKey: 'signupFeatureAI', text: 'AI-powered insights for smarter decisions' },
+  { icon: Users, textKey: 'signupFeatureTeam', text: 'Manage your team from anywhere in Nigeria' },
+  { icon: Zap, textKey: 'signupFeatureAutomate', text: 'Automate repetitive tasks and save hours' },
+  { icon: Shield, textKey: 'signupFeatureSecurity', text: 'Bank-level security for your business data' },
 ]
 
 export default function Signup() {
   const navigate = useNavigate()
+  const { translations } = useLocale()
+  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
   const [step, setStep] = useState<'form' | 'success'>('form')
   const [businessName, setBusinessName] = useState('')
   const [fullName, setFullName] = useState('')
@@ -148,18 +151,18 @@ export default function Signup() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-black">Check your email</h2>
-            <p className="text-sm text-black mt-2">We sent a confirmation link to</p>
+            <h2 className="text-2xl font-bold text-black">{tr('checkEmail', 'Check your email')}</h2>
+            <p className="text-sm text-black mt-2">{tr('confirmationSent', 'We sent a confirmation link to')}</p>
             <p className="font-semibold text-blue-600 mt-1">{email}</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-[var(--av-primary)]/5 rounded-xl p-5 text-left space-y-3">
-            <p className="text-sm font-medium text-black">Next steps:</p>
+            <p className="text-sm font-medium text-black">{tr('nextSteps', 'Next steps:')}</p>
             <ol className="text-sm text-black space-y-2">
               {[
-                'Click the confirmation link in your email',
-                `Your business "${businessName}" will be set up`,
-                'Start using Avenize with your team'
+                tr('stepClickLink', 'Click the confirmation link in your email'),
+                tr('stepBusinessSetup', `Your business "${businessName}" will be set up`),
+                tr('stepStartUsing', 'Start using Avenize with your team')
               ].map((stepText, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center flex-shrink-0">{i + 1}</span>
@@ -170,12 +173,12 @@ export default function Signup() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs text-black">Didn&apos;t receive the email? Check your spam folder.</p>
+            <p className="text-xs text-black">{tr('noEmail', 'Didn\'t receive the email? Check your spam folder.')}</p>
             <button 
               onClick={handleResendEmail}
               className="text-sm text-blue-600 hover:underline font-medium"
             >
-              Resend confirmation email
+              {tr('resendEmail', 'Resend confirmation email')}
             </button>
           </div>
 
@@ -183,7 +186,7 @@ export default function Signup() {
             to="/login" 
             className="text-sm text-black hover:text-black font-medium flex items-center justify-center gap-1 pt-4 border-t border-white"
           >
-            ← Back to sign in
+            ← {tr('backToSignin', 'Back to sign in')}
           </Link>
         </div>
       </div>
@@ -209,10 +212,10 @@ export default function Signup() {
         <div className="relative z-10 space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl font-bold text-white leading-tight">
-              The Business Operating System for Nigeria
+              {tr('signupHeadline', 'The Business Operating System for Nigeria')}
             </h1>
             <p className="text-xl text-white/80">
-              Everything you need to run your business in one powerful platform.
+              {tr('signupSubheadline', 'Everything you need to run your business in one powerful platform.')}
             </p>
           </div>
 
@@ -222,13 +225,13 @@ export default function Signup() {
                 <div className="w-10 h-10 rounded-lg bg-white backdrop-blur flex items-center justify-center flex-shrink-0">
                   <feature.icon size={20} />
                 </div>
-                <span className="text-lg">{feature.text}</span>
+                <span className="text-lg">{tr(feature.textKey, feature.text)}</span>
               </div>
             ))}
           </div>
 
           <div className="pt-8 border-t border-white/10">
-            <p className="text-white/60 text-sm mb-3">Trusted by 2,500+ Nigerian businesses</p>
+            <p className="text-white/60 text-sm mb-3">{tr('signupTrustedBy', 'Trusted by 2,500+ Nigerian businesses')}</p>
             <div className="flex -space-x-3">
               {['bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-pink-400', 'bg-purple-400'].map((color, i) => (
                 <div key={i} className={`w-10 h-10 rounded-full ${color} border-2 border-white/20`} />
@@ -241,7 +244,7 @@ export default function Signup() {
         </div>
 
         <div className="relative z-10 text-white/80 text-sm">
-          © 2026 Avenize. Built for Nigerian businesses.
+          © 2026 Avenize. {tr('builtForNigeria', 'Built for Nigerian businesses.')}
         </div>
       </div>
 
@@ -258,8 +261,8 @@ export default function Signup() {
           </div>
 
           <div className="text-center lg:text-left">
-            <h2 className="text-2xl font-bold text-black">Set up your business</h2>
-            <p className="text-black mt-1">Create your workspace and invite your team</p>
+            <h2 className="text-2xl font-bold text-black">{tr('signupFormTitle', 'Set up your business')}</h2>
+            <p className="text-black mt-1">{tr('signupFormSubtitle', 'Create your workspace and invite your team')}</p>
           </div>
 
           <div className="space-y-3">
@@ -273,7 +276,7 @@ export default function Signup() {
                 <path fill="var(--av-warning)" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="var(--av-danger)" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Continue with Google
+              {tr('continueGoogle', 'Continue with Google')}
             </button>
 
             <button
@@ -283,7 +286,7 @@ export default function Signup() {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
               </svg>
-              Continue with GitHub
+              {tr('continueGithub', 'Continue with GitHub')}
             </button>
           </div>
 
@@ -292,7 +295,7 @@ export default function Signup() {
               <div className="w-full border-t border-black" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-4 text-sm text-black">or</span>
+              <span className="bg-white px-4 text-sm text-black">{tr('or', 'or')}</span>
             </div>
           </div>
 
@@ -306,11 +309,11 @@ export default function Signup() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Business Name <span className="text-red-500">*</span>
+                  {tr('businessName', 'Business Name')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   required
-                  placeholder="Acme Nigeria Ltd"
+                  placeholder={tr('businessNamePlaceholder', 'Acme Nigeria Ltd')}
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
                   className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
@@ -319,30 +322,30 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Industry <span className="text-black font-normal">(optional)</span>
+                  {tr('industry', 'Industry')} <span className="text-black font-normal">({tr('optional', 'optional')})</span>
                 </label>
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition bg-white"
                 >
-                  <option value="">Select an industry</option>
-                  <option value="construction">Construction</option>
-                  <option value="real_estate">Real Estate</option>
-                  <option value="manufacturing">Manufacturing</option>
-                  <option value="retail">Retail</option>
-                  <option value="services">Professional Services</option>
-                  <option value="other">Other</option>
+                  <option value="">{tr('selectIndustry', 'Select an industry')}</option>
+                  <option value="construction">{tr('industryConstruction', 'Construction')}</option>
+                  <option value="real_estate">{tr('industryRealEstate', 'Real Estate')}</option>
+                  <option value="manufacturing">{tr('industryManufacturing', 'Manufacturing')}</option>
+                  <option value="retail">{tr('industryRetail', 'Retail')}</option>
+                  <option value="services">{tr('industryServices', 'Professional Services')}</option>
+                  <option value="other">{tr('other', 'Other')}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Full Name <span className="text-red-500">*</span>
+                  {tr('fullName', 'Full Name')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   required
-                  placeholder="Chinedu Okonkwo"
+                  placeholder={tr('fullNamePlaceholder', 'Chinedu Okonkwo')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
@@ -351,12 +354,12 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Work Email <span className="text-red-500">*</span>
+                  {tr('workEmail', 'Work Email')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
                   required
-                  placeholder="you@company.com"
+                  placeholder={tr('emailPlaceholder', 'you@company.com')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
@@ -365,14 +368,14 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Password <span className="text-red-500">*</span>
+                  {tr('password', 'Password')} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     minLength={8}
-                    placeholder="Min. 8 characters"
+                    placeholder={tr('passwordPlaceholder', 'Min. 8 characters')}
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value)
