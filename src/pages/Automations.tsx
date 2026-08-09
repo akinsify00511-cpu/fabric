@@ -117,16 +117,16 @@ const [automations, setAutomations] = useState<Automation[]>([])
       if (autoData && autoData.length > 0) {
         setAutomations(autoData as Automation[])
       } else {
-        setAutomations(DEMO_AUTOMATIONS)
+        setAutomations([])
       }
       if (runsData && runsData.length > 0) {
         setRuns(runsData as Run[])
       } else {
-        setRuns(DEMO_RUNS)
+        setRuns([])
       }
     } catch {
-      setAutomations(DEMO_AUTOMATIONS)
-      setRuns(DEMO_RUNS)
+      setAutomations([])
+      setRuns([])
     }
     setLoading(false)
   }

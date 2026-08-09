@@ -48,7 +48,7 @@ const DEMO_PAGES: KBPage[] = [
 ]
 
 export default function Knowledge() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [spaces, setSpaces] = useState<KBSpace[]>([])
   const [selectedSpace, setSelectedSpace] = useState<KBSpace | null>(null)
@@ -86,34 +86,22 @@ export default function Knowledge() {
   }
 
   const loadSpaces = async () => {
-    if (isDemo) {
-      setSpaces(DEMO_SPACES)
-      if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
-      return
-    }
     try {
       const { data } = await supabase.from('kb_spaces').select('*').order('is_default', { ascending: false })
       if (data && data.length > 0) {
         setSpaces(data as KBSpace[])
         if (!selectedSpace) setSelectedSpace(data[0] as KBSpace)
       } else {
-        setSpaces(DEMO_SPACES)
-        if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
+        setSpaces([])
+        
       }
     } catch {
-      setSpaces(DEMO_SPACES)
-      if (!selectedSpace) setSelectedSpace(DEMO_SPACES[0])
+      setSpaces([])
+      
     }
   }
 
   const loadPages = async (spaceId: string) => {
-    if (isDemo) {
-      const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
-      const tree = buildTree(spacePages)
-      setPages(tree)
-      setLoading(false)
-      return
-    }
     try {
       const { data } = await supabase
         .from('kb_pages')
@@ -126,14 +114,10 @@ export default function Knowledge() {
         const tree = buildTree(data as KBPage[])
         setPages(tree)
       } else {
-        const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
-        const tree = buildTree(spacePages)
-        setPages(tree)
+        setPages([])
       }
     } catch {
-      const spacePages = DEMO_PAGES.filter(p => p.space_id === spaceId)
-      const tree = buildTree(spacePages)
-      setPages(tree)
+      setPages([])
     }
     setLoading(false)
   }
@@ -358,22 +342,16 @@ export default function Knowledge() {
                 const name = prompt('Space name:')
                 if (!name?.trim()) return
                 const icon = prompt('Icon emoji (default: 📁):') || '📁'
-                if (isDemo) {
-                  const newSpace = { id: `space-${Date.now()}`, name, icon_emoji: icon, is_default: false, description: '' }
-                  setSpaces([...spaces, newSpace])
-                  showToast('Space created', 'success')
+                const { error } = await supabase.from('kb_spaces').insert({
+                  name,
+                  icon_emoji: icon,
+                  business_id: staff?.business_id,
+                })
+                if (error) {
+                  showToast('Failed to create space', 'error')
                 } else {
-                  const { error } = await supabase.from('kb_spaces').insert({
-                    name,
-                    icon_emoji: icon,
-                    business_id: staff?.business_id,
-                  })
-                  if (error) {
-                    showToast('Failed to create space', 'error')
-                  } else {
-                    loadSpaces()
-                    showToast('Space created', 'success')
-                  }
+                  loadSpaces()
+                  showToast('Space created', 'success')
                 }
               }}
               className="p-1 hover:bg-black/[0.05] rounded text-black hover:text-black"

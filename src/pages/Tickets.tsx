@@ -71,7 +71,7 @@ const DEMO_STAFF: StaffMember[] = [
 ]
 
 export default function Tickets() {
-  const { staff, isDemo, session } = useAuth()
+  const { staff, session } = useAuth()
   const { showToast } = useToast()
   const [tickets, setTickets] = useState<TicketType[]>([])
   const [teamMembers, setTeamMembers] = useState<StaffMember[]>([])
@@ -92,13 +92,6 @@ export default function Tickets() {
   const loadTickets = async () => {
     setLoading(true)
     
-    if (isDemo) {
-      setTickets(DEMO_TICKETS as TicketType[])
-      setTeamMembers(DEMO_STAFF)
-      setLoading(false)
-      return
-    }
-
     try {
       const { data } = await supabase
         .from('tickets')
@@ -116,12 +109,12 @@ export default function Tickets() {
         }))
         setTickets(enriched)
       } else {
-        setTickets(DEMO_TICKETS as TicketType[])
+        setTickets([])
       }
       setTeamMembers((staffData ?? []) as StaffMember[])
     } catch {
-      setTickets(DEMO_TICKETS as TicketType[])
-      setTeamMembers(DEMO_STAFF)
+      setTickets([])
+      setTeamMembers([])
     }
     setLoading(false)
   }

@@ -39,7 +39,7 @@ const STATUS_ICONS = {
 }
 
 export default function Tasks() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [tasks, setTasks] = useState<Task[]>([])
   const [newTask, setNewTask] = useState('')
@@ -50,8 +50,8 @@ export default function Tasks() {
     const loadTasks = async () => {
       setLoading(true)
       
-      if (isDemo || !staff?.business_id) {
-        setTasks(DEMO_TASKS)
+      if (!staff?.business_id) {
+        setTasks([])
         setLoading(false)
         return
       }
@@ -64,17 +64,17 @@ export default function Tasks() {
           .order('created_at', { ascending: false })
 
         if (error) throw error
-        setTasks(data as Task[] || DEMO_TASKS)
+        setTasks(data as Task[] || [])
       } catch (error) {
         console.warn('Tasks not available:', (error as any)?.message)
-        setTasks(DEMO_TASKS)
+        setTasks([])
       } finally {
         setLoading(false)
       }
     }
 
     loadTasks()
-  }, [staff?.business_id, isDemo])
+  }, [staff?.business_id])
 
   const addTask = async () => {
     if (!newTask.trim()) return
@@ -89,7 +89,7 @@ export default function Tasks() {
       created_by: staff?.id,
     }
 
-    if (!isDemo && staff?.business_id) {
+    if (staff?.business_id) {
       try {
         const { error } = await supabase
           .from('tasks')
@@ -125,7 +125,7 @@ export default function Tasks() {
 
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status: nextStatus } : t))
 
-    if (!isDemo && staff?.business_id) {
+    if (staff?.business_id) {
       try {
         const { error } = await supabase
           .from('tasks')
@@ -147,7 +147,7 @@ export default function Tasks() {
 
     setTasks(prev => prev.filter(t => t.id !== id))
 
-    if (!isDemo && staff?.business_id) {
+    if (staff?.business_id) {
       try {
         const { error } = await supabase
           .from('tasks')
@@ -190,13 +190,6 @@ export default function Tasks() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {isDemo && (
-        <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-4 mb-6 text-white">
-          <p className="font-medium">Demo Mode Active</p>
-          <p className="text-sm opacity-90">Sample data shown. Actions are read-only in demo mode.</p>
-        </div>
-      )}
-
       <h1 className="text-2xl font-bold text-black mb-6">Tasks</h1>
 
       <div className="grid grid-cols-4 gap-3 mb-6">
@@ -230,7 +223,6 @@ export default function Tasks() {
           />
           <button
             onClick={addTask}
-            disabled={isDemo}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
           >
             <Plus size={16} />
@@ -253,14 +245,13 @@ export default function Tasks() {
                 <div key={task.id} className="flex items-center gap-3 p-4 hover:bg-black/10 group">
                   <button
                     onClick={() => toggleStatus(task.id)}
-                    disabled={isDemo}
                     className={`shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition ${
                       task.status === 'done' 
                         ? 'bg-green-500 border-green-500 text-white' 
                         : task.status === 'in_progress'
                         ? 'border-amber-400 text-amber-400'
                         : 'border-black/20 hover:border-black/40'
-                    } ${isDemo ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    }`}
                   >
                     {task.status === 'done' && <Check size={14} />}
                     {task.status === 'in_progress' && <Clock size={12} />}
@@ -278,7 +269,6 @@ export default function Tasks() {
                   </span>
                   <button
                     onClick={() => deleteTask(task.id)}
-                    disabled={isDemo}
                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded text-red-500 transition disabled:opacity-50"
                   >
                     <Trash2 size={14} />

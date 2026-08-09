@@ -44,54 +44,16 @@ const BRAND = {
 // Current month name
 const getCurrentMonth = () => new Date().toLocaleString('default', { month: 'long' })
 
-// Mock data
-const birthdaysThisMonth = [
-  { name: 'Chioma Adebayo', date: '2026-08-15', department: 'Sales', avatar: 'CA' },
-  { name: 'Emmanuel Okonkwo', date: '2026-08-22', department: 'Marketing', avatar: 'EO' },
-  { name: 'Fatima Bello', date: '2026-08-28', department: 'Finance', avatar: 'FB' },
-]
-
-const bestStaff = {
-  name: 'Adebayo Johnson',
-  role: 'Sales Manager',
-  department: 'Sales',
-  achievement: 'Highest sales this month - ₦2.5M target achieved',
-  avatar: 'AJ',
-  stats: { sales: '₦2.5M', deals: 12, tasks: 28 }
+type BirthdayEntry = { name: string; date: string; department: string; avatar: string }
+type AwardEntry = { id: string; recipient: string; award: string; reason: string; icon: typeof Star; color: string }
+type Poll = {
+  id: string
+  question: string
+  options: { text: string; votes: number; percentage: number }[]
+  totalVotes: number
+  endsAt: string
+  status: string
 }
-
-const pollResults = [
-  {
-    id: '1',
-    question: 'Best Team Building Activity for Q3?',
-    options: [
-      { text: 'Beach Party', votes: 24, percentage: 45 },
-      { text: 'Game Night', votes: 18, percentage: 34 },
-      { text: 'Cooking Class', votes: 11, percentage: 21 },
-    ],
-    totalVotes: 53,
-    endsAt: '2026-08-20',
-    status: 'active'
-  },
-  {
-    id: '2',
-    question: 'Favorite Remote Work Day?',
-    options: [
-      { text: 'Friday', votes: 31, percentage: 52 },
-      { text: 'Monday', votes: 15, percentage: 25 },
-      { text: 'Wednesday', votes: 14, percentage: 23 },
-    ],
-    totalVotes: 60,
-    endsAt: '2026-08-10',
-    status: 'closed'
-  }
-]
-
-const recentAwards = [
-  { id: '1', recipient: 'Ngozi Okafor', award: 'Star Performer', reason: 'Closed 3 major deals this week', icon: Star, color: BRAND.amber },
-  { id: '2', recipient: 'Ibrahim Musa', award: 'Rising Star', reason: 'Exceeded quarterly targets by 150%', icon: Trophy, color: BRAND.purple },
-  { id: '3', recipient: 'Grace Eze', award: 'Team Player', reason: 'Helped onboard 3 new clients', icon: Heart, color: BRAND.pink },
-]
 
 // Reusable Card component
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -138,16 +100,92 @@ function Avatar({ initials, gradient = true }: { initials: string; gradient?: bo
 }
 
 export default function CompanyHome() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { branding } = useBranding()
   const [selectedPoll, setSelectedPoll] = useState<string | null>(null)
   const [hasVoted, setHasVoted] = useState<string[]>([])
+  const [birthdaysThisMonth, setBirthdaysThisMonth] = useState<BirthdayEntry[]>([])
+  const [recentAwards, setRecentAwards] = useState<AwardEntry[]>([])
+  const [pollResults, setPollResults] = useState<Poll[]>([])
+  const [bestStaff, setBestStaff] = useState<{
+    name: string; role: string; department: string; achievement: string; avatar: string;
+    stats: { sales: string; deals: number; tasks: number }
+  } | null>(null)
   const currentMonth = getCurrentMonth()
 
   useEffect(() => {
     const voted = localStorage.getItem('avenize_voted_polls')
     if (voted) setHasVoted(JSON.parse(voted))
   }, [])
+
+  useEffect(() => {
+    if (!staff?.business_id) return
+    const loadData = async () => {
+      try {
+        const currentMonthNum = new Date().getMonth() + 1
+        // Fetch staff for birthdays this month
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('id, name, full_name, department, date_of_birth')
+          .eq('business_id', staff.business_id)
+        if (staffData) {
+          const birthdays = staffData
+            .filter(s => s.date_of_birth && new Date(s.date_of_birth).getMonth() + 1 === currentMonthNum)
+            .map(s => ({
+              name: s.full_name || s.name,
+              date: s.date_of_birth,
+              department: s.department || '—',
+              avatar: (s.full_name || s.name || '?').split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+            }))
+          setBirthdaysThisMonth(birthdays)
+        }
+
+        // Fetch recent merit awards
+        const { data: awardsData } = await supabase
+          .from('merit_entries')
+          .select('id, staff_id, points, reason, created_at, staff:staff_id(name, full_name)')
+          .order('created_at', { ascending: false })
+          .limit(3)
+        if (awardsData && awardsData.length > 0) {
+          const awardLabels = ['Star Performer', 'Rising Star', 'Team Player']
+          const awardIcons = [Star, Trophy, Heart]
+          const awardColors = [BRAND.amber, BRAND.purple, BRAND.pink]
+          setRecentAwards(awardsData.map((a: any, i: number) => ({
+            id: a.id,
+            recipient: a.staff?.full_name || a.staff?.name || 'Team Member',
+            award: awardLabels[i % awardLabels.length],
+            reason: a.reason || 'Recognition awarded',
+            icon: awardIcons[i % awardIcons.length],
+            color: awardColors[i % awardColors.length]
+          })))
+        }
+
+        // Fetch polls
+        const { data: pollsData } = await supabase
+          .from('polls')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(2)
+        if (pollsData && pollsData.length > 0) {
+          setPollResults(pollsData.map((p: any) => ({
+            id: p.id,
+            question: p.question,
+            options: Array.isArray(p.options) ? p.options.map((opt: any) => ({
+              text: opt.text || opt,
+              votes: opt.votes || 0,
+              percentage: opt.percentage || 0
+            })) : [],
+            totalVotes: p.total_votes || 0,
+            endsAt: p.ends_at || '',
+            status: p.status || 'active'
+          })))
+        }
+      } catch (err) {
+        console.error('Failed to load company home data:', err)
+      }
+    }
+    loadData()
+  }, [staff?.business_id])
 
   const handleVote = (pollId: string, optionIndex: number) => {
     if (hasVoted.includes(pollId)) return
@@ -229,6 +267,7 @@ export default function CompanyHome() {
               </span>
             </div>
             
+            {bestStaff ? (
             <div className="flex items-center gap-5">
               <div 
                 className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-bold"
@@ -257,6 +296,11 @@ export default function CompanyHome() {
                 </div>
               </div>
             </div>
+            ) : (
+              <p className="text-sm py-8 text-center" style={{ color: BRAND.textMuted }}>
+                No staff highlighted yet this month.
+              </p>
+            )}
           </div>
         </Card>
 

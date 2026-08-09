@@ -46,7 +46,7 @@ const DEMO_ENTRIES: MeritEntry[] = [
 ]
 
 export default function Merit() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [entries, setEntries] = useState<MeritEntry[]>([])
@@ -59,29 +59,6 @@ export default function Merit() {
 
   const load = async () => {
     setLoading(true)
-
-    if (isDemo) {
-      const enrichedEntries = DEMO_ENTRIES.map(e => ({
-        ...e,
-        staff_name: DEMO_TEAM.find(t => t.id === e.staff_id)?.full_name ?? 'Unknown',
-        awarded_by_name: DEMO_TEAM.find(t => t.id === e.awarded_by)?.full_name ?? 'Unknown',
-      }))
-      setEntries(enrichedEntries)
-      
-      // Calculate leaderboard
-      const totals: Record<string, LeaderboardEntry> = {}
-      enrichedEntries.forEach((e: MeritEntry) => {
-        if (!totals[e.staff_id]) {
-          totals[e.staff_id] = { staff_id: e.staff_id, staff_name: e.staff_name ?? 'Unknown', total_points: 0, entry_count: 0 }
-        }
-        totals[e.staff_id].total_points += e.points
-        totals[e.staff_id].entry_count += 1
-      })
-      setLeaderboard(Object.values(totals).sort((a, b) => b.total_points - a.total_points))
-      setTeamMembers(DEMO_TEAM)
-      setLoading(false)
-      return
-    }
 
     try {
       const [{ data: entriesData }, { data: staffData }] = await Promise.all([

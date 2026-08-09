@@ -52,7 +52,7 @@ const DEMO_STAFF: StaffMember[] = [
 ]
 
 export default function Calendar() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [events, setEvents] = useState<Event[]>([])
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([])
@@ -78,9 +78,9 @@ export default function Calendar() {
     setLoading(true)
 
     // Use demo data for demo mode or when RPC fails
-    if (isDemo || !staff?.business_id) {
-      setEvents(DEMO_EVENTS)
-      setStaffMembers(DEMO_STAFF)
+    if (!staff?.business_id) {
+      setEvents([])
+      setStaffMembers([])
       setLoading(false)
       return
     }
@@ -103,8 +103,8 @@ export default function Calendar() {
         setStaffMembers(staffData as StaffMember[])
       }
     } catch {
-      setEvents(DEMO_EVENTS)
-      setStaffMembers(DEMO_STAFF)
+      setEvents([])
+      setStaffMembers([])
     }
     setLoading(false)
   }

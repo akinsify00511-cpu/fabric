@@ -51,29 +51,6 @@ const formatCurrency = (amount: number) => {
   return `₦${amount.toLocaleString()}`
 }
 
-const getMockData = () => ({
-  stats: {
-    hotDeals: 7,
-    hotDealsChange: 3,
-    pipelineValue: 3200000,
-    pipelineChange: 2000000,
-    pendingTasks: 18,
-    tasksChange: -3,
-    teamMembers: 42,
-    teamChange: 2,
-  },
-  activities: [
-    { id: '1', type: 'deal', text: 'New hot lead: Ibrahim Musa, ₦3.5M deal', time: '2 min ago', icon: Flame, color: BRAND.danger },
-    { id: '2', type: 'payment', text: 'Riverside Construction signed, ₦2.5M deal', time: '15 min ago', icon: Check, color: BRAND.success },
-    { id: '3', type: 'invoice', text: 'Invoice #0042 sent to TechStart', time: '30 min ago', icon: DollarSign, color: BRAND.primary },
-  ],
-  upcoming: [
-    { id: '1', text: 'Call Ibrahim Musa, hot deal closing', time: 'Today, 2:00 PM', priority: 'high' },
-    { id: '2', text: 'Team standup meeting', time: 'Today, 9:00 AM', priority: 'medium' },
-    { id: '3', text: 'Follow up with Alhaji Motors', time: 'Tomorrow, 10:00 AM', priority: 'high' },
-  ],
-})
-
 // Reusable Card component - Google-style with shadow, no border
 function Card({ children, className = '', accent = false, hoverable = false }: { children: React.ReactNode; className?: string; accent?: boolean; hoverable?: boolean }) {
   return (
@@ -133,58 +110,142 @@ function StatCard({
 }
 
 export default function Dashboard() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const [stats, setStats] = useState<any>(null)
   const [activities, setActivities] = useState<any[]>([])
   const [upcoming, setUpcoming] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [revenueData, setRevenueData] = useState<number[]>([])
+  const [revenueChange, setRevenueChange] = useState<number | null>(null)
 
   useEffect(() => {
     loadDashboardData()
-  }, [staff, isDemo])
+  }, [staff])
 
   const loadDashboardData = async () => {
-    if (isDemo || !staff?.business_id) {
-      const mockData = getMockData()
-      setStats(mockData.stats)
-      setActivities(mockData.activities)
-      setUpcoming(mockData.upcoming)
-      setRevenueData([40, 55, 45, 70, 60, 90, 100])
+    if (!staff?.business_id) {
       setLoading(false)
       return
     }
 
     try {
-      const [dealsData, tasksData, staffData] = await Promise.all([
+      const [dealsData, tasksData, staffData, invoicesData, recentDealsData, recentTasksData, upcomingMeetingsData] = await Promise.all([
         supabase.from('deals').select('value, stage').eq('business_id', staff.business_id).eq('stage', 'hot'),
-        supabase.from('tasks').select('id').eq('business_id', staff.business_id).eq('status', 'pending'),
+        supabase.from('tasks').select('id, title, due_date, priority, status').eq('business_id', staff.business_id).eq('status', 'pending').order('due_date', { ascending: true }).limit(5),
         supabase.from('staff').select('id').eq('business_id', staff.business_id),
+        supabase.from('invoices').select('amount, status, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }),
+        supabase.from('deals').select('id, title, value, stage, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }).limit(5),
+        supabase.from('tasks').select('id, title, status, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }).limit(3),
+        supabase.from('meetings').select('id, title, date, start_time').eq('business_id', staff.business_id).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(3),
       ])
 
+      const hotDeals = dealsData.data?.length || 0
+      const pipelineValue = dealsData.data?.reduce((sum: number, d: any) => sum + (d.value || 0), 0) || 0
+      const pendingTasks = tasksData.data?.length || 0
+      const teamMembers = staffData.data?.length || 0
+
+      // Real revenue from paid invoices this month vs last month
+      const now = new Date()
+      const thisMonth = now.getMonth()
+      const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1
+      const thisYear = now.getFullYear()
+      const lastYear = thisMonth === 0 ? thisYear - 1 : thisYear
+
+      const paidInvoices = invoicesData.data?.filter((i: any) => i.status === 'paid') || []
+      const thisMonthRevenue = paidInvoices
+        .filter((i: any) => {
+          const d = new Date(i.created_at)
+          return d.getMonth() === thisMonth && d.getFullYear() === thisYear
+        })
+        .reduce((sum: number, i: any) => sum + (i.amount || 0), 0)
+      const lastMonthRevenue = paidInvoices
+        .filter((i: any) => {
+          const d = new Date(i.created_at)
+          return d.getMonth() === lastMonth && d.getFullYear() === (thisMonth === 0 ? lastYear : thisYear)
+        })
+        .reduce((sum: number, i: any) => sum + (i.amount || 0), 0)
+
+      const change = lastMonthRevenue > 0
+        ? Math.round(((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
+        : null
+      setRevenueChange(change)
+
+      // Revenue chart: last 7 months of paid invoices
+      const monthlyRevenue: number[] = []
+      for (let i = 6; i >= 0; i--) {
+        const targetDate = new Date(thisYear, thisMonth - i, 1)
+        const monthRev = paidInvoices
+          .filter((inv: any) => {
+            const d = new Date(inv.created_at)
+            return d.getMonth() === targetDate.getMonth() && d.getFullYear() === targetDate.getFullYear()
+          })
+          .reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0)
+        monthlyRevenue.push(monthRev)
+      }
+      const maxRev = Math.max(...monthlyRevenue, 1)
+      setRevenueData(monthlyRevenue.map((r) => Math.max((r / maxRev) * 100, 4)))
+
       setStats({
-        hotDeals: dealsData.data?.length || 0,
-        pipelineValue: dealsData.data?.reduce((sum: number, d: any) => sum + (d.value || 0), 0) || 0,
-        pendingTasks: tasksData.data?.length || 0,
-        teamMembers: staffData.data?.length || 0,
+        hotDeals,
+        pipelineValue,
+        pendingTasks,
+        teamMembers,
+        thisMonthRevenue,
         hotDealsChange: 0,
         pipelineChange: 0,
         tasksChange: 0,
         teamChange: 0,
       })
-      setRevenueData([40, 55, 45, 70, 60, 90, 100])
-      setActivities([
-        { id: '1', type: 'deal', text: `You have ${dealsData.data?.length || 0} hot deals`, time: 'Just now', icon: Flame, color: BRAND.danger },
-        { id: '2', type: 'invoice', text: `${tasksData.data?.length || 0} pending tasks`, time: 'Updated', icon: CheckSquare, color: BRAND.primary },
-      ])
-      setUpcoming([{ id: '1', text: 'Check your tasks', time: 'Today', priority: 'high' }])
+
+      // Real activities from recent deals and tasks
+      const realActivities: any[] = []
+      recentDealsData.data?.forEach((deal: any) => {
+        realActivities.push({
+          id: `deal-${deal.id}`,
+          type: 'deal',
+          text: `Deal: ${deal.title} — ${formatCurrency(deal.value || 0)} (${deal.stage})`,
+          time: new Date(deal.created_at).toLocaleDateString(),
+          icon: Flame,
+          color: BRAND.danger,
+        })
+      })
+      recentTasksData.data?.forEach((task: any) => {
+        realActivities.push({
+          id: `task-${task.id}`,
+          type: 'task',
+          text: `Task ${task.status === 'completed' ? 'completed' : 'created'}: ${task.title}`,
+          time: new Date(task.created_at).toLocaleDateString(),
+          icon: CheckSquare,
+          color: BRAND.primary,
+        })
+      })
+      setActivities(realActivities.slice(0, 5))
+
+      // Real upcoming: pending tasks + meetings
+      const realUpcoming: any[] = []
+      tasksData.data?.forEach((task: any) => {
+        realUpcoming.push({
+          id: `task-${task.id}`,
+          text: task.title,
+          time: task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date',
+          priority: task.priority || 'normal',
+        })
+      })
+      upcomingMeetingsData.data?.forEach((meeting: any) => {
+        realUpcoming.push({
+          id: `meeting-${meeting.id}`,
+          text: `Meeting: ${meeting.title}`,
+          time: `${meeting.date} at ${meeting.start_time}`,
+          priority: 'high',
+        })
+      })
+      setUpcoming(realUpcoming.slice(0, 5))
     } catch (error) {
       console.error('Error loading dashboard:', error)
-      const mockData = getMockData()
-      setStats(mockData.stats)
-      setActivities(mockData.activities)
-      setUpcoming(mockData.upcoming)
-      setRevenueData([40, 55, 45, 70, 60, 90, 100])
+      setStats(null)
+      setActivities([])
+      setUpcoming([])
+      setRevenueData([])
     }
     setLoading(false)
   }
@@ -193,8 +254,6 @@ export default function Dashboard() {
     if (!staff) return 'User'
     return staff.full_name?.split(' ')[0] || staff.name?.split(' ')[0] || 'User'
   }
-
-  const revenueChange = 35
 
   if (loading) {
     return (
@@ -234,26 +293,30 @@ export default function Dashboard() {
                 letterSpacing: '-0.01em',
                 color: BRAND.text
               }}>
-                {stats ? formatCurrency(stats.pipelineValue) : '₦0'}
+                {stats?.thisMonthRevenue ? formatCurrency(stats.thisMonthRevenue) : '₦0'}
               </div>
             </div>
             {/* Mini chart */}
             <div className="flex items-end gap-1 mt-4">
-              {revenueData.map((height, i) => (
+              {revenueData.length > 0 ? revenueData.map((height, i) => (
                 <div
                   key={i}
                   className="rounded-sm"
-                  style={{ 
+                  style={{
                     height: `${height}%`,
                     width: '10px',
                     backgroundColor: i >= revenueData.length - 2 ? BRAND.primary : BRAND.textMuted,
                     opacity: i >= revenueData.length - 2 ? 1 : 0.35
                   }}
                 />
-              ))}
-              <span className="text-xs font-semibold ml-3 mb-0.5" style={{ color: BRAND.success }}>
-                +{revenueChange}%
-              </span>
+              )) : (
+                <span className="text-xs" style={{ color: BRAND.textMuted }}>No revenue data yet</span>
+              )}
+              {revenueChange !== null && (
+                <span className="text-xs font-semibold ml-3 mb-0.5" style={{ color: revenueChange >= 0 ? BRAND.success : BRAND.danger }}>
+                  {revenueChange >= 0 ? '+' : ''}{revenueChange}%
+                </span>
+              )}
             </div>
           </Card>
         </div>

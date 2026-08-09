@@ -61,7 +61,7 @@ const DEMO_CONTACTS: Contact[] = [
 ]
 
 export default function Campaigns() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   
   // Email sending feature status - requires email provider integration (SendGrid, AWS SES, etc.)
@@ -84,13 +84,6 @@ export default function Campaigns() {
   const load = async () => {
     setLoading(true)
     
-    if (isDemo) {
-      setCampaigns(DEMO_CAMPAIGNS)
-      setContacts(DEMO_CONTACTS)
-      setLoading(false)
-      return
-    }
-
     try {
       const { data: campaignsData } = await supabase
         .from('email_campaigns')
@@ -104,16 +97,16 @@ export default function Campaigns() {
       if (campaignsData && campaignsData.length > 0) {
         setCampaigns(campaignsData as Campaign[])
       } else {
-        setCampaigns(DEMO_CAMPAIGNS)
+        setCampaigns([])
       }
       if (contactsData && contactsData.length > 0) {
         setContacts(contactsData as Contact[])
       } else {
-        setContacts(DEMO_CONTACTS)
+        setContacts([])
       }
     } catch {
-      setCampaigns(DEMO_CAMPAIGNS)
-      setContacts(DEMO_CONTACTS)
+      setCampaigns([])
+      setContacts([])
     }
     setLoading(false)
   }

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, X, Send, Bot, User, Sparkles, ArrowRight, Lightbulb } from 'lucide-react'
+import { MessageCircle, X, Send, HelpCircle, User, Sparkles, ArrowRight, Lightbulb } from 'lucide-react'
 
 // Feature suggestions based on context
 const FEATURE_SUGGESTIONS: Record<string, { label: string; path: string; keywords: string[]; description: string }> = {
@@ -45,9 +45,9 @@ function findFeatureSuggestions(message: string): Array<{ label: string; path: s
 
 const SARAH_KNOWLEDGE = {
   greetings: [
-    "Hello! I'm Sarah, your Avenize assistant. How can I help you today?",
-    "Welcome! I'm Sarah. What would you like to know about Avenize?",
-    "Hi there! Great to see you. I'm Sarah. How can I assist you?",
+    "Hello! I'm your Avenize help guide. I can point you to the right features. What are you looking for?",
+    "Welcome! Need help finding a feature? Tell me what you're trying to do.",
+    "Hi there! I'm your Avenize help guide. Ask me where to find anything in the app.",
   ],
   
   features: {
@@ -73,16 +73,15 @@ const SARAH_KNOWLEDGE = {
   ],
   
   help: [
-    "I can help you with:\n\n- Feature explanations and how to use them\n- Pricing and plan questions\n- Getting started with Avenize\n- Troubleshooting common issues\n- Tips and best practices for Nigerian businesses\n\nJust let me know what you need!",
+    "I can help you with:\n\n- Finding the right feature for your task\n- Pricing and plan questions\n- Getting started with Avenize\n- Tips and best practices for Nigerian businesses\n\nJust let me know what you need!",
   ],
 
-  unknown: "I'm not sure I understand that question. Could you try rephrasing it? I can help with:\n\n- CRM, Tasks, People, Projects, Finance\n- Pricing and plans\n- Getting started\n- Troubleshooting\n\nWhat would you like to know?",
+  unknown: "I'm not sure I understand that. I can help you find:\n\n- CRM, Tasks, People, Projects, Finance\n- Pricing and plans\n- Getting started\n\nWhat would you like to find?",
 }
 
 const NEW_FEATURES = [
-  "New in Avenize: AI-powered insights to help you make better decisions.",
+  "New in Avenize: Custom dashboards - create views that work for you.",
   "New: Mobile-responsive design - use Avenize on any device.",
-  "New: Custom dashboards - create views that work for you.",
   "New: Lightning-fast performance - pages load in milliseconds.",
   "New: Enhanced security with 2FA support.",
   "New: Improved invoicing with VAT and WHT built-in.",
@@ -258,11 +257,11 @@ export default function SarahChat() {
           <div className="bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                <Bot size={20} />
+                <HelpCircle size={20} />
               </div>
               <div>
-                <h3 className="font-bold">Sarah</h3>
-                <p className="text-xs text-white/80">Avenize AI Assistant</p>
+                <h3 className="font-bold">Help Guide</h3>
+                <p className="text-xs text-white/80">Avenize Help Guide</p>
               </div>
             </div>
             <button
@@ -274,7 +273,7 @@ export default function SarahChat() {
           </div>
 
           <div className="bg-[#4285F4]/5 px-4 py-2 text-xs text-[#4285F4] flex items-center gap-2">
-            <Bot size={12} />
+            <HelpCircle size={12} />
             <span>Ask me anything about Avenize features, pricing, or how to get started.</span>
           </div>
 
@@ -290,7 +289,7 @@ export default function SarahChat() {
                       ? 'bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white' 
                       : 'bg-white text-black'
                   }`}>
-                    {msg.role === 'assistant' ? <Bot size={16} /> : <User size={16} />}
+                    {msg.role === 'assistant' ? <HelpCircle size={16} /> : <User size={16} />}
                   </div>
                   <div>
                     <div className={`rounded-2xl px-4 py-3 text-sm ${
@@ -324,7 +323,7 @@ export default function SarahChat() {
                     )}
                     
                     <p className="text-[10px] text-black mt-1 px-1">
-                      {msg.role === 'assistant' ? 'Sarah' : 'You'} • {msg.time}
+                      {msg.role === 'assistant' ? 'Guide' : 'You'} • {msg.time}
                     </p>
                   </div>
                 </div>
@@ -335,7 +334,7 @@ export default function SarahChat() {
               <div className="flex justify-start">
                 <div className="flex gap-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white flex items-center justify-center">
-                    <Bot size={16} />
+                    <HelpCircle size={16} />
                   </div>
                   <div className="bg-white rounded-2xl px-4 py-3">
                     <div className="flex gap-1">
@@ -386,7 +385,7 @@ export default function SarahChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Ask Sarah anything..."
+                placeholder="Ask for help finding a feature..."
                 className="flex-1 rounded-full bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
               />
               <button

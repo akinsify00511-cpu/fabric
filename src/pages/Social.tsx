@@ -61,7 +61,7 @@ const DEMO_METRICS: SocialMetrics[] = [
 ]
 
 export default function Social() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [activeTab, setActiveTab] = useState<'posts' | 'metrics' | 'branding'>('posts')
   const [loading, setLoading] = useState(true)
@@ -86,13 +86,6 @@ export default function Social() {
   const load = async () => {
     setLoading(true)
     
-    if (isDemo) {
-      setPosts(DEMO_POSTS)
-      setMetrics(DEMO_METRICS)
-      setLoading(false)
-      return
-    }
-
     try {
       const [{ data: postsData }, { data: metricsData }, { data: assetsData }] = await Promise.all([
         supabase.from('social_posts').select('*').order('created_at', { ascending: false }),
@@ -103,17 +96,17 @@ export default function Social() {
       if (postsData && postsData.length > 0) {
         setPosts(postsData as SocialPost[])
       } else {
-        setPosts(DEMO_POSTS)
+        setPosts([])
       }
       if (metricsData && metricsData.length > 0) {
         setMetrics(metricsData as SocialMetrics[])
       } else {
-        setMetrics(DEMO_METRICS)
+        setMetrics([])
       }
       setBrandAssets((assetsData as BrandAsset[]) ?? [])
     } catch {
-      setPosts(DEMO_POSTS)
-      setMetrics(DEMO_METRICS)
+      setPosts([])
+      setMetrics([])
     }
     setLoading(false)
   }

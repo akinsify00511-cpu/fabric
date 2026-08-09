@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Download } from 'lucide-react'
 import { useToast } from '../components/Toast'
 import { useAuth } from '../lib/AuthContext'
-import { isDemoMode, getDeals } from '../lib/Storage'
-import { DEMO_DEALS } from '../lib/DemoData'
+import { getDeals } from '../lib/Storage'
 import { generateQuotePDF } from '../lib/PDFGenerator'
 
 type Quote = {
@@ -56,8 +55,6 @@ export default function Quotes() {
     const loadedDeals = await getDeals()
     if (loadedDeals.length > 0) {
       setDeals(loadedDeals)
-    } else if (isDemoMode()) {
-      setDeals(DEMO_DEALS)
     }
     
     const storedQuotes = localStorage.getItem('avenize_quotes')

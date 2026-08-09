@@ -51,7 +51,7 @@ const DEMO_SUMMARIES: DailySummary[] = [
 ]
 
 export default function TimeTracking() {
-  const { staff, isDemo } = useAuth()
+  const { staff } = useAuth()
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [activeEntry, setActiveEntry] = useState<TimeEntry | null>(null)
@@ -98,10 +98,9 @@ export default function TimeTracking() {
   async function loadData() {
     setLoading(true)
 
-    // Use demo data for demo mode
-    if (isDemo || !staff?.id) {
-      setEntries(DEMO_ENTRIES)
-      setSummaries(DEMO_SUMMARIES)
+    if (!staff?.id) {
+      setEntries([])
+      setSummaries([])
       setLoading(false)
       return
     }
@@ -144,8 +143,8 @@ export default function TimeTracking() {
         setSummaries(summaryData as DailySummary[])
       }
     } catch {
-      setEntries(DEMO_ENTRIES)
-      setSummaries(DEMO_SUMMARIES)
+      setEntries([])
+      setSummaries([])
     }
     setLoading(false)
   }

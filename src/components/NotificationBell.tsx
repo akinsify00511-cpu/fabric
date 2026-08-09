@@ -1,95 +1,117 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Bell, X, Check, MessageSquare, Calendar, AlertCircle, User, DollarSign } from 'lucide-react'
+import { Bell, X, Check, MessageSquare, Calendar, AlertCircle, User, DollarSign, BellOff } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 
 interface Notification {
   id: string
-  type: 'info' | 'success' | 'warning' | 'error' | 'message' | 'calendar' | 'payment' | 'mention'
+  type: string
   title: string
-  message: string
-  timestamp: Date
-  read: boolean
-  link?: string
+  message: string | null
+  link: string | null
+  is_read: boolean
+  created_at: string
 }
 
-const NOTIFICATION_ICONS = {
-  info: AlertCircle,
-  success: Check,
-  warning: AlertCircle,
-  error: AlertCircle,
-  message: MessageSquare,
-  calendar: Calendar,
+const NOTIFICATION_ICONS: Record<string, typeof Bell> = {
+  chat_message: MessageSquare,
+  meeting: Calendar,
+  reminder: Calendar,
+  task_assigned: Check,
+  task_due: AlertCircle,
+  task_completed: Check,
+  invoice_paid: DollarSign,
+  invoice_overdue: AlertCircle,
   payment: DollarSign,
+  leave_approved: Check,
+  leave_rejected: AlertCircle,
   mention: User,
+  comment: MessageSquare,
+  system: AlertCircle,
+  achievement: Check,
 }
 
-const NOTIFICATION_COLORS = {
-  info: 'text-blue-500 bg-blue-50',
-  success: 'text-green-500 bg-green-50',
-  warning: 'text-amber-500 bg-amber-50',
-  error: 'text-red-500 bg-red-50',
-  message: 'text-purple-500 bg-purple-50',
-  calendar: 'text-indigo-500 bg-indigo-50',
+const NOTIFICATION_COLORS: Record<string, string> = {
+  chat_message: 'text-blue-500 bg-blue-50',
+  meeting: 'text-indigo-500 bg-indigo-50',
+  reminder: 'text-indigo-500 bg-indigo-50',
+  task_assigned: 'text-green-500 bg-green-50',
+  task_due: 'text-amber-500 bg-amber-50',
+  task_completed: 'text-green-500 bg-green-50',
+  invoice_paid: 'text-emerald-500 bg-emerald-50',
+  invoice_overdue: 'text-red-500 bg-red-50',
   payment: 'text-emerald-500 bg-emerald-50',
+  leave_approved: 'text-green-500 bg-green-50',
+  leave_rejected: 'text-red-500 bg-red-50',
   mention: 'text-pink-500 bg-pink-50',
+  comment: 'text-blue-500 bg-blue-50',
+  system: 'text-gray-500 bg-gray-50',
+  achievement: 'text-purple-500 bg-purple-50',
+}
+
+function getIcon(type: string) {
+  return NOTIFICATION_ICONS[type] || Bell
+}
+
+function getColor(type: string) {
+  return NOTIFICATION_COLORS[type] || 'text-gray-500 bg-gray-50'
 }
 
 export default function NotificationBell() {
+  const { staff } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Load notifications
-  useEffect(() => {
-    loadNotifications()
-  }, [])
-
-  const loadNotifications = async () => {
+  const loadNotifications = useCallback(async () => {
+    if (!staff?.id) return
     setLoading(true)
     try {
-      // Load from localStorage for demo
-      const stored = localStorage.getItem('avenize-notifications')
-      if (stored) {
-        setNotifications(JSON.parse(stored))
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('id, type, title, message, link, is_read, created_at')
+        .or(`staff_id.eq.${staff.id},business_id.eq.${staff.business_id}`)
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+      if (error) {
+        console.error('Failed to load notifications:', error)
+        setNotifications([])
       } else {
-        // Demo notifications
-        const demo: Notification[] = [
-          {
-            id: '1',
-            type: 'message',
-            title: 'New message',
-            message: 'Sarah sent you a message about the project update',
-            timestamp: new Date(Date.now() - 1000 * 60 * 5),
-            read: false,
-            link: '/app/chat',
-          },
-          {
-            id: '2',
-            type: 'calendar',
-            title: 'Upcoming meeting',
-            message: 'Team standup in 15 minutes',
-            timestamp: new Date(Date.now() - 1000 * 60 * 30),
-            read: false,
-            link: '/app/calendar',
-          },
-          {
-            id: '3',
-            type: 'payment',
-            title: 'Payment received',
-            message: 'Invoice #1234 has been paid - ₦150,000',
-            timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-            read: true,
-            link: '/app/payments',
-          },
-        ]
-        setNotifications(demo)
-        localStorage.setItem('avenize-notifications', JSON.stringify(demo))
+        setNotifications(data as Notification[])
       }
-    } catch (error) {
-      console.error('Failed to load notifications:', error)
+    } catch (err) {
+      console.error('Failed to load notifications:', err)
+      setNotifications([])
     }
     setLoading(false)
-  }
+  }, [staff?.id, staff?.business_id])
+
+  useEffect(() => {
+    loadNotifications()
+  }, [loadNotifications])
+
+  // Realtime: listen for new notifications
+  useEffect(() => {
+    if (!staff?.id && !staff?.business_id) return
+
+    const channel = supabase
+      .channel('notifications:realtime')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+      }, () => {
+        loadNotifications()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [staff?.id, staff?.business_id, loadNotifications])
 
   // Close on click outside
   useEffect(() => {
@@ -116,35 +138,47 @@ export default function NotificationBell() {
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen])
 
-  const markAsRead = useCallback((id: string) => {
-    setNotifications((prev) => {
-      const updated = prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-      localStorage.setItem('avenize-notifications', JSON.stringify(updated))
-      return updated
-    })
+  const markAsRead = useCallback(async (id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)))
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('id', id)
+    } catch (err) {
+      console.error('Failed to mark notification as read:', err)
+    }
   }, [])
 
-  const markAllAsRead = useCallback(() => {
-    setNotifications((prev) => {
-      const updated = prev.map((n) => ({ ...n, read: true }))
-      localStorage.setItem('avenize-notifications', JSON.stringify(updated))
-      return updated
-    })
+  const markAllAsRead = useCallback(async () => {
+    const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
+    if (unreadIds.length === 0) return
+    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
+    try {
+      await supabase
+        .from('notifications')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .in('id', unreadIds)
+    } catch (err) {
+      console.error('Failed to mark all as read:', err)
+    }
+  }, [notifications])
+
+  const dismissNotification = useCallback(async (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id))
+    try {
+      await supabase.from('notifications').delete().eq('id', id)
+    } catch (err) {
+      console.error('Failed to dismiss notification:', err)
+    }
   }, [])
 
-  const dismissNotification = useCallback((id: string) => {
-    setNotifications((prev) => {
-      const updated = prev.filter((n) => n.id !== id)
-      localStorage.setItem('avenize-notifications', JSON.stringify(updated))
-      return updated
-    })
-  }, [])
+  const unreadCount = notifications.filter((n) => !n.is_read).length
 
-  const unreadCount = notifications.filter((n) => !n.read).length
-
-  const formatTime = (date: Date) => {
+  const formatTime = (dateStr: string) => {
+    const date = new Date(dateStr)
     const now = new Date()
-    const diff = now.getTime() - new Date(date).getTime()
+    const diff = now.getTime() - date.getTime()
     const minutes = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
@@ -199,33 +233,30 @@ export default function NotificationBell() {
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <Bell size={32} className="text-black/20 mx-auto mb-2" />
-                <p className="text-sm text-black/50">No notifications</p>
+                <BellOff size={32} className="text-black/20 mx-auto mb-2" />
+                <p className="text-sm text-black/50">No notifications yet</p>
+                <p className="text-xs text-black/30 mt-1">You'll see meeting invites, task assignments, and payment updates here.</p>
               </div>
             ) : (
               notifications.map((notification) => {
-                const Icon = NOTIFICATION_ICONS[notification.type]
-                const colorClass = NOTIFICATION_COLORS[notification.type]
-                return (
-                  <div
-                    key={notification.id}
-                    className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
-                      !notification.read ? 'bg-blue-50/50' : ''
-                    }`}
-                    onClick={() => markAsRead(notification.id)}
-                  >
+                const Icon = getIcon(notification.type)
+                const colorClass = getColor(notification.type)
+                const notifContent = (
+                  <>
                     <div className={`p-2 rounded-xl ${colorClass}`}>
                       <Icon size={16} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-medium text-black truncate">{notification.title}</p>
-                        {!notification.read && (
+                        {!notification.is_read && (
                           <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />
                         )}
                       </div>
-                      <p className="text-xs text-black/50 line-clamp-2 mt-0.5">{notification.message}</p>
-                      <p className="text-xs text-black/30 mt-1">{formatTime(notification.timestamp)}</p>
+                      {notification.message && (
+                        <p className="text-xs text-black/50 line-clamp-2 mt-0.5">{notification.message}</p>
+                      )}
+                      <p className="text-xs text-black/30 mt-1">{formatTime(notification.created_at)}</p>
                     </div>
                     <button
                       onClick={(e) => {
@@ -236,6 +267,28 @@ export default function NotificationBell() {
                     >
                       <X size={14} className="text-black/30" />
                     </button>
+                  </>
+                )
+                return notification.link ? (
+                  <Link
+                    key={notification.id}
+                    to={notification.link}
+                    className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
+                      !notification.is_read ? 'bg-blue-50/50' : ''
+                    }`}
+                    onClick={() => markAsRead(notification.id)}
+                  >
+                    {notifContent}
+                  </Link>
+                ) : (
+                  <div
+                    key={notification.id}
+                    className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
+                      !notification.is_read ? 'bg-blue-50/50' : ''
+                    }`}
+                    onClick={() => markAsRead(notification.id)}
+                  >
+                    {notifContent}
                   </div>
                 )
               })
@@ -244,9 +297,9 @@ export default function NotificationBell() {
 
           {notifications.length > 0 && (
             <div className="px-4 py-3 border-t border-black/5 text-center">
-              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <Link to="/app/notifications" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
                 View all notifications
-              </button>
+              </Link>
             </div>
           )}
         </div>

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { X, Crown, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useEntitlements } from '../lib/useEntitlement'
-import { useAuth } from '../lib/AuthContext'
 
 const TRIAL_DAYS = 7
 
@@ -10,17 +9,11 @@ export default function TrialBanner() {
   const [visible, setVisible] = useState(false)
   const [daysLeft, setDaysLeft] = useState(TRIAL_DAYS)
   const { plan, loading } = useEntitlements()
-  const { isDemo } = useAuth()
 
   useEffect(() => {
     // Don't show trial banner for paid plans or demo users
     if (loading) return
     
-    if (isDemo) {
-      setVisible(false)
-      return
-    }
-
     // Check if user has a paid plan
     const paidPlans = ['starter', 'professional', 'enterprise']
     if (paidPlans.includes(plan)) {
@@ -39,7 +32,7 @@ export default function TrialBanner() {
       setDaysLeft(Math.max(0, remaining))
       setVisible(remaining > 0)
     }
-  }, [loading, plan, isDemo])
+  }, [loading, plan])
 
   const dismiss = () => setVisible(false)
 

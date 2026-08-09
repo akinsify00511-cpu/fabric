@@ -79,10 +79,13 @@ export const initiatePayment = async (request: PaymentRequest): Promise<{ author
 /**
  * @deprecated Payment verification MUST be done server-side via Supabase Edge Function
  * Use: supabase.functions.invoke('paystack-verify', { body: { reference } })
+ *
+ * NOTE: This stub returns false until a server-side verify function is deployed.
+ * Never auto-approve payments client-side.
  */
 export const verifyPayment = async (_reference: string): Promise<boolean> => {
-  console.warn('[SECURITY] Payment verification should be done server-side.')
-  return true
+  console.error('[SECURITY] Payment verification requires a server-side Edge Function. Refusing to verify client-side.')
+  return false
 }
 
 /**
@@ -90,8 +93,8 @@ export const verifyPayment = async (_reference: string): Promise<boolean> => {
  * Use: supabase.functions.invoke('paystack-subscription', { body: { email, planCode } })
  */
 export const createSubscription = async (_customerEmail: string, _planCode: string) => {
-  console.warn('[SECURITY] Subscription creation should be done server-side.')
-  return { status: 'success', message: 'Subscription placeholder - implement server-side' }
+  console.error('[SECURITY] Subscription creation requires a server-side Edge Function.')
+  return { status: 'error', message: 'Subscription processing not configured. Contact support.' }
 }
 
 export const PAYMENT_FEATURES = {

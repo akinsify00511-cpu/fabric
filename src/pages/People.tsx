@@ -86,10 +86,11 @@ export default function People() {
           functional_roles: memberRoleMap[s.id] || []
         })) as TeamMember[])
       } else {
-        setMembers(DEMO_MEMBERS)
+        setMembers([])
       }
-    } catch {
-      setMembers(DEMO_MEMBERS)
+    } catch (err) {
+      console.error('Failed to load people:', err)
+      setMembers([])
     }
     setLoading(false)
   }
@@ -401,11 +402,3 @@ export default function People() {
   )
 }
 
-const DEMO_MEMBERS: TeamMember[] = [
-  { id: '1', name: 'Adaeze Nwankwo', email: 'adaeze@company.com', role: 'owner', department: 'Leadership', joined_at: '2024-01-01' },
-  { id: '2', name: 'Emeka Obi', email: 'emeka@company.com', role: 'admin', department: 'Engineering', joined_at: '2024-01-05' },
-  { id: '3', name: 'Blessing Adeyemi', email: 'blessing@company.com', role: 'manager', department: 'Sales', joined_at: '2024-01-10' },
-  { id: '4', name: 'Kunle Adebayo', email: 'kunle@company.com', role: 'staff', department: 'Engineering', joined_at: '2024-01-15' },
-  { id: '5', name: 'Ngozi Chukwu', email: 'ngozi@company.com', role: 'staff', department: 'Marketing', joined_at: '2024-01-20' },
-  { id: '6', name: 'Tunde Bakare', email: 'tunde@company.com', role: 'team_lead', department: 'Operations', joined_at: '2024-02-01' },
-]

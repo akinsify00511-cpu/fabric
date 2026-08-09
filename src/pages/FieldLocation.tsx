@@ -1,24 +1,82 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MapPin, Users, Clock, Phone, MessageSquare, Navigation, Zap, AlertCircle, CheckCircle } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 
-// Demo field team data
-const FIELD_TEAMS = [
-  { id: 1, name: 'Chinedu Okafor', role: 'Field Engineer', status: 'active', location: 'Victoria Island, Lagos', lat: 6.4281, lng: 3.4219, lastUpdate: '2 min ago', phone: '+234 801 234 5678' },
-  { id: 2, name: 'Amina Bello', role: 'Sales Rep', status: 'active', location: 'Ikeja, Lagos', lat: 6.6059, lng: 3.3499, lastUpdate: '5 min ago', phone: '+234 802 345 6789' },
-  { id: 3, name: 'Emeka Nwosu', role: 'Project Manager', status: 'active', location: 'Lekki, Lagos', lat: 6.4312, lng: 3.4551, lastUpdate: '1 min ago', phone: '+234 803 456 7890' },
-  { id: 4, name: 'Fatima Ahmed', role: 'Field Technician', status: 'idle', location: 'Surulere, Lagos', lat: 6.4969, lng: 3.3441, lastUpdate: '15 min ago', phone: '+234 804 567 8901' },
-  { id: 5, name: 'Olumide Adeyemi', role: 'Delivery Agent', status: 'on_route', location: 'Yaba, Lagos', lat: 6.5014, lng: 3.3633, lastUpdate: '3 min ago', phone: '+234 805 678 9012' },
-]
+type FieldTeam = {
+  id: string
+  name: string
+  role: string
+  status: string
+  location: string
+  lat?: number
+  lng?: number
+  lastUpdate: string
+  phone: string
+}
 
-const JOBS_ON_MAP = [
-  { id: 1, title: 'Site Inspection - Alhaji Motors', address: '15 Admiralty Way, Lekki', status: 'pending', assignedTo: 'Chinedu Okafor', time: '10:00 AM' },
-  { id: 2, title: 'Installation - TechStart Office', address: '24 Broad Street, Lagos Island', status: 'in_progress', assignedTo: 'Emeka Nwosu', time: '11:30 AM' },
-  { id: 3, title: 'Maintenance - EduFirst School', address: '8 Adeyemo Alakija, Victoria Island', status: 'completed', assignedTo: 'Fatima Ahmed', time: '9:00 AM' },
-]
+type MapJob = {
+  id: string
+  title: string
+  address: string
+  status: string
+  assignedTo: string
+  time: string
+}
 
 export default function FieldLocation() {
+  const { staff } = useAuth()
   const [activeTab, setActiveTab] = useState<'map' | 'team' | 'jobs'>('map')
-  const [selectedTeam, setSelectedTeam] = useState<number | null>(null)
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
+  const [fieldTeams, setFieldTeams] = useState<FieldTeam[]>([])
+  const [jobsOnMap, setJobsOnMap] = useState<MapJob[]>([])
+
+  useEffect(() => {
+    if (!staff?.business_id) return
+    const loadData = async () => {
+      try {
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('id, name, full_name, role, phone, location, status, last_active_at')
+          .eq('business_id', staff.business_id)
+        if (staffData) {
+          const teams: FieldTeam[] = staffData.map((s: any) => ({
+            id: s.id,
+            name: s.full_name || s.name,
+            role: s.role || 'Team Member',
+            status: s.status || 'active',
+            location: s.location || '—',
+            lastUpdate: s.last_active_at
+              ? `${Math.max(1, Math.floor((Date.now() - new Date(s.last_active_at).getTime()) / 60000))} min ago`
+              : '—',
+            phone: s.phone || '—',
+          }))
+          setFieldTeams(teams)
+        }
+
+        const { data: tasksData } = await supabase
+          .from('tasks')
+          .select('id, title, status, address, location, assignee:assignee_id(name, full_name), due_date')
+          .eq('business_id', staff.business_id)
+          .order('created_at', { ascending: false })
+          .limit(10)
+        if (tasksData) {
+          const jobs: MapJob[] = tasksData.map((t: any) => ({
+            id: t.id,
+            title: t.title || 'Untitled task',
+            address: t.address || t.location || '—',
+            status: t.status || 'pending',
+            assignedTo: t.assignee?.full_name || t.assignee?.name || 'Unassigned',
+            time: t.due_date ? new Date(t.due_date).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' }) : '—',
+          }))
+          setJobsOnMap(jobs)
+        }
+      } catch (err) {
+        console.error('Failed to load field data:', err)
+      }
+    }
+    loadData()
+  }, [staff?.business_id])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -110,11 +168,11 @@ export default function FieldLocation() {
             </div>
 
             {/* Team markers on map */}
-            {FIELD_TEAMS.map((member) => (
+            {fieldTeams.map((member, index) => (
               <div
                 key={member.id}
                 className="absolute cursor-pointer group"
-                style={{ left: `${20 + (member.id * 15)}%`, top: `${30 + (member.id * 10)}%` }}
+                style={{ left: `${20 + (index * 15)}%`, top: `${30 + (index * 10)}%` }}
                 onClick={() => setSelectedTeam(member.id)}
               >
                 <div className={`w-8 h-8 rounded-full ${getStatusColor(member.status)} border-2 border-white flex items-center justify-center text-white text-xs font-bold shadow-lg`}>
@@ -131,10 +189,10 @@ export default function FieldLocation() {
           {/* Team Sidebar */}
           <div className="bg-white rounded-xl border border-white overflow-hidden">
             <div className="p-4 border-b border-white">
-              <h3 className="font-bold text-black">Field Team ({FIELD_TEAMS.length})</h3>
+              <h3 className="font-bold text-black">Field Team ({fieldTeams.length})</h3>
             </div>
             <div className="divide-y divide-white max-h-[400px] overflow-y-auto">
-              {FIELD_TEAMS.map((member) => (
+              {fieldTeams.map((member) => (
                 <div
                   key={member.id}
                   className={`p-4 hover:bg-white cursor-pointer transition ${selectedTeam === member.id ? 'bg-[#4285F4]/5' : ''}`}
@@ -167,7 +225,11 @@ export default function FieldLocation() {
       {/* TEAM STATUS VIEW */}
       {activeTab === 'team' && (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FIELD_TEAMS.map((member) => (
+          {fieldTeams.length === 0 ? (
+            <div className="col-span-full text-center py-12 text-[#5F6368]">
+              No field team members yet. Add staff from the People page to see them here.
+            </div>
+          ) : fieldTeams.map((member) => (
             <div key={member.id} className="bg-white rounded-xl p-6 border border-white">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -225,7 +287,11 @@ export default function FieldLocation() {
       {/* JOBS ON MAP */}
       {activeTab === 'jobs' && (
         <div className="space-y-4">
-          {JOBS_ON_MAP.map((job) => (
+          {jobsOnMap.length === 0 ? (
+            <div className="text-center py-12 text-[#5F6368]">
+              No field jobs yet. Assign tasks with locations to see them on the map.
+            </div>
+          ) : jobsOnMap.map((job) => (
             <div key={job.id} className="bg-white rounded-xl p-5 border border-white flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                 job.status === 'completed' ? 'bg-green-100' :
