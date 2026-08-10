@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FreshnessBadge from '../components/FreshnessBadge'
 import { useRecentEvents } from '../components/FreshnessBadge'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   Users, Wallet, TrendingUp, Activity, Boxes, AlertTriangle,
   ShieldCheck, Sparkles, ArrowRight, Loader2, CheckCircle2
@@ -25,6 +26,7 @@ interface Index { signals: Record<string, number>; score: number; components: st
 export default function ObserverView() {
   const { staff } = useAuth()
   const bid = staff?.business_id
+  const dbState = useDbState()
   const [snap, setSnap] = useState<Snapshot | null>(null)
   const [exc, setExc] = useState<Exception[]>([])
   const [indexes, setIndexes] = useState<Record<string, Index> | null>(null)
@@ -54,7 +56,12 @@ export default function ObserverView() {
   }, [bid])
 
   if (loading) return <div className="p-10 flex justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]" /></div>
-  if (!snap) return <div className="p-10 text-[var(--av-text-secondary)]">No data yet.</div>
+  if (!snap) return (
+    <div className="p-6 max-w-7xl mx-auto">
+      <DbStateBanner state={dbState} />
+      <div className="p-10 text-[var(--av-text-secondary)] text-center">No snapshot data available yet.</div>
+    </div>
+  )
 
   const openExc = exc.filter(e => !e.resolved)
   const critical = openExc.filter(e => e.severity === 'critical').length

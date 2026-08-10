@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Avenize",
+    "slug": "avenize",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "avenize",
+    "splash": {
+      "backgroundColor": "#4285F4",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.avenize.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Avenize uses the camera to scan documents and capture receipts.",
+        "NSPhotoLibraryUsageDescription": "Avenize uses photos to attach receipts and documents."
+      }
+    },
+    "android": {
+      "package": "com.avenize.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#4285F4"
+      },
+      "permissions": ["CAMERA", "READ_EXTERNAL_STORAGE", "INTERNET"]
+    },
+    "extra": {
+      "eas": {
+        "projectId": "avenize"
+      }
+    },
+    "github": {
+      "owner": "akinsify00511-cpu",
+      "repo": "fabric",
+      "path": "/mobile"
+    }
+  }
+}

@@ -1,17 +1,32 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  realtime: {
-    params: {
-      eventsPerSecond: 10,
+// Never silently create a broken client. If config is missing, log a
+// visible error so the app doesn't swallow every query as "no data".
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+if (!isSupabaseConfigured) {
+  // eslint-disable-next-line no-console
+  console.error(
+    '[Avenize] Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. ' +
+      'The app will not connect. Copy .env.example to .env and fill it in.'
+  )
+}
+
+export const supabase: SupabaseClient = createClient(
+  supabaseUrl || 'https://placeholder.supabase.co',
+  supabaseAnonKey || 'placeholder-anon-key',
+  {
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
+      },
     },
-  },
-  global: {
-    headers: {
-      'X-Client-Info': 'avenize',
+    global: {
+      headers: {
+        'X-Client-Info': 'avenize',
+      },
     },
-  },
-})
+  }
+)
