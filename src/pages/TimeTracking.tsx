@@ -6,7 +6,7 @@ import EntitlementGate from '../components/EntitlementGate'
 import {
   Clock, Play, Square, Plus, Calendar, ChevronLeft, ChevronRight,
   CheckCircle2, Coffee, Plane, Heart, User, Trash2, Edit3,
-  Timer, TrendingUp, Target, AlertCircle
+  Timer, TrendingUp, Target, AlertCircle, Send
 } from 'lucide-react'
 
 type TimeEntry = {
@@ -50,6 +50,10 @@ export default function TimeTracking() {
   const [showTimeOffModal, setShowTimeOffModal] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [timesheet, setTimesheet] = useState<{
+    id: string; status: string; total_minutes: number; billable_minutes: number;
+  } | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   // Manual entry form
   const [manualForm, setManualForm] = useState({
@@ -130,6 +134,17 @@ export default function TimeTracking() {
       if (summaryData) {
         setSummaries(summaryData as DailySummary[])
       }
+
+      // Load the week's timesheet (if any) so we can show its approval
+      // status and gate editing once submitted/approved.
+      const ws = weekStart.toISOString().split('T')[0]
+      const { data: ts } = await supabase
+        .from('timesheets')
+        .select('id, status, total_minutes, billable_minutes')
+        .eq('staff_id', staff?.id)
+        .eq('week_start', ws)
+        .maybeSingle()
+      setTimesheet(ts as any)
     } catch {
       setEntries([])
       setSummaries([])
@@ -232,6 +247,71 @@ export default function TimeTracking() {
     loadData()
   }
 
+  // Submit the current week's entries as a timesheet for manager approval.
+  // Uses the submit_timesheet RPC which flips status, recomputes totals,
+  // links entries, and creates an approvals-engine request.
+  async function submitWeek() {
+    if (!staff?.id) return
+    if (entries.length === 0) { showToast('No time to submit this week', 'error'); return }
+    if (timesheet?.status === 'submitted') { showToast('Already submitted', 'error'); return }
+    setSubmitting(true)
+    try {
+      const ws = weekStart.toISOString().split('T')[0]
+      const we = new Date(weekStart.getTime() + 6 * 86400000).toISOString().split('T')[0]
+      // Upsert the timesheet row (draft if first submit, reopen if rejected).
+      const { data: ts, error: tsErr } = await supabase
+        .from('timesheets')
+        .upsert({
+          business_id: staff.business_id, staff_id: staff.id,
+          week_start: ws, week_end: we, status: 'draft',
+        }, { onConflict: 'staff_id,week_start' })
+        .select('id')
+        .single()
+      if (tsErr) throw tsErr
+      // Attach this week's entries to the timesheet so totals lock.
+      await supabase.from('time_entries')
+        .update({ timesheet_id: ts.id })
+        .eq('staff_id', staff.id)
+        .gte('start_time', ws)
+        .lte('start_time', we + 'T23:59:59')
+      const { error: rpcErr } = await supabase.rpc('submit_timesheet', {
+        p_timesheet_id: ts.id, p_submitter_id: staff.id,
+      })
+      if (rpcErr) throw rpcErr
+      showToast('Week submitted for approval', 'success')
+      loadData()
+    } catch (e) {
+      console.error('submitWeek failed', e)
+      showToast('Could not submit timesheet', 'error')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Manager-side approve/reject (the action handler in Approvals calls the
+  // decide_timesheet RPC; this UI button is a convenience for managers).
+  async function decideTimesheet(decision: 'approved' | 'rejected') {
+    if (!staff?.id || !timesheet) return
+    const reason = decision === 'rejected'
+      ? prompt('Reason for rejection?') || ''
+      : ''
+    setSubmitting(true)
+    try {
+      const { error } = await supabase.rpc('decide_timesheet', {
+        p_timesheet_id: timesheet.id, p_decision: decision,
+        p_approver_id: staff.id, p_reason: reason,
+      })
+      if (error) throw error
+      showToast(decision === 'approved' ? 'Timesheet approved' : 'Timesheet rejected', 'info')
+      loadData()
+    } catch (e) {
+      console.error('decideTimesheet failed', e)
+      showToast('Could not update timesheet', 'error')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(weekStart.getTime() + i * 24 * 60 * 60 * 1000)
     const summary = summaries.find((s) => s.date === date.toISOString().split('T')[0])
@@ -309,10 +389,22 @@ export default function TimeTracking() {
         >
           <ChevronLeft size={20} />
         </button>
-        <h2 className="font-medium">
-          {weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} -{' '}
-          {new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="font-medium">
+            {weekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} -{' '}
+            {new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </h2>
+          {timesheet && (
+            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              timesheet.status === 'approved' ? 'bg-green-100 text-green-700' :
+              timesheet.status === 'submitted' ? 'bg-blue-100 text-blue-700' :
+              timesheet.status === 'rejected' ? 'bg-red-100 text-red-700' :
+              'bg-gray-100 text-gray-600'
+            }`}>
+              {timesheet.status === 'reopened' ? 'needs edits' : timesheet.status}
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setWeekStart(new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000))}
           className="p-2 rounded-lg hover:bg-black/[0.05]"
@@ -320,6 +412,38 @@ export default function TimeTracking() {
           <ChevronRight size={20} />
         </button>
       </div>
+
+      {/* Timesheet approval actions */}
+      <div className="flex items-center justify-end gap-2 mb-4">
+        {!timesheet || timesheet.status === 'draft' || timesheet.status === 'reopened' ? (
+          <button
+            onClick={submitWeek}
+            disabled={submitting || entries.length === 0}
+            className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-xl text-sm font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 transition"
+          >
+            <Send size={16} />
+            Submit Week for Approval
+          </button>
+        ) : timesheet.status === 'submitted' ? (
+          <>
+            <button
+              onClick={() => decideTimesheet('approved')}
+              disabled={submitting}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--av-success)] text-white rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 transition"
+            >
+              <CheckCircle2 size={16} /> Approve
+            </button>
+            <button
+              onClick={() => decideTimesheet('rejected')}
+              disabled={submitting}
+              className="flex items-center gap-2 px-4 py-2 bg-[var(--av-error)] text-white rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-50 transition"
+            >
+              Reject
+            </button>
+          </>
+        ) : null}
+      </div>
+
 
       {/* Week Overview */}
       <div className="grid grid-cols-7 gap-2 mb-6">
