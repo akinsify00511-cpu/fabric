@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import {   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck,   ClipboardList, Sparkles, FlaskConical, Brain } from 'lucide-react'
+import {   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck,   ClipboardList, Sparkles, FlaskConical, Brain, ShieldCheck } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -16,6 +16,8 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/simulation': 'dashboard',
   '/app/intelligence': 'dashboard',
   '/app/governance': 'dashboard',
+  '/app/control': 'dashboard',
+  '/app/personas': 'dashboard',
   '/app/migration': 'settings',
   '/app/vendor-portal': 'inventory',
   '/app/chat': 'chat',
@@ -63,6 +65,8 @@ const NAV_ITEMS = [
   { to: '/app/simulation', label: 'Simulate', icon: FlaskConical, toolKey: 'dashboard' },
   { to: '/app/intelligence', label: 'Intelligence', icon: Brain, toolKey: 'dashboard' },
   { to: '/app/governance', label: 'Governance', icon: Shield, toolKey: 'dashboard' },
+  { to: '/app/control', label: 'Control & Audit', icon: ShieldCheck, toolKey: 'dashboard' },
+  { to: '/app/personas', label: 'Personas', icon: UserRound, toolKey: 'dashboard' },
   { to: '/app/migration', label: 'Migrate', icon: FileText, toolKey: 'settings' },
   { to: '/app/vendor-portal', label: 'Vendor Portal', icon: Truck, toolKey: 'inventory' },
   { to: '/app/chat', label: 'Chat', icon: MessageSquare, toolKey: 'chat' },

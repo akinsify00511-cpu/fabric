@@ -82,6 +82,8 @@ const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub'))
 const GovernanceHub = lazy(() => import('./pages/GovernanceHub'))
 const MigrationPipeline = lazy(() => import('./pages/MigrationPipeline'))
 const VendorPortal = lazy(() => import('./pages/VendorPortal'))
+const ControlAuditHub = lazy(() => import('./pages/ControlAuditHub'))
+const PersonaHub = lazy(() => import('./pages/PersonaHub'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
@@ -313,6 +315,8 @@ function AppRoutes() {
         <Route path="governance" element={<GovernanceHub />} />
         <Route path="migration" element={<MigrationPipeline />} />
         <Route path="vendor-portal" element={<VendorPortal />} />
+        <Route path="control" element={<ControlAuditHub />} />
+        <Route path="personas" element={<PersonaHub />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
