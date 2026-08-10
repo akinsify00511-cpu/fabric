@@ -79,6 +79,9 @@ const AICapture = lazy(() => import('./pages/AICapture'))
 const ObserverView = lazy(() => import('./pages/ObserverView'))
 const Simulation = lazy(() => import('./pages/Simulation'))
 const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub'))
+const GovernanceHub = lazy(() => import('./pages/GovernanceHub'))
+const MigrationPipeline = lazy(() => import('./pages/MigrationPipeline'))
+const VendorPortal = lazy(() => import('./pages/VendorPortal'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
@@ -307,6 +310,9 @@ function AppRoutes() {
         <Route path="observer" element={<ObserverView />} />
         <Route path="simulation" element={<Simulation />} />
         <Route path="intelligence" element={<IntelligenceHub />} />
+        <Route path="governance" element={<GovernanceHub />} />
+        <Route path="migration" element={<MigrationPipeline />} />
+        <Route path="vendor-portal" element={<VendorPortal />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
