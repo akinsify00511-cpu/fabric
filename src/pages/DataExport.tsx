@@ -111,6 +111,27 @@ export default function DataExportPage() {
     if (!staff?.business_id) return []
     
     const entityOption = ENTITY_OPTIONS.find(e => e.value === entityType)
+
+    // Full backup: export every entity table into a single flat list with
+    // an `__entity` discriminator so the backup is restorable / inspectable.
+    if (entityType === 'all') {
+      const out: Record<string, any>[] = []
+      for (const opt of ENTITY_OPTIONS) {
+        if (!opt.table) continue
+        try {
+          const { data } = await supabase
+            .from(opt.table)
+            .select('*')
+            .eq('business_id', staff.business_id)
+            .limit(10000)
+          for (const row of data || []) out.push({ __entity: opt.value, ...row })
+        } catch (e) {
+          console.error(`Full backup: skipped ${opt.table}`, e)
+        }
+      }
+      return out
+    }
+
     if (!entityOption?.table) return []
 
     try {
