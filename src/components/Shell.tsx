@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import {   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck,   ClipboardList, Sparkles, FlaskConical } from 'lucide-react'
+import {   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck,   ClipboardList, Sparkles, FlaskConical, Brain } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -14,6 +14,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
   '/app/capture': 'dashboard',
   '/app/observer': 'dashboard',
   '/app/simulation': 'dashboard',
+  '/app/intelligence': 'dashboard',
   '/app/chat': 'chat',
   '/app/tasks': 'tasks',
   '/app/calendar': 'calendar',
@@ -57,6 +58,7 @@ const NAV_ITEMS = [
   { to: '/app/capture', label: 'AI Capture', icon: Sparkles, toolKey: 'dashboard' },
   { to: '/app/observer', label: 'Snapshot', icon: Activity, toolKey: 'dashboard' },
   { to: '/app/simulation', label: 'Simulate', icon: FlaskConical, toolKey: 'dashboard' },
+  { to: '/app/intelligence', label: 'Intelligence', icon: Brain, toolKey: 'dashboard' },
   { to: '/app/chat', label: 'Chat', icon: MessageSquare, toolKey: 'chat' },
   { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
   { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },

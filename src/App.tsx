@@ -78,6 +78,7 @@ const CompanyHome = lazy(() => import('./pages/CompanyHome'))
 const AICapture = lazy(() => import('./pages/AICapture'))
 const ObserverView = lazy(() => import('./pages/ObserverView'))
 const Simulation = lazy(() => import('./pages/Simulation'))
+const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
@@ -305,6 +306,7 @@ function AppRoutes() {
         <Route path="capture" element={<AICapture />} />
         <Route path="observer" element={<ObserverView />} />
         <Route path="simulation" element={<Simulation />} />
+        <Route path="intelligence" element={<IntelligenceHub />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />
