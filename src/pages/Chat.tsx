@@ -59,7 +59,7 @@ export default function Chat() {
   }, [])
 
   const loadChannels = async () => {
-    // Use demo data for demo mode or if Supabase RPC fails
+    // Requires a business; otherwise there's nothing to load.
     if (!staff?.business_id) {
       setLoading(false)
       return

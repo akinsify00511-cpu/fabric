@@ -30,21 +30,6 @@ type LeaderboardEntry = {
   entry_count: number
 }
 
-// Demo data
-const DEMO_TEAM: StaffMember[] = [
-  { id: '1', full_name: 'Sarah Johnson', name: 'Sarah Johnson', email: 'sarah@example.com' },
-  { id: '2', full_name: 'Michael Park', name: 'Michael Park', email: 'michael@example.com' },
-  { id: '3', full_name: 'Emily Chen', name: 'Emily Chen', email: 'emily@example.com' },
-  { id: '4', full_name: 'David Kim', name: 'David Kim', email: 'david@example.com' },
-]
-
-const DEMO_ENTRIES: MeritEntry[] = [
-  { id: '1', staff_id: '1', points: 10, reason: 'Outstanding presentation to client!', awarded_by: '2', created_at: new Date().toISOString() },
-  { id: '2', staff_id: '2', points: 5, reason: 'Helped fix critical bug quickly', awarded_by: '1', created_at: new Date(Date.now() - 86400000).toISOString() },
-  { id: '3', staff_id: '3', points: 15, reason: 'Exceptional teamwork on the project', awarded_by: '1', created_at: new Date(Date.now() - 2 * 86400000).toISOString() },
-  { id: '4', staff_id: '1', points: 5, reason: 'Great customer support', awarded_by: '3', created_at: new Date(Date.now() - 3 * 86400000).toISOString() },
-]
-
 export default function Merit() {
   const { staff } = useAuth()
   const { showToast } = useToast()

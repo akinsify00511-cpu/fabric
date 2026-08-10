@@ -37,20 +37,6 @@ const EVENT_COLORS = {
   reminder: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
 }
 
-// Demo events
-const DEMO_EVENTS: Event[] = [
-  { id: 'ev-1', title: 'Team Standup', description: 'Daily sync meeting', event_type: 'meeting', start_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(9, 30, 0, 0)).toISOString(), all_day: false, location: 'Conference Room A', status: 'confirmed', organizer_name: 'Sarah Johnson' },
-  { id: 'ev-2', title: 'Q4 Planning', description: 'Quarterly review session', event_type: 'meeting', start_time: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(16, 0, 0, 0)).toISOString(), all_day: false, location: 'Board Room', status: 'confirmed', organizer_name: 'Michael Okonkwo' },
-  { id: 'ev-3', title: 'Project Deadline', description: 'Client deliverable due', event_type: 'deadline', start_time: new Date(new Date().setHours(17, 0, 0, 0)).toISOString(), end_time: null, all_day: true, location: null, status: 'pending', organizer_name: 'You' },
-  { id: 'ev-4', title: 'Client Call', description: 'Follow up on proposal', event_type: 'meeting', start_time: new Date(new Date().setHours(11, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(11, 30, 0, 0)).toISOString(), all_day: false, location: 'Zoom', status: 'confirmed', organizer_name: 'Aisha Bello' },
-]
-
-const DEMO_STAFF: StaffMember[] = [
-  { id: 'staff-1', full_name: 'Sarah Johnson', name: 'Sarah Johnson' },
-  { id: 'staff-2', full_name: 'Michael Okonkwo', name: 'Michael Okonkwo' },
-  { id: 'staff-3', full_name: 'Aisha Bello', name: 'Aisha Bello' },
-]
-
 export default function Calendar() {
   const { staff } = useAuth()
   const { showToast } = useToast()
@@ -77,7 +63,7 @@ export default function Calendar() {
   const loadEvents = async () => {
     setLoading(true)
 
-    // Use demo data for demo mode or when RPC fails
+    // Load events for the current month via RPC, falling back to empty state.
     if (!staff?.business_id) {
       setEvents([])
       setStaffMembers([])

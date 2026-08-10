@@ -58,17 +58,7 @@ export default function Organogram() {
       orgData.filter((n: OrgNode) => n.level <= 1).forEach((n: OrgNode) => initialExpanded.add(n.staff_id))
       setExpandedNodes(initialExpanded)
     } else {
-      // Demo data
-      setOrgChart([
-        { staff_id: '1', full_name: 'Sarah Chen', email: 'sarah@company.com', avatar_url: '', position_title: 'CEO', department: 'Executive', level: 0, manager_id: '', direct_report_count: 3 },
-        { staff_id: '2', full_name: 'Michael Park', email: 'michael@company.com', avatar_url: '', position_title: 'CTO', department: 'Engineering', level: 1, manager_id: '1', direct_report_count: 5 },
-        { staff_id: '3', full_name: 'Emily Davis', email: 'emily@company.com', avatar_url: '', position_title: 'VP Sales', department: 'Sales', level: 1, manager_id: '1', direct_report_count: 4 },
-        { staff_id: '4', full_name: 'David Kim', email: 'david@company.com', avatar_url: '', position_title: 'VP Marketing', department: 'Marketing', level: 1, manager_id: '1', direct_report_count: 3 },
-        { staff_id: '5', full_name: 'James Wilson', email: 'james@company.com', avatar_url: '', position_title: 'Tech Lead', department: 'Engineering', level: 2, manager_id: '2', direct_report_count: 3 },
-        { staff_id: '6', full_name: 'Lisa Brown', email: 'lisa@company.com', avatar_url: '', position_title: 'Senior Dev', department: 'Engineering', level: 3, manager_id: '5', direct_report_count: 0 },
-        { staff_id: '7', full_name: 'Tom Anderson', email: 'tom@company.com', avatar_url: '', position_title: 'Sales Manager', department: 'Sales', level: 2, manager_id: '3', direct_report_count: 2 },
-        { staff_id: '8', full_name: 'Anna Smith', email: 'anna@company.com', avatar_url: '', position_title: 'Account Executive', department: 'Sales', level: 3, manager_id: '7', direct_report_count: 0 },
-      ])
+      setOrgChart([])
     }
 
     // Load reporting channels
@@ -78,15 +68,7 @@ export default function Organogram() {
       .eq('business_id', staff?.business_id)
       .eq('is_active', true)
 
-    if (channelData && channelData.length > 0) {
-      setChannels(channelData as ReportingChannel[])
-    } else {
-      setChannels([
-        { id: '1', channel_type: 'daily_standup', name: 'Daily Standup', description: 'Quick team sync', frequency: 'daily', auto_generate: true, is_active: true },
-        { id: '2', channel_type: 'weekly_update', name: 'Weekly Status', description: 'Weekly progress report', frequency: 'weekly', auto_generate: true, is_active: true },
-        { id: '3', channel_type: 'one_on_one', name: '1:1 with Manager', description: 'Personal check-in', frequency: 'weekly', auto_generate: false, is_active: true },
-      ])
-    }
+    setChannels((channelData as ReportingChannel[]) || [])
 
     setLoading(false)
   }

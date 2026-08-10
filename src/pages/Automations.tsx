@@ -77,20 +77,8 @@ export default function Automations() {
   const { showToast } = useToast()
   const { track } = useAnalytics()
 
-  // Feature flag gating - automations are behind a flag, defaulted off for beta
+    // Feature flag gating - automations are behind a flag, defaulted off for beta
   const automationsEnabled = useFeatureFlag(FEATURE_FLAG_KEYS.AUTOMATIONS)
-  // Demo automations
-const DEMO_AUTOMATIONS: Automation[] = [
-  { id: '1', name: 'Welcome Email', description: 'Send welcome email to new contacts', trigger_type: 'contact_created', trigger_config: {}, action_type: 'send_email', action_config: {}, enabled: true, run_count: 156, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
-  { id: '2', name: 'Deal Follow-up', description: 'Remind team to follow up on stale deals', trigger_type: 'deal_stale', trigger_config: { days: '7' }, action_type: 'send_notification', action_config: {}, enabled: true, run_count: 42, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
-  { id: '3', name: 'Invoice Reminder', description: 'Send reminder for overdue invoices', trigger_type: 'invoice_overdue', trigger_config: {}, action_type: 'send_email', action_config: {}, enabled: false, run_count: 23, last_run_at: new Date().toISOString(), created_at: new Date().toISOString() },
-]
-
-const DEMO_RUNS: Run[] = [
-  { id: 'r1', automation_id: '1', trigger_event: {}, status: 'success', error_message: null, executed_at: new Date().toISOString() },
-  { id: 'r2', automation_id: '2', trigger_event: {}, status: 'success', error_message: null, executed_at: new Date(Date.now() - 3600000).toISOString() },
-  { id: 'r3', automation_id: '1', trigger_event: {}, status: 'failed', error_message: 'Email service unavailable', executed_at: new Date(Date.now() - 7200000).toISOString() },
-]
 
 const [automations, setAutomations] = useState<Automation[]>([])
   const [runs, setRuns] = useState<Run[]>([])

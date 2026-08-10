@@ -84,41 +84,7 @@ export default function Events() {
     if (data) {
       setEvents(data as Event[])
     } else {
-      // Demo data
-      setEvents([
-        {
-          id: '1',
-          title: 'Product Launch Webinar',
-          description: 'Join us for the unveiling of our new product line',
-          start_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 2 * 60 * 60 * 1000).toISOString(),
-          location_type: 'virtual',
-          location_name: 'Zoom',
-          location_url: 'https://zoom.us/j/123456',
-          max_capacity: 100,
-          current_registrations: 45,
-          requires_registration: true,
-          is_published: true,
-          is_cancelled: false,
-          cover_image_url: '',
-        },
-        {
-          id: '2',
-          title: 'Team Building Workshop',
-          description: 'Interactive workshop for team collaboration',
-          start_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
-          end_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000 + 4 * 60 * 60 * 1000).toISOString(),
-          location_type: 'physical',
-          location_name: 'Downtown Conference Center',
-          location_url: '',
-          max_capacity: 50,
-          current_registrations: 32,
-          requires_registration: true,
-          is_published: true,
-          is_cancelled: false,
-          cover_image_url: '',
-        },
-      ])
+      setEvents([])
     }
 
     setLoading(false)
@@ -164,10 +130,14 @@ export default function Events() {
   }
 
   async function handleRegister(event: Event) {
+    if (!staff?.email) {
+      showToast('Sign in to register for an event.', 'error')
+      return
+    }
     const { error } = await supabase.rpc('register_for_event', {
       p_event_id: event.id,
-      p_email: 'user@example.com', // Would get from auth
-      p_full_name: 'Demo User',
+      p_email: staff.email,
+      p_full_name: staff.full_name,
     })
 
     if (error) {

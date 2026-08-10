@@ -340,17 +340,37 @@ function ForecastingTab({ businessId }: { businessId?: string }) {
   const [forecasts, setForecasts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Demo data
-  const demoForecasts = [
-    { period: 'January 2024', pipeline: 5000000, commit: 3000000, best: 4000000, worst: 2000000 },
-    { period: 'February 2024', pipeline: 6000000, commit: 3500000, best: 4500000, worst: 2500000 },
-    { period: 'March 2024', pipeline: 7500000, commit: 4000000, best: 5500000, worst: 3000000 },
-  ]
-
   useEffect(() => {
-    setForecasts(demoForecasts)
-    setLoading(false)
+    loadForecasts()
   }, [])
+
+  async function loadForecasts() {
+    setLoading(true)
+    // Derive a forecast from open deals grouped by expected_close month.
+    const { data } = await supabase
+      .from('deals')
+      .select('value, stage, expected_close')
+      .eq('business_id', businessId)
+      .in('stage', ['prospect', 'qualified', 'proposal', 'negotiation'])
+      .not('expected_close', 'is', null)
+      .order('expected_close', { ascending: true })
+
+    const byMonth = new Map<string, { pipeline: number; commit: number; best: number; worst: number }>()
+    for (const d of data || []) {
+      const key = new Date(d.expected_close).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      const value = Number(d.value) || 0
+      const entry = byMonth.get(key) || { pipeline: 0, commit: 0, best: 0, worst: 0 }
+      entry.pipeline += value
+      // Weight by stage confidence: negotiation ~0.8, proposal ~0.5, qualified ~0.3, prospect ~0.1
+      const weight = d.stage === 'negotiation' ? 0.8 : d.stage === 'proposal' ? 0.5 : d.stage === 'qualified' ? 0.3 : 0.1
+      entry.commit += value * weight
+      entry.best += value * Math.min(weight + 0.2, 1)
+      entry.worst += value * Math.max(weight - 0.1, 0)
+      byMonth.set(key, entry)
+    }
+    setForecasts(Array.from(byMonth.entries()).map(([period, v]) => ({ period, ...v })))
+    setLoading(false)
+  }
 
   return (
     <div>
@@ -408,18 +428,29 @@ function WinLossTab({ businessId }: { businessId?: string }) {
   const [analytics, setAnalytics] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Demo data
-  const demoAnalytics = [
-    { id: '1', outcome: 'won', deal_name: 'Enterprise License', initial_value: 3000000, final_value: 2500000, days_to_close: 14 },
-    { id: '2', outcome: 'lost', deal_name: 'Annual Subscription', lost_to_competitor: 'Competitor A', loss_reason: 'Price too high', initial_value: 500000, days_to_close: 7 },
-    { id: '3', outcome: 'won', deal_name: 'Consulting Package', initial_value: 800000, final_value: 800000, days_to_close: 21 },
-    { id: '4', outcome: 'lost', deal_name: 'Premium Support', lost_to_competitor: 'Competitor B', loss_reason: 'Feature gap', initial_value: 1200000, days_to_close: 30 },
-  ]
-
   useEffect(() => {
-    setAnalytics(demoAnalytics)
-    setLoading(false)
+    loadAnalytics()
   }, [])
+
+  async function loadAnalytics() {
+    setLoading(true)
+    const [analyticsRes, dealsRes] = await Promise.all([
+      supabase.from('deal_analytics').select('*').eq('business_id', businessId).order('created_at', { ascending: false }),
+      supabase.from('deals').select('id, title').eq('business_id', businessId),
+    ])
+    const dealTitles = new Map((dealsRes.data || []).map((d: any) => [d.id, d.title]))
+    setAnalytics((analyticsRes.data || []).map((d: any) => ({
+      id: d.id,
+      outcome: d.outcome,
+      deal_name: dealTitles.get(d.deal_id) || 'Untitled deal',
+      lost_to_competitor: d.lost_to_competitor,
+      loss_reason: d.loss_reason,
+      initial_value: d.initial_value,
+      final_value: d.final_value,
+      days_to_close: d.days_to_close,
+    })))
+    setLoading(false)
+  }
 
   const wonDeals = analytics.filter(a => a.outcome === 'won')
   const lostDeals = analytics.filter(a => a.outcome === 'lost')

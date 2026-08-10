@@ -38,18 +38,6 @@ const LEAVE_TYPES = [
   { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-white text-black' },
 ]
 
-// Demo data
-const DEMO_ENTRIES: TimeEntry[] = [
-  { id: 'te-1', description: 'Team standup meeting', start_time: new Date(new Date().setHours(9, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(9, 30, 0, 0)).toISOString(), duration_minutes: 30, billable: false, tags: ['meeting'], project: { name: 'General' } },
-  { id: 'te-2', description: 'Client proposal work', start_time: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(12, 30, 0, 0)).toISOString(), duration_minutes: 150, billable: true, tags: ['client'], project: { name: 'Apex Corp' } },
-  { id: 'te-3', description: 'Code review session', start_time: new Date(new Date().setHours(13, 0, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(14, 0, 0, 0)).toISOString(), duration_minutes: 60, billable: true, tags: ['development'], project: { name: 'Website Redesign' } },
-  { id: 'te-4', description: 'Documentation updates', start_time: new Date(new Date().setHours(14, 30, 0, 0)).toISOString(), end_time: new Date(new Date().setHours(16, 0, 0, 0)).toISOString(), duration_minutes: 90, billable: false, tags: ['admin'], project: { name: 'General' } },
-]
-
-const DEMO_SUMMARIES: DailySummary[] = [
-  { date: new Date().toISOString().split('T')[0], total_minutes: 330, billable_minutes: 240, non_billable_minutes: 90, target_minutes: 480, goal_met: false },
-]
-
 export default function TimeTracking() {
   const { staff } = useAuth()
   const { showToast } = useToast()
