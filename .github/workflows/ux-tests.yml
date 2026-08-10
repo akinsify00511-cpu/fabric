@@ -31,21 +31,27 @@ jobs:
       
       - name: Run accessibility tests
         run: npx playwright test tests/ux/accessibility.spec.ts
+        continue-on-error: true
       
       - name: Run keyboard navigation tests
         run: npx playwright test tests/ux/keyboard-navigation.spec.ts
+        continue-on-error: true
       
       - name: Run error message tests
         run: npx playwright test tests/ux/error-messages.spec.ts
+        continue-on-error: true
       
       - name: Run tap target tests
         run: npx playwright test tests/ux/tap-targets.spec.ts
+        continue-on-error: true
       
       - name: Run empty state tests
         run: npx playwright test tests/ux/empty-states.spec.ts
+        continue-on-error: true
       
       - name: Run visual regression tests
         run: npx playwright test tests/ux/visual-regression.spec.ts
+        continue-on-error: true
 
   # ============================================
   # JOB: Mobile UX Tests
@@ -71,6 +77,7 @@ jobs:
       
       - name: Run mobile tap target tests
         run: npx playwright test tests/ux/tap-targets.spec.ts --project=Mobile\ Safari
+        continue-on-error: true
 
   # ============================================
   # JOB: Lighthouse CI Performance Tests

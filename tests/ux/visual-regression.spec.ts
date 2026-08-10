@@ -14,9 +14,9 @@ const PAGES_TO_SNAPSHOT = [
 ]
 
 test.describe('Visual Regression', () => {
-  for (const page of PAGES_TO_SNAPSHOT) {
-    test(`[Visual] ${page.name} matches baseline`, async ({ page }) => {
-      await page.goto(page.path)
+  for (const pageConfig of PAGES_TO_SNAPSHOT) {
+    test(`[Visual] ${pageConfig.name} matches baseline`, async ({ page }) => {
+      await page.goto(pageConfig.path)
       await page.waitForLoadState('networkidle')
       
       // Wait for any animations to complete
@@ -39,7 +39,7 @@ test.describe('Visual Regression', () => {
       
       // In CI, compare against baseline
       if (process.env.CI) {
-        const baselinePath = path.join(__dirname, 'baselines', `${page.name.toLowerCase()}.png`)
+        const baselinePath = path.join(__dirname, 'baselines', `${pageConfig.name.toLowerCase()}.png`)
         const fs = await import('fs')
         
         if (fs.existsSync(baselinePath)) {
@@ -66,7 +66,7 @@ test.describe('Visual Regression', () => {
         fs.mkdirSync(screenshotsDir, { recursive: true })
       }
       
-      const outputPath = path.join(screenshotsDir, `${page.name.toLowerCase()}-${Date.now()}.png`)
+      const outputPath = path.join(screenshotsDir, `${pageConfig.name.toLowerCase()}-${Date.now()}.png`)
       fs.writeFileSync(outputPath, screenshot)
       
       console.log(`Screenshot saved to: ${outputPath}`)

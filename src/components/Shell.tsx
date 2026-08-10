@@ -9,6 +9,7 @@ import {
   Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList, Sparkles, FlaskConical, Brain,
   ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
   Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
+  Scale, ShoppingCart, BookOpen, Globe,
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
@@ -51,10 +52,12 @@ const NAV_GROUPS: NavGroup[] = [
     defaultOpen: false,
     items: [
       { to: '/app', label: 'Dashboard', icon: Home, toolKey: 'dashboard', end: true },
+      { to: '/app/cockpit', label: 'Executive Cockpit', icon: Target, toolKey: 'dashboard' },
       { to: '/app/capture', label: 'Quick Capture', icon: Sparkles, toolKey: 'dashboard' },
       { to: '/app/activity', label: 'Activity', icon: Activity, toolKey: 'dashboard' },
       { to: '/app/scenarios', label: 'Scenarios', icon: FlaskConical, toolKey: 'dashboard' },
       { to: '/app/intelligence', label: 'Insights', icon: Brain, toolKey: 'dashboard' },
+      { to: '/app/market', label: 'Market Index', icon: Globe, toolKey: 'dashboard' },
     ],
   },
   {
@@ -69,6 +72,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
       { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
       { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
+      { to: '/app/wall', label: 'Company Wall', icon: Sparkles, toolKey: 'dashboard' },
     ],
   },
   {
@@ -124,6 +128,8 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
       { to: '/app/vendors', label: 'Vendors', icon: Truck, toolKey: 'inventory' },
       { to: '/app/purchase-orders', label: 'Purchase Orders', icon: ClipboardList, toolKey: 'inventory' },
+      { to: '/app/procurement', label: 'Procurement & RFQs', icon: ShoppingCart, toolKey: 'inventory' },
+      { to: '/app/legal', label: 'Legal', icon: Scale, toolKey: 'settings' },
       { to: '/app/services', label: 'Services', icon: Tag, toolKey: 'settings' },
       { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
       { to: '/app/assets', label: 'Assets', icon: Wrench, toolKey: 'dashboard' },
@@ -140,6 +146,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/time', label: 'Time Tracking', icon: Clock, toolKey: 'time-tracking' },
       { to: '/app/approvals', label: 'Approvals', icon: ShieldCheck, toolKey: 'approvals' },
       { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
+      { to: '/app/memory', label: 'Org Memory', icon: BookOpen, toolKey: 'knowledge' },
       { to: '/app/tickets', label: 'Support', icon: LifeBuoy, toolKey: 'tickets' },
     ],
   },

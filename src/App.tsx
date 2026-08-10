@@ -84,6 +84,12 @@ const MigrationPipeline = lazy(() => import('./pages/MigrationPipeline'))
 const VendorPortal = lazy(() => import('./pages/VendorPortal'))
 const ControlAuditHub = lazy(() => import('./pages/ControlAuditHub'))
 const PersonaHub = lazy(() => import('./pages/PersonaHub'))
+const ExecutiveCockpit = lazy(() => import('./pages/ExecutiveCockpit'))
+const CompanyWall = lazy(() => import('./pages/CompanyWall'))
+const MarketIndex = lazy(() => import('./pages/MarketIndex'))
+const Legal = lazy(() => import('./pages/Legal'))
+const Procurement = lazy(() => import('./pages/Procurement'))
+const OrganizationalMemory = lazy(() => import('./pages/OrganizationalMemory'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
@@ -319,6 +325,14 @@ function AppRoutes() {
         <Route path="vendor-portal" element={<VendorPortal />} />
         <Route path="control" element={<ControlAuditHub />} />
         <Route path="personas" element={<PersonaHub />} />
+        <Route path="cockpit" element={<ExecutiveCockpit />} />
+        <Route path="executive" element={<ExecutiveCockpit />} />
+        <Route path="wall" element={<CompanyWall />} />
+        <Route path="market" element={<MarketIndex />} />
+        <Route path="legal" element={<Legal />} />
+        <Route path="procurement" element={<Procurement />} />
+        <Route path="rfqs" element={<Procurement />} />
+        <Route path="memory" element={<OrganizationalMemory />} />
         <Route path="more" element={<More />} />
         <Route path="social" element={<Social />} />
         <Route path="approvals" element={<Approvals />} />

@@ -13,9 +13,9 @@ const PAGES_TO_TEST = [
   { name: 'Signup', path: '/signup' },
 ]
 
-for (const page of PAGES_TO_TEST) {
-  test(`[Accessibility] ${page.name} has no critical WCAG violations`, async ({ page }) => {
-    await page.goto(page.path)
+for (const pageConfig of PAGES_TO_TEST) {
+  test(`[Accessibility] ${pageConfig.name} has no critical WCAG violations`, async ({ page }) => {
+    await page.goto(pageConfig.path)
     await page.waitForLoadState('networkidle')
 
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -32,10 +32,10 @@ for (const page of PAGES_TO_TEST) {
         .map(v => `  - ${v.id}: ${v.description} (${v.nodes.length} nodes)`)
         .join('\n')
       
-      console.log(`Critical accessibility violations on ${page.name}:\n${violationsText}`)
+      console.log(`Critical accessibility violations on ${pageConfig.name}:\n${violationsText}`)
     }
 
-    expect.soft(criticalViolations, `Critical accessibility violations on ${page.name}`).toHaveLength(0)
+    expect.soft(criticalViolations, `Critical accessibility violations on ${pageConfig.name}`).toHaveLength(0)
   })
 }
 
