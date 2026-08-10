@@ -80,6 +80,34 @@ export default function LiveChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Realtime: refresh the conversation list when any conversation in this
+  // business is updated (new message, assignment, status change), and
+  // live-append new messages to the open conversation so agents see replies
+  // without manual refresh. This is the "routed to an available agent via
+  // Supabase Realtime" behaviour the Live Chat spec requires.
+  useEffect(() => {
+    if (!staff?.business_id) return
+    const channel = supabase
+      .channel('live-chat')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'chat_conversations', filter: `business_id=eq.${staff.business_id}` },
+        () => fetchConversations()
+      )
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+        (payload) => {
+          const msg = payload.new as ChatMessage
+          if (selectedConversation && msg.conversation_id === selectedConversation.id) {
+            setMessages(prev => prev.some(m => m.id === msg.id) ? prev : [...prev, msg])
+          }
+        }
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [staff?.business_id, selectedConversation])
+
   async function fetchConversations() {
     if (!staff?.business_id) return
 
