@@ -68,25 +68,6 @@
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Dark mode - Google Workspace Dark */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --av-surface: #202124;
-    --av-surface-2: #292A2D;
-    --av-surface-3: #3C4043;
-    --av-surface-elevated: #292A2D;
-    --av-text: #E8EAED;
-    --av-text-secondary: #9AA0A6;
-    --av-text-muted: #5F6368;
-    --av-text-disabled: #3C4043;
-    --av-border: #5F6368;
-    --av-border-strong: #9AA0A6;
-    --av-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
-    --av-shadow-md: 0 2px 4px 0 rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);
-    --av-shadow-lg: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-}
-
 /* Utility classes */
 .av-surface { background-color: var(--av-surface); }
 .av-surface-2 { background-color: var(--av-surface-2); }

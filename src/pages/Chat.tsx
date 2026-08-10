@@ -287,7 +287,7 @@ export default function Chat() {
                 value={newChannelName}
                 onChange={(e) => setNewChannelName(e.target.value)}
                 placeholder="channel-name"
-                className="flex-1 rounded-lg border border-black/10 px-2 py-1 text-sm"
+                className="flex-1 rounded-lg border border-black/10 px-2 py-1 text-sm text-black bg-white placeholder:text-black/40"
                 autoFocus
                 onKeyDown={(e) => e.key === 'Enter' && createChannel()}
               />
@@ -414,7 +414,7 @@ export default function Chat() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder={`Message #${selectedChannel.name}`}
-                  className="w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+                  className="w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm text-black bg-white placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                   rows={1}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
