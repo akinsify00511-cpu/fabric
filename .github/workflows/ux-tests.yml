@@ -52,6 +52,9 @@ jobs:
       - name: Run visual regression tests
         run: npx playwright test tests/ux/visual-regression.spec.ts
         continue-on-error: true
+      - name: Run gap-fill module tests
+        run: npx playwright test tests/ux/gap-fill-modules.spec.ts
+        continue-on-error: true
 
   # ============================================
   # JOB: Mobile UX Tests

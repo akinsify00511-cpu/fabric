@@ -241,10 +241,12 @@ export default function Knowledge() {
       setSearchResults([])
       return
     }
+    // Search across both the page title and the body content (JSONB cast to
+    // text) so users find pages by what's written in them, not just titles.
     const { data } = await supabase
       .from('kb_pages')
       .select('*, kb_spaces(name)')
-      .ilike('title', `%${query}%`)
+      .or(`title.ilike.%${query}%,content::text.ilike.%${query}%`)
       .eq('is_archived', false)
       .limit(20)
     setSearchResults((data as KBPage[]) ?? [])
