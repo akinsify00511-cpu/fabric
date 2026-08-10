@@ -6,6 +6,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import { useToast } from '../components/Toast'
 import { FlaskConical, Play, Send, Check, Loader2, AlertCircle, TrendingUp, DollarSign } from 'lucide-react'
 
@@ -19,6 +20,7 @@ const SCENARIOS: { key: Scenario; label: string; icon: any; hint: string }[] = [
 
 export default function Simulation() {
   const { staff } = useAuth()
+  const dbState = useDbState()
   const { showToast } = useToast()
   const [scenario, setScenario] = useState<Scenario>('salary_increase')
   const [inputs, setInputs] = useState<Record<string, string>>({ raise_pct: '10' })
@@ -60,6 +62,7 @@ export default function Simulation() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
+      <DbStateBanner state={dbState} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
           <FlaskConical size={24} className="text-[var(--av-primary)]" />

@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import { useToast } from '../components/Toast'
 import {
   ShieldCheck, AlertTriangle, RefreshCw, Activity, Flag,
@@ -25,9 +26,11 @@ const TABS: { key: Tab; label: string; icon: any }[] = [
 
 export default function ControlAuditHub() {
   const { staff } = useAuth()
+  const dbState = useDbState()
   const [tab, setTab] = useState<Tab>('audit')
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <DbStateBanner state={dbState} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
           <ShieldCheck size={24} className="text-[var(--av-primary)]" /> Control & Audit

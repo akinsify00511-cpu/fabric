@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   UserCircle, Loader2, Target, Compass, Repeat, AlertTriangle,
   TrendingUp, BookOpen
@@ -22,9 +23,11 @@ const TABS: { key: Tab; label: string; icon: any }[] = [
 
 export default function PersonaHub() {
   const { staff } = useAuth()
+  const dbState = useDbState()
   const [tab, setTab] = useState<Tab>('profiles')
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <DbStateBanner state={dbState} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
           <UserCircle size={24} className="text-[var(--av-primary)]" /> Persona Intelligence

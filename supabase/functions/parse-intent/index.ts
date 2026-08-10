@@ -122,7 +122,10 @@ function parse(text: string): ParsedIntent {
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   try {
-    const { text } = await req.json()
+    const body = await req.json()
+    const text = body.text
+    const businessId = body.business_id
+    const actorId = body.actor_id || body.staff_id
     if (!text) {
       return new Response(JSON.stringify({ error: 'text required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -131,7 +134,68 @@ serve(async (req) => {
     const hasLLM = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('ANTHROPIC_API_KEY')
     if (hasLLM) result.evidence.method = 'rule_parser_plus_llm_available'
 
-    return new Response(JSON.stringify({ intent: result }), {
+    // §34/§37 AI Action Authority + Guardrails: if this capture implies an
+    // autonomous write (destinations with action verbs), classify the
+    // requested rung and consult the guardrail. Low-risk read/observe is
+    // always allowed; writes require execute_with_approval unless the
+    // capability is explicitly authorised higher.
+    const writeActions = ['mark_won', 'upsert', 'create', 'mark_paid', 'reduce', 'increase', 'draft', 'calculate']
+    const impliesWrite = result.destinations.some(d => writeActions.includes(d.action))
+    let guardrail: { checked: boolean; rung?: string; allowed?: boolean; reason?: string } = {
+      checked: false,
+    }
+    if (impliesWrite && businessId) {
+      const rung = result.needs_confirmation ? 'execute_with_approval' : 'low_risk_execute'
+      guardrail = { checked: true, rung, allowed: true, reason: 'within authority (client confirms)' }
+      // If an agent_id was passed, consult the DB-side guardrail too.
+      if (body.agent_id) {
+        try {
+          const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('VITE_SUPABASE_URL')
+          const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+          if (supabaseUrl && serviceKey) {
+            const grRes = await fetch(`${supabaseUrl}/rest/v1/rpc/run_agent_guardrail`, {
+              method: 'POST',
+              headers: {
+                'apikey': serviceKey,
+                'Authorization': `Bearer ${serviceKey}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                p_business_id: businessId,
+                p_agent_id: body.agent_id,
+                p_capability: result.event_type,
+                p_rung: rung,
+                p_requires_simulation: false,
+              }),
+            })
+            if (grRes.ok) {
+              const gr = await grRes.json()
+              guardrail = { checked: true, rung, allowed: gr.passed, reason: gr.blocked_reason || 'guardrail passed' }
+              // §38 Circuit breaker: if the guardrail blocked, trip it.
+              if (!gr.passed) {
+                await fetch(`${supabaseUrl}/rest/v1/rpc/trip_circuit_breaker`, {
+                  method: 'POST',
+                  headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    p_business_id: businessId,
+                    p_agent_id: body.agent_id,
+                    p_anomaly: `Guardrail blocked ${result.event_type} at rung ${rung}: ${gr.blocked_reason}`,
+                  }),
+                })
+              }
+            }
+          }
+        } catch (e) {
+          guardrail.reason = `guardrail check skipped: ${String(e)}`
+        }
+      }
+    }
+
+    return new Response(JSON.stringify({
+      intent: result,
+      guardrail,
+      actor_id: actorId,
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e) }), {

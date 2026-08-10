@@ -7,6 +7,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { parseIntent } from '../lib/intentParser'
 import { useToast } from '../components/Toast'
 import { emitBusinessEvent } from '../lib/businessOS'
 import {
@@ -31,19 +32,21 @@ export default function AICapture() {
   const { showToast } = useToast()
   const [input, setInput] = useState('')
   const [intent, setIntent] = useState<Intent | null>(null)
+  const [guardrail, setGuardrail] = useState<{ checked: boolean; rung?: string; allowed?: boolean; reason?: string } | null>(null)
   const [parsing, setParsing] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [done, setDone] = useState(false)
 
   async function handleParse() {
     if (!input.trim()) return
-    setParsing(true); setIntent(null); setDone(false)
+    setParsing(true); setIntent(null); setDone(false); setGuardrail(null)
     try {
       const { data, error } = await supabase.functions.invoke('parse-intent', {
         body: { text: input.trim() },
       })
       if (error) throw error
       setIntent(data.intent)
+      if (data.guardrail) setGuardrail(data.guardrail)
     } catch (e) {
       // Fallback: local parse so the feature works even if the edge fn
       // isn't deployed yet. Mirrors the edge fn's deterministic parser.
@@ -201,6 +204,16 @@ export default function AICapture() {
               </div>
             )}
 
+            {guardrail && guardrail.checked && (
+              <div className={`flex items-start gap-2 p-3 rounded-lg text-sm ${guardrail.allowed ? 'bg-[var(--av-success)]/10 text-[var(--av-success)]' : 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]'}`}>
+                <Shield size={16} className="mt-0.5 shrink-0" />
+                <span>
+                  <b>AI guardrail:</b> rung <code className="text-xs">{guardrail.rung}</code> — {guardrail.reason}
+                  {!guardrail.allowed && ' — action blocked, circuit breaker tripped.'}
+                </span>
+              </div>
+            )}
+
             <div className="flex items-center justify-end gap-2 pt-2">
               <button onClick={reset} className="flex items-center gap-2 px-4 py-2 rounded-xl text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] transition">
                 <X size={16} /> Discard
@@ -242,54 +255,8 @@ function ConfidencePill({ value }: { value: number }) {
   )
 }
 
-// Local fallback parser — same deterministic logic as the edge function,
-// so capture works even before the edge fn is deployed.
+// Local fallback parser — delegates to the shared deterministic parser so
+// the edge function and client never diverge.
 function localParse(text: string): Intent {
-  const t = text.toLowerCase()
-  let event_type = 'Note', confidence = 0.4
-  if (/(closed|won|signed the deal|deal closed)/.test(t)) { event_type = 'DealWon'; confidence = 0.85 }
-  else if (/(paid|received payment|payment came|settled)/.test(t)) { event_type = 'PaymentReceived'; confidence = 0.8 }
-  else if (/(hired|joined|onboarded|new hire)/.test(t)) { event_type = 'EmployeeJoined'; confidence = 0.8 }
-  else if (/(left|resigned|exited|fired|quit)/.test(t)) { event_type = 'EmployeeExited'; confidence = 0.75 }
-  else if (/(low stock|out of stock|reorder|running out)/.test(t)) { event_type = 'InventoryLow'; confidence = 0.8 }
-  else if (/(overdue|late|missed deadline)/.test(t)) { event_type = 'TaskOverdue'; confidence = 0.7 }
-  else if (/(expiring|renew)/.test(t)) { event_type = 'ContractExpiring'; confidence = 0.7 }
-  else if (/(payroll|salary|run payroll)/.test(t)) { event_type = 'PayrollDue'; confidence = 0.7 }
-
-  const entities: Entity[] = []
-  const mm = text.match(/(₦|NGN|\$|USD)\s?([\d.,]+)\s?(m|million|k|thousand|bn|billion)?/i)
-  if (mm) {
-    let n = parseFloat(mm[2].replace(/,/g, ''))
-    const u = (mm[3] || '').toLowerCase()
-    if (u.startsWith('m') || u === 'million') n *= 1_000_000
-    else if (u.startsWith('b') || u === 'billion') n *= 1_000_000_000
-    else if (u.startsWith('k') || u === 'thousand') n *= 1_000
-    entities.push({ field: 'amount', value: n.toString(), raw: mm[0] })
-  }
-  const pm = text.match(/(\d{1,3})\s?%/); if (pm) entities.push({ field: 'upfront_percent', value: pm[1], raw: `${pm[1]}%` })
-  const om = text.match(/(?:handled by|owner|rep|managed by|by)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/); if (om) entities.push({ field: 'sales_owner', value: om[1], raw: om[1] })
-  const qm = text.match(/(?:deal|contract|account)\s+(?:for|with|at)\s+([A-Z][A-Za-z0-9 &]+)/); if (qm) entities.push({ field: 'customer', value: qm[1].trim(), raw: qm[0] })
-
-  const destinations: Destination[] = event_type === 'DealWon'
-    ? [
-      { entity_type: 'deal', action: 'mark_won', reason: 'Sales pipeline should reflect the win' },
-      { entity_type: 'customer', action: 'upsert', reason: 'Customer record should exist' },
-      { entity_type: 'commission', action: 'calculate', reason: 'Commission may be due' },
-      { entity_type: 'invoice', action: 'draft', reason: 'Upfront portion may need invoicing' },
-    ]
-    : event_type === 'PaymentReceived'
-    ? [
-      { entity_type: 'receivable', action: 'reduce', reason: 'Receivable should decrease' },
-      { entity_type: 'cash', action: 'increase', reason: 'Cash should reflect the receipt' },
-      { entity_type: 'invoice', action: 'mark_paid', reason: 'Invoice may be settled' },
-    ]
-    : [{ entity_type: 'note', action: 'create', reason: 'Capture as a business note' }]
-
-  return {
-    event_type,
-    summary: `${event_type}: ${entities.map(e => `${e.field}=${e.value}`).join(', ')}`,
-    entities, destinations, confidence,
-    evidence: { source: 'user_input', method: 'local_fallback_parser' },
-    needs_confirmation: ['DealWon', 'PaymentReceived', 'EmployeeJoined', 'EmployeeExited', 'PayrollDue'].includes(event_type),
-  }
+  return parseIntent(text) as Intent
 }

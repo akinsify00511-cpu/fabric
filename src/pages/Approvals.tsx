@@ -60,16 +60,38 @@ export default function Approvals() {
   const handleApprove = async (request: ApprovalRequest) => {
     setProcessing(true)
     try {
+      // §15/§22 Enforcement gate — pre-check before mutating.
+      // The DB trigger (approvals_enforce_gate) is the backstop; this
+      // pre-check gives the user a readable reason instead of a 500.
+      const { data: verdict, error: enforceError } = await supabase.rpc(
+        'enforce_approval',
+        {
+          p_business_id: request.business_id,
+          p_approver_id: staff?.id,
+          p_entity_type: request.entity_type || request.type,
+          p_entity_id: request.entity_id,
+          p_amount: request.amount ?? null,
+          p_blocking: false,
+        }
+      )
+      if (enforceError) throw enforceError
+      if (verdict && !verdict.allowed) {
+        const reasons = (verdict.blocked_reasons || []).join('; ')
+        alert(`Approval blocked: ${reasons}`)
+        setProcessing(false)
+        return
+      }
+
       const { error } = await supabase
         .from('approval_requests')
-        .update({ 
+        .update({
           status: request.current_level >= 2 ? 'approved' : 'pending',
           current_level: request.current_level + 1
         })
         .eq('id', request.id)
 
       if (error) throw error
-      
+
       // Record decision in the approvals engine's action log
       await supabase.from('approval_actions').insert({
         approval_id: request.id,
@@ -79,11 +101,24 @@ export default function Approvals() {
         comment: actionComment,
       })
 
+      // Start/advance the action protocol run for this approval (§12).
+      await supabase.rpc('start_approval_protocol', {
+        p_business_id: request.business_id,
+        p_approval_id: request.id,
+        p_initiator_id: staff?.id,
+      }).then(({ error }) => { if (error) console.warn('[protocol]', error.message) })
+
       await loadApprovals()
       setSelectedRequest(null)
       setActionComment('')
     } catch (error) {
       console.error('Failed to approve:', error)
+      const msg = error instanceof Error ? error.message : String(error)
+      if (msg.includes('Approval blocked')) {
+        alert(msg)
+      } else {
+        alert('Failed to approve. Please try again.')
+      }
     }
     setProcessing(false)
   }

@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   Shield, Brain, Repeat, Gauge, Database, BookOpen,
   Loader2, Plus, Check, AlertTriangle, Network
@@ -23,9 +24,11 @@ const TABS: { key: Tab; label: string; icon: any }[] = [
 
 export default function GovernanceHub() {
   const { staff } = useAuth()
+  const dbState = useDbState()
   const [tab, setTab] = useState<Tab>('memory')
   return (
     <div className="p-6 max-w-5xl mx-auto">
+      <DbStateBanner state={dbState} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
           <Shield size={24} className="text-[var(--av-primary)]" /> Governance & Memory

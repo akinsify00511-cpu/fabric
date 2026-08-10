@@ -72,9 +72,10 @@ export async function recentEvents(businessId: string, limit = 15) {
 
 // Offline-tolerant: parse-intent calls the edge function; on failure we
 // return a structured error instead of throwing so the UI degrades.
+// The edge function returns { intent, guardrail, actor_id }.
 export async function parseIntent(text: string, businessId: string) {
   const { data: fn } = await supabase.functions.invoke('parse-intent', {
     body: { text, business_id: businessId },
   })
-  return fn
+  return fn?.intent ?? fn
 }

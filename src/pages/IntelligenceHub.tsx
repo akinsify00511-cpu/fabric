@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   Brain, Loader2, AlertTriangle, TrendingUp, Activity, Users,
   Workflow, ShieldAlert, LineChart, Lightbulb, Target, Globe, Info
@@ -21,6 +22,7 @@ interface Panel {
 export default function IntelligenceHub() {
   const { staff } = useAuth()
   const bid = staff?.business_id
+  const dbState = useDbState()
   const [panels, setPanels] = useState<Panel[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -59,6 +61,7 @@ export default function IntelligenceHub() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
+      <DbStateBanner state={dbState} />
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
           <Brain size={24} className="text-[var(--av-primary)]" /> Intelligence Hub
