@@ -56,7 +56,7 @@ export default function Operations() {
         ))}
       </div>
 
-      {activeTab === 'overview' && <OverviewTab businessId={businessId} staff={staff} />}
+      {activeTab === 'overview' && <OverviewTab businessId={businessId} staff={staff} onNavigate={(t) => setActiveTab(t)} />}
       {activeTab === 'announcements' && <AnnouncementsTab businessId={businessId} staffId={staff?.id} />}
       {activeTab === 'issues' && <IssuesTab businessId={businessId} staffId={staff?.id} />}
       {activeTab === 'sops' && <SOPsTab businessId={businessId} />}
@@ -69,7 +69,7 @@ export default function Operations() {
 }
 
 // Overview Tab
-function OverviewTab({ businessId, staff }: { businessId?: string; staff: any }) {
+function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; staff: any; onNavigate: (tab: OpsTab) => void }) {
   const [stats, setStats] = useState<any>({
     openIssues: 0,
     pendingCompliance: 0,
@@ -155,19 +155,19 @@ function OverviewTab({ businessId, staff }: { businessId?: string; staff: any })
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <h3 className="font-medium mb-3">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-2">
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
+            <button onClick={() => onNavigate('issues')} className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <Plus size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Report Issue</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
+            <button onClick={() => onNavigate('announcements')} className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <Bell size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Announcement</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
+            <button onClick={() => onNavigate('sops')} className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <FileText size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">New SOP</span>
             </button>
-            <button className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
+            <button onClick={() => onNavigate('compliance')} className="flex items-center gap-2 p-3 rounded-xl hover:bg-black/10 text-left">
               <ScrollText size={18} className="text-[var(--av-primary, #4285F4)]" />
               <span className="text-sm">Compliance</span>
             </button>

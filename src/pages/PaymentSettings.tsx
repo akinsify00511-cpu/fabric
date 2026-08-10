@@ -67,6 +67,18 @@ export default function PaymentSettingsPage() {
     }
   }
 
+  async function toggleGateway(gw: PaymentGateway) {
+    const { error } = await supabase
+      .from('payment_gateways')
+      .update({ is_active: !gw.is_active })
+      .eq('id', gw.id)
+    if (error) {
+      console.error('Failed to toggle gateway:', error)
+      return
+    }
+    loadData()
+  }
+
   const providerLogos: Record<string, string> = {
     paystack: 'https://paystack.com/favicon.ico',
     flutterwave: 'https://flutterwave.com/favicon.ico',
@@ -205,7 +217,7 @@ export default function PaymentSettingsPage() {
                     <span className="text-sm text-black">
                       {gw.supported_currencies?.join(', ') || 'NGN'}
                     </span>
-                    <button className="p-2 hover:bg-black/10 rounded-lg">
+                    <button onClick={() => toggleGateway(gw)} title={gw.is_active ? 'Deactivate' : 'Activate'} className="p-2 hover:bg-black/10 rounded-lg">
                       <Settings size={16} className="text-black" />
                     </button>
                   </div>

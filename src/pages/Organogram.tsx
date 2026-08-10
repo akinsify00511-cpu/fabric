@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
@@ -33,6 +34,7 @@ type ReportingChannel = {
 export default function Organogram() {
   const { staff } = useAuth()
   const { showToast } = useToast()
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [orgChart, setOrgChart] = useState<OrgNode[]>([])
   const [channels, setChannels] = useState<ReportingChannel[]>([])
@@ -40,6 +42,13 @@ export default function Organogram() {
   const [selectedNode, setSelectedNode] = useState<OrgNode | null>(null)
   const [view, setView] = useState<'org' | 'channels' | 'departments'>('org')
   const [filter, setFilter] = useState('')
+  const [showChannelForm, setShowChannelForm] = useState(false)
+  const [channelForm, setChannelForm] = useState({
+    name: '',
+    channel_type: 'daily_standup',
+    description: '',
+    frequency: 'daily',
+  })
 
   useEffect(() => {
     loadData()
@@ -71,6 +80,30 @@ export default function Organogram() {
     setChannels((channelData as ReportingChannel[]) || [])
 
     setLoading(false)
+  }
+
+  async function createChannel() {
+    if (!channelForm.name.trim()) {
+      showToast('Enter a channel name', 'error')
+      return
+    }
+    const { error } = await supabase.from('reporting_channels').insert({
+      business_id: staff?.business_id,
+      channel_type: channelForm.channel_type,
+      name: channelForm.name.trim(),
+      description: channelForm.description,
+      frequency: channelForm.frequency,
+      auto_generate: true,
+      is_active: true,
+    })
+    if (error) {
+      showToast('Could not create the channel.', 'error')
+      return
+    }
+    showToast('Channel created!', 'success')
+    setShowChannelForm(false)
+    setChannelForm({ name: '', channel_type: 'daily_standup', description: '', frequency: 'daily' })
+    loadData()
   }
 
   const toggleNode = (staffId: string) => {
@@ -198,7 +231,7 @@ export default function Organogram() {
             <RefreshCw size={14} />
             Refresh
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
+          <button onClick={() => navigate('/app/hr')} className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
             <UserPlus size={16} />
             Add Member
           </button>
@@ -291,7 +324,7 @@ export default function Organogram() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <p className="text-sm text-black">Automated reporting and sync channels</p>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
+            <button onClick={() => setShowChannelForm(true)} className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               New Channel
             </button>
@@ -397,7 +430,7 @@ export default function Organogram() {
                   )}
                 </div>
 
-                <button className="w-full mt-4 py-2 rounded-lg border border-black/10 text-sm">
+                <button onClick={() => { setFilter(dept); setView('org'); }} className="w-full mt-4 py-2 rounded-lg border border-black/10 text-sm">
                   View Department
                 </button>
               </div>
@@ -405,16 +438,83 @@ export default function Organogram() {
           })}
 
           {/* Add department card */}
-          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10 h-fit">
+          <button onClick={() => navigate('/app/operations?tab=departments')} className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10 h-fit">
             <PlusCircle size={32} className="text-black mb-2" />
             <p className="text-sm text-black">Add Department</p>
+          </button>
+        </div>
+      )}
+
+      {/* Create Channel Modal */}
+      {showChannelForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+              <h2 className="font-semibold">New Reporting Channel</h2>
+              <button onClick={() => setShowChannelForm(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">✕</button>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); createChannel() }} className="p-6 space-y-4">
+              <div>
+                <label className="text-sm font-medium block mb-1">Channel Name</label>
+                <input
+                  value={channelForm.name}
+                  onChange={(e) => setChannelForm({ ...channelForm, name: e.target.value })}
+                  placeholder="Daily Standup"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  required
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium block mb-1">Type</label>
+                <select
+                  value={channelForm.channel_type}
+                  onChange={(e) => setChannelForm({ ...channelForm, channel_type: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                >
+                  <option value="daily_standup">Daily Standup</option>
+                  <option value="weekly_update">Weekly Update</option>
+                  <option value="monthly_review">Monthly Review</option>
+                  <option value="project_sync">Project Sync</option>
+                  <option value="one_on_one">1:1</option>
+                  <option value="escalation">Escalation</option>
+                  <option value="broadcast">Broadcast</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium block mb-1">Frequency</label>
+                <select
+                  value={channelForm.frequency}
+                  onChange={(e) => setChannelForm({ ...channelForm, frequency: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Biweekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="as_needed">As needed</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium block mb-1">Description</label>
+                <textarea
+                  value={channelForm.description}
+                  onChange={(e) => setChannelForm({ ...channelForm, description: e.target.value })}
+                  placeholder="What is this channel for?"
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  rows={2}
+                />
+              </div>
+              <button type="submit" className="w-full py-2 rounded-lg avenize-gradient text-white font-medium">
+                Create Channel
+              </button>
+            </form>
           </div>
         </div>
       )}
 
       {/* Selected Node Detail Modal */}
       {selectedNode && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Team Member</h2>
@@ -448,13 +548,13 @@ export default function Organogram() {
               </div>
 
               <div className="flex gap-2">
-                <button className="flex-1 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
+                <button onClick={() => navigate(`/app/staff/${selectedNode.staff_id}`)} className="flex-1 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
                   View Full Profile
                 </button>
-                <button className="px-4 py-2 rounded-lg border border-black/10">
+                <button onClick={() => navigate('/app/chat')} className="px-4 py-2 rounded-lg border border-black/10">
                   <MessageSquare size={16} />
                 </button>
-                <button className="px-4 py-2 rounded-lg border border-black/10">
+                <button onClick={() => window.location.href = `mailto:${selectedNode.email}`} className="px-4 py-2 rounded-lg border border-black/10">
                   <Mail size={16} />
                 </button>
               </div>

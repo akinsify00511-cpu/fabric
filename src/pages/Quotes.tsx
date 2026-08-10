@@ -79,6 +79,45 @@ export default function Quotes() {
     if (updErr) console.error('Failed to update quote:', updErr)
   }
 
+  const convertToInvoice = async (quote: Quote) => {
+    if (!staff?.business_id) return
+    const invoiceNumber = `INV-${Date.now().toString().slice(-6)}`
+    const { data: invoice, error: invErr } = await supabase
+      .from('invoices')
+      .insert({
+        business_id: staff.business_id,
+        invoice_number: invoiceNumber,
+        client_name: quote.client_name,
+        client_email: quote.client_email,
+        subtotal: quote.subtotal,
+        tax: quote.vat_amount,
+        total: quote.total,
+        status: 'draft',
+        due_date: quote.valid_until ? new Date(quote.valid_until).toISOString().split('T')[0] : null,
+        deal_id: quote.deal_id || null,
+      })
+      .select()
+      .single()
+    if (invErr || !invoice) {
+      error('Could not create the invoice.')
+      return
+    }
+    if (quote.items && quote.items.length > 0) {
+      const items = quote.items.map((it) => ({
+        invoice_id: invoice.id,
+        description: it.description,
+        quantity: it.quantity,
+        unit_price: it.unit_price,
+        total: it.total,
+      }))
+      const { error: itemsErr } = await supabase.from('invoice_items').insert(items)
+      if (itemsErr) console.error('Failed to insert invoice items:', itemsErr)
+    }
+    await persistQuote(quote.id, { status: 'converted' })
+    success(`Converted to invoice ${invoiceNumber}`)
+    loadData()
+  }
+
   const convertDealToQuote = (deal: any) => {
     setConvertingDeal(deal.id)
     setNewQuote({
@@ -314,7 +353,7 @@ export default function Quotes() {
                     </>
                   )}
                   {quote.status === 'accepted' && (
-                    <button className="flex items-center gap-1 px-3 py-1.5 bg-purple-500 text-white rounded-lg text-xs font-medium hover:bg-purple-600 transition">
+                    <button onClick={() => convertToInvoice(quote)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-500 text-white rounded-lg text-xs font-medium hover:bg-purple-600 transition">
                       <FileText size={14} /> Convert to Invoice
                     </button>
                   )}
