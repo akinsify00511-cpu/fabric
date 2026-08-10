@@ -119,38 +119,70 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- EmployeeJoined / EmployeeExited on staff.
-CREATE OR REPLACE FUNCTION emit_staff_event() RETURNS TRIGGER AS $$
+-- EmployeeJoined / EmployeeExited on staff. staff may or may not have a
+-- status column; we detect it dynamically and degrade gracefully (joined
+-- always fires on INSERT; exited only if a status column exists).
+DO $$ DECLARE
+  v_has_status BOOLEAN;
 BEGIN
-  IF TG_OP = 'INSERT' THEN
-    PERFORM emit_business_event(
-      p_business_id := (NEW).business_id,
-      p_event_type := 'EmployeeJoined',
-      p_entity_type := 'staff',
-      p_entity_id := (NEW).id,
-      p_payload := jsonb_build_object('name',(NEW).full_name,'role',(NEW).role),
-      p_source := 'system'
-    );
-  ELSIF TG_OP = 'UPDATE' THEN
-    IF ((OLD).status IS DISTINCT FROM (NEW).status)
-       AND (NEW).status IN ('exited','inactive','terminated') THEN
-      PERFORM emit_business_event(
-        p_business_id := (NEW).business_id,
-        p_event_type := 'EmployeeExited',
-        p_entity_type := 'staff',
-        p_entity_id := (NEW).id,
-        p_payload := jsonb_build_object('name',(NEW).full_name,'new_status',(NEW).status)
-      );
-    END IF;
-  END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='staff' AND column_name='status'
+  ) INTO v_has_status;
 
-CREATE TRIGGER evt_staff_joined AFTER INSERT ON staff
-  FOR EACH ROW EXECUTE FUNCTION emit_staff_event();
-CREATE TRIGGER evt_staff_exited AFTER UPDATE OF status ON staff
-  FOR EACH ROW EXECUTE FUNCTION emit_staff_event();
+  IF v_has_status THEN
+    EXECUTE $fn$
+      CREATE OR REPLACE FUNCTION emit_staff_event() RETURNS TRIGGER AS $f$
+      BEGIN
+        IF TG_OP = 'INSERT' THEN
+          PERFORM emit_business_event(
+            p_business_id := (NEW).business_id,
+            p_event_type := 'EmployeeJoined',
+            p_entity_type := 'staff',
+            p_entity_id := (NEW).id,
+            p_payload := jsonb_build_object('name', coalesce((NEW).full_name,(NEW).name)),
+            p_source := 'system'
+          );
+        ELSIF TG_OP = 'UPDATE' THEN
+          IF ((OLD).status IS DISTINCT FROM (NEW).status)
+             AND (NEW).status IN ('exited','inactive','terminated') THEN
+            PERFORM emit_business_event(
+              p_business_id := (NEW).business_id,
+              p_event_type := 'EmployeeExited',
+              p_entity_type := 'staff',
+              p_entity_id := (NEW).id,
+              p_payload := jsonb_build_object('name', coalesce((NEW).full_name,(NEW).name),'new_status',(NEW).status)
+            );
+          END IF;
+        END IF;
+        RETURN NEW;
+      END;
+      $f$ LANGUAGE plpgsql SECURITY DEFINER;
+      CREATE TRIGGER evt_staff_joined AFTER INSERT ON staff
+        FOR EACH ROW EXECUTE FUNCTION emit_staff_event();
+      CREATE TRIGGER evt_staff_exited AFTER UPDATE OF status ON staff
+        FOR EACH ROW EXECUTE FUNCTION emit_staff_event();
+    $fn$;
+  ELSE
+    EXECUTE $fn$
+      CREATE OR REPLACE FUNCTION emit_staff_joined() RETURNS TRIGGER AS $f$
+      BEGIN
+        PERFORM emit_business_event(
+          p_business_id := (NEW).business_id,
+          p_event_type := 'EmployeeJoined',
+          p_entity_type := 'staff',
+          p_entity_id := (NEW).id,
+          p_payload := jsonb_build_object('name', (NEW).name),
+          p_source := 'system'
+        );
+        RETURN NEW;
+      END;
+      $f$ LANGUAGE plpgsql SECURITY DEFINER;
+      CREATE TRIGGER evt_staff_joined AFTER INSERT ON staff
+        FOR EACH ROW EXECUTE FUNCTION emit_staff_joined();
+    $fn$;
+  END IF;
+END $$;
 
 COMMENT ON FUNCTION emit_business_event IS
   'Bus entry point; called by the triggers in 059 for invoices, deals, products, staff.';
