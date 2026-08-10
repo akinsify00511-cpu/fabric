@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { FileSignature, Pen, Type, Upload, Check, X, Clock, Shield } from 'lucide-react'
+import { FileSignature, Pen, Type, Upload, Check, X, Clock, Shield, Download } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 interface SignerInfo {
@@ -60,6 +60,7 @@ export default function SignDocument() {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [done, setDone] = useState(false)
+  const [requestCompleted, setRequestCompleted] = useState(false)
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const drawingRef = useRef(false)
@@ -89,6 +90,7 @@ export default function SignDocument() {
       if (r.status === 'expired' || (r.expires_at && new Date(r.expires_at) < new Date())) {
         setError('This document has expired and can no longer be signed.')
       } else if (s.status === 'signed') {
+        setRequestCompleted(r.status === 'signed')
         setDone(true)
       } else if (s.status === 'declined') {
         setError('You have declined to sign this document.')
@@ -249,6 +251,7 @@ export default function SignDocument() {
         setError('This document may have already been signed or is no longer available.')
         return
       }
+      setRequestCompleted(Boolean(data?.completed))
       setDone(true)
     } catch (err) {
       console.error('Signing failed:', err)
@@ -333,9 +336,25 @@ export default function SignDocument() {
               </div>
               <div className="flex justify-between">
                 <span className="text-[#5F6368]">Status</span>
-                <span className="font-medium text-[#34A853]">Completed</span>
+                <span className="font-medium text-[#34A853]">
+                  {requestCompleted ? 'All parties signed — request complete' : 'Your signature recorded'}
+                </span>
               </div>
             </div>
+            {requestCompleted ? (
+              <a
+                href={request.document_url}
+                download={request.document_name || 'signed-document.pdf'}
+                className="inline-flex items-center gap-2 mt-6 px-5 py-2.5 bg-[#4285F4] text-white rounded-lg font-medium hover:bg-[#3367D6] transition-colors"
+              >
+                <Download size={18} />
+                Download signed document
+              </a>
+            ) : (
+              <p className="text-xs text-[#9AA0A6] mt-6">
+                {allSigners.filter(s => s.status !== 'signed' && s.status !== 'declined').length} signer(s) still pending. You'll be notified when the document is fully executed.
+              </p>
+            )}
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-6">

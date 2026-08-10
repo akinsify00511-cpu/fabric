@@ -4,7 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
   Plug, MessageSquare, Share2, Link2, ExternalLink, Check, X, 
-  RefreshCw, ChevronRight, Settings, Trash2, AlertCircle
+  RefreshCw, ChevronRight, Settings, Trash2, AlertCircle, Mail
 } from 'lucide-react'
 
 // Social Media Platform Types
@@ -38,7 +38,11 @@ export default function Integrations() {
   const { showToast } = useToast()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [activeTab, setActiveTab] = useState<'social' | 'sms'>('social')
+  const [activeTab, setActiveTab] = useState<'social' | 'sms' | 'email'>('social')
+
+  // Email provider state
+  const [emailConfig, setEmailConfig] = useState({ resendApiKey: '', fromAddress: 'notifications@avenize.com' })
+  const [emailConfigLoaded, setEmailConfigLoaded] = useState(false)
 
   // Social platforms state
   const [socialPlatforms, setSocialPlatforms] = useState<SocialPlatform[]>([
@@ -138,7 +142,45 @@ export default function Integrations() {
       }))
     }
 
+    // Load email provider config (Resend API key + from address)
+    const { data: emailSettings } = await supabase
+      .from('settings')
+      .select('key, value')
+      .eq('business_id', businessId)
+      .in('key', ['resend_api_key', 'email_from_address'])
+    if (emailSettings) {
+      const next = { ...emailConfig }
+      for (const row of emailSettings) {
+        if (row.key === 'resend_api_key') next.resendApiKey = row.value ?? ''
+        if (row.key === 'email_from_address') next.fromAddress = row.value ?? next.fromAddress
+      }
+      setEmailConfig(next)
+      setEmailConfigLoaded(true)
+    }
+
     setLoading(false)
+  }
+
+  const saveEmailConfig = async () => {
+    if (!staff?.business_id) return
+    setSaving(true)
+    try {
+      // Upsert both keys as separate rows in settings (UNIQUE business_id,key).
+      const rows = [
+        { business_id: staff.business_id, key: 'resend_api_key', value: emailConfig.resendApiKey || null },
+        { business_id: staff.business_id, key: 'email_from_address', value: emailConfig.fromAddress },
+      ]
+      const { error } = await supabase
+        .from('settings')
+        .upsert(rows, { onConflict: 'business_id,key' })
+      if (error) throw error
+      showToast('Email provider settings saved', 'success')
+    } catch (err) {
+      console.error('Save email config failed:', err)
+      showToast('Could not save email settings', 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const connectSocialPlatform = async (platform: SocialPlatform) => {
@@ -336,6 +378,17 @@ export default function Integrations() {
           <MessageSquare size={16} />
           SMS
         </button>
+        <button
+          onClick={() => setActiveTab('email')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'email'
+              ? 'bg-white text-black shadow-sm'
+              : 'text-black hover:text-black/70'
+          }`}
+        >
+          <Mail size={16} />
+          Email
+        </button>
       </div>
 
       {activeTab === 'social' && (
@@ -475,6 +528,85 @@ export default function Integrations() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {activeTab === 'email' && (
+        <div className="space-y-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <Mail size={20} className="text-blue-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium text-blue-800">Transactional Email</p>
+                <p className="text-sm text-blue-700 mt-1">
+                  Avenize sends notifications, signature requests, and invoices via email. Connect a Resend account to deliver these from your own domain. Without a key, email notifications are queued but never sent.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl border border-black/[0.06] p-6">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-black flex items-center justify-center">
+                <Mail size={22} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="font-medium">Resend</p>
+                  {emailConfigLoaded && emailConfig.resendApiKey ? (
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-600 text-xs">
+                      <Check size={12} />
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs">Not configured</span>
+                  )}
+                </div>
+                <p className="text-sm text-black/60">Recommended transactional email provider</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Resend API Key</label>
+                <input
+                  type="password"
+                  value={emailConfig.resendApiKey}
+                  onChange={(e) => setEmailConfig(prev => ({ ...prev, resendApiKey: e.target.value }))}
+                  placeholder="re_..."
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--av-primary, #4285F4)]/20 font-mono"
+                />
+                <p className="text-xs text-black/50 mt-1">
+                  Get your API key at{' '}
+                  <a href="https://resend.com/api-keys" target="_blank" rel="noreferrer" className="text-[var(--av-primary, #4285F4)] hover:underline">
+                    resend.com/api-keys
+                  </a>
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5">From Address</label>
+                <input
+                  type="email"
+                  value={emailConfig.fromAddress}
+                  onChange={(e) => setEmailConfig(prev => ({ ...prev, fromAddress: e.target.value }))}
+                  placeholder="notifications@yourdomain.com"
+                  className="w-full px-3 py-2 border border-black/[0.1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--av-primary, #4285F4)]/20"
+                />
+                <p className="text-xs text-black/50 mt-1">
+                  The sender address recipients see. Use a domain you own and have verified in Resend.
+                </p>
+              </div>
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={saveEmailConfig}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary, #4285F4)] text-white rounded-lg text-sm font-medium hover:opacity-90 disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save Email Settings'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

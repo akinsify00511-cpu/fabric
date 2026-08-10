@@ -196,6 +196,28 @@ export default function ElectronicSignatures() {
     alert(`Signing link copied for ${signer.name}:\n${url}`)
   }
 
+  // Email every signer their unique signing link via the
+  // send-signature-request edge function. Falls back to a plain status
+  // flip if the function is unreachable so the admin can still copy links.
+  const sendForSigning = async (request: SignatureRequest) => {
+    if (!confirm(`Email signing links to ${request.signers.length} signer(s)?`)) return
+    try {
+      const { data, error } = await supabase.functions.invoke('send-signature-request', {
+        body: { request_id: request.id },
+      })
+      if (error) throw error
+      if (data?.warning) {
+        alert(data.warning)
+      } else if (data?.success) {
+        alert(`Sent signing emails to ${data.sent} of ${data.total} signer(s).`)
+      }
+      fetchRequests()
+    } catch (err) {
+      console.error('send-signature-request failed:', err)
+      alert('Could not email signers. Check your email provider settings, or copy the signing link manually.')
+    }
+  }
+
   const resetForm = () => {
     setFormData({
       title: '',
@@ -426,7 +448,7 @@ export default function ElectronicSignatures() {
                     <div className="flex items-center justify-end gap-1">
                       {request.status === 'draft' && (
                         <button
-                          onClick={() => updateStatus(request.id, 'pending')}
+                          onClick={() => sendForSigning(request)}
                           className="p-2 hover:bg-[var(--av-primary)]/10 rounded-lg transition"
                           title="Send for signing"
                         >

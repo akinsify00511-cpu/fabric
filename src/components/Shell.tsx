@@ -3,6 +3,7 @@ import { Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
+import { useLocale } from '../lib/LocaleContext'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 import ToolOnboardingPopup from './ToolOnboardingPopup'
@@ -100,6 +101,7 @@ export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
   const { tools: accessibleTools, loading } = useAccessibleTools()
+  const { t } = useLocale()
   const location = useLocation()
   
   // Check if user is admin/owner (they see everything)
@@ -157,7 +159,7 @@ export default function Shell() {
                 }
               >
                 <Icon size={16} strokeWidth={2} />
-                {item.label}
+                {t(item.toolKey as any, item.label)}
               </NavLink>
             )
           })}
@@ -232,9 +234,9 @@ export default function Shell() {
               >
                 <Icon size={20} strokeWidth={2} />
                 <span className="text-[10px] font-medium">
-                  {item.to === '/' ? 'Home' : 
-                   item.to === '/app/chat' ? 'Chat' :
-                   item.to === '/app/more' ? 'More' : 'Settings'}
+                  {item.to === '/' ? t('dashboard', 'Home') : 
+                   item.to === '/app/chat' ? t('chat', 'Chat') :
+                   item.to === '/app/more' ? 'More' : t('settings', 'Settings')}
                 </span>
               </NavLink>
             )

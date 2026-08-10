@@ -109,7 +109,8 @@ async function sendEmailViaResend(
   apiKey: string,
   to: string,
   subject: string,
-  html: string
+  html: string,
+  fromEmail: string
 ): Promise<{ success: boolean; message?: string; error?: string }> {
   try {
     const response = await fetch('https://api.resend.com/emails', {
@@ -119,7 +120,7 @@ async function sendEmailViaResend(
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        from: 'Avenize <notifications@avenize.com>',
+        from: `Avenize <${fromEmail}>`,
         to: to,
         subject: subject,
         html: html,
@@ -139,18 +140,35 @@ async function sendEmailViaResend(
 }
 
 // Get email configuration from settings
-async function getEmailConfig(supabase: any) {
-  const { data: apiKey } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'resend_api_key')
-    .single()
-  
-  const { data: fromEmail } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'email_from_address')
-    .single()
+async function getEmailConfig(supabase: any, businessId?: string) {
+  let apiKey, fromEmail
+  if (businessId) {
+    ({ data: apiKey } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('business_id', businessId)
+      .eq('key', 'resend_api_key')
+      .maybeSingle())
+    ;({ data: fromEmail } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('business_id', businessId)
+      .eq('key', 'email_from_address')
+      .maybeSingle())
+  } else {
+    ({ data: apiKey } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'resend_api_key')
+      .limit(1)
+      .maybeSingle())
+    ;({ data: fromEmail } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'email_from_address')
+      .limit(1)
+      .maybeSingle())
+  }
 
   return {
     apiKey: apiKey?.value || Deno.env.get('RESEND_API_KEY'),
@@ -176,7 +194,7 @@ serve(async (req) => {
     const { notificationId, userId, testMode } = await req.json()
 
     // Get email configuration
-    const emailConfig = await getEmailConfig(supabase)
+    let emailConfig = await getEmailConfig(supabase)
 
     if (!emailConfig.apiKey && testMode) {
       return new Response(JSON.stringify({ 
@@ -228,6 +246,12 @@ serve(async (req) => {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
+    }
+
+    // Re-resolve email config scoped to the notification's business so each
+    // tenant sends from its own configured Resend key / from address.
+    if (notification.business_id) {
+      emailConfig = await getEmailConfig(supabase, notification.business_id)
     }
 
     // Get user email
@@ -290,7 +314,8 @@ serve(async (req) => {
         emailConfig.apiKey,
         user.email,
         emailSubject,
-        emailHtml
+        emailHtml,
+        emailConfig.fromEmail || 'notifications@avenize.com'
       )
 
       if (!result.success) {

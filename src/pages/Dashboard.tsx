@@ -5,6 +5,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
+import { useLocale } from '../lib/LocaleContext'
 import { supabase } from '../lib/supabase'
 import {
   Users, DollarSign, Target, CheckSquare, 
@@ -111,6 +112,7 @@ function StatCard({
 
 export default function Dashboard() {
   const { staff } = useAuth()
+  const { t } = useLocale()
   const [stats, setStats] = useState<any>(null)
   const [activities, setActivities] = useState<any[]>([])
   const [upcoming, setUpcoming] = useState<any[]>([])
@@ -286,7 +288,7 @@ export default function Dashboard() {
                 <span className="text-sm font-medium" style={{ color: BRAND.textSecondary }}>Avenize</span>
               </div>
               <div className="text-sm" style={{ color: BRAND.textSecondary }}>
-                Welcome back, <span className="font-medium" style={{ color: BRAND.text }}>{getUserName()}</span>
+                {t('welcome', 'Welcome back')}, <span className="font-medium" style={{ color: BRAND.text }}>{getUserName()}</span>
               </div>
               <div className="text-sm mt-2" style={{ color: BRAND.textMuted }}>Revenue this month</div>
               <div className="text-[38px] font-semibold mt-1" style={{ 
