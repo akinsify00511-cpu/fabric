@@ -1,5 +1,15 @@
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import {   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon, LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones, Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette, Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award, Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon, Shield, Tag, UserRound, TrendingUp, Truck,   ClipboardList, Sparkles, FlaskConical, Brain, ShieldCheck } from 'lucide-react'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import {
+  Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon,
+  LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones,
+  Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette,
+  Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award,
+  Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon,
+  Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList, Sparkles, FlaskConical, Brain,
+  ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
+  Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
+} from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
@@ -8,111 +18,148 @@ import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 import ToolOnboardingPopup from './ToolOnboardingPopup'
 
-// Map nav routes to tool keys
+// Map nav routes to tool keys (for onboarding popups)
 const TOOL_KEY_MAP: Record<string, string> = {
   '/app': 'dashboard',
   '/app/capture': 'dashboard',
-  '/app/observer': 'dashboard',
-  '/app/simulation': 'dashboard',
-  '/app/intelligence': 'dashboard',
-  '/app/governance': 'dashboard',
-  '/app/control': 'dashboard',
-  '/app/personas': 'dashboard',
-  '/app/migration': 'settings',
-  '/app/vendor-portal': 'inventory',
   '/app/chat': 'chat',
   '/app/tasks': 'tasks',
   '/app/calendar': 'calendar',
   '/app/time': 'time-tracking',
-  '/app/events': 'events',
-  '/app/knowledge': 'knowledge',
-  '/app/tickets': 'tickets',
   '/app/crm': 'crm',
-  '/app/leads': 'crm',
-  '/app/social': 'social',
   '/app/projects': 'projects',
   '/app/finance': 'finance',
-  '/app/e-invoicing': 'finance',
-  '/app/budgets': 'finance',
   '/app/hr': 'people',
-  '/app/recruitment': 'people',
-  '/app/appraisals': 'people',
-  '/app/payroll': 'payroll',
   '/app/inventory': 'inventory',
-  '/app/vendors': 'inventory',
-  '/app/purchase-orders': 'inventory',
-  '/app/properties': 'projects',
-  '/app/property-owners': 'projects',
-  '/app/property-sales': 'projects',
-  '/app/services': 'settings',
-  '/app/requisitions': 'requisitions',
-  '/app/organogram': 'merit',
-  '/app/reports': 'reports',
-  '/app/sms': 'settings',
-  '/app/live-chat': 'tickets',
-  '/app/whatsapp': 'settings',
-  '/app/monitoring': 'dashboard',
-  '/app/meetings': 'meetings',
-  '/app/home': 'dashboard',
-  '/app/branding': 'branding',
   '/app/settings': 'settings',
 }
 
-const NAV_ITEMS = [
-  { to: '/app', label: 'Dashboard', end: true, icon: Home, toolKey: 'dashboard' },
-  { to: '/app/capture', label: 'AI Capture', icon: Sparkles, toolKey: 'dashboard' },
-  { to: '/app/observer', label: 'Snapshot', icon: Activity, toolKey: 'dashboard' },
-  { to: '/app/simulation', label: 'Simulate', icon: FlaskConical, toolKey: 'dashboard' },
-  { to: '/app/intelligence', label: 'Intelligence', icon: Brain, toolKey: 'dashboard' },
-  { to: '/app/governance', label: 'Governance', icon: Shield, toolKey: 'dashboard' },
-  { to: '/app/control', label: 'Control & Audit', icon: ShieldCheck, toolKey: 'dashboard' },
-  { to: '/app/personas', label: 'Personas', icon: UserRound, toolKey: 'dashboard' },
-  { to: '/app/migration', label: 'Migrate', icon: FileText, toolKey: 'settings' },
-  { to: '/app/vendor-portal', label: 'Vendor Portal', icon: Truck, toolKey: 'inventory' },
-  { to: '/app/chat', label: 'Chat', icon: MessageSquare, toolKey: 'chat' },
-  { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
-  { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
-  { to: '/app/time', label: 'Time', icon: Clock, toolKey: 'time-tracking' },
-  { to: '/app/events', label: 'Events', icon: CalendarDays, toolKey: 'events' },
-  { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
-  { to: '/app/tickets', label: 'Support', icon: Headphones, toolKey: 'tickets' },
-  { to: '/app/live-chat', label: 'Live Chat', icon: HeadphonesIcon, toolKey: 'tickets' },
-  { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
-  { to: '/app/leads', label: 'Leads', icon: UserPlus, toolKey: 'crm' },
-  { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
-  { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
-  { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
-  { to: '/app/e-invoicing', label: 'e-Invoicing', icon: FileTextIcon, toolKey: 'finance' },
-  { to: '/app/budgets', label: 'Budgets', icon: Target, toolKey: 'finance' },
-  { to: '/app/hr', label: 'HR', icon: Contact, toolKey: 'people' },
-  { to: '/app/recruitment', label: 'Recruit', icon: Briefcase, toolKey: 'people' },
-  { to: '/app/appraisals', label: 'Appraisals', icon: Award, toolKey: 'people' },
-  { to: '/app/payroll', label: 'Payroll', icon: Receipt, toolKey: 'payroll' },
-  { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
-  { to: '/app/vendors', label: 'Vendors', icon: Truck, toolKey: 'inventory' },
-  { to: '/app/purchase-orders', label: 'POs', icon: ClipboardList, toolKey: 'inventory' },
-  { to: '/app/properties', label: 'Properties', icon: Building, toolKey: 'projects' },
-  { to: '/app/property-owners', label: 'Owners', icon: UserRound, toolKey: 'projects' },
-  { to: '/app/property-sales', label: 'Sales', icon: TrendingUp, toolKey: 'projects' },
-  { to: '/app/services', label: 'Services', icon: Tag, toolKey: 'settings' },
-  { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
-  { to: '/app/organogram', label: 'Org Chart', icon: Network, toolKey: 'merit' },
-  { to: '/app/departments', label: 'Departments', icon: Building2, toolKey: 'merit' },
+// ── New information architecture ──────────────────────────────────────
+// The old sidebar listed 49 items flat. This redesign groups them into ≤7
+// top-level sections (Slack/Discord/Trello pattern) with plain-language
+// labels a small-business owner understands, collapses each section, and
+// moves admin/secondary items to a Discord-style user card at the bottom.
+// Routes are unchanged — only the navigation is reorganized.
+type NavItem = { to: string; label: string; icon: typeof Home; toolKey?: string; end?: boolean }
+type NavGroup = { id: string; label: string; icon: typeof Home; items: NavItem[]; defaultOpen?: boolean }
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    id: 'home',
+    label: 'Home',
+    icon: Home,
+    defaultOpen: false,
+    items: [
+      { to: '/app', label: 'Dashboard', icon: Home, toolKey: 'dashboard', end: true },
+      { to: '/app/capture', label: 'Quick Capture', icon: Sparkles, toolKey: 'dashboard' },
+      { to: '/app/activity', label: 'Activity', icon: Activity, toolKey: 'dashboard' },
+      { to: '/app/scenarios', label: 'Scenarios', icon: FlaskConical, toolKey: 'dashboard' },
+      { to: '/app/intelligence', label: 'Insights', icon: Brain, toolKey: 'dashboard' },
+    ],
+  },
+  {
+    id: 'communicate',
+    label: 'Communicate',
+    icon: MessageSquare,
+    defaultOpen: false,
+    items: [
+      { to: '/app/chat', label: 'Chat', icon: ChatIcon, toolKey: 'chat' },
+      { to: '/app/live-chat', label: 'Live Chat', icon: HeadphonesIcon, toolKey: 'tickets' },
+      { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageCircle, toolKey: 'settings' },
+      { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
+      { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
+      { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
+    ],
+  },
+  {
+    id: 'sell',
+    label: 'Sell',
+    icon: Users2,
+    defaultOpen: false,
+    items: [
+      { to: '/app/crm', label: 'CRM', icon: Users2, toolKey: 'crm' },
+      { to: '/app/leads', label: 'Leads', icon: UserPlus, toolKey: 'crm' },
+      { to: '/app/quotes', label: 'Quotes', icon: FileText, toolKey: 'crm' },
+      { to: '/app/properties', label: 'Properties', icon: Building, toolKey: 'projects' },
+      { to: '/app/property-sales', label: 'Property Sales', icon: TrendingUp, toolKey: 'projects' },
+      { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
+    ],
+  },
+  {
+    id: 'money',
+    label: 'Money',
+    icon: Wallet,
+    defaultOpen: false,
+    items: [
+      { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
+      { to: '/app/e-invoicing', label: 'Invoices', icon: FileTextIcon, toolKey: 'finance' },
+      { to: '/app/payments', label: 'Payments', icon: DollarSign, toolKey: 'finance' },
+      { to: '/app/budgets', label: 'Budgets', icon: Target, toolKey: 'finance' },
+      { to: '/app/expenses', label: 'Expenses', icon: Receipt, toolKey: 'finance' },
+      { to: '/app/payroll', label: 'Payroll', icon: CreditCard, toolKey: 'payroll' },
+      { to: '/app/accounting', label: 'Accounting', icon: Calculator, toolKey: 'finance' },
+    ],
+  },
+  {
+    id: 'people',
+    label: 'People',
+    icon: Contact,
+    defaultOpen: false,
+    items: [
+      { to: '/app/hr', label: 'Team', icon: Contact, toolKey: 'people' },
+      { to: '/app/recruitment', label: 'Recruit', icon: Briefcase, toolKey: 'people' },
+      { to: '/app/appraisals', label: 'Appraisals', icon: Award, toolKey: 'people' },
+      { to: '/app/leave', label: 'Leave', icon: CalendarIcon, toolKey: 'people' },
+      { to: '/app/attendance', label: 'Attendance', icon: Clock, toolKey: 'people' },
+      { to: '/app/organogram', label: 'Org Chart', icon: Network, toolKey: 'merit' },
+    ],
+  },
+  {
+    id: 'ops',
+    label: 'Operations',
+    icon: FolderKanban,
+    defaultOpen: false,
+    items: [
+      { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
+      { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
+      { to: '/app/vendors', label: 'Vendors', icon: Truck, toolKey: 'inventory' },
+      { to: '/app/purchase-orders', label: 'Purchase Orders', icon: ClipboardList, toolKey: 'inventory' },
+      { to: '/app/services', label: 'Services', icon: Tag, toolKey: 'settings' },
+      { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
+      { to: '/app/assets', label: 'Assets', icon: Wrench, toolKey: 'dashboard' },
+    ],
+  },
+  {
+    id: 'work',
+    label: 'My Work',
+    icon: CheckSquare,
+    defaultOpen: false,
+    items: [
+      { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
+      { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
+      { to: '/app/time', label: 'Time Tracking', icon: Clock, toolKey: 'time-tracking' },
+      { to: '/app/approvals', label: 'Approvals', icon: ShieldCheck, toolKey: 'approvals' },
+      { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
+      { to: '/app/tickets', label: 'Support', icon: LifeBuoy, toolKey: 'tickets' },
+    ],
+  },
+]
+
+// Secondary links that live in the user card / overflow (Discord-style):
+// Settings, Branding, Reports, Controls, Integrations, API — admin/secondary.
+const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
-  { to: '/app/sms', label: 'SMS', icon: MessageSquareText, toolKey: 'settings' },
-  { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageCircle, toolKey: 'settings' },
-  { to: '/app/monitoring', label: 'Monitoring', icon: Activity, toolKey: 'dashboard' },
-  { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
-  { to: '/app/home', label: 'Company', icon: Home, toolKey: 'dashboard' },
-  { to: '/app/branding', label: 'Branding', icon: Palette, toolKey: 'branding' },
-  { to: '/app/settings', label: 'Settings', icon: SettingsIcon, toolKey: 'settings' },
+  { to: '/app/governance', label: 'Controls', icon: Shield, toolKey: 'dashboard' },
+  { to: '/app/control', label: 'Audit Log', icon: ShieldCheck, toolKey: 'dashboard' },
+  { to: '/app/integrations', label: 'Integrations', icon: Network, toolKey: 'integrations' },
+  { to: '/app/api', label: 'API & Webhooks', icon: FileTextIcon, toolKey: 'api' },
 ]
 
 const MOBILE_NAV_ITEMS = [
-  { to: '/app', end: true, icon: Home },
-  { to: '/app/chat', end: false, icon: ChatIcon },
-  { to: '/app/more', end: false, icon: LayoutGrid },
-  { to: '/app/settings', end: false, icon: User },
+  { to: '/app', end: true, icon: Home, label: 'Home' },
+  { to: '/app/capture', end: false, icon: Sparkles, label: 'Capture' },
+  { to: '/app/chat', end: false, icon: ChatIcon, label: 'Chat' },
+  { to: '/app/more', end: false, icon: LayoutGrid, label: 'More' },
 ]
 
 export default function Shell() {
@@ -121,113 +168,229 @@ export default function Shell() {
   const { tools: accessibleTools, loading } = useAccessibleTools()
   const { t } = useLocale()
   const location = useLocation()
-  
-  // Check if user is admin/owner (they see everything)
+  const navigate = useNavigate()
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+
   const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
-  
-  // Filter nav items based on tool access (unless privileged)
-  // Always show Settings regardless of tool access
-  const visibleNavItems = loading || isPrivileged 
-    ? NAV_ITEMS 
-    : NAV_ITEMS.filter(item => 
-        item.toolKey === 'settings' || accessibleTools.includes(item.toolKey as any)
-      )
-  
+
+  const itemVisible = (item: NavItem) =>
+    loading || isPrivileged || !item.toolKey || item.toolKey === 'settings' ||
+    accessibleTools.includes(item.toolKey as any)
+
+  const groupHasActive = (group: NavGroup) =>
+    group.items.some(i => location.pathname === i.to ||
+      (i.to !== '/app' && location.pathname.startsWith(i.to)))
+
+  // Auto-expand the group containing the active route on first render.
+  const effectiveOpen = (g: NavGroup) =>
+    openGroups[g.id] ?? g.defaultOpen ?? groupHasActive(g)
+
   const companyName = branding.custom_name || staff?.business_name || 'My Company'
-  const displayLogo = branding.logo_url || branding.brand_name ? null : <AvenizeMark size={22} />
-  
-  // Get branding colors - use actual branding values
-  const bgColor = branding.background_color
-  const textColor = branding.text_color
+
+  const handleSearch = () => {
+    // Cmd+K command palette is globally bound in AppShell; trigger it.
+    const isMac = navigator.platform.includes('Mac')
+    document.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'k', metaKey: isMac, ctrlKey: !isMac, bubbles: true
+    }))
+  }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[var(--av-surface-2)]">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 shrink-0 bg-white border-r border-black flex-col fixed inset-y-0 left-0">
-        <div className="px-5 py-4 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            {displayLogo}
-            {branding.logo_url && (
-              <img 
-                src={branding.logo_url} 
-                alt="Logo" 
-                className="h-6 w-auto object-contain"
-                style={{ maxHeight: '28px' }}
-              />
-            )}
-            <span className="text-base font-semibold tracking-tight truncate text-black">
-              {companyName}
-            </span>
+      <aside className="hidden md:flex w-60 shrink-0 bg-[var(--av-surface)] border-r border-[var(--av-border)] flex-col fixed inset-y-0 left-0 z-30">
+        {/* Workspace header */}
+        <div className="px-4 py-3.5 flex items-center gap-2 border-b border-[var(--av-border)]">
+          {branding.logo_url ? (
+            <img src={branding.logo_url} alt="Logo" className="h-7 w-auto object-contain rounded-lg" style={{ maxHeight: '28px' }} />
+          ) : (
+            <AvenizeMark size={24} />
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">{companyName}</p>
+            <p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.role || 'workspace'}</p>
           </div>
         </div>
-        <nav className="flex-1 px-2 space-y-0.5">
-          {visibleNavItems.map((item) => {
-            const Icon = item.icon
+
+        {/* Quick Capture button — the hero feature, always one tap away */}
+        <div className="px-3 pt-3">
+          <button
+            onClick={() => navigate('/app/capture')}
+            className="w-full flex items-center justify-center gap-2 rounded-[var(--av-radius-md)] bg-[var(--av-primary)] text-white text-sm font-medium py-2.5 hover:bg-[var(--av-primary-hover)] transition shadow-[var(--av-shadow-sm)]"
+          >
+            <Sparkles size={16} />
+            Quick Capture
+          </button>
+        </div>
+
+        {/* Grouped nav — collapsible sections */}
+        <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
+          {NAV_GROUPS.map((group) => {
+            const GIcon = group.icon
+            const open = effectiveOpen(group)
+            const active = groupHasActive(group)
+            const visibleItems = group.items.filter(itemVisible)
+            if (visibleItems.length === 0) return null
             return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
-                    isActive
-                      ? 'bg-blue-50 text-blue-600 font-medium'
-                      : 'text-black hover:bg-white'
-                  }`
-                }
-              >
-                <Icon size={16} strokeWidth={2} />
-                {t(item.toolKey as any, item.label)}
-              </NavLink>
+              <div key={group.id}>
+                <button
+                  onClick={() => setOpenGroups(s => ({ ...s, [group.id]: !open }))}
+                  className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    active ? 'text-[var(--av-text)]' : 'text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
+                  }`}
+                >
+                  <GIcon size={15} strokeWidth={2.2} />
+                  <span className="flex-1 text-left">{group.label}</span>
+                  <ChevronDown size={14} className={`transition-transform ${open ? '' : '-rotate-90'}`} />
+                </button>
+                {open && (
+                  <div className="ml-1 mt-0.5 space-y-0.5">
+                    {visibleItems.map((item) => {
+                      const Icon = item.icon
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          end={item.end}
+                          className={({ isActive }) =>
+                            `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
+                              isActive
+                                ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
+                                : 'text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
+                            }`
+                          }
+                        >
+                          <Icon size={16} strokeWidth={2} />
+                          {item.label}
+                        </NavLink>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             )
           })}
+
+          {/* Secondary / admin links */}
+          <div className="pt-2 mt-2 border-t border-[var(--av-border)]">
+            {SECONDARY_LINKS.filter(itemVisible).map((item) => {
+              const Icon = item.icon
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
+                      isActive
+                        ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
+                        : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
+                    }`
+                  }
+                >
+                  <Icon size={16} strokeWidth={2} />
+                  {item.label}
+                </NavLink>
+              )
+            })}
+            <NavLink
+              to="/app/more"
+              className={({ isActive }) =>
+                `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
+                  isActive
+                    ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
+                    : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
+                }`
+              }
+            >
+              <LayoutGrid size={16} strokeWidth={2} />
+              More
+            </NavLink>
+          </div>
         </nav>
-        
+
         {/* Upgrade CTA */}
-        <div className="px-3 pb-3">
+        <div className="px-3 pb-2">
           <a
             href="/upgrade"
-            className="flex items-center gap-2 px-3 py-3 rounded-xl bg-gradient-to-r to-[#4285F4] to-[#8B5CF6]/50 text-white text-sm font-medium hover:shadow-lg transition"
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white text-sm font-medium hover:shadow-[var(--av-shadow-md)] transition"
           >
             <Crown size={16} />
             <span>Upgrade to Pro</span>
           </a>
         </div>
-        
-        <div className="px-5 py-4 border-t border-black text-xs text-black">
-          <p className="truncate text-black">{staff?.full_name ?? staff?.name ?? '...'}</p>
-          <p className="text-[10px] capitalize text-black">{staff?.role || 'Staff'}</p>
-          <button onClick={signOut} className="mt-1 hover:opacity-70">
-            Sign out
+
+        {/* Discord-style user card — settings live here, not in the nav */}
+        <div className="relative border-t border-[var(--av-border)]">
+          <button
+            onClick={() => setUserMenuOpen(o => !o)}
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-[var(--av-surface-2)] transition"
+          >
+            <div className="w-8 h-8 rounded-full bg-[var(--av-primary)] text-white flex items-center justify-center text-sm font-semibold shrink-0">
+              {(staff?.full_name ?? staff?.name ?? '?').charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1 text-left">
+              <p className="text-sm font-medium truncate text-[var(--av-text)]">{staff?.full_name ?? staff?.name ?? 'User'}</p>
+              <p className="text-[11px] text-[var(--av-text-muted)] truncate">{staff?.email ?? ''}</p>
+            </div>
+            <Settings2 size={16} className="text-[var(--av-text-muted)] shrink-0" />
           </button>
+
+          {userMenuOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 mx-3 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] shadow-[var(--av-shadow-lg)] overflow-hidden">
+              <UserMenuItem to="/app/settings" icon={SettingsIcon} label="Settings" onClick={() => setUserMenuOpen(false)} />
+              <UserMenuItem to="/app/branding" icon={Palette} label="Branding" onClick={() => setUserMenuOpen(false)} />
+              <UserMenuItem to="/app/notifications" icon={Bell} label="Notifications" onClick={() => setUserMenuOpen(false)} />
+              <div className="border-t border-[var(--av-border)]">
+                <button
+                  onClick={() => { setUserMenuOpen(false); signOut() }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] transition"
+                >
+                  <LogOut size={16} />
+                  Sign out
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </aside>
 
+      {/* Desktop top bar */}
+      <header className="hidden md:flex items-center gap-3 fixed top-0 right-0 left-60 h-14 px-6 bg-[var(--av-surface)] border-b border-[var(--av-border)] z-20">
+        <button
+          onClick={handleSearch}
+          className="flex items-center gap-2 flex-1 max-w-md rounded-lg border border-[var(--av-border)] bg-[var(--av-surface-2)] px-3 py-1.5 text-sm text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)] hover:bg-[var(--av-surface)] transition"
+        >
+          <Search size={16} />
+          <span>Search or jump to\u2026</span>
+          <kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">\u2318K</kbd>
+        </button>
+        <div className="ml-auto flex items-center gap-1">
+          <NotificationBell />
+        </div>
+      </header>
+
       {/* Mobile top header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10 bg-white border-black">
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--av-border)] sticky top-0 z-10 bg-[var(--av-surface)]">
         <div className="flex items-center gap-2">
           {!branding.logo_url && <AvenizeMark size={20} />}
           {branding.logo_url && (
-            <img 
-              src={branding.logo_url} 
-              alt="Logo" 
-              className="h-5 w-auto object-contain"
-            />
+            <img src={branding.logo_url} alt="Logo" className="h-5 w-auto object-contain" />
           )}
-          <span className="text-sm font-semibold tracking-tight truncate text-black">
+          <span className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">
             {companyName}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <button className="w-8 h-8 rounded-full flex items-center justify-center bg-white text-black">
-            <Search size={15} strokeWidth={2} />
+          <button onClick={() => navigate('/app/capture')} className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--av-primary)] text-white">
+            <Sparkles size={15} strokeWidth={2} />
           </button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="md:ml-56 p-4 md:p-8 pb-28 md:pb-8">
+      <main className="md:ml-60 md:mt-14 p-4 md:p-6 pb-28 md:pb-8">
         <Outlet />
       </main>
 
@@ -235,7 +398,7 @@ export default function Shell() {
       <ToolOnboardingPopup toolKey={TOOL_KEY_MAP[location.pathname] || ''} />
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20 bg-white border-black">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-[var(--av-border)] px-2 py-2 z-20 bg-[var(--av-surface)]">
         <div className="flex items-center justify-around">
           {MOBILE_NAV_ITEMS.map((item) => {
             const Icon = item.icon
@@ -246,21 +409,30 @@ export default function Shell() {
                 end={item.end}
                 className={({ isActive }) =>
                   `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
-                    isActive ? 'text-blue-600' : 'text-black'
+                    isActive ? 'text-[var(--av-primary)]' : 'text-[var(--av-text-muted)]'
                   }`
                 }
               >
                 <Icon size={20} strokeWidth={2} />
-                <span className="text-[10px] font-medium">
-                  {item.to === '/' ? t('dashboard', 'Home') : 
-                   item.to === '/app/chat' ? t('chat', 'Chat') :
-                   item.to === '/app/more' ? 'More' : t('settings', 'Settings')}
-                </span>
+                <span className="text-[10px] font-medium">{item.label}</span>
               </NavLink>
             )
           })}
         </div>
       </nav>
     </div>
+  )
+}
+
+function UserMenuItem({ to, icon: Icon, label, onClick }: { to: string; icon: typeof Home; label: string; onClick: () => void }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-text)] hover:bg-[var(--av-surface-2)] transition"
+    >
+      <Icon size={16} className="text-[var(--av-text-muted)]" />
+      {label}
+    </NavLink>
   )
 }

@@ -310,7 +310,9 @@ function AppRoutes() {
         <Route path="home" element={<Dashboard />} />
         <Route path="capture" element={<AICapture />} />
         <Route path="observer" element={<ObserverView />} />
+        <Route path="activity" element={<ObserverView />} />
         <Route path="simulation" element={<Simulation />} />
+        <Route path="scenarios" element={<Simulation />} />
         <Route path="intelligence" element={<IntelligenceHub />} />
         <Route path="governance" element={<GovernanceHub />} />
         <Route path="migration" element={<MigrationPipeline />} />
