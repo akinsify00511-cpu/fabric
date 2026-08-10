@@ -9,7 +9,7 @@ import {
   Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList, Sparkles, FlaskConical, Brain,
   ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
   Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
-  Scale, ShoppingCart, BookOpen, Globe,
+  Scale, ShoppingCart, BookOpen, Globe, Stethoscope, GitCompare,
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
@@ -157,6 +157,8 @@ const NAV_GROUPS: NavGroup[] = [
 const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
   { to: '/app/governance', label: 'Controls', icon: Shield, toolKey: 'dashboard' },
+  { to: '/app/self-audit', label: 'Self-Audit', icon: Stethoscope, toolKey: 'dashboard' },
+  { to: '/app/reality-gap', label: 'Reality Gap', icon: GitCompare, toolKey: 'dashboard' },
   { to: '/app/control', label: 'Audit Log', icon: ShieldCheck, toolKey: 'dashboard' },
   { to: '/app/integrations', label: 'Integrations', icon: Network, toolKey: 'integrations' },
   { to: '/app/api', label: 'API & Webhooks', icon: FileTextIcon, toolKey: 'api' },

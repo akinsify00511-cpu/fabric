@@ -4,12 +4,14 @@
 // its claim_type (FACT/INFERENCE/ESTIMATE) per the platform-wide principle.
 
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   Brain, Loader2, AlertTriangle, TrendingUp, Activity, Users,
-  Workflow, ShieldAlert, LineChart, Lightbulb, Target, Globe, Info
+  Workflow, ShieldAlert, LineChart, Lightbulb, Target, Globe, Info,
+  DollarSign, ArrowRight,
 } from 'lucide-react'
 
 interface Panel {
@@ -38,6 +40,8 @@ export default function IntelligenceHub() {
         { key: 'early', title: 'Early Warnings', icon: AlertTriangle, rpc: 'early_warnings' },
         { key: 'opportunity', title: 'Opportunities', icon: Lightbulb, rpc: 'opportunity_intelligence' },
         { key: 'strategy', title: 'Strategic Alignment', icon: Target, rpc: 'strategic_alignment' },
+        { key: 'salary', title: 'Salary Affordability', icon: DollarSign, rpc: 'salary_affordability' },
+        { key: 'compensation', title: 'Compensation Review', icon: Users, rpc: 'compensation_review_recommendation' },
       ]
       const results = await Promise.allSettled(
         calls.map(async c => {
@@ -156,10 +160,52 @@ function PanelCard({ panel }: { panel: Panel }) {
           </div>
           {d.misalignment_detected && <Note tone="warn">{d.note}</Note>}
         </div>
+      ) : panel.key === 'salary' ? (
+        <div className="space-y-2">
+          <Big label="Affordable raise %" value={d.affordable_raise_pct != null ? `${d.affordable_raise_pct}%` : '—'} />
+          {d.payroll_coverage_months != null && (
+            <div className="flex justify-between text-sm"><span className="text-[var(--av-text-secondary)]">Payroll coverage</span><span className="font-medium text-[var(--av-text)]">{d.payroll_coverage_months} mo</span></div>
+          )}
+          {d.note && <Note tone="warn">{d.note}</Note>}
+          <ActionLink to="/app/scenarios" label="Model a raise" />
+        </div>
+      ) : panel.key === 'compensation' ? (
+        <div className="space-y-2">
+          {d.recommendations?.length ? d.recommendations.slice(0,4).map((r: any, i: number) => (
+            <div key={i} className="text-sm">
+              <span className="font-medium text-[var(--av-text)]">{r.role || r.staff_name}</span>
+              {r.recommended_adjustment != null && <span className="text-[var(--av-primary)]"> · {r.recommended_adjustment > 0 ? '+' : ''}{r.recommended_adjustment}%</span>}
+            </div>
+          )) : <p className="text-sm text-[var(--av-text-tertiary)]">No compensation review data.</p>}
+          {d.note && <Note tone="muted">{d.note}</Note>}
+          <ActionLink to="/app/hr" label="Review team" />
+        </div>
       ) : (
         <pre className="text-xs text-[var(--av-text-tertiary)] overflow-auto">{JSON.stringify(d, null, 2)}</pre>
       )}
+      <div className="mt-3 pt-2 border-t border-[var(--av-border)]">
+        <ActionLink to={ACTION_LINKS[panel.key] || '/app/intelligence'} label={ACTION_LABELS[panel.key] || 'Drill down'} />
+      </div>
     </div>
+  )
+}
+
+const ACTION_LINKS: Record<string, string> = {
+  capacity: '/app/hr', process: '/app/projects', risk: '/app/activity',
+  forecast: '/app/scenarios', early: '/app/activity', opportunity: '/app/crm',
+  strategy: '/app/reports', salary: '/app/scenarios', compensation: '/app/hr',
+}
+const ACTION_LABELS: Record<string, string> = {
+  capacity: 'See team capacity', process: 'See projects', risk: 'Review exceptions',
+  forecast: 'Run a scenario', early: 'See activity', opportunity: 'Go to CRM',
+  strategy: 'See reports', salary: 'Model a raise', compensation: 'Review team',
+}
+
+function ActionLink({ to, label }: { to: string; label: string }) {
+  return (
+    <Link to={to} className="inline-flex items-center gap-1 text-xs font-medium text-[var(--av-primary)] hover:underline">
+      {label} <ArrowRight size={12} />
+    </Link>
   )
 }
 
