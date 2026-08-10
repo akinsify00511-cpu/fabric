@@ -307,7 +307,7 @@ export default function People() {
 
       {/* Edit Roles Modal */}
       {editingRoles && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold">Edit Functional Roles</h2>
@@ -364,7 +364,7 @@ export default function People() {
 
       {/* Invite Modal */}
       {showInvite && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
             <h2 className="text-lg font-bold mb-4">Invite Team Member</h2>
             <input

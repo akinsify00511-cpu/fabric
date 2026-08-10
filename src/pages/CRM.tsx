@@ -394,7 +394,7 @@ export default function CRM() {
       )}
 
       {showAddDeal && (
-        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}>
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Add New Deal</h3>
@@ -422,7 +422,7 @@ export default function CRM() {
       )}
 
       {showAddContact && (
-        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}>
           <div className="bg-white rounded-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Add New Contact</h3>
@@ -443,7 +443,7 @@ export default function CRM() {
       )}
 
       {editingDeal && (
-        <div className="fixed inset-0 bg-black/100 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}>
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}>
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="p-4 border-b border-black/10 flex items-center justify-between">
               <h3 className="font-bold text-lg">Edit Deal</h3>

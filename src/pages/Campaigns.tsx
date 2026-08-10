@@ -450,7 +450,7 @@ export default function Campaigns() {
 
       {/* Builder Modal */}
       {showBuilder && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
             <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
               <h2 className="text-lg font-semibold">New Campaign</h2>

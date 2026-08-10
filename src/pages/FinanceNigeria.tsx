@@ -571,7 +571,7 @@ export default function FinanceNigeria() {
 
       {/* New Invoice Modal */}
       {showNewInvoice && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">New Invoice</h2>
@@ -724,7 +724,7 @@ export default function FinanceNigeria() {
 
       {/* Record Payment Modal */}
       {showRecordPayment && selectedInvoice && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Record Payment</h2>
@@ -813,7 +813,7 @@ export default function FinanceNigeria() {
 
       {/* Invoice Detail Modal */}
       {selectedInvoice && !showRecordPayment && (
-        <div className="fixed inset-0 bg-black/100 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 pt-12 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-2xl mb-8">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <div>

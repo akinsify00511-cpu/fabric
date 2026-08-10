@@ -939,7 +939,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
 
       {/* Payslip Detail Modal */}
       {selectedPayslip && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-auto">
             <div className="p-4 border-b border-black/[0.06] flex items-center justify-between">
               <h3 className="font-semibold">Payslip - {new Date(selectedPayslip.pay_period).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</h3>

@@ -276,7 +276,7 @@ export function AchievementCelebration({ achievement, onDismiss }: { achievement
   }, [onDismiss])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-3xl p-8 max-w-sm w-full mx-4 text-center animate-in zoom-in">
         <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
           <Award size={40} className="text-white" />

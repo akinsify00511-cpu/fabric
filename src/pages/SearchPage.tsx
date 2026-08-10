@@ -455,7 +455,7 @@ export default function SearchPage() {
 
       {/* Save Search Modal */}
       {showSaveModal && (
-        <div className="fixed inset-0 z-50 bg-black/100 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
             <h2 className="text-lg font-bold mb-4">Save Search</h2>
             <input

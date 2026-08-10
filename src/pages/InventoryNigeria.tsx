@@ -484,7 +484,7 @@ export default function InventoryNigeria() {
 
       {/* New Item Modal */}
       {showNewItem && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Add Inventory Item</h2>
@@ -624,7 +624,7 @@ export default function InventoryNigeria() {
 
       {/* Movement Modal */}
       {showMovement && selectedItem && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <h2 className="font-semibold">Record Movement</h2>

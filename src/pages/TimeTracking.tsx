@@ -414,7 +414,7 @@ export default function TimeTracking() {
 
       {/* Manual Entry Modal */}
       {showManualModal && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Add Manual Entry</h2>
@@ -482,7 +482,7 @@ export default function TimeTracking() {
 
       {/* Time Off Modal */}
       {showTimeOffModal && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Request Time Off</h2>
