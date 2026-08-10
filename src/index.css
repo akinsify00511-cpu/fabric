@@ -47,6 +47,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Form element base: ensure readable text color on white surfaces even
+   when no Tailwind text-color class is present (prevents white-on-white
+   inheritance bugs). Explicit utility classes still override these. */
+input, textarea, select {
+  color: var(--av-text);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--av-text-muted);
+}
+select:invalid { color: var(--av-text-muted); }
+
 /* Numeric class for big numbers */
 .num {
   font-family: var(--av-font-numeric);

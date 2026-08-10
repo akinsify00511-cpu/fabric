@@ -63,6 +63,12 @@ export default function Monitoring() {
   const [activeTab, setActiveTab] = useState<'overview' | 'monitors' | 'incidents' | 'heartbeats'>('overview')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [overallStatus, setOverallStatus] = useState<'operational' | 'degraded' | 'down'>('operational')
+  const [newMonitor, setNewMonitor] = useState({
+    name: '',
+    monitor_type: 'http',
+    target_url: '',
+    check_interval: 60,
+  })
 
   useEffect(() => {
     loadData()
@@ -78,17 +84,17 @@ export default function Monitoring() {
       .eq('business_id', staff?.business_id)
       .order('name')
 
-    if (monitorData && monitorData.length > 0) {
-      setMonitors(monitorData)
-    } else {
-      // Demo data
-      setMonitors([
-        { id: '1', name: 'Main Website', monitor_type: 'http', target_url: 'https://avenize.riverwayse.com', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 145, uptime_percent: 99.98, is_active: true },
-        { id: '2', name: 'API Server', monitor_type: 'http', target_url: 'https://api.avenize.riverwayse.com', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 89, uptime_percent: 99.95, is_active: true },
-        { id: '3', name: 'Database', monitor_type: 'tcp', target_url: '', status: 'up', last_check_at: new Date().toISOString(), response_time_ms: 12, uptime_percent: 100, is_active: true },
-        { id: '4', name: 'Auth Service', monitor_type: 'http', target_url: 'https://auth.avenize.riverwayse.com', status: 'degraded', last_check_at: new Date().toISOString(), response_time_ms: 450, uptime_percent: 98.5, is_active: true },
-      ])
-    }
+    setMonitors((monitorData || []).map((m: any) => ({
+      id: m.id,
+      name: m.name,
+      monitor_type: m.monitor_type,
+      target_url: m.target_url || '',
+      status: m.status || 'unknown',
+      last_check_at: m.last_check_at || new Date().toISOString(),
+      response_time_ms: 0,
+      uptime_percent: 0,
+      is_active: m.is_active,
+    })))
 
     // Load incidents
     const { data: incidentData } = await supabase
@@ -97,23 +103,57 @@ export default function Monitoring() {
       .eq('business_id', staff?.business_id)
       .order('started_at', { ascending: false })
 
-    if (incidentData && incidentData.length > 0) {
-      setIncidents(incidentData)
-    } else {
-      setIncidents([
-        { id: '1', title: 'API response time degraded', severity: 'medium', status: 'investigating', started_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(), resolved_at: null, duration_seconds: 1800, affected_users: 0 },
-        { id: '2', title: 'Email delivery delays', severity: 'low', status: 'resolved', started_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), resolved_at: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(), duration_seconds: 14400, affected_users: 15 },
-      ])
-    }
+    setIncidents((incidentData || []).map((i: any) => ({
+      id: i.id,
+      title: i.title,
+      severity: i.severity,
+      status: i.status,
+      started_at: i.started_at,
+      resolved_at: i.resolved_at,
+      duration_seconds: i.resolved_at
+        ? Math.floor((new Date(i.resolved_at).getTime() - new Date(i.started_at).getTime()) / 1000)
+        : Math.floor((Date.now() - new Date(i.started_at).getTime()) / 1000),
+      affected_users: i.affected_users || 0,
+    })))
 
     // Load heartbeats
-    setHeartbeats([
-      { id: '1', name: 'Daily Reports Job', status: 'healthy', last_heartbeat_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), check_interval_seconds: 300 },
-      { id: '2', name: 'Email Digest Cron', status: 'healthy', last_heartbeat_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(), check_interval_seconds: 900 },
-      { id: '3', name: 'Data Sync Task', status: 'late', last_heartbeat_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(), check_interval_seconds: 300 },
-    ])
+    const { data: heartbeatData } = await supabase
+      .from('heartbeats')
+      .select('*')
+      .eq('business_id', staff?.business_id)
+      .order('name')
+
+    setHeartbeats((heartbeatData || []).map((h: any) => ({
+      id: h.id,
+      name: h.name,
+      status: h.status || 'healthy',
+      last_heartbeat_at: h.last_heartbeat_at || new Date().toISOString(),
+      check_interval_seconds: h.check_interval_seconds || 300,
+    })))
 
     setLoading(false)
+  }
+
+  async function createMonitor() {
+    if (!newMonitor.name.trim() || !newMonitor.target_url.trim()) {
+      showToast('Enter a name and target URL.', 'error')
+      return
+    }
+    const { error } = await supabase.from('monitors').insert({
+      name: newMonitor.name.trim(),
+      monitor_type: newMonitor.monitor_type,
+      target_url: newMonitor.target_url.trim(),
+      check_interval: Number(newMonitor.check_interval),
+      business_id: staff?.business_id,
+      created_by: staff?.id,
+      status: 'unknown',
+      is_active: true,
+    })
+    if (error) { showToast('Could not create the monitor.', 'error'); return }
+    showToast('Monitor added!', 'success')
+    setShowCreateModal(false)
+    setNewMonitor({ name: '', monitor_type: 'http', target_url: '', check_interval: 60 })
+    loadData()
   }
 
   const formatDuration = (seconds: number) => {
@@ -456,7 +496,7 @@ export default function Monitoring() {
 
       {/* Create Monitor Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/100 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
             <div className="p-6 border-b border-black/[0.06]">
               <h2 className="font-semibold">Add Monitor</h2>
@@ -465,13 +505,19 @@ export default function Monitoring() {
               <div>
                 <label className="text-sm font-medium block mb-1">Monitor Name</label>
                 <input
+                  value={newMonitor.name}
+                  onChange={(e) => setNewMonitor({ ...newMonitor, name: e.target.value })}
                   placeholder="API Server"
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                 />
               </div>
               <div>
                 <label className="text-sm font-medium block mb-1">Monitor Type</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-black/10">
+                <select
+                  value={newMonitor.monitor_type}
+                  onChange={(e) => setNewMonitor({ ...newMonitor, monitor_type: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                >
                   <option value="http">HTTP(s) - Website/API</option>
                   <option value="tcp">TCP - Server</option>
                   <option value="ping">Ping</option>
@@ -482,17 +528,23 @@ export default function Monitoring() {
               <div>
                 <label className="text-sm font-medium block mb-1">Target URL</label>
                 <input
+                  value={newMonitor.target_url}
+                  onChange={(e) => setNewMonitor({ ...newMonitor, target_url: e.target.value })}
                   placeholder="https://api.example.com/health"
                   className="w-full px-4 py-3 rounded-xl border border-black/10"
                 />
               </div>
               <div>
                 <label className="text-sm font-medium block mb-1">Check Interval</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-black/10">
-                  <option value="30">Every 30 seconds</option>
-                  <option value="60">Every minute</option>
-                  <option value="300">Every 5 minutes</option>
-                  <option value="600">Every 10 minutes</option>
+                <select
+                  value={newMonitor.check_interval}
+                  onChange={(e) => setNewMonitor({ ...newMonitor, check_interval: Number(e.target.value) })}
+                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                >
+                  <option value={30}>Every 30 seconds</option>
+                  <option value={60}>Every minute</option>
+                  <option value={300}>Every 5 minutes</option>
+                  <option value={600}>Every 10 minutes</option>
                 </select>
               </div>
             </div>
@@ -500,7 +552,7 @@ export default function Monitoring() {
               <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
                 Cancel
               </button>
-              <button onClick={() => { setShowCreateModal(false); showToast('Monitor added!', 'success'); }} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">
+              <button onClick={createMonitor} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">
                 Add Monitor
               </button>
             </div>

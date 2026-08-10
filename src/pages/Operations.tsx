@@ -459,7 +459,16 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
 function SOPsTab({ businessId }: { businessId?: string }) {
   const [sops, setSOPs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const { showToast } = useToast()
+
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    category: 'operations',
+    status: 'draft',
+    version: '1.0',
+  })
 
   useEffect(() => {
     loadSOPs()
@@ -470,6 +479,19 @@ function SOPsTab({ businessId }: { businessId?: string }) {
     const { data } = await supabase.from('standard_procedures').select('*').eq('business_id', businessId).order('created_at', { ascending: false })
     setSOPs(data || [])
     setLoading(false)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const { error } = await supabase.from('standard_procedures').insert({
+      ...form,
+      business_id: businessId,
+    })
+    if (error) { showToast('Could not create the SOP.', 'error'); return }
+    showToast('SOP created!', 'success')
+    setShowForm(false)
+    setForm({ title: '', description: '', category: 'operations', status: 'draft', version: '1.0' })
+    loadSOPs()
   }
 
   const statusColors: Record<string, string> = {
@@ -488,10 +510,58 @@ function SOPsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Standard Operating Procedures</h2>
-        <button onClick={() => showToast('SOP creation coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> New SOP
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <input
+            type="text"
+            placeholder="SOP Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            required
+          />
+          <textarea
+            placeholder="Describe this procedure..."
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            rows={3}
+          />
+          <div className="grid grid-cols-3 gap-3">
+            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="hr">HR</option>
+              <option value="finance">Finance</option>
+              <option value="operations">Operations</option>
+              <option value="sales">Sales</option>
+              <option value="it">IT</option>
+              <option value="safety">Safety</option>
+              <option value="compliance">Compliance</option>
+              <option value="other">Other</option>
+            </select>
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="draft">Draft</option>
+              <option value="review">Review</option>
+              <option value="approved">Approved</option>
+              <option value="active">Active</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Version"
+              value={form.version}
+              onChange={(e) => setForm({ ...form, version: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+          </div>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white">
+            Create SOP
+          </button>
+        </form>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
@@ -532,7 +602,15 @@ function SOPsTab({ businessId }: { businessId?: string }) {
 function WorkflowsTab({ businessId }: { businessId?: string }) {
   const [workflows, setWorkflows] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const { showToast } = useToast()
+
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    workflow_type: 'custom',
+    is_active: true,
+  })
 
   useEffect(() => {
     loadWorkflows()
@@ -545,6 +623,20 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const { error } = await supabase.from('process_workflows').insert({
+      ...form,
+      business_id: businessId,
+      steps: [],
+    })
+    if (error) { showToast('Could not create the workflow.', 'error'); return }
+    showToast('Workflow created!', 'success')
+    setShowForm(false)
+    setForm({ name: '', description: '', workflow_type: 'custom', is_active: true })
+    loadWorkflows()
+  }
+
   const typeIcons: Record<string, any> = {
     approval: CheckCircle2, onboarding: Users, offboarding: User, purchase: ScrollText, leave: Calendar, reimbursement: ScrollText, escalation: AlertTriangle, incident: AlertCircle, custom: GitBranch,
   }
@@ -553,10 +645,50 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Process Workflows</h2>
-        <button onClick={() => showToast('Workflow builder coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> New Workflow
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <input
+            type="text"
+            placeholder="Workflow Name"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            required
+          />
+          <textarea
+            placeholder="Describe when this workflow runs..."
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            rows={3}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <select value={form.workflow_type} onChange={(e) => setForm({ ...form, workflow_type: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="approval">Approval</option>
+              <option value="onboarding">Onboarding</option>
+              <option value="offboarding">Offboarding</option>
+              <option value="purchase">Purchase</option>
+              <option value="leave">Leave</option>
+              <option value="reimbursement">Reimbursement</option>
+              <option value="escalation">Escalation</option>
+              <option value="incident">Incident</option>
+              <option value="custom">Custom</option>
+            </select>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} className="rounded" />
+              Active
+            </label>
+          </div>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white">
+            Create Workflow
+          </button>
+        </form>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
@@ -597,7 +729,18 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
 function ComplianceTab({ businessId }: { businessId?: string }) {
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const { showToast } = useToast()
+
+  const [form, setForm] = useState({
+    requirement: '',
+    regulation: '',
+    compliance_type: 'other',
+    frequency: 'annually',
+    due_date: '',
+    status: 'pending',
+    notes: '',
+  })
 
   useEffect(() => {
     loadItems()
@@ -608,6 +751,20 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
     const { data } = await supabase.from('compliance_items').select('*').eq('business_id', businessId).order('due_date', { ascending: true })
     setItems(data || [])
     setLoading(false)
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const { error } = await supabase.from('compliance_items').insert({
+      ...form,
+      business_id: businessId,
+      due_date: form.due_date || null,
+    })
+    if (error) { showToast('Could not create the compliance item.', 'error'); return }
+    showToast('Compliance item added!', 'success')
+    setShowForm(false)
+    setForm({ requirement: '', regulation: '', compliance_type: 'other', frequency: 'annually', due_date: '', status: 'pending', notes: '' })
+    loadItems()
   }
 
   const statusColors: Record<string, string> = {
@@ -621,10 +778,67 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Compliance Tracking</h2>
-        <button onClick={() => showToast('Add compliance item coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Add Requirement
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <input
+            type="text"
+            placeholder="Compliance requirement"
+            value={form.requirement}
+            onChange={(e) => setForm({ ...form, requirement: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            required
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              placeholder="Regulation (e.g. NDPR, FIRS)"
+              value={form.regulation}
+              onChange={(e) => setForm({ ...form, regulation: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+            <input
+              type="date"
+              value={form.due_date}
+              onChange={(e) => setForm({ ...form, due_date: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <select value={form.compliance_type} onChange={(e) => setForm({ ...form, compliance_type: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="data_protection">Data Protection</option>
+              <option value="tax">Tax</option>
+              <option value="labor">Labor</option>
+              <option value="safety">Safety</option>
+              <option value="environmental">Environmental</option>
+              <option value="financial">Financial</option>
+              <option value="other">Other</option>
+            </select>
+            <select value={form.frequency} onChange={(e) => setForm({ ...form, frequency: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="one_time">One Time</option>
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="quarterly">Quarterly</option>
+              <option value="annually">Annually</option>
+            </select>
+          </div>
+          <textarea
+            placeholder="Notes..."
+            value={form.notes}
+            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            rows={2}
+          />
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white">
+            Add Compliance Item
+          </button>
+        </form>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
@@ -665,7 +879,17 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
 function DocumentsTab({ businessId }: { businessId?: string }) {
   const [documents, setDocuments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const { showToast } = useToast()
+
+  const [form, setForm] = useState({
+    title: '',
+    document_type: 'policy',
+    description: '',
+    version: '1.0',
+  })
+  const [file, setFile] = useState<File | null>(null)
 
   useEffect(() => {
     loadDocuments()
@@ -678,13 +902,41 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!file) { showToast('Choose a file to upload.', 'error'); return }
+    setUploading(true)
+    const ext = file.name.split('.').pop()
+    const path = `${businessId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const { error: upErr } = await supabase.storage.from('documents').upload(path, file, { cacheControl: '3600' })
+    if (upErr) { showToast('Upload failed.', 'error'); setUploading(false); return }
+    const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(path)
+    const { error } = await supabase.from('company_documents').insert({
+      title: form.title,
+      document_type: form.document_type,
+      description: form.description,
+      version: form.version,
+      file_url: publicUrl,
+      file_size: file.size,
+      mime_type: file.type,
+      business_id: businessId,
+    })
+    setUploading(false)
+    if (error) { showToast('Could not save the document record.', 'error'); return }
+    showToast('Document uploaded!', 'success')
+    setShowForm(false)
+    setForm({ title: '', document_type: 'policy', description: '', version: '1.0' })
+    setFile(null)
+    loadDocuments()
+  }
+
   const typeColors: Record<string, string> = {
     policy: 'bg-red-500/10 text-red-500',
     procedure: 'bg-blue-500/10 text-blue-500',
     contract: 'bg-purple-500/10 text-purple-500',
     template: 'bg-amber-500/10 text-amber-500',
     report: 'bg-green-500/10 text-green-500',
-    legal: 'bg-white0/10 text-black',
+    legal: 'bg-black/10 text-black',
     training: 'bg-teal-500/10 text-teal-500',
     other: 'bg-black/10 text-black',
   }
@@ -693,10 +945,58 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Company Documents</h2>
-        <button onClick={() => showToast('Document upload coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Upload Document
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <input
+            type="text"
+            placeholder="Document Title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            required
+          />
+          <textarea
+            placeholder="Description..."
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            rows={2}
+          />
+          <div className="grid grid-cols-2 gap-3">
+            <select value={form.document_type} onChange={(e) => setForm({ ...form, document_type: e.target.value })} className="rounded-lg border border-black/10 px-3 py-2 text-sm">
+              <option value="policy">Policy</option>
+              <option value="procedure">Procedure</option>
+              <option value="contract">Contract</option>
+              <option value="template">Template</option>
+              <option value="report">Report</option>
+              <option value="legal">Legal</option>
+              <option value="training">Training</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Version"
+              value={form.version}
+              onChange={(e) => setForm({ ...form, version: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+          </div>
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="w-full text-sm"
+            required
+          />
+          <button type="submit" disabled={uploading} className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white disabled:opacity-50">
+            {uploading ? 'Uploading...' : 'Upload Document'}
+          </button>
+        </form>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
@@ -733,7 +1033,15 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
 function DepartmentsTab({ businessId }: { businessId?: string }) {
   const [departments, setDepartments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
   const { showToast } = useToast()
+
+  const [form, setForm] = useState({
+    name: '',
+    code: '',
+    description: '',
+    color: '#4285F4',
+  })
 
   useEffect(() => {
     loadDepartments()
@@ -746,14 +1054,68 @@ function DepartmentsTab({ businessId }: { businessId?: string }) {
     setLoading(false)
   }
 
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const { error } = await supabase.from('departments').insert({
+      ...form,
+      business_id: businessId,
+    })
+    if (error) { showToast('Could not create the department.', 'error'); return }
+    showToast('Department added!', 'success')
+    setShowForm(false)
+    setForm({ name: '', code: '', description: '', color: '#4285F4' })
+    loadDepartments()
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Departments</h2>
-        <button onClick={() => showToast('Department management coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-primary, #4285F4)] text-white text-sm">
           <Plus size={16} /> Add Department
         </button>
       </div>
+
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-black/[0.06] p-4 mb-4 space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              placeholder="Department Name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Code (e.g. ENG)"
+              value={form.code}
+              onChange={(e) => setForm({ ...form, code: e.target.value })}
+              className="rounded-lg border border-black/10 px-3 py-2 text-sm"
+            />
+          </div>
+          <textarea
+            placeholder="Description..."
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm"
+            rows={2}
+          />
+          <div className="flex items-center gap-2 text-sm">
+            <label className="text-black">Color</label>
+            <input
+              type="color"
+              value={form.color}
+              onChange={(e) => setForm({ ...form, color: e.target.value })}
+              className="w-8 h-8 rounded border border-black/10"
+            />
+          </div>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white">
+            Add Department
+          </button>
+        </form>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
