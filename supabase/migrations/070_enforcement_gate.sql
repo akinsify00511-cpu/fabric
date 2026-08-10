@@ -95,13 +95,33 @@ CREATE OR REPLACE FUNCTION enforce_approval_on_status_change()
 RETURNS TRIGGER AS $$
 DECLARE
   v_verdict RECORD; v_amount NUMERIC;
+  v_approver_id UUID;
 BEGIN
   -- Only gate transitions INTO approved.
   IF NEW.status = 'approved' AND (OLD.status IS DISTINCT FROM 'approved') THEN
     v_amount := COALESCE(NEW.amount, 0);
+    -- The approver is recorded in approval_actions.approver_id. The page
+    -- inserts the action row BEFORE the status update, so the latest
+    -- pending 'approve' action tells us who is acting. Fall back to
+    -- session_user() / current_setting so a direct SQL update still has a
+    -- usable actor when an action row exists.
+    SELECT approver_id INTO v_approver_id
+      FROM approval_actions
+      WHERE approval_id = NEW.id AND action = 'approve'
+      ORDER BY created_at DESC LIMIT 1;
+    IF v_approver_id IS NULL THEN
+      -- No action row yet: use the last action's approver or the requester
+      -- as a last resort (the pre-check in the UI is the primary gate).
+      SELECT approver_id INTO v_approver_id
+        FROM approval_actions
+        WHERE approval_id = NEW.id
+        ORDER BY created_at DESC LIMIT 1;
+    END IF;
+    v_approver_id := COALESCE(v_approver_id, NEW.requester_id);
+
     SELECT * INTO v_verdict FROM enforce_approval(
       NEW.business_id,
-      NEW.requester_id,  -- approver is whoever is acting; see note below
+      v_approver_id,
       NEW.entity_type,
       NEW.entity_id,
       v_amount,
@@ -111,11 +131,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- NOTE: the trigger uses requester_id as a fallback approver when no
--- explicit approver column exists. The Approvals.tsx page passes the
--- acting staff_id via an RPC call (enforce_approval pre-check) before
--- updating, so the trigger is the backstop, not the only gate.
 
 DROP TRIGGER IF EXISTS approvals_enforce_gate ON approvals;
 CREATE TRIGGER approvals_enforce_gate

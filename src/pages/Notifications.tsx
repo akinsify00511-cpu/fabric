@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Bell, Mail, Check, Save, RotateCcw, MessageSquare } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { supabase } from '../lib/supabase'
 
 interface NotificationPreferences {
   // In-app
@@ -75,20 +76,23 @@ export default function NotificationSettings() {
   async function loadPreferences() {
     if (!staff?.user_id) return
     setLoading(true)
-    
+
     try {
-      const { data } = await fetch(`/rest/v1/notification_preferences?user_id=eq.${staff.user_id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '',
-          'Authorization': `Bearer ${(import.meta as any).env?.VITE_SUPABASE_ANON_KEY || ''}`,
-        },
-      }).then(r => r.json())
-      
-      if (data && data.length > 0) {
+      // Use the supabase client so the request goes to the Supabase host
+      // with the user's session token (RLS). The previous fetch() used a
+      // relative /rest/v1/ URL that hit the SPA origin and the anon key as
+      // a Bearer, so it 404'd silently on Vercel.
+      const { data, error } = await supabase
+        .from('notification_preferences')
+        .select('*')
+        .eq('user_id', staff.user_id)
+        .maybeSingle()
+
+      if (error) throw error
+      if (data) {
         setPreferences({
           ...defaultPreferences,
-          ...data[0],
+          ...data,
         })
       }
     } catch (err) {
@@ -100,45 +104,26 @@ export default function NotificationSettings() {
   async function savePreferences() {
     if (!staff?.user_id) return
     setSaving(true)
-    
+
     try {
-      const response = await fetch(`/rest/v1/notification_preferences?user_id=eq.${staff.user_id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '',
-          'Authorization': `Bearer ${(import.meta as any).env?.VITE_SUPABASE_ANON_KEY || ''}`,
-          'Prefer': 'return=minimal',
-        },
-        body: JSON.stringify({
+      // upsert handles both insert (first save) and update (subsequent) in
+      // one round-trip, using the user_id unique constraint.
+      const { error } = await supabase
+        .from('notification_preferences')
+        .upsert({
+          user_id: staff.user_id,
           ...preferences,
           updated_at: new Date().toISOString(),
-        }),
-      })
+        }, { onConflict: 'user_id' })
 
-      if (response.ok) {
-        showToast('Preferences saved successfully!', 'success')
-      } else {
-        // Try inserting if not exists
-        await fetch(`/rest/v1/notification_preferences`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '',
-            'Authorization': `Bearer ${(import.meta as any).env?.VITE_SUPABASE_ANON_KEY || ''}`,
-          },
-          body: JSON.stringify({
-            user_id: staff.user_id,
-            ...preferences,
-          }),
-        })
-        showToast('Preferences saved!', 'success')
-      }
+      if (error) throw error
+      showToast('Preferences saved!', 'success')
     } catch (err) {
       console.error('Failed to save preferences:', err)
       showToast('Failed to save preferences', 'error')
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
   }
 
   function resetToDefaults() {

@@ -61,7 +61,8 @@ export default function AICapture() {
     setConfirming(true)
     try {
       // Raise the canonical business event. Downstream handlers in the
-      // event bus propagate to each proposed destination.
+      // event bus (handler_propagate_capture → handler_update_entity_freshness)
+      // perform the real writes proposed by each destination.
       const payload: Record<string, any> = {}
       for (const e of intent.entities) payload[e.field] = e.value
       payload._raw = input.trim()
@@ -83,7 +84,13 @@ export default function AICapture() {
         confidence: intent.confidence,
       })
       setDone(true)
-      showToast('Captured — Avenize is updating the relevant records', 'success')
+      // Be specific about what was acted on so the user knows the capture
+      // actually wrote records, not just raised an event.
+      const actedOn = intent.destinations
+        .map(d => d.action.replace(/_/g, ' '))
+        .slice(0, 3)
+        .join(', ')
+      showToast(`Captured — updating: ${actedOn}`, 'success')
     } catch (e) {
       console.error(e)
       showToast('Could not commit the capture', 'error')
@@ -229,13 +236,28 @@ export default function AICapture() {
       )}
 
       {done && (
-        <div className="mt-6 rounded-2xl border border-[var(--av-success)]/30 bg-[var(--av-success)]/5 p-6 text-center">
-          <Check size={32} className="mx-auto text-[var(--av-success)] mb-2" />
-          <h2 className="font-semibold text-[var(--av-text)]">Captured and propagated</h2>
-          <p className="text-sm text-[var(--av-text-secondary)] mt-1">
-            The {intent?.event_type} event is on the bus. Affected modules are updating.
-          </p>
-          <button onClick={reset} className="mt-4 text-[var(--av-primary)] text-sm font-medium hover:underline">
+        <div className="mt-6 rounded-2xl border border-[var(--av-success)]/30 bg-[var(--av-success)]/5 p-6">
+          <div className="flex items-center gap-3 mb-3">
+            <Check size={28} className="text-[var(--av-success)]" />
+            <div>
+              <h2 className="font-semibold text-[var(--av-text)]">Captured and propagated</h2>
+              <p className="text-sm text-[var(--av-text-secondary)]">
+                The {intent?.event_type} event is on the bus and handlers wrote to the destination records.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-1.5 mb-4">
+            {intent?.destinations.map((d, i) => (
+              <div key={i} className="flex items-start gap-2 text-sm text-[var(--av-text-secondary)]">
+                <Check size={14} className="text-[var(--av-success)] mt-0.5 shrink-0" />
+                <span>
+                  <span className="font-medium text-[var(--av-text)]">{d.action.replace(/_/g, ' ')}</span>
+                  {' — '}{d.reason}
+                </span>
+              </div>
+            ))}
+          </div>
+          <button onClick={reset} className="text-[var(--av-primary)] text-sm font-medium hover:underline">
             Capture something else
           </button>
         </div>

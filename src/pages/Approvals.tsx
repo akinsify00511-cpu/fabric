@@ -82,6 +82,19 @@ export default function Approvals() {
         return
       }
 
+      // Record the decision BEFORE the status update so the DB enforcement
+      // trigger (enforce_approval_on_status_change) can read approver_id
+      // from approval_actions. The pre-check above already validated; the
+      // trigger is the backstop.
+      const { error: actionError } = await supabase.from('approval_actions').insert({
+        approval_id: request.id,
+        step: request.current_level,
+        approver_id: staff?.id,
+        action: 'approve',
+        comment: actionComment,
+      })
+      if (actionError) throw actionError
+
       const { error } = await supabase
         .from('approval_requests')
         .update({
@@ -91,15 +104,6 @@ export default function Approvals() {
         .eq('id', request.id)
 
       if (error) throw error
-
-      // Record decision in the approvals engine's action log
-      await supabase.from('approval_actions').insert({
-        approval_id: request.id,
-        step: request.current_level,
-        approver_id: staff?.id,
-        action: 'approve',
-        comment: actionComment,
-      })
 
       // Start/advance the action protocol run for this approval (§12).
       await supabase.rpc('start_approval_protocol', {
