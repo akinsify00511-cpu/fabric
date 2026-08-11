@@ -292,3 +292,41 @@ const BRAND = {
 - **Cache hygiene:** `useModuleAccess` caches per `business_id:module` so the route guard + sidebar don't each re-call. `clearModuleAccessCache()` called on signOut (dynamic import to avoid a circular dep with AuthContext).
 - **Verified:** `tsc -b` clean, `vite build` succeeds, 61 unit tests pass. New E2E: `tests/ux/module-gate.spec.ts` (typing a not-ready module URL doesn't 500). Files: `supabase/migrations/20260101000005_two_flag_module_gate.sql`, `src/lib/useModuleAccess.ts`, `src/components/RequireModule.tsx`, modified `src/App.tsx` (mg helper + route wrapping), `src/components/Shell.tsx` (ROUTE_MODULE map + itemVisible), `src/lib/AuthContext.tsx` (cache clear on signOut).
 - **Deploy note:** migration `20260101000005` must be applied to Supabase before the gate is effective. Before that, `can_access_module` errors → the gate treats it as "not ready" → most modules hidden (safe default). Apply the migration first.
+
+## Session 9 (2026-08-10): Block A+ verification + applied intelligence + usage telemetry
+
+Triggered by a rigorous roadmap review. The reviewer's core directive: *"force every §13.1 'Exists' module through the §9 production bar before building anything new"* and *"treat the generative AI Copilot as Phase 3 — build Applied Intelligence (deterministic, Postgres-only) now instead."* Verified the reviewer's factual claims, then executed.
+
+### Verified (the reviewer was right)
+- `src/lib/features.ts` exists and says exactly what was reported: ✅ production = 2FA + Nigeria Mode; 🟡 beta = webhooks + automations (need pg_net/pg_cron); 🔴 rest not started. Confirmed.
+- AI Copilot = 🔴 "coming_soon, needs LLM integration" — confirms zero of the intelligence layer exists. Confirmed.
+- Dual RBAC: `permissions.ts` (TS core roles = RLS security boundary) vs `functional_roles` tables (UX layer via useToolAccess). Self-documented as "TWO-SYSTEM ARCHITECTURE." Confirmed.
+- **Triple source of truth found (worse than the dual the reviewer named):** "can this user see X?" was answered by (1) `features.ts` hardcoded client object, (2) `module_status` DB table [Session 8 gate], (3) `PLAN_ENTITLEMENTS` hardcoded constant in `useToolAccess.ts` that **defaulted every non-privileged user to the Professional tool set regardless of their actual plan**. Source #3 was the dangerous one — a free-tier user got pro tools.
+
+### A+ work done (the must-be-first work)
+1. **Reconciled source #3 → DB.** `useToolAccess` now loads the business's actual `business_entitlements.features` JSONB and derives the tool set via `derivePlanTools()` — the SAME source `has_feature()` and `can_access_module()` read. The hardcoded `PLAN_ENTITLEMENTS` is gone. A free-tier user now sees only `BASE_TOOLS` (dashboard, crm, people, tasks, settings, approvals, calendar, events, meetings), not the pro set.
+2. **§9 production verification — 0 gaps.** Wrote a dependency audit: every table/RPC referenced by each of the 19 `module_status.ready=true` modules was matched against `CREATE TABLE`/`CREATE FUNCTION` in migrations. **Zero references to undefined tables/RPCs.** Inventory verified separately (uses chained `.from()` calls). All 19 ready modules genuinely persist end-to-end. The "exists ≠ production" gap from the audit is CLOSED for ready modules.
+3. **Named bugs:** the `payments` route collision the audit flagged is **stale/resolved** — only one `payments` route exists now (properly gated). Found a `settings/profile` duplicate path but it's in different route trees (top-level redirect vs nested `/app/`) — harmless. No action needed.
+4. **`PRODUCTION_REGISTER.md` produced** — the verified §9 register artifact, cross-referencing features.ts + module_status + the audit result. This is the "documentation exercise that removes the single biggest risk."
+
+### Applied Intelligence layer (deterministic, no LLM) — the tier to sell before the copilot
+Split the addenda's "Intelligence" into applied vs generative per the roadmap. Built the applied half as pure SQL RPCs (migration `20260101000006`):
+- `intelligence_process_bottlenecks` — stagnant deals (>14d) + stale tasks (>7d), severity-tiered.
+- `intelligence_risk_anomalies` — expense >2x historical avg, invoices to <24h-old contacts, payments reversed within 24h.
+- `intelligence_capacity` — staff workload vs business mean, labeled over/under-utilized.
+- `intelligence_early_warnings` — 3+ invoices overdue >30d, budgets at 90% consumed.
+- `intelligence_sales_performance` — sales targets vs closed-won attainment.
+- `intelligence_cashflow_forecast` — 90-day moving average projection (classical time-series; the narrative "why" stays with the generative copilot, Phase 3).
+All SECURITY DEFINER, STABLE, granted to authenticated. No external API, no per-call cost, no hallucination surface.
+
+### Usage telemetry (infrastructure, not a feature)
+- `usage_events` table (migration `20260101000007`) — append-only, RLS lets a business read/write only its own. `usage_module_adoption(business_id)` RPC for per-business adoption; `usage_cross_business_adoption()` for the builder dashboard (service-role only).
+- `useUsageTracking` hook wired into Shell.tsx — logs view events fire-and-forget on every route change (never blocks UX). Purpose: empirical "which of the 61 L2 modules actually get touched" data for sprint decisions — independent of entitlements.
+
+### Verified: tsc clean, build succeeds, 61 tests pass. Files: modified `src/lib/useToolAccess.ts`, `src/components/Shell.tsx`; new `src/lib/useUsageTracking.ts`, `PRODUCTION_REGISTER.md`, migrations `20260101000006` + `20260101000007`.
+
+### Phase ordering locked in
+- **Phase 1 (done):** A+ verification + RBAC reconciliation + production register.
+- **Phase 1 (done):** Applied Intelligence (deterministic) — sellable Intelligence tier, no LLM dependency.
+- **Phase 1 (done):** Usage telemetry infra.
+- **NOT started, deferred to Phase 3:** Generative AI Copilot — only after core ERP modules have real paying customers and real transaction history. Scoped to answer only from verified data (Fact-vs-Inference protocol). Do NOT build this on partially-fake modules.

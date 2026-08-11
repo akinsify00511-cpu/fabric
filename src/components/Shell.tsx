@@ -15,6 +15,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
 import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
+import { useUsageTracking } from '../lib/useUsageTracking'
 import { useLocale } from '../lib/LocaleContext'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
@@ -212,6 +213,7 @@ export default function Shell() {
   const { branding } = useBranding()
   const { tools: accessibleTools, loading } = useAccessibleTools()
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
+  useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
   const { t } = useLocale()
   const location = useLocation()
   const navigate = useNavigate()

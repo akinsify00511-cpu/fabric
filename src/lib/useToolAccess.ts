@@ -44,15 +44,40 @@ export const TOOLS = [
 
 export type ToolKey = typeof TOOLS[number]['key']
 
-// Plan-based entitlements (simplified - in production, check subscription tier)
-const PLAN_ENTITLEMENTS: Record<string, ToolKey[]> = {
-  starter: ['dashboard', 'crm', 'people', 'tasks', 'reports', 'settings'],
-  professional: ['dashboard', 'crm', 'projects', 'finance', 'quotes', 'payments', 
-                 'accounting', 'people', 'inventory', 'reports', 'tasks', 'campaigns',
-                 'social', 'automations', 'tickets', 'chat', 'approvals', 'requisitions',
-                 'meetings', 'knowledge', 'calendar', 'events', 'time-tracking', 'cashflow',
-                 'settings', 'integrations', 'api', 'branding'],
-  enterprise: TOOLS.map(t => t.key), // All tools
+// Plan-based entitlements are sourced from the DATABASE (business_entitlements.features
+// JSONB, the same source has_feature() and can_access_module() read), NOT from a
+// hardcoded constant. Previously a hardcoded PLAN_ENTITLEMENTS defaulted every
+// non-privileged user to the 'professional' tool set regardless of their actual
+// plan — a parallel source of truth that could contradict the DB. The mapping
+// below only translates feature-flag keys into the tool keys the nav uses; the
+// entitlement decision itself is the DB's.
+const FEATURE_TO_TOOLS: Record<string, ToolKey[]> = {
+  crm: ['crm'], inventory: ['inventory'], projects: ['projects'],
+  time_tracking: ['time-tracking'], invoicing: ['payments', 'accounting'],
+  multi_currency: ['cashflow'], automations: ['automations'],
+  campaigns: ['campaigns'], social_media: ['social'],
+  support_tickets: ['tickets'], live_chat: ['chat'],
+  knowledge_base: ['knowledge'], recognition: ['merit', 'social-recognition'],
+  api_access: ['api'], custom_branding: ['branding'],
+  advanced_analytics: ['reports'],
+}
+
+// Tools every plan (incl. free) gets — core chrome.
+const BASE_TOOLS: ToolKey[] = ['dashboard', 'crm', 'people', 'tasks', 'settings', 'approvals', 'calendar', 'events', 'meetings']
+
+// Derive the tool set a business is entitled to from its business_entitlements
+// row (plan + features JSONB) — the single DB source of truth, the same one
+// has_feature() and can_access_module() consult. Returns BASE_TOOLS plus every
+// tool mapped from a feature flag that is true for this business.
+function derivePlanTools(features: Record<string, boolean> | null | undefined): Set<ToolKey> {
+  const set = new Set<ToolKey>(BASE_TOOLS)
+  if (!features) return set
+  for (const [feature, on] of Object.entries(features)) {
+    if (on && feature in FEATURE_TO_TOOLS) {
+      for (const t of FEATURE_TO_TOOLS[feature]) set.add(t)
+    }
+  }
+  return set
 }
 
 // Staff role that bypasses functional role filtering (sees everything)
@@ -93,10 +118,16 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
     }
 
     try {
-      // Default plan for now (all tools available until subscription tier is implemented)
-      const planTools = PLAN_ENTITLEMENTS.professional
-      
-      if (planTools.includes(tool)) {
+      // Load the business's ACTUAL entitlements from the DB (single source of
+      // truth) instead of defaulting to the hardcoded professional set.
+      const { data: ent } = await supabase
+        .from('business_entitlements')
+        .select('features')
+        .eq('business_id', staff.business_id)
+        .single()
+      const planTools = derivePlanTools(ent?.features as any)
+
+      if (planTools.has(tool)) {
         // Plan allows this tool - check functional role
         const { data: roleData, error: roleError } = await supabase
           .from('staff_functional_roles')
@@ -176,37 +207,44 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
       return
     }
 
-    // Get plan tools - default to professional for now
-    const planTools = PLAN_ENTITLEMENTS.professional
+    // Load the business's ACTUAL entitlements from the DB (single source of
+    // truth) before resolving functional-role tools.
+    ;(async () => {
+      const { data: ent } = await supabase
+        .from('business_entitlements')
+        .select('features')
+        .eq('business_id', staff.business_id)
+        .single()
+      const planTools = derivePlanTools(ent?.features as any)
 
-    // Get functional role tools
-    supabase
-      .from('staff_functional_roles')
-      .select(`
-        functional_roles (
-          functional_role_tools (tool_key)
-        )
-      `)
-      .eq('staff_id', staff.id)
-      .then(({ data, error }) => {
-        if (error) {
-          // Fall back to plan tools
-          setTools(planTools)
-        } else {
-          const allowedTools = new Set<string>(planTools)
-          for (const assignment of (data || []) as RoleToolAssignment[]) {
-            const roles = assignment.functional_roles || []
-            for (const role of roles) {
-              const frt = role.functional_role_tools || []
-              for (const t of frt) {
-                allowedTools.add(t.tool_key)
+      // Get functional role tools
+      supabase
+        .from('staff_functional_roles')
+        .select(`
+          functional_roles (
+            functional_role_tools (tool_key)
+          )
+        `)
+        .eq('staff_id', staff.id)
+        .then(({ data, error }) => {
+          if (error) {
+            setTools(Array.from(planTools))
+          } else {
+            const allowedTools = new Set<ToolKey>(planTools)
+            for (const assignment of (data || []) as RoleToolAssignment[]) {
+              const roles = assignment.functional_roles || []
+              for (const role of roles) {
+                const frt = role.functional_role_tools || []
+                for (const t of frt) {
+                  allowedTools.add(t.tool_key as ToolKey)
+                }
               }
             }
+            setTools(Array.from(allowedTools))
           }
-          setTools(Array.from(allowedTools) as ToolKey[])
-        }
-        setLoading(false)
-      })
+          setLoading(false)
+        })
+    })()
   }, [staff])
 
   return { tools, loading }
