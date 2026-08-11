@@ -14,6 +14,8 @@ import CommandPalette, { useGlobalCommands, useCommandPalette } from './componen
 import { useKeyboardShortcuts, GLOBAL_SHORTCUTS } from './hooks/useKeyboardShortcuts'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { PageSkeleton } from './components/Skeleton'
+import RequireModule from './components/RequireModule'
+import type { ModuleKey } from './lib/useModuleAccess'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcuts'
 
 // Initialize QC system on app load
@@ -226,6 +228,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   )
 }
 
+// Module gate helper: wraps a route element in <RequireModule> so the
+// server-side can_access_module check is enforced at the route layer, not
+// just in the sidebar. A user can't reach a gated module by typing the URL.
+function mg(module: ModuleKey, el: React.ReactElement) {
+  return <RequireModule module={module}>{el}</RequireModule>
+}
+
 function AppRoutes() {
   // Backward-compatible redirects: old flat paths → new /app/... paths
   const appRoutes = [
@@ -279,85 +288,85 @@ function AppRoutes() {
           }
         >
         <Route index element={<CompanyHome />} />
-        <Route path="crm" element={<CRM />} />
-        <Route path="leads" element={<Leads />} />
-        <Route path="projects" element={<ProjectsNigeria />} />
-        <Route path="finance" element={<FinanceCenter />} />
-        <Route path="quotes" element={<Quotes />} />
-        <Route path="payments" element={<Payments />} />
-        <Route path="hr" element={<HumanResources />} />
-        <Route path="recruitment" element={<Recruitment />} />
-        <Route path="appraisals" element={<Appraisals />} />
-        <Route path="payroll" element={<Payroll />} />
-        <Route path="operations" element={<Operations />} />
-        <Route path="sales-performance" element={<SalesPerformance />} />
-        <Route path="logistics" element={<Logistics />} />
-        <Route path="equipment" element={<Equipment />} />
-        <Route path="lab" element={<LabQC />} />
-        <Route path="inventory" element={<InventoryNigeria />} />
-        <Route path="reports" element={<Reports />} />
+        <Route path="crm" element={mg('crm', <CRM />)} />
+        <Route path="leads" element={mg('crm', <Leads />)} />
+        <Route path="projects" element={mg('projects', <ProjectsNigeria />)} />
+        <Route path="finance" element={mg('finance', <FinanceCenter />)} />
+        <Route path="quotes" element={mg('crm', <Quotes />)} />
+        <Route path="payments" element={mg('finance', <Payments />)} />
+        <Route path="hr" element={mg('hr', <HumanResources />)} />
+        <Route path="recruitment" element={mg('hr', <Recruitment />)} />
+        <Route path="appraisals" element={mg('hr', <Appraisals />)} />
+        <Route path="payroll" element={mg('finance', <Payroll />)} />
+        <Route path="operations" element={mg('projects', <Operations />)} />
+        <Route path="sales-performance" element={mg('crm', <SalesPerformance />)} />
+        <Route path="logistics" element={mg('inventory', <Logistics />)} />
+        <Route path="equipment" element={mg('inventory', <Equipment />)} />
+        <Route path="lab" element={mg('inventory', <LabQC />)} />
+        <Route path="inventory" element={mg('inventory', <InventoryNigeria />)} />
+        <Route path="reports" element={mg('reports', <Reports />)} />
         <Route path="settings" element={<Settings />} />
         <Route path="settings/projects" element={<ProjectSettings />} />
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
         <Route path="settings/payments" element={<PaymentSettings />} />
         <Route path="settings/webhooks" element={<Webhooks />} />
-        <Route path="settings/api-keys" element={<APIKeys />} />
-        <Route path="properties" element={<Properties />} />
-        <Route path="property-owners" element={<PropertyOwners />} />
-        <Route path="property-sales" element={<PropertySales />} />
-        <Route path="leases" element={<LeaseManagement />} />
-        <Route path="maintenance" element={<MaintenanceRequests />} />
-        <Route path="signatures" element={<ElectronicSignatures />} />
-        <Route path="documents" element={<DocumentsHub />} />
-        <Route path="budgets" element={<Budgets />} />
+        <Route path="settings/api-keys" element={mg('api', <APIKeys />)} />
+        <Route path="properties" element={mg('crm', <Properties />)} />
+        <Route path="property-owners" element={mg('crm', <PropertyOwners />)} />
+        <Route path="property-sales" element={mg('crm', <PropertySales />)} />
+        <Route path="leases" element={mg('crm', <LeaseManagement />)} />
+        <Route path="maintenance" element={mg('inventory', <MaintenanceRequests />)} />
+        <Route path="signatures" element={mg('legal', <ElectronicSignatures />)} />
+        <Route path="documents" element={mg('knowledge', <DocumentsHub />)} />
+        <Route path="budgets" element={mg('finance', <Budgets />)} />
         <Route path="subscription" element={<Subscription />} />
         <Route path="premium" element={<Premium />} />
-        <Route path="staff/:staffId" element={<StaffProfile />} />
-        <Route path="infrastructure" element={<BusinessInfrastructure />} />
+        <Route path="staff/:staffId" element={mg('hr', <StaffProfile />)} />
+        <Route path="infrastructure" element={mg('inventory', <BusinessInfrastructure />)} />
         <Route path="home" element={<Dashboard />} />
         <Route path="capture" element={<AICapture />} />
         <Route path="observer" element={<ObserverView />} />
         <Route path="activity" element={<ObserverView />} />
-        <Route path="simulation" element={<Simulation />} />
-        <Route path="scenarios" element={<Simulation />} />
-        <Route path="intelligence" element={<IntelligenceHub />} />
-        <Route path="governance" element={<GovernanceHub />} />
-        <Route path="migration" element={<MigrationPipeline />} />
-        <Route path="vendor-portal" element={<VendorPortal />} />
-        <Route path="control" element={<ControlAuditHub />} />
-        <Route path="personas" element={<PersonaHub />} />
-        <Route path="cockpit" element={<ExecutiveCockpit />} />
-        <Route path="executive" element={<ExecutiveCockpit />} />
-        <Route path="wall" element={<CompanyWall />} />
-        <Route path="market" element={<MarketIndex />} />
-        <Route path="legal" element={<Legal />} />
-        <Route path="procurement" element={<Procurement />} />
-        <Route path="rfqs" element={<Procurement />} />
-        <Route path="memory" element={<OrganizationalMemory />} />
-        <Route path="reality-gap" element={<RealityGap />} />
-        <Route path="self-audit" element={<SelfAudit />} />
+        <Route path="simulation" element={mg('intelligence', <Simulation />)} />
+        <Route path="scenarios" element={mg('intelligence', <Simulation />)} />
+        <Route path="intelligence" element={mg('intelligence', <IntelligenceHub />)} />
+        <Route path="governance" element={mg('self_audit', <GovernanceHub />)} />
+        <Route path="migration" element={mg('inventory', <MigrationPipeline />)} />
+        <Route path="vendor-portal" element={mg('procurement', <VendorPortal />)} />
+        <Route path="control" element={mg('self_audit', <ControlAuditHub />)} />
+        <Route path="personas" element={mg('hr', <PersonaHub />)} />
+        <Route path="cockpit" element={mg('cockpit', <ExecutiveCockpit />)} />
+        <Route path="executive" element={mg('cockpit', <ExecutiveCockpit />)} />
+        <Route path="wall" element={mg('wall', <CompanyWall />)} />
+        <Route path="market" element={mg('market', <MarketIndex />)} />
+        <Route path="legal" element={mg('legal', <Legal />)} />
+        <Route path="procurement" element={mg('procurement', <Procurement />)} />
+        <Route path="rfqs" element={mg('procurement', <Procurement />)} />
+        <Route path="memory" element={mg('memory', <OrganizationalMemory />)} />
+        <Route path="reality-gap" element={mg('reality_gap', <RealityGap />)} />
+        <Route path="self-audit" element={mg('self_audit', <SelfAudit />)} />
         <Route path="more" element={<More />} />
-        <Route path="social" element={<Social />} />
-        <Route path="approvals" element={<Approvals />} />
-        <Route path="tasks" element={<Tasks />} />
-        <Route path="merit" element={<Merit />} />
-        <Route path="cashflow" element={<CashFlow />} />
-        <Route path="chat" element={<Chat />} />
-        <Route path="knowledge" element={<Knowledge />} />
-        <Route path="automations" element={<Automations />} />
-        <Route path="tickets" element={<Tickets />} />
-        <Route path="campaigns" element={<Campaigns />} />
-        <Route path="accounting" element={<Accounting />} />
+        <Route path="social" element={mg('crm', <Social />)} />
+        <Route path="approvals" element={mg('approvals', <Approvals />)} />
+        <Route path="tasks" element={mg('tasks', <Tasks />)} />
+        <Route path="merit" element={mg('hr', <Merit />)} />
+        <Route path="cashflow" element={mg('finance', <CashFlow />)} />
+        <Route path="chat" element={mg('chat', <Chat />)} />
+        <Route path="knowledge" element={mg('knowledge', <Knowledge />)} />
+        <Route path="automations" element={mg('automations', <Automations />)} />
+        <Route path="tickets" element={mg('tasks', <Tickets />)} />
+        <Route path="campaigns" element={mg('crm', <Campaigns />)} />
+        <Route path="accounting" element={mg('finance', <Accounting />)} />
         <Route path="branding" element={<BrandingSettings />} />
-        <Route path="security" element={<SecuritySettings />} />
-        <Route path="sso" element={<SSOSettings />} />
+        <Route path="security" element={mg('security', <SecuritySettings />)} />
+        <Route path="sso" element={mg('sso', <SSOSettings />)} />
         <Route path="integrations" element={<Integrations />} />
-        <Route path="sms" element={<SMSBroadcast />} />
-        <Route path="live-chat" element={<LiveChat />} />
-        <Route path="whatsapp" element={<WhatsAppIntegration />} />
-        <Route path="e-invoicing" element={<EInvoicing />} />
-        <Route path="api" element={<APISettings />} />
+        <Route path="sms" element={mg('finance', <SMSBroadcast />)} />
+        <Route path="live-chat" element={mg('chat', <LiveChat />)} />
+        <Route path="whatsapp" element={mg('chat', <WhatsAppIntegration />)} />
+        <Route path="e-invoicing" element={mg('finance', <EInvoicing />)} />
+        <Route path="api" element={mg('api', <APISettings />)} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />
         <Route path="requisitions" element={<Requisitions />} />

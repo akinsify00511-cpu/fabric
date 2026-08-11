@@ -136,6 +136,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     Sentry.setUser(null)
+    // Clear the per-business module-access cache so a different user signing
+    // in next doesn't inherit the previous business's gate results.
+    const { clearModuleAccessCache } = await import('./useModuleAccess')
+    clearModuleAccessCache()
     await supabase.auth.signOut()
   }
 

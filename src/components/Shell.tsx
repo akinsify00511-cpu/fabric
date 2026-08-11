@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
+import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
 import { useLocale } from '../lib/LocaleContext'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
@@ -43,6 +44,41 @@ const TOOL_KEY_MAP: Record<string, string> = {
 // Routes are unchanged — only the navigation is reorganized.
 type NavItem = { to: string; label: string; icon: typeof Home; toolKey?: string; end?: boolean }
 type NavGroup = { id: string; label: string; icon: typeof Home; items: NavItem[]; defaultOpen?: boolean }
+
+// Route → module gate. Drives the two-flag sidebar filter: a nav item only
+// shows when the business is entitled to the module AND the module is
+// ready (wired to real data). This MUST stay in sync with the mg() map in
+// App.tsx — both layers enforce the same server-side can_access_module.
+const ROUTE_MODULE: Record<string, ModuleKey> = {
+  '/app/cockpit': 'cockpit', '/app/executive': 'cockpit',
+  '/app/intelligence': 'intelligence', '/app/scenarios': 'intelligence',
+  '/app/simulation': 'intelligence', '/app/market': 'market',
+  '/app/wall': 'wall', '/app/legal': 'legal', '/app/procurement': 'procurement',
+  '/app/rfqs': 'procurement', '/app/vendor-portal': 'procurement',
+  '/app/memory': 'memory', '/app/reality-gap': 'reality_gap',
+  '/app/self-audit': 'self_audit', '/app/governance': 'self_audit',
+  '/app/control': 'self_audit', '/app/chat': 'chat', '/app/live-chat': 'chat',
+  '/app/whatsapp': 'chat', '/app/sms': 'chat',
+  '/app/crm': 'crm', '/app/leads': 'crm', '/app/quotes': 'crm',
+  '/app/properties': 'crm', '/app/property-owners': 'crm',
+  '/app/property-sales': 'crm', '/app/leases': 'crm', '/app/social': 'crm',
+  '/app/sales-performance': 'crm', '/app/signatures': 'legal',
+  '/app/finance': 'finance', '/app/payments': 'finance', '/app/payroll': 'finance',
+  '/app/budgets': 'finance', '/app/cashflow': 'finance', '/app/accounting': 'finance',
+  '/app/e-invoicing': 'finance',
+  '/app/hr': 'hr', '/app/recruitment': 'hr', '/app/appraisals': 'hr',
+  '/app/merit': 'hr', '/app/personas': 'hr', '/app/staff': 'hr',
+  '/app/projects': 'projects', '/app/operations': 'projects',
+  '/app/inventory': 'inventory', '/app/logistics': 'inventory',
+  '/app/equipment': 'inventory', '/app/lab': 'inventory',
+  '/app/maintenance': 'inventory', '/app/infrastructure': 'inventory',
+  '/app/migration': 'inventory', '/app/knowledge': 'knowledge',
+  '/app/documents': 'knowledge', '/app/approvals': 'approvals',
+  '/app/tasks': 'tasks', '/app/tickets': 'tasks', '/app/reports': 'reports',
+  '/app/automations': 'automations', '/app/calendar': 'calendar',
+  '/app/api': 'api', '/app/settings/api-keys': 'api', '/app/sso': 'sso',
+  '/app/security': 'security',
+}
 
 const NAV_GROUPS: NavGroup[] = [
   {
@@ -175,6 +211,7 @@ export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
   const { tools: accessibleTools, loading } = useAccessibleTools()
+  const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
   const { t } = useLocale()
   const location = useLocation()
   const navigate = useNavigate()
@@ -183,9 +220,25 @@ export default function Shell() {
 
   const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
 
-  const itemVisible = (item: NavItem) =>
-    loading || isPrivileged || !item.toolKey || item.toolKey === 'settings' ||
-    accessibleTools.includes(item.toolKey as any)
+  // Two independent gates ANDed:
+  //  (a) tool-role access (existing) — does this user's functional role see it?
+  //  (b) module gate (new)        — is the business entitled AND is it ready?
+  // A paying customer on a not-ready module still doesn't see it (readiness
+  // is the safety net); a ready module hidden by role still stays hidden.
+  const itemVisible = (item: NavItem) => {
+    // While either gate is loading, don't hide (prevents flash of empty nav).
+    if (loading || modulesLoading) return true
+    // Settings/capture/dashboard are always visible (core chrome).
+    if (!item.toolKey || item.toolKey === 'settings' || item.toolKey === 'dashboard') return true
+    // Role gate: privileged roles bypass; otherwise tool must be in role set.
+    const roleOk = isPrivileged || accessibleTools.includes(item.toolKey as any)
+    if (!roleOk) return false
+    // Module gate: if this route maps to a module, the business must be
+    // entitled AND the module must be ready.
+    const mod = ROUTE_MODULE[item.to]
+    if (!mod) return true
+    return isPrivileged || accessibleModules.has(mod)
+  }
 
   const groupHasActive = (group: NavGroup) =>
     group.items.some(i => location.pathname === i.to ||
