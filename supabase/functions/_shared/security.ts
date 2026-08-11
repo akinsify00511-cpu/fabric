@@ -61,7 +61,7 @@ export async function requireRole(req: Request, roles: string[]): Promise<AuthUs
   if (!roles.includes(user.role) && user.role !== 'owner') {
     throw new Response(JSON.stringify({ error: 'Forbidden' }), {
       status: 403,
-      headers: { ' 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' }
     })
   }
   return user

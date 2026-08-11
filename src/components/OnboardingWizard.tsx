@@ -48,9 +48,6 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const step = STEPS[currentStep]
 
   const markOnboardingComplete = async () => {
-    // Set localStorage for quick access
-    localStorage.setItem('avenize_onboarding_complete', 'true')
-    
     // Update staff record for persistence - save profile data too
     if (staff?.id) {
       await supabase
@@ -70,7 +67,6 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
       // Complete onboarding
       setLoading(true)
       await markOnboardingComplete()
-      await new Promise(resolve => setTimeout(resolve, 500)) // Simulate save
       setLoading(false)
       onComplete()
     } else {

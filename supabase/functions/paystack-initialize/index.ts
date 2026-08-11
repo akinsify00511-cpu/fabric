@@ -39,7 +39,37 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // SECURITY: Verify authentication — this endpoint uses the service role
+    // key (bypasses RLS), so we MUST authenticate the caller ourselves and
+    // scope all writes to the caller's own business_id. Without this, any
+    // anonymous user could initialize a Paystack transaction for another
+    // business's invoice (IDOR).
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return json({ error: "Missing authorization header" }, 401);
+    }
+
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const token = authHeader.substring(7);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return json({ error: "Unauthorized" }, 401);
+    }
+
+    // Resolve the caller's business_id from their staff record
+    const { data: staffData, error: staffError } = await supabase
+      .from("staff")
+      .select("business_id, role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (staffError || !staffData) {
+      return json({ error: "User not associated with a business" }, 403);
+    }
+
+    const callerBusinessId = staffData.business_id;
+
     const body = await req.json();
 
     let { invoice_id, business_id, amount_kobo, email, currency = "NGN" } = body;
@@ -56,6 +86,10 @@ Deno.serve(async (req) => {
       if (invoiceErr || !invoice) {
         return json({ error: "Invoice not found" }, 404);
       }
+      // SECURITY: the invoice must belong to the caller's business
+      if (invoice.business_id !== callerBusinessId) {
+        return json({ error: "Invoice not found" }, 404);
+      }
       if (invoice.status === "paid") {
         return json({ error: "Invoice already paid" }, 409);
       }
@@ -67,9 +101,13 @@ Deno.serve(async (req) => {
       amount_kobo = Math.round(Number(invoice.total) * 100);
     }
 
-    if (!business_id || !amount_kobo || !email) {
+    // SECURITY: for direct (non-invoice) requests, force business_id to the
+    // caller's own business — never trust a client-supplied business_id.
+    business_id = callerBusinessId;
+
+    if (!amount_kobo || !email) {
       return json(
-        { error: "business_id, amount_kobo and email are required (directly or via invoice_id)" },
+        { error: "amount_kobo and email are required (directly or via invoice_id)" },
         400
       );
     }

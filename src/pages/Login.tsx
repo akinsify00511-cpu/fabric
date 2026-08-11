@@ -70,6 +70,7 @@ export default function Login() {
         .eq('user_id', data.session.user.id)
         .maybeSingle()
       
+      setLoading(false)
       if (staffData?.business_id) {
         navigate('/app')
       } else {

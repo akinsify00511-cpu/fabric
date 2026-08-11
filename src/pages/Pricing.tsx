@@ -5,6 +5,7 @@
 
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../lib/AuthContext'
 import { 
   Check, ArrowRight, Sparkles, Users, Zap, Shield,
   CreditCard, Building2, Phone, MessageSquare
@@ -234,6 +235,7 @@ const WHY_PRICING = [
 // ============================================
 function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[0] | typeof YEARLY_PLANS[0]; isYearly?: boolean }) {
   const navigate = useNavigate()
+  const { session } = useAuth()
   const monthlyPlan = plan as typeof MONTHLY_PLANS[0]
   const yearlyPlan = plan as typeof YEARLY_PLANS[0]
   const paystackLink = isYearly ? yearlyPlan.paystackLink : monthlyPlan.paystackLink
@@ -242,8 +244,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
   const handleSelectPlan = () => {
     // Authenticated users go to the in-app subscription page (tracked checkout)
     // Non-authenticated users go to signup first
-    const hasSession = localStorage.getItem('avenize_onboarding_complete') === 'true'
-    if (hasSession) {
+    if (session) {
       navigate('/app/settings/subscription')
     } else {
       navigate('/signup')

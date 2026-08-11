@@ -188,24 +188,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />
   }
 
-  // Check if onboarding is complete via localStorage first (fast path)
-  const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-  
-  // If onboarding is complete in localStorage, allow access
-  if (localOnboarding === 'true') {
-    return (
-      <>
-        <TrialBanner />
-        <SarahChat />
-        <BetaFeedbackButton />
-        {children}
-      </>
-    )
-  }
-
   // User has a session - check staff record
   if (!staff) {
-    // No staff record and no local onboarding complete - send to onboarding
+    // No staff record - send to onboarding
     return <Navigate to="/onboarding" replace />
   }
 
@@ -215,9 +200,6 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   // User is fully authenticated and onboarded - show app
-  // Also save to localStorage for faster future checks
-  localStorage.setItem('avenize_onboarding_complete', 'true')
-  
   return (
     <>
       <TrialBanner />

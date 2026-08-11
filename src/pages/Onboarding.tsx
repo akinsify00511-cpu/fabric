@@ -60,28 +60,20 @@ export default function Onboarding() {
   // Check if already onboarded - redirect to app
   useEffect(() => {
     const checkOnboarding = async () => {
-      // Check localStorage first (fast path)
-      const localOnboarding = localStorage.getItem('avenize_onboarding_complete')
-      if (localOnboarding === 'true') {
-        navigate('/app', { replace: true })
-        return
-      }
-      
       // No session - stay on onboarding
       if (!session?.user.id) {
         return
       }
-      
-      // Check database for staff record
+
+      // Check database for staff record (authoritative — localStorage can be spoofed)
       try {
         const { data: staffData } = await supabase
           .from('staff')
           .select('onboarding_completed, business_id')
           .eq('user_id', session.user.id)
           .maybeSingle()
-        
+
         if (staffData?.business_id && staffData?.onboarding_completed) {
-          localStorage.setItem('avenize_onboarding_complete', 'true')
           navigate('/app', { replace: true })
         }
       } catch (err) {
@@ -158,7 +150,6 @@ export default function Onboarding() {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)
         localStorage.setItem('avenize_theme_text', selectedColor.previewText)
       }
-      localStorage.setItem('avenize_onboarding_complete', 'true')
       window.location.href = '/app'
       
     } catch (err: any) {
@@ -230,7 +221,6 @@ export default function Onboarding() {
     }
 
     // Complete!
-    localStorage.setItem('avenize_onboarding_complete', 'true')
     window.location.href = '/app'
   }
 
