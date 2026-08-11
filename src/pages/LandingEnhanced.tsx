@@ -103,6 +103,8 @@ const TASK_FEATURES = [
   { icon: MessageCircle, label: 'Comments', desc: 'Discuss tasks' },
 ]
 
+// Illustrative examples — not real customer quotes. Replace with verified
+// testimonials once real customers opt in. Avatars are generated, not photos.
 const TESTIMONIALS = [
   { name: 'Chinedu Okafor', role: 'CEO, TechStart Nigeria', business: 'Software Company - 25 staff', quote: 'Before Avenize, our sales team was managing leads in WhatsApp. Now everyone knows exactly where every deal stands. We closed 40% more deals last quarter!', rating: 5, highlight: '40% more deals' },
   { name: 'Amina Ibrahim', role: 'Founder, StyleBox', business: 'Fashion Brand - 12 staff', quote: 'I was terrified of invoicing. Avenize made it so simple. Now I send professional invoices in seconds and get paid faster.', rating: 5, highlight: 'Faster payments' },
@@ -111,7 +113,7 @@ const TESTIMONIALS = [
 
 const PRICING = [
   { name: 'Starter', price: '₦15,000', period: '/month flat', desc: 'Perfect for getting started', features: ['Core job & project tracking', 'Invoicing with VAT & WHT', 'Basic inventory (single location)', 'CRM basics', '5 team members'], seats: '1–5 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
-  { name: 'Team', price: '₦48,000', period: '/month', desc: 'For growing teams', features: ['Everything in Starter', 'Advanced CRM with AI insights', 'Department groups & tasks', 'Offline field sync', 'Priority support'], seats: '6–15 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
+  { name: 'Team', price: '₦48,000', period: '/month', desc: 'For growing teams', features: ['Everything in Starter', 'Advanced CRM with AI-assisted capture', 'Department groups & tasks', 'Offline field sync', 'Priority support'], seats: '6–15 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
   { name: 'Business', price: '₦112,000', period: '/month', desc: 'For scaling businesses', features: ['Everything in Team', 'Multi-location inventory', 'Client communication log', 'Advanced reporting', 'Custom integrations'], seats: '16–30 seats', cta: 'Start Free 7-Day Trial', popular: false, founding: true },
   { name: 'Pro', price: '₦186,000', period: '/month', desc: '50-staff sweet spot', features: ['Everything in Business', 'Full API access', 'Approval workflows', 'Dedicated account manager', 'Custom onboarding'], seats: '31–75 seats', cta: 'Start Free 7-Day Trial', popular: true, founding: true },
   { name: 'Scale', price: '₦380,000', period: '/month', desc: 'For enterprises', features: ['Everything in Pro', 'SSO & data residency', 'Priority support', 'Custom SLA', 'White-label options'], seats: '76+ seats', cta: 'Contact Sales', popular: false, founding: true },
@@ -213,7 +215,7 @@ function HeroSection() {
         {/* AI Feature Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-8" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>
           <Sparkles size={16} style={{ color: BRAND.amber }} />
-          <span className="font-medium">AI-Powered Insights included</span>
+          <span className="font-medium">AI-assisted capture included</span>
         </div>
         
         {/* Google-style search bar - THE ICONIC ELEMENT */}
@@ -253,7 +255,7 @@ function HeroSection() {
         </div>
         
         {/* Main headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-6 leading-tight">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-black mb-6 leading-tight display-tracking">
           Run Your Entire<br />
           <span className="bg-clip-text text-transparent" style={{ backgroundImage: BRAND.gradient }}>Business in One Place</span>
         </h1>
@@ -311,7 +313,7 @@ function WhoSection() {
             <Users size={16} />
             <span className="font-medium">Built for Teams</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Built for Every Team</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 display-tracking-tight" style={{ color: BRAND.text }}>Built for Every Team</h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>Whether you're closing deals, tracking projects, or running payroll — Avenize has you covered.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -404,7 +406,7 @@ function ProductivityToolsSection() {
             <LayoutGrid size={16} />
             <span className="font-medium">Productivity Suite</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Everything Your Team Needs to Ship Faster</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 display-tracking-tight" style={{ color: BRAND.text }}>Everything Your Team Needs to Ship Faster</h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>All-in-one workspace with tasks, chat, video calls, and more. No more app switching.</p>
         </div>
         
@@ -501,7 +503,7 @@ function ModulesSection() {
             <Briefcase size={16} />
             <span className="font-medium">55+ Modules</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Everything Your Business Needs</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 display-tracking-tight" style={{ color: BRAND.text }}>Everything Your Business Needs</h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>55+ modules, each built for Nigerian businesses. Start with what you need, unlock more as you grow.</p>
         </div>
         
@@ -514,11 +516,11 @@ function ModulesSection() {
                 <span className="font-semibold">Most Popular</span>
               </div>
               <h3 className="text-2xl font-bold mb-3" style={{ color: BRAND.text }}>CRM — Customer Relationship Management</h3>
-              <p className="mb-4" style={{ color: BRAND.textSecondary }}>Close deals faster with AI-powered insights. Track every lead, every conversation, every opportunity.</p>
+              <p className="mb-4" style={{ color: BRAND.textSecondary }}>Close deals faster. Track every lead, every conversation, every opportunity — and capture updates in plain language.</p>
               <div className="flex flex-wrap gap-2">
                 <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Lead Tracking</span>
                 <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Deal Pipeline</span>
-                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>AI Insights</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>AI-assisted capture</span>
                 <span className="px-3 py-1 rounded-full text-sm font-medium" style={{ backgroundColor: BRAND.primarySoft, color: BRAND.primary }}>Reminders</span>
               </div>
             </div>
@@ -577,8 +579,9 @@ function TestimonialsSection() {
             <Quote size={16} />
             <span className="font-medium">Customer Stories</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Real Businesses. Real Results.</h2>
-          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>See how Nigerian companies use Avenize to grow their businesses</p>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 display-tracking-tight" style={{ color: BRAND.text }}>How Teams Use Avenize</h2>
+          <p className="text-lg max-w-2xl mx-auto" style={{ color: BRAND.textSecondary }}>See how Nigerian businesses could use Avenize to grow</p>
+          <p className="text-xs max-w-2xl mx-auto mt-2" style={{ color: BRAND.textMuted }}>Illustrative examples — not verified customer quotes. Replaced with real testimonials as customers opt in.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
@@ -636,7 +639,7 @@ function PricingSection() {
             <BarChart3 size={16} />
             <span className="font-medium">Pricing</span>
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: BRAND.text }}>Simple, Honest Pricing</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 display-tracking-tight" style={{ color: BRAND.text }}>Simple, Honest Pricing</h2>
           <p className="text-lg" style={{ color: BRAND.textSecondary }}>Pay per team size. No hidden fees. No per-feature pricing.</p>
         </div>
         <div className="rounded-2xl p-4 mb-8 max-w-2xl mx-auto text-center" style={{ backgroundColor: 'rgba(251, 188, 5, 0.15)' }}>

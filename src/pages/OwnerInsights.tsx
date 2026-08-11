@@ -110,7 +110,7 @@ export default function OwnerInsights() {
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
         {[
           { id: 'overview', label: 'Overview', icon: BarChart3 },
-          { id: 'sarah', label: 'Sarah Analytics', icon: Bot },
+          { id: 'sarah', label: 'Help Guide Analytics', icon: Bot },
           { id: 'modules', label: 'Module Usage', icon: Target },
         ].map((tab) => {
           const Icon = tab.icon
@@ -172,9 +172,9 @@ export default function OwnerInsights() {
         <div className="space-y-6">
           <div className="bg-white rounded-xl p-8 shadow-sm text-center">
             <Bot size={40} className="text-[#4285F4] mx-auto mb-3" />
-            <h2 className="text-lg font-bold text-black mb-2">Sarah AI Analytics</h2>
+            <h2 className="text-lg font-bold text-black mb-2">Help Guide Analytics</h2>
             <p className="text-sm text-black/60 max-w-md mx-auto">
-              Conversation analytics for the Sarah AI assistant require a dedicated
+              Conversation analytics for the Avenize Help Guide require a dedicated
               analytics pipeline. Connect your chat event source to populate these metrics.
             </p>
           </div>

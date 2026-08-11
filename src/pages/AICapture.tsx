@@ -1,6 +1,6 @@
 // AI Intent & Data Gateway — the flagship "Tell Avenize what happened"
 // capture surface (Architecture §5). A user types (or pastes) natural
-// language; we parse intent + entities, show "What I Understood" with
+// language; we parse intent + entities, show "What I parsed" with
 // evidence/confidence/proposed destinations, and on confirm raise a
 // business event that downstream modules react to.
 
@@ -111,7 +111,7 @@ export default function AICapture() {
           Tell Avenize what happened
         </h1>
         <p className="text-sm text-[var(--av-text-secondary)] mt-1">
-          Describe an activity in plain language. Avenize understands it, shows what it understood, and updates the right records — after you confirm.
+          Describe an activity in plain language. Avenize interprets it, shows what it parsed, and updates the right records — after you confirm.
         </p>
       </div>
 
@@ -150,17 +150,17 @@ export default function AICapture() {
         <button onClick={handleParse} disabled={!input.trim() || parsing}
           className="flex items-center gap-2 px-5 py-2.5 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 transition">
           {parsing ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
-          Understand this
+          Interpret this
         </button>
       </div>
 
-      {/* What I Understood */}
+      {/* What I parsed */}
       {intent && !done && (
         <div className="mt-6 rounded-2xl border border-[var(--av-border)] bg-white shadow-[var(--av-elevation-2)] overflow-hidden">
           <div className="px-5 py-4 bg-[var(--av-surface-2)] border-b border-[var(--av-border)]">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2">
-                <Check size={18} className="text-[var(--av-success)]" /> What I understood
+                <Check size={18} className="text-[var(--av-success)]" /> What I parsed
               </h2>
               <ConfidencePill value={intent.confidence} />
             </div>

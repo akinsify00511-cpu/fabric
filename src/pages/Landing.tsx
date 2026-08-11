@@ -48,7 +48,7 @@ const DASHBOARDS = [
   {
     role: "Business Owner",
     icon: "👑",
-    color: "from-orange-500 to-pink-500",
+    color: "bg-orange-500",
     tagline: "See everything. Control everything.",
     features: [
       "Real-time view of all operations across locations",
@@ -63,7 +63,7 @@ const DASHBOARDS = [
   {
     role: "Team Lead / Supervisor",
     icon: "🎯",
-    color: "from-blue-500 to-cyan-500",
+    color: "bg-blue-500",
     tagline: "Manage your team without chasing them.",
     features: [
       "Track field staff location and job status in real-time",
@@ -78,7 +78,7 @@ const DASHBOARDS = [
   {
     role: "Accounting / Finance",
     icon: "💰",
-    color: "from-emerald-500 to-teal-500",
+    color: "bg-emerald-500",
     tagline: "Numbers you can trust. Every time.",
     features: [
       "Automated invoicing linked to completed jobs",
@@ -93,7 +93,7 @@ const DASHBOARDS = [
   {
     role: "Admin / Operations",
     icon: "⚙️",
-    color: "from-purple-500 to-violet-500",
+    color: "bg-purple-500",
     tagline: "Keep everything running. Smoothly.",
     features: [
       "Inventory management: stock levels, reorder points",
@@ -108,7 +108,7 @@ const DASHBOARDS = [
   {
     role: "HR / People",
     icon: "👥",
-    color: "from-pink-500 to-rose-500",
+    color: "bg-pink-500",
     tagline: "Your people, organized. Your culture, protected.",
     features: [
       "Staff database: contacts, roles, departments",
@@ -123,7 +123,7 @@ const DASHBOARDS = [
   {
     role: "Sales Head",
     icon: "📈",
-    color: "from-red-500 to-orange-500",
+    color: "bg-red-500",
     tagline: "Never lose a deal. Never miss a follow-up.",
     features: [
       "Pipeline view: enquiry → quote → won/lost",
@@ -138,7 +138,7 @@ const DASHBOARDS = [
   {
     role: "Business Development",
     icon: "🚀",
-    color: "from-yellow-500 to-amber-500",
+    color: "bg-amber-500",
     tagline: "Find opportunities. Close them faster.",
     features: [
       "Lead capture from multiple sources",
@@ -153,7 +153,7 @@ const DASHBOARDS = [
   {
     role: "Marketing",
     icon: "📣",
-    color: "to-[var(--av-primary)] to-blue-500",
+    color: "bg-indigo-500",
     tagline: "Know what's working. Double down on it.",
     features: [
       "Campaign tracking: leads generated, deals closed",
@@ -413,7 +413,7 @@ function HeroSection() {
             </div>
 
             {/* Headline */}
-            <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+            <h1 className="hero-title text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 display-tracking">
               <span className="text-white">{tr('heroHeadline1', 'Stop running your business.')}</span>
               <br />
               <span className="text-[var(--av-primary)]">
@@ -591,7 +591,7 @@ function ProblemsSection() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-700 border border-black text-black text-xs font-semibold uppercase tracking-wider mb-6">
             The Problem
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6 leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-6 leading-tight display-tracking-tight">
             Running a business is hard.<br className="hidden md:block" />
             <span className="text-black"> Managing it shouldn't be this chaotic.</span>
           </h2>
@@ -863,7 +863,7 @@ function DashboardsSection() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500/20 to-pink-500/20 border border-orange-500/30 text-orange-400 text-sm font-bold uppercase tracking-wider mb-6">
             <span>🎛️</span> Command Centers for Every Role
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 display-tracking">
             Every role. Every dashboard.<br />
             <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">One system.</span>
           </h2>
@@ -881,7 +881,7 @@ function DashboardsSection() {
                 onClick={() => setActiveTab(i)}
                 className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   activeTab === i
-                    ? `bg-gradient-to-r ${dashboard.color} text-white shadow-lg`
+                    ? `${dashboard.color} text-white shadow-lg`
                     : 'bg-black text-black hover:bg-black'
                 }`}
               >
@@ -898,7 +898,7 @@ function DashboardsSection() {
             {/* Dashboard Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
               <div className="flex items-center gap-4">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${DASHBOARDS[activeTab].color} flex items-center justify-center text-3xl shadow-lg`}>
+                <div className={`w-16 h-16 rounded-2xl ${DASHBOARDS[activeTab].color} flex items-center justify-center text-3xl shadow-lg`}>
                   {DASHBOARDS[activeTab].icon}
                 </div>
                 <div>

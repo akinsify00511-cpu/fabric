@@ -55,6 +55,12 @@
   /* ========== TYPOGRAPHY ========== */
   /* Google Sans Flex - Google's official variable font */
   --av-font-sans: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Letter-spacing: negative tracking at display sizes gives the premium
+     "tight headline" feel (Apple SF Pro Display uses -0.28 to -0.374px). */
+  --av-tracking-display: -0.02em;
+  --av-tracking-tight: -0.015em;
+  --av-tracking-body: 0;
   
   /* ========== RADII - Google Radius Scale ========== */
   --av-radius-sm: 8px;

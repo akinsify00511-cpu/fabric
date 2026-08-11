@@ -64,6 +64,17 @@ select:invalid { color: var(--av-text-muted); }
   font-variant-numeric: tabular-nums;
 }
 
+/* Display headings: negative letter-spacing for the premium "tight headline"
+   feel (Apple SF Pro Display uses -0.28 to -0.374px tracking at display sizes).
+   Apply to h1/h2 hero text, not to body copy. */
+.display-tracking {
+  letter-spacing: var(--av-tracking-display);
+}
+
+.display-tracking-tight {
+  letter-spacing: var(--av-tracking-tight);
+}
+
 /* Avenize Signature Gradient - Google blue to violet */
 .avenize-gradient {
   background: var(--av-gradient);
@@ -271,12 +282,20 @@ select:invalid { color: var(--av-text-muted); }
   border: none;
   border-radius: var(--av-radius-md);
   cursor: pointer;
-  transition: background var(--av-transition-fast), box-shadow var(--av-transition-fast);
+  transition: background var(--av-transition-fast), box-shadow var(--av-transition-fast), transform var(--av-transition-fast);
 }
 
 .btn-filled:hover {
   background: var(--av-primary-hover);
   box-shadow: var(--av-elevation-1);
+}
+
+/* Tactile press micro-interaction (Apple uses scale(0.95) system-wide) */
+.btn-filled:active,
+.btn-outlined:active,
+.btn-text:active,
+.btn-gradient:active {
+  transform: scale(0.96);
 }
 
 /* Outlined button */

@@ -43,40 +43,39 @@ function findFeatureSuggestions(message: string): Array<{ label: string; path: s
   return suggestions.slice(0, 3) // Max 3 suggestions
 }
 
-const SARAH_KNOWLEDGE = {
+const HELP_KNOWLEDGE = {
   greetings: [
-    "Hello! I'm your Avenize help guide. I can point you to the right features. What are you looking for?",
-    "Welcome! Need help finding a feature? Tell me what you're trying to do.",
-    "Hi there! I'm your Avenize help guide. Ask me where to find anything in the app.",
-  ],
-  
-  features: {
-    crm: "Our CRM helps you manage leads, deals, and customer relationships. Track deals through stages (Prospect to Won/Lost) and keep all your contacts organized. Perfect for Nigerian businesses looking to close more deals.",
-    tasks: "The Tasks feature lets you create, assign, and track tasks with priorities. Mark tasks as To Do, In Progress, or Done. Great for keeping your team aligned on what matters most.",
-    people: "The People page is your HR hub. You can see all team members, invite new staff, manage roles, and track attendance. Everything you need to manage your Nigerian team.",
-    projects: "Projects helps you organize and track work. Create projects, add tasks, and monitor progress all in one place. Supports field updates for teams working across Nigeria.",
-    chat: "Our Chat feature lets your team communicate in real-time. No more scattered WhatsApp messages. Keep all business conversations organized and searchable.",
-    calendar: "The Calendar keeps all your appointments and events in one place. Never miss a meeting again. Syncs across devices so you stay organized on the go.",
-    reports: "Reports give you insights into your business performance. Track metrics, analyze trends, and make data-driven decisions. Available in real-time from your dashboard.",
-    finance: "Finance helps you manage invoices, payments, and cash flow in Naira. Includes VAT and WHT tracking. Send professional invoices and get paid faster.",
-    inventory: "Inventory management helps you track products, stock levels, and orders. Perfect for businesses with physical goods. Multi-location support for businesses across Nigeria.",
-  },
-  
-  pricing: {
-    free: "The Free plan includes: up to 5 team members, Basic CRM, Task management, and 50MB storage. Great for getting started with your business.",
-    pro: "Pro plan (starting at ₦15,000/month for Starter, up to ₦380,000/month for Scale) unlocks: Unlimited team members, Advanced CRM and Analytics, Invoicing and Payments, Priority support, Custom branding, and API access.",
-    trial: "You have a 7-day free trial to experience all features. No credit card required to start.",
-  },
-  
-  onboarding: [
-    "Welcome to Avenize! Here's how to get started:\n\n1. Go to CRM to add your first deals and contacts\n2. Check out Tasks to create your first task\n3. Invite your team from the People page\n4. Explore Finance to send your first invoice\n5. Check Reports to see your business insights\n\nLet me know if you have any questions!",
-  ],
-  
-  help: [
-    "I can help you with:\n\n- Finding the right feature for your task\n- Pricing and plan questions\n- Getting started with Avenize\n- Tips and best practices for Nigerian businesses\n\nJust let me know what you need!",
+    "Avenize Help Guide. Search for a feature below, or describe what you're trying to do.",
+    "Avenize Help Guide. Type a feature name or a task to find the right tool.",
   ],
 
-  unknown: "I'm not sure I understand that. I can help you find:\n\n- CRM, Tasks, People, Projects, Finance\n- Pricing and plans\n- Getting started\n\nWhat would you like to find?",
+  features: {
+    crm: "CRM manages leads, deals, and customer relationships. Track deals through stages (Prospect to Won/Lost) and keep contacts organized.",
+    tasks: "Tasks lets you create, assign, and track tasks with priorities. Mark tasks as To Do, In Progress, or Done.",
+    people: "The People page is the HR hub. View team members, invite staff, manage roles, and track attendance.",
+    projects: "Projects organizes and tracks work. Create projects, add tasks, and monitor progress. Supports field updates for teams across Nigeria.",
+    chat: "Chat lets your team communicate in real-time. Keep business conversations organized and searchable instead of scattered across WhatsApp.",
+    calendar: "The Calendar keeps appointments and events in one place. Syncs across devices.",
+    reports: "Reports show business performance. Track metrics and analyze trends from the dashboard.",
+    finance: "Finance manages invoices, payments, and cash flow in Naira. Includes VAT and WHT tracking.",
+    inventory: "Inventory tracks products, stock levels, and orders. Multi-location support for businesses across Nigeria.",
+  },
+
+  pricing: {
+    free: "The Free plan includes: up to 5 team members, Basic CRM, Task management, and 50MB storage.",
+    pro: "Paid plans (₦15,000/month for Starter, up to ₦380,000/month for Scale) unlock: unlimited team members, advanced CRM and analytics, invoicing and payments, priority support, custom branding, and API access.",
+    trial: "A 7-day free trial covers all features. No credit card required to start.",
+  },
+
+  onboarding: [
+    "Getting started with Avenize:\n\n1. Go to CRM to add your first deals and contacts\n2. Use Tasks to create your first task\n3. Invite your team from the People page\n4. Open Finance to send your first invoice\n5. Check Reports to see business insights",
+  ],
+
+  help: [
+    "This guide can help find:\n\n- The right feature for a task\n- Pricing and plan details\n- Getting started steps\n\nType a keyword or feature name.",
+  ],
+
+  unknown: "No match found. Try searching for a feature name:\n\n- CRM, Tasks, People, Projects, Finance\n- Pricing and plans\n- Getting started",
 }
 
 const NEW_FEATURES = [
@@ -107,78 +106,78 @@ function generateResponse(userMessage: string): { text: string; suggestions: Arr
   const msg = userMessage.toLowerCase()
   
   if (/^(hi|hello|hey|good morning|good afternoon|good evening|howdy)/.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.greetings[Math.floor(Math.random() * SARAH_KNOWLEDGE.greetings.length)], suggestions: [] }
+    return { text: HELP_KNOWLEDGE.greetings[Math.floor(Math.random() * HELP_KNOWLEDGE.greetings.length)], suggestions: [] }
   }
   
   if (/welcome|new user|first time|just signed|just started|getting started/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.onboarding[0], suggestions: findFeatureSuggestions(msg) }
+    return { text: HELP_KNOWLEDGE.onboarding[0], suggestions: findFeatureSuggestions(msg) }
   }
 
   if (/crm|deals|contacts|leads|pipeline|sales/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.crm, suggestions: [{ label: 'CRM', path: '/app/crm', description: 'Go to CRM' }] }
+    return { text: HELP_KNOWLEDGE.features.crm, suggestions: [{ label: 'CRM', path: '/app/crm', description: 'Go to CRM' }] }
   }
   if (/task|todo|to-do/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.tasks, suggestions: [{ label: 'Tasks', path: '/app/tasks', description: 'Go to Tasks' }] }
+    return { text: HELP_KNOWLEDGE.features.tasks, suggestions: [{ label: 'Tasks', path: '/app/tasks', description: 'Go to Tasks' }] }
   }
   if (/people|team|hr|staff|employee/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.people, suggestions: [{ label: 'People', path: '/app/people', description: 'Go to People' }] }
+    return { text: HELP_KNOWLEDGE.features.people, suggestions: [{ label: 'People', path: '/app/people', description: 'Go to People' }] }
   }
   if (/project/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.projects, suggestions: [{ label: 'Projects', path: '/app/projects', description: 'Go to Projects' }] }
+    return { text: HELP_KNOWLEDGE.features.projects, suggestions: [{ label: 'Projects', path: '/app/projects', description: 'Go to Projects' }] }
   }
   if (/chat|message|conversation/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.chat, suggestions: [{ label: 'Chat', path: '/app/chat', description: 'Go to Chat' }] }
+    return { text: HELP_KNOWLEDGE.features.chat, suggestions: [{ label: 'Chat', path: '/app/chat', description: 'Go to Chat' }] }
   }
   if (/calendar|event|meeting|schedule/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.calendar, suggestions: [{ label: 'Calendar', path: '/app/calendar', description: 'Go to Calendar' }] }
+    return { text: HELP_KNOWLEDGE.features.calendar, suggestions: [{ label: 'Calendar', path: '/app/calendar', description: 'Go to Calendar' }] }
   }
   if (/report|analytics|insight|metric|dashboard/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.reports, suggestions: [{ label: 'Reports', path: '/app/reports', description: 'Go to Reports' }] }
+    return { text: HELP_KNOWLEDGE.features.reports, suggestions: [{ label: 'Reports', path: '/app/reports', description: 'Go to Reports' }] }
   }
   if (/finance|invoice|payment|money|cash|naira/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.finance, suggestions: [{ label: 'Finance', path: '/app/finance', description: 'Go to Finance' }] }
+    return { text: HELP_KNOWLEDGE.features.finance, suggestions: [{ label: 'Finance', path: '/app/finance', description: 'Go to Finance' }] }
   }
   if (/inventory|stock|product/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.features.inventory, suggestions: [{ label: 'Inventory', path: '/app/inventory', description: 'Go to Inventory' }] }
+    return { text: HELP_KNOWLEDGE.features.inventory, suggestions: [{ label: 'Inventory', path: '/app/inventory', description: 'Go to Inventory' }] }
   }
   
   if (/pricing|price|cost|how much|plan|subscription|naira/i.test(msg)) {
     if (/free|free plan/i.test(msg)) {
-      return { text: SARAH_KNOWLEDGE.pricing.free, suggestions: [] }
+      return { text: HELP_KNOWLEDGE.pricing.free, suggestions: [] }
     }
     if (/pro|premium|upgrade|paid/i.test(msg)) {
-      return { text: SARAH_KNOWLEDGE.pricing.pro, suggestions: [] }
+      return { text: HELP_KNOWLEDGE.pricing.pro, suggestions: [] }
     }
-    return { text: "Here's our pricing:\n\n" + SARAH_KNOWLEDGE.pricing.free + "\n\n" + SARAH_KNOWLEDGE.pricing.pro + "\n\n" + SARAH_KNOWLEDGE.pricing.trial, suggestions: [] }
+    return { text: "Here's our pricing:\n\n" + HELP_KNOWLEDGE.pricing.free + "\n\n" + HELP_KNOWLEDGE.pricing.pro + "\n\n" + HELP_KNOWLEDGE.pricing.trial, suggestions: [] }
   }
   
   if (/trial|free trial/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.pricing.trial, suggestions: [] }
+    return { text: HELP_KNOWLEDGE.pricing.trial, suggestions: [] }
   }
   
   if (/help|what can you do|how do i|how to|tutorial|guide/i.test(msg)) {
-    return { text: SARAH_KNOWLEDGE.help[0], suggestions: [] }
+    return { text: HELP_KNOWLEDGE.help[0], suggestions: [] }
   }
   
   if (/what.*new|new feature|update|what's new|recent/i.test(msg)) {
-    return { text: "Here's what's new in Avenize:\n\n" + NEW_FEATURES.join('\n\n') + "\n\nIs there anything specific you'd like to know more about?", suggestions: [] }
+    return { text: "What's new in Avenize:\n\n" + NEW_FEATURES.join('\n\n'), suggestions: [] }
   }
   
   if (/thank|thanks|appreciate/i.test(msg)) {
-    return { text: "You're welcome! Is there anything else I can help you with?", suggestions: [] }
+    return { text: "Glad that helped. Search for another feature anytime.", suggestions: [] }
   }
   
   if (/bye|goodbye|see you|talk later/i.test(msg)) {
-    return { text: "Goodbye! Feel free to come back if you have any questions. Have a great day!", suggestions: [] }
+    return { text: "Closing the help guide. Reopen it anytime to search again.", suggestions: [] }
   }
   
   // Check for any feature-related keywords in the message
   const suggestions = findFeatureSuggestions(msg)
   if (suggestions.length > 0) {
-    return { text: SARAH_KNOWLEDGE.unknown, suggestions }
+    return { text: HELP_KNOWLEDGE.unknown, suggestions }
   }
   
-  return { text: SARAH_KNOWLEDGE.unknown, suggestions: [] }
+  return { text: HELP_KNOWLEDGE.unknown, suggestions: [] }
 }
 
 export default function SarahChat() {
@@ -188,12 +187,11 @@ export default function SarahChat() {
     {
       id: generateId(),
       role: 'assistant',
-      content: SARAH_KNOWLEDGE.greetings[0],
+      content: HELP_KNOWLEDGE.greetings[0],
       time: getTime()
     }
   ])
   const [input, setInput] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -212,20 +210,18 @@ export default function SarahChat() {
 
     setMessages(prev => [...prev, userMsg])
     setInput('')
-    setIsTyping(true)
 
-    setTimeout(() => {
-      const { text, suggestions } = generateResponse(userMsg.content)
-      const assistantMsg: Message = {
-        id: generateId(),
-        role: 'assistant',
-        content: text,
-        time: getTime(),
-        suggestions
-      }
-      setMessages(prev => [...prev, assistantMsg])
-      setIsTyping(false)
-    }, 800 + Math.random() * 500)
+    // Rule-based match returns instantly — no simulated "typing" delay that
+    // would imply a human is composing the reply (humanwashing).
+    const { text, suggestions } = generateResponse(userMsg.content)
+    const assistantMsg: Message = {
+      id: generateId(),
+      role: 'assistant',
+      content: text,
+      time: getTime(),
+      suggestions
+    }
+    setMessages(prev => [...prev, assistantMsg])
   }
 
   const handleQuickReply = (question: string) => {
@@ -329,23 +325,7 @@ export default function SarahChat() {
                 </div>
               </div>
             ))}
-            
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="flex gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white flex items-center justify-center">
-                    <HelpCircle size={16} />
-                  </div>
-                  <div className="bg-white rounded-2xl px-4 py-3">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+
             <div ref={messagesEndRef} />
           </div>
 

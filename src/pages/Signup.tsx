@@ -6,7 +6,7 @@ import { Check, Sparkles, Users, Zap, Shield } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 
 const FEATURES = [
-  { icon: Sparkles, textKey: 'signupFeatureAI', text: 'AI-powered insights for smarter decisions' },
+  { icon: Sparkles, textKey: 'signupFeatureAI', text: 'AI-assisted capture — describe what happened in plain language' },
   { icon: Users, textKey: 'signupFeatureTeam', text: 'Manage your team from anywhere in Nigeria' },
   { icon: Zap, textKey: 'signupFeatureAutomate', text: 'Automate repetitive tasks and save hours' },
   { icon: Shield, textKey: 'signupFeatureSecurity', text: 'Bank-level security for your business data' },

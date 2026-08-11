@@ -150,7 +150,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
       </div>
 
       {/* Net Position */}
-      <div className="mt-6 bg-gradient-to-br from-purple-500 to-[#8B5CF6] rounded-2xl p-6 text-white">
+      <div className="mt-6 bg-purple-600 rounded-2xl p-6 text-white">
         <p className="text-sm opacity-80 mb-2">Net Working Capital</p>
         <h2 className="text-3xl font-bold">₦{((stats.totalDebtors - stats.totalCreditors) / 1000000).toFixed(1)}M</h2>
         <p className="text-sm opacity-80 mt-2">Debtors - Creditors</p>
@@ -202,7 +202,7 @@ function BankingTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       {/* Total Balance */}
-      <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-emerald-600 rounded-2xl p-6 text-white mb-6">
         <p className="text-sm opacity-80">Total Bank Balance</p>
         <h2 className="text-3xl font-bold">₦{totalBalance.toLocaleString()}</h2>
       </div>
@@ -307,7 +307,7 @@ function VATTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 text-white">
+        <div className="bg-blue-600 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-80">Total VAT</p>
           <h2 className="text-2xl font-bold">₦{totalVAT.toLocaleString()}</h2>
         </div>
@@ -422,7 +422,7 @@ function WHTTab({ businessId }: { businessId?: string }) {
 
   return (
     <div>
-      <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-amber-600 rounded-2xl p-6 text-white mb-6">
         <p className="text-sm opacity-80">Total WHT</p>
         <h2 className="text-3xl font-bold">₦{totalWHT.toLocaleString()}</h2>
       </div>
@@ -532,7 +532,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-4 text-white">
+        <div className="bg-red-600 rounded-2xl p-4 text-white">
           <p className="text-sm opacity-80">Total Outstanding</p>
           <h2 className="text-2xl font-bold">₦{totalOutstanding.toLocaleString()}</h2>
         </div>
@@ -644,7 +644,7 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
 
   return (
     <div>
-      <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-amber-600 rounded-2xl p-6 text-white mb-6">
         <p className="text-sm opacity-80">Total Payable</p>
         <h2 className="text-3xl font-bold">₦{totalOutstanding.toLocaleString()}</h2>
       </div>

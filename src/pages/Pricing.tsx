@@ -63,7 +63,7 @@ const MONTHLY_PLANS = [
     seats: '6–15 seats',
     features: [
       'Everything in Starter',
-      'Advanced CRM with AI insights',
+      'Advanced CRM with AI-assisted capture',
       'Department groups & tasks',
       'Offline field sync',
       'Priority support'
