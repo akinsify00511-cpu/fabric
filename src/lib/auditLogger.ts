@@ -44,7 +44,7 @@ class AuditLogger {
           .from('staff')
           .select('business_id')
           .eq('user_id', user.id)
-          .single()
+          .maybeSingle()
         this.cachedBusinessId = staff?.business_id ?? null
       }
     } catch {

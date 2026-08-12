@@ -180,7 +180,7 @@ class EventTracker {
           .from('staff')
           .select('business_id')
           .eq('user_id', user.id)
-          .single()
+          .maybeSingle()
         this.cachedBusinessId = staff?.business_id ?? null
       }
     } catch {
@@ -362,7 +362,7 @@ class LearningLoop {
         .from('user_learning')
         .select('*')
         .eq('user_id', this.userId)
-        .single()
+        .maybeSingle()
 
       if (data) {
         // Load interaction patterns
@@ -548,7 +548,7 @@ class EngagementSystem {
         .select('*')
         .eq('user_id', userId)
         .eq('achievement_key', config.key)
-        .single()
+        .maybeSingle()
 
       if (data?.unlocked) return null // Already unlocked
 

@@ -124,7 +124,7 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
         .from('business_entitlements')
         .select('features')
         .eq('business_id', staff.business_id)
-        .single()
+        .maybeSingle()
       const planTools = derivePlanTools(ent?.features as any)
 
       if (planTools.has(tool)) {
@@ -214,7 +214,7 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
         .from('business_entitlements')
         .select('features')
         .eq('business_id', staff.business_id)
-        .single()
+        .maybeSingle()
       const planTools = derivePlanTools(ent?.features as any)
 
       // Get functional role tools

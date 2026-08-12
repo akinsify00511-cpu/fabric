@@ -110,7 +110,7 @@ export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
           .from('business_entitlements')
           .select('*')
           .eq('business_id', staff.business_id)
-          .single()
+          .maybeSingle()
 
         if (entData) {
           setEntitlement(entData as BusinessEntitlement)
@@ -222,7 +222,7 @@ export function useTeamLimit(): UseTeamEntitlementResult {
           .from('business_entitlements')
           .select('team_limit')
           .eq('business_id', staff.business_id)
-          .single()
+          .maybeSingle()
 
         if (entData) {
           setLimit(entData.team_limit)
@@ -276,10 +276,11 @@ export function useEntitlements(): {
       .from('business_entitlements')
       .select('*')
       .eq('business_id', staff.business_id)
-      .single()
+      .maybeSingle()
       .then(({ data, error }) => {
-        // Silently handle 404 - table might not exist
-        if (error && error.code !== 'PGRST116') {
+        // maybeSingle returns null data with no error when 0 rows;
+        // only treat genuine errors as failures.
+        if (error) {
           // Only log real errors, not missing tables
           console.warn('Entitlements not available:', error.message)
         }

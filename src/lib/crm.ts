@@ -95,7 +95,7 @@ export async function getLead(leadId: string): Promise<Lead | null> {
       .from('leads')
       .select('*')
       .eq('id', leadId)
-      .single()
+      .maybeSingle()
 
     if (error) return null
     return data
