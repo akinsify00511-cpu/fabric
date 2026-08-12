@@ -124,6 +124,7 @@ export function useRealtime<T extends Record<string, any>>({
     return () => {
       if (channelRef.current) {
         supabase.removeChannel(channelRef.current)
+        channelRef.current = null
       }
     }
   }, [table, filter?.column, filter?.value, enabled])
