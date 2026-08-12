@@ -15,6 +15,7 @@
  * 
  * Usage:
  * POST /functions/v1/execute-automation
+ * Headers: X-Automation-Secret: <secret>
  * Body: { "trigger": "deal_won", "payload": { deal_id: "...", ... } }
  */
 
@@ -51,7 +52,19 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    
+
+    // SECURITY: Verify the automation secret to prevent unauthorized callers
+    // from triggering automations across all businesses. DB triggers pass this
+    // via pg_net headers (set in app.settings.automation_secret).
+    const automationSecret = Deno.env.get('AUTOMATION_SECRET')
+    const providedSecret = req.headers.get('X-Automation-Secret')
+    if (!automationSecret || providedSecret !== automationSecret) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
     
     const { trigger, payload, automation_id }: AutomationPayload = await req.json()
