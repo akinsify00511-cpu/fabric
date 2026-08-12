@@ -57,6 +57,31 @@ export interface VerifyOTPResponse {
 // SMS SERVICE (Client-side methods)
 // ============================================
 
+// Call the send-sms edge function with the caller's session JWT (not the
+// anon key) so the function's auth.getUser() check succeeds. Keeps the
+// Termii API key server-side. Shared by TermiiSMS and TermiiOTP.
+async function invokeSms(body: Record<string, any>): Promise<any> {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.access_token) {
+    throw new Error('Not authenticated')
+  }
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    signal: AbortSignal.timeout(15000),
+    body: JSON.stringify(body),
+  })
+  const data = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(data.error || `Request failed (${response.status})`)
+  }
+  return data
+}
+
 export const TermiiSMS = {
   // Check whether a Termii API key is configured, WITHOUT fetching the secret
   // value to the browser. Reads only the sender_id / channel (non-secret) for
@@ -66,7 +91,7 @@ export const TermiiSMS = {
     try {
       const { data: apiKeyRow } = await supabase
         .from('settings')
-        .select('value')
+        .select('key')
         .eq('key', 'termii_api_key')
         .maybeSingle()
 
@@ -83,7 +108,7 @@ export const TermiiSMS = {
         .maybeSingle()
 
       return {
-        hasApiKey: !!apiKeyRow?.value,
+        hasApiKey: !!apiKeyRow,
         senderId: senderId?.value || 'Avenize',
         channel: (channel?.value as 'dnd' | 'whatsapp' | 'generic') || 'dnd',
       }
@@ -128,28 +153,12 @@ export const TermiiSMS = {
   async sendViaEdgeFunction(message: SMSMessage): Promise<SMSResponse> {
     try {
       const { data: business } = await supabase.auth.getUser()
-
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        signal: AbortSignal.timeout(15000),
-        body: JSON.stringify({
-          to: message.to,
-          message: message.message,
-          channel: message.channel || 'dnd',
-          business_id: business.user?.id,
-        }),
+      const data = await invokeSms({
+        to: message.to,
+        message: message.message,
+        channel: message.channel || 'dnd',
+        business_id: business.user?.id,
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        return { success: false, message: data.error || 'Failed to send SMS', error: data.error }
-      }
-
       return {
         success: true,
         message: 'SMS sent successfully',
@@ -157,7 +166,7 @@ export const TermiiSMS = {
       }
     } catch (error) {
       console.error('SMS send error:', error)
-      return { success: false, message: 'Network error', error: (error as Error).message }
+      return { success: false, message: (error as Error).message || 'Network error', error: (error as Error).message }
     }
   },
 
@@ -182,19 +191,8 @@ export const TermiiSMS = {
   // and leaked the key — both fixed by routing through send-sms.
   async getBalance(): Promise<{ success: boolean; balance?: number; error?: string }> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        signal: AbortSignal.timeout(10000),
-        body: JSON.stringify({ action: 'balance' }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok && data.success) {
+      const data = await invokeSms({ action: 'balance' })
+      if (data.success) {
         return { success: true, balance: data.balance }
       }
       return { success: false, error: data.error || 'Failed to get balance' }
@@ -286,22 +284,16 @@ export const TermiiOTP = {
   // never read by the browser.
   async send(phone: string, config?: OTPConfig): Promise<OTPResponse> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
-        signal: AbortSignal.timeout(10000),
-        body: JSON.stringify({
-          action: 'otp_send',
-          to: phone,
-          channel: config?.channel,
-          pin_length: config?.length,
-          pin_time_to_live: config?.lifetime,
-          pin_placeholder: config?.placeholder,
-          message_text: config?.placeholder,
-        }),
+      const data = await invokeSms({
+        action: 'otp_send',
+        to: phone,
+        channel: config?.channel,
+        pin_length: config?.length,
+        pin_time_to_live: config?.lifetime,
+        pin_placeholder: config?.placeholder,
+        message_text: config?.placeholder,
       })
-      const data = await response.json()
-      if (response.ok && data.success) {
+      if (data.success) {
         return { success: true, messageId: data.pin_id, message: 'OTP sent successfully' }
       }
       return { success: false, error: data.error || 'Failed to send OTP' }
@@ -313,13 +305,7 @@ export const TermiiOTP = {
 
   async verify(pinId: string, otp: string): Promise<VerifyOTPResponse> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
-        signal: AbortSignal.timeout(10000),
-        body: JSON.stringify({ action: 'otp_verify', pin_id: pinId, pin: otp }),
-      })
-      const data = await response.json()
+      const data = await invokeSms({ action: 'otp_verify', pin_id: pinId, pin: otp })
       return { verified: !!data.verified, message: data.message || (data.verified ? 'OTP verified successfully' : 'Invalid OTP') }
     } catch (error) {
       console.error('OTP verify error:', error)
@@ -329,14 +315,8 @@ export const TermiiOTP = {
 
   async resend(pinId: string): Promise<OTPResponse> {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
-        signal: AbortSignal.timeout(10000),
-        body: JSON.stringify({ action: 'otp_resend', pin_id: pinId }),
-      })
-      const data = await response.json()
-      if (response.ok && data.success) {
+      const data = await invokeSms({ action: 'otp_resend', pin_id: pinId })
+      if (data.success) {
         return { success: true, messageId: data.pin_id, message: 'OTP resent successfully' }
       }
       return { success: false, error: data.error || 'Failed to resend OTP' }

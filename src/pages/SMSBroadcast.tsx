@@ -6,6 +6,7 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
+import { TermiiSMS } from '../lib/smsService'
 import {
   MessageSquare, Send, Users, Search, Filter, CheckCircle2,
   XCircle, Clock, Loader2, ChevronDown, User, Building2, Phone
@@ -214,79 +215,33 @@ export default function SMSBroadcastPage() {
     setSending(true)
 
     try {
-      // Get Termii settings
-      const { data: apiKeyData } = await supabase
-        .from('settings')
-        .select('value')
-        .eq('key', 'termii_api_key')
-        .single()
-
-      const { data: senderIdData } = await supabase
-        .from('settings')
-        .select('value')
-        .eq('key', 'termii_sender_id')
-        .single()
-
-      const apiKey = apiKeyData?.value
-      const senderId = senderIdData?.value || 'Avenize'
-
-      if (!apiKey) {
-        showToast('SMS API key not configured. Please set it in Settings.', 'error')
-        setSending(false)
-        return
-      }
-
-      // Send SMS to each recipient
+      // Send each SMS through the server-side edge function, which reads the
+      // Termii API key with the service role (RLS doesn't gate it) and logs
+      // to sms_logs server-side. The key never reaches the browser. We do NOT
+      // pre-flight with isConfigured() here: that helper reads the secret
+      // settings row, which RLS (migration 079) restricts to owner/manager, so
+      // it would wrongly report "not configured" for other staff. The edge
+      // function returns a clear "not configured" error if the key is missing.
       const results = []
+      let configError: string | null = null
       for (const recipient of recipients) {
-        try {
-          const response = await fetch('https://api.ng.termii.com/api/sms/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              api_key: apiKey,
-              to: recipient.phone,
-              from: senderId,
-              sms: message,
-              type: 'plain',
-              channel: 'dnd',
-            }),
-          })
-
-          const data = await response.json()
-
-          // Log the SMS
-          await supabase.from('sms_logs').insert({
-            business_id: staff?.business_id,
-            recipient: recipient.phone,
-            message,
-            message_id: data.message_id || null,
-            status: data.status === 'success' ? 'sent' : 'failed',
-            error_message: data.status !== 'success' ? data.message : null,
-            channel: 'dnd',
-          })
-
-          results.push({ phone: recipient.phone, success: data.status === 'success' })
-        } catch (error) {
-          console.error('Error sending SMS to', recipient.phone, error)
-          results.push({ phone: recipient.phone, success: false })
-
-          // Log the failed SMS
-          await supabase.from('sms_logs').insert({
-            business_id: staff?.business_id,
-            recipient: recipient.phone,
-            message,
-            status: 'failed',
-            error_message: 'Network error',
-            channel: 'dnd',
-          })
+        const res = await TermiiSMS.sendViaEdgeFunction({
+          to: recipient.phone,
+          message,
+          channel: 'dnd',
+        })
+        results.push({ phone: recipient.phone, success: res.success })
+        if (!res.success && res.error && /not configured/i.test(res.error) && !configError) {
+          configError = res.error
         }
       }
 
-      const successCount = results.filter(r => r.success).length
-      showToast(`SMS sent: ${successCount}/${recipients.length} successful`, 'success')
+      if (configError) {
+        showToast(configError, 'error')
+      } else {
+        const successCount = results.filter(r => r.success).length
+        showToast(`SMS sent: ${successCount}/${recipients.length} successful`, successCount === recipients.length ? 'success' : 'error')
+      }
 
       // Clear form
       setMessage('')

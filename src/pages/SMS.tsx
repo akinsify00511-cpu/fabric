@@ -78,10 +78,12 @@ export default function SMSSettings() {
     setLoading(true)
     try {
       // Load only the presence flag of the secret key + the non-secret config.
-      // The actual API key value is never read to the browser.
+      // The actual API key value is never read to the browser — we select just
+      // the row key to confirm presence, so the secret never enters the
+      // response payload.
       const { data: apiKeyRow } = await supabase
         .from('settings')
-        .select('value')
+        .select('key')
         .eq('key', 'termii_api_key')
         .maybeSingle()
 
@@ -97,7 +99,7 @@ export default function SMSSettings() {
         .eq('key', 'termii_channel')
         .maybeSingle()
 
-      setApiKeySet(!!apiKeyRow?.value)
+      setApiKeySet(!!apiKeyRow)
       setSettings({
         apiKey: '',
         senderId: senderId?.value || 'Avenize',
