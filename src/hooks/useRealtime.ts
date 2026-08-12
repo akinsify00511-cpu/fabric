@@ -199,10 +199,8 @@ export function usePresence(channelName: string) {
         setPresenceState(state)
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('User joined:', key, newPresences)
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('User left:', key, leftPresences)
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {

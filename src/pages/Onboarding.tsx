@@ -168,7 +168,6 @@ export default function Onboarding() {
     }
 
     // Step 1: Create business
-    console.log('Creating business manually...')
     const { data: businessData, error: businessError } = await supabase
       .from('businesses')
       .insert({ name: businessName, industry: industry })
@@ -181,10 +180,8 @@ export default function Onboarding() {
       setLoading(false)
       return
     }
-    console.log('Business created:', businessData.id)
 
     // Step 2: Create staff record
-    console.log('Creating staff record...')
     const { data: staffData, error: staffError } = await supabase
       .from('staff')
       .insert({
@@ -205,11 +202,9 @@ export default function Onboarding() {
       setLoading(false)
       return
     }
-    console.log('Staff created:', staffData.id)
 
     // Step 3: Save branding
     if (selectedColor) {
-      console.log('Saving branding...')
       await supabase
         .from('business_branding')
         .upsert({

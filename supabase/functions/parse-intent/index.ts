@@ -8,6 +8,7 @@
 // The client shows a "What I Understood" confirmation before committing.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -124,12 +125,37 @@ serve(async (req) => {
   try {
     const body = await req.json()
     const text = body.text
-    const businessId = body.business_id
     const actorId = body.actor_id || body.staff_id
     if (!text) {
       return new Response(JSON.stringify({ error: 'text required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
+
+    // SECURITY: Verify the caller and derive business_id from their staff
+    // record. This also ensures the guardrail check below actually runs
+    // (previously business_id was never sent by the client, so the guardrail
+    // was silently skipped for every capture).
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const token = authHeader.substring(7)
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const { data: staffData } = await supabase
+      .from('staff')
+      .select('business_id, id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    const businessId = staffData?.business_id || body.business_id
+    const resolvedActorId = actorId || staffData?.id
     const result = parse(String(text))
     const hasLLM = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('ANTHROPIC_API_KEY')
     if (hasLLM) result.evidence.method = 'rule_parser_plus_llm_available'
@@ -194,7 +220,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       intent: result,
       guardrail,
-      actor_id: actorId,
+      actor_id: resolvedActorId,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   } catch (e) {

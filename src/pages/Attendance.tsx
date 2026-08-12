@@ -139,7 +139,7 @@ export default function AttendancePage() {
           lng = position.coords.longitude
           locationText = `${lat.toFixed(4)}, ${lng.toFixed(4)}`
         } catch (e) {
-          console.log('Could not get location')
+          console.warn('Could not get location')
         }
       }
 

@@ -107,7 +107,7 @@ export default function AuthCallback() {
                 localStorage.removeItem('avenize_pending_business')
                 
                 // Send welcome email (non-blocking)
-                sendWelcomeEmail(email, fullName, businessName)
+                sendWelcomeEmail(email, fullName, businessName, session.access_token)
                 
                 setMessage('Business created! Redirecting...')
                 setTimeout(() => navigate('/app', { replace: true }), 1500)
@@ -215,13 +215,14 @@ export default function AuthCallback() {
 }
 
 // Send welcome email via Edge Function
-async function sendWelcomeEmail(email: string, fullName: string, businessName?: string) {
+async function sendWelcomeEmail(email: string, fullName: string, businessName: string | undefined, accessToken: string) {
   try {
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ email, fullName, businessName }),
     })

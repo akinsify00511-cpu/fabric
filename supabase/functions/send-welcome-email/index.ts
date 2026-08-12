@@ -6,6 +6,7 @@
 // Deploy: supabase functions deploy send-welcome-email --no-verify-jwt
 
 import { Resend } from "https://esm.sh/resend@3.2.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')!;
 const FROM_EMAIL = Deno.env.get('FROM_EMAIL') ?? 'Avenize <noreply@avenize.com>';
@@ -33,6 +34,24 @@ Deno.serve(async (req) => {
 
     if (!email || !fullName) {
       return json({ error: 'email and fullName are required' }, 400);
+    }
+
+    // SECURITY: Verify the caller is authenticated and the email matches
+    // their session. Prevents email bombing via this public endpoint.
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return json({ error: 'Missing authorization header' }, 401);
+    }
+    const token = authHeader.substring(7);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return json({ error: 'Unauthorized' }, 401);
+    }
+    if (user.email !== email) {
+      return json({ error: 'Email does not match authenticated user' }, 403);
     }
 
     const firstName = fullName.split(' ')[0];
