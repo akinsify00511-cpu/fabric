@@ -12,11 +12,8 @@ export default defineConfig({
             if (id.includes('react')) return 'vendor-react'
             if (id.includes('react-router')) return 'vendor-router'
             if (id.includes('supabase')) return 'vendor-supabase'
-            if (id.includes('date-fns') || id.includes('uuid')) return 'vendor-utils'
-            if (id.includes('jspdf') || id.includes('html2canvas')) return 'vendor-pdf'
+            if (id.includes('jspdf')) return 'vendor-pdf'
             if (id.includes('lucide')) return 'vendor-icons'
-            if (id.includes('@supabase')) return 'vendor-supabase'
-            if (id.includes('dompurify')) return 'vendor-sanitize'
           }
         },
       },
