@@ -210,29 +210,23 @@ export default function PublicAppointmentsPage() {
       // Create client (if not exists by email)
       let clientId: string | null = null
 
-      const { data: existingClient } = await supabase
+      // Upsert client by (business_id, email). Anonymous users cannot SELECT
+      // existing client rows (RLS blocks it), so a check-then-insert pattern
+      // would crash with a UNIQUE violation on the second booking by the same
+      // person. upsert with onConflict resolves this atomically.
+      const { data: client, error: clientError } = await supabase
         .from('clients')
+        .upsert({
+          business_id: business.id,
+          business_name: form.name,
+          email: form.email,
+          phone: form.phone,
+        }, { onConflict: 'business_id,email' })
         .select('id')
-        .eq('email', form.email)
         .single()
 
-      if (existingClient) {
-        clientId = existingClient.id
-      } else {
-        const { data: newClient, error: clientError } = await supabase
-          .from('clients')
-          .insert({
-            business_id: business.id,
-            business_name: form.name,
-            email: form.email,
-            phone: form.phone,
-          })
-          .select('id')
-          .single()
-
-        if (clientError) throw clientError
-        clientId = newClient.id
-      }
+      if (clientError) throw clientError
+      clientId = client.id
 
       // Create appointment
       const appointmentDate = new Date(`${form.date}T${form.time}`)
