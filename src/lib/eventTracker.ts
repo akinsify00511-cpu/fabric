@@ -151,6 +151,9 @@ class EventTracker {
   private flushTimeout: ReturnType<typeof setTimeout> | null = null
   private readonly BATCH_SIZE = 10
   private readonly FLUSH_INTERVAL = 5000
+  private cachedUserId: string | null = null
+  private cachedBusinessId: string | null = null
+  private identityResolved = false
 
   constructor() {
     // Start batch processor
@@ -163,6 +166,27 @@ class EventTracker {
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', () => this.flush())
     }
+  }
+
+  // Lazily resolve the current user and their business_id from auth,
+  // instead of relying on window globals that were never set.
+  private async resolveIdentity(): Promise<void> {
+    if (this.identityResolved) return
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        this.cachedUserId = user.id
+        const { data: staff } = await supabase
+          .from('staff')
+          .select('business_id')
+          .eq('user_id', user.id)
+          .single()
+        this.cachedBusinessId = staff?.business_id ?? null
+      }
+    } catch {
+      // leave nulls — analytics recorded without attribution
+    }
+    this.identityResolved = true
   }
 
   async track(event: AnalyticsEvent) {
@@ -262,6 +286,8 @@ class EventTracker {
   async flush() {
     if (this.queue.length === 0) return
 
+    await this.resolveIdentity()
+
     const events = [...this.queue]
     this.queue = []
 
@@ -270,8 +296,8 @@ class EventTracker {
       
       for (const event of events) {
         await supabase.rpc('record_analytics_event', {
-          p_business_id: (window as any).__businessId__ || null,
-          p_user_id: (window as any).__userId__ || null,
+          p_business_id: this.cachedBusinessId,
+          p_user_id: this.cachedUserId,
           p_event_name: event.eventName,
           p_category: event.category,
           p_page: event.page || window.location.pathname,

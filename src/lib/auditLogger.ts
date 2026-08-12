@@ -19,6 +19,9 @@ class AuditLogger {
   private flushTimeout: ReturnType<typeof setTimeout> | null = null
   private readonly BATCH_SIZE = 10
   private readonly FLUSH_INTERVAL = 3000
+  private cachedUserId: string | null = null
+  private cachedBusinessId: string | null = null
+  private identityResolved = false
 
   constructor() {
     this.startBatchProcessor()
@@ -27,6 +30,27 @@ class AuditLogger {
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', () => this.flush())
     }
+  }
+
+  // Lazily resolve the current user and their business_id from auth,
+  // instead of relying on window globals that were never set.
+  private async resolveIdentity(): Promise<void> {
+    if (this.identityResolved) return
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        this.cachedUserId = user.id
+        const { data: staff } = await supabase
+          .from('staff')
+          .select('business_id')
+          .eq('user_id', user.id)
+          .single()
+        this.cachedBusinessId = staff?.business_id ?? null
+      }
+    } catch {
+      // leave nulls — audit logs recorded without attribution
+    }
+    this.identityResolved = true
   }
 
   async log(entry: AuditLogEntry) {
@@ -78,14 +102,16 @@ class AuditLogger {
   async flush() {
     if (this.queue.length === 0) return
 
+    await this.resolveIdentity()
+
     const entries = [...this.queue]
     this.queue = []
 
     try {
       for (const entry of entries) {
         await supabase.rpc('record_audit', {
-          p_business_id: (window as any).__businessId__ || null,
-          p_user_id: (window as any).__userId__ || null,
+          p_business_id: this.cachedBusinessId,
+          p_user_id: this.cachedUserId,
           p_action: entry.action,
           p_entity_type: entry.entityType,
           p_entity_id: entry.entityId,
