@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useToast } from '../components/Toast'
 
 interface LeaveType {
   id: string
@@ -50,6 +51,7 @@ interface PendingApproval {
 export default function LeaveManagementPage() {
   const { staff } = useAuth()
   const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
+  const { showToast } = useToast()
   const [balances, setBalances] = useState<LeaveBalance[]>([])
   const [requests, setRequests] = useState<LeaveRequest[]>([])
   const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([])
@@ -139,41 +141,70 @@ export default function LeaveManagementPage() {
 
   async function handleApprove(requestId: string) {
     try {
-      await supabase.from('leave_requests').update({
+      const req = requests.find(r => r.id === requestId)
+      // Guard the transition: only a pending request can be approved. This
+      // prevents re-approving an already-approved/rejected request, which
+      // would double-decrement the leave balance.
+      if (!req || req.status !== 'pending') {
+        showToast('This request can no longer be approved.', 'error')
+        return
+      }
+
+      const { error: updateError } = await supabase.from('leave_requests').update({
         status: 'approved',
         approved_by: staff?.id,
         approved_at: new Date().toISOString(),
       }).eq('id', requestId)
-      
-      // Update balance
-      const req = requests.find(r => r.id === requestId)
-      if (req) {
-        await supabase.rpc('update_leave_balance', {
-          p_staff_id: staff?.id,
-          p_leave_type_id: req.leave_type_id,
-          p_days: req.total_days,
-          p_type: 'approve',
-        })
+
+      if (updateError) {
+        showToast('Failed to approve request. Please try again.', 'error')
+        return
       }
-      
+
+      // Only decrement the balance once the approval has actually committed.
+      const { error: balError } = await supabase.rpc('update_leave_balance', {
+        p_staff_id: staff?.id,
+        p_leave_type_id: req.leave_type_id,
+        p_days: req.total_days,
+        p_type: 'approve',
+      })
+      if (balError) {
+        console.error('update_leave_balance RPC failed:', balError)
+        showToast('Approved, but the leave balance could not be updated. Please contact an admin.', 'error')
+      } else {
+        showToast('Leave request approved', 'success')
+      }
+
       loadData()
     } catch (e) {
       console.error('Failed to approve:', e)
+      showToast('Failed to approve request. Please try again.', 'error')
     }
   }
 
   async function handleReject(requestId: string, reason: string) {
     try {
-      await supabase.from('leave_requests').update({
+      const req = requests.find(r => r.id === requestId)
+      if (!req || req.status !== 'pending') {
+        showToast('This request can no longer be rejected.', 'error')
+        return
+      }
+      const { error: updateError } = await supabase.from('leave_requests').update({
         status: 'rejected',
         rejection_reason: reason,
         approved_by: staff?.id,
         approved_at: new Date().toISOString(),
       }).eq('id', requestId)
-      
+
+      if (updateError) {
+        showToast('Failed to reject request. Please try again.', 'error')
+        return
+      }
+      showToast('Leave request rejected', 'success')
       loadData()
     } catch (e) {
       console.error('Failed to reject:', e)
+      showToast('Failed to reject request. Please try again.', 'error')
     }
   }
 
