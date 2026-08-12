@@ -530,9 +530,12 @@ export default function RecruitmentPage() {
                               </button>
                               {posting.status !== 'open' && (
                                 <button
-                                  onClick={(e) => {
+                                  onClick={async (e) => {
                                     e.stopPropagation()
-                                    supabase.from('job_postings').update({ status: 'open' }).eq('id', posting.id).then(() => fetchPostings())
+                                    const { error } = await supabase.from('job_postings').update({ status: 'open' }).eq('id', posting.id)
+                                    if (error) { showToast('Failed to publish posting', 'error'); return }
+                                    showToast('Posting published', 'success')
+                                    fetchPostings()
                                   }}
                                   className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-green-700"
                                 >
@@ -541,9 +544,12 @@ export default function RecruitmentPage() {
                               )}
                               {posting.status === 'open' && (
                                 <button
-                                  onClick={(e) => {
+                                  onClick={async (e) => {
                                     e.stopPropagation()
-                                    supabase.from('job_postings').update({ status: 'closed' }).eq('id', posting.id).then(() => fetchPostings())
+                                    const { error } = await supabase.from('job_postings').update({ status: 'closed' }).eq('id', posting.id)
+                                    if (error) { showToast('Failed to close posting', 'error'); return }
+                                    showToast('Posting closed', 'success')
+                                    fetchPostings()
                                   }}
                                   className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm hover:bg-amber-700"
                                 >
