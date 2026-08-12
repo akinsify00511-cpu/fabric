@@ -4,10 +4,11 @@ import { supabase } from '../lib/supabase'
 
 interface LeadCaptureProps {
   source?: string
+  businessId?: string
   onSuccess?: () => void
 }
 
-export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptureProps) {
+export default function LeadCapture({ source = 'website', businessId, onSuccess }: LeadCaptureProps) {
   const [form, setForm] = useState({
     full_name: '',
     company_name: '',
@@ -38,6 +39,7 @@ export default function LeadCapture({ source = 'website', onSuccess }: LeadCaptu
       const { error: dbError } = await supabase
         .from('leads')
         .insert({
+          business_id: businessId || null,
           full_name: form.full_name,
           company_name: form.company_name,
           email: form.email,

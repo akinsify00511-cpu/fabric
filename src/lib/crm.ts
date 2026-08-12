@@ -5,6 +5,7 @@ import { supabase } from './supabase'
 
 export interface Lead {
   id: string
+  business_id?: string | null
   full_name: string
   company_name?: string
   email: string
