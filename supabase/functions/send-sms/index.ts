@@ -19,11 +19,31 @@ interface SMSRequest {
   save_to_logs?: boolean
 }
 
+// OTP action payloads (Termii OTP API). Routed through this edge function so
+// the Termii API key never reaches the browser.
+interface OtpSendPayload {
+  to: string
+  channel?: string
+  pin_length?: number
+  pin_time_to_live?: number
+  pin_placeholder?: string
+  message_text?: string
+}
+interface OtpVerifyPayload {
+  pin_id: string
+  pin: string
+}
+interface OtpResendPayload {
+  pin_id: string
+}
+
 interface TermiiResponse {
   status: string
   response_code: string
   response_message: string
   message_id?: string
+  pin_id?: string
+  verified?: boolean
   data?: {
     balance?: number
     message?: string
@@ -165,24 +185,108 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     // Parse request body
-    const { to, message, channel, business_id, save_to_logs = true }: SMSRequest = await req.json()
-
-    // Validate required fields
-    if (!to || !message) {
-      return new Response(JSON.stringify({
-        error: 'Missing required fields: to and message are required'
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
-
+    const { to, message, channel, business_id, save_to_logs = true, action }: SMSRequest & { action?: string } = await req.json()
+    
     // Get Termii configuration
     const config = await getTermiiConfig(supabase)
     
     if (!config.apiKey) {
       return new Response(JSON.stringify({
         error: 'Termii not configured. Please set termii_api_key in settings.'
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    
+    // Balance action: fetch the Termii balance server-side so the API key
+    // never reaches the browser. Uses the correct Termii balance endpoint
+    // (api_key passed in the JSON body, per Termii docs).
+    if (action === 'balance') {
+      const balanceRes = await fetch(`${TERMII_API_URL}/sms/balance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: config.apiKey }),
+      })
+      const balanceData = await balanceRes.json() as TermiiResponse
+      if (balanceData.status === 'success') {
+        return new Response(JSON.stringify({
+          success: true,
+          balance: balanceData.data?.balance,
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      return new Response(JSON.stringify({
+        success: false,
+        error: balanceData.response_message || 'Failed to get balance',
+      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    
+    // OTP actions: send / verify / resend, all server-side so the API key
+    // never reaches the browser. (Termii OTP endpoints.)
+    if (action === 'otp_send') {
+      const otp: OtpSendPayload = (await req.json().catch(() => ({}))) as OtpSendPayload
+      const phone = otp.to || to
+      if (!phone) {
+        return new Response(JSON.stringify({ error: 'Missing phone number' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      const formattedPhone = formatPhoneNumber(phone)
+      const res = await fetch(`${TERMII_API_URL}/sms/otp/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          api_key: config.apiKey,
+          message_type: 'NUMERIC',
+          to: formattedPhone,
+          from: config.senderId,
+          channel: otp.channel || config.channel,
+          pin_attempts: 3,
+          pin_length: otp.pin_length || 4,
+          pin_time_to_live: otp.pin_time_to_live || 5,
+          pin_placeholder: otp.pin_placeholder || '< 1234 >',
+          message_text: otp.message_text || 'Your Avenize verification code is < 1234 >',
+          loop: 0,
+        }),
+      })
+      const d = await res.json() as TermiiResponse
+      return new Response(JSON.stringify(d.status === 'success'
+        ? { success: true, pin_id: d.pin_id }
+        : { success: false, error: d.response_message || 'Failed to send OTP' }),
+        { status: d.status === 'success' ? 200 : 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    if (action === 'otp_verify') {
+      const otp: OtpVerifyPayload = (await req.json().catch(() => ({}))) as OtpVerifyPayload
+      if (!otp.pin_id || !otp.pin) {
+        return new Response(JSON.stringify({ verified: false, message: 'Missing pin_id or pin' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      const res = await fetch(`${TERMII_API_URL}/sms/otp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: config.apiKey, pin_id: otp.pin_id, pin: otp.pin }),
+      })
+      const d = await res.json() as TermiiResponse
+      return new Response(JSON.stringify({ verified: !!d.verified, message: d.response_message || (d.verified ? 'Verified' : 'Invalid OTP') }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    if (action === 'otp_resend') {
+      const otp: OtpResendPayload = (await req.json().catch(() => ({}))) as OtpResendPayload
+      if (!otp.pin_id) {
+        return new Response(JSON.stringify({ success: false, error: 'Missing pin_id' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      const res = await fetch(`${TERMII_API_URL}/sms/otp/resend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: config.apiKey, pin_id: otp.pin_id, type: 'numeric' }),
+      })
+      const d = await res.json() as TermiiResponse
+      return new Response(JSON.stringify(d.status === 'success'
+        ? { success: true, pin_id: d.pin_id }
+        : { success: false, error: d.response_message || 'Failed to resend OTP' }),
+        { status: d.status === 'success' ? 200 : 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    // Validate required fields for the default send action
+    if (!to || !message) {
+      return new Response(JSON.stringify({
+        error: 'Missing required fields: to and message are required'
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

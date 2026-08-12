@@ -5,12 +5,6 @@
 
 import { supabase } from './supabase'
 
-export interface SMSConfig {
-  apiKey: string
-  senderId: string
-  channel?: 'dnd' | 'whatsapp' | 'generic'
-}
-
 export interface SMSMessage {
   to: string
   message: string
@@ -58,40 +52,38 @@ export interface VerifyOTPResponse {
 // TERMII API CONFIGURATION
 // ============================================
 
-const TERMII_API_URL = 'https://api.ng.termii.com/api'
 
 // ============================================
 // SMS SERVICE (Client-side methods)
 // ============================================
 
 export const TermiiSMS = {
-  // Get configuration from database settings
-  async getConfig(): Promise<SMSConfig | null> {
+  // Check whether a Termii API key is configured, WITHOUT fetching the secret
+  // value to the browser. Reads only the sender_id / channel (non-secret) for
+  // display. The API key itself stays server-side (used by the send-sms edge
+  // function); the settings page sets/replaces it but never reads it back.
+  async getConfig(): Promise<{ senderId: string; channel: 'dnd' | 'whatsapp' | 'generic'; hasApiKey: boolean } | null> {
     try {
-      const { data: apiKey } = await supabase
+      const { data: apiKeyRow } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_api_key')
-        .single()
-      
+        .maybeSingle()
+
       const { data: senderId } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_sender_id')
-        .single()
-      
+        .maybeSingle()
+
       const { data: channel } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_channel')
-        .single()
-
-      if (!apiKey?.value) {
-        return null
-      }
+        .maybeSingle()
 
       return {
-        apiKey: apiKey.value,
+        hasApiKey: !!apiKeyRow?.value,
         senderId: senderId?.value || 'Avenize',
         channel: (channel?.value as 'dnd' | 'whatsapp' | 'generic') || 'dnd',
       }
@@ -101,8 +93,9 @@ export const TermiiSMS = {
     }
   },
 
-  // Save configuration to database
-  async saveConfig(config: SMSConfig): Promise<boolean> {
+  // Save configuration to database. The API key is written (upserted) but is
+  // never read back for display — the page shows a masked placeholder instead.
+  async saveConfig(config: { apiKey: string; senderId: string; channel?: 'dnd' | 'whatsapp' | 'generic' }): Promise<boolean> {
     try {
       const { error: apiKeyError } = await supabase
         .from('settings')
@@ -125,17 +118,17 @@ export const TermiiSMS = {
     }
   },
 
-  // Check if Termii is configured
+  // Check if Termii is configured (does not fetch the secret value).
   async isConfigured(): Promise<boolean> {
     const config = await this.getConfig()
-    return !!config?.apiKey
+    return !!config?.hasApiKey
   },
 
   // Send SMS via Edge Function (recommended - keeps API key server-side)
   async sendViaEdgeFunction(message: SMSMessage): Promise<SMSResponse> {
     try {
       const { data: business } = await supabase.auth.getUser()
-      
+
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
         method: 'POST',
         headers: {
@@ -168,67 +161,10 @@ export const TermiiSMS = {
     }
   },
 
-  // Send SMS directly from client (requires API key exposed - use edge function instead)
-  async sendDirect(message: SMSMessage): Promise<SMSResponse> {
-    const config = await this.getConfig()
-    
-    if (!config) {
-      return { success: false, message: 'Termii not configured', error: 'Please configure Termii API key' }
-    }
-
-    try {
-      // Format phone number
-      const formattedPhone = this.formatPhoneNumber(message.to)
-
-      const response = await fetch(`${TERMII_API_URL}/sms/send`, {
-        signal: AbortSignal.timeout(10000),
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          api_key: config.apiKey,
-          to: formattedPhone,
-          from: config.senderId,
-          sms: message.message,
-          channel: message.channel || config.channel || 'dnd',
-          type: 'plain',
-        }),
-      })
-
-      const data = await response.json()
-
-      if (data.status === 'success') {
-        // Record the SMS
-        await this.recordSMS({
-          to: formattedPhone,
-          message: message.message,
-          message_id: data.message_id,
-          status: 'sent',
-        })
-
-        return {
-          success: true,
-          message: 'SMS sent successfully',
-          message_id: data.message_id,
-        }
-      } else {
-        return {
-          success: false,
-          message: data.response_message || 'Failed to send SMS',
-          error: data.response_code,
-        }
-      }
-    } catch (error) {
-      console.error('SMS send error:', error)
-      return { success: false, message: 'Network error', error: (error as Error).message }
-    }
-  },
-
-  // Send bulk SMS
+  // Send bulk SMS (routes each through the server-side edge function).
   async sendBulk(messages: SMSMessage[]): Promise<{ success: boolean; results: SMSResponse[] }> {
     const results: SMSResponse[] = []
-    
+
     for (const message of messages) {
       const result = await this.sendViaEdgeFunction(message)
       results.push(result)
@@ -240,36 +176,28 @@ export const TermiiSMS = {
     }
   },
 
-  // Get SMS balance
+  // Get SMS balance via the server-side edge function (action: 'balance') so
+  // the Termii API key never reaches the browser. Previously this called the
+  // Termii balance endpoint directly without passing the key (always failed)
+  // and leaked the key — both fixed by routing through send-sms.
   async getBalance(): Promise<{ success: boolean; balance?: number; error?: string }> {
-    const config = await this.getConfig()
-    
-    if (!config) {
-      return { success: false, error: 'Termii not configured' }
-    }
-
     try {
-      const response = await fetch(`${TERMII_API_URL}/sms/balance`, {
-        signal: AbortSignal.timeout(10000),
-        method: 'GET',
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
+        signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({ action: 'balance' }),
       })
 
       const data = await response.json()
 
-      if (data.status === 'success') {
-        return {
-          success: true,
-          balance: data.data.balance,
-        }
-      } else {
-        return {
-          success: false,
-          error: data.response_message || 'Failed to get balance',
-        }
+      if (response.ok && data.success) {
+        return { success: true, balance: data.balance }
       }
+      return { success: false, error: data.error || 'Failed to get balance' }
     } catch (error) {
       return { success: false, error: (error as Error).message }
     }
@@ -353,133 +281,65 @@ export const TermiiSMS = {
 // ============================================
 
 export const TermiiOTP = {
-  // Send OTP to phone number
+  // All OTP actions route through the server-side send-sms edge function
+  // (actions: otp_send / otp_verify / otp_resend) so the Termii API key is
+  // never read by the browser.
   async send(phone: string, config?: OTPConfig): Promise<OTPResponse> {
-    const termiiConfig = await TermiiSMS.getConfig()
-    
-    if (!termiiConfig) {
-      return { success: false, error: 'Termii not configured' }
-    }
-
     try {
-      const formattedPhone = TermiiSMS.formatPhoneNumber(phone)
-
-      const response = await fetch(`${TERMII_API_URL}/api/sms/otp/send`, {
-        signal: AbortSignal.timeout(10000),
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+        signal: AbortSignal.timeout(10000),
         body: JSON.stringify({
-          api_key: termiiConfig.apiKey,
-          message_type: 'NUMERIC',
-          to: formattedPhone,
-          from: termiiConfig.senderId,
-          channel: config?.channel || 'dnd',
-          pin_attempts: 3,
-          pin_length: config?.length || 4,
-          pin_time_to_live: config?.lifetime || 5,
-          pin_placeholder: config?.placeholder || '< 1234 >',
-          message_text: config?.placeholder || 'Your Avenize verification code is < 1234 >',
-          loop: 0,
+          action: 'otp_send',
+          to: phone,
+          channel: config?.channel,
+          pin_length: config?.length,
+          pin_time_to_live: config?.lifetime,
+          pin_placeholder: config?.placeholder,
+          message_text: config?.placeholder,
         }),
       })
-
       const data = await response.json()
-
-      if (data.status === 'success') {
-        // Record OTP request
-        await this.recordOTPRequest(formattedPhone, data.pin_id, 'sent')
-
-        return {
-          success: true,
-          messageId: data.pin_id,
-          message: 'OTP sent successfully',
-        }
-      } else {
-        return {
-          success: false,
-          error: data.response_message || 'Failed to send OTP',
-        }
+      if (response.ok && data.success) {
+        return { success: true, messageId: data.pin_id, message: 'OTP sent successfully' }
       }
+      return { success: false, error: data.error || 'Failed to send OTP' }
     } catch (error) {
       console.error('OTP send error:', error)
       return { success: false, error: (error as Error).message }
     }
   },
 
-  // Verify OTP
   async verify(pinId: string, otp: string): Promise<VerifyOTPResponse> {
-    const config = await TermiiSMS.getConfig()
-    
-    if (!config) {
-      return { verified: false, message: 'Termii not configured' }
-    }
-
     try {
-      const response = await fetch(`${TERMII_API_URL}/api/sms/otp/verify`, {
-        signal: AbortSignal.timeout(10000),
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          api_key: config.apiKey,
-          pin_id: pinId,
-          pin: otp,
-        }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+        signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({ action: 'otp_verify', pin_id: pinId, pin: otp }),
       })
-
       const data = await response.json()
-
-      if (data.verified) {
-        await this.recordOTPRequest('', pinId, 'verified')
-        return { verified: true, message: 'OTP verified successfully' }
-      } else {
-        return { verified: false, message: data.response_message || 'Invalid OTP' }
-      }
+      return { verified: !!data.verified, message: data.message || (data.verified ? 'OTP verified successfully' : 'Invalid OTP') }
     } catch (error) {
       console.error('OTP verify error:', error)
       return { verified: false, message: (error as Error).message }
     }
   },
 
-  // Resend OTP
   async resend(pinId: string): Promise<OTPResponse> {
-    const config = await TermiiSMS.getConfig()
-    
-    if (!config) {
-      return { success: false, error: 'Termii not configured' }
-    }
-
     try {
-      const response = await fetch(`${TERMII_API_URL}/api/sms/otp/resend`, {
-        signal: AbortSignal.timeout(10000),
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-sms`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          api_key: config.apiKey,
-          pin_id: pinId,
-          type: 'numeric',
-        }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}` },
+        signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({ action: 'otp_resend', pin_id: pinId }),
       })
-
       const data = await response.json()
-
-      if (data.status === 'success') {
-        return {
-          success: true,
-          messageId: data.pin_id,
-          message: 'OTP resent successfully',
-        }
-      } else {
-        return {
-          success: false,
-          error: data.response_message || 'Failed to resend OTP',
-        }
+      if (response.ok && data.success) {
+        return { success: true, messageId: data.pin_id, message: 'OTP resent successfully' }
       }
+      return { success: false, error: data.error || 'Failed to resend OTP' }
     } catch (error) {
       console.error('OTP resend error:', error)
       return { success: false, error: (error as Error).message }
@@ -490,7 +350,6 @@ export const TermiiOTP = {
   async recordOTPRequest(phone: string, pinId: string, status: string): Promise<void> {
     try {
       const { data: business } = await supabase.auth.getUser()
-      
       await supabase.from('otp_requests').insert({
         business_id: business.user?.id,
         phone: phone,

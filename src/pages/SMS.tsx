@@ -44,6 +44,9 @@ export default function SMSSettings() {
     senderId: 'Avenize',
     channel: 'dnd',
   })
+  // Whether a Termii API key is already stored server-side. We never read the
+  // secret value back for display; the apiKey field is for entering a NEW key.
+  const [apiKeySet, setApiKeySet] = useState(false)
   const [showApiKey, setShowApiKey] = useState(false)
   const [balance, setBalance] = useState<number | null>(null)
   const [checkingBalance, setCheckingBalance] = useState(false)
@@ -74,26 +77,29 @@ export default function SMSSettings() {
   async function loadSettings() {
     setLoading(true)
     try {
-      const { data: apiKey } = await supabase
+      // Load only the presence flag of the secret key + the non-secret config.
+      // The actual API key value is never read to the browser.
+      const { data: apiKeyRow } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_api_key')
-        .single()
-      
+        .maybeSingle()
+
       const { data: senderId } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_sender_id')
-        .single()
-      
+        .maybeSingle()
+
       const { data: channel } = await supabase
         .from('settings')
         .select('value')
         .eq('key', 'termii_channel')
-        .single()
+        .maybeSingle()
 
+      setApiKeySet(!!apiKeyRow?.value)
       setSettings({
-        apiKey: apiKey?.value || '',
+        apiKey: '',
         senderId: senderId?.value || 'Avenize',
         channel: (channel?.value as 'dnd' | 'whatsapp' | 'generic') || 'dnd',
       })
@@ -104,7 +110,8 @@ export default function SMSSettings() {
   }
 
   async function saveSettings() {
-    if (!settings.apiKey) {
+    // Require a new key only when none is stored yet.
+    if (!apiKeySet && !settings.apiKey) {
       showToast('Please enter your Termii API key', 'error')
       return
     }
@@ -115,9 +122,14 @@ export default function SMSSettings() {
 
     setSaving(true)
     try {
-      await supabase
-        .from('settings')
-        .upsert({ key: 'termii_api_key', value: settings.apiKey, type: 'secret' }, { onConflict: 'key' })
+      // Only overwrite the stored API key when the admin entered a new value.
+      // (The field is empty when an existing key is kept.)
+      if (settings.apiKey) {
+        await supabase
+          .from('settings')
+          .upsert({ key: 'termii_api_key', value: settings.apiKey, type: 'secret' }, { onConflict: 'key' })
+        setApiKeySet(true)
+      }
 
       await supabase
         .from('settings')
@@ -128,7 +140,10 @@ export default function SMSSettings() {
         .upsert({ key: 'termii_channel', value: settings.channel, type: 'string' }, { onConflict: 'key' })
 
       showToast('SMS settings saved!', 'success')
-      
+
+      // Clear the new-key field after a successful save.
+      setSettings(s => ({ ...s, apiKey: '' }))
+
       // Check balance after saving
       checkBalance()
     } catch (error) {
@@ -283,7 +298,7 @@ export default function SMSSettings() {
                     type={showApiKey ? 'text' : 'password'}
                     value={settings.apiKey}
                     onChange={(e) => setSettings({ ...settings, apiKey: e.target.value })}
-                    placeholder="Enter your Termii API key"
+                    placeholder={apiKeySet ? "••••••••••••  (key set — enter a new key to replace it)" : "Enter your Termii API key"}
                     className="w-full px-4 py-2.5 rounded-xl border border-black/10 focus:border-[var(--av-primary, #4285F4)] focus:ring-2 focus:ring-[var(--av-primary, #4285F4)]/20 outline-none pr-10"
                   />
                   <button
@@ -354,7 +369,7 @@ export default function SMSSettings() {
                 </button>
                 <button
                   onClick={checkBalance}
-                  disabled={checkingBalance || !settings.apiKey}
+                  disabled={checkingBalance || !apiKeySet}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 hover:bg-black/10 disabled:opacity-50"
                 >
                   <RefreshCw size={16} className={checkingBalance ? 'animate-spin' : ''} />
@@ -400,7 +415,7 @@ export default function SMSSettings() {
 
               <button
                 onClick={sendTestSMS}
-                disabled={sendingTest || !settings.apiKey}
+                disabled={sendingTest || !apiKeySet}
                 className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 disabled:opacity-50"
               >
                 <Send size={16} />

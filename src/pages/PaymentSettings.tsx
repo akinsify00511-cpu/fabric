@@ -45,9 +45,11 @@ export default function PaymentSettingsPage() {
     setLoading(true)
 
     try {
+      // Select only the non-secret columns — never load provider secret keys
+      // (secret_key_encrypted / webhook_secret_encrypted) to the browser.
       const { data: gw } = await supabase
         .from('payment_gateways')
-        .select('*')
+        .select('id, provider, is_active, is_test_mode, status, supported_currencies')
         .eq('business_id', staff.business_id)
 
       setGateways(gw || [])
@@ -337,6 +339,12 @@ function AddGatewayModal({
     setSaving(true)
 
     try {
+      // NOTE: the provider secret is stored in `secret_key_encrypted` as
+      // plaintext (the column name is aspirational). The browser-leak risk is
+      // mitigated because reads exclude this column (see loadData select), but
+      // true encryption-at-rest requires a pgcrypto-backed SECURITY DEFINER RPC
+      // keyed from Supabase server secrets — deferred follow-up. The secret is
+      // only readable by the service role (edge functions) + admins (RLS).
       await supabase.from('payment_gateways').insert({
         business_id: staff.business_id,
         provider: selected,
