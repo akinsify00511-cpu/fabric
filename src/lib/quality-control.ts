@@ -80,9 +80,34 @@ const QC_CONFIG = {
 class QCConsumer {
   private logs: QCLog[] = []
   private listeners: ((log: QCLog) => void)[] = []
+  private cachedUserId: string | null = null
+  private cachedBusinessId: string | null = null
+  private identityResolved = false
 
   constructor() {
     this.loadFromStorage()
+    this.resolveIdentity()
+  }
+
+  // Lazily resolve the current user and their business_id from auth,
+  // instead of relying on window globals that were never set.
+  private async resolveIdentity(): Promise<void> {
+    if (this.identityResolved) return
+    this.identityResolved = true
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        this.cachedUserId = user.id
+        const { data: staff } = await supabase
+          .from('staff')
+          .select('business_id')
+          .eq('user_id', user.id)
+          .single()
+        this.cachedBusinessId = staff?.business_id ?? null
+      }
+    } catch {
+      // leave nulls — QC logs recorded without attribution
+    }
   }
 
   private loadFromStorage() {
@@ -116,8 +141,8 @@ class QCConsumer {
       message,
       context,
       page: window.location.pathname,
-      userId: (window as any).__userId__,
-      businessId: (window as any).__businessId__,
+      userId: this.cachedUserId ?? undefined,
+      businessId: this.cachedBusinessId ?? undefined,
     }
   }
 
