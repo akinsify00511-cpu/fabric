@@ -17,15 +17,6 @@ type Task = {
   created_by?: string
 }
 
-const DEMO_TASKS: Task[] = [
-  { id: '1', title: 'Review Q4 sales report', status: 'done', priority: 'high', created_at: '2024-01-15' },
-  { id: '2', title: 'Update client onboarding docs', status: 'in_progress', priority: 'medium', created_at: '2024-01-14' },
-  { id: '3', title: 'Prepare presentation for investors', status: 'todo', priority: 'high', created_at: '2024-01-13' },
-  { id: '4', title: 'Fix login bug on mobile', status: 'in_progress', priority: 'high', created_at: '2024-01-12' },
-  { id: '5', title: 'Schedule team meeting', status: 'todo', priority: 'low', created_at: '2024-01-11' },
-  { id: '6', title: 'Update pricing page', status: 'todo', priority: 'medium', created_at: '2024-01-10' },
-]
-
 const PRIORITY_COLORS = {
   low: 'bg-white text-black',
   medium: 'bg-amber-100 text-amber-600',

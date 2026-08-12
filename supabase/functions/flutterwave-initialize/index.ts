@@ -99,12 +99,43 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    
+
     // Create Supabase client with service role key
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+    // SECURITY: Verify authentication — this endpoint uses the service role
+    // key (bypasses RLS), so we MUST authenticate the caller and scope the
+    // transaction to the caller's own business_id.
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const token = authHeader.substring(7)
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const { data: staffData, error: staffError } = await supabase
+      .from('staff')
+      .select('business_id')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    if (staffError || !staffData) {
+      return new Response(JSON.stringify({ error: 'User not associated with a business' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const callerBusinessId = staffData.business_id
+
     // Parse request body
     const paymentData: FlutterwavePaymentRequest = await req.json()
+
+    // SECURITY: force business_id to the caller's own business
+    paymentData.business_id = callerBusinessId
 
     // Validate required fields
     if (!paymentData.amount || !paymentData.customer_email || !paymentData.tx_ref) {
