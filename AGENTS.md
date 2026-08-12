@@ -411,3 +411,44 @@ Triggered by a hard "build-from-within-first" audit protocol. Phase 1 = read-onl
 - **R1 (reliability, internal):** Replace `.single()` with `.maybeSingle()` on settings/MFA SELECTs across the ~12 pages. Fixes #6. **R2:** fix `getBalance` to pass the key (or, per S3, route balance through the edge function). Fixes #7.
 - **D1 (dead weight):** Remove the dead `paystackLink` fields from Pricing plans. Fixes #9. **D2:** Replace live creds in `.env.example` with placeholders. Fixes #10.
 - Defer #8 (dead security infra wiring) — wiring `check_auth_rate_limit`/`log_security_event` into login is valuable but is a larger change; flag as a follow-up, not Phase 2, unless time permits. Per protocol §35, every fix batch ends with tsc + vite build + vitest green.
+
+
+## Session 10 (2026-08-12): autonomous full-stack audit — security/data/reliability/dead-code/dependency repair
+
+Ran the full audit-and-repair protocol. Read-only discovery (Phase 1) found the critical systemic defect; Phases 2-5 executed controlled repair batches. 11 commits (30bf3c8..bdfea53), all on main, not pushed. Full report: AUDIT-FINAL-REPORT.md.
+
+### Critical (CLOSED)
+- **Cross-tenant RLS leak (systemic, ~111 policies).** Policies used `business_id IN (SELECT id FROM businesses)` — a subquery over the whole businesses table — true for ANY authenticated staff member regardless of tenant. Effectively USING(true) on tenant-scoped tables: any user could read/write any tenant's data. **Migration 080** rewrites all 111 to `business_id IN (SELECT business_id FROM get_current_staff())`, adds missing RLS on asset_categories/expense_categories/entity_freshness view/business_events/approval_requests view, hardens approval_requests + entity_freshness_status views with security_barrier=true. Commit 3ed5a7a.
+- **MFA bypass + unhashed backup codes.** 30bf3c8. Correct TOTP verify via otpauth; backup codes hashed, constant-time compare.
+
+### High (CLOSED)
+- **SMSBroadcast provider API-key leak** (secret sent to browser) + **edge-function auth** (anon/service key used without verifying caller JWT). 402b953 — secret stays server-side; functions verify caller JWT before using service role.
+- **.env.example live credentials.** 8bed327 sanitized.
+- **Provider secrets loaded to client** (settings returned full secret values). 37750db — stop loading secrets client-side; harden settings RLS.
+
+### Medium (CLOSED)
+- **.single() misuse** (throws on absent optional row) -> .maybeSingle() across lib + pages. 4abf724, 3be6b42.
+- **Business-delete blocked by bare FKs.** api_request_logs + deal_analytics had `business_id REFERENCES businesses(id)` with no ON DELETE action (default RESTRICT) -> business undeletable while rows exist. **Migration 081** -> ON DELETE CASCADE (drop-then-re-add via pg_constraint loop so it works regardless of auto-generated constraint name). 142 bare staff(id) FKs left RESTRICT (data-integrity-safe default; staff removal should deactivate, not delete). 11518e2.
+- **useRealtime stale channel ref** on cleanup. 9f8a061 — null the ref.
+
+### Dead code / deps (removed)
+- 7 unreachable modules (~1,130 lines): dead src/hooks/index.ts barrel + useRetry/useDebounce/useFocusManagement (only the dead barrel re-exported them) + useTheme.tsx (full theme system never wired into App/main) + OnboardingTour.tsx/LoadingSkeleton.tsx (zero refs). 3b09a65.
+- Dead devDeps postcss + autoprefixer (Tailwind v4 @tailwindcss/vite bundles its own PostCSS; no config files referenced them). bdfea53.
+
+### Reviewed, no change needed (verified sound)
+- **Payment idempotency:** paystack-webhook checks status==='success' (invoice) + provider_payment_id existence (subscription) before acting -> no double-charge/double-activation. paystack-verify is JWT-gated, server-side, uses real provider status (the prior verifyPayment()->true auto-approve bug is confirmed fixed).
+- **AICapture:** handleParse has local fallback if edge fn down; handleConfirm throws on emit error + surfaces toast; confirm button disabled={confirming}. Sound.
+- **WhatsApp token:** masked (password + eye toggle), admin-only, RLS-gated; sendMessage only queues a DB row — browser never calls Meta Graph with the token.
+- **Realtime subscriptions:** all have `return () => supabase.removeChannel(channel)` cleanup.
+- **Runtime deps (10):** all justified — gsap (Landing.tsx only), jspdf (build-from-within PDF), otpauth (MFA), Sentry (opt-in), rest essential.
+
+### Architectural risks (documented, not fixed — feature-sized)
+1. **Subscription checkout is Paystack-only.** Flutterwave edge fns exist for invoices but subscription-management only calls Paystack -> no fallback if Paystack is down. Recommendation: route subscription checkout through a provider abstraction that can fall back to Flutterwave.
+2. **Duplicate EmptyState pair** (EmptyState.tsx default + EmptyStates.tsx named). Not merged — would touch 9+ pages with visual-regression risk.
+3. **useModuleAccess ineffective dynamic import** (build warning) — deliberate (avoids AuthContext<->useModuleAccess circular dep, Session 8); cosmetic.
+
+### Deploy note
+Migrations 080 + 081 must be applied to live Supabase before the RLS + FK fixes take effect. Before 080 is applied, can_access_module errors -> two-flag gate treats unknowns as not-ready (safe-closed default). Apply 080/081 first.
+
+### Verification (every commit + final)
+tsc -b --noEmit clean; vite build succeeds; vitest run 61/61 pass.
