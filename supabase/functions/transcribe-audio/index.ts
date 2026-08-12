@@ -101,7 +101,7 @@ serve(async (req) => {
       .eq('id', meeting_id)
 
     // Download audio from Supabase Storage
-    const audioResponse = await fetch(audio_url)
+    const audioResponse = await fetch(audio_url, { signal: AbortSignal.timeout(30000) })
     if (!audioResponse.ok) {
       throw new Error('Failed to download audio file')
     }
@@ -122,6 +122,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${openaiApiKey}`,
       },
+      signal: AbortSignal.timeout(60000),
       body: formData,
     })
 
@@ -139,6 +140,7 @@ serve(async (req) => {
         'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [

@@ -303,6 +303,7 @@ async function handleCreateCheckout(
         Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(15000),
       body: JSON.stringify({
         email: userEmail,
         amount: amountKobo,

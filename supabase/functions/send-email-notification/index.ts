@@ -119,6 +119,7 @@ async function sendEmailViaResend(
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
+      signal: AbortSignal.timeout(10000),
       body: JSON.stringify({
         from: `Avenize <${fromEmail}>`,
         to: to,

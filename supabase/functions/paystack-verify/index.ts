@@ -86,6 +86,7 @@ serve(async (req) => {
           'Authorization': `Bearer ${config.secretKey}`,
           'Content-Type': 'application/json',
         },
+        signal: AbortSignal.timeout(15000),
       }
     )
 

@@ -66,6 +66,7 @@ async function initializeFlutterwavePayment(
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${secretKey}`,
       },
+      signal: AbortSignal.timeout(15000),
       body: JSON.stringify({
         amount: paymentData.amount,
         currency: paymentData.currency || 'NGN',

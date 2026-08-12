@@ -217,6 +217,7 @@ async function sendWithResend(
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(10000),
       body: JSON.stringify({
         from: fromNameHeader,
         to: contacts.map(c => c.name ? `${c.name} <${c.email}>` : c.email),
@@ -265,6 +266,7 @@ async function sendWithSendgrid(
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(10000),
       body: JSON.stringify({
         personalizations: [{
           to: [{ email: contact.email, name: contact.name }],

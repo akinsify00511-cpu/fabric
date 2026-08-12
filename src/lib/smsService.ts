@@ -142,6 +142,7 @@ export const TermiiSMS = {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
+        signal: AbortSignal.timeout(15000),
         body: JSON.stringify({
           to: message.to,
           message: message.message,
@@ -180,6 +181,7 @@ export const TermiiSMS = {
       const formattedPhone = this.formatPhoneNumber(message.to)
 
       const response = await fetch(`${TERMII_API_URL}/sms/send`, {
+        signal: AbortSignal.timeout(10000),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -248,6 +250,7 @@ export const TermiiSMS = {
 
     try {
       const response = await fetch(`${TERMII_API_URL}/sms/balance`, {
+        signal: AbortSignal.timeout(10000),
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -362,6 +365,7 @@ export const TermiiOTP = {
       const formattedPhone = TermiiSMS.formatPhoneNumber(phone)
 
       const response = await fetch(`${TERMII_API_URL}/api/sms/otp/send`, {
+        signal: AbortSignal.timeout(10000),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -414,6 +418,7 @@ export const TermiiOTP = {
 
     try {
       const response = await fetch(`${TERMII_API_URL}/api/sms/otp/verify`, {
+        signal: AbortSignal.timeout(10000),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -449,6 +454,7 @@ export const TermiiOTP = {
 
     try {
       const response = await fetch(`${TERMII_API_URL}/api/sms/otp/resend`, {
+        signal: AbortSignal.timeout(10000),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

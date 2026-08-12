@@ -167,6 +167,7 @@ serve(async (req) => {
             'Authorization': `Bearer ${resendApiKey}`,
             'Content-Type': 'application/json',
           },
+          signal: AbortSignal.timeout(10000),
           body: JSON.stringify({
             from: `${businessName} <${fromAddress}>`,
             to: signer.email,

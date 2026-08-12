@@ -117,6 +117,7 @@ async function sendWhatsAppViaTwilio(
           'Authorization': `Basic ${authHeader}`,
           'Content-Type': 'application/x-www-form-urlencoded',
         },
+        signal: AbortSignal.timeout(10000),
         body: new URLSearchParams({
           From: fromNumber.startsWith('whatsapp:') ? fromNumber : `whatsapp:${fromNumber}`,
           To: `whatsapp:${formatPhoneNumber(to)}`,
