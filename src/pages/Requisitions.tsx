@@ -217,6 +217,19 @@ export default function Requisitions() {
     }
   }
 
+  const handleSubmitForApproval = async (req: Requisition) => {
+    const { error } = await supabase.rpc('submit_requisition', {
+      p_requisition_id: req.id,
+    })
+
+    if (error) {
+      showToast('Failed to submit', 'error')
+    } else {
+      showToast('Requisition submitted for approval!', 'success')
+      loadData()
+    }
+  }
+
   const handleSendReminder = async (req: Requisition) => {
     const { error } = await supabase.rpc('send_follow_up', {
       p_requisition_id: req.id,
@@ -360,7 +373,7 @@ export default function Requisitions() {
 
                   {req.status === 'draft' && (
                     <button
-                      onClick={() => supabase.rpc('submit_requisition', { p_requisition_id: req.id })}
+                      onClick={() => handleSubmitForApproval(req)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-sm"
                     >
                       <Send size={14} />
