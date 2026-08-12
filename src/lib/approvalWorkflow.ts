@@ -342,7 +342,7 @@ async function executePostApprovalActions(request: ApprovalRequest) {
   switch (request.type) {
     case 'expense':
       await supabase
-        .from('expenses')
+        .from('expense_claims')
         .update({ status: 'approved' })
         .eq('id', request.entity_id)
       break
@@ -372,7 +372,7 @@ async function executePostRejectionActions(request: ApprovalRequest) {
   switch (request.type) {
     case 'expense':
       await supabase
-        .from('expenses')
+        .from('expense_claims')
         .update({ status: 'rejected' })
         .eq('id', request.entity_id)
       break
