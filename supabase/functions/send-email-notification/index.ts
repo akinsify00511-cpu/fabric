@@ -185,8 +185,29 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
     const appUrl = Deno.env.get('APP_URL') || 'https://app.avenize.com'
-    
+
+    // SECURITY: Verify the caller's JWT before using the service role key
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const token = authHeader.substring(7)
+    const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    })
+    const { data: { user }, error: authError } = await authClient.auth.getUser()
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     // Create Supabase client with service role key
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
