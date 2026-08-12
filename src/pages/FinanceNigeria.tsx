@@ -272,7 +272,7 @@ export default function FinanceNigeria() {
       const newStatus: InvoiceStatus = newBalance <= 0 ? 'paid' : 
         newAmountPaid > 0 ? 'partially_paid' : selectedInvoice.status
 
-      await supabase
+      const { error: invoiceError } = await supabase
         .from('invoices')
         .update({
           amount_paid: newAmountPaid,
@@ -280,6 +280,12 @@ export default function FinanceNigeria() {
           status: newStatus,
         })
         .eq('id', selectedInvoice.id)
+
+      if (invoiceError) {
+        // Payment row saved but invoice balance/status update failed --
+        // do NOT show success or the invoice displays a stale balance.
+        throw invoiceError
+      }
 
       setInvoices(prev => prev.map(inv =>
         inv.id === selectedInvoice.id

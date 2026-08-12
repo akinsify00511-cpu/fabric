@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useToast } from '../components/Toast'
 
 interface AttendanceRecord {
   id: string
@@ -34,6 +35,7 @@ export default function AttendancePage() {
   const [records, setRecords] = useState<AttendanceRecord[]>([])
   const [summary, setSummary] = useState<AttendanceSummary | null>(null)
   const [loading, setLoading] = useState(true)
+  const { showToast } = useToast()
   const [checking, setChecking] = useState(false)
   const [todayRecord, setTodayRecord] = useState<AttendanceRecord | null>(null)
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -150,7 +152,7 @@ export default function AttendancePage() {
       const hour = now.getHours()
       const isLate = hour >= 9
 
-      await supabase.from('attendance_records').insert({
+      const { error: checkInError } = await supabase.from('attendance_records').insert({
         staff_id: staff.id,
         business_id: staff.business_id,
         date: today,
@@ -163,9 +165,15 @@ export default function AttendancePage() {
         check_in_device: navigator.userAgent,
       })
 
+      if (checkInError) {
+        showToast('Failed to check in. Please try again.', 'error')
+        return
+      }
+      showToast('Checked in', 'success')
       loadData()
     } catch (e) {
       console.error('Failed to check in:', e)
+      showToast('Failed to check in. Please try again.', 'error')
     } finally {
       setChecking(false)
     }
@@ -178,14 +186,20 @@ export default function AttendancePage() {
     try {
       const now = new Date()
       
-      await supabase.from('attendance_records').update({
+      const { error: checkOutError } = await supabase.from('attendance_records').update({
         check_out: now.toISOString(),
         check_out_device: navigator.userAgent,
       }).eq('id', todayRecord.id)
 
+      if (checkOutError) {
+        showToast('Failed to check out. Please try again.', 'error')
+        return
+      }
+      showToast('Checked out', 'success')
       loadData()
     } catch (e) {
       console.error('Failed to check out:', e)
+      showToast('Failed to check out. Please try again.', 'error')
     } finally {
       setChecking(false)
     }

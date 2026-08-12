@@ -132,91 +132,39 @@ export default function Onboarding() {
       })
 
       if (rpcError) {
-        console.error('RPC Error details:', {
-          message: rpcError.message,
-          details: rpcError.details,
-          hint: rpcError.hint,
-          code: rpcError.code
-        })
-        
-        // If RPC fails, skip it and use manual creation
-        console.warn('RPC failed, using manual creation:', rpcError.message)
-        await createBusinessManually()
+        // The user may already have a business (e.g. a prior partial
+        // onboarding, or a transient staff fetch sent an already-onboarded
+        // user back here). The RPC raises 'User already belongs to a
+        // business' in that case -- correct recovery is to refresh the
+        // authoritative staff record and go to the app, NOT to attempt
+        // direct inserts (RLS denies those by design post-074) and show a
+        // misleading "Failed to create business".
+        if (/already belongs to a business/i.test(rpcError.message)) {
+          await refreshStaff()
+          navigate('/app', { replace: true })
+          return
+        }
+        // The SECURITY DEFINER RPC is the single authoritative onboarding
+        // path (migration 074 blocks direct business/staff inserts), so
+        // there is no valid manual fallback -- surface the real error.
+        console.error('create_business_and_owner RPC failed:', rpcError)
+        setError(rpcError.message || 'Setup failed. Please try again.')
         return
       }
 
-      // RPC succeeded!
+      // RPC succeeded
       if (selectedColor) {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)
         localStorage.setItem('avenize_theme_text', selectedColor.previewText)
       }
       window.location.href = '/app'
-      
+
     } catch (err: any) {
       console.error('Setup error:', err)
       setError(err.message || 'Setup failed. Please try again.')
     } finally {
       setLoading(false)
     }
-  }
-
-  // Create business and staff manually
-  const createBusinessManually = async () => {
-    if (selectedColor) {
-      localStorage.setItem('avenize_theme_bg', selectedColor.hex)
-      localStorage.setItem('avenize_theme_text', selectedColor.previewText)
-    }
-
-    // Step 1: Create business
-    const { data: businessData, error: businessError } = await supabase
-      .from('businesses')
-      .insert({ name: businessName, industry: industry })
-      .select()
-      .single()
-
-    if (businessError) {
-      console.error('Business insert error:', businessError)
-      setError(`Failed to create business: ${businessError.message}`)
-      setLoading(false)
-      return
-    }
-
-    // Step 2: Create staff record
-    const { data: staffData, error: staffError } = await supabase
-      .from('staff')
-      .insert({
-        business_id: businessData.id,
-        user_id: session?.user?.id,
-        name: fullName,
-        email: session?.user?.email,
-        role: 'owner',
-        job_title: 'Owner',
-        onboarding_completed: true,
-      })
-      .select()
-      .single()
-
-    if (staffError) {
-      console.error('Staff insert error:', staffError)
-      setError(`Failed to create staff record: ${staffError.message}`)
-      setLoading(false)
-      return
-    }
-
-    // Step 3: Save branding
-    if (selectedColor) {
-      await supabase
-        .from('business_branding')
-        .upsert({
-          business_id: businessData.id,
-          background_color: selectedColor.hex,
-          text_color: selectedColor.previewText,
-          updated_at: new Date().toISOString(),
-        })
-    }
-
-    // Complete!
-    window.location.href = '/app'
   }
 
   return (

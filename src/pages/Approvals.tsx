@@ -139,19 +139,27 @@ export default function Approvals() {
 
       if (error) throw error
       
-      await supabase.from('approval_actions').insert({
+      // Audit trail: if the status update succeeded but this insert fails,
+      // the rejection is recorded without an audit row -- surface it so the
+      // control-plane gap is visible rather than silently swallowed.
+      const { error: auditError } = await supabase.from('approval_actions').insert({
         approval_id: request.id,
         step: request.current_level,
         approver_id: staff?.id,
         action: 'reject',
         comment: actionComment,
       })
+      if (auditError) {
+        console.error('approval_actions audit insert failed:', auditError)
+        alert('Request rejected, but the audit trail could not be saved. Please contact an admin.')
+      }
 
       await loadApprovals()
       setSelectedRequest(null)
       setActionComment('')
     } catch (error) {
       console.error('Failed to reject:', error)
+      alert('Failed to reject. Please try again.')
     }
     setProcessing(false)
   }
