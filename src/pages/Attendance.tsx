@@ -73,7 +73,7 @@ export default function AttendancePage() {
         .select('*')
         .eq('staff_id', staff.id)
         .eq('date', today)
-        .single()
+        .maybeSingle()
 
       setTodayRecord(todayData)
 
@@ -94,7 +94,7 @@ export default function AttendancePage() {
         .eq('staff_id', staff.id)
         .eq('month', new Date().getMonth() + 1)
         .eq('year', new Date().getFullYear())
-        .single()
+        .maybeSingle()
 
       if (summaryData) {
         setSummary(summaryData)

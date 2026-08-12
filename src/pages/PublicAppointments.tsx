@@ -104,7 +104,7 @@ export default function PublicAppointmentsPage() {
           .from('businesses')
           .select('*')
           .eq('slug', slug)
-          .single()
+          .maybeSingle()
         
         if (biz) {
           setBusiness(biz)
@@ -114,7 +114,7 @@ export default function PublicAppointmentsPage() {
             .eq('id', biz.id)
         }
       } else {
-        const { data: defaultBiz } = await businessQuery.single()
+        const { data: defaultBiz } = await businessQuery.maybeSingle()
         setBusiness(defaultBiz)
       }
 

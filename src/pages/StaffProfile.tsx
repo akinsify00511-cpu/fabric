@@ -61,10 +61,15 @@ export default function StaffProfile() {
         .select('*')
         .eq('id', staffId)
         .eq('business_id', currentStaff.business_id)
-        .single()
+        .maybeSingle()
 
       if (error) throw error
-      setProfile(data)
+      if (!data) {
+        setError('Profile not found')
+        setProfile(null)
+      } else {
+        setProfile(data)
+      }
     } catch (err) {
       console.error('Error loading profile:', err)
       setError('Failed to load profile')

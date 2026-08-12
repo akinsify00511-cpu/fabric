@@ -151,7 +151,7 @@ export default function AnnouncementsPage() {
         .select('id')
         .eq('announcement_id', announcementId)
         .eq('staff_id', staff?.id)
-        .single()
+        .maybeSingle()
 
       if (!existing.data) {
         await supabase.from('announcement_views').insert({

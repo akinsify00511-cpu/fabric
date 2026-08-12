@@ -138,7 +138,7 @@ export default function Chat() {
           .from('staff')
           .select('full_name, name')
           .eq('id', newMsg.sender_id)
-          .single()
+          .maybeSingle()
         const enriched = {
           ...newMsg,
           sender_name: senderData?.full_name ?? senderData?.name ?? 'Unknown',
