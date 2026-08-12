@@ -144,6 +144,7 @@ export default function CompanyHome() {
         const { data: awardsData } = await supabase
           .from('merit_entries')
           .select('id, staff_id, points, reason, created_at, staff:staff_id(name, full_name)')
+          .eq('business_id', staff.business_id)
           .order('created_at', { ascending: false })
           .limit(3)
         if (awardsData && awardsData.length > 0) {
@@ -163,22 +164,72 @@ export default function CompanyHome() {
         // Fetch polls
         const { data: pollsData } = await supabase
           .from('polls')
-          .select('*')
+          .select('id, question, options, total_votes, ends_at, status')
+          .eq('business_id', staff.business_id)
           .order('created_at', { ascending: false })
           .limit(2)
         if (pollsData && pollsData.length > 0) {
-          setPollResults(pollsData.map((p: any) => ({
-            id: p.id,
-            question: p.question,
-            options: Array.isArray(p.options) ? p.options.map((opt: any) => ({
-              text: opt.text || opt,
-              votes: opt.votes || 0,
-              percentage: opt.percentage || 0
-            })) : [],
-            totalVotes: p.total_votes || 0,
-            endsAt: p.ends_at || '',
-            status: p.status || 'active'
-          })))
+          // Fetch real vote counts from poll_votes (votes are persisted server-side)
+          const pollIds = pollsData.map((p: any) => p.id)
+          const { data: votesData } = await supabase
+            .from('poll_votes')
+            .select('poll_id, option')
+            .in('poll_id', pollIds)
+
+          const voteCounts: Record<string, Record<string, number>> = {}
+          let pollTotals: Record<string, number> = {}
+          ;(votesData || []).forEach((v: any) => {
+            if (!voteCounts[v.poll_id]) voteCounts[v.poll_id] = {}
+            voteCounts[v.poll_id][v.option] = (voteCounts[v.poll_id][v.option] || 0) + 1
+            pollTotals[v.poll_id] = (pollTotals[v.poll_id] || 0) + 1
+          })
+
+          setPollResults(pollsData.map((p: any) => {
+            const counts = voteCounts[p.id] || {}
+            const total = pollTotals[p.id] || 0
+            return {
+              id: p.id,
+              question: p.question,
+              options: Array.isArray(p.options) ? p.options.map((opt: any) => {
+                const text = opt.text || opt
+                const votes = counts[text] || 0
+                return {
+                  text,
+                  votes,
+                  percentage: total > 0 ? Math.round((votes / total) * 100) : 0,
+                }
+              }) : [],
+              totalVotes: total,
+              endsAt: p.ends_at || '',
+              status: p.status || 'active'
+            }
+          }))
+        }
+
+        // Fetch best staff (top performer by merit points this month)
+        const monthStart = new Date()
+        monthStart.setDate(1)
+        monthStart.setHours(0, 0, 0, 0)
+        const { data: topPerformer } = await supabase
+          .from('merit_entries')
+          .select('staff_id, points, reason, created_at, staff:staff_id(name, full_name, role, department, avatar_url)')
+          .eq('business_id', staff.business_id)
+          .gte('created_at', monthStart.toISOString())
+          .order('points', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        if (topPerformer?.staff) {
+          const s = topPerformer.staff as any
+          const name = s.full_name || s.name || 'Team Member'
+          setBestStaff({
+            name,
+            role: s.role || s.job_title || 'Staff',
+            department: s.department || '—',
+            achievement: topPerformer.reason || 'Top performer this month',
+            avatar: name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase(),
+            stats: { sales: `${topPerformer.points} pts`, deals: 0, tasks: 0 }
+          })
         }
       } catch (err) {
         console.error('Failed to load company home data:', err)
@@ -187,12 +238,59 @@ export default function CompanyHome() {
     loadData()
   }, [staff?.business_id])
 
-  const handleVote = (pollId: string, optionIndex: number) => {
+  const handleVote = async (pollId: string, optionIndex: number) => {
     if (hasVoted.includes(pollId)) return
+    const poll = pollResults.find(p => p.id === pollId)
+    if (!poll || poll.status !== 'active') return
+    const optionText = poll.options[optionIndex]?.text
+    if (!optionText) return
+
+    // Persist the vote server-side. poll_votes has UNIQUE(poll_id, voter_id),
+    // so a duplicate insert (same user, same poll) is rejected by Postgres.
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase
+      .from('poll_votes')
+      .insert({
+        poll_id: pollId,
+        business_id: staff?.business_id,
+        option: optionText,
+        voter_id: user?.id || null,
+      })
+
+    if (error) {
+      // 23505 = unique_violation — user already voted; treat as already-voted
+      if (error.code !== '23505') {
+        console.error('Failed to record vote:', error.message)
+        return
+      }
+    }
+
+    // Update local "voted" state so the UI shows results
     const newVoted = [...hasVoted, pollId]
     setHasVoted(newVoted)
     localStorage.setItem('avenize_voted_polls', JSON.stringify(newVoted))
     setSelectedPoll(`${pollId}-${optionIndex}`)
+
+    // Re-fetch vote counts for this poll so the bar updates immediately
+    const { data: freshVotes } = await supabase
+      .from('poll_votes')
+      .select('option')
+      .eq('poll_id', pollId)
+    const counts: Record<string, number> = {}
+    let total = 0
+    ;(freshVotes || []).forEach((v: any) => {
+      counts[v.option] = (counts[v.option] || 0) + 1
+      total++
+    })
+    setPollResults(prev => prev.map(p => p.id === pollId ? {
+      ...p,
+      options: p.options.map(opt => ({
+        ...opt,
+        votes: counts[opt.text] || 0,
+        percentage: total > 0 ? Math.round(((counts[opt.text] || 0) / total) * 100) : 0,
+      })),
+      totalVotes: total,
+    } : p))
   }
 
   return (
