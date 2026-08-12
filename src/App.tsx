@@ -16,6 +16,7 @@ import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { PageSkeleton } from './components/Skeleton'
 import RequireModule from './components/RequireModule'
 import type { ModuleKey } from './lib/useModuleAccess'
+import { getUserMfa, mfaRequired, isMfaVerified } from './lib/mfa'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcuts'
 
 // Initialize QC system on app load
@@ -166,6 +167,53 @@ function PageLoader() {
   )
 }
 
+// MFA gate: once a session + staff record exist, verify the user has cleared
+// their second factor (if they have TOTP enabled) before rendering the app.
+// This closes the bypass where a user with an existing session cookie could
+// type an /app URL and skip the login-page MFA challenge.
+function MfaGate({ children }: { children: React.ReactNode }) {
+  const { session } = useAuth()
+  const [checking, setChecking] = useState(true)
+  const [blocked, setBlocked] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const check = async () => {
+      if (!session?.user?.id) {
+        if (!cancelled) setChecking(false)
+        return
+      }
+      // Already verified this session (e.g. came through the login challenge).
+      if (isMfaVerified(session.user.id)) {
+        if (!cancelled) { setChecking(false); setBlocked(false) }
+        return
+      }
+      const mfa = await getUserMfa(session)
+      if (cancelled) return
+      if (mfaRequired(mfa)) {
+        // Session exists but second factor not supplied — bounce to login,
+        // which will present the challenge UI.
+        setBlocked(true)
+      }
+      setChecking(false)
+    }
+    check()
+    return () => { cancelled = true }
+  }, [session])
+
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-8 h-8 border-2 border-black border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    )
+  }
+  if (blocked) {
+    return <Navigate to="/login?mfa=1" replace />
+  }
+  return <>{children}</>
+}
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
 
@@ -199,14 +247,14 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <Navigate to="/onboarding" replace />
   }
 
-  // User is fully authenticated and onboarded - show app
+  // User is fully authenticated and onboarded - verify MFA then show app
   return (
-    <>
+    <MfaGate>
       <TrialBanner />
       <SarahChat />
       <BetaFeedbackButton />
       {children}
-    </>
+    </MfaGate>
   )
 }
 

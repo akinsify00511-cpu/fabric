@@ -10,12 +10,15 @@ import {
   Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Sparkles
 } from 'lucide-react'
 import { TOTP, Secret } from 'otpauth'
+import { hashBackupCode } from '../lib/mfa'
 
 type MFAStatus = {
   enabled: boolean
   method: string
   totp_confirmed_at: string | null
   backup_codes_used: number
+  backup_codes_total: number
+  backup_codes_remaining: number
 }
 
 type AuditLog = {
@@ -71,14 +74,17 @@ export default function SecuritySettings() {
       .from('user_mfa')
       .select('*')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
     if (mfaData) {
+      const storedHashes = (mfaData.backup_codes_hash || '').split(',').filter(Boolean)
       setMfa({
         enabled: mfaData.enabled,
         method: mfaData.method,
         totp_confirmed_at: mfaData.totp_confirmed_at,
-        backup_codes_used: mfaData.backup_codes_used,
+        backup_codes_used: mfaData.backup_codes_used ?? 0,
+        backup_codes_total: 10,
+        backup_codes_remaining: storedHashes.length,
       })
     }
 
@@ -148,16 +154,24 @@ export default function SecuritySettings() {
 
     // Generate backup codes with secure random
     const codes = generateBackupCodes(10)
+    // Store only SHA-256 hashes (native crypto.subtle) — codes are one-time
+    // secrets, so they are hashed like passwords, never stored in plaintext.
+    const hashes = await Promise.all(codes.map(c => hashBackupCode(c)))
 
-    await supabase.from('user_mfa').upsert({
+    const { error: upsertError } = await supabase.from('user_mfa').upsert({
       user_id: user.id,
       enabled: true,
       method: 'totp',
       totp_secret: totpSecret,
       totp_confirmed_at: new Date().toISOString(),
-      backup_codes: codes.join(','),
+      backup_codes_hash: hashes.join(','),
       backup_codes_used: 0,
     })
+
+    if (upsertError) {
+      showToast('Failed to enable 2FA. Please try again.', 'error')
+      return
+    }
 
     setBackupCodes(codes)
     setSetupStep('backup')
@@ -298,7 +312,7 @@ Each code can only be used once!`
                       <div>
                         <p className="text-sm font-medium">Backup Codes</p>
                         <p className="text-xs text-black">
-                          {10 - mfa.backup_codes_used} of 10 remaining
+                          {mfa.backup_codes_remaining} of {mfa.backup_codes_total} remaining
                         </p>
                       </div>
                     </div>

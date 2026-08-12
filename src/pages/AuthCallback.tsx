@@ -56,6 +56,15 @@ export default function AuthCallback() {
           return
         }
 
+        // MFA gate: if the OAuth user has TOTP enabled, defer to the login
+        // page's challenge UI rather than dropping them straight into the app.
+        const { data: mfaRow } = await supabase
+          .from('user_mfa')
+          .select('enabled, method, totp_confirmed_at')
+          .eq('user_id', session.user.id)
+          .maybeSingle()
+        const mfaRequired = !!(mfaRow && mfaRow.enabled && mfaRow.method === 'totp' && mfaRow.totp_confirmed_at)
+
         // Check if user already has a business
         const { data: staffData } = await supabase
           .from('staff')
@@ -64,6 +73,11 @@ export default function AuthCallback() {
           .maybeSingle()
 
         if (staffData?.business_id) {
+          if (mfaRequired) {
+            // Defer to the login challenge (?mfa=1 triggers it).
+            navigate('/login?mfa=1', { replace: true })
+            return
+          }
           // Already has a business, go to dashboard
           setMessage('Welcome back! Redirecting to your dashboard...')
           setTimeout(() => navigate('/app', { replace: true }), 1500)

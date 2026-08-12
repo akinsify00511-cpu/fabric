@@ -1,7 +1,12 @@
 import { useState, useEffect, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { AvenizeMark } from '../components/AvenizeMark'
+import {
+  getUserMfa, mfaRequired, verifyTotpCode, parseBackupCodeHashes,
+  verifyBackupCode, consumeBackupCode, setMfaVerified,
+  type UserMfaRow,
+} from '../lib/mfa'
 
 // GOOGLE STANDARD BRAND COLORS
 const BRAND = {
@@ -24,58 +29,124 @@ const BRAND = {
 
 export default function Login() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [oauthLoading, setOauthLoading] = useState<string | null>(null)
 
+  // MFA challenge state — set when a valid password/OAuth session exists but
+  // the user has TOTP enabled and has not yet supplied the second factor.
+  const [mfaChallenge, setMfaChallenge] = useState<UserMfaRow | null>(null)
+  const [mfaCode, setMfaCode] = useState('')
+  const [mfaVerifying, setMfaVerifying] = useState(false)
+  const [useBackupCode, setUseBackupCode] = useState(false)
+
+  // Complete login after the MFA challenge (or when none is required).
+  const finishLogin = async (userId: string) => {
+    const { data: staffData } = await supabase
+      .from('staff')
+      .select('business_id')
+      .eq('user_id', userId)
+      .maybeSingle()
+
+    setLoading(false)
+    if (staffData?.business_id) {
+      navigate('/app')
+    } else {
+      navigate('/onboarding')
+    }
+  }
+
+  // Verify the TOTP code (or a backup code) and, on success, mark MFA cleared
+  // and proceed to the app.
+  const handleMfaVerify = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!mfaChallenge || !mfaChallenge.user_id) return
+    setMfaVerifying(true)
+    setError(null)
+
+    try {
+      if (useBackupCode) {
+        const stored = parseBackupCodeHashes(mfaChallenge.backup_codes_hash)
+        const { ok, remaining } = await verifyBackupCode(stored, mfaCode)
+        if (!ok) {
+          setError('Invalid backup code')
+          setMfaVerifying(false)
+          return
+        }
+        await consumeBackupCode(mfaChallenge.user_id, remaining, mfaChallenge.backup_codes_used + 1)
+      } else {
+        if (!verifyTotpCode(mfaChallenge.totp_secret || '', mfaCode)) {
+          setError('Invalid verification code')
+          setMfaVerifying(false)
+          return
+        }
+      }
+      setMfaVerified(mfaChallenge.user_id)
+      await finishLogin(mfaChallenge.user_id)
+    } catch (err) {
+      console.error('MFA verify error:', err)
+      setError('Verification failed. Please try again.')
+      setMfaVerifying(false)
+    }
+  }
+
+  // If we arrive with an existing session (OAuth callback redirect, or a page
+  // refresh while the session cookie is still valid), honour the MFA gate
+  // instead of silently dropping the user into the app.
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        const { data: staffData } = await supabase
-          .from('staff')
-          .select('business_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-        
-        if (staffData?.business_id) {
-          navigate('/app', { replace: true })
-        } else {
-          navigate('/onboarding', { replace: true })
-        }
+      if (!session) return
+
+      const mfa = await getUserMfa(session)
+      if (mfaRequired(mfa)) {
+        // MFA enabled — show challenge, do NOT navigate to /app yet.
+        setMfaChallenge(mfa)
+        setLoading(false)
+        return
+      }
+
+      const { data: staffData } = await supabase
+        .from('staff')
+        .select('business_id')
+        .eq('user_id', session.user.id)
+        .maybeSingle()
+
+      if (staffData?.business_id) {
+        navigate('/app', { replace: true })
+      } else {
+        navigate('/onboarding', { replace: true })
       }
     }
     checkSession()
-  }, [navigate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, searchParams.get('mfa')])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-    
+
     if (error) {
       setError(error.message)
       setLoading(false)
       return
     }
-    
+
     if (data.session) {
-      const { data: staffData } = await supabase
-        .from('staff')
-        .select('business_id')
-        .eq('user_id', data.session.user.id)
-        .maybeSingle()
-      
-      setLoading(false)
-      if (staffData?.business_id) {
-        navigate('/app')
-      } else {
-        navigate('/onboarding')
+      // Password verified. Now check whether a second factor is required.
+      const mfa = await getUserMfa(data.session)
+      if (mfaRequired(mfa)) {
+        setMfaChallenge(mfa)
+        setLoading(false)
+        return
       }
+      await finishLogin(data.session.user.id)
     }
   }
 
@@ -114,7 +185,9 @@ export default function Login() {
           <AvenizeMark size={26} />
           <span className="text-xl font-semibold tracking-tight" style={{ color: BRAND.text }}>Avenize</span>
         </div>
-        <p className="text-sm mb-6" style={{ color: BRAND.textSecondary }}>Sign in to your workspace</p>
+        <p className="text-sm mb-6" style={{ color: BRAND.textSecondary }}>
+          {mfaChallenge ? 'Enter your verification code' : 'Sign in to your workspace'}
+        </p>
 
         {error && (
           <div 
@@ -125,6 +198,64 @@ export default function Login() {
           </div>
         )}
 
+        {mfaChallenge ? (
+          <form onSubmit={handleMfaVerify} className="space-y-4 mb-4">
+            <div>
+              <label className="text-sm font-medium block mb-2" style={{ color: BRAND.text }}>
+                {useBackupCode ? 'Backup code' : 'Authentication code'}
+              </label>
+              <input
+                type="text"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value.trim().slice(0, useBackupCode ? 20 : 6))}
+                placeholder={useBackupCode ? 'XXXX-XXXX' : '000000'}
+                className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none"
+                style={{
+                  border: `1px solid ${BRAND.border}`,
+                  backgroundColor: BRAND.surfaceElevated,
+                  color: BRAND.text,
+                  minHeight: '48px',
+                  textAlign: 'center',
+                  letterSpacing: useBackupCode ? '0.1em' : '0.4em',
+                  fontSize: useBackupCode ? '0.875rem' : '1.5rem',
+                }}
+                autoFocus
+                autoComplete="one-time-code"
+                inputMode={useBackupCode ? 'text' : 'numeric'}
+              />
+              <p className="text-xs mt-2 text-center" style={{ color: BRAND.textSecondary }}>
+                {useBackupCode
+                  ? 'Enter one of your saved backup codes'
+                  : 'Enter the 6-digit code from your authenticator app'}
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={mfaVerifying || !mfaCode}
+              className="w-full rounded-lg text-white py-2 text-sm font-medium transition disabled:opacity-50"
+              style={{ backgroundColor: BRAND.primary, border: 'none' }}
+            >
+              {mfaVerifying ? 'Verifying…' : 'Verify'}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setUseBackupCode(v => !v); setMfaCode(''); setError(null) }}
+              className="w-full text-center text-xs transition"
+              style={{ color: BRAND.primary }}
+            >
+              {useBackupCode ? 'Use authentication code instead' : 'Use a backup code instead'}
+            </button>
+            <button
+              type="button"
+              onClick={async () => { await supabase.auth.signOut(); setMfaChallenge(null); setMfaCode(''); setError(null) }}
+              className="w-full text-center text-xs transition"
+              style={{ color: BRAND.textSecondary }}
+            >
+              Back to sign in
+            </button>
+          </form>
+        ) : (
+        <>
         {/* OAuth Buttons */}
         <div className="space-y-3 mb-6">
           <button
@@ -261,6 +392,8 @@ export default function Login() {
             Set up your business
           </Link>
         </p>
+        </>
+        )}
       </div>
     </div>
   )
