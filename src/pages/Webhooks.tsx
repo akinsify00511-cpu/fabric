@@ -326,6 +326,11 @@ export default function WebhooksPage() {
                   <Copy className="w-3 h-3 inline" />
                 </button>
               </p>
+              <p className="text-xs text-blue-600 mt-2">
+                Include <code className="bg-blue-100 px-1 py-0.5 rounded">business_id</code> and
+                <code className="bg-blue-100 px-1 py-0.5 rounded ml-1">secret</code> in the request body.
+                The secret must match an active webhook for your business.
+              </p>
             </div>
           </div>
         </div>
