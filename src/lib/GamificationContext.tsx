@@ -262,69 +262,41 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
-      const { data: xpData } = await supabase
-        .from('user_xp')
-        .select('xp_total, streak_days, longest_streak, last_active_date')
-        .eq('user_id', user.id)
-        .single()
-
-      const currentXP = xpData?.xp_total || 0
-      const newXP = currentXP + amount
-
-      const today = new Date().toISOString().split('T')[0]
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-      
-      let newStreak = xpData?.streak_days || 0
-      let longestStreak = xpData?.longest_streak || 0
-
-      if (xpData?.last_active_date !== today) {
-        if (xpData?.last_active_date === yesterday) {
-          newStreak += 1
-        } else {
-          newStreak = 1
-        }
-        longestStreak = Math.max(longestStreak, newStreak)
-      }
-
-      await supabase
-        .from('user_xp')
-        .update({
-          xp_total: newXP,
-          streak_days: newStreak,
-          longest_streak: longestStreak,
-          last_active_date: today,
-          updated_at: new Date().toISOString(),
+      // Single RPC call — atomic XP increment + streak + level + history log.
+      // The old client-side read-modify-write had a race condition: two
+      // concurrent calls would both read the same xp_total, both add their
+      // amount, and the second UPDATE would overwrite the first (lost XP).
+      const { data, error } = await supabase
+        .rpc('award_xp_with_streak', {
+          p_user_id: user.id,
+          p_xp_amount: amount,
+          p_action: action,
+          p_description: description || null,
         })
-        .eq('user_id', user.id)
+
+      if (error) throw error
+      if (!data || data.length === 0) return
+
+      const result = data[0]
 
       setXP({
-        xp_total: newXP,
-        level: calculateLevel(newXP),
-        streak_days: newStreak,
-        longest_streak: longestStreak,
-        last_active_date: today,
+        xp_total: result.xp_total,
+        level: result.level,
+        streak_days: result.streak_days,
+        longest_streak: result.longest_streak,
+        last_active_date: result.last_active_date,
       })
 
-      const oldLevel = calculateLevel(currentXP)
-      const newLevel = calculateLevel(newXP)
-      if (newLevel > oldLevel) {
+      if (result.leveled_up) {
         showToast({
           id: `level-${Date.now()}`,
           type: 'level_up',
           title: 'Level Up! 🎉',
-          message: `You reached level ${newLevel}!`,
+          message: `You reached level ${result.level}!`,
           icon: '⬆️',
-          xp_reward: newXP,
+          xp_reward: result.xp_total,
         })
       }
-
-      await supabase.from('xp_history').insert({
-        user_id: user.id,
-        amount,
-        action,
-        description,
-      })
-
     } catch (error) {
       console.error('Failed to award XP:', error)
     }
