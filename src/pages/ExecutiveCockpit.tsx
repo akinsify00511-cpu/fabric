@@ -51,9 +51,9 @@ export default function ExecutiveCockpit() {
         revenue, cash, pipeline, people, exceptions, forecast, capacity, process, risk,
       ] = await Promise.allSettled([
         supabase.rpc('revenue_forecast', { p_business_id: bid }),
-        supabase.from('transactions').select('amount, type, created_at').limit(500),
-        supabase.from('deals').select('value, stage, expected_close_date').limit(500),
-        supabase.from('staff').select('id, status, department').limit(500),
+        supabase.from('transactions').select('total, type, created_at').limit(500),
+        supabase.from('deals').select('value, stage, expected_close').limit(500),
+        supabase.from('staff').select('id, active, department').limit(500),
         supabase.rpc('early_warnings', { p_business_id: bid }),
         supabase.rpc('revenue_forecast', { p_business_id: bid }),
         supabase.rpc('capacity_intelligence', { p_business_id: bid }),
@@ -143,10 +143,10 @@ function deriveMetrics(d: any): Record<Lens, Metric[]> {
   const cap = d?.capacity
   const proc = d?.process
 
-  const collected = txns.filter((t: any) => t.type === 'income' || t.type === 'credit').reduce((s: number, t: any) => s + Number(t.amount || 0), 0)
-  const spent = txns.filter((t: any) => t.type === 'expense' || t.type === 'debit').reduce((s: number, t: any) => s + Number(t.amount || 0), 0)
+  const collected = txns.filter((t: any) => t.type === 'income' || t.type === 'credit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
+  const spent = txns.filter((t: any) => t.type === 'expense' || t.type === 'debit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
   const pipelineValue = deals.reduce((s: number, t: any) => s + Number(t.value || 0), 0)
-  const activeStaff = staff.filter((s: any) => s.status === 'active' || !s.status).length
+  const activeStaff = staff.filter((s: any) => s.active !== false).length
   const projected = fc?.projected_next_months
   const monthlyAvg = fc?.monthly_avg_collected
 
@@ -234,8 +234,8 @@ function DrillCard({ lens, data }: { lens: Lens; data: any }) {
       <div className="space-y-2 text-sm">
         {lens === 'cfo' && (
           <>
-            <Row k="Total collected" v={naira((data?.transactions||[]).filter((t:any)=>t.type==='income'||t.type==='credit').reduce((s:number,t:any)=>s+Number(t.amount||0),0))} />
-            <Row k="Total spent" v={naira((data?.transactions||[]).filter((t:any)=>t.type==='expense'||t.type==='debit').reduce((s:number,t:any)=>s+Number(t.amount||0),0))} />
+            <Row k="Total collected" v={naira((data?.transactions||[]).filter((t:any)=>t.type==='income'||t.type==='credit').reduce((s:number,t:any)=>s+Number(t.total||0),0))} />
+            <Row k="Total spent" v={naira((data?.transactions||[]).filter((t:any)=>t.type==='expense'||t.type==='debit').reduce((s:number,t:any)=>s+Number(t.total||0),0))} />
             <Row k="Transactions" v={String((data?.transactions||[]).length)} />
           </>
         )}
@@ -246,7 +246,7 @@ function DrillCard({ lens, data }: { lens: Lens; data: any }) {
           <>
             <Row k="Open pipeline" v={naira((data?.deals||[]).reduce((s:number,t:any)=>s+Number(t.value||0),0))} />
             <Row k="Deals" v={String((data?.deals||[]).length)} />
-            <Row k="Active people" v={String((data?.staff||[]).filter((s:any)=>s.status==='active'||!s.status).length)} />
+            <Row k="Active people" v={String((data?.staff||[]).filter((s:any)=>s.active!==false).length)} />
           </>
         )}
       </div>

@@ -53,7 +53,7 @@ export default function CompanyWall() {
       supabase.from('recognition').select('*').order('created_at', { ascending: false }).limit(20),
       supabase.from('announcements').select('*').order('created_at', { ascending: false }).limit(20),
       supabase.from('events').select('*').order('start_date', { ascending: true }).limit(20),
-      supabase.from('staff').select('id, full_name, date_of_birth, avatar_url, department'),
+      supabase.from('staff').select('id, full_name, avatar_url, department'),
     ])
     const pick = (r: any) => r.status === 'fulfilled' ? (r.value.data || []) : []
     const items: any[] = []

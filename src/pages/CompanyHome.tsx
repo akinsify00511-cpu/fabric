@@ -122,23 +122,8 @@ export default function CompanyHome() {
     if (!staff?.business_id) return
     const loadData = async () => {
       try {
-        const currentMonthNum = new Date().getMonth() + 1
-        // Fetch staff for birthdays this month
-        const { data: staffData } = await supabase
-          .from('staff')
-          .select('id, name, full_name, department, date_of_birth')
-          .eq('business_id', staff.business_id)
-        if (staffData) {
-          const birthdays = staffData
-            .filter(s => s.date_of_birth && new Date(s.date_of_birth).getMonth() + 1 === currentMonthNum)
-            .map(s => ({
-              name: s.full_name || s.name,
-              date: s.date_of_birth,
-              department: s.department || '—',
-              avatar: (s.full_name || s.name || '?').split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
-            }))
-          setBirthdaysThisMonth(birthdays)
-        }
+        // Birthdays require a date_of_birth column not yet in the schema; left empty until added.
+        setBirthdaysThisMonth([])
 
         // Fetch recent merit awards
         const { data: awardsData } = await supabase

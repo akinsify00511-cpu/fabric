@@ -135,7 +135,7 @@ export default function Dashboard() {
         supabase.from('deals').select('value, stage').eq('business_id', staff.business_id).eq('stage', 'hot'),
         supabase.from('tasks').select('id, title, due_date, priority, status').eq('business_id', staff.business_id).eq('status', 'pending').order('due_date', { ascending: true }).limit(5),
         supabase.from('staff').select('id').eq('business_id', staff.business_id),
-        supabase.from('invoices').select('amount, status, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }),
+        supabase.from('invoices').select('total, status, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }),
         supabase.from('deals').select('id, title, value, stage, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }).limit(5),
         supabase.from('tasks').select('id, title, status, created_at').eq('business_id', staff.business_id).order('created_at', { ascending: false }).limit(3),
         supabase.from('meetings').select('id, title, date, start_time').eq('business_id', staff.business_id).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(3),
@@ -159,13 +159,13 @@ export default function Dashboard() {
           const d = new Date(i.created_at)
           return d.getMonth() === thisMonth && d.getFullYear() === thisYear
         })
-        .reduce((sum: number, i: any) => sum + (i.amount || 0), 0)
+        .reduce((sum: number, i: any) => sum + (i.total || 0), 0)
       const lastMonthRevenue = paidInvoices
         .filter((i: any) => {
           const d = new Date(i.created_at)
           return d.getMonth() === lastMonth && d.getFullYear() === (thisMonth === 0 ? lastYear : thisYear)
         })
-        .reduce((sum: number, i: any) => sum + (i.amount || 0), 0)
+        .reduce((sum: number, i: any) => sum + (i.total || 0), 0)
 
       const change = lastMonthRevenue > 0
         ? Math.round(((thisMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
@@ -181,7 +181,7 @@ export default function Dashboard() {
             const d = new Date(inv.created_at)
             return d.getMonth() === targetDate.getMonth() && d.getFullYear() === targetDate.getFullYear()
           })
-          .reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0)
+          .reduce((sum: number, inv: any) => sum + (inv.total || 0), 0)
         monthlyRevenue.push(monthRev)
       }
       const maxRev = Math.max(...monthlyRevenue, 1)
