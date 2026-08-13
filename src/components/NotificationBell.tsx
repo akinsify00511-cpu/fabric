@@ -64,6 +64,7 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const loadNotificationsRef = useRef<() => void>(() => {})
 
   const loadNotifications = useCallback(async () => {
     if (!staff?.id) return
@@ -89,11 +90,20 @@ export default function NotificationBell() {
     setLoading(false)
   }, [staff?.id, staff?.business_id])
 
+  // Keep ref in sync so the realtime callback always calls the latest version
+  // without forcing the realtime effect to re-subscribe.
+  loadNotificationsRef.current = loadNotifications
+
   useEffect(() => {
     loadNotifications()
   }, [loadNotifications])
 
-  // Realtime: listen for new notifications
+  // Realtime: listen for new notifications.
+  // loadNotifications is intentionally excluded from the dep array — including
+  // it causes the effect to tear down + re-create the channel on every identity
+  // change, and since removeChannel() is async, the new .channel(sameName) can
+  // return the still-subscribed channel object from Supabase's cache, causing
+  // .on() to throw "cannot add callbacks after subscribe()" (crashes the page).
   useEffect(() => {
     if (!staff?.id && !staff?.business_id) return
 
@@ -104,14 +114,14 @@ export default function NotificationBell() {
         schema: 'public',
         table: 'notifications',
       }, () => {
-        loadNotifications()
+        loadNotificationsRef.current()
       })
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [staff?.id, staff?.business_id, loadNotifications])
+  }, [staff?.id, staff?.business_id])
 
   // Close on click outside
   useEffect(() => {

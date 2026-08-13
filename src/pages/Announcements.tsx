@@ -148,7 +148,7 @@ export default function AnnouncementsPage() {
     try {
       const existing = await supabase
         .from('announcement_views')
-        .select('id')
+        .select('announcement_id')
         .eq('announcement_id', announcementId)
         .eq('staff_id', staff?.id)
         .maybeSingle()

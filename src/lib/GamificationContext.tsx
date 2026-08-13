@@ -346,7 +346,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
           await supabase.from('user_achievements').upsert({
             user_id: user.id,
             achievement_id: achievement.id,
-            progress: achievement.target,
+            progress_current: achievement.target,
+            progress_target: achievement.target,
+            progress_percent: 100,
+            unlocked: true,
             unlocked_at: new Date().toISOString(),
           })
 

@@ -122,8 +122,23 @@ export default function CompanyHome() {
     if (!staff?.business_id) return
     const loadData = async () => {
       try {
-        // Birthdays require a date_of_birth column not yet in the schema; left empty until added.
-        setBirthdaysThisMonth([])
+        const currentMonthNum = new Date().getMonth() + 1
+        // Fetch staff for birthdays this month
+        const { data: staffData } = await supabase
+          .from('staff')
+          .select('id, name, full_name, department, date_of_birth')
+          .eq('business_id', staff.business_id)
+        if (staffData) {
+          const birthdays = staffData
+            .filter(s => s.date_of_birth && new Date(s.date_of_birth).getMonth() + 1 === currentMonthNum)
+            .map(s => ({
+              name: s.full_name || s.name,
+              date: s.date_of_birth,
+              department: s.department || '—',
+              avatar: (s.full_name || s.name || '?').split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+            }))
+          setBirthdaysThisMonth(birthdays)
+        }
 
         // Fetch recent merit awards
         const { data: awardsData } = await supabase
@@ -149,7 +164,7 @@ export default function CompanyHome() {
         // Fetch polls
         const { data: pollsData } = await supabase
           .from('polls')
-          .select('id, question, options, total_votes, ends_at, status')
+          .select('id, question, options, closes_at, status')
           .eq('business_id', staff.business_id)
           .order('created_at', { ascending: false })
           .limit(2)
@@ -185,7 +200,7 @@ export default function CompanyHome() {
                 }
               }) : [],
               totalVotes: total,
-              endsAt: p.ends_at || '',
+              endsAt: p.closes_at || '',
               status: p.status || 'active'
             }
           }))

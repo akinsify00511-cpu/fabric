@@ -61,7 +61,7 @@ export interface ApprovalRequest {
 
 export interface ApprovalDecision {
   id: string
-  request_id: string
+  requisition_id: string
   approver_id: string
   approver?: { full_name: string }
   level: number
@@ -264,7 +264,7 @@ export async function approveRequest(
 
     // Record decision
     await supabase.from('approval_decisions').insert({
-      request_id: requestId,
+      requisition_id: requestId,
       approver_id: approverId,
       level: currentLevel,
       decision: 'approved',
@@ -285,7 +285,7 @@ export async function approveRequest(
 
     // Record decision
     await supabase.from('approval_decisions').insert({
-      request_id: requestId,
+      requisition_id: requestId,
       approver_id: approverId,
       level: currentLevel,
       decision: 'approved',
@@ -324,7 +324,7 @@ export async function rejectRequest(
 
   // Record decision
   await supabase.from('approval_decisions').insert({
-    request_id: requestId,
+    requisition_id: requestId,
     approver_id: approverId,
     level: request.current_level,
     decision: 'rejected',

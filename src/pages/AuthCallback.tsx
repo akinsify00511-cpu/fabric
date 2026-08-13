@@ -6,12 +6,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export default function AuthCallback() {
   const navigate = useNavigate()
+  const { refreshStaff } = useAuth()
   const [searchParams] = useSearchParams()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -112,8 +114,19 @@ export default function AuthCallback() {
                 })
                 
                 if (bizError) {
+                  // The user may already have a business (e.g. re-clicking an
+                  // old confirmation link after onboarding completed). The RPC
+                  // raises 'User already belongs to a business' in that case --
+                  // correct recovery is to refresh the authoritative staff
+                  // record and go to the app, not show a misleading error.
+                  if (/already belongs to a business/i.test(bizError.message)) {
+                    localStorage.removeItem('avenize_pending_business')
+                    await refreshStaff()
+                    navigate('/app', { replace: true })
+                    return
+                  }
                   console.error('Failed to create business:', bizError)
-                  setError('Failed to set up your business. Please contact support.')
+                  setError(bizError.message || 'Failed to set up your business. Please contact support.')
                   setLoading(false)
                   return
                 }
@@ -172,7 +185,7 @@ export default function AuthCallback() {
     }
 
     handleCallback()
-  }, [searchParams, navigate])
+  }, [searchParams, navigate, refreshStaff])
 
   if (loading) {
     return (
