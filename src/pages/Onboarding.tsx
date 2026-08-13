@@ -120,6 +120,18 @@ export default function Onboarding() {
   }
 
   const completeSetup = async () => {
+    // The SECURITY DEFINER RPC is granted only to `authenticated` and keys
+    // every write off auth.uid(). If the session isn't restored into the
+    // client yet (getSession() still pending) or has expired, this call goes
+    // out as `anon` -> the function 404s (no anon grant) or inserts with
+    // user_id = NULL. Bail before firing it. (This mirrors the guard the
+    // useEffect above already uses for the staff-status check.)
+    if (!session?.user.id) {
+      setError('Your session has expired. Please log in again to continue.')
+      navigate('/login', { replace: true })
+      return
+    }
+
     setLoading(true)
     setError(null)
 

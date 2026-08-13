@@ -213,6 +213,27 @@ function MfaGate({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+// Session-only gate for the onboarding route. Lighter than RequireAuth
+// (which also checks the staff record and redirects to /onboarding, which
+// would loop). Ensures the auth client has restored a session before the
+// onboarding page can fire any authed RPC -- the create_business_and_owner
+// RPC is granted only to `authenticated` and runs as `anon` (-> 404 / NULL
+// auth.uid) if the request leaves before getSession() resolves.
+function RequireSession({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth()
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-8 h-8 border-2 border-black border-t-blue-600 rounded-full animate-spin" />
+      </div>
+    )
+  }
+  if (!session) {
+    return <Navigate to="/login" replace />
+  }
+  return <>{children}</>
+}
+
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked } = useAuth()
 
@@ -285,7 +306,7 @@ function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/update-password" element={<UpdatePassword />} />
-        <Route path="/onboarding" element={<Onboarding />} />
+        <Route path="/onboarding" element={<RequireSession><Onboarding /></RequireSession>} />
         <Route path="/join/:inviteId" element={<Join />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
