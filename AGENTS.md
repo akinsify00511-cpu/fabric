@@ -616,3 +616,16 @@ tsc clean, vite build succeeds, vitest 73/73 pass at every commit. No new depend
 
 - **U16 — Monthly Performance Review (§26):** migration `097_monthly_performance_review.sql` adds `monthly_review(business_id, period_start, period_end)` — a read-only roll-up of Business Health (093) + OKR progress (094) + open Risks (095) + open Recommendations (091) + governed metric movers (086) + data-quality summary (089) for a month window. NO new tables — pure interpretation over existing data (§0/§6). `MonthlyReview.tsx` page (`/app/review`, self_audit gate): month selector, summary header, per-dimension health breakdown, OKR progress, top risks + recommendations, metric movers, DQ counts. Board-ready + PRINTABLE (print CSS). ExecutiveCockpit's BusinessHealthCard deep-links to the full MPR. Deployed (9414ec1).
 - **U17 — Required documentation (§35/§36):** `METRIC_DICTIONARY.md` — the canonical metric registry (§6/§7): all 21 governed metrics with key/name/formula/sources/unit/min_sample/status, the governance layers (metric_definitions → kpi_metrics → health_metric_map → refresh_business_metrics), and the §7 anti-patterns prevented. `INTELLIGENCE_RULE_CATALOG.md` — every recommendation rule in the full §36 format (8 implemented: FIN-AR-001/002, FIN-CF-001, SAL-CONV-001, INV-001, CUST-001, OPS-001, DQ-001 + 8 planned as candidates only). Both verified against the real migrations, not written from memory. Committed 60e2253.
+
+### Session 14c (continued): complete §35 documentation set (U18)
+
+Completed all 10 §35 required documents (each describing what ACTUALLY exists,
+verified against real migrations — never aspirational):
+- AVENIZE_INTELLIGENCE_ARCHITECTURE.md — top-level stack, outcome loop (§15), failure isolation (§24), performance (§23), component map.
+- BUSINESS_DATA_MODEL.md (§3) — 362 real tables mapped to canonical conceptual model; cross-module relationship graph (§4) verified against FKs; no duplication (customers=contacts, revenue=derived metric, actions reuse tasks/approvals/POs, OKRs extended strategic_objectives).
+- BUSINESS_EVENT_CATALOG.md (§5) — the single event bus (058/059/090): 10 emitted events + AI-captured + catalogued-handler + flywheel wiring. No competing architecture.
+- DATA_QUALITY_MODEL.md (§8) — 089 scanner: 7 implemented checks, health-penalty + DQ-001 + MPR loop, and what it deliberately does NOT do (never mutates business data, §14).
+- RECOMMENDATION_CATALOG.md (§12/§13) — 8 recommendation types in full §12 field set + lifecycle + effectiveness (§16). Specific to real data, never generic (§13).
+- INTELLIGENCE_ROADMAP.md (§31/§32) — P0/P1/P2 done, P3 deferred, blocked-on-live-DB items, explicit anti-goals (§33).
+- INTELLIGENCE_TEST_MATRIX.md (§29/§30) — unit coverage, SQL scenarios with expected behavior, 7 golden datasets (§30), live failure testing (§60/§81).
+(METRIC_DICTIONARY + INTELLIGENCE_RULE_CATALOG from U17; AVENIZE_INTELLIGENCE_CURRENT_STATE + PRODUCTION_REGISTER pre-existing.) Committed dae3139. tsc clean; markdown only.
