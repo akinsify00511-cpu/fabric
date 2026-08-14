@@ -8,6 +8,7 @@ import {
   Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon,
   Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList, Sparkles, FlaskConical, Brain,
   ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
+  ShieldAlert,
   Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
   Scale, ShoppingCart, BookOpen, Globe, Stethoscope, GitCompare,
 } from 'lucide-react'
@@ -60,6 +61,7 @@ const ROUTE_MODULE: Record<string, ModuleKey> = {
   '/app/memory': 'memory', '/app/reality-gap': 'reality_gap',
   '/app/self-audit': 'self_audit', '/app/governance': 'self_audit',
   '/app/control': 'self_audit', '/app/data-quality': 'self_audit',
+  '/app/risks': 'self_audit',
   '/app/chat': 'chat', '/app/live-chat': 'chat',
   '/app/whatsapp': 'chat', '/app/sms': 'chat',
   '/app/crm': 'crm', '/app/leads': 'crm', '/app/quotes': 'crm',
@@ -200,6 +202,7 @@ const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/governance', label: 'Controls', icon: Shield, toolKey: 'dashboard' },
   { to: '/app/self-audit', label: 'Self-Audit', icon: Stethoscope, toolKey: 'dashboard' },
   { to: '/app/data-quality', label: 'Data Quality', icon: ShieldCheck, toolKey: 'dashboard' },
+  { to: '/app/risks', label: 'Risks', icon: ShieldAlert, toolKey: 'dashboard' },
   { to: '/app/reality-gap', label: 'Reality Gap', icon: GitCompare, toolKey: 'dashboard' },
   { to: '/app/control', label: 'Audit Log', icon: ShieldCheck, toolKey: 'dashboard' },
   { to: '/app/integrations', label: 'Integrations', icon: Network, toolKey: 'integrations' },
