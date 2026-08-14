@@ -97,57 +97,94 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  const fetchStaff = useCallback(async (attempt = 1, myId = fetchIdRef.current) => {
-    if (!session?.user?.id) {
-      setStaff(null)
-      setStaffChecked(true)
-      return
-    }
-    // We have a session and are (re)checking the staff record. Keep the auth
-    // gate in its loading state until it resolves, so a brief null staff does
-    // not bounce an already-onboarded user to /onboarding and back (which also
-    // loses the page they were on after a refresh).
-    if (attempt === 1) setStaffChecked(false)
-    try {
-      const { data } = await supabase
-        .from('staff')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .maybeSingle()
-      // A newer fetch superseded this one — drop the result.
-      if (myId !== fetchIdRef.current) return
-      if (data) {
-        setStaff({ ...data, user: session.user } as Staff)
+  // userId is passed explicitly (not read from the session closure) so this
+  // callback is stable across re-renders — only a genuine USER change (login,
+  // logout, account switch) re-fetches, not a new session object reference
+  // (Supabase re-fires INITIAL_SESSION on subscribe, which previously caused a
+  // discarded first fetch + a transient null that bounced users to /onboarding).
+  const fetchStaff = useCallback(
+    async (userId: string, attempt = 1, myId = fetchIdRef.current) => {
+      if (!userId) {
+        setStaff(null)
         setStaffChecked(true)
         return
       }
-      // No staff row. A transient miss (right after signup/onboarding, or an
-      // auth-state race) should not be treated as "needs onboarding" — retry
-      // once before concluding, so an onboarded user is not flashed to
-      // /onboarding and dropped onto the dashboard on refresh.
-      if (attempt < 2 && myId === fetchIdRef.current) {
-        setTimeout(() => { if (myId === fetchIdRef.current) fetchStaff(2, myId) }, 500)
+      // Keep the auth gate in its loading state until we have a definitive
+      // answer, so a transient null staff does not bounce an already-onboarded
+      // user to /onboarding and back (which also loses the page they were on).
+      if (attempt === 1) setStaffChecked(false)
+      try {
+        const { data, error } = await supabase
+          .from('staff')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle()
+        // A newer fetch superseded this one — drop the result.
+        if (myId !== fetchIdRef.current) return
+        if (data) {
+          setStaff({ ...data, user: session?.user } as Staff)
+          setStaffChecked(true)
+          return
+        }
+        // Distinguish a genuine fetch error from "no staff row exists."
+        // An error (network blip, cold start, PostgREST hiccup) must retry,
+        // not be treated as "user has no staff record" — otherwise an
+        // onboarded user is flashed to /onboarding on refresh.
+        if (error) {
+          if (attempt < 4 && myId === fetchIdRef.current) {
+            const delay = [200, 500, 1200][attempt - 1] || 1500
+            setTimeout(() => {
+              if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
+            }, delay)
+            return
+          }
+          // Exhausted retries on a hard error — keep the gate loading rather
+          // than bounce to onboarding, since we genuinely don't know whether
+          // the user has a staff record.
+          console.warn('Failed to fetch staff after retries:', error)
+          setStaffChecked(false)
+          return
+        }
+        // No error, no data: the user genuinely has no staff row. Retry once
+        // to cover a just-created-row race (signup/onboarding), then conclude.
+        if (attempt < 2 && myId === fetchIdRef.current) {
+          setTimeout(() => {
+            if (myId === fetchIdRef.current) fetchStaff(userId, 2, myId)
+          }, 300)
+          return
+        }
+        setStaff(null)
+      } catch (err) {
+        if (myId !== fetchIdRef.current) return
+        console.warn('Failed to fetch staff (throw):', err)
+        if (attempt < 4 && myId === fetchIdRef.current) {
+          const delay = [200, 500, 1200][attempt - 1] || 1500
+          setTimeout(() => {
+            if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
+          }, delay)
+          return
+        }
+        setStaffChecked(false)
         return
       }
-      setStaff(null)
-    } catch (err) {
-      if (myId !== fetchIdRef.current) return
-      console.warn('Failed to fetch staff:', err)
-      setStaff(null)
-    }
-    setStaffChecked(true)
-  }, [session])
+      setStaffChecked(true)
+    },
+    [session?.user],
+  )
 
+  // Re-fetch only when the authenticated USER changes (by id), not when the
+  // session object reference changes. This avoids the INITIAL_SESSION double
+  // fetch and its discarded-result race.
+  const userId = session?.user?.id
   useEffect(() => {
-    // Only reset and fetch if we have a session
-    if (session) {
+    if (userId) {
       const id = ++fetchIdRef.current
-      fetchStaff(1, id)
+      fetchStaff(userId, 1, id)
     } else {
       setStaff(null)
       setStaffChecked(true)
     }
-  }, [fetchStaff, session])
+  }, [fetchStaff, userId])
 
   // Update Sentry context when staff changes
   useEffect(() => {
@@ -177,9 +214,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Manual refresh (after a profile/onboarding mutation). Bumps the request id
   // so any in-flight auto fetch is discarded and this result wins.
   const refreshStaff = useCallback(() => {
+    if (!session?.user?.id) return Promise.resolve()
     const id = ++fetchIdRef.current
-    return fetchStaff(1, id)
-  }, [fetchStaff])
+    return fetchStaff(session.user.id, 1, id)
+  }, [fetchStaff, session?.user?.id])
 
   const userRole = staff?.role || 'staff'
   const canManageStaff = hasPermission(userRole, 'manage_staff') || userRole === 'owner'

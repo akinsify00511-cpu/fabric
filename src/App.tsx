@@ -236,10 +236,42 @@ function RequireSession({ children }: { children: React.ReactNode }) {
 }
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { session, loading, staff, staffChecked } = useAuth()
+  const { session, loading, staff, staffChecked, refreshStaff } = useAuth()
+  const [stuck, setStuck] = useState(false)
 
-  // While any auth check is pending, show loading
+  // Safety net: if the staff fetch hasn't resolved after several seconds
+  // (DB unreachable / all retries exhausted on a hard error), stop spinning
+  // and offer a retry instead of hanging on the loader forever.
+  useEffect(() => {
+    if (loading || !staffChecked) {
+      setStuck(false)
+      const t = setTimeout(() => setStuck(true), 6000)
+      return () => clearTimeout(t)
+    }
+    setStuck(false)
+  }, [loading, staffChecked])
+
+  // While any auth check is pending, show loading (or a retry prompt if stuck)
   if (loading || !staffChecked) {
+    if (stuck) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="flex flex-col items-center gap-4 text-center px-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
+              <span className="text-white font-bold text-xl">A</span>
+            </div>
+            <p className="text-black font-medium">Taking a moment to load your workspace…</p>
+            <p className="text-sm text-black/50">This usually finishes in a second. If it doesn't, check your connection and retry.</p>
+            <button
+              onClick={() => { setStuck(false); refreshStaff() }}
+              className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      )
+    }
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="flex flex-col items-center gap-4">
