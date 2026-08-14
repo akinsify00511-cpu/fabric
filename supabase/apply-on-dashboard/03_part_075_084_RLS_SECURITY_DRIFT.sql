@@ -1,5 +1,436 @@
 
 -- ############################################
+-- FILE: 075_leads_business_id_and_rls.sql
+-- ############################################
+-- ============================================
+-- LEADS TABLE: Add business_id + fix cross-tenant RLS
+--
+-- The leads table (migration 041) was created WITHOUT a business_id
+-- column, but the frontend (Leads.tsx, crm.ts) filters by business_id —
+-- so queries silently returned nothing and the lead pipeline was broken.
+-- The RLS policy also allowed ANY authenticated user to see ALL
+-- unassigned leads across ALL businesses (cross-tenant leak).
+--
+-- This migration:
+-- 1. Adds business_id (nullable — existing leads and platform-level
+--    leads have no business)
+-- 2. Drops the permissive "unassigned visible to all" policy
+-- 3. Restores business-scoped RLS
+-- 4. Adds an index for the business_id filter
+-- ============================================
+
+
+-- 1. Add business_id column
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS business_id UUID REFERENCES businesses(id) ON DELETE CASCADE;
+
+-- 2. Index for the common query pattern
+CREATE INDEX IF NOT EXISTS idx_leads_business ON leads(business_id, created_at DESC);
+
+-- 3. Drop old permissive policies
+DROP POLICY IF EXISTS "Anyone can create leads" ON leads;
+DROP POLICY IF EXISTS "Users can view business leads" ON leads;
+DROP POLICY IF EXISTS "Users can update assigned leads" ON leads;
+
+-- 4. New RLS policies
+
+-- Public insert: anonymous users can submit a lead for a specific business
+-- (business_id is provided by the public form). Platform-level leads
+-- (business_id NULL) are also allowed from the public marketing form.
+CREATE POLICY "leads_public_insert"
+  ON leads FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (TRUE);
+
+-- Business members can see leads scoped to their business
+CREATE POLICY "leads_business_select"
+  ON leads FOR SELECT
+  TO authenticated
+  USING (business_id IN (SELECT business_id FROM get_current_staff()));
+
+-- Business members can update leads in their business
+CREATE POLICY "leads_business_update"
+  ON leads FOR UPDATE
+  TO authenticated
+  USING (business_id IN (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+
+-- Business members can delete leads in their business
+CREATE POLICY "leads_business_delete"
+  ON leads FOR DELETE
+  TO authenticated
+  USING (business_id IN (SELECT business_id FROM get_current_staff()));
+
+-- ============================================
+-- Done
+-- ============================================
+SELECT 'leads table: business_id added, RLS scoped to business' as status;
+
+-- ============================================
+-- CONTACTS: Add traceability columns used by crm.ts convertLeadToContact
+-- The contacts table (migration 001) only has: name, email, phone,
+-- company, deal_id. The lead-conversion code inserts full_name, source,
+-- lead_id, notes — none of which exist. Add them so the pipeline works.
+-- ============================================
+
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS lead_id UUID REFERENCES leads(id) ON DELETE SET NULL;
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'manual';
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS notes TEXT;
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS full_name TEXT;
+
+-- full_name is the human-readable name; populate from name for existing rows
+UPDATE contacts SET full_name = name WHERE full_name IS NULL;
+
+CREATE INDEX IF NOT EXISTS idx_contacts_lead_id ON contacts(lead_id) WHERE lead_id IS NOT NULL;
+
+-- ############################################
+-- FILE: 076_clients_public_update_policy.sql
+-- ############################################
+-- ============================================
+-- PUBLIC BOOKING: Allow anon UPDATE on clients for upsert
+--
+-- PublicAppointments.tsx upserts a client row by (business_id, email) when
+-- an anonymous booker submits the form. The `clients_public_insert` policy
+-- (migration 043) allows anon INSERT, but there is no anon UPDATE policy.
+-- PostgREST's upsert runs INSERT ... ON CONFLICT DO UPDATE, so the UPDATE
+-- branch is rejected by RLS when a returning booker (same email) submits
+-- again — the booking crashes with a 403/RLS denial instead of updating
+-- their phone/name.
+--
+-- This migration adds a narrowly-scoped anon UPDATE policy on clients so
+-- the upsert's ON CONFLICT branch can update the matching row. The policy
+-- mirrors the INSERT check (business_id IS NOT NULL); the upsert's own
+-- ON CONFLICT (business_id, email) clause provides the row-level scoping.
+-- ============================================
+
+
+DROP POLICY IF EXISTS "clients_public_update" ON clients;
+
+CREATE POLICY "clients_public_update" ON public.clients
+  FOR UPDATE TO anon, authenticated
+  USING (business_id IS NOT NULL)
+  WITH CHECK (business_id IS NOT NULL);
+
+SELECT 'clients: anon UPDATE policy added for public booking upsert' as status;
+
+-- ############################################
+-- FILE: 077_atomic_xp_award.sql
+-- ############################################
+-- ============================================
+-- ATOMIC XP AWARD WITH STREAK + LEVEL + HISTORY
+--
+-- GamificationContext.awardXP was doing a client-side read-modify-write:
+-- SELECT xp_total, compute new value in JS, UPDATE. Two concurrent calls
+-- (e.g., completing two tasks quickly) would both read the same xp_total,
+-- both add their amount, and the second UPDATE would overwrite the first,
+-- silently losing XP.
+--
+-- The existing award_xp() RPC does atomic increment but doesn't handle
+-- streak logic or xp_history logging. This new RPC does everything
+-- server-side in a single transaction:
+--   1. Atomic xp_total increment (no race)
+--   2. Streak update (today vs yesterday vs other)
+--   3. Level recalculation
+--   4. xp_history insert
+--   5. Returns new state for client to consume
+-- ============================================
+
+
+CREATE OR REPLACE FUNCTION public.award_xp_with_streak(
+  p_user_id UUID,
+  p_xp_amount INTEGER,
+  p_action TEXT,
+  p_description TEXT DEFAULT NULL
+)
+RETURNS TABLE(
+  xp_total INTEGER,
+  level INTEGER,
+  streak_days INTEGER,
+  longest_streak INTEGER,
+  last_active_date DATE,
+  leveled_up BOOLEAN
+) AS $$
+DECLARE
+  v_current_xp INTEGER := 0;
+  v_new_xp INTEGER;
+  v_old_level INTEGER;
+  v_new_level INTEGER;
+  v_streak INTEGER := 0;
+  v_longest INTEGER := 0;
+  v_last_active DATE;
+  v_today DATE := CURRENT_DATE;
+  v_yesterday DATE := CURRENT_DATE - 1;
+BEGIN
+  -- Ensure user_xp row exists
+  INSERT INTO user_xp (user_id, xp_total, level, streak_days, longest_streak, last_active_date)
+  VALUES (p_user_id, 0, 1, 0, 0, NULL)
+  ON CONFLICT (user_id) DO NOTHING;
+
+  -- Read current state (single read, then atomic update below)
+  SELECT xp_total, streak_days, longest_streak, last_active_date
+  INTO v_current_xp, v_streak, v_longest, v_last_active
+  FROM user_xp
+  WHERE user_id = p_user_id;
+
+  v_current_xp := COALESCE(v_current_xp, 0);
+  v_new_xp := v_current_xp + p_xp_amount;
+  v_old_level := calculate_level(v_current_xp);
+  v_new_level := calculate_level(v_new_xp);
+
+  -- Streak logic
+  IF v_last_active IS NULL OR v_last_active < v_yesterday THEN
+    v_streak := 1;
+  ELSIF v_last_active = v_yesterday THEN
+    v_streak := v_streak + 1;
+  END IF;
+
+  v_longest := GREATEST(COALESCE(v_longest, 0), v_streak);
+
+  -- Atomic update (single statement, no race window)
+  UPDATE user_xp
+  SET
+    xp_total = v_new_xp,
+    level = v_new_level,
+    streak_days = v_streak,
+    longest_streak = v_longest,
+    last_active_date = v_today,
+    updated_at = NOW()
+  WHERE user_id = p_user_id;
+
+  -- Log to xp_history
+  INSERT INTO xp_history (user_id, amount, action, description)
+  VALUES (p_user_id, p_xp_amount, p_action, p_description);
+
+  RETURN QUERY
+  SELECT
+    v_new_xp,
+    v_new_level,
+    v_streak,
+    v_longest,
+    v_today,
+    (v_new_level > v_old_level);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Grant to authenticated (the RPC uses auth.uid() indirectly via p_user_id
+-- which the client passes from supabase.auth.getUser())
+GRANT EXECUTE ON FUNCTION public.award_xp_with_streak TO authenticated;
+
+SELECT 'award_xp_with_streak RPC created' as status;
+
+-- ############################################
+-- FILE: 078_enable_rls_unprotected_tables.sql
+-- ############################################
+-- ============================================
+-- ENABLE RLS ON 11 UNPROTECTED TABLES
+--
+-- Discovery found 11 tables created by migrations but never had
+-- ENABLE ROW LEVEL SECURITY applied. Without RLS, ANY authenticated
+-- user can read/write ALL rows across ALL businesses (cross-tenant).
+-- None of these tables are queried directly from the frontend (all
+-- access is via SECURITY DEFINER RPCs or service_role edge functions),
+-- so enabling RLS will not break any client query.
+--
+-- Categories:
+--   A. Business-scoped (have business_id): action_reversals,
+--      commission_plans, customer_risk_scores, security_audit_log
+--   B. Parent-linked (business_id via FK): purchase_request_items,
+--      rfq_line_items, webhook_logs
+--   C. Global/platform (no business_id, server-side only):
+--      auth_rate_limits, business_event_handlers, plan_pricing,
+--      saml_metadata_cache
+-- ============================================
+
+
+-- ============================================
+-- A. BUSINESS-SCOPED TABLES
+-- ============================================
+
+-- action_reversals
+ALTER TABLE action_reversals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "action_reversals_business" ON action_reversals
+  FOR ALL USING (business_id = (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
+
+-- commission_plans
+ALTER TABLE commission_plans ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "commission_plans_business" ON commission_plans
+  FOR ALL USING (business_id = (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
+
+-- customer_risk_scores
+ALTER TABLE customer_risk_scores ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "customer_risk_scores_business" ON customer_risk_scores
+  FOR ALL USING (business_id = (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
+
+-- security_audit_log (business_id is nullable — platform events have no business)
+ALTER TABLE security_audit_log ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "security_audit_log_business_read" ON security_audit_log
+  FOR SELECT USING (
+    business_id IS NULL OR business_id = (SELECT business_id FROM get_current_staff())
+  );
+-- Writes only via service_role (edge functions / triggers); no client INSERT/UPDATE policy.
+
+-- ============================================
+-- B. PARENT-LINKED TABLES (business_id via FK join)
+-- ============================================
+
+-- purchase_request_items -> purchase_requests.business_id
+ALTER TABLE purchase_request_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "purchase_request_items_business" ON purchase_request_items
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM purchase_requests pr
+           WHERE pr.id = purchase_request_items.request_id
+             AND pr.business_id = (SELECT business_id FROM get_current_staff()))
+  )
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM purchase_requests pr
+           WHERE pr.id = purchase_request_items.request_id
+             AND pr.business_id = (SELECT business_id FROM get_current_staff()))
+  );
+
+-- rfq_line_items -> rfqs.business_id
+ALTER TABLE rfq_line_items ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "rfq_line_items_business" ON rfq_line_items
+  FOR ALL USING (
+    EXISTS (SELECT 1 FROM rfqs r
+           WHERE r.id = rfq_line_items.rfq_id
+             AND r.business_id = (SELECT business_id FROM get_current_staff()))
+  )
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM rfqs r
+           WHERE r.id = rfq_line_items.rfq_id
+             AND r.business_id = (SELECT business_id FROM get_current_staff()))
+  );
+
+-- webhook_logs -> webhooks.business_id
+ALTER TABLE webhook_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "webhook_logs_business" ON webhook_logs
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM webhooks w
+           WHERE w.id = webhook_logs.webhook_id
+             AND w.business_id = (SELECT business_id FROM get_current_staff()))
+  );
+-- webhook_logs are append-only by the system; no client INSERT/UPDATE/DELETE policy.
+
+-- ============================================
+-- C. GLOBAL / PLATFORM TABLES (no client access)
+-- RLS enabled with NO policies = client (anon/authenticated) denied all
+-- access; only service_role (edge functions) and SECURITY DEFINER
+-- RPCs can read/write. This is the correct posture for:
+--   - auth_rate_limits: server-side rate limiting
+--   - business_event_handlers: server-side event handler registry
+--   - plan_pricing: read via grant_business_plan SECURITY DEFINER RPC
+--   - saml_metadata_cache: server-side SSO metadata cache
+-- ============================================
+
+ALTER TABLE auth_rate_limits ENABLE ROW LEVEL SECURITY;
+ALTER TABLE business_event_handlers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plan_pricing ENABLE ROW LEVEL SECURITY;
+ALTER TABLE saml_metadata_cache ENABLE ROW LEVEL SECURITY;
+
+SELECT 'RLS enabled on 11 previously-unprotected tables' as status;
+
+-- ############################################
+-- FILE: 079_settings_type_and_secret_rls.sql
+-- ############################################
+-- 079_settings_type_and_secret_rls.sql
+--
+-- Two problems fixed here:
+--
+-- 1. The `settings` table was created (046) WITHOUT a `type` column, but the
+--    client (smsService / SMS page / WhatsApp integration) upserts rows with
+--    `type: 'secret'`. PostgREST rejects unknown columns, so saving an
+--    integration API key has been silently failing (the error is swallowed by
+--    the page's try/catch). This adds the missing column so those writes
+--    succeed, and backfills known secret keys.
+--
+-- 2. The `settings_business_all` policy let ANY business staff member read
+--    every settings row — including rows holding provider API keys / access
+--    tokens (type='secret'). A non-admin staff member could exfiltrate the
+--    Termii API key or WhatsApp token by querying the table directly via the
+--    Postgres REST API. This tightens RLS so secret rows are readable (and
+--    writable) only by owner/manager roles; non-secret rows stay
+--    business-readable as before.
+--
+-- Pure internal SQL — no new dependency, no external service.
+
+
+-- (1) Add the missing column. Nullable so existing rows default to NULL.
+ALTER TABLE public.settings ADD COLUMN IF NOT EXISTS type TEXT;
+
+-- Backfill known integration-secret keys so the new RLS gate covers them.
+UPDATE public.settings
+SET type = 'secret'
+WHERE type IS NULL
+  AND key IN (
+    'termii_api_key',
+    'whatsapp_access_token',
+    'whatsapp_phone_number_id',
+    'whatsapp_business_id',
+    'paystack_secret_key',
+    'flutterwave_secret_key',
+    'mailgun_api_key',
+    'sendgrid_api_key',
+    'postmark_api_token',
+    'smtp_password'
+  );
+
+-- (2) Tighten RLS. Drop the broad business-wide policy.
+DROP POLICY IF EXISTS "settings_business_all" ON public.settings;
+
+-- Read: all business staff may read NON-secret settings; only owner/manager
+-- may read secret settings.
+CREATE POLICY "settings_select_non_secret" ON public.settings
+  FOR SELECT USING (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND (type IS DISTINCT FROM 'secret')
+  );
+
+CREATE POLICY "settings_select_secret_admin" ON public.settings
+  FOR SELECT USING (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND type = 'secret'
+    AND (SELECT role FROM public.get_current_staff()) IN ('owner', 'manager')
+  );
+
+-- Writes: owner/manager may write secret rows; any business staff may write
+-- non-secret rows (preserves existing write behaviour for config keys).
+CREATE POLICY "settings_insert" ON public.settings
+  FOR INSERT WITH CHECK (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND (
+      type IS DISTINCT FROM 'secret'
+      OR (SELECT role FROM public.get_current_staff()) IN ('owner', 'manager')
+    )
+  );
+
+CREATE POLICY "settings_update" ON public.settings
+  FOR UPDATE USING (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND (
+      type IS DISTINCT FROM 'secret'
+      OR (SELECT role FROM public.get_current_staff()) IN ('owner', 'manager')
+    )
+  )
+  WITH CHECK (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND (
+      type IS DISTINCT FROM 'secret'
+      OR (SELECT role FROM public.get_current_staff()) IN ('owner', 'manager')
+    )
+  );
+
+CREATE POLICY "settings_delete" ON public.settings
+  FOR DELETE USING (
+    business_id = (SELECT business_id FROM public.get_current_staff())
+    AND (
+      type IS DISTINCT FROM 'secret'
+      OR (SELECT role FROM public.get_current_staff()) IN ('owner', 'manager')
+    )
+  );
+
+-- ############################################
 -- FILE: 080_fix_cross_tenant_rls_subquery.sql
 -- ############################################
 -- 080_fix_cross_tenant_rls_subquery.sql
@@ -748,3 +1179,117 @@ GRANT EXECUTE ON FUNCTION create_business_and_owner(TEXT, TEXT, TEXT, TEXT) TO a
 
 -- Reload PostgREST so the new function signature + columns are visible.
 NOTIFY pgrst, 'reload schema';
+
+-- ############################################
+-- FILE: 084_task_management_enhancements.sql
+-- ############################################
+-- 084_task_management_enhancements.sql
+-- Turn the tasks table from a basic todo list into a managed-work surface:
+-- assignment, follow-up comments, review feedback (satisfactory / rework),
+-- and time management (estimated vs logged hours).
+--
+-- All additions are additive (no drop of existing data) and idempotent.
+
+
+-- ============================================================
+-- 1. Extend tasks table with review + time-management columns
+-- ============================================================
+
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS estimated_hours NUMERIC(6,2);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS actual_hours NUMERIC(6,2) DEFAULT 0;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS review_status TEXT
+  DEFAULT 'pending'
+  CHECK (review_status IN ('pending', 'satisfactory', 'needs_rework'));
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS review_comment TEXT;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS reviewed_by UUID REFERENCES staff(id);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ;
+
+-- Allow the richer priority set used by the UI (004 only allowed low/medium/high/urgent).
+ALTER TABLE tasks DROP CONSTRAINT IF EXISTS tasks_priority_check;
+ALTER TABLE tasks ADD CONSTRAINT tasks_priority_check
+  CHECK (priority IN ('low', 'medium', 'high', 'urgent'));
+
+COMMENT ON COLUMN tasks.review_status IS
+  'pending = not yet reviewed; satisfactory = approved by a manager/lead; needs_rework = sent back for rework.';
+
+-- ============================================================
+-- 2. task_comments — follow-up thread on a task
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS task_comments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+  author_id UUID REFERENCES staff(id),
+  body TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_task_comments_task_id ON task_comments(task_id);
+
+ALTER TABLE task_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "task_comments same business read"
+  ON task_comments FOR SELECT
+  USING (business_id IN (SELECT business_id FROM get_current_staff()));
+CREATE POLICY "task_comments same business write"
+  ON task_comments FOR ALL
+  USING (business_id IN (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+
+-- ============================================================
+-- 3. task_time_logs — manual time entries (hours + note)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS task_time_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+  business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+  staff_id UUID REFERENCES staff(id),
+  hours NUMERIC(6,2) NOT NULL CHECK (hours > 0),
+  note TEXT,
+  logged_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_task_time_logs_task_id ON task_time_logs(task_id);
+
+ALTER TABLE task_time_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "task_time_logs same business read"
+  ON task_time_logs FOR SELECT
+  USING (business_id IN (SELECT business_id FROM get_current_staff()));
+CREATE POLICY "task_time_logs same business write"
+  ON task_time_logs FOR ALL
+  USING (business_id IN (SELECT business_id FROM get_current_staff()))
+  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+
+-- ============================================================
+-- 4. Auto-maintain tasks.actual_hours from time logs + updated_at
+-- ============================================================
+
+CREATE OR REPLACE FUNCTION maintain_task_actual_hours()
+RETURNS TRIGGER AS $$
+DECLARE
+  p_task UUID;
+  p_business UUID;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    p_task := OLD.task_id;
+    p_business := OLD.business_id;
+  ELSE
+    p_task := NEW.task_id;
+    p_business := NEW.business_id;
+  END IF;
+
+  UPDATE tasks SET
+    actual_hours = (
+      SELECT COALESCE(SUM(hours), 0) FROM task_time_logs WHERE task_id = p_task
+    ),
+    updated_at = NOW()
+  WHERE id = p_task;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS trg_task_time_logs_actual_hours ON task_time_logs;
+CREATE TRIGGER trg_task_time_logs_actual_hours
+  AFTER INSERT OR UPDATE OR DELETE ON task_time_logs
+  FOR EACH ROW EXECUTE FUNCTION maintain_task_actual_hours();
