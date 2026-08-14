@@ -112,6 +112,7 @@ const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
 const Leads = lazy(() => import('./pages/Leads'))
 const Recruitment = lazy(() => import('./pages/Recruitment'))
+const People = lazy(() => import('./pages/People'))
 const Webhooks = lazy(() => import('./pages/Webhooks'))
 const Appraisals = lazy(() => import('./pages/Appraisals'))
 const Payroll = lazy(() => import('./pages/Payroll'))
@@ -345,6 +346,7 @@ function AppRoutes() {
         <Route path="quotes" element={mg('crm', <Quotes />)} />
         <Route path="payments" element={mg('finance', <Payments />)} />
         <Route path="hr" element={mg('hr', <HumanResources />)} />
+        <Route path="people" element={mg('hr', <People />)} />
         <Route path="recruitment" element={mg('hr', <Recruitment />)} />
         <Route path="appraisals" element={mg('hr', <Appraisals />)} />
         <Route path="payroll" element={mg('finance', <Payroll />)} />
