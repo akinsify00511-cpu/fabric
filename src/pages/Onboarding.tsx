@@ -89,6 +89,7 @@ export default function Onboarding() {
   const [fullName, setFullName] = useState(
     (session?.user.user_metadata?.full_name as string | undefined) ?? '',
   )
+  const [jobTitle, setJobTitle] = useState('')
   const [industry, setIndustry] = useState('')
   const [selectedColor, setSelectedColor] = useState<typeof BRAND_COLORS[0] | null>(null)
 
@@ -141,6 +142,7 @@ export default function Onboarding() {
         p_business_name: businessName,
         p_industry: industry,
         p_staff_name: fullName,
+        p_job_title: jobTitle.trim() || undefined,
       })
 
       if (rpcError) {
@@ -266,7 +268,7 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 1: Full Name */}
+          {/* Step 1: Full Name + Position */}
           {step === 1 && (
             <div className="space-y-6">
               <div>
@@ -281,6 +283,19 @@ export default function Onboarding() {
                 className="w-full px-5 py-4 rounded-lg border-2 border-black text-lg text-black placeholder-black focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
                 autoFocus
               />
+              <div>
+                <label className="block text-sm font-medium text-black/70 mb-1.5">
+                  Your role or position
+                </label>
+                <input
+                  type="text"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="e.g. Founder & CEO, Operations Director"
+                  className="w-full px-5 py-4 rounded-lg border-2 border-black text-base text-black placeholder-black focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20 transition-all bg-white"
+                />
+                <p className="text-xs text-black mt-1.5">Optional — helps your team know who you are.</p>
+              </div>
             </div>
           )}
 

@@ -347,6 +347,14 @@ function AppRoutes() {
         <Route path="payments" element={mg('finance', <Payments />)} />
         <Route path="hr" element={mg('hr', <HumanResources />)} />
         <Route path="people" element={mg('hr', <People />)} />
+        {/* Aliases for paths referenced elsewhere (CommandPalette, CompanyHome,
+            Shell) that had no route and 404'd. */}
+        <Route path="dashboard" element={<Navigate to="/app" replace />} />
+        <Route path="profile" element={<Navigate to="/app/settings/profile" replace />} />
+        <Route path="staff" element={<Navigate to="/app/people" replace />} />
+        <Route path="awards" element={<Navigate to="/app/wall?tab=recognition" replace />} />
+        <Route path="kudos" element={<Navigate to="/app/wall?tab=recognition" replace />} />
+        <Route path="polls" element={<Navigate to="/app/wall?tab=polls" replace />} />
         <Route path="recruitment" element={mg('hr', <Recruitment />)} />
         <Route path="appraisals" element={mg('hr', <Appraisals />)} />
         <Route path="payroll" element={mg('finance', <Payroll />)} />

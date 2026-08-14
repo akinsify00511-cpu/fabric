@@ -4,7 +4,7 @@
 // person actually opens to feel the company.
 
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
@@ -37,7 +37,9 @@ export default function CompanyWall() {
   const bid = staff?.business_id
   const dbState = useDbState()
   const { showToast } = useToast()
-  const [tab, setTab] = useState<'all' | 'recognition' | 'announcements' | 'events' | 'polls'>('all')
+  const [searchParams] = useSearchParams()
+  const initialTab = (searchParams.get('tab') as 'recognition' | 'polls' | null) || 'all'
+  const [tab, setTab] = useState<'all' | 'recognition' | 'announcements' | 'events' | 'polls'>(initialTab)
   const [feed, setFeed] = useState<any[]>([])
   const [polls, setPolls] = useState<any[]>([])
   const [loading, setLoading] = useState(true)

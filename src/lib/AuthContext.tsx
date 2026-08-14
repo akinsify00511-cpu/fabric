@@ -20,6 +20,12 @@ export type Staff = {
   job_title: string | null
   department?: string
   avatar_url?: string
+  date_of_birth?: string
+  pronouns?: string
+  bio?: string
+  hobbies?: string
+  location?: string
+  emergency_contact?: string
   plan?: 'free' | 'starter' | 'pro' | 'enterprise'
   is_admin?: boolean
   active?: boolean

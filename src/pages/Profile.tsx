@@ -18,6 +18,14 @@ export default function Profile() {
   const [jobTitle, setJobTitle] = useState('')
   const [department, setDepartment] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+  // Personal / humanizing fields — feed HR, People, and the Company Wall
+  // (birthdays). date_of_birth already exists on the staff table.
+  const [dateOfBirth, setDateOfBirth] = useState('')
+  const [pronouns, setPronouns] = useState('')
+  const [bio, setBio] = useState('')
+  const [hobbies, setHobbies] = useState('')
+  const [location, setLocation] = useState('')
+  const [emergencyContact, setEmergencyContact] = useState('')
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [profileLoading, setProfileLoading] = useState(false)
   const [profileError, setProfileError] = useState<string | null>(null)
@@ -42,9 +50,15 @@ export default function Profile() {
       setFullName(staff.full_name || staff.name || '')
       setEmail(staff.user?.email || '')
       setPhone(staff.phone || '')
-      setJobTitle((staff as any).job_title || '')
-      setDepartment((staff as any).department || '')
+      setJobTitle(staff.job_title || '')
+      setDepartment(staff.department || '')
       setAvatarUrl(staff.avatar_url || null)
+      setDateOfBirth(staff.date_of_birth || '')
+      setPronouns(staff.pronouns || '')
+      setBio(staff.bio || '')
+      setHobbies(staff.hobbies || '')
+      setLocation(staff.location || '')
+      setEmergencyContact(staff.emergency_contact || '')
     }
   }, [staff])
 
@@ -107,6 +121,12 @@ export default function Profile() {
         phone,
         job_title: jobTitle || null,
         department: department || null,
+        date_of_birth: dateOfBirth || null,
+        pronouns: pronouns || null,
+        bio: bio || null,
+        hobbies: hobbies || null,
+        location: location || null,
+        emergency_contact: emergencyContact || null,
       })
       .eq('id', staff.id)
 
@@ -368,6 +388,86 @@ export default function Profile() {
                 className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
                 placeholder="e.g. Sales, Operations, Finance"
               />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-black/70 mb-1.5">
+                  Date of Birth
+                </label>
+                <input
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(e) => setDateOfBirth(e.target.value)}
+                  className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
+                />
+                <p className="text-xs text-black mt-1">Shown on the Company Wall for birthdays.</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-black/70 mb-1.5">
+                  Pronouns
+                </label>
+                <input
+                  type="text"
+                  value={pronouns}
+                  onChange={(e) => setPronouns(e.target.value)}
+                  className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
+                  placeholder="e.g. she/her, he/him, they/them"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                Location
+              </label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
+                placeholder="e.g. Lagos, Nigeria"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                About You
+              </label>
+              <textarea
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={3}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30 resize-none"
+                placeholder="A short intro — who you are and what you do at the company."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                Hobbies & Interests
+              </label>
+              <input
+                type="text"
+                value={hobbies}
+                onChange={(e) => setHobbies(e.target.value)}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
+                placeholder="e.g. Football, reading, travel"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black/70 mb-1.5">
+                Emergency Contact
+              </label>
+              <input
+                type="text"
+                value={emergencyContact}
+                onChange={(e) => setEmergencyContact(e.target.value)}
+                className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/30"
+                placeholder="Name and phone number"
+              />
+              <p className="text-xs text-black mt-1">Visible to HR / admins only.</p>
             </div>
 
             <button
