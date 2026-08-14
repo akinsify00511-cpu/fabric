@@ -557,3 +557,24 @@ New `tests/frontend/lib/governedMetrics.test.ts` (12 tests): confidence contract
 - No external AI/analytics APIs — all intelligence is deterministic SQL over real tables.
 - No new modules, no chatbot, no superficial dashboards — reuse ExecutiveCockpit + claims infra.
 - No forecast narrative ("why") — stays with a future generative layer (Phase 3); 085 only emits the deterministic number + assumptions.
+
+## Session 13b (2026-08-14): Intelligence Transformation — P2 activation (U7–U10)
+
+Continuation after user "commit them and deploy". P2 completes the loop so the
+recommendation engine has content, stays fresh automatically, and is surfaced
+where decisions happen. 2 migrations (091–092) + 1 new page + ExecutiveCockpit
+panel. tsc clean, build succeeds, 73/73 tests pass. Deployed to Vercel (commit
+be9fd20, run 31833910274 — all green).
+
+### What shipped
+- **U7 (091): recommendation issuer.** `run_recommendation_rules(business_id)` applies 8 deterministic, documented rules that scan real data and upsert RECOMMENDATION claims with rule_id/severity/evidence/expected_impact/confidence. Rules: FIN-AR-001 receivables concentration, FIN-AR-002 overdue aging, FIN-CF-001 negative cash-flow trend, SAL-CONV-001 pipeline stagnation, INV-001 low-stock reorder, CUST-001 customer inactivity, OPS-001 task overload, DQ-001 data-quality blocking. Each is SPECIFIC to the company's data (names actual customers/amounts/days — never "improve sales"), humanized, small-data-guarded (§21: minimum evidence base), idempotent (no re-issue while an open recommendation exists via a partial unique index), and best-effort per rule (§24). `issue_recommendation` + `has_open_recommendation` helpers. Client wrapper `runRecommendationRules`.
+- **U8 (092): pg_cron schedules** (pg_cron enabled in 051): avenize-refresh-metrics (every 15 min), avenize-data-quality-scan (hourly), avenize-recommendation-rules (hourly, +5 min after the DQ scan so DQ-001 sees fresh findings), avenize-detect-customer-inactive (daily 02:00). Fan-out helpers iterate all businesses best-effort per business. Whole block guarded so a DB without pg_cron no-ops (§24).
+- **U9: Data Quality view page** (`src/pages/DataQuality.tsx`, route `/app/data-quality`, `self_audit` gate): surfaces `scan_data_quality` findings with severity stats, per-finding fix links to the source page (invoice→finance, deal→crm, task→tasks…), and a resolve action. Advisory only — never mutates business data (§14). Wired into App.tsx routes, Shell ROUTE_MODULE map, and the Controls nav group.
+- **U10: Recommendations feed in Executive Cockpit.** New `RecommendationsCard` — the "What needs my attention" feed (§17) — surfaces `open_recommendations` with accept/reject/acknowledge actions and expected-impact. Honest empty state ("No open recommendations. As your business data grows…") when no data yet. Best-effort: stays empty if the recommendation migration isn't deployed.
+
+### Deploy status
+- Vercel production: ✅ deployed (be9fd20). Build + Deploy green.
+- ⚠️ STILL needs live DB: migrations **080–092** must be applied to Supabase (project kgsgqvatyleetyquffya) for the new RPCs to take effect. Frontend degrades gracefully until then (panels empty, no errors — every caller is best-effort/non-blocking, §24).
+
+### Verification
+tsc clean, vite build succeeds, vitest 73/73 (unchanged; no new tests this batch — the issuer rules are SQL and need the live DB for golden-dataset validation per §30).
