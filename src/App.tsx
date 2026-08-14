@@ -355,6 +355,9 @@ function AppRoutes() {
         <Route path="awards" element={<Navigate to="/app/wall?tab=recognition" replace />} />
         <Route path="kudos" element={<Navigate to="/app/wall?tab=recognition" replace />} />
         <Route path="polls" element={<Navigate to="/app/wall?tab=polls" replace />} />
+        {/* Nested-path aliases: callers used a deeper path than the route. */}
+        <Route path="finance/invoices" element={<Navigate to="/app/e-invoicing" replace />} />
+        <Route path="settings/subscription" element={<Navigate to="/app/subscription" replace />} />
         <Route path="recruitment" element={mg('hr', <Recruitment />)} />
         <Route path="appraisals" element={mg('hr', <Appraisals />)} />
         <Route path="payroll" element={mg('finance', <Payroll />)} />

@@ -245,7 +245,7 @@ function PricingTicket({ plan, isYearly = false }: { plan: typeof MONTHLY_PLANS[
     // Authenticated users go to the in-app subscription page (tracked checkout)
     // Non-authenticated users go to signup first
     if (session) {
-      navigate('/app/settings/subscription')
+      navigate('/app/subscription')
     } else {
       navigate('/signup')
     }

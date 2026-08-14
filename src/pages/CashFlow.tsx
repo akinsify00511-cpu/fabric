@@ -135,7 +135,7 @@ export default function CashFlow() {
 
       <FeatureSuggestions suggestions={[
         { label: 'Finance', path: '/app/finance', description: 'View financial reports' },
-        { label: 'Invoices', path: '/app/finance/invoices', description: 'Manage invoices' },
+        { label: 'Invoices', path: '/app/e-invoicing', description: 'Manage invoices' },
       ]} />
     </div>
   )
