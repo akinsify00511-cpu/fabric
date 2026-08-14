@@ -108,6 +108,7 @@ the trail is tamper-evident.
 | Risks | 095 | RiskRegister.tsx | (this doc) |
 | MPR | 097 | MonthlyReview.tsx | (this doc) |
 | Trust/audit | 096 | TrustRecovery.tsx | (this doc) |
+| Notification integration | 099 | NotificationBell.tsx | (this doc, §25) |
 | Scheduled freshness | 092 (pg_cron) | (background) | INTELLIGENCE_ROADMAP.md |
 
 ## Failure isolation (§24)
