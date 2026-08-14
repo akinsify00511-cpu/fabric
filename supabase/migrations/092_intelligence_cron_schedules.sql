@@ -41,6 +41,9 @@ BEGIN
   FOR b IN SELECT DISTINCT s.business_id FROM staff s LOOP
     BEGIN
       PERFORM refresh_business_metrics(b);
+      -- Sync OKR key results that link to governed metrics (094 §24) so
+      -- OKR progress reflects real data. Best-effort; no-op if 094 absent.
+      PERFORM sync_kr_from_metric(b);
       v_n := v_n + 1;
     EXCEPTION WHEN OTHERS THEN NULL; END;
   END LOOP;
