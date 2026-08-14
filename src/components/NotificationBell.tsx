@@ -107,8 +107,15 @@ export default function NotificationBell() {
   useEffect(() => {
     if (!staff?.id && !staff?.business_id) return
 
+    // Unique channel name per mount: Shell renders this component in BOTH the
+    // desktop header and the mobile header simultaneously (CSS-hidden, not
+    // unmounted), so two instances always subscribe. A shared static channel
+    // name returns the same cached Supabase client channel object, and calling
+    // .on().subscribe() on an already-subscribing channel throws
+    // "cannot add callbacks after subscribe()", crashing the page. A per-mount
+    // suffix keeps each instance on its own channel.
     const channel = supabase
-      .channel('notifications:realtime')
+      .channel(`notifications:realtime:${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
