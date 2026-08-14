@@ -377,6 +377,11 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
           Insufficient data for: {health.insufficient_dimensions.join(', ')}. Set targets on metrics to enable these dimensions.
         </p>
       )}
+      <div className="mt-3 pt-3 border-t border-[var(--av-border)]">
+        <a href="/app/review" className="text-xs text-[var(--av-primary)] hover:underline flex items-center gap-1">
+          View full Monthly Performance Review <ArrowRight size={12} />
+        </a>
+      </div>
     </div>
   )
 }

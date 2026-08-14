@@ -63,6 +63,7 @@ const ROUTE_MODULE: Record<string, ModuleKey> = {
   '/app/control': 'self_audit', '/app/data-quality': 'self_audit',
   '/app/risks': 'self_audit',
   '/app/trust': 'self_audit',
+  '/app/review': 'self_audit',
   '/app/chat': 'chat', '/app/live-chat': 'chat',
   '/app/whatsapp': 'chat', '/app/sms': 'chat',
   '/app/crm': 'crm', '/app/leads': 'crm', '/app/quotes': 'crm',
@@ -189,6 +190,7 @@ const NAV_GROUPS: NavGroup[] = [
 // Settings, Branding, Reports, Controls, Integrations, API — admin/secondary.
 const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
+  { to: '/app/review', label: 'Monthly Review', icon: CalendarIcon, toolKey: 'dashboard' },
   { to: '/app/governance', label: 'Controls', icon: Shield, toolKey: 'dashboard' },
   { to: '/app/self-audit', label: 'Self-Audit', icon: Stethoscope, toolKey: 'dashboard' },
   { to: '/app/data-quality', label: 'Data Quality', icon: ShieldCheck, toolKey: 'dashboard' },
