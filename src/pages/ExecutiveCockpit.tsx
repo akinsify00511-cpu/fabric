@@ -11,7 +11,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
-  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, type Recommendation,
+  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, type Recommendation,
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
 } from '../lib/businessOS'
 import {
@@ -49,6 +49,7 @@ export default function ExecutiveCockpit() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [recBusy, setRecBusy] = useState<string | null>(null)
   const [health, setHealth] = useState<BusinessHealth | null>(null)
+  const [effectiveness, setEffectiveness] = useState<any[]>([])
 
   useEffect(() => {
     if (!bid) return
@@ -69,6 +70,10 @@ export default function ExecutiveCockpit() {
       // Open recommendations (the "what needs my attention?" feed, §17).
       // Best-effort: stays empty if the recommendation migration isn't deployed.
       fetchOpenRecommendations(bid).then(r => { if (active) setRecommendations(r) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
+      // §16 recommendation effectiveness — "did the action work?" learning loop.
+      // Best-effort: stays empty if the migration isn't deployed.
+      fetchRecommendationEffectiveness(bid).then(e => { if (active) setEffectiveness(e) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
       // Pull several real signals in parallel; tolerate missing RPCs/tables.
       const [
@@ -170,6 +175,10 @@ export default function ExecutiveCockpit() {
               setRecBusy(null)
             }}
           />
+
+          {effectiveness.length > 0 && (
+            <EffectivenessCard rows={effectiveness} />
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <ExceptionsCard early={data?.early} risk={data?.risk} />
@@ -459,6 +468,56 @@ function RecommendationsCard({
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function EffectivenessCard({ rows }: { rows: any[] }) {
+  const nairaFmt = (n: number | null) => n == null || !Number.isFinite(n) ? '—' : naira(n)
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+      <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5 mb-1">
+        <Sparkles size={16} className="text-[var(--av-primary)]" /> Did the recommendations work?
+      </h3>
+      <p className="text-xs text-[var(--av-text-muted)] mb-3">
+        How often you acted on each recommendation type, and whether the outcome matched the expected impact.
+        <ClaimTag type="FACT" />
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-left text-[var(--av-text-muted)] border-b border-[var(--av-border)]">
+              <th className="py-1.5 pr-3 font-medium">Rule</th>
+              <th className="py-1.5 px-2 font-medium text-right">Issued</th>
+              <th className="py-1.5 px-2 font-medium text-right">Accepted</th>
+              <th className="py-1.5 px-2 font-medium text-right">Acted</th>
+              <th className="py-1.5 px-2 font-medium text-right">Outcomes</th>
+              <th className="py-1.5 px-2 font-medium text-right">Avg expected</th>
+              <th className="py-1.5 pl-2 font-medium text-right">Avg actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => {
+              const acted = Number(r.acted || 0)
+              const outcomes = Number(r.outcome_recorded || 0)
+              const successes = Number(r.success_count || 0)
+              return (
+                <tr key={i} className="border-b border-[var(--av-border)] last:border-0">
+                  <td className="py-1.5 pr-3 font-mono text-[var(--av-text-secondary)]">{r.rule_id || '—'}</td>
+                  <td className="py-1.5 px-2 text-right text-[var(--av-text)]">{r.issued || 0}</td>
+                  <td className="py-1.5 px-2 text-right text-[var(--av-text)]">{r.accepted || 0}</td>
+                  <td className="py-1.5 px-2 text-right text-[var(--av-text)]">{acted}</td>
+                  <td className="py-1.5 px-2 text-right text-[var(--av-text)]">
+                    {outcomes}{outcomes > 0 && <span className="text-[var(--av-success)]"> ({successes} ok)</span>}
+                  </td>
+                  <td className="py-1.5 px-2 text-right text-[var(--av-text-secondary)]">{nairaFmt(r.avg_expected)}</td>
+                  <td className="py-1.5 pl-2 text-right font-medium text-[var(--av-text)]">{nairaFmt(r.avg_actual)}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
