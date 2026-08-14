@@ -2,7 +2,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import {
   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon,
-  LayoutGrid, User, Search, Share2, CheckSquare, MessageSquare, Book, Headphones,
+  LayoutGrid, User, Search, Share2, CheckSquare, Book, Headphones,
   Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette,
   Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award,
   Receipt, Building, MessageSquareText, HeadphonesIcon, MessageCircle, FileText as FileTextIcon,
@@ -86,6 +86,9 @@ const ROUTE_MODULE: Record<string, ModuleKey> = {
   '/app/security': 'security',
 }
 
+// §14 nav simplification: ≤5 primary groups (was 7). Merged Sell + Communicate
+// → "Reach" (customer/market-facing surface); folded My Work into Operations
+// (work execution). All routes preserved; SECONDARY_LINKS overflow unchanged.
 const NAV_GROUPS: NavGroup[] = [
   {
     id: 'home',
@@ -103,23 +106,8 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    id: 'communicate',
-    label: 'Communicate',
-    icon: MessageSquare,
-    defaultOpen: false,
-    items: [
-      { to: '/app/chat', label: 'Chat', icon: ChatIcon, toolKey: 'chat' },
-      { to: '/app/live-chat', label: 'Live Chat', icon: HeadphonesIcon, toolKey: 'tickets' },
-      { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageCircle, toolKey: 'settings' },
-      { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
-      { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
-      { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
-      { to: '/app/wall', label: 'Company Wall', icon: Sparkles, toolKey: 'dashboard' },
-    ],
-  },
-  {
-    id: 'sell',
-    label: 'Sell',
+    id: 'reach',
+    label: 'Reach',
     icon: Users2,
     defaultOpen: false,
     items: [
@@ -129,6 +117,13 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/properties', label: 'Properties', icon: Building, toolKey: 'projects' },
       { to: '/app/property-sales', label: 'Property Sales', icon: TrendingUp, toolKey: 'projects' },
       { to: '/app/social', label: 'Social', icon: Share2, toolKey: 'social' },
+      { to: '/app/chat', label: 'Chat', icon: ChatIcon, toolKey: 'chat' },
+      { to: '/app/live-chat', label: 'Live Chat', icon: HeadphonesIcon, toolKey: 'tickets' },
+      { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageCircle, toolKey: 'settings' },
+      { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
+      { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
+      { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
+      { to: '/app/wall', label: 'Company Wall', icon: Sparkles, toolKey: 'dashboard' },
     ],
   },
   {
@@ -162,11 +157,20 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
-    id: 'ops',
+    id: 'operations',
     label: 'Operations',
     icon: FolderKanban,
     defaultOpen: false,
     items: [
+      // Personal work execution first (most-used).
+      { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
+      { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
+      { to: '/app/time', label: 'Time Tracking', icon: Clock, toolKey: 'time-tracking' },
+      { to: '/app/approvals', label: 'Approvals', icon: ShieldCheck, toolKey: 'approvals' },
+      { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
+      { to: '/app/memory', label: 'Org Memory', icon: BookOpen, toolKey: 'knowledge' },
+      { to: '/app/tickets', label: 'Support', icon: LifeBuoy, toolKey: 'tickets' },
+      // Business operations.
       { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
       { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
       { to: '/app/vendors', label: 'Vendors', icon: Truck, toolKey: 'inventory' },
@@ -176,21 +180,6 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/services', label: 'Services', icon: Tag, toolKey: 'settings' },
       { to: '/app/requisitions', label: 'Requests', icon: FileText, toolKey: 'requisitions' },
       { to: '/app/assets', label: 'Assets', icon: Wrench, toolKey: 'dashboard' },
-    ],
-  },
-  {
-    id: 'work',
-    label: 'My Work',
-    icon: CheckSquare,
-    defaultOpen: false,
-    items: [
-      { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
-      { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
-      { to: '/app/time', label: 'Time Tracking', icon: Clock, toolKey: 'time-tracking' },
-      { to: '/app/approvals', label: 'Approvals', icon: ShieldCheck, toolKey: 'approvals' },
-      { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
-      { to: '/app/memory', label: 'Org Memory', icon: BookOpen, toolKey: 'knowledge' },
-      { to: '/app/tickets', label: 'Support', icon: LifeBuoy, toolKey: 'tickets' },
     ],
   },
 ]
