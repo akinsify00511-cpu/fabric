@@ -610,3 +610,9 @@ User merged the board-level directive additions into one master instruction and 
 
 ### Verification
 tsc clean, vite build succeeds, vitest 73/73 pass at every commit. No new dependencies. No external APIs. All intelligence is deterministic SQL over real tables (§22/§38 anti-hallucination).
+
+
+### Session 14b (continued): MPR (U16) + required docs (U17)
+
+- **U16 — Monthly Performance Review (§26):** migration `097_monthly_performance_review.sql` adds `monthly_review(business_id, period_start, period_end)` — a read-only roll-up of Business Health (093) + OKR progress (094) + open Risks (095) + open Recommendations (091) + governed metric movers (086) + data-quality summary (089) for a month window. NO new tables — pure interpretation over existing data (§0/§6). `MonthlyReview.tsx` page (`/app/review`, self_audit gate): month selector, summary header, per-dimension health breakdown, OKR progress, top risks + recommendations, metric movers, DQ counts. Board-ready + PRINTABLE (print CSS). ExecutiveCockpit's BusinessHealthCard deep-links to the full MPR. Deployed (9414ec1).
+- **U17 — Required documentation (§35/§36):** `METRIC_DICTIONARY.md` — the canonical metric registry (§6/§7): all 21 governed metrics with key/name/formula/sources/unit/min_sample/status, the governance layers (metric_definitions → kpi_metrics → health_metric_map → refresh_business_metrics), and the §7 anti-patterns prevented. `INTELLIGENCE_RULE_CATALOG.md` — every recommendation rule in the full §36 format (8 implemented: FIN-AR-001/002, FIN-CF-001, SAL-CONV-001, INV-001, CUST-001, OPS-001, DQ-001 + 8 planned as candidates only). Both verified against the real migrations, not written from memory. Committed 60e2253.
