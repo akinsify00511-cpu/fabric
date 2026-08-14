@@ -9,11 +9,14 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
-import { fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric } from '../lib/businessOS'
+import {
+  fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
+  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, type Recommendation,
+} from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
-  CalendarClock, Gauge,
+  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 
@@ -42,6 +45,8 @@ export default function ExecutiveCockpit() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [governed, setGoverned] = useState<GovernedMetric[]>([])
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+  const [recBusy, setRecBusy] = useState<string | null>(null)
 
   useEffect(() => {
     if (!bid) return
@@ -55,6 +60,10 @@ export default function ExecutiveCockpit() {
         fetchCurrentMetrics(bid).then(m => { if (active) setGoverned(m) })
           .catch(() => { /* migration not deployed yet — non-blocking */ })
       })
+      // Open recommendations (the "what needs my attention?" feed, §17).
+      // Best-effort: stays empty if the recommendation migration isn't deployed.
+      fetchOpenRecommendations(bid).then(r => { if (active) setRecommendations(r) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
       // Pull several real signals in parallel; tolerate missing RPCs/tables.
       const [
         revenue, cash, pipeline, people, exceptions, forecast, capacity, process, risk,
@@ -131,6 +140,27 @@ export default function ExecutiveCockpit() {
           </div>
 
           <GovernedMetricsCard metrics={governed} />
+
+          <RecommendationsCard
+            recommendations={recommendations}
+            busy={recBusy}
+            onDecide={async (id, decision) => {
+              setRecBusy(id)
+              try {
+                if (decision === 'acknowledge') {
+                  await acknowledgeRecommendation(id, staff?.id ?? '')
+                } else {
+                  await decideRecommendation(id, decision === 'accepted', staff?.id ?? '')
+                }
+                setRecommendations(prev =>
+                  decision === 'rejected'
+                    ? prev.filter(r => r.id !== id)
+                    : prev.map(r => r.id === id ? { ...r, status: decision === 'accepted' ? 'accepted' : 'acknowledged' } : r)
+                )
+              } catch { /* non-blocking */ }
+              setRecBusy(null)
+            }}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <ExceptionsCard early={data?.early} risk={data?.risk} />
@@ -254,6 +284,72 @@ function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function RecommendationsCard({
+  recommendations, busy, onDecide,
+}: {
+  recommendations: Recommendation[]
+  busy: string | null
+  onDecide: (id: string, decision: 'acknowledge' | 'accepted' | 'rejected') => void
+}) {
+  const sevColor = (s: string) =>
+    s === 'critical' ? 'var(--av-danger)' : s === 'warning' ? 'var(--av-warning)' : 'var(--av-info)'
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
+          <Lightbulb size={16} className="text-[var(--av-primary)]" /> What needs my attention
+        </h3>
+        {recommendations.length > 0 && (
+          <Link to="/app/intelligence" className="text-xs text-[var(--av-primary)] flex items-center gap-1">
+            All insights <ArrowRight size={11} />
+          </Link>
+        )}
+      </div>
+      {recommendations.length === 0 ? (
+        <p className="text-xs text-[var(--av-text-muted)] py-2">
+          No open recommendations. As your business data grows, Avenize will surface specific, evidenced actions here. <ClaimTag type="FACT" />
+        </p>
+      ) : (
+        <div className="space-y-2">
+          {recommendations.slice(0, 6).map((r) => (
+            <div key={r.id} className="rounded-xl border border-[var(--av-border)] p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ background: sevColor(r.severity ?? 'info') }} />
+                    <span className="text-[10px] font-mono text-[var(--av-text-muted)]">{r.rule_id}</span>
+                    <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-secondary)]">{r.severity}</span>
+                  </div>
+                  <p className="text-sm text-[var(--av-text)] mt-1">{r.statement}</p>
+                  {r.expected_impact && (
+                    <p className="text-xs text-[var(--av-text-muted)] mt-1 flex items-center gap-1">
+                      <Sparkles size={11} />
+                      {r.expected_impact.description || 'Expected impact'}
+                      {r.expected_impact.amount ? `: ${naira(r.expected_impact.amount)}` : ''}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => onDecide(r.id, 'accepted')} disabled={busy === r.id}
+                    title="Accept"
+                    className="p-1.5 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] hover:bg-[var(--av-primary)] hover:text-white disabled:opacity-50">
+                    <Check size={14} />
+                  </button>
+                  <button onClick={() => onDecide(r.id, 'rejected')} disabled={busy === r.id}
+                    title="Dismiss"
+                    className="p-1.5 rounded-lg bg-[var(--av-surface-3)] text-[var(--av-text-secondary)] hover:bg-[var(--av-danger)] hover:text-white disabled:opacity-50">
+                    <X size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

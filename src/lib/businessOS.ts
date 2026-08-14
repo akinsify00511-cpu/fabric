@@ -224,6 +224,16 @@ export async function fetchRecommendationEffectiveness(businessId: string) {
   return data || []
 }
 
+// Best-effort: run the deterministic recommendation issuer for this business.
+// Creates specific, evidenced RECOMMENDATION claims from real data (§12/§13).
+export async function runRecommendationRules(businessId: string) {
+  try {
+    await supabase.rpc('run_recommendation_rules', { p_business_id: businessId })
+  } catch (e) {
+    console.error('run_recommendation_rules failed (non-blocking):', e)
+  }
+}
+
 // ---------- Data Quality (089) ----------
 // Deterministic data-quality findings. `scanDataQuality` writes findings
 // (advisory; never mutates business data). `fetchDataQualityFindings` reads.

@@ -95,6 +95,7 @@ const Procurement = lazy(() => import('./pages/Procurement'))
 const OrganizationalMemory = lazy(() => import('./pages/OrganizationalMemory'))
 const RealityGap = lazy(() => import('./pages/RealityGap'))
 const SelfAudit = lazy(() => import('./pages/SelfAudit'))
+const DataQuality = lazy(() => import('./pages/DataQuality'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
 const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
@@ -441,6 +442,7 @@ function AppRoutes() {
         <Route path="memory" element={mg('memory', <OrganizationalMemory />)} />
         <Route path="reality-gap" element={mg('reality_gap', <RealityGap />)} />
         <Route path="self-audit" element={mg('self_audit', <SelfAudit />)} />
+        <Route path="data-quality" element={mg('self_audit', <DataQuality />)} />
         <Route path="more" element={<More />} />
         <Route path="social" element={mg('crm', <Social />)} />
         <Route path="approvals" element={mg('approvals', <Approvals />)} />
