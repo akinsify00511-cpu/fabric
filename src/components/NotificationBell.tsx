@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Bell, X, Check, MessageSquare, Calendar, AlertCircle, User, DollarSign, BellOff } from 'lucide-react'
+import { Bell, X, Check, MessageSquare, Calendar, AlertCircle, User, DollarSign, BellOff, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -30,6 +30,7 @@ const NOTIFICATION_ICONS: Record<string, typeof Bell> = {
   comment: MessageSquare,
   system: AlertCircle,
   achievement: Check,
+  intelligence: Sparkles,
 }
 
 const NOTIFICATION_COLORS: Record<string, string> = {
@@ -48,6 +49,7 @@ const NOTIFICATION_COLORS: Record<string, string> = {
   comment: 'text-blue-500 bg-blue-50',
   system: 'text-gray-500 bg-gray-50',
   achievement: 'text-purple-500 bg-purple-50',
+  intelligence: 'text-violet-500 bg-violet-50',
 }
 
 function getIcon(type: string) {
