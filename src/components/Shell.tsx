@@ -17,6 +17,7 @@ import { useAccessibleTools } from '../lib/useToolAccess'
 import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
 import { useUsageTracking } from '../lib/useUsageTracking'
 import { useLocale } from '../lib/LocaleContext'
+import { useDbState } from '../lib/useDbState'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 import ToolOnboardingPopup from './ToolOnboardingPopup'
@@ -215,6 +216,7 @@ export default function Shell() {
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
   useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
   const { t } = useLocale()
+  const dbState = useDbState()
   const location = useLocation()
   const navigate = useNavigate()
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
@@ -455,6 +457,13 @@ export default function Shell() {
 
       {/* Content */}
       <main className="md:ml-60 md:mt-14 p-4 md:p-6 pb-28 md:pb-8">
+        {dbState === 'migrations-missing' && (
+          <div className="rounded-xl bg-amber-50 border border-amber-300 p-4 text-sm text-amber-800 mb-4">
+            <strong>Database setup incomplete.</strong> Some features may not work because database migrations
+            haven't been applied yet. An administrator needs to run the migrations in the Supabase Dashboard
+            (SQL Editor → paste <code className="bg-amber-100 px-1 rounded">APPLY_ALL_MIGRATIONS.sql</code> → Run).
+          </div>
+        )}
         <Outlet />
       </main>
 
