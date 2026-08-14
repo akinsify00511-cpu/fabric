@@ -11,13 +11,13 @@ import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
-  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, type Recommendation,
+  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, markRecommendationActed, type Recommendation,
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
-  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle,
+  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 
@@ -172,6 +172,31 @@ export default function ExecutiveCockpit() {
                     : prev.map(r => r.id === id ? { ...r, status: decision === 'accepted' ? 'accepted' : 'acknowledged' } : r)
                 )
               } catch { /* non-blocking */ }
+              setRecBusy(null)
+            }}
+            onAct={async (r) => {
+              setRecBusy(r.id)
+              try {
+                // §14 action layer — create a task from the recommendation and
+                // link it back via mark_recommendation_acted (§15 outcome loop).
+                const { data: task, error } = await supabase
+                  .from('tasks')
+                  .insert({
+                    title: r.statement.slice(0, 180),
+                    description: `Created from recommendation ${r.rule_id ?? ''}. ${r.statement}`,
+                    business_id: bid,
+                    created_by: staff?.id ?? null,
+                    status: 'todo',
+                    priority: r.severity === 'critical' ? 'high' : 'medium',
+                  })
+                  .select('id')
+                  .single()
+                if (error) throw error
+                await markRecommendationActed(r.id, 'create_task', task.id)
+                setRecommendations(prev =>
+                  prev.map(rec => rec.id === r.id ? { ...rec, status: 'acted' as any, action_type: 'create_task', linked_action_id: task.id } : rec)
+                )
+              } catch { /* non-blocking — task table may not exist yet */ }
               setRecBusy(null)
             }}
           />
@@ -396,11 +421,12 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
 }
 
 function RecommendationsCard({
-  recommendations, busy, onDecide,
+  recommendations, busy, onDecide, onAct,
 }: {
   recommendations: Recommendation[]
   busy: string | null
   onDecide: (id: string, decision: 'acknowledge' | 'accepted' | 'rejected') => void
+  onAct: (r: Recommendation) => void
 }) {
   const [expanded, setExpanded] = useState<string | null>(null)
   const sevColor = (s: string) =>
@@ -451,17 +477,34 @@ function RecommendationsCard({
                     <EvidencePanel evidence={r.evidence} ruleId={r.rule_id} />
                   )}
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button onClick={() => onDecide(r.id, 'accepted')} disabled={busy === r.id}
-                    title="Accept"
-                    className="p-1.5 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] hover:bg-[var(--av-primary)] hover:text-white disabled:opacity-50">
-                    <Check size={14} />
-                  </button>
-                  <button onClick={() => onDecide(r.id, 'rejected')} disabled={busy === r.id}
-                    title="Dismiss"
-                    className="p-1.5 rounded-lg bg-[var(--av-surface-3)] text-[var(--av-text-secondary)] hover:bg-[var(--av-danger)] hover:text-white disabled:opacity-50">
-                    <X size={14} />
-                  </button>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => onDecide(r.id, 'accepted')} disabled={busy === r.id}
+                      title="Accept"
+                      className="p-1.5 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] hover:bg-[var(--av-primary)] hover:text-white disabled:opacity-50">
+                      <Check size={14} />
+                    </button>
+                    <button onClick={() => onDecide(r.id, 'rejected')} disabled={busy === r.id}
+                      title="Dismiss"
+                      className="p-1.5 rounded-lg bg-[var(--av-surface-3)] text-[var(--av-text-secondary)] hover:bg-[var(--av-danger)] hover:text-white disabled:opacity-50">
+                      <X size={14} />
+                    </button>
+                  </div>
+                  {r.status === 'accepted' && (
+                    <button
+                      onClick={() => onAct(r)}
+                      disabled={busy === r.id}
+                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-[var(--av-success-soft)] text-[var(--av-success)] hover:bg-[var(--av-success)] hover:text-white disabled:opacity-50 flex items-center gap-1"
+                      title="Create a task from this recommendation (§14 action layer)"
+                    >
+                      <ListTodo size={11} /> Act → Create task
+                    </button>
+                  )}
+                  {r.status === 'acted' && (
+                    <span className="text-[10px] text-[var(--av-success)] flex items-center gap-0.5">
+                      <Check size={10} /> Task created
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
