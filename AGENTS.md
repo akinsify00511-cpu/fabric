@@ -578,3 +578,35 @@ be9fd20, run 31833910274 — all green).
 
 ### Verification
 tsc clean, vite build succeeds, vitest 73/73 (unchanged; no new tests this batch — the issuer rules are SQL and need the live DB for golden-dataset validation per §30).
+
+## Session 14 (2026-08-14): Intelligence Transformation — Business Health + OKR + Risk + Nav + Trust (U11–U15)
+
+User merged the board-level directive additions into one master instruction and asked for the next layer: Business Health (§21), OKR/MPR (§24-26), Risk (§48), nav simplification (§14), Trust/DR (§50-51). Maintained the green baseline throughout. 6 commits (d52c415..cbd283d), all pushed + deploying to Vercel.
+
+### U11 — Business Health engine (§21, the keystone)
+- **093 migration:** `business_health_scores` table + `health_metric_map` (governed metric → dimension + direction + label + weight) + `compute_business_health(business_id)` RPC. The explainable, decomposable composite score: each dimension (financial, sales, customers, operations, people, projects) averages the sub-scores of governed metrics (086) that have BOTH a current_value AND a target_value. Higher-is-better: clamp(actual/target×100). Lower-is-better (overdue %, collection period): clamp(1−actual/target×100). Dimensions with no target-backed data are flagged `insufficient_data` and excluded from the overall (honest, not a guess — §21). DQ penalty: −2 per critical finding (max −10), −1 per warning (max −5) from 089 findings. Open critical recommendations (091) surfaced as a flag (no double-penalty — the underlying metrics already reflect the condition). `dimension_scores` JSONB stores the full breakdown so the UI answers "why 81" with the actual numbers. `current_business_health` read helper. Granted to authenticated.
+- **092:** added `compute_all_business_health` fan-out + `avenize-business-health` cron (2 min after each metrics refresh so the score uses fresh data).
+- **businessOS.ts:** `BusinessHealth`/`HealthDimension` types + `computeBusinessHealth`/`fetchBusinessHealth` wrappers.
+- **ExecutiveCockpit:** `BusinessHealthCard` — the "Business Health — 81/100" headline with per-dimension breakdown, DQ penalty, critical-recommendation count, and honest "insufficient data / set targets" empty state.
+
+### U12 — OKR engine (§24-25)
+- **094 migration:** EXTENDED the existing dormant `strategic_objectives` table (063) — did NOT duplicate it (§6) — with OKR fields (owner_id, scope, department_id, period_start/end, weight, confidence). Added a proper `key_results` child table: numeric start/target/current with a GENERATED progress column (clamped 0-100), optional `metric_key` link to governed KPIs (086) so actuals flow from real data, weighting, status, owner, due_date. `objective_progress` RPC rolls up weighted KR progress (NULL if no KRs — honest, not "0%"). `sync_kr_from_metric` RPC pulls governed-KPI actuals into linked KRs. RLS hardened to `get_current_staff` (the old strategic_objectives policies were the cross-tenant-leak pattern). `092`'s metrics fan-out now also calls `sync_kr_from_metric` so OKR actuals stay in sync.
+- **OKR.tsx page** (`/app/okrs`, `hr` gate): create objectives (scope/owner/period), add key results (unit/start/target, optional metric link), inline update current value, weighted progress bars, expand/collapse. Honest empty state.
+
+### U13 — Risk register (§48)
+- **095 migration:** `business_risks` table. Categories (financial/customer/operational/project/people/strategic/compliance). probability + impact (1-5 each) with a trigger-computed `risk_score` (probability × impact, 1-25). Owner, mitigation plan + status, due date, lifecycle status, evidence JSONB, optional entity link. `risk_summary` RPC (counts + avg score by category). RLS via `get_current_staff`.
+- **RiskRegister.tsx page** (`/app/risks`, `self_audit` gate): create/edit/delete risks, category filter chips, stat cards (total/open/high), inline status change, live score preview in the modal. The existing `customer_risk_scores` (031) is narrow (per-customer payment risk only); this is the general, explainable risk system.
+
+### U14 — Nav simplification to ≤5 groups (§14)
+- **Shell.tsx:** 7 groups → 5. Merged Sell + Communicate → "Reach" (customer/market-facing surface). Folded My Work (tasks/calendar/time/approvals/docs/org-memory/support) into Operations at the top of the group (personal work execution first, then business operations). All routes preserved (no removals); active-route auto-expand still works dynamically; SECONDARY_LINKS overflow unchanged. Removed unused `MessageSquare` import.
+
+### U15 — Trust & Recovery (§50-51)
+- **096 migration:** extended `audit_row_change()` triggers (056) to the intelligence/decision tables: `claims` (recommendations), `business_risks`, `key_results`, `kpi_metrics` (target governance). Before this, the outcome loop (§15) had no tamper-evident trail — a user could silently change a target to make a score look better. Added `trust_health(business_id)` RPC — honest audit-trail integrity check: latest entry, 24h/30d volumes, per-table coverage, gap detection (tables with writes but no audit rows = trigger may be broken). Returns FACT-level evidence only; does NOT fabricate a backup status (Supabase manages backups — documented honestly).
+- **TrustRecovery.tsx page** (`/app/trust`, `self_audit` gate): audit health (volumes, latest entry, coverage, gap alerts, recent entries), DR posture (RLS, audit active, trigger integrity), and the full list of audited tables.
+
+### Deploy status
+- Vercel production: ✅ all commits deploying. Builds green.
+- ⚠️ STILL needs live DB: migrations **080–096** must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until then (health card shows "set targets", OKR/Risk/Trust pages show empty/error states, recommendations empty) because every caller is best-effort/non-blocking (§24).
+
+### Verification
+tsc clean, vite build succeeds, vitest 73/73 pass at every commit. No new dependencies. No external APIs. All intelligence is deterministic SQL over real tables (§22/§38 anti-hallucination).
