@@ -87,6 +87,19 @@ jobs:
           path: mobile/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
 
+      - name: Distribute APK to Firebase App Distribution
+        if: ${{ secrets.FIREBASE_TOKEN != '' }}
+        continue-on-error: true
+        run: |
+          npx firebase-tools@latest appdistribution:distribute \
+            android/app/build/outputs/apk/release/app-release.apk \
+            --app "$FIREBASE_APP_ID_ANDROID" \
+            --token "$FIREBASE_TOKEN" \
+            --release-notes "Avenize Android build ${{ github.run_number }} (${{ github.sha }})"
+        env:
+          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
   # ============================================================
   # JOB: Build iOS (hosted as a GitHub artifact — requires macOS)
   # ============================================================
@@ -132,3 +145,9 @@ jobs:
           name: avenize-ios
           path: mobile/ios/build/Build/Products/*.app
           retention-days: 30
+      # NOTE: Firebase App Distribution for iOS is NOT wired here because the
+      # CI produces a simulator .app (CODE_SIGNING_ALLOWED=NO), not a signed
+      # .ipa. Firebase App Distribution for iOS accepts only signed IPAs for
+      # real-device installs. To enable iOS Firebase distribution, add Apple
+      # Developer signing (cert + provisioning profile) as GitHub secrets and
+      # switch to a signed `xcodebuild archive` + export IPA flow.
