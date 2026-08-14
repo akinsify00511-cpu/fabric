@@ -563,9 +563,37 @@ ALTER TABLE staff ADD COLUMN IF NOT EXISTS date_of_birth DATE;
 --   chat_messages (LiveChat)
 -- Without these in the publication, subscribe() fires a postgres_changes error.
 
-ALTER PUBLICATION supabase_realtime ADD TABLE IF NOT EXISTS notifications;
-ALTER PUBLICATION supabase_realtime ADD TABLE IF NOT EXISTS business_events;
-ALTER PUBLICATION supabase_realtime ADD TABLE IF NOT EXISTS chat_messages;
+-- ADD TABLE IF NOT EXISTS is unsupported on Postgres < 15; guard each add.
+-- Notifications
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'notifications'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+  END IF;
+END $$;
+-- business_events
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'business_events'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.business_events;
+  END IF;
+END $$;
+-- chat_messages
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables
+    WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'chat_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.chat_messages;
+  END IF;
+END $$;
 
 -- ============================================
 -- 4. SIGNATURES STORAGE BUCKET
