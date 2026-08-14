@@ -92,3 +92,166 @@ export const FRESHNESS_META: Record<FreshnessTier, { label: string; color: strin
   old: { label: 'Outdated', color: '#EA4335' },
   unknown: { label: 'No data', color: '#9AA0A6' },
 }
+
+// ---------- Governed Metrics (086) ----------
+// The canonical, governed metric layer. `refreshBusinessMetrics` is the ONLY
+// caller of the write RPC; `fetchCurrentMetrics` is the single read a metric
+// panel should make. Confidence 'insufficient' means the UI must show the
+// definition's insufficient_note (§21 small-data safety).
+
+export type MetricConfidence = 'high' | 'medium' | 'low' | 'insufficient' | 'error'
+
+export interface GovernedMetric {
+  metric_key: string
+  name: string
+  category: string
+  unit: string
+  formula: string
+  current_value: number | null
+  previous_value: number | null
+  change_percent: number | null
+  sample_size: number
+  confidence: MetricConfidence
+  insufficient_note: string | null
+  period: string
+  last_calculated_at: string | null
+}
+
+export async function fetchCurrentMetrics(businessId: string) {
+  const { data, error } = await supabase.rpc('current_metrics', { p_business_id: businessId })
+  if (error) throw error
+  return (data || []) as GovernedMetric[]
+}
+
+// Trigger a refresh on load (best-effort). Never blocks the UI: failures are
+// swallowed so business operations stay authoritative (§24).
+export async function refreshBusinessMetrics(businessId: string) {
+  try {
+    await supabase.rpc('refresh_business_metrics', { p_business_id: businessId })
+  } catch (e) {
+    console.error('refresh_business_metrics failed (non-blocking):', e)
+  }
+}
+
+// ---------- Context Graph (087 wiring of 060) ----------
+// The business relationship graph. `fetchRelationships` asks "what is
+// connected to this entity?" for cross-module diagnosis / impact analysis.
+
+export interface GraphNeighbor {
+  entity_type: string
+  entity_id: string
+  depth: number
+  path: string[]
+}
+
+export async function fetchRelationships(
+  businessId: string, startType: string, startId: string, maxDepth = 3
+) {
+  const { data, error } = await supabase.rpc('business_relationships', {
+    p_business_id: businessId, p_start_type: startType, p_start_id: startId, p_max_depth: maxDepth,
+  })
+  if (error) throw error
+  return (data || []) as GraphNeighbor[]
+}
+
+// ---------- Recommendations + Outcome Loop (088) ----------
+// A recommendation is a `claims` row (claim_type='RECOMMENDATION'). These
+// wrap the lifecycle RPCs. Best-effort callers never block business ops.
+
+export type RecommendationStatus =
+  | 'issued' | 'acknowledged' | 'accepted' | 'rejected'
+  | 'acted' | 'outcome_recorded' | 'superseded' | 'expired'
+
+export interface Recommendation {
+  id: string
+  rule_id: string | null
+  severity: 'info' | 'warning' | 'critical' | null
+  statement: string
+  evidence: any[]
+  expected_impact: { amount?: number; description?: string; metric_key?: string } | null
+  status: RecommendationStatus
+  owner_id: string | null
+  action_type: string | null
+  linked_action_id: string | null
+  created_at: string
+  subject_type: string | null
+  subject_id: string | null
+}
+
+export async function fetchOpenRecommendations(businessId: string, limit = 50) {
+  const { data, error } = await supabase.rpc('open_recommendations', {
+    p_business_id: businessId, p_limit: limit,
+  })
+  if (error) throw error
+  return (data || []) as Recommendation[]
+}
+
+export async function decideRecommendation(claimId: string, accepted: boolean, byStaffId: string) {
+  const { error } = await supabase.rpc('set_recommendation_decision', {
+    p_claim_id: claimId, p_accepted: accepted, p_by: byStaffId,
+  })
+  if (error) throw error
+}
+
+export async function acknowledgeRecommendation(claimId: string, byStaffId: string) {
+  const { error } = await supabase.rpc('acknowledge_recommendation', {
+    p_claim_id: claimId, p_by: byStaffId,
+  })
+  if (error) throw error
+}
+
+export async function markRecommendationActed(
+  claimId: string, actionType: string, actionId: string
+) {
+  const { error } = await supabase.rpc('mark_recommendation_acted', {
+    p_claim_id: claimId, p_action_type: actionType, p_action_id: actionId,
+  })
+  if (error) throw error
+}
+
+export async function recordRecommendationOutcome(claimId: string, actualImpact: Record<string, any>) {
+  const { error } = await supabase.rpc('record_recommendation_outcome', {
+    p_claim_id: claimId, p_actual_impact: actualImpact,
+  })
+  if (error) throw error
+}
+
+export async function fetchRecommendationEffectiveness(businessId: string) {
+  const { data, error } = await supabase.rpc('recommendation_effectiveness', {
+    p_business_id: businessId,
+  })
+  if (error) throw error
+  return data || []
+}
+
+// ---------- Data Quality (089) ----------
+// Deterministic data-quality findings. `scanDataQuality` writes findings
+// (advisory; never mutates business data). `fetchDataQualityFindings` reads.
+
+export interface DataQualityFinding {
+  id: string
+  category: string
+  severity: 'info' | 'warning' | 'critical'
+  title: string
+  detail: string
+  entity_type: string | null
+  entity_id: string | null
+  suggested_remediation: string | null
+  resolved: boolean
+  created_at: string
+}
+
+export async function fetchDataQualityFindings(businessId: string) {
+  const { data, error } = await supabase.rpc('data_quality_findings', { p_business_id: businessId })
+  if (error) throw error
+  return (data || []) as DataQualityFinding[]
+}
+
+// Best-effort scan trigger (non-blocking).
+export async function scanDataQuality(businessId: string) {
+  try {
+    await supabase.rpc('scan_data_quality', { p_business_id: businessId })
+  } catch (e) {
+    console.error('scan_data_quality failed (non-blocking):', e)
+  }
+}

@@ -524,3 +524,36 @@ Three user-reported bugs fixed, then a proactive route-drift audit + staff-profi
 ### Mobile app scope (what exists in mobile/)
 - Real app, not a stub: Login (Supabase Auth + SecureStore token persistence), Capture (parse-intent edge fn → raise business event), Observer (org snapshot w/ pull-to-refresh), More (profile + module links). AuthContext mirrors web. 5 screens total — Capture/Snapshot/Tasks/Chat/More tabs (Tasks/Chat are placeholders). Shares brand tokens with web. Typechecks clean.
 - To get the app actually connecting: set `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_ANON_KEY` (the workflow falls back to `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` secrets if the EXPO_ ones aren't set).
+
+## Session 13 (2026-08-14): Intelligence Transformation — P1 activation (U1–U6)
+
+Triggered by the master "Business Intelligence Transformation" directive. Per §41: understand first → analysis report → wait for approval → implement. Report (`AVENIZE_INTELLIGENCE_CURRENT_STATE.md`, sections A–V) written and approved ("yes proceed"). P1 then executed incrementally; baseline held green after every step. Final: `tsc -b --noEmit` clean, `vite build` succeeds, `vitest run` 73/73 (was 61, +12 new). All changes internal SQL + a thin client wrapper; no working module rewritten; no external dependency.
+
+### Drift discovered and FIXED (not papered over) — the highest-risk defect class
+- **`invoices` has NO `contact_id`** (001/002 use `client_name`/`client_email`/`deal_id`), yet the `…06` intelligence family + 068 self-audit + …06 referenced `invoices.contact_id` → would error on a live DB. Governed metric engine (086) uses real `client_name` for customer attribution.
+- **`deals` uses `stage` (won/lost/…), `owner_id` (NOT `assigned_to`), and has NO `closed_at`.** The 059 `emit_deal_won` trigger checked `NEW.status = 'closed_won'` → **DealWon NEVER fired.** Fixed in 090 (fires on `stage`→won). The entire `…06` family referenced non-existent `deals.assigned_to`/`closed_at` → confirmed dead+broken, deprecated.
+- **`tasks` uses `assignee_id`** (not `assigned_to`). Data-quality scanner (089) uses the real column.
+
+### What shipped (6 idempotent migrations 085–090, ~1,574 lines)
+- **U1 (085): consolidate duplicate intelligence RPC families.** 063 family is canonical (consumed by IntelligenceHub/ExecutiveCockpit/MarketIndex). The `20260101000006_applied_intelligence.sql` `intelligence_*` twins have ZERO callers AND are drifted/broken — deprecated (kept callable one release via COMMENT, not DROP). Added `sales_performance_intelligence` (replaces a twin that referenced non-existent `sales_targets.target_amount`; real col is `revenue_target`) + `cashflow_forecast_intelligence` (90d moving avg with explicit insufficient-data guard, §21). JSONB house style.
+- **U2 (086): metric registry + governed engine.** `metric_definitions` (§7) seeded with 20 governed metrics — each has definition/formula/sources/period/min_sample/insufficient_note. `refresh_business_metrics(business_id)` is the ONLY writer of governed `kpi_metrics` rows; emits `sample_size`+`confidence` (high/medium/low/insufficient); value is NULL below min_sample (§21). `current_metrics` read helper. `kpi_metrics` (019, dormant shell) extended additively + activated. `GovernedMetricsCard` in ExecutiveCockpit surfaces real numbers, change %, confidence, and the honest "insufficient data" note — never a fabricated value.
+- **U3 (087): wire the context graph.** New best-effort handler `handler_derive_relationships` registered with the event bus at run_order 6 (after propagation at 5, before freshness at 10) derives Customer→Deal→Invoice→Payment edges via the existing `link_entities` (060). Existing triggers/handlers untouched. `business_relationships` read helper over `recursive_neighbors` (060) for impact analysis.
+- **U4 (088): recommendation + outcome loop.** Extended `claims` (060) additively with lifecycle columns (status/rule_id/severity/owner_id/action_type/linked_action_id/expected_impact/actual_impact). Lifecycle RPCs: `acknowledge_recommendation`, `set_recommendation_decision`, `mark_recommendation_acted`, `record_recommendation_outcome` (computes accuracy vs expected). `recommendation_effectiveness` (§16 by-rule historical success) + `open_recommendations` (§17 severity-prioritised feed). A recommendation IS a `claims` row — no parallel `recommendations` table.
+- **U5 (089): data-quality scanner.** `scan_data_quality` set-based scanner: orphaned invoice, missing due date, negative amounts, deal w/o owner, unassigned task, stale entity (via `entity_freshness_status` VIEW), duplicate contact, unreconciled payment. Each check in its own EXCEPTION block (§24). Writes findings into `self_audit_findings` (audit_dimension CHECK extended to `data_quality`) + summary into `data_quality_checks`. Never mutates business data (§14) — advisory only. Idempotent via unique indexes.
+- **U6 (090): complete event catalog.** Fixed drifted `emit_deal_won` (stage not status); added `DealLost`, `InvoiceOverdue`, `TaskCompleted`, `ProjectDelayed` triggers (AFTER, idempotent, guard against re-emission) + `detect_customer_inactive`/`_all` windowed detectors (CustomerInactive, idempotent per day, for pg_cron).
+
+### Client layer
+`src/lib/businessOS.ts` gained thin best-effort wrappers (non-blocking on failure, §24): `fetchCurrentMetrics`/`refreshBusinessMetrics`, `fetchRelationships`, recommendation lifecycle (fetch/decide/acknowledge/acted/outcome/effectiveness), `fetchDataQualityFindings`/`scanDataQuality`. New types: `GovernedMetric`/`MetricConfidence`, `GraphNeighbor`, `Recommendation`/`RecommendationStatus`, `DataQualityFinding`.
+
+### Tests (§29/§30)
+New `tests/frontend/lib/governedMetrics.test.ts` (12 tests): confidence contract (high→FACT, medium/low→INFERENCE, insufficient/error→UNKNOWN), small-data formatting (null→"—", currency/percent/duration/number/ratio), and the recommendation lifecycle union asserted against the DB CHECK constraint.
+
+### STILL PENDING — needs live DB (U0, flagged to user)
+- **Deploy migrations 080 + 081 + 082 + 083 + 085–090 to live Supabase** (project kgsgqvatyleetyquffya). All idempotent (`CREATE OR REPLACE`/`IF NOT EXISTS`/`ON CONFLICT`), safe to apply. Until applied, new RPCs aren't callable — but the frontend degrades gracefully (governed panel/recommendations/data-quality stay empty) because every caller is best-effort + non-blocking (§24 safe-failure). No commit has been made this session yet.
+- **pg_cron jobs** (once pg_cron enabled): `refresh_business_metrics(business_id)` per business + `detect_customer_inactive_all()` daily.
+- Golden test datasets (§30) + live DB failure testing (§60/§81) — follow-ups needing the live DB.
+
+### Deliberately NOT done (§22/§31/§33)
+- No external AI/analytics APIs — all intelligence is deterministic SQL over real tables.
+- No new modules, no chatbot, no superficial dashboards — reuse ExecutiveCockpit + claims infra.
+- No forecast narrative ("why") — stays with a future generative layer (Phase 3); 085 only emits the deterministic number + assumptions.

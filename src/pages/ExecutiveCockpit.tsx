@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
+import { fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
@@ -40,12 +41,20 @@ export default function ExecutiveCockpit() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [governed, setGoverned] = useState<GovernedMetric[]>([])
 
   useEffect(() => {
     if (!bid) return
     let active = true
     setLoading(true); setError(null)
     ;(async () => {
+      // Governed metrics: refresh (best-effort, non-blocking) then read the
+      // materialized rows. If the migration isn't deployed yet, this fails
+      // silently and the governed panel simply stays empty.
+      refreshBusinessMetrics(bid).finally(() => {
+        fetchCurrentMetrics(bid).then(m => { if (active) setGoverned(m) })
+          .catch(() => { /* migration not deployed yet — non-blocking */ })
+      })
       // Pull several real signals in parallel; tolerate missing RPCs/tables.
       const [
         revenue, cash, pipeline, people, exceptions, forecast, capacity, process, risk,
@@ -121,6 +130,8 @@ export default function ExecutiveCockpit() {
             {metrics[lens].map((m, i) => <MetricCard key={i} {...m} />)}
           </div>
 
+          <GovernedMetricsCard metrics={governed} />
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <ExceptionsCard early={data?.early} risk={data?.risk} />
             <DrillCard lens={lens} data={data} />
@@ -186,6 +197,64 @@ function MetricCard({ label, value, sub, delta, trend, claim, icon: Icon, to }: 
       </div>
       {delta && <div className={`text-xs mt-1 ${trend === 'up' ? 'text-[var(--av-success)]' : trend === 'down' ? 'text-[var(--av-danger)]' : 'text-[var(--av-text-muted)]'}`}>{delta}</div>}
     </Link>
+  )
+}
+
+// Governed, explainable metrics from the registry (migration 086). Each row
+// carries its definition, confidence, and an honest "insufficient data"
+// state — never a fabricated number (§21 small-data safety).
+function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
+  if (!metrics || metrics.length === 0) {
+    // The governed metric layer isn't deployed yet, or no metrics refreshed.
+    // Non-blocking: render nothing rather than a broken panel.
+    return null
+  }
+  const fmt = (m: GovernedMetric) => {
+    const v = m.current_value
+    if (v == null || Number.isNaN(v)) return '—'
+    if (m.unit === 'percent') return `${Math.round(v)}%`
+    if (m.unit === 'currency') return naira(v)
+    if (m.unit === 'duration_days') return `${Math.round(v)}d`
+    return Number.isInteger(v) ? `${v}` : v.toFixed(2)
+  }
+  const confidenceTone = (c: string) =>
+    c === 'high' ? 'FACT' : c === 'medium' || c === 'low' ? 'INFERENCE' : c === 'insufficient' ? 'UNKNOWN' : 'UNKNOWN'
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2">
+          <Gauge size={18} className="text-[var(--av-primary)]" /> Governed business metrics
+        </h2>
+        <span className="text-[11px] text-[var(--av-text-muted)]">
+          {metrics.length} metrics · sourced from the metric registry
+        </span>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {metrics.slice(0, 12).map(m => (
+          <div key={m.metric_key} className="rounded-xl bg-[var(--av-surface)] p-3" title={m.formula}>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-medium text-[var(--av-text-secondary)] truncate">{m.name}</span>
+              <ClaimTag type={confidenceTone(m.confidence)} />
+            </div>
+            {m.confidence === 'insufficient' ? (
+              <p className="text-xs text-[var(--av-text-muted)] mt-2 leading-snug">
+                {m.insufficient_note || 'Not enough data yet.'}
+              </p>
+            ) : (
+              <>
+                <div className="text-xl font-bold text-[var(--av-text)] mt-1">{fmt(m)}</div>
+                {m.change_percent != null && (
+                  <div className={`text-[11px] mt-0.5 ${m.change_percent >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
+                    {m.change_percent >= 0 ? '+' : ''}{m.change_percent}% vs prev
+                  </div>
+                )}
+                <div className="text-[10px] text-[var(--av-text-muted)] mt-0.5">n={m.sample_size} · {m.confidence}</div>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
