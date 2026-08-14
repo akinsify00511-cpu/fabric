@@ -1,26 +1,31 @@
 /**
  * AVENIZE ROLE-BASED ACCESS CONTROL (RBAC)
- * 
+ *
  * This file defines the CORE ROLE PERMISSIONS matrix.
- * 
+ *
  * TWO-SYSTEM ARCHITECTURE:
- * 
+ *
  * 1. Core Roles (this file) - Used for:
- *    - Staff.role field (owner, admin, manager, staff, etc.)
+ *    - Staff.role field (the 5 values allowed by the DB CHECK constraint)
  *    - UI-level permission checks (canCreate, canEdit, etc.)
  *    - RLS policy enforcement at database level
- * 
+ *
  * 2. Functional Roles (database tables) - Used for:
  *    - Business-configurable roles (Sales, Marketing, Finance, etc.)
  *    - Tool-level access control via useToolAccess hook
  *    - Per-business customization
  *    - See: functional_roles, functional_role_tools, staff_functional_roles tables
- * 
+ *
  * RECONCILIATION:
  * - Core roles are the SECURITY BOUNDARY (enforced by RLS)
  * - Functional roles are the UX LAYER (tool visibility in navigation)
  * - owner/admin roles bypass functional role filtering (see useToolAccess.ts)
- * 
+ *
+ * Role union matches the staff.role CHECK constraint in migration 024:
+ *   CHECK (role IN ('owner', 'admin', 'manager', 'team_lead', 'staff'))
+ * Do NOT add values here that the database cannot store — they are unreachable
+ * dead weight and mislead readers about what the security boundary allows.
+ *
  * TOOL_KEY MAPPING (for useToolAccess.ts):
  * - dashboard, crm, projects, finance, quotes, payments, accounting
  * - people, inventory, reports, tasks, campaigns, social
@@ -29,32 +34,22 @@
  * - merit, social-recognition, integrations, api, branding, settings
  */
 
-export type Role = 'super_admin' | 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff' | 'accountant' | 'sales' | 'hr' | 'viewer'
+export type Role = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
 export const ROLE_HIERARCHY: Record<Role, number> = {
-  super_admin: 100,
   owner: 90,
   admin: 80,
   manager: 70,
   team_lead: 60,
-  accountant: 50,
-  sales: 50,
-  hr: 50,
   staff: 40,
-  viewer: 10,
 }
 
 export const ROLE_LABELS: Record<Role, string> = {
-  super_admin: 'Super Admin',
   owner: 'Business Owner',
   admin: 'Admin Manager',
   manager: 'Manager',
   team_lead: 'Team Lead',
   staff: 'Staff',
-  accountant: 'Accountant',
-  sales: 'Sales Manager',
-  hr: 'HR Manager',
-  viewer: 'Viewer',
 }
 
 export type Module = 
@@ -69,26 +64,6 @@ type ModulePermissions = Partial<Record<Module, Permission[]>>
 type PermissionMatrix = Record<Role, ModulePermissions>
 
 const PERMISSIONS: PermissionMatrix = {
-  super_admin: {
-    dashboard: ['view', 'manage'], tasks: ['view', 'create', 'edit', 'delete', 'manage'],
-    projects: ['view', 'create', 'edit', 'delete', 'manage'],
-    invoices: ['view', 'create', 'edit', 'delete', 'approve', 'export', 'manage'],
-    expenses: ['view', 'create', 'edit', 'delete', 'approve', 'export', 'manage'],
-    inventory: ['view', 'create', 'edit', 'delete', 'manage'],
-    clients: ['view', 'create', 'edit', 'delete', 'manage'],
-    leads: ['view', 'create', 'edit', 'delete', 'manage'],
-    deals: ['view', 'create', 'edit', 'delete', 'manage'],
-    staff: ['view', 'create', 'edit', 'delete', 'manage'],
-    payroll: ['view', 'create', 'edit', 'delete', 'approve', 'manage'],
-    leave: ['view', 'create', 'edit', 'delete', 'approve', 'manage'],
-    reports: ['view', 'create', 'export', 'manage'],
-    meetings: ['view', 'create', 'edit', 'delete', 'manage'],
-    documents: ['view', 'create', 'edit', 'delete', 'manage'],
-    settings: ['view', 'edit', 'manage'],
-    purchases: ['view', 'create', 'edit', 'delete', 'approve', 'manage'],
-    approvals: ['view', 'approve', 'manage'],
-    analytics: ['view', 'export', 'manage'],
-  },
   owner: {
     dashboard: ['view', 'manage'], tasks: ['view', 'create', 'edit', 'delete', 'manage'],
     projects: ['view', 'create', 'edit', 'delete', 'manage'],
@@ -159,51 +134,12 @@ const PERMISSIONS: PermissionMatrix = {
     meetings: ['view', 'create'], documents: ['view'],
     purchases: ['view'], approvals: [], analytics: [],
   },
-  accountant: {
-    dashboard: ['view'], tasks: ['view', 'edit'], projects: ['view'],
-    invoices: ['view', 'create', 'edit', 'delete', 'approve', 'export', 'manage'],
-    expenses: ['view', 'create', 'edit', 'delete', 'approve', 'export', 'manage'],
-    inventory: ['view', 'export'], clients: ['view', 'create'],
-    staff: ['view'], payroll: ['view', 'create', 'edit', 'delete', 'approve', 'manage'],
-    leave: ['view', 'approve'], reports: ['view', 'create', 'export', 'manage'],
-    meetings: ['view'], documents: ['view', 'create'],
-    purchases: ['view', 'create', 'edit'], approvals: ['view', 'approve'],
-    analytics: ['view', 'export'],
-  },
-  sales: {
-    dashboard: ['view'], tasks: ['view', 'create', 'edit'], projects: ['view'],
-    invoices: ['view', 'create'], expenses: ['view'],
-    clients: ['view', 'create', 'edit'],
-    leads: ['view', 'create', 'edit', 'delete', 'manage'],
-    deals: ['view', 'create', 'edit', 'delete', 'manage'],
-    leave: ['view', 'create'], reports: ['view'],
-    meetings: ['view', 'create'], documents: ['view', 'create'],
-    analytics: ['view'],
-  },
-  hr: {
-    dashboard: ['view'], tasks: ['view', 'create', 'edit'],
-    invoices: ['view'], expenses: ['view'],
-    staff: ['view', 'create', 'edit', 'delete', 'manage'],
-    payroll: ['view', 'create', 'edit', 'manage'],
-    leave: ['view', 'create', 'edit', 'approve', 'manage'],
-    reports: ['view', 'create', 'export'],
-    meetings: ['view', 'create'], documents: ['view', 'create', 'edit', 'manage'],
-    approvals: ['view', 'approve'], analytics: ['view', 'export'],
-  },
   staff: {
     dashboard: ['view'], tasks: ['view', 'create', 'edit'], projects: ['view'],
     invoices: ['view'], expenses: ['view', 'create'],
     inventory: ['view'], clients: ['view'],
     leave: ['view', 'create'], reports: ['view'],
     meetings: ['view'], documents: ['view'],
-  },
-  viewer: {
-    dashboard: ['view'], tasks: ['view'], projects: ['view'],
-    invoices: ['view'], expenses: ['view'], inventory: ['view'],
-    clients: ['view'], leads: ['view'], deals: ['view'],
-    staff: ['view'], leave: ['view'], reports: ['view'],
-    meetings: ['view'], documents: ['view'],
-    purchases: ['view'], analytics: ['view'],
   },
 }
 
