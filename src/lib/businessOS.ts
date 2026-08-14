@@ -265,3 +265,49 @@ export async function scanDataQuality(businessId: string) {
     console.error('scan_data_quality failed (non-blocking):', e)
   }
 }
+
+// ---------- Business Health (093 / §21) ----------
+// Explainable, decomposable composite score derived from governed metrics vs
+// targets + data-quality penalty + recommendation flags. Every number has
+// evidence (dimension_scores JSONB). Honest NULL when no target-backed data.
+
+export interface HealthDimension {
+  score: number | null
+  status: 'healthy' | 'watch' | 'at_risk' | 'insufficient_data'
+  metrics: {
+    metric_key: string
+    label: string
+    actual: number
+    target: number
+    direction: 'higher' | 'lower'
+    score: number
+  }[]
+}
+
+export interface BusinessHealth {
+  overall_score: number | null
+  dimension_scores: Record<string, HealthDimension> & { _meta?: {
+    data_quality_penalty: number
+    open_critical_findings: number
+    open_warning_findings: number
+    recommendations: { open_critical_recommendations: number }
+  } }
+  data_quality_penalty: number
+  insufficient_dimensions: string[]
+  computed_at: string | null
+}
+
+// Best-effort: compute then read (non-blocking if migration not deployed).
+export async function computeBusinessHealth(businessId: string): Promise<void> {
+  try {
+    await supabase.rpc('compute_business_health', { p_business_id: businessId })
+  } catch (e) {
+    console.error('compute_business_health failed (non-blocking):', e)
+  }
+}
+
+export async function fetchBusinessHealth(businessId: string): Promise<BusinessHealth | null> {
+  const { data, error } = await supabase.rpc('current_business_health', { p_business_id: businessId })
+  if (error) throw error
+  return (data || null) as BusinessHealth | null
+}

@@ -12,11 +12,12 @@ import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
   fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, type Recommendation,
+  computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
-  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb,
+  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 
@@ -47,18 +48,23 @@ export default function ExecutiveCockpit() {
   const [governed, setGoverned] = useState<GovernedMetric[]>([])
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
   const [recBusy, setRecBusy] = useState<string | null>(null)
+  const [health, setHealth] = useState<BusinessHealth | null>(null)
 
   useEffect(() => {
     if (!bid) return
     let active = true
     setLoading(true); setError(null)
     ;(async () => {
-      // Governed metrics: refresh (best-effort, non-blocking) then read the
-      // materialized rows. If the migration isn't deployed yet, this fails
-      // silently and the governed panel simply stays empty.
+      // Governed metrics + Business Health (§21): refresh metrics (best-effort,
+      // non-blocking), then read the governed rows AND compute+read health.
+      // If the migration isn't deployed yet, both stay empty silently.
       refreshBusinessMetrics(bid).finally(() => {
         fetchCurrentMetrics(bid).then(m => { if (active) setGoverned(m) })
           .catch(() => { /* migration not deployed yet — non-blocking */ })
+        computeBusinessHealth(bid).finally(() => {
+          fetchBusinessHealth(bid).then(h => { if (active) setHealth(h) })
+            .catch(() => { /* migration not deployed yet — non-blocking */ })
+        })
       })
       // Open recommendations (the "what needs my attention?" feed, §17).
       // Best-effort: stays empty if the recommendation migration isn't deployed.
@@ -135,6 +141,9 @@ export default function ExecutiveCockpit() {
           <p className="text-xs text-[var(--av-text-muted)] mb-3">
             {LENSES.find(l => l.key === lens)?.blurb}
           </p>
+
+          <BusinessHealthCard health={health} />
+
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {metrics[lens].map((m, i) => <MetricCard key={i} {...m} />)}
           </div>
@@ -284,6 +293,90 @@ function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
+  // §21: every score must be explainable + decomposable. This card shows the
+  // overall score, the per-dimension breakdown, and the evidence (actual vs
+  // target per metric). Honest "insufficient data" when no targets are set.
+  if (!health || health.overall_score == null) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6 flex items-center gap-3">
+        <HeartPulse size={20} className="text-[var(--av-text-muted)]" />
+        <div>
+          <p className="text-sm font-semibold text-[var(--av-text)]">Business Health — not yet available</p>
+          <p className="text-xs text-[var(--av-text-muted)]">
+            Set targets on your key metrics and the health score will appear here. <ClaimTag type="FACT" />
+          </p>
+        </div>
+      </div>
+    )
+  }
+  const score = health.overall_score
+  const tone = score >= 80 ? 'var(--av-success)' : score >= 60 ? 'var(--av-warning)' : 'var(--av-danger)'
+  const label = score >= 80 ? 'Healthy' : score >= 60 ? 'Needs attention' : 'At risk'
+  const DIM_LABELS: Record<string, string> = {
+    financial: 'Financial', sales: 'Sales', customers: 'Customers',
+    operations: 'Operations', people: 'People', projects: 'Projects',
+  }
+  const dims = Object.entries(health.dimension_scores || {})
+    .filter(([k]) => k !== '_meta') as [string, HealthDimension][]
+  const meta = (health.dimension_scores as any)?._meta
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
+          <HeartPulse size={16} style={{ color: tone }} /> Business Health
+        </h3>
+        <span className="text-[10px] text-[var(--av-text-muted)]">
+          {health.computed_at ? `Updated ${new Date(health.computed_at).toLocaleDateString()}` : ''}
+        </span>
+      </div>
+      <div className="flex items-center gap-6 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="text-4xl font-bold" style={{ color: tone }}>{score}</div>
+          <div>
+            <div className="text-xs font-medium" style={{ color: tone }}>{label}</div>
+            <div className="text-[10px] text-[var(--av-text-muted)]">out of 100</div>
+          </div>
+        </div>
+        {meta && (
+          <div className="text-[10px] text-[var(--av-text-muted)] flex flex-col gap-0.5">
+            {meta.data_quality_penalty > 0 && <span>DQ penalty: −{meta.data_quality_penalty}</span>}
+            {meta.recommendations?.open_critical_recommendations > 0 && (
+              <span className="text-[var(--av-danger)]">
+                {meta.recommendations.open_critical_recommendations} critical recommendation{meta.recommendations.open_critical_recommendations > 1 ? 's' : ''}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+        {dims.map(([key, dim]) => {
+          const dTone = dim.score == null ? 'var(--av-text-muted)'
+            : dim.score >= 80 ? 'var(--av-success)'
+            : dim.score >= 60 ? 'var(--av-warning)' : 'var(--av-danger)'
+          return (
+            <div key={key} className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
+              <div className="text-[10px] text-[var(--av-text-muted)] uppercase tracking-wide">{DIM_LABELS[key] || key}</div>
+              <div className="text-lg font-semibold" style={{ color: dTone }}>
+                {dim.score ?? '—'}
+              </div>
+              <div className="text-[9px] text-[var(--av-text-muted)]">
+                {dim.status === 'insufficient_data' ? 'no targets set' :
+                 dim.metrics.length === 0 ? 'no data' : `${dim.metrics.length} metric${dim.metrics.length > 1 ? 's' : ''}`}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      {(health.insufficient_dimensions?.length || 0) > 0 && (
+        <p className="text-[10px] text-[var(--av-text-muted)] mt-3">
+          Insufficient data for: {health.insufficient_dimensions.join(', ')}. Set targets on metrics to enable these dimensions.
+        </p>
+      )}
     </div>
   )
 }
