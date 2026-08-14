@@ -479,6 +479,24 @@ Triggered by adding a dedicated data-lifecycle audit to the master protocol: tra
 
 ## Session 12 (2026-08-14): NotificationBell crash fix + mobile (Android/iOS) build unblocked
 
+## Session 12 (2026-08-14): onboarding/profile/return-to-page fixes + missing-route audit + humanized staff
+
+Three user-reported bugs fixed, then a proactive route-drift audit + staff-profile enrichment.
+
+### Bug fixes (commit 9f03655)
+- **Onboarding flash + lost-page-on-refresh (shared root cause):** on refresh, `getSession()` resolved (`loading=false`) before the staff fetch completed, leaving `staff=null` + `staffChecked=true` transiently -> `RequireAuth` bounced an already-onboarded user to `/onboarding`, which then redirected to `/app` (dashboard) instead of the page they were on. Fix in `AuthContext.tsx`: keep `staffChecked=false` (gate shows spinner) while staff resolves; retry the fetch once on a transient null (right after signup/onboarding or an auth-state race) before concluding no staff record; monotonic `fetchIdRef` discards stale in-flight fetches; `refreshStaff` bumps the id so a manual refresh always wins.
+- **Self-audit "Could not find the function public.run_system_health_audit":** RPC missing/not-granted on live DB + page read findings from the RPC's count return (always empty). `SelfAudit.tsx` now calls the RPC best-effort, reads persisted findings, and falls back to computing findings from core tables (invoices/tasks/entity_freshness) when the RPC isn't deployed — each query isolated. Migration `082_self_audit_function_grant.sql` re-declares the functions idempotently, grants EXECUTE, reloads PostgREST cache.
+
+### Missing-route audit (commit 01a940c + 02cb9ab)
+- **Route-vs-reference drift scan (reusable method):** extract registered nested routes `grep -oE 'path="([a-z0-9:_/-]+)"' src/App.tsx` (strip leading `/` and `app`) and compare against every `/app/*` link referenced in `src/`: `grep -rhoE "/app/[a-z0-9_/-]+" src/ | sed 's|/app/||' | sort -u`. `comm -23` of (referenced) vs (registered) reveals dead links. CAUTION: nested routes under the `/app` parent route do NOT have the `/app/` prefix in App.tsx — compare after stripping, or you get false positives.
+- Found 6 dead links: `/app/people` (People page existed but no route — the original report), `/app/dashboard` (CommandPalette), `/app/profile` (CommandPalette), `/app/awards` + `/app/kudos` + `/app/polls` (CompanyHome quick actions), bare `/app/staff` (Shell ROUTE_MODULE map). All fixed as alias `<Navigate>` routes: dashboard->/app, profile->/app/settings/profile, staff->/app/people, awards/kudos->/app/wall?tab=recognition, polls->/app/wall?tab=polls. `CompanyWall` reads `?tab=` for initial tab.
+
+### Humanized staff profile + onboarding role (commit 02cb9ab)
+- **Onboarding self-introduction:** step 1 ("Your Profile") now also captures the user's role/position (was hardcoded to 'Owner'). `create_business_and_owner` RPC gained a `p_job_title` param (DROP+CREATE — signature change; defaults keep signup + invite-accept callers working), writes `COALESCE(input, 'Owner')`.
+- **Personal profile fields:** migration `083_staff_personal_fields_and_onboarding_title.sql` adds `bio`, `hobbies`, `location`, `pronouns`, `emergency_contact` to `staff` (`date_of_birth` already existed and feeds Company Wall birthdays). `Profile.tsx` loads + saves all of them. `People.tsx` already does `select('*')` so the data flows to the team view / HR. Extended the `Staff` type with the fields, removed `(staff as any)` casts.
+- **Deploy note:** migration 083 must be applied to live Supabase for the new columns + RPC signature. Before it's applied: Profile silently ignores the new fields on save (PostgREST drops unknown columns), onboarding falls back to 'Owner' — no crash. Migration 082 (self-audit) and 080/081 (RLS/FK) from prior sessions are also still pending on the live DB.
+
+
 ### NotificationBell realtime crash (committed 845d98a, deployed)
 - `Shell.tsx` renders `<NotificationBell />` TWICE — line 433 desktop header + line 449 mobile header — and Tailwind `md:hidden`/`hidden md:flex` only toggles CSS visibility, NOT React mounting. Both instances always mounted and both subscribed to the same hardcoded `supabase.channel('notifications:realtime')`. Supabase client dedupes by name → returns the cached channel → second `.on().subscribe()` throws "cannot add callbacks after subscribe()" → page crash.
 - Fix: per-mount random suffix on the channel name (`notifications:realtime:${Math.random().toString(36).slice(2)}`). Complements the earlier dep-array/ref fix (a different contributor — teardown/recreate churn). Both needed.
