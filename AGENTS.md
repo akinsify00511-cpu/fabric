@@ -476,3 +476,22 @@ Triggered by adding a dedicated data-lifecycle audit to the master protocol: tra
 ### Still pending (blocked on user DB credential -- project ref kgsgqvatyleetyquffya)
 - Apply migration 080 (cross-tenant RLS fix) + 081 (FK cascade) to live Supabase.
 - With DB access: §60/§81 live failure testing (RLS denial, constraint violation, duplicate request, timeout), §85 real-user scenario runs, §84 anon-grant narrowing, §62 DB-level transition constraints, §86 final DB report.
+
+## Session 12 (2026-08-14): NotificationBell crash fix + mobile (Android/iOS) build unblocked
+
+### NotificationBell realtime crash (committed 845d98a, deployed)
+- `Shell.tsx` renders `<NotificationBell />` TWICE — line 433 desktop header + line 449 mobile header — and Tailwind `md:hidden`/`hidden md:flex` only toggles CSS visibility, NOT React mounting. Both instances always mounted and both subscribed to the same hardcoded `supabase.channel('notifications:realtime')`. Supabase client dedupes by name → returns the cached channel → second `.on().subscribe()` throws "cannot add callbacks after subscribe()" → page crash.
+- Fix: per-mount random suffix on the channel name (`notifications:realtime:${Math.random().toString(36).slice(2)}`). Complements the earlier dep-array/ref fix (a different contributor — teardown/recreate churn). Both needed.
+- `polls` "Batch 4" was correctly SKIPPED: the DB migration already defines `closes_at` (not `ends_at`); `CompanyHome.tsx` already selects `closes_at` and already normalizes both `options` shapes (`opt.text || opt`). The "ends_at → closes_at" concern was based on a stale read. Lesson: read live code, not screenshots, before writing SQL.
+
+### Mobile app (Android + iOS) — BUILD NOW WORKING (committed dd37c45)
+- The `mobile/` Expo/React Native app already existed and typechecked clean, but the `Build Mobile App` GitHub workflow had FAILED twice (Aug 10) with `Plugin [id: 'expo-module-gradle-plugin'] was not found` from `expo-font/android/build.gradle`.
+- **Root cause:** version skew. `@expo/vector-icons@14.1.0` depends on `expo-font@57.0.1` (future SDK), while `expo@51` depends on `expo-font@12.0.10`. npm hoisted `expo-font@57.0.1` to top-level; its build.gradle uses the NEW `plugins { id 'expo-module-gradle-plugin' }` mechanism that SDK 51's `settings.gradle` `useExpoModules()` does NOT register → plugin not found.
+- **Fix:** npm `overrides` in `mobile/package.json` pinning `expo-font` to `12.0.10` (SDK-51-compatible). The single resolved expo-font@12.0.10 uses the SDK-51 mechanism (`apply from: ExpoModulesCorePlugin.gradle`). Verified: typecheck clean, prebuild succeeds, generated build.gradle no longer references the unresolved plugin.
+- **Also added `mobile/eas.json`** so EAS Build (Expo cloud) is available for signed device builds (.apk/.aab + .ipa), complementing the self-hosted CI which produces unsigned APK + simulator-only iOS `.app`.
+- **CI result (run 31786545369):** ALL GREEN — Mobile Type Check ✓ (31s), Android APK ✓ (8m41s), iOS App ✓ (13m41s). Artifacts: `avenize-android` (APK), `avenize-ios` (.app simulator build). Download: `gh run download 31786545369 --repo akinsify00511-cpu/fabric -n avenize-android`.
+- **Limitations of the self-hosted CI build:** the APK is UNSIGNED (no keystore configured) — installable on Android with "install unknown apps" but not Play Store ready. The iOS build is a SIMULATOR build (`CODE_SIGNING_ALLOWED=NO`) — runs in iOS Simulator, NOT installable on real iPhones. For real device/Store distribution you need EAS Build (an Expo account + `EXPO_TOKEN` secret in GitHub) or local signed builds (keystore for Android, Apple Developer account + signing certs for iOS).
+
+### Mobile app scope (what exists in mobile/)
+- Real app, not a stub: Login (Supabase Auth + SecureStore token persistence), Capture (parse-intent edge fn → raise business event), Observer (org snapshot w/ pull-to-refresh), More (profile + module links). AuthContext mirrors web. 5 screens total — Capture/Snapshot/Tasks/Chat/More tabs (Tasks/Chat are placeholders). Shares brand tokens with web. Typechecks clean.
+- To get the app actually connecting: set `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_ANON_KEY` (the workflow falls back to `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` secrets if the EXPO_ ones aren't set).
