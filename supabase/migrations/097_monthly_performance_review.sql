@@ -73,6 +73,7 @@ BEGIN
   SELECT COALESCE(jsonb_agg(jsonb_build_object(
     'id', c.id, 'rule_id', c.rule_id, 'statement', c.statement,
     'severity', c.severity, 'status', c.status,
+    'evidence', c.evidence,
     'expected_impact', c.expected_impact, 'created_at', c.created_at
   ) ORDER BY
     CASE c.severity WHEN 'critical' THEN 0 WHEN 'high' THEN 1

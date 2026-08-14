@@ -17,9 +17,9 @@ import {
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
-  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse,
+  CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle,
 } from 'lucide-react'
-import { ClaimTag, ClaimNote } from '../components/Evidence'
+import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 
 type Lens = 'ceo' | 'cfo' | 'coo'
 
@@ -393,6 +393,7 @@ function RecommendationsCard({
   busy: string | null
   onDecide: (id: string, decision: 'acknowledge' | 'accepted' | 'rejected') => void
 }) {
+  const [expanded, setExpanded] = useState<string | null>(null)
   const sevColor = (s: string) =>
     s === 'critical' ? 'var(--av-danger)' : s === 'warning' ? 'var(--av-warning)' : 'var(--av-info)'
   return (
@@ -429,6 +430,16 @@ function RecommendationsCard({
                       {r.expected_impact.description || 'Expected impact'}
                       {r.expected_impact.amount ? `: ${naira(r.expected_impact.amount)}` : ''}
                     </p>
+                  )}
+                  <button
+                    onClick={() => setExpanded(expanded === r.id ? null : r.id)}
+                    className="text-[11px] text-[var(--av-primary)] hover:underline mt-1.5 flex items-center gap-1"
+                  >
+                    <HelpCircle size={11} />
+                    {expanded === r.id ? 'Hide evidence' : 'Why are you telling me this?'}
+                  </button>
+                  {expanded === r.id && (
+                    <EvidencePanel evidence={r.evidence} ruleId={r.rule_id} />
                   )}
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

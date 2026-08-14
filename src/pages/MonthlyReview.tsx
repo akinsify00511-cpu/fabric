@@ -6,10 +6,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
-import { ClaimTag, ClaimNote } from '../components/Evidence'
+import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 import {
   Calendar, Loader2, Printer, TrendingDown, TrendingUp, Minus,
-  HeartPulse, Target, ShieldAlert, Lightbulb, BarChart3, ShieldCheck,
+  HeartPulse, Target, ShieldAlert, Lightbulb, BarChart3, ShieldCheck, HelpCircle,
 } from 'lucide-react'
 
 interface MPR {
@@ -19,7 +19,7 @@ interface MPR {
   health: { overall_score: number | null; dimension_scores: any; data_quality_penalty: number; insufficient_dimensions: string[]; computed_at: string } | null
   objectives: { id: string; title: string; scope: string; status: string; progress: number | null; key_result_count: number; period_end: string | null }[]
   risks: { id: string; title: string; category: string; risk_score: number; status: string; mitigation_status: string; due_date: string | null }[]
-  recommendations: { id: string; rule_id: string; statement: string; severity: string; status: string; expected_impact: any }[]
+  recommendations: { id: string; rule_id: string; statement: string; severity: string; status: string; evidence: any; expected_impact: any }[]
   metrics: { metric_key: string; name: string; category: string; current_value: number; previous_value: number; change_percent: number; confidence: string; sample_size: number; target_value: number; period_end: string }[]
   data_quality: { open_critical: number; open_warning: number; resolved_total: number }
   summary: { open_risks: number; high_risks: number; open_recommendations: number; critical_recommendations: number; objective_count: number; metric_count: number }
@@ -56,6 +56,7 @@ export default function MPRPage() {
   const [review, setReview] = useState<MPR | null>(null)
   const [loading, setLoading] = useState(true)
   const [monthIdx, setMonthIdx] = useState(0)
+  const [expandedRec, setExpandedRec] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     if (!bid) return
@@ -218,7 +219,19 @@ export default function MPRPage() {
                     style={{ background: `${sevTone(r.severity)}15`, color: sevTone(r.severity) }}>
                     {r.severity}
                   </span>
-                  <p className="text-sm text-[var(--av-text)] flex-1">{r.statement}</p>
+                  <div className="flex-1">
+                    <p className="text-sm text-[var(--av-text)]">{r.statement}</p>
+                    <button
+                      onClick={() => setExpandedRec(expandedRec === r.id ? null : r.id)}
+                      className="text-[11px] text-[var(--av-primary)] hover:underline mt-1 flex items-center gap-1"
+                    >
+                      <HelpCircle size={11} />
+                      {expandedRec === r.id ? 'Hide evidence' : 'Why?'}
+                    </button>
+                    {expandedRec === r.id && (
+                      <EvidencePanel evidence={r.evidence} ruleId={r.rule_id} />
+                    )}
+                  </div>
                 </div>
                 <p className="text-[10px] text-[var(--av-text-muted)] mt-0.5 ml-[38px]">{r.rule_id}</p>
               </div>
