@@ -629,3 +629,9 @@ verified against real migrations — never aspirational):
 - INTELLIGENCE_ROADMAP.md (§31/§32) — P0/P1/P2 done, P3 deferred, blocked-on-live-DB items, explicit anti-goals (§33).
 - INTELLIGENCE_TEST_MATRIX.md (§29/§30) — unit coverage, SQL scenarios with expected behavior, 7 golden datasets (§30), live failure testing (§60/§81).
 (METRIC_DICTIONARY + INTELLIGENCE_RULE_CATALOG from U17; AVENIZE_INTELLIGENCE_CURRENT_STATE + PRODUCTION_REGISTER pre-existing.) Committed dae3139. tsc clean; markdown only.
+
+### Session 14d (continued): golden test datasets (U19, §29/§30)
+
+- **§30 golden test datasets:** migration `098_golden_test_datasets.sql` adds `seed_golden_dataset(profile)` + `cleanup_golden_datasets()`. 7 synthetic business profiles (A_healthy, B_cashflow, C_sales_decline, D_high_growth, E_inventory, F_project, G_empty) each producing a PREDICTABLE intelligence output so the rules can be asserted against known expected scenarios. Self-contained (creates dedicated golden-test-* auth users, clearly prefixed for safe cleanup), idempotent (re-seed deletes prior), SECURITY DEFINER.
+- `supabase/tests/golden_dataset_validation.sql`: the §30 validation runner — seeds all profiles, runs the intelligence engine, SELECTs the per-profile result summary with expected values as comments for assertion. Cleans up after itself.
+- These are live-DB fixtures (Postgres runs there, not in dev container). Blocked on live DB creds, like the rest of the SQL tests (§60/§81). tsc clean, build succeeds (SQL only).
