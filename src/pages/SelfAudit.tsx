@@ -25,6 +25,8 @@ type Finding = {
   owner_id?: string
   due_date?: string
   status?: string
+  entity_type?: string
+  entity_id?: string
 }
 
 export default function SelfAudit() {
@@ -38,26 +40,75 @@ export default function SelfAudit() {
 
   useEffect(() => { if (bid) runAudit() }, [bid])
 
+  // Run the audit. The server-side RPC (run_system_health_audit) populates the
+  // self_audit_findings table, but it may be absent on a deployment whose
+  // migrations are not fully applied (PostgREST then reports "Could not find
+  // the function ... in the schema cache"). To keep the page useful regardless
+  // of migration state, we (a) call the RPC best-effort to populate findings
+  // server-side, (b) read any persisted findings back, and (c) fall back to
+  // computing findings directly from core tables the app already uses. Each
+  // query is isolated so a missing table only drops that category.
   async function runAudit() {
     if (!bid) return
     setLoading(true)
-    const { data, error } = await supabase.rpc('run_system_health_audit', { p_business_id: bid })
-    setLoading(false)
     setLastRun(new Date().toISOString())
-    if (error) { showToast('Audit failed: ' + error.message, 'error'); return }
-    // The RPC may return a single object or an array; normalise to findings.
+
+    // (a) Best-effort: populate the audit-findings table server-side.
+    const { error: rpcError } = await supabase.rpc('run_system_health_audit', { p_business_id: bid })
+    const rpcMissing = !!rpcError && /could not find the function|PGRST202/i.test(rpcError.message)
+
+    // (b) Read persisted findings (the RPC returns only a count).
     let items: Finding[] = []
-    if (Array.isArray(data)) items = data
-    else if (data?.findings) items = data.findings
-    else if (data) {
-      // Build findings from common fields
-      for (const k of ['failed_workflows','broken_integrations','stale_data','duplicates','permission_anomalies','ai_failures']) {
-        const arr = (data as any)[k]
-        if (Array.isArray(arr)) arr.forEach((a: any) => items.push({ category: k, severity: a.severity || 'medium', title: a.title || a.name || k, detail: a.detail || a.note }))
-      }
+    try {
+      const { data: rows, error: selError } = await supabase
+        .from('self_audit_findings')
+        .select('category, severity, title, detail, owner_id, due_date, status, entity_type, entity_id')
+        .eq('business_id', bid)
+        .order('created_at', { ascending: false })
+        .limit(200)
+      if (!selError && Array.isArray(rows)) items = rows as Finding[]
+    } catch { /* table may not exist yet — fall back to client-side */ }
+
+    // (c) If the RPC isn't deployed (or no persisted findings), compute
+    // findings directly from core tables so the page is never dead.
+    if (rpcMissing || items.length === 0) {
+      items = await clientSideAudit(bid)
     }
+
+    setLoading(false)
+    if (rpcError && !rpcMissing) { showToast('Audit failed: ' + rpcError.message, 'error'); return }
     setFindings(items)
     if (items.length === 0) showToast('No issues found — the system is healthy', 'success')
+  }
+
+  // Direct table queries mirroring the server-side audit, each isolated so a
+  // missing/unrelated table does not abort the whole audit.
+  async function clientSideAudit(bid: string): Promise<Finding[]> {
+    const out: Finding[] = []
+    const safe = async (fn: () => Promise<void>) => { try { await fn() } catch { /* optional table */ } }
+
+    await safe(async () => {
+      const { data } = await supabase.from('invoices').select('id,total,contact_id,status')
+        .eq('business_id', bid).in('status', ['overdue', 'unpaid'])
+      ;(data || []).forEach((i: any) => {
+        if (i.status === 'overdue') out.push({ category: 'financial_anomaly', severity: 'critical', title: 'Overdue invoice', detail: `Invoice overdue${i.total != null ? ', total ' + i.total : ''}`, entity_type: 'invoice', entity_id: i.id })
+        if (i.contact_id == null) out.push({ category: 'incomplete_record', severity: 'warning', title: 'Invoice without a contact', detail: 'Invoice has no contact linked', entity_type: 'invoice', entity_id: i.id })
+      })
+    })
+    await safe(async () => {
+      const { data } = await supabase.from('tasks').select('id,title,due_date,status')
+        .eq('business_id', bid).eq('status', 'pending')
+      const now = Date.now()
+      ;(data || []).forEach((t: any) => {
+        if (t.due_date && new Date(t.due_date).getTime() < now) out.push({ category: 'stale_data', severity: 'high', title: 'Overdue task', detail: t.title || 'Task past its due date', entity_type: 'task', entity_id: t.id })
+      })
+    })
+    await safe(async () => {
+      const { data } = await supabase.from('entity_freshness').select('entity_type,entity_id,freshness_tier')
+        .eq('business_id', bid).in('freshness_tier', ['stale', 'old'])
+      ;(data || []).forEach((f: any) => out.push({ category: 'stale_data', severity: 'warning', title: 'Stale entity: ' + (f.entity_type || 'record'), detail: `No activity for ${f.entity_type || 'record'} in 30 days`, entity_type: f.entity_type, entity_id: f.entity_id }))
+    })
+    return out
   }
 
   async function routeToOwner(idx: number) {

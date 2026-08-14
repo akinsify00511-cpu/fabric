@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { clearMfaVerified } from './mfa'
@@ -73,6 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [loading, setLoading] = useState(true)
   const [staffChecked, setStaffChecked] = useState(false)
+  // Monotonic request id. Each session change / manual refresh bumps it so a
+  // stale in-flight fetch (or its scheduled retry) cannot overwrite a fresher
+  // staff record.
+  const fetchIdRef = useRef(0)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -87,26 +91,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  const fetchStaff = useCallback(async () => {
+  const fetchStaff = useCallback(async (attempt = 1, myId = fetchIdRef.current) => {
     if (!session?.user?.id) {
       setStaff(null)
       setStaffChecked(true)
       return
     }
-
+    // We have a session and are (re)checking the staff record. Keep the auth
+    // gate in its loading state until it resolves, so a brief null staff does
+    // not bounce an already-onboarded user to /onboarding and back (which also
+    // loses the page they were on after a refresh).
+    if (attempt === 1) setStaffChecked(false)
     try {
       const { data } = await supabase
         .from('staff')
         .select('*')
         .eq('user_id', session.user.id)
         .maybeSingle()
-
+      // A newer fetch superseded this one — drop the result.
+      if (myId !== fetchIdRef.current) return
       if (data) {
         setStaff({ ...data, user: session.user } as Staff)
-      } else {
-        setStaff(null)
+        setStaffChecked(true)
+        return
       }
+      // No staff row. A transient miss (right after signup/onboarding, or an
+      // auth-state race) should not be treated as "needs onboarding" — retry
+      // once before concluding, so an onboarded user is not flashed to
+      // /onboarding and dropped onto the dashboard on refresh.
+      if (attempt < 2 && myId === fetchIdRef.current) {
+        setTimeout(() => { if (myId === fetchIdRef.current) fetchStaff(2, myId) }, 500)
+        return
+      }
+      setStaff(null)
     } catch (err) {
+      if (myId !== fetchIdRef.current) return
       console.warn('Failed to fetch staff:', err)
       setStaff(null)
     }
@@ -116,7 +135,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Only reset and fetch if we have a session
     if (session) {
-      fetchStaff()
+      const id = ++fetchIdRef.current
+      fetchStaff(1, id)
     } else {
       setStaff(null)
       setStaffChecked(true)
@@ -148,6 +168,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut()
   }
 
+  // Manual refresh (after a profile/onboarding mutation). Bumps the request id
+  // so any in-flight auto fetch is discarded and this result wins.
+  const refreshStaff = useCallback(() => {
+    const id = ++fetchIdRef.current
+    return fetchStaff(1, id)
+  }, [fetchStaff])
+
   const userRole = staff?.role || 'staff'
   const canManageStaff = hasPermission(userRole, 'manage_staff') || userRole === 'owner'
   const canApproveRequests = hasPermission(userRole, 'approve_requests') || userRole === 'owner'
@@ -161,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       staffChecked,
       signOut,
-      refreshStaff: fetchStaff,
+      refreshStaff,
       canManageStaff,
       canApproveRequests,
       canViewReports,
