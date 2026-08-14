@@ -44,6 +44,9 @@ jobs:
     defaults:
       run:
         working-directory: mobile
+    env:
+      FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
     steps:
       - uses: actions/checkout@v4
 
@@ -88,7 +91,7 @@ jobs:
           retention-days: 30
 
       - name: Distribute APK to Firebase App Distribution
-        if: ${{ secrets.FIREBASE_TOKEN != '' }}
+        if: env.FIREBASE_TOKEN != ''
         continue-on-error: true
         run: |
           npx firebase-tools@latest appdistribution:distribute \
@@ -96,9 +99,6 @@ jobs:
             --app "$FIREBASE_APP_ID_ANDROID" \
             --token "$FIREBASE_TOKEN" \
             --release-notes "Avenize Android build ${{ github.run_number }} (${{ github.sha }})"
-        env:
-          FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
   # ============================================================
   # JOB: Build iOS (hosted as a GitHub artifact — requires macOS)
