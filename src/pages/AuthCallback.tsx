@@ -125,6 +125,13 @@ export default function AuthCallback() {
                     navigate('/app', { replace: true })
                     return
                   }
+                  // If the RPC itself doesn't exist (migration not applied),
+                  // guide the user to onboarding which has a manual path.
+                  if (/could not find the function|PGRST202/i.test(bizError.message)) {
+                    localStorage.removeItem('avenize_pending_business')
+                    navigate('/onboarding', { replace: true })
+                    return
+                  }
                   console.error('Failed to create business:', bizError)
                   setError(bizError.message || 'Failed to set up your business. Please contact support.')
                   setLoading(false)

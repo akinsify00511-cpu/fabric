@@ -160,7 +160,11 @@ export default function Onboarding() {
         // path (migration 074 blocks direct business/staff inserts), so
         // there is no valid manual fallback -- surface the real error.
         console.error('create_business_and_owner RPC failed:', rpcError)
-        setError(rpcError.message || 'Setup failed. Please try again.')
+        if (/could not find the function|PGRST202/i.test(rpcError.message)) {
+          setError('Your account is set up, but the business creation service is not yet configured on this deployment. Please contact support.')
+        } else {
+          setError(rpcError.message || 'Setup failed. Please try again.')
+        }
         return
       }
 
