@@ -781,3 +781,27 @@ The new direction: "More capable than an ERP. Easier than WhatsApp." Avenize run
 - Headline + features aligned with new direction.
 
 Verification: tsc clean, vite build ZERO warnings, vitest 88/88, schema drift 0. Commit f34a1eb pushed.
+
+## Session 18 (2026-08-15): Lighthouse Performance CI green — accessibility 100, performance 85
+
+The Lighthouse Performance CI workflow (`.github/workflows/ux-tests.yml`) was failing on `categories:accessibility` (score 81, threshold 90). Root cause was a combination of low-contrast colors, missing landmark, missing button aria-labels, AND a config bug where Lighthouse was auditing the NotFound 404 page instead of the landing page.
+
+### Fixes (commit 2a67268, deployed)
+- **lighthouserc.json:** `urls` changed from `http://localhost/index.html` → `http://localhost/`. The SPA router saw path `/index.html`, didn't match route `/` → rendered NotFound 404 page. Lighthouse was auditing the 404 page (wrong content, missing `<main>`, low-contrast links) instead of LandingEnhanced.
+- **LandingEnhanced.tsx:** BRAND colors darkened to pass WCAG AA (4.5:1) even on soft-tint backgrounds (badges with `rgba(color, 0.08)` backgrounds). `primary` #4285F4→#155BB4 (6.3:1 on white + soft-blue), `amber` #E89400→#845400 (5.2:1), `success` #1E8E3E→#157342 (5:1), `textMuted` #9AA0A6→#5F6368 (7:1). Added `<main>` landmark wrapper. Mobile menu button got `aria-label`.
+- **CookieConsent.tsx:** replaced `var(--av-primary)` buttons/links (3.56:1) with high-contrast `#155BB4`. Added `aria-label` to both close buttons (settings close + banner dismiss).
+- **NotFound.tsx:** added `<main>` landmark; `/app` link `text-[#4285F4]`→`#1B6FE0`; secondary text `text-black`→`#5F6368`.
+- **SarahChat.tsx:** floating help button got `aria-label="Open help guide"`.
+- **index.html:** Google Analytics deferred (`async`→`defer`); fonts async-loaded via `preload` + `media="print" onload="this.media='all'"` trick (non-blocking).
+- **PDFGenerator.ts:** `jspdf` + `jspdf-autotable` changed to dynamic `await import()` so the 137KB-gzip PDF library only loads when a user generates a PDF — not on every page load.
+- **vite.config.ts:** `modulePreload: false` to prevent auto-preloading vendor-pdf (430KB), vendor-react, vendor-supabase chunks.
+
+### Verification
+- Local Lighthouse (desktop preset): performance=85, **accessibility=100**, best-practices=96, seo=91. All metrics green: FCP 1433ms, LCP 2070ms, TBT 0, CLS 0, Speed Index 1433, TTI 2070.
+- CI: Lighthouse Performance job ✅ SUCCESS (only warn-level render-blocking + text-compression, no error-level failures).
+- CI: UX Tests (Mobile) ✅, UX Tests (Desktop) ✅ (all: accessibility, keyboard, error, tap target, empty state, visual regression, gap-fill modules, module gate).
+- Vercel deploy ✅.
+- 88/88 unit tests pass.
+
+### Contrast methodology (reusable)
+Small text (text-xs = 12px, text-sm = 14px) needs 4.5:1. Colored text on a soft-tint background of the SAME color (e.g. `color: #1B6FE0` on `rgba(21,91,180,0.08)` = `#e6eef8`) has LOWER contrast than on pure white because the background is a lightened version of the text color. Always calculate contrast against the ACTUAL rendered background, not white. Use `python3` with the WCAG luminance formula (0.2126R + 0.7152G + 0.0722B, gamma-corrected) to verify before shipping.
