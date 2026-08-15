@@ -144,6 +144,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (myId !== fetchIdRef.current) return
         if (data) {
+          // A confirmed staff row is the authoritative membership record.
+          // Its onboarding_completed value is consumed by RequireAuth; do not
+          // infer onboarding state from localStorage or transient UI state.
           setStaff({ ...data, user: session?.user } as Staff)
           setStaffChecked(true)
           return
@@ -162,13 +165,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
 
-        if (attempt < 2 && myId === fetchIdRef.current) {
+        // An empty result is NOT immediately treated as "not onboarded".
+        // During session restoration the auth token, RLS context, and database
+        // request can become ready on slightly different ticks. Previously we
+        // accepted one empty result and redirected a valid onboarded user to
+        // /onboarding. Require four consecutive empty reads before declaring
+        // that this authenticated user truly has no staff record.
+        if (attempt < 4 && myId === fetchIdRef.current) {
+          const delay = [200, 500, 1200][attempt - 1] || 1500
           setTimeout(() => {
-            if (myId === fetchIdRef.current) fetchStaff(userId, 2, myId)
-          }, 300)
+            if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
+          }, delay)
           return
         }
+
         setStaff(null)
+        setStaffChecked(true)
       } catch (err) {
         if (myId !== fetchIdRef.current) return
         console.warn('Failed to fetch staff (throw):', err)
