@@ -118,6 +118,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Seed entitlements for existing businesses
+ALTER TABLE businesses ADD COLUMN IF NOT EXISTS subscription_tier TEXT DEFAULT 'free';
 INSERT INTO business_entitlements (business_id, plan, team_limit)
 SELECT id, COALESCE(subscription_tier, 'free'), 
   CASE COALESCE(subscription_tier, 'free')

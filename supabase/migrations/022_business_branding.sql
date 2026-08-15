@@ -414,10 +414,10 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 -- UPDATED_AT TRIGGERS
 -- ============================================
-CREATE TRIGGER business_branding_updated_at BEFORE UPDATE ON business_branding FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER portfolio_sections_updated_at BEFORE UPDATE ON portfolio_sections FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER portfolio_items_updated_at BEFORE UPDATE ON portfolio_items FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER portfolio_team_updated_at BEFORE UPDATE ON portfolio_team FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER testimonials_updated_at BEFORE UPDATE ON testimonials FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER custom_domains_updated_at BEFORE UPDATE ON custom_domains FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER public_pages_updated_at BEFORE UPDATE ON public_pages FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER business_branding_updated_at BEFORE UPDATE ON business_branding FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER portfolio_sections_updated_at BEFORE UPDATE ON portfolio_sections FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER portfolio_items_updated_at BEFORE UPDATE ON portfolio_items FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER portfolio_team_updated_at BEFORE UPDATE ON portfolio_team FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER testimonials_updated_at BEFORE UPDATE ON testimonials FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER custom_domains_updated_at BEFORE UPDATE ON custom_domains FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER public_pages_updated_at BEFORE UPDATE ON public_pages FOR EACH ROW EXECUTE FUNCTION update_updated_at();

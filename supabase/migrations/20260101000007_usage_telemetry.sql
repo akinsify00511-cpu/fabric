@@ -46,7 +46,7 @@ RETURNS TABLE (
 ) LANGUAGE sql STABLE SECURITY DEFINER AS $$
   SELECT module_key,
          COUNT(DISTINCT staff_id)::INT,
-         COUNT(*)::BIGINT,
+         COUNT(*)::BIGINT AS event_count,
          MAX(occurred_at),
          CASE
            WHEN COUNT(DISTINCT staff_id) >= 3 THEN 'adopted'
@@ -68,7 +68,7 @@ RETURNS TABLE (
   total_events BIGINT
 ) LANGUAGE sql STABLE SECURITY DEFINER AS $$
   SELECT module_key,
-         COUNT(DISTINCT business_id)::INT,
+         COUNT(DISTINCT business_id)::INT AS businesses_touching,
          COUNT(*)::BIGINT
   FROM usage_events
   WHERE occurred_at >= NOW() - INTERVAL '30 days'

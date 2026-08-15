@@ -74,5 +74,7 @@ CREATE POLICY "Cashflow entries same business"
 -- ============================================
 -- UPDATED_AT TRIGGERS
 -- ============================================
-CREATE TRIGGER IF NOT EXISTS tasks_updated_at BEFORE UPDATE ON tasks FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER IF NOT EXISTS cashflow_entries_updated_at BEFORE UPDATE ON cashflow_entries FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS tasks_updated_at ON tasks;
+CREATE TRIGGER tasks_updated_at BEFORE UPDATE ON tasks FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS cashflow_entries_updated_at ON cashflow_entries;
+CREATE TRIGGER cashflow_entries_updated_at BEFORE UPDATE ON cashflow_entries FOR EACH ROW EXECUTE FUNCTION update_updated_at();

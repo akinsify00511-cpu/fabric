@@ -250,8 +250,8 @@ CREATE POLICY "Workflow log create"
 
 -- Create requisition
 CREATE OR REPLACE FUNCTION create_requisition(
-  p_category_id UUID DEFAULT NULL,
   p_title TEXT,
+  p_category_id UUID DEFAULT NULL,
   p_description TEXT DEFAULT NULL,
   p_amount NUMERIC DEFAULT NULL,
   p_items JSONB DEFAULT '[]'::jsonb,

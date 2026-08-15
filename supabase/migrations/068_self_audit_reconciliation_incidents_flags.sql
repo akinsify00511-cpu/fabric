@@ -140,10 +140,6 @@ BEGIN
     WHERE d.business_id = p_business_id;
   ELSIF p_check_name = 'inventory_accounting_stock_value' THEN
     INSERT INTO reconciliation_runs (business_id, source_domain, target_domain, check_name, status, detail)
-    SELECT p_business_id, 'inventory', 'accounting', p_check_name, 'reconciled',
-      jsonb_build_object('note', 'placeholder — wire to GL stock account');
-    WHERE FALSE;
-    INSERT INTO reconciliation_runs (business_id, source_domain, target_domain, check_name, status, detail)
     VALUES (p_business_id, 'inventory', 'accounting', p_check_name, 'unreconciled',
       jsonb_build_object('note', 'GL stock account not yet wired'));
   ELSE
@@ -293,13 +289,14 @@ CREATE TABLE IF NOT EXISTS feature_flags (
   UNIQUE(business_id, flag_key)
 );
 
+ALTER TABLE feature_flags ADD COLUMN IF NOT EXISTS business_id UUID;
 ALTER TABLE feature_flags ENABLE ROW LEVEL SECURITY;
 CREATE POLICY flags_viewable ON feature_flags FOR SELECT
   USING (business_id IS NULL OR business_id IN (SELECT id FROM businesses));
 CREATE POLICY flags_managing ON feature_flags FOR ALL
   USING (business_id IS NULL OR business_id IN (SELECT id FROM businesses));
 
-CREATE TRIGGER feature_flags_updated_at BEFORE UPDATE ON feature_flags
+CREATE OR REPLACE TRIGGER feature_flags_updated_at BEFORE UPDATE ON feature_flags
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- is_feature_enabled: consult a flag for a business with rollout gating.

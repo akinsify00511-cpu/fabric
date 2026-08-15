@@ -101,10 +101,13 @@ BEGIN
     BEGIN
       UPDATE invoices
         SET status = 'paid', updated_at = NOW()
-        WHERE business_id = ev.business_id
-          AND COALESCE(total, 0) = COALESCE(v_amount, total)
-          AND status IN ('sent', 'overdue')
-        ORDER BY created_at DESC LIMIT 1;
+        WHERE id IN (
+          SELECT id FROM invoices
+          WHERE business_id = ev.business_id
+            AND COALESCE(total, 0) = COALESCE(v_amount, total)
+            AND status IN ('sent', 'overdue')
+          ORDER BY created_at DESC LIMIT 1
+        );
       -- If we matched one, backfill its id.
       SELECT id INTO v_invoice_id FROM invoices
         WHERE business_id = ev.business_id AND status = 'paid'

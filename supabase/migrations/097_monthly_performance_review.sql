@@ -121,11 +121,11 @@ BEGIN
     -- Quick counts for the summary header.
     'summary', jsonb_build_object(
       'open_risks', jsonb_array_length(v_risks),
-      'high_risks', count(*) FROM jsonb_array_elements(v_risks) x
-        WHERE (x->>'risk_score')::int >= 15,
+      'high_risks', (SELECT count(*) FROM jsonb_array_elements(v_risks) x
+        WHERE (x->>'risk_score')::int >= 15),
       'open_recommendations', jsonb_array_length(v_recommendations),
-      'critical_recommendations', count(*) FROM jsonb_array_elements(v_recommendations) x
-        WHERE x->>'severity' = 'critical',
+      'critical_recommendations', (SELECT count(*) FROM jsonb_array_elements(v_recommendations) x
+        WHERE x->>'severity' = 'critical'),
       'objective_count', jsonb_array_length(v_objectives),
       'metric_count', jsonb_array_length(v_metrics)
     )

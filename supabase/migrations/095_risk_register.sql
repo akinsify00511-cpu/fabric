@@ -97,12 +97,19 @@ RETURNS JSONB AS $$
     'total', count(*),
     'open', count(*) FILTER (WHERE status = 'open'),
     'high', count(*) FILTER (WHERE risk_score >= 15),
-    'by_category', jsonb_object_agg(
-      category, jsonb_build_object(
-        'total', count(*),
-        'open', count(*) FILTER (WHERE status = 'open'),
-        'avg_score', round(avg(risk_score)::numeric, 1)
-      )
+    'by_category', COALESCE(
+      (SELECT jsonb_object_agg(category, cat_data)
+       FROM (
+         SELECT category, jsonb_build_object(
+           'total', count(*),
+           'open', count(*) FILTER (WHERE status = 'open'),
+           'avg_score', round(avg(risk_score)::numeric, 1)
+         ) AS cat_data
+         FROM business_risks
+         WHERE business_id = p_business_id
+         GROUP BY category
+       ) sub),
+      '{}'::jsonb
     )
   )
   FROM business_risks

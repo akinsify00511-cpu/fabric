@@ -119,13 +119,8 @@ CREATE TABLE IF NOT EXISTS incidents (
   started_at TIMESTAMPTZ NOT NULL,
   acknowledged_at TIMESTAMPTZ,
   resolved_at TIMESTAMPTZ,
-  -- Duration
-  duration_seconds INTEGER GENERATED ALWAYS AS (
-    CASE WHEN resolved_at IS NOT NULL 
-    THEN EXTRACT(EPOCH FROM (resolved_at - started_at))::INTEGER
-    ELSE EXTRACT(EPOCH FROM (NOW() - started_at))::INTEGER
-    END
-  ) STORED,
+  -- Duration (computed on read; NOW() is not immutable)
+  duration_seconds INTEGER,
   -- Status
   status TEXT DEFAULT 'open' CHECK (status IN (
     'open', 'investigating', 'identified', 'monitoring', 'resolved'

@@ -83,6 +83,10 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS event_type TEXT;
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS event_name TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_analytics_events_user ON analytics_events(user_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_events_business ON analytics_events(business_id);
 CREATE INDEX IF NOT EXISTS idx_analytics_events_type ON analytics_events(event_type);
@@ -117,6 +121,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_tasks_business ON tasks(business_id);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS assigned_to UUID;
+
 CREATE INDEX IF NOT EXISTS idx_tasks_assigned ON tasks(assigned_to);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_due ON tasks(due_date);
@@ -197,6 +203,11 @@ CREATE TABLE IF NOT EXISTS kb_pages (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+ALTER TABLE kb_spaces ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE kb_pages ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE kb_pages ADD COLUMN IF NOT EXISTS space_id UUID;
+ALTER TABLE kb_pages ADD COLUMN IF NOT EXISTS is_archived BOOLEAN;
+
 CREATE INDEX IF NOT EXISTS idx_kb_spaces_business ON kb_spaces(business_id);
 CREATE INDEX IF NOT EXISTS idx_kb_pages_space ON kb_pages(space_id);
 CREATE INDEX IF NOT EXISTS idx_kb_pages_business ON kb_pages(business_id);
@@ -239,7 +250,18 @@ CREATE TABLE IF NOT EXISTS ticket_comments (
 
 CREATE INDEX IF NOT EXISTS idx_tickets_business ON tickets(business_id);
 CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
+ALTER TABLE tickets ADD COLUMN IF NOT EXISTS assigned_to UUID;
+
 CREATE INDEX IF NOT EXISTS idx_tickets_assigned ON tickets(assigned_to);
+
+CREATE TABLE IF NOT EXISTS inventory_categories (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID,
+  name TEXT NOT NULL,
+  parent_id UUID REFERENCES inventory_categories(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 CREATE INDEX IF NOT EXISTS idx_ticket_comments_ticket ON ticket_comments(ticket_id);
 
 -- ============================================
@@ -290,6 +312,8 @@ CREATE TABLE IF NOT EXISTS stock_movements (
 
 CREATE INDEX IF NOT EXISTS idx_inventory_business ON inventory(business_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_category ON inventory(category_id);
+ALTER TABLE stock_movements ADD COLUMN IF NOT EXISTS inventory_id UUID;
+
 CREATE INDEX IF NOT EXISTS idx_stock_movements_inventory ON stock_movements(inventory_id);
 CREATE INDEX IF NOT EXISTS idx_stock_movements_business ON stock_movements(business_id);
 
@@ -431,6 +455,9 @@ CREATE TABLE IF NOT EXISTS channel_members (
 
 CREATE INDEX IF NOT EXISTS idx_channels_business ON channels(business_id);
 CREATE INDEX IF NOT EXISTS idx_channel_members_channel ON channel_members(channel_id);
+ALTER TABLE channel_members ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE channel_members ADD COLUMN IF NOT EXISTS channel_id UUID;
+
 CREATE INDEX IF NOT EXISTS idx_channel_members_user ON channel_members(user_id);
 
 -- ============================================
@@ -453,6 +480,9 @@ CREATE TABLE IF NOT EXISTS events (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE events ADD COLUMN IF NOT EXISTS start_date TIMESTAMPTZ;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS end_date TIMESTAMPTZ;
 
 CREATE INDEX IF NOT EXISTS idx_events_business ON events(business_id);
 CREATE INDEX IF NOT EXISTS idx_events_date ON events(start_date);
@@ -646,104 +676,143 @@ ALTER TABLE channel_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for user_xp
+DROP POLICY IF EXISTS "Users can view their own XP" ON user_xp;
 CREATE POLICY "Users can view their own XP" ON user_xp FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can update their own XP" ON user_xp;
 CREATE POLICY "Users can update their own XP" ON user_xp FOR UPDATE USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert their own XP" ON user_xp;
 CREATE POLICY "Users can insert their own XP" ON user_xp FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- Create policies for business_entitlements
+DROP POLICY IF EXISTS "Business members can view entitlements" ON business_entitlements;
 CREATE POLICY "Business members can view entitlements" ON business_entitlements FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update entitlements" ON business_entitlements;
 CREATE POLICY "Business members can update entitlements" ON business_entitlements FOR UPDATE
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for tasks
+DROP POLICY IF EXISTS "Business members can view tasks" ON tasks;
 CREATE POLICY "Business members can view tasks" ON tasks FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert tasks" ON tasks;
 CREATE POLICY "Business members can insert tasks" ON tasks FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update tasks" ON tasks;
 CREATE POLICY "Business members can update tasks" ON tasks FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can delete tasks" ON tasks;
 CREATE POLICY "Business members can delete tasks" ON tasks FOR DELETE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'manager')));
 
 -- Create policies for time_entries
+DROP POLICY IF EXISTS "Business members can view time entries" ON time_entries;
 CREATE POLICY "Business members can view time entries" ON time_entries FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert time entries" ON time_entries;
 CREATE POLICY "Business members can insert time entries" ON time_entries FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update time entries" ON time_entries;
 CREATE POLICY "Business members can update time entries" ON time_entries FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
 
 -- Create policies for kb_spaces and kb_pages
+DROP POLICY IF EXISTS "Business members can view KB" ON kb_spaces;
 CREATE POLICY "Business members can view KB" ON kb_spaces FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can manage KB" ON kb_spaces;
 CREATE POLICY "Business members can manage KB" ON kb_spaces FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'manager')));
 
+DROP POLICY IF EXISTS "Business members can view KB pages" ON kb_pages;
 CREATE POLICY "Business members can view KB pages" ON kb_pages FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert KB pages" ON kb_pages;
 CREATE POLICY "Business members can insert KB pages" ON kb_pages FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update KB pages" ON kb_pages;
 CREATE POLICY "Business members can update KB pages" ON kb_pages FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can delete KB pages" ON kb_pages;
 CREATE POLICY "Business members can delete KB pages" ON kb_pages FOR DELETE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for channels
+DROP POLICY IF EXISTS "Members can view channels" ON channels;
 CREATE POLICY "Members can view channels" ON channels FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Admins can manage channels" ON channels;
 CREATE POLICY "Admins can manage channels" ON channels FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for events
+DROP POLICY IF EXISTS "Business members can view events" ON events;
 CREATE POLICY "Business members can view events" ON events FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert events" ON events;
 CREATE POLICY "Business members can insert events" ON events FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update events" ON events;
 CREATE POLICY "Business members can update events" ON events FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can delete events" ON events;
 CREATE POLICY "Business members can delete events" ON events FOR DELETE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for meetings
+DROP POLICY IF EXISTS "Business members can view meetings" ON meetings;
 CREATE POLICY "Business members can view meetings" ON meetings FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert meetings" ON meetings;
 CREATE POLICY "Business members can insert meetings" ON meetings FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update meetings" ON meetings;
 CREATE POLICY "Business members can update meetings" ON meetings FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can delete meetings" ON meetings;
 CREATE POLICY "Business members can delete meetings" ON meetings FOR DELETE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for inventory
+DROP POLICY IF EXISTS "Business members can view inventory" ON inventory;
 CREATE POLICY "Business members can view inventory" ON inventory FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can manage inventory" ON inventory;
 CREATE POLICY "Business members can manage inventory" ON inventory FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin', 'manager')));
 
 -- Create policies for requisitions
+DROP POLICY IF EXISTS "Business members can view requisitions" ON requisitions;
 CREATE POLICY "Business members can view requisitions" ON requisitions FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can insert requisitions" ON requisitions;
 CREATE POLICY "Business members can insert requisitions" ON requisitions FOR INSERT 
   WITH CHECK (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can update requisitions" ON requisitions;
 CREATE POLICY "Business members can update requisitions" ON requisitions FOR UPDATE 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
 
 -- Create policies for tickets
+DROP POLICY IF EXISTS "Business members can view tickets" ON tickets;
 CREATE POLICY "Business members can view tickets" ON tickets FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can manage tickets" ON tickets;
 CREATE POLICY "Business members can manage tickets" ON tickets FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
 
 -- Create policies for incidents
+DROP POLICY IF EXISTS "Business members can view incidents" ON incidents;
 CREATE POLICY "Business members can view incidents" ON incidents FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can manage incidents" ON incidents;
 CREATE POLICY "Business members can manage incidents" ON incidents FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
 -- Create policies for monitors
+DROP POLICY IF EXISTS "Business members can view monitors" ON monitors;
 CREATE POLICY "Business members can view monitors" ON monitors FOR SELECT 
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "Business members can manage monitors" ON monitors;
 CREATE POLICY "Business members can manage monitors" ON monitors FOR ALL
   USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid() AND role IN ('owner', 'admin')));
 
@@ -768,7 +837,7 @@ GRANT USAGE ON SCHEMA public TO anon, authenticated;
 -- Tables: only the CRUD verbs RLS then gates (no TRUNCATE/REFERENCES to
 -- anon/authenticated — those are service-role only).
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+GRANT SELECT, USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 -- anon gets table USAGE so it can reach explicitly-granted public RPCs, but
 -- no blanket table verbs (RLS policies on public-facing tables gate anon).
 GRANT USAGE ON SCHEMA public TO anon;
@@ -901,10 +970,11 @@ CREATE TABLE IF NOT EXISTS business_entitlements (
 -- ============================================
 -- ANALYTICS EVENTS
 -- ============================================
-CREATE TYPE IF NOT EXISTS event_category AS ENUM (
+DO $$ BEGIN CREATE TYPE event_category AS ENUM (
   'page_view', 'user_action', 'feature_usage', 'search', 'filter',
   'export', 'import', 'notification', 'payment', 'auth', 'error', 'performance', 'engagement'
 );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS analytics_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -959,6 +1029,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 -- ============================================
 
 -- Function to get user's channels
+DROP FUNCTION IF EXISTS get_my_channels(p_user_id UUID) CASCADE;
+DROP FUNCTION IF EXISTS get_my_channels() CASCADE;
 CREATE OR REPLACE FUNCTION get_my_channels()
 RETURNS TABLE (
   id UUID,
@@ -1035,45 +1107,58 @@ ALTER TABLE channels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 
 -- user_xp policies
+DROP POLICY IF EXISTS "Users can view own XP" ON user_xp;
 CREATE POLICY "Users can view own XP"
   ON user_xp FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own XP" ON user_xp;
 CREATE POLICY "Users can update own XP"
   ON user_xp FOR UPDATE
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert own XP" ON user_xp;
 CREATE POLICY "Users can insert own XP"
   ON user_xp FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
 -- user_learning policies
+DROP POLICY IF EXISTS "Users can view own learning" ON user_learning;
+DROP POLICY IF EXISTS "Users can view own learning" ON user_learning;
 CREATE POLICY "Users can view own learning"
   ON user_learning FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own learning" ON user_learning;
+DROP POLICY IF EXISTS "Users can update own learning" ON user_learning;
 CREATE POLICY "Users can update own learning"
   ON user_learning FOR UPDATE
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert own learning" ON user_learning;
+DROP POLICY IF EXISTS "Users can insert own learning" ON user_learning;
 CREATE POLICY "Users can insert own learning"
   ON user_learning FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
 -- user_achievements policies
+DROP POLICY IF EXISTS "Users can view own achievements" ON user_achievements;
 CREATE POLICY "Users can view own achievements"
   ON user_achievements FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update own achievements" ON user_achievements;
 CREATE POLICY "Users can update own achievements"
   ON user_achievements FOR UPDATE
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert own achievements" ON user_achievements;
 CREATE POLICY "Users can insert own achievements"
   ON user_achievements FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
 -- business_entitlements policies
+DROP POLICY IF EXISTS "Staff can read own business entitlements" ON business_entitlements;
 CREATE POLICY "Staff can read own business entitlements"
   ON business_entitlements FOR SELECT
   USING (
@@ -1082,6 +1167,7 @@ CREATE POLICY "Staff can read own business entitlements"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can manage business entitlements" ON business_entitlements;
 CREATE POLICY "Admins can manage business entitlements"
   ON business_entitlements FOR ALL
   USING (
@@ -1091,14 +1177,17 @@ CREATE POLICY "Admins can manage business entitlements"
   );
 
 -- analytics_events policies
+DROP POLICY IF EXISTS "Users can view own analytics" ON analytics_events;
 CREATE POLICY "Users can view own analytics"
   ON analytics_events FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Service can insert analytics" ON analytics_events;
 CREATE POLICY "Service can insert analytics"
   ON analytics_events FOR INSERT
   WITH CHECK (TRUE);
 
+DROP POLICY IF EXISTS "Admins can view business analytics" ON analytics_events;
 CREATE POLICY "Admins can view business analytics"
   ON analytics_events FOR SELECT
   USING (
@@ -1108,6 +1197,7 @@ CREATE POLICY "Admins can view business analytics"
   );
 
 -- channels policies
+DROP POLICY IF EXISTS "Staff can view business channels" ON channels;
 CREATE POLICY "Staff can view business channels"
   ON channels FOR SELECT
   USING (
@@ -1116,6 +1206,7 @@ CREATE POLICY "Staff can view business channels"
     )
   );
 
+DROP POLICY IF EXISTS "Channel members can view channels" ON channels;
 CREATE POLICY "Channel members can view channels"
   ON channels FOR SELECT
   USING (
@@ -1127,6 +1218,7 @@ CREATE POLICY "Channel members can view channels"
   );
 
 -- tasks policies
+DROP POLICY IF EXISTS "Staff can view business tasks" ON tasks;
 CREATE POLICY "Staff can view business tasks"
   ON tasks FOR SELECT
   USING (
@@ -1135,6 +1227,7 @@ CREATE POLICY "Staff can view business tasks"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can create tasks" ON tasks;
 CREATE POLICY "Staff can create tasks"
   ON tasks FOR INSERT
   WITH CHECK (
@@ -1143,6 +1236,7 @@ CREATE POLICY "Staff can create tasks"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can update business tasks" ON tasks;
 CREATE POLICY "Staff can update business tasks"
   ON tasks FOR UPDATE
   USING (
@@ -1174,7 +1268,7 @@ CROSS JOIN (
     ('speed_demon', 'Speed Demon', 'Completed 10 tasks in a day', 'usage', 75),
     ('social_butterfly', 'Social Butterfly', 'Invited your first team member', 'usage', 100)
 ) AS ach(key, name, description, category, points)
-ON CONFLICT (user_id, achievement_key) DO NOTHING;
+ON CONFLICT DO NOTHING;
 
 -- ============================================
 -- ENABLE REALTIME (optional)

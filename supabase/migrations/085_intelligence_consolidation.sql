@@ -163,19 +163,37 @@ COMMENT ON FUNCTION cashflow_forecast_intelligence IS
 -- (wrong column) is NOT re-fixed — it is deprecated; use the canonical
 -- function above instead.
 -- ============================================================
-COMMENT ON FUNCTION intelligence_process_bottlenecks(UUID) IS
-  'DEPRECATED (migration 085): duplicate of process_bottleneck_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
-COMMENT ON FUNCTION intelligence_risk_anomalies(UUID) IS
-  'DEPRECATED (migration 085): duplicate of risk_anomaly_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
-COMMENT ON FUNCTION intelligence_capacity(UUID) IS
-  'DEPRECATED (migration 085): duplicate of capacity_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
-COMMENT ON FUNCTION intelligence_early_warnings(UUID) IS
-  'DEPRECATED (migration 085): duplicate of early_warnings. Use the canonical 063 family. Will be removed in a later migration.';
-COMMENT ON FUNCTION intelligence_sales_performance(UUID) IS
-  'DEPRECATED + BROKEN (migration 085): references a non-existent column (sales_targets.target_amount; real column is revenue_target). Use sales_performance_intelligence instead. Will be removed in a later migration.';
-COMMENT ON FUNCTION intelligence_cashflow_forecast(UUID, INT) IS
-  'DEPRECATED (migration 085): use cashflow_forecast_intelligence instead. Will be removed in a later migration.';
+-- COMMENTs are best-effort: the deprecated functions may not exist if the
+-- …06 migration failed. Wrap each in a DO block that silently skips if
+-- the function is not found.
+-- ============================================================
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_process_bottlenecks(UUID) IS
+    'DEPRECATED (migration 085): duplicate of process_bottleneck_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_risk_anomalies(UUID) IS
+    'DEPRECATED (migration 085): duplicate of risk_anomaly_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_capacity(UUID) IS
+    'DEPRECATED (migration 085): duplicate of capacity_intelligence. Use the canonical 063 family. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_early_warnings(UUID) IS
+    'DEPRECATED (migration 085): duplicate of early_warnings. Use the canonical 063 family. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_sales_performance(UUID) IS
+    'DEPRECATED + BROKEN (migration 085): references a non-existent column (sales_targets.target_amount; real column is revenue_target). Use sales_performance_intelligence instead. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
+DO $$ BEGIN
+  COMMENT ON FUNCTION intelligence_cashflow_forecast(UUID, INT) IS
+    'DEPRECATED (migration 085): use cashflow_forecast_intelligence instead. Will be removed in a later migration.';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;
 
 -- Helper kept around from …06 for the deal-stage-age; harmless, single use.
-COMMENT ON FUNCTION deal_stage_age_days(UUID) IS
-  'Helper: days a deal has spent in its current stage (from 20260101000006).';
+DO $$ BEGIN
+  COMMENT ON FUNCTION deal_stage_age_days(UUID) IS
+    'Helper: days a deal has spent in its current stage (from 20260101000006).';
+EXCEPTION WHEN undefined_function THEN NULL; END $$;

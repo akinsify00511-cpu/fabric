@@ -9,22 +9,40 @@
 -- ============================================
 
 -- Departments
+-- 023 also creates departments (with parent_department_id, head_staff_id).
+-- Use ALTER TABLE ADD COLUMN IF NOT EXISTS so 039's columns exist regardless
+-- of which migration created the table, then index conditionally.
 CREATE TABLE IF NOT EXISTS departments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  code TEXT, -- Short code for display (e.g., "HR", "FIN")
+  code TEXT,
   parent_id UUID REFERENCES departments(id) ON DELETE SET NULL,
-  head_id UUID REFERENCES staff(id) ON DELETE SET NULL, -- Department head
+  head_id UUID REFERENCES staff(id) ON DELETE SET NULL,
   color TEXT DEFAULT '#6366F1',
   description TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- Stub: user_is_admin function (may be overridden by later migrations)
+CREATE OR REPLACE FUNCTION user_is_admin(p_business_id UUID)
+RETURNS BOOLEAN LANGUAGE sql STABLE AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM staff
+    WHERE user_id = auth.uid()
+      AND business_id = p_business_id
+      AND role IN ('owner', 'admin', 'manager')
+  );
+$$;
 
-CREATE INDEX idx_departments_business ON departments(business_id);
-CREATE INDEX idx_departments_parent ON departments(parent_id);
+ALTER TABLE departments ADD COLUMN IF NOT EXISTS parent_id UUID REFERENCES departments(id) ON DELETE SET NULL;
+ALTER TABLE departments ADD COLUMN IF NOT EXISTS head_id UUID REFERENCES staff(id) ON DELETE SET NULL;
+ALTER TABLE departments ADD COLUMN IF NOT EXISTS color TEXT DEFAULT '#6366F1';
+ALTER TABLE departments ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+
+CREATE INDEX IF NOT EXISTS idx_departments_business ON departments(business_id);
+CREATE INDEX IF NOT EXISTS idx_departments_parent ON departments(parent_id);
 
 -- Teams
 CREATE TABLE IF NOT EXISTS teams (
@@ -456,11 +474,19 @@ CREATE TABLE IF NOT EXISTS assets (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- 031 also creates assets (with `category TEXT` not `category_id UUID`).
+-- Add 039's extra columns so the indexes below succeed.
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS category_id UUID;
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS assigned_to UUID;
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS status TEXT;
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS serial_number TEXT;
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS warranty_expiry DATE;
+ALTER TABLE assets ADD COLUMN IF NOT EXISTS image_url TEXT;
 
-CREATE INDEX idx_assets_business ON assets(business_id);
-CREATE INDEX idx_assets_category ON assets(category_id);
-CREATE INDEX idx_assets_status ON assets(status);
-CREATE INDEX idx_assets_assigned ON assets(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_assets_business ON assets(business_id);
+CREATE INDEX IF NOT EXISTS idx_assets_category ON assets(category_id);
+CREATE INDEX IF NOT EXISTS idx_assets_status ON assets(status);
+CREATE INDEX IF NOT EXISTS idx_assets_assigned ON assets(assigned_to);
 
 -- Asset Depreciation Records
 CREATE TABLE IF NOT EXISTS asset_depreciation (
@@ -575,10 +601,15 @@ CREATE TABLE IF NOT EXISTS announcements (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- 033 also creates announcements (may lack 039's status/start_date/end_date cols).
+ALTER TABLE announcements ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'active';
+ALTER TABLE announcements ADD COLUMN IF NOT EXISTS author_id UUID;
+ALTER TABLE announcements ADD COLUMN IF NOT EXISTS start_date DATE;
+ALTER TABLE announcements ADD COLUMN IF NOT EXISTS end_date DATE;
 
-CREATE INDEX idx_announcements_business ON announcements(business_id);
-CREATE INDEX idx_announcements_status ON announcements(status);
-CREATE INDEX idx_announcements_dates ON announcements(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_announcements_business ON announcements(business_id);
+CREATE INDEX IF NOT EXISTS idx_announcements_status ON announcements(status);
+CREATE INDEX IF NOT EXISTS idx_announcements_dates ON announcements(start_date, end_date);
 
 -- Announcement Views
 CREATE TABLE IF NOT EXISTS announcement_views (
@@ -1170,7 +1201,7 @@ CREATE POLICY "Staff can manage own bookings"
   USING (booked_by IN (SELECT id FROM staff WHERE user_id = auth.uid()) AND status != 'cancelled');
 CREATE POLICY "Admins can manage all bookings"
   ON resource_bookings FOR ALL
-  USING (user_is_admin(EXISTS (
+  USING (user_is_admin((
     SELECT business_id FROM resources WHERE id = resource_bookings.resource_id
   )));
 
@@ -1192,6 +1223,8 @@ CREATE POLICY "Staff can check in/out"
 CREATE POLICY "Staff can update own records"
   ON attendance_records FOR UPDATE
   USING (staff_id IN (SELECT id FROM staff WHERE user_id = auth.uid()));
+ALTER TABLE attendance_records ADD COLUMN IF NOT EXISTS business_id UUID;
+
 CREATE POLICY "Admins can manage all attendance"
   ON attendance_records FOR ALL
   USING (user_is_admin(business_id));
@@ -1280,7 +1313,7 @@ CREATE TABLE IF NOT EXISTS properties (
   documents JSONB DEFAULT '[]'::jsonb,
   -- Agent/Owner
   assigned_agent_id UUID REFERENCES staff(id),
-  owner_id UUID REFERENCES clients(id),
+  owner_id UUID,
   -- Commission
   commission_rate DECIMAL(5, 2), -- Percentage
   commission_fixed DECIMAL(15, 2),
@@ -1298,12 +1331,12 @@ ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Properties are viewable by business" ON properties
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Properties are manageable by business" ON properties
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 -- Indexes
@@ -1324,7 +1357,7 @@ CREATE TABLE IF NOT EXISTS property_enquiries (
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   -- Contact Info
-  client_id UUID REFERENCES clients(id),
+  client_id UUID,
   contact_name TEXT NOT NULL,
   contact_email TEXT NOT NULL,
   contact_phone TEXT,
@@ -1346,12 +1379,12 @@ ALTER TABLE property_enquiries ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Enquiries viewable by business" ON property_enquiries
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Enquiries manageable by business" ON property_enquiries
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE INDEX IF NOT EXISTS idx_enquiries_property ON property_enquiries(property_id);
@@ -1365,8 +1398,8 @@ CREATE TABLE IF NOT EXISTS lease_agreements (
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE RESTRICT,
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   -- Parties
-  landlord_id UUID REFERENCES clients(id), -- Owner
-  tenant_id UUID NOT NULL REFERENCES clients(id),
+  landlord_id UUID, -- Owner
+  tenant_id UUID NOT NULL,
   -- Lease Terms
   lease_type TEXT CHECK (lease_type IN ('residential', 'commercial', 'land', 'short_term')),
   start_date DATE NOT NULL,
@@ -1397,12 +1430,12 @@ ALTER TABLE lease_agreements ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Leases viewable by business" ON lease_agreements
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Leases manageable by business" ON lease_agreements
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE INDEX IF NOT EXISTS idx_leases_property ON lease_agreements(property_id);
@@ -1420,7 +1453,7 @@ CREATE TABLE IF NOT EXISTS rent_payments (
   lease_id UUID NOT NULL REFERENCES lease_agreements(id) ON DELETE CASCADE,
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE RESTRICT,
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
-  tenant_id UUID NOT NULL REFERENCES clients(id),
+  tenant_id UUID NOT NULL,
   -- Payment Details
   amount DECIMAL(15, 2) NOT NULL,
   period_start DATE NOT NULL,
@@ -1445,12 +1478,12 @@ ALTER TABLE rent_payments ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Rent payments viewable by business" ON rent_payments
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Rent payments manageable by business" ON rent_payments
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE INDEX IF NOT EXISTS idx_rent_lease ON rent_payments(lease_id);
@@ -1467,7 +1500,7 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
   lease_id UUID REFERENCES lease_agreements(id),
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   -- Reporter
-  reported_by UUID REFERENCES clients(id),
+  reported_by UUID,
   assigned_to UUID REFERENCES staff(id),
   -- Issue Details
   category TEXT CHECK (category IN (
@@ -1495,12 +1528,12 @@ ALTER TABLE maintenance_requests ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Maintenance viewable by business" ON maintenance_requests
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Maintenance manageable by business" ON maintenance_requests
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE INDEX IF NOT EXISTS idx_maintenance_property ON maintenance_requests(property_id);
@@ -1544,12 +1577,12 @@ ALTER TABLE property_inspections ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Inspections viewable by business" ON property_inspections
   FOR SELECT USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE POLICY "Inspections manageable by business" ON property_inspections
   FOR ALL USING (business_id = (
-    SELECT business_id FROM staff WHERE id = current_setting('request.jwt.claims', true)::jsonb->>'staff_id'
+    SELECT business_id FROM staff WHERE id = (current_setting('request.jwt.claims', true)::jsonb->>'staff_id')::uuid
   ));
 
 CREATE INDEX IF NOT EXISTS idx_inspections_property ON property_inspections(property_id);
@@ -1584,6 +1617,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS new_values JSONB;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS old_values JSONB;
 
 CREATE TRIGGER update_property_on_lease_change
   AFTER INSERT OR UPDATE OR DELETE ON lease_agreements

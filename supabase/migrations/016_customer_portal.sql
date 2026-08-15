@@ -175,13 +175,14 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Get portal invitation by token
 CREATE OR REPLACE FUNCTION get_portal_invitation(p_token TEXT)
 RETURNS portal_invitations AS $$
+DECLARE result portal_invitations;
 BEGIN
-  RETURN QUERY
-  SELECT * FROM portal_invitations
+  SELECT * INTO result FROM portal_invitations
   WHERE token = p_token
     AND status = 'pending'
     AND expires_at > NOW()
   LIMIT 1;
+  RETURN result;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

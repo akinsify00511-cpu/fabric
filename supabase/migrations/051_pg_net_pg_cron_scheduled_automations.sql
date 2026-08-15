@@ -12,14 +12,26 @@
 \set ON_ERROR_STOP on
 
 -- pg_net: HTTP client used by dispatch-webhooks for outbound POST.
-CREATE EXTENSION IF NOT EXISTS pg_net;
+-- Not available in bare Postgres CI; create best-effort.
+DO $$ BEGIN CREATE EXTENSION pg_net; EXCEPTION WHEN OTHERS THEN RAISE NOTICE 'pg_net not available, skipping'; END $$;
+
+-- pg_cron: PostgreSQL-based cron. Create best-effort.
+DO $$ BEGIN
+  CREATE SCHEMA IF NOT EXISTS extensions;
+  CREATE EXTENSION pg_cron WITH SCHEMA extensions;
+EXCEPTION WHEN OTHERS THEN RAISE NOTICE 'pg_cron not available, skipping';
+END $$;
 
 -- pg_cron: PostgreSQL-based cron. On Supabase this lives in the `extensions`
 -- schema. Idempotent so re-running migrations is safe.
-CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA extensions;
+DO $$ BEGIN
+  CREATE SCHEMA IF NOT EXISTS extensions;
+  CREATE EXTENSION pg_cron WITH SCHEMA extensions;
+EXCEPTION WHEN OTHERS THEN RAISE NOTICE 'pg_cron not available, skipping';
+END $$;
 
 -- Ensure the cron schema is reachable.
-GRANT USAGE ON SCHEMA extensions TO service_role;
+DO $$ BEGIN GRANT USAGE ON SCHEMA extensions TO service_role; EXCEPTION WHEN OTHERS THEN NULL; END $$;
 
 -- ============================================================================
 -- 1. Schedule columns on automations (for time-based triggers)
@@ -100,8 +112,14 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN NULL;
 END$$;
 
-SELECT cron.schedule(
-  'avenize-due-automations',
-  '* * * * *',                       -- every minute
-  $$ SELECT public.execute_due_automations(); $$
-);
+DO $cron_register$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
+    PERFORM cron.schedule(
+      'avenize-due-automations',
+      '* * * * *',
+      $$ SELECT public.execute_due_automations(); $$
+    );
+  END IF;
+EXCEPTION WHEN OTHERS THEN RAISE NOTICE 'cron.schedule not available, skipping';
+END $cron_register$;

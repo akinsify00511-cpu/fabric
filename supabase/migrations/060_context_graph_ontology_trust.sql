@@ -67,7 +67,7 @@ WITH RECURSIVE walk AS (
 SELECT DISTINCT target_type, target_id, depth, path FROM walk
 UNION
 SELECT p_start_type, p_start_id, 0, ARRAY[p_start_type||':'||p_start_id];
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$$ LANGUAGE sql STABLE SECURITY DEFINER;
 
 -- link_entities: helper domains call to record an edge.
 CREATE OR REPLACE FUNCTION link_entities(
@@ -143,7 +143,7 @@ RETURNS TABLE(canonical_type TEXT, canonical_table TEXT) AS $$
 SELECT canonical_type, canonical_table FROM business_ontology
 WHERE business_id = p_business_id AND lower(alias) = lower(p_alias)
 LIMIT 1;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$$ LANGUAGE sql STABLE SECURITY DEFINER;
 
 -- ============================================================
 -- 5. DATA QUALITY / RECONCILIATION / CONFLICT (§19, tables 8 & 9)

@@ -6,7 +6,7 @@
 -- Email templates table for customizable messages
 CREATE TABLE IF NOT EXISTS email_templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  business_id UUID REFERENCES businesses(id) ON DELETE CASCADE,
+  business_id UUID,
   template_type TEXT NOT NULL CHECK (template_type IN ('welcome_owner', 'welcome_staff', 'invite')),
   subject TEXT NOT NULL DEFAULT 'Welcome to Avenize',
   heading TEXT,
@@ -18,6 +18,18 @@ CREATE TABLE IF NOT EXISTS email_templates (
   updated_at TIMESTAMPTZ DEFAULT now(),
   UNIQUE(business_id, template_type)
 );
+
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS template_type TEXT;
+DO $$ BEGIN ALTER TABLE email_templates ALTER COLUMN business_id DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE email_templates ALTER COLUMN name DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE email_templates ALTER COLUMN content_html DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE email_templates ALTER COLUMN subject DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE email_templates ALTER COLUMN body DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS subject TEXT;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS heading TEXT;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS body TEXT;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS cta_text TEXT;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS is_default BOOLEAN;
 
 -- Insert default Avenize branded templates
 INSERT INTO email_templates (template_type, subject, heading, body, cta_text, is_default) VALUES

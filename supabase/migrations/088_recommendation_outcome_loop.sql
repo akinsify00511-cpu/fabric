@@ -141,16 +141,16 @@ RETURNS TABLE(
   outcome_recorded BIGINT, success_count BIGINT, avg_actual NUMERIC, avg_expected NUMERIC
 ) AS $$
   SELECT
-    COALESCE(c.rule_id, 'unspecified'),
-    COUNT(*) FILTER (WHERE c.status IS NOT NULL),
-    COUNT(*) FILTER (WHERE c.status IN ('accepted','acted','outcome_recorded')),
-    COUNT(*) FILTER (WHERE c.status = 'rejected'),
-    COUNT(*) FILTER (WHERE c.status IN ('acted','outcome_recorded')),
-    COUNT(*) FILTER (WHERE c.status = 'outcome_recorded'),
+    COALESCE(c.rule_id, 'unspecified') AS rule_id,
+    COUNT(*) FILTER (WHERE c.status IS NOT NULL) AS issued,
+    COUNT(*) FILTER (WHERE c.status IN ('accepted','acted','outcome_recorded')) AS accepted,
+    COUNT(*) FILTER (WHERE c.status = 'rejected') AS rejected,
+    COUNT(*) FILTER (WHERE c.status IN ('acted','outcome_recorded')) AS acted,
+    COUNT(*) FILTER (WHERE c.status = 'outcome_recorded') AS outcome_recorded,
     COUNT(*) FILTER (WHERE c.status = 'outcome_recorded'
-      AND (c.actual_impact->>'amount')::NUMERIC >= 0),
-    AVG(NULLIF((c.actual_impact->>'amount')::NUMERIC, NULL)),
-    AVG(NULLIF((c.expected_impact->>'amount')::NUMERIC, NULL))
+      AND (c.actual_impact->>'amount')::NUMERIC >= 0) AS success_count,
+    AVG(NULLIF((c.actual_impact->>'amount')::NUMERIC, NULL)) AS avg_actual,
+    AVG(NULLIF((c.expected_impact->>'amount')::NUMERIC, NULL)) AS avg_expected
   FROM claims c
   WHERE c.business_id = p_business_id AND c.claim_type = 'RECOMMENDATION'
   GROUP BY COALESCE(c.rule_id, 'unspecified')

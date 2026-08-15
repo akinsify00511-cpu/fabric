@@ -213,8 +213,7 @@ INSERT INTO achievements (key, name, description, icon, category, xp_reward, rar
   
   -- Knowledge
   ('first_doc', 'Documentor', 'Created your first document', '📝', 'engagement', 20, 'common'),
-  ('docs_10', 'Wiki Wizard', 'Created 10 documents', '📚', 'engagement', 100, 'rare'),
-
+  ('docs_10', 'Wiki Wizard', 'Created 10 documents', '📚', 'engagement', 100, 'rare')
 ON CONFLICT (key) DO NOTHING;
 
 -- ============================================

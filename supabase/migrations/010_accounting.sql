@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS journal_lines (
 -- ACCOUNT BALANCES (denormalized for fast reporting)
 -- ============================================
 CREATE TABLE IF NOT EXISTS account_balances (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID DEFAULT gen_random_uuid(),
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   account_id UUID NOT NULL REFERENCES accounts(id),
   period_year INTEGER NOT NULL,

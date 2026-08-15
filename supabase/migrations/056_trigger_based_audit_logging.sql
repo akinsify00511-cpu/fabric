@@ -90,31 +90,33 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Attach triggers to the most sensitive tables. Triggers are AFTER so the
 -- log only records committed changes; no row is audited for a rolled-back
 -- transaction.
-CREATE TRIGGER audit_invoices AFTER INSERT OR UPDATE OR DELETE ON invoices
+CREATE OR REPLACE TRIGGER audit_invoices AFTER INSERT OR UPDATE OR DELETE ON invoices
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('invoice');
 
-CREATE TRIGGER audit_payments AFTER INSERT OR UPDATE OR DELETE ON payments
+CREATE OR REPLACE TRIGGER audit_payments AFTER INSERT OR UPDATE OR DELETE ON payments
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('payment');
 
-CREATE TRIGGER audit_journal_entries AFTER INSERT OR UPDATE OR DELETE ON journal_entries
+CREATE OR REPLACE TRIGGER audit_journal_entries AFTER INSERT OR UPDATE OR DELETE ON journal_entries
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('journal_entry');
 
-CREATE TRIGGER audit_staff AFTER INSERT OR UPDATE OR DELETE ON staff
+CREATE OR REPLACE TRIGGER audit_staff AFTER INSERT OR UPDATE OR DELETE ON staff
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('staff');
 
-CREATE TRIGGER audit_payroll_runs AFTER INSERT OR UPDATE OR DELETE ON payroll_runs
+CREATE OR REPLACE TRIGGER audit_payroll_runs AFTER INSERT OR UPDATE OR DELETE ON payroll_runs
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('payroll_run');
 
-CREATE TRIGGER audit_approvals AFTER INSERT OR UPDATE OR DELETE ON approvals
+CREATE OR REPLACE TRIGGER audit_approvals AFTER INSERT OR UPDATE OR DELETE ON approvals
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('approval');
 
-CREATE TRIGGER audit_property_commissions AFTER INSERT OR UPDATE OR DELETE ON property_commissions
-  FOR EACH ROW EXECUTE FUNCTION audit_row_change('property_commission');
+DO $$ BEGIN
+  CREATE OR REPLACE TRIGGER audit_property_commissions AFTER INSERT OR UPDATE OR DELETE ON property_commissions
+    FOR EACH ROW EXECUTE FUNCTION audit_row_change('property_commission');
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'property_commissions not found, skipping trigger'; END $$;
 
-CREATE TRIGGER audit_signature_requests AFTER INSERT OR UPDATE OR DELETE ON signature_requests
+CREATE OR REPLACE TRIGGER audit_signature_requests AFTER INSERT OR UPDATE OR DELETE ON signature_requests
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('signature_request');
 
-CREATE TRIGGER audit_business_subscriptions AFTER INSERT OR UPDATE OR DELETE ON business_subscriptions
+CREATE OR REPLACE TRIGGER audit_business_subscriptions AFTER INSERT OR UPDATE OR DELETE ON business_subscriptions
   FOR EACH ROW EXECUTE FUNCTION audit_row_change('business_subscription');
 
 COMMENT ON FUNCTION audit_row_change() IS

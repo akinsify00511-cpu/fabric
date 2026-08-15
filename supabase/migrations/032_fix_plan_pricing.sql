@@ -2,9 +2,14 @@
 -- ============================================
 
 -- First, fix the incorrect plan payment (was 15,000, should be 186,000)
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'plan_payments') THEN
 UPDATE plan_payments 
 SET amount = 186000.00 
 WHERE id = 'b6261ea4-42a7-411c-a3fd-3df48886475b';
+  END IF;
+END $$;
 
 -- Create plan_pricing table for reference
 CREATE TABLE IF NOT EXISTS plan_pricing (
@@ -277,6 +282,15 @@ ALTER TABLE staff_contracts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staff_documents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE staff_benefits ENABLE ROW LEVEL SECURITY;
 
+-- Ensure staff_id columns exist on leave/HR tables
+ALTER TABLE leave_balances ADD COLUMN IF NOT EXISTS staff_id UUID;
+ALTER TABLE leave_requests ADD COLUMN IF NOT EXISTS staff_id UUID;
+ALTER TABLE attendance_records ADD COLUMN IF NOT EXISTS staff_id UUID;
+ALTER TABLE performance_reviews ADD COLUMN IF NOT EXISTS staff_id UUID;
+ALTER TABLE leave_types ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE job_postings ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE recruitment_stages ADD COLUMN IF NOT EXISTS business_id UUID;
+
 -- RLS Policies
 CREATE POLICY "Staff access leave_types" ON leave_types FOR ALL USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));
 CREATE POLICY "Staff access own leave_balances" ON leave_balances FOR ALL USING (staff_id IN (SELECT id FROM staff WHERE user_id = auth.uid()));
@@ -291,10 +305,15 @@ CREATE POLICY "Staff access own documents" ON staff_documents FOR ALL USING (sta
 CREATE POLICY "Staff access own benefits" ON staff_benefits FOR ALL USING (staff_id IN (SELECT id FROM staff WHERE user_id = auth.uid()));
 
 -- Insert default leave types for Nigeria
-INSERT INTO leave_types (business_id, name, days_per_year, is_paid) VALUES
-  ('00000000-0000-0000-0000-000000000001', 'Annual Leave', 21, TRUE),
-  ('00000000-0000-0000-0000-000000000001', 'Sick Leave', 14, TRUE),
-  ('00000000-0000-0000-0000-000000000001', 'Maternity Leave', 84, TRUE),
-  ('00000000-0000-0000-0000-000000000001', 'Paternity Leave', 14, TRUE),
-  ('00000000-0000-0000-0000-000000000001', 'Compassionate Leave', 5, TRUE),
-  ('00000000-0000-0000-0000-000000000001', 'Unpaid Leave', 0, FALSE);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM businesses WHERE id = '00000000-0000-0000-0000-000000000001') THEN
+    INSERT INTO leave_types (business_id, name, days_per_year, is_paid) VALUES
+      ('00000000-0000-0000-0000-000000000001', 'Annual Leave', 21, TRUE),
+      ('00000000-0000-0000-0000-000000000001', 'Sick Leave', 14, TRUE),
+      ('00000000-0000-0000-0000-000000000001', 'Maternity Leave', 84, TRUE),
+      ('00000000-0000-0000-0000-000000000001', 'Paternity Leave', 14, TRUE),
+      ('00000000-0000-0000-0000-000000000001', 'Compassionate Leave', 5, TRUE),
+      ('00000000-0000-0000-0000-000000000001', 'Unpaid Leave', 0, FALSE);
+  END IF;
+END $$;

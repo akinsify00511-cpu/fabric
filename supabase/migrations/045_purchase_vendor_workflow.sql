@@ -99,14 +99,16 @@ CREATE TRIGGER po_updated_at BEFORE UPDATE ON public.purchase_orders
 -- parallel branch — the relationship is still enforced once both exist).
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='requisitions') THEN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='requisitions')
+     AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='po_requisition_fk') THEN
     ALTER TABLE public.purchase_orders
-      ADD CONSTRAINT IF NOT EXISTS po_requisition_fk
+      ADD CONSTRAINT po_requisition_fk
       FOREIGN KEY (requisition_id) REFERENCES public.requisitions(id) ON DELETE SET NULL;
   END IF;
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='approvals') THEN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='approvals')
+     AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='po_approval_fk') THEN
     ALTER TABLE public.purchase_orders
-      ADD CONSTRAINT IF NOT EXISTS po_approval_fk
+      ADD CONSTRAINT po_approval_fk
       FOREIGN KEY (approval_id) REFERENCES public.approvals(id) ON DELETE SET NULL;
   END IF;
 END $$;
@@ -288,9 +290,10 @@ CREATE TRIGGER vi_updated_at BEFORE UPDATE ON public.vendor_invoices
 -- Wire vendor_invoices.payment_id to payments(id) if that table exists.
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='payments') THEN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='payments')
+     AND NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='vi_payment_fk') THEN
     ALTER TABLE public.vendor_invoices
-      ADD CONSTRAINT IF NOT EXISTS vi_payment_fk
+      ADD CONSTRAINT vi_payment_fk
       FOREIGN KEY (payment_id) REFERENCES public.payments(id) ON DELETE SET NULL;
   END IF;
 END $$;

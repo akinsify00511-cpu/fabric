@@ -49,13 +49,15 @@ CREATE POLICY "owners_business_all" ON public.property_owners
 CREATE POLICY "owners_self_select" ON public.property_owners
   FOR SELECT USING (portal_user_id = auth.uid());
 CREATE INDEX IF NOT EXISTS idx_owners_business ON public.property_owners(business_id);
-CREATE TRIGGER owners_updated_at BEFORE UPDATE ON public.property_owners
+CREATE OR REPLACE TRIGGER owners_updated_at BEFORE UPDATE ON public.property_owners
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- Link 039's properties.owner_id to property_owners (currently FK->clients).
 -- We add a dedicated column rather than repointing the existing FK, so 039's
 -- clients-based owners keep working during the transition.
-ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS owner_id_uuid UUID REFERENCES public.property_owners(id) ON DELETE SET NULL;
+DO $$ BEGIN
+  ALTER TABLE public.properties ADD COLUMN IF NOT EXISTS owner_id_uuid UUID REFERENCES public.property_owners(id) ON DELETE SET NULL;
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'properties table not found, skipping'; END $$;
 
 -- ============================================================================
 -- 2. TENANTS  (the renting party — distinct from a generic CRM contact)
@@ -80,11 +82,13 @@ CREATE POLICY "tenants_business_all" ON public.tenants
 CREATE POLICY "tenants_self_select" ON public.tenants
   FOR SELECT USING (portal_user_id = auth.uid());
 CREATE INDEX IF NOT EXISTS idx_tenants_business ON public.tenants(business_id);
-CREATE TRIGGER tenants_updated_at BEFORE UPDATE ON public.tenants
+CREATE OR REPLACE TRIGGER tenants_updated_at BEFORE UPDATE ON public.tenants
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- Link lease_agreements to the dedicated tenant record (039 used clients).
-ALTER TABLE public.lease_agreements ADD COLUMN IF NOT EXISTS tenant_id_uuid UUID REFERENCES public.tenants(id) ON DELETE SET NULL;
+DO $$ BEGIN
+  ALTER TABLE public.lease_agreements ADD COLUMN IF NOT EXISTS tenant_id_uuid UUID REFERENCES public.tenants(id) ON DELETE SET NULL;
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'lease_agreements not found, skipping'; END $$;
 
 -- ============================================================================
 -- 3. PROPERTY SALES  (offer -> accepted -> contract -> completion)
@@ -113,7 +117,7 @@ CREATE POLICY "sales_business_all" ON public.property_sales
 CREATE INDEX IF NOT EXISTS idx_sales_property ON public.property_sales(property_id);
 CREATE INDEX IF NOT EXISTS idx_sales_status ON public.property_sales(status);
 CREATE INDEX IF NOT EXISTS idx_sales_agent ON public.property_sales(agent_id) WHERE agent_id IS NOT NULL;
-CREATE TRIGGER sales_updated_at BEFORE UPDATE ON public.property_sales
+CREATE OR REPLACE TRIGGER sales_updated_at BEFORE UPDATE ON public.property_sales
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- ============================================================================
@@ -141,14 +145,16 @@ CREATE TABLE IF NOT EXISTS public.property_commissions (
   created_at          TIMESTAMPTZ DEFAULT NOW(),
   updated_at          TIMESTAMPTZ DEFAULT NOW()
 );
-ALTER TABLE public.property_commissions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "commissions_business_all" ON public.property_commissions
+DO $$ BEGIN
+  ALTER TABLE public.property_commissions ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "commissions_business_all" ON public.property_commissions
   FOR ALL USING (business_id = (SELECT business_id FROM public.get_current_staff()))
   WITH CHECK (business_id = (SELECT business_id FROM public.get_current_staff()));
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'property_commissions not found, skipping'; END $$;
 CREATE INDEX IF NOT EXISTS idx_commissions_business ON public.property_commissions(business_id);
 CREATE INDEX IF NOT EXISTS idx_commissions_status ON public.property_commissions(status);
 CREATE INDEX IF NOT EXISTS idx_commissions_agent ON public.property_commissions(agent_id) WHERE agent_id IS NOT NULL;
-CREATE TRIGGER commissions_updated_at BEFORE UPDATE ON public.property_commissions
+CREATE OR REPLACE TRIGGER commissions_updated_at BEFORE UPDATE ON public.property_commissions
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- Wire approval_id to approvals(id) if that table exists.
@@ -156,9 +162,10 @@ DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='approvals') THEN
     ALTER TABLE public.property_commissions
-      ADD CONSTRAINT IF NOT EXISTS commission_approval_fk
+      ADD CONSTRAINT commission_approval_fk
       FOREIGN KEY (approval_id) REFERENCES public.approvals(id) ON DELETE SET NULL;
   END IF;
+EXCEPTION WHEN duplicate_object OR undefined_table THEN NULL;
 END $$;
 
 -- ============================================================================
@@ -177,6 +184,6 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS audit_property_commission_insert ON public.property_commissions;
-CREATE TRIGGER audit_property_commission_insert
+CREATE OR REPLACE TRIGGER audit_property_commission_insert
   AFTER INSERT ON public.property_commissions
   FOR EACH ROW EXECUTE FUNCTION public.audit_property_commission();

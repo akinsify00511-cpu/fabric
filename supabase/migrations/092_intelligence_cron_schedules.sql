@@ -129,7 +129,7 @@ BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-refresh-metrics',
     '*/15 * * * *',                     -- every 15 minutes
-    $$ SELECT public.refresh_all_business_metrics(); $$
+    $job$ SELECT public.refresh_all_business_metrics(); $job$
   );
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-refresh-metrics not scheduled: %', SQLERRM;
@@ -147,7 +147,7 @@ BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-business-health',
     '2,17,32,47 * * * *',               -- 2 min after each metrics refresh
-    $$ SELECT public.compute_all_business_health(); $$
+    $job$ SELECT public.compute_all_business_health(); $job$
   );
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-business-health not scheduled: %', SQLERRM;
@@ -164,7 +164,7 @@ BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-data-quality-scan',
     '0 * * * *',                        -- at minute 0 of every hour
-    $$ SELECT public.scan_all_business_data_quality(); $$
+    $job$ SELECT public.scan_all_business_data_quality(); $job$
   );
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-data-quality-scan not scheduled: %', SQLERRM;
@@ -182,7 +182,7 @@ BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-recommendation-rules',
     '5 * * * *',                        -- 5 minutes past the hour
-    $$ SELECT public.run_all_recommendation_rules(); $$
+    $job$ SELECT public.run_all_recommendation_rules(); $job$
   );
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-recommendation-rules not scheduled: %', SQLERRM;
@@ -199,7 +199,7 @@ BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-detect-customer-inactive',
     '0 2 * * *',                        -- daily at 02:00
-    $$ SELECT public.detect_customer_inactive_all(90); $$
+    $job$ SELECT public.detect_customer_inactive_all(90); $job$
   );
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-detect-customer-inactive not scheduled: %', SQLERRM;

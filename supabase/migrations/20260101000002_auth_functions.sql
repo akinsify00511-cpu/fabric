@@ -10,10 +10,13 @@ DROP FUNCTION IF EXISTS get_invite_info(TEXT);
 
 -- create_business_and_owner
 -- Creates a business and adds the signing up user as owner
+DROP FUNCTION IF EXISTS create_business_and_owner(TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS create_business_and_owner(TEXT, TEXT, TEXT, TEXT);
 CREATE OR REPLACE FUNCTION create_business_and_owner(
   p_business_name TEXT,
   p_industry TEXT DEFAULT NULL,
-  p_staff_name TEXT DEFAULT NULL
+  p_staff_name TEXT DEFAULT NULL,
+  p_job_title TEXT DEFAULT NULL
 ) RETURNS TABLE(p_business_id UUID, p_staff_id UUID) AS $$
 DECLARE
   v_business_id UUID;
@@ -40,6 +43,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- accept_invite
 -- Accepts an invite and adds the user as staff
+DROP FUNCTION IF EXISTS accept_invite(TEXT, TEXT, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS accept_invite(TEXT, TEXT, UUID);
+DROP FUNCTION IF EXISTS accept_invite(TEXT, TEXT);
 CREATE OR REPLACE FUNCTION accept_invite(
   p_token TEXT,
   p_staff_name TEXT DEFAULT NULL
@@ -115,7 +121,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Grant execute permissions
-GRANT EXECUTE ON FUNCTION create_business_and_owner TO authenticated;
-GRANT EXECUTE ON FUNCTION accept_invite TO authenticated;
-GRANT EXECUTE ON FUNCTION get_invite_info TO authenticated;
-GRANT EXECUTE ON FUNCTION get_invite_info TO anon;
+GRANT EXECUTE ON FUNCTION create_business_and_owner(TEXT, TEXT, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION accept_invite(TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_invite_info(TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_invite_info(TEXT) TO anon;

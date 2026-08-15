@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS public.sso_providers (
   UNIQUE (business_id, provider)
 );
 
+ALTER TABLE public.sso_providers ADD COLUMN IF NOT EXISTS business_id UUID;
 ALTER TABLE public.sso_providers ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "sso_business_select" ON public.sso_providers
@@ -41,7 +42,7 @@ CREATE POLICY "sso_business_modify" ON public.sso_providers
 
 CREATE INDEX IF NOT EXISTS idx_sso_providers_business ON public.sso_providers(business_id);
 
-CREATE TRIGGER sso_providers_updated_at BEFORE UPDATE ON public.sso_providers
+CREATE OR REPLACE TRIGGER sso_providers_updated_at BEFORE UPDATE ON public.sso_providers
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- ----------------------------------------------------------------------------

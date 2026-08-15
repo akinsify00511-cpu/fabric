@@ -72,7 +72,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 DROP TRIGGER IF EXISTS evt_deal_won ON deals;
 CREATE TRIGGER evt_deal_won AFTER INSERT OR UPDATE OF stage ON deals
   FOR EACH ROW EXECUTE FUNCTION emit_deal_won();
-CREATE TRIGGER IF NOT EXISTS evt_deal_lost AFTER INSERT OR UPDATE OF stage ON deals
+DROP TRIGGER IF EXISTS evt_deal_lost ON deals;
+CREATE TRIGGER evt_deal_lost AFTER INSERT OR UPDATE OF stage ON deals
   FOR EACH ROW EXECUTE FUNCTION emit_deal_lost();
 
 -- ============================================================

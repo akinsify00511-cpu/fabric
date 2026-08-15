@@ -233,11 +233,11 @@ CREATE OR REPLACE FUNCTION verify_api_key(p_key TEXT)
 RETURNS api_keys AS $$
 DECLARE
   v_key_hash TEXT;
+  result api_keys;
 BEGIN
   v_key_hash := encode(sha256(p_key::bytea), 'hex');
   
-  RETURN QUERY
-  SELECT * FROM api_keys
+  SELECT * INTO result FROM api_keys
   WHERE key_hash = v_key_hash
     AND is_active = TRUE
     AND (expires_at IS NULL OR expires_at > NOW())

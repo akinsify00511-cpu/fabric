@@ -289,17 +289,21 @@ CREATE POLICY "Event types manage"
   USING (business_id IN (SELECT business_id FROM get_current_staff() WHERE role IN ('owner', 'manager')));
 
 -- Events
-CREATE POLICY "Events view"
+ALTER TABLE events ADD COLUMN IF NOT EXISTS visibility TEXT DEFAULT 'public';
+DROP POLICY IF EXISTS "Events read" ON events;
+CREATE POLICY "Events read"
   ON events FOR SELECT
   USING (
     visibility = 'public'
     OR business_id IN (SELECT business_id FROM get_current_staff())
   );
 
+DROP POLICY IF EXISTS "Events create" ON events;
 CREATE POLICY "Events create"
   ON events FOR INSERT
   WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
 
+DROP POLICY IF EXISTS "Events update" ON events;
 CREATE POLICY "Events update"
   ON events FOR UPDATE
   USING (
@@ -517,6 +521,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- UPDATED_AT TRIGGERS
 -- ============================================
 CREATE TRIGGER event_types_updated_at BEFORE UPDATE ON event_types FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER events_updated_at BEFORE UPDATE ON events FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE OR REPLACE TRIGGER events_updated_at BEFORE UPDATE ON events FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER event_registrations_updated_at BEFORE UPDATE ON event_registrations FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER event_analytics_updated_at BEFORE UPDATE ON event_analytics FOR EACH ROW EXECUTE FUNCTION update_updated_at();

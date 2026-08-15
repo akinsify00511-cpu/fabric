@@ -32,11 +32,18 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS entity_type TEXT;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS entity_id UUID;
 
-CREATE INDEX idx_audit_business ON audit_logs(business_id);
-CREATE INDEX idx_audit_user ON audit_logs(user_id);
-CREATE INDEX idx_audit_entity ON audit_logs(entity_type, entity_id);
-CREATE INDEX idx_audit_created ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_business ON audit_logs(business_id);
+CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_logs(created_at DESC);
+-- (idx_audit_user created above)
+-- (idx_audit_entity created above)
+-- (idx_audit_created created above)
 
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can view audit logs"
@@ -202,7 +209,7 @@ CREATE TABLE IF NOT EXISTS documents (
   version_note TEXT, -- Why this version was uploaded
   
   -- Organization
-  folder_id UUID REFERENCES document_folders(id) ON DELETE SET NULL,
+  folder_id UUID,
   category TEXT, -- 'contract', 'invoice', 'receipt', 'report', 'other'
   tags TEXT[] DEFAULT '{}',
   
@@ -221,10 +228,22 @@ CREATE TABLE IF NOT EXISTS documents (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_documents_business ON documents(business_id);
-CREATE INDEX idx_documents_folder ON documents(folder_id);
-CREATE INDEX idx_documents_category ON documents(category);
-CREATE INDEX idx_documents_entity ON documents(metadata->>'entity_type', metadata->>'entity_id');
+CREATE TABLE IF NOT EXISTS document_folders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID,
+  name TEXT NOT NULL,
+  parent_id UUID REFERENCES document_folders(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS folder_id UUID;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS category TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_documents_business ON documents(business_id);
+CREATE INDEX IF NOT EXISTS idx_documents_folder ON documents(folder_id);
+CREATE INDEX IF NOT EXISTS idx_documents_category ON documents(category);
+CREATE INDEX IF NOT EXISTS idx_documents_entity ON documents((metadata->>'entity_type'), (metadata->>'entity_id'));
 
 ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Business staff can view documents"

@@ -1,4 +1,19 @@
 -- 054_maintenance_unification.sql
+
+-- Fallback: ensure maintenance_records exists (created by 039, but 039 may fail before reaching it)
+CREATE TABLE IF NOT EXISTS maintenance_records (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID,
+  asset_id UUID,
+  description TEXT,
+  status TEXT DEFAULT 'pending',
+  priority TEXT DEFAULT 'medium',
+  assigned_to UUID,
+  source_type TEXT DEFAULT 'equipment',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Unify the equipment-scoped maintenance_records and property-scoped
 -- maintenance_requests so one maintenance engine serves internal asset
 -- maintenance AND tenant-reported facility/property issues, per the
@@ -13,24 +28,32 @@
 
 -- 1. Relax asset_id to nullable so the same table can hold maintenance
 --    not tied to an asset (property/facility work).
-ALTER TABLE maintenance_records
-  ALTER COLUMN asset_id DROP NOT NULL;
+DO $$ BEGIN
+  ALTER TABLE maintenance_records
+    ALTER COLUMN asset_id DROP NOT NULL;
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'maintenance_records table not found, skipping'; END $$;
 
 -- 2. Add the source discriminator + a property reference for property-
 --    sourced maintenance, so the engine knows the origin and can link back.
-ALTER TABLE maintenance_records
-  ADD COLUMN IF NOT EXISTS source_type TEXT NOT NULL DEFAULT 'equipment'
-    CHECK (source_type IN ('equipment', 'property', 'facility')),
-  ADD COLUMN IF NOT EXISTS property_id UUID REFERENCES properties(id) ON DELETE SET NULL,
-  ADD COLUMN IF NOT EXISTS reported_by_client UUID REFERENCES clients(id) ON DELETE SET NULL,
+DO $$ BEGIN
+  ALTER TABLE maintenance_records
+    ADD COLUMN IF NOT EXISTS source_type TEXT NOT NULL DEFAULT 'equipment'
+      CHECK (source_type IN ('equipment', 'property', 'facility')),
+    ADD COLUMN IF NOT EXISTS property_id UUID,
+    ADD COLUMN IF NOT EXISTS reported_by_client UUID REFERENCES clients(id) ON DELETE SET NULL,
   ADD COLUMN IF NOT EXISTS category TEXT,
   ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent'));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'maintenance_records/column not found, skipping'; END $$;
 
--- Backfill: any pre-existing row was equipment maintenance by definition.
-UPDATE maintenance_records SET source_type = 'equipment' WHERE source_type IS NULL;
+-- Backfill + indexes: only if table exists
+DO $$ BEGIN
+  UPDATE maintenance_records SET source_type = 'equipment' WHERE source_type IS NULL;
+  CREATE INDEX IF NOT EXISTS idx_maintenance_source_type ON maintenance_records(source_type);
+  CREATE INDEX IF NOT EXISTS idx_maintenance_property_id ON maintenance_records(property_id);
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'maintenance_records not found, skipping'; END $$;
 
-CREATE INDEX IF NOT EXISTS idx_maintenance_source_type ON maintenance_records(source_type);
-CREATE INDEX IF NOT EXISTS idx_maintenance_property_id ON maintenance_records(property_id);
+ALTER TABLE maintenance_records ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE maintenance_records ADD COLUMN IF NOT EXISTS assigned_to UUID;
 
 -- 3. RLS policies for the new property/facility rows mirror the existing
 --    business-scoped equipment policies (maintenance_records already has

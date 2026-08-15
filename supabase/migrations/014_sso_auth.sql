@@ -326,6 +326,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- ============================================
 -- SEED DEFAULT SSO PROVIDERS
 -- ============================================
+ALTER TABLE sso_providers ADD COLUMN IF NOT EXISTS description TEXT;
 INSERT INTO sso_providers (name, provider_type, logo_url, color, description) VALUES
   ('Okta', 'oidc', 'https://www.google.com/s2/favicons?domain=okta.com', '#007DC1', 'Enterprise identity management'),
   ('Microsoft', 'oidc', 'https://www.google.com/s2/favicons?domain=microsoft.com', '#0078D4', 'Azure Active Directory / Microsoft 365'),

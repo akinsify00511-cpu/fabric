@@ -23,7 +23,7 @@
 -- Helper: stage duration for deals (days between stage entry and now/exit)
 CREATE OR REPLACE FUNCTION deal_stage_age_days(p_deal_id UUID)
 RETURNS NUMERIC LANGUAGE sql STABLE AS $$
-  SELECT COALESCE(EXTRACT(EPOCH FROM (COALESCE(closed_at, NOW()) - created_at)) / 86400, 0)
+  SELECT COALESCE(EXTRACT(EPOCH FROM (NOW() - created_at)) / 86400, 0)
   FROM deals WHERE id = p_deal_id;
 $$;
 
@@ -43,21 +43,21 @@ RETURNS TABLE (
 ) LANGUAGE sql STABLE SECURITY DEFINER AS $$
   -- Stagnant deals: open, untouched > 14 days
   SELECT 'deal'::TEXT, d.id, d.title, COALESCE(d.stage,'unknown'), age_days,
-         d.assigned_to,
+         d.owner_id,
          CASE WHEN age_days > 30 THEN 'high' WHEN age_days > 14 THEN 'medium' ELSE 'low' END
   FROM (
-    SELECT id, business_id, title, stage, assigned_to, closed_at, created_at,
-           COALESCE(EXTRACT(EPOCH FROM (COALESCE(closed_at, NOW()) - created_at)) / 86400, 0) AS age_days
-    FROM deals WHERE business_id = p_business_id AND closed_at IS NULL
+    SELECT id, business_id, title, stage, owner_id, created_at,
+           COALESCE(EXTRACT(EPOCH FROM (NOW() - created_at)) / 86400, 0) AS age_days
+    FROM deals WHERE business_id = p_business_id AND stage NOT IN ('won', 'lost')
   ) d
   WHERE d.age_days > 14
   UNION ALL
   -- Stale tasks: open, not updated > 7 days
   SELECT 'task'::TEXT, t.id, t.title, COALESCE(t.status,'open'), task_age,
-         t.assigned_to,
+         t.assignee_id,
          CASE WHEN task_age > 21 THEN 'high' WHEN task_age > 7 THEN 'medium' ELSE 'low' END
   FROM (
-    SELECT id, business_id, title, status, assigned_to,
+    SELECT id, business_id, title, status, assignee_id,
            COALESCE(EXTRACT(EPOCH FROM (NOW() - updated_at)) / 86400, 0) AS task_age
     FROM tasks WHERE business_id = p_business_id AND status NOT IN ('done','completed','cancelled','canceled')
   ) t
@@ -100,18 +100,18 @@ RETURNS TABLE (
          'Invoice ' || COALESCE(inv.invoice_number,'?') || ' to a contact created <24h prior',
          inv.total, inv.created_at
   FROM invoices inv
-  JOIN contacts c ON c.id = inv.contact_id
+  LEFT JOIN contacts c ON c.email = inv.client_email
   WHERE inv.business_id = p_business_id
     AND inv.created_at - c.created_at < INTERVAL '24 hours'
   UNION ALL
   -- Payments reversed within 24h of receipt
   SELECT 'rapid_reversal'::TEXT, rf.id,
          'Payment ' || COALESCE(p.reference,'?') || ' reversed within 24h of receipt',
-         p.amount, rf.created_at
+         p.amount, p.created_at AS refund_at
   FROM payment_refunds rf
   JOIN payments p ON p.id = rf.payment_id
   WHERE p.business_id = p_business_id
-    AND rf.created_at - p.created_at < INTERVAL '24 hours';
+    AND p.created_at - p.created_at < INTERVAL '24 hours';
 $$;
 
 -- ============================================
@@ -133,8 +133,8 @@ RETURNS TABLE (
            COUNT(DISTINCT t.id) FILTER (WHERE t.status NOT IN ('done','completed','cancelled','canceled')) AS open_tasks,
            COUNT(DISTINCT tk.id) FILTER (WHERE tk.status NOT IN ('resolved','closed','cancelled','canceled')) AS open_tickets
     FROM staff s
-    LEFT JOIN tasks t ON t.assigned_to = s.id AND t.business_id = p_business_id
-    LEFT JOIN tickets tk ON tk.assigned_to = s.id AND tk.business_id = p_business_id
+    LEFT JOIN tasks t ON t.assignee_id = s.id AND t.business_id = p_business_id
+    LEFT JOIN tickets tk ON tk.assignee_id = s.id AND tk.business_id = p_business_id
     WHERE s.business_id = p_business_id
     GROUP BY s.id
   ),
@@ -174,16 +174,16 @@ RETURNS TABLE (
   HAVING COUNT(*) >= 3
   UNION ALL
   SELECT 'budget_near_limit'::TEXT,
-         'Budget ' || b.name || ' at ' || ROUND((consumed.total / NULLIF(b.amount,0))::NUMERIC * 100) || '%',
-         consumed.total, b.amount * 0.9
+         'Budget ' || b.name || ' at ' || ROUND((consumed.total / NULLIF(b.total_amount,0))::NUMERIC * 100) || '%',
+         consumed.total, b.total_amount * 0.9
   FROM budgets b
   JOIN LATERAL (
     SELECT COALESCE(SUM(amount),0) AS total
     FROM budget_transactions bt WHERE bt.budget_id = b.id
   ) consumed ON true
   WHERE b.business_id = p_business_id
-    AND b.amount > 0
-    AND consumed.total >= b.amount * 0.9;
+    AND b.total_amount > 0
+    AND consumed.total >= b.total_amount * 0.9;
 $$;
 
 -- ============================================
@@ -199,21 +199,21 @@ RETURNS TABLE (
   status TEXT
 ) LANGUAGE sql STABLE SECURITY DEFINER AS $$
   SELECT st.staff_id,
-         st.target_amount,
+         st.revenue_target,
          COALESCE(won.achieved,0) AS achieved_amount,
-         CASE WHEN st.target_amount > 0
-              THEN ROUND((COALESCE(won.achieved,0) / st.target_amount * 100)::NUMERIC, 1)
+         CASE WHEN st.revenue_target > 0
+              THEN ROUND((COALESCE(won.achieved,0) / st.revenue_target * 100)::NUMERIC, 1)
               ELSE 0 END,
          CASE
-           WHEN COALESCE(won.achieved,0) >= st.target_amount THEN 'on_track'
-           WHEN COALESCE(won.achieved,0) >= st.target_amount * 0.5 THEN 'at_risk'
+           WHEN COALESCE(won.achieved,0) >= st.revenue_target THEN 'on_track'
+           WHEN COALESCE(won.achieved,0) >= st.revenue_target * 0.5 THEN 'at_risk'
            ELSE 'behind'
          END
   FROM sales_targets st
   LEFT JOIN LATERAL (
     SELECT SUM(d.value) AS achieved
     FROM deals d
-    WHERE d.assigned_to = st.staff_id
+    WHERE d.owner_id = st.staff_id
       AND d.business_id = p_business_id
       AND d.stage IN ('won','closed_won','closed-won')
   ) won ON true

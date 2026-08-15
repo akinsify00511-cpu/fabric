@@ -64,12 +64,17 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure columns exist (analytics_events may have been created by 019 with fewer cols)
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS user_id UUID;
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE analytics_events ADD COLUMN IF NOT EXISTS event_name TEXT;
+
 -- Indexes for efficient querying
-CREATE INDEX idx_events_business ON analytics_events(business_id);
-CREATE INDEX idx_events_user ON analytics_events(user_id);
-CREATE INDEX idx_events_category ON analytics_events(category);
-CREATE INDEX idx_events_name ON analytics_events(event_name);
-CREATE INDEX idx_events_created ON analytics_events(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_events_business ON analytics_events(business_id);
+CREATE INDEX IF NOT EXISTS idx_events_user ON analytics_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_events_category ON analytics_events(category);
+CREATE INDEX IF NOT EXISTS idx_events_name ON analytics_events(event_name);
+CREATE INDEX IF NOT EXISTS idx_events_created ON analytics_events(created_at DESC);
 CREATE INDEX idx_events_session ON analytics_events(session_id);
 
 -- ============================================
@@ -250,8 +255,9 @@ CREATE TABLE IF NOT EXISTS user_achievements (
   UNIQUE(user_id, achievement_key)
 );
 
-CREATE INDEX idx_achievements_user ON user_achievements(user_id);
-CREATE INDEX idx_achievements_unlocked ON user_achievements(user_id, unlocked);
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS unlocked BOOLEAN DEFAULT FALSE;
+CREATE INDEX IF NOT EXISTS idx_achievements_user ON user_achievements(user_id);
+CREATE INDEX IF NOT EXISTS idx_achievements_unlocked ON user_achievements(user_id, unlocked);
 
 -- ============================================
 -- Admin Analytics Summary (Pre-computed)
@@ -447,16 +453,29 @@ $$ LANGUAGE plpgsql;
 -- ============================================
 -- Default Achievements
 -- ============================================
-INSERT INTO user_achievements (user_id, achievement_key, achievement_name, achievement_description, category, points) VALUES
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS achievement_key TEXT;
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS achievement_id UUID;
+ALTER TABLE user_achievements ALTER COLUMN achievement_id DROP NOT NULL;
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS achievement_name TEXT;
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS achievement_description TEXT;
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE user_achievements ADD COLUMN IF NOT EXISTS points INTEGER;
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM auth.users LIMIT 1) THEN
+    INSERT INTO user_achievements (user_id, achievement_key, achievement_name, achievement_description, category, points) VALUES
   (gen_random_uuid()::UUID, 'first_login', 'Welcome Aboard', 'Logged in for the first time', 'usage', 10),
   (gen_random_uuid()::UUID, 'first_task', 'Task Starter', 'Completed your first task', 'usage', 25),
   (gen_random_uuid()::UUID, 'explorer', 'Explorer', 'Visited 10 different pages', 'exploration', 50),
-  (gen_uuid()::UUID, 'consistent', 'Consistent', 'Used the app 3 days in a row', 'consistency', 100),
+
+  (gen_random_uuid(), 'consistent', 'Consistent', 'Used the app 3 days in a row', 'consistency', 100),
   (gen_random_uuid()::UUID, 'power_user', 'Power User', 'Used 5 different features', 'mastery', 150),
   (gen_random_uuid()::UUID, 'week_streak', 'Week Warrior', 'Maintained a 7-day streak', 'consistency', 500),
   (gen_random_uuid()::UUID, 'speed_demon', 'Speed Demon', 'Completed 10 tasks in a day', 'usage', 75),
   (gen_random_uuid()::UUID, 'social_butterfly', 'Social Butterfly', 'Invited your first team member', 'usage', 100)
 ON CONFLICT DO NOTHING;
+  END IF;
+END $$;
 
 -- ============================================
 -- RLS Policies

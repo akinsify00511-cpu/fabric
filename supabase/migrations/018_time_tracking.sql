@@ -230,12 +230,13 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Get active time entry
 CREATE OR REPLACE FUNCTION get_active_time_entry()
 RETURNS time_entries AS $$
+DECLARE result time_entries;
 BEGIN
-  RETURN QUERY
-  SELECT * FROM time_entries
+  SELECT * INTO result FROM time_entries
   WHERE staff_id = (SELECT id FROM staff WHERE user_id = auth.uid())
     AND status = 'active'
   LIMIT 1;
+  RETURN result;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

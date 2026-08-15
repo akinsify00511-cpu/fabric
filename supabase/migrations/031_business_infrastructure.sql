@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS commission_plans (
   business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   type TEXT NOT NULL, -- 'percentage', 'tiered', 'fixed'
-  rate DECIMAL(5,2), -- percentage or fixed amount
+  rate DECIMAL(12,2), -- percentage or fixed amount (12,2 to hold large fixed amounts)
   tier_threshold DECIMAL(15,2), -- for tiered plans
   tier_rate DECIMAL(5,2), -- rate for this tier
   is_active BOOLEAN DEFAULT TRUE,
@@ -250,12 +250,17 @@ CREATE POLICY "Recurring costs viewable by business staff" ON recurring_costs
   );
 
 -- ============================================
--- SEED DATA: Default commission plans
+-- SEED DATA: Default commission plans (only if a business exists)
 -- ============================================
-INSERT INTO commission_plans (business_id, name, type, rate) VALUES
-  (gen_random_uuid(), 'Standard Sales Commission', 'percentage', 5.00),
-  (gen_random_uuid(), 'Referral Bonus', 'fixed', 10000.00)
-ON CONFLICT DO NOTHING;
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM businesses LIMIT 1) THEN
+    INSERT INTO commission_plans (business_id, name, type, rate)
+    SELECT id, 'Standard Sales Commission', 'percentage', 5.00
+    FROM businesses LIMIT 1
+    ON CONFLICT DO NOTHING;
+  END IF;
+END $$;
 
 
 -- ============================================
@@ -324,9 +329,9 @@ CREATE TABLE IF NOT EXISTS payroll_entries (
   nsitf NUMERIC(15,2) DEFAULT 0,
   other_deductions NUMERIC(15,2) DEFAULT 0,
   total_deductions NUMERIC(15,2) GENERATED ALWAYS AS (paye + pension + nhf + nsitf + other_deductions) STORED,
-  net_salary NUMERIC(15,2) GENERATED ALWAYS AS (gross_salary - total_deductions) STORED,
+  net_salary NUMERIC(15,2) GENERATED ALWAYS AS ((basic_salary + allowances + bonuses) - (paye + pension + nhf + nsitf + other_deductions)) STORED,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'paid')),
-  created_at TIMERTAMPTZ DEFAULT NOW(),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(payroll_run_id, staff_id)
 );
 

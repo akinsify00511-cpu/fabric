@@ -60,13 +60,21 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Ensure columns exist (notifications may have been created by 013 with fewer cols)
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS business_id UUID;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS scheduled_for TIMESTAMPTZ;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS sent BOOLEAN DEFAULT FALSE;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS read BOOLEAN DEFAULT FALSE;
+
 -- Indexes for performance
-CREATE INDEX idx_notifications_user ON notifications(user_id);
-CREATE INDEX idx_notifications_business ON notifications(business_id);
-CREATE INDEX idx_notifications_read ON notifications(user_id, read);
-CREATE INDEX idx_notifications_category ON notifications(category);
-CREATE INDEX idx_notifications_scheduled ON notifications(scheduled_for) WHERE scheduled_for IS NOT NULL AND sent = FALSE;
-CREATE INDEX idx_notifications_unsent_email ON notifications(email_sent, created_at) WHERE email_sent = FALSE;
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_business ON notifications(business_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(user_id, read);
+CREATE INDEX IF NOT EXISTS idx_notifications_category ON notifications(category);
+CREATE INDEX IF NOT EXISTS idx_notifications_scheduled ON notifications(scheduled_for) WHERE scheduled_for IS NOT NULL AND sent = FALSE;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS email_sent BOOLEAN DEFAULT FALSE;
+CREATE INDEX IF NOT EXISTS idx_notifications_unsent_email ON notifications(email_sent, created_at) WHERE email_sent = FALSE;
 
 -- ============================================
 -- Notification Preferences
@@ -132,6 +140,21 @@ CREATE TABLE IF NOT EXISTS notification_templates (
 );
 
 -- Insert default notification templates
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS slug TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+DO $$ BEGIN ALTER TABLE notification_templates ALTER COLUMN body DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE notification_templates ALTER COLUMN message_template DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN ALTER TABLE notification_templates ALTER COLUMN business_id DROP NOT NULL; EXCEPTION WHEN undefined_column THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER TABLE notification_templates ADD CONSTRAINT notification_templates_slug_unique UNIQUE (slug);
+EXCEPTION WHEN duplicate_table THEN NULL;
+END $$;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS title_template TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS message_template TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS email_subject TEXT;
+ALTER TABLE notification_templates ADD COLUMN IF NOT EXISTS variables JSONB;
 INSERT INTO notification_templates (slug, name, category, title_template, message_template, email_subject, variables) VALUES
   -- Onboarding
   ('welcome', 'Welcome to Avenize', 'onboarding', 
@@ -233,6 +256,7 @@ INSERT INTO notification_templates (slug, name, category, title_template, messag
    '{{name}} ({{email}}) has joined {{business}}. Say hello!',
    'A new team member joined',
    '["name", "email", "business"]')
+
 ON CONFLICT (slug) DO UPDATE SET
   title_template = EXCLUDED.title_template,
   message_template = EXCLUDED.message_template,

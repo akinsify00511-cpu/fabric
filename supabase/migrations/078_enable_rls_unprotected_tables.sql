@@ -24,11 +24,13 @@
 -- A. BUSINESS-SCOPED TABLES
 -- ============================================
 
--- action_reversals
-ALTER TABLE action_reversals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "action_reversals_business" ON action_reversals
-  FOR ALL USING (business_id = (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
+-- action_reversals (may not exist if 20260101000004 failed)
+DO $$ BEGIN
+  ALTER TABLE action_reversals ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "action_reversals_business" ON action_reversals
+    FOR ALL USING (business_id = (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'action_reversals not found, skipping'; END $$;
 
 -- commission_plans
 ALTER TABLE commission_plans ENABLE ROW LEVEL SECURITY;
@@ -43,20 +45,23 @@ CREATE POLICY "customer_risk_scores_business" ON customer_risk_scores
   WITH CHECK (business_id = (SELECT business_id FROM get_current_staff()));
 
 -- security_audit_log (business_id is nullable — platform events have no business)
-ALTER TABLE security_audit_log ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "security_audit_log_business_read" ON security_audit_log
-  FOR SELECT USING (
+DO $$ BEGIN
+  ALTER TABLE security_audit_log ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "security_audit_log_business_read" ON security_audit_log
+    FOR SELECT USING (
     business_id IS NULL OR business_id = (SELECT business_id FROM get_current_staff())
   );
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'security_audit_log not found, skipping'; END $$;
 -- Writes only via service_role (edge functions / triggers); no client INSERT/UPDATE policy.
 
 -- ============================================
 -- B. PARENT-LINKED TABLES (business_id via FK join)
 -- ============================================
 
--- purchase_request_items -> purchase_requests.business_id
-ALTER TABLE purchase_request_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "purchase_request_items_business" ON purchase_request_items
+-- purchase_request_items -> purchase_requests.business_id (may not exist)
+DO $$ BEGIN
+  ALTER TABLE purchase_request_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "purchase_request_items_business" ON purchase_request_items
   FOR ALL USING (
     EXISTS (SELECT 1 FROM purchase_requests pr
            WHERE pr.id = purchase_request_items.request_id
@@ -67,10 +72,12 @@ CREATE POLICY "purchase_request_items_business" ON purchase_request_items
            WHERE pr.id = purchase_request_items.request_id
              AND pr.business_id = (SELECT business_id FROM get_current_staff()))
   );
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'purchase_request_items not found, skipping'; END $$;
 
--- rfq_line_items -> rfqs.business_id
-ALTER TABLE rfq_line_items ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "rfq_line_items_business" ON rfq_line_items
+-- rfq_line_items -> rfqs.business_id (may not exist)
+DO $$ BEGIN
+  ALTER TABLE rfq_line_items ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "rfq_line_items_business" ON rfq_line_items
   FOR ALL USING (
     EXISTS (SELECT 1 FROM rfqs r
            WHERE r.id = rfq_line_items.rfq_id
@@ -81,15 +88,19 @@ CREATE POLICY "rfq_line_items_business" ON rfq_line_items
            WHERE r.id = rfq_line_items.rfq_id
              AND r.business_id = (SELECT business_id FROM get_current_staff()))
   );
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'rfq_line_items not found, skipping'; END $$;
 
 -- webhook_logs -> webhooks.business_id
-ALTER TABLE webhook_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "webhook_logs_business" ON webhook_logs
+DO $$ BEGIN ALTER TABLE webhook_logs ENABLE ROW LEVEL SECURITY;
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'webhook_logs not found, skipping'; END $$;
+DO $$ BEGIN
+  CREATE POLICY "webhook_logs_business" ON webhook_logs
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM webhooks w
            WHERE w.id = webhook_logs.webhook_id
              AND w.business_id = (SELECT business_id FROM get_current_staff()))
   );
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'webhook_logs not found, skipping'; END $$;
 -- webhook_logs are append-only by the system; no client INSERT/UPDATE/DELETE policy.
 
 -- ============================================
@@ -103,9 +114,9 @@ CREATE POLICY "webhook_logs_business" ON webhook_logs
 --   - saml_metadata_cache: server-side SSO metadata cache
 -- ============================================
 
-ALTER TABLE auth_rate_limits ENABLE ROW LEVEL SECURITY;
-ALTER TABLE business_event_handlers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE plan_pricing ENABLE ROW LEVEL SECURITY;
-ALTER TABLE saml_metadata_cache ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN ALTER TABLE auth_rate_limits ENABLE ROW LEVEL SECURITY; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'auth_rate_limits not found, skipping'; END $$;
+DO $$ BEGIN ALTER TABLE business_event_handlers ENABLE ROW LEVEL SECURITY; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'business_event_handlers not found, skipping'; END $$;
+DO $$ BEGIN ALTER TABLE plan_pricing ENABLE ROW LEVEL SECURITY; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'plan_pricing not found, skipping'; END $$;
+DO $$ BEGIN ALTER TABLE saml_metadata_cache ENABLE ROW LEVEL SECURITY; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'saml_metadata_cache not found, skipping'; END $$;
 
 SELECT 'RLS enabled on 11 previously-unprotected tables' as status;

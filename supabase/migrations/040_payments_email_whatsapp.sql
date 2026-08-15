@@ -110,12 +110,17 @@ CREATE TABLE IF NOT EXISTS payments (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_payments_business ON payments(business_id);
-CREATE INDEX idx_payments_invoice ON payments(invoice_id);
-CREATE INDEX idx_payments_customer ON payments(customer_id);
-CREATE INDEX idx_payments_reference ON payments(reference);
-CREATE INDEX idx_payments_status ON payments(status);
-CREATE INDEX idx_payments_provider ON payments(provider);
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS customer_id UUID;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS reference TEXT;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS status TEXT;
+ALTER TABLE payments ADD COLUMN IF NOT EXISTS provider TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_payments_business ON payments(business_id);
+CREATE INDEX IF NOT EXISTS idx_payments_invoice ON payments(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_payments_customer ON payments(customer_id);
+CREATE INDEX IF NOT EXISTS idx_payments_reference ON payments(reference);
+CREATE INDEX IF NOT EXISTS idx_payments_status ON payments(status);
+CREATE INDEX IF NOT EXISTS idx_payments_provider ON payments(provider);
 CREATE INDEX idx_payments_created ON payments(created_at);
 
 -- Payment Refunds
@@ -462,10 +467,14 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_notifications_user ON notifications(user_id, staff_id);
-CREATE INDEX idx_notifications_unread ON notifications(user_id, is_read) WHERE NOT is_read;
-CREATE INDEX idx_notifications_type ON notifications(type);
-CREATE INDEX idx_notifications_created ON notifications(created_at);
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS staff_id UUID;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS is_read BOOLEAN DEFAULT FALSE;
+ALTER TABLE notifications ADD COLUMN IF NOT EXISTS type TEXT;
+
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, staff_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(user_id, is_read) WHERE NOT is_read;
+CREATE INDEX IF NOT EXISTS idx_notifications_type ON notifications(type);
+CREATE INDEX IF NOT EXISTS idx_notifications_created ON notifications(created_at);
 
 -- Notification Preferences
 CREATE TABLE IF NOT EXISTS notification_preferences (
@@ -615,19 +624,24 @@ CREATE POLICY "System can update opt-ins"
   ON whatsapp_optins FOR UPDATE USING (TRUE);
 
 -- Notifications - User can view own
+DROP POLICY IF EXISTS "Users can view own notifications" ON notifications;
 CREATE POLICY "Users can view own notifications"
   ON notifications FOR SELECT
   USING (user_id = auth.uid() OR staff_id IN (SELECT id FROM staff WHERE user_id = auth.uid()));
+DROP POLICY IF EXISTS "System can insert notifications" ON notifications;
 CREATE POLICY "System can insert notifications"
   ON notifications FOR INSERT WITH CHECK (TRUE);
+DROP POLICY IF EXISTS "Users can update own notifications" ON notifications;
 CREATE POLICY "Users can update own notifications"
   ON notifications FOR UPDATE
   USING (user_id = auth.uid() OR staff_id IN (SELECT id FROM staff WHERE user_id = auth.uid()));
 
 -- Notification Preferences
+DROP POLICY IF EXISTS "Users can view own preferences" ON notification_preferences;
 CREATE POLICY "Users can view own preferences"
   ON notification_preferences FOR SELECT
   USING (user_id = auth.uid());
+DROP POLICY IF EXISTS "Users can manage own preferences" ON notification_preferences;
 CREATE POLICY "Users can manage own preferences"
   ON notification_preferences FOR ALL
   USING (user_id = auth.uid());

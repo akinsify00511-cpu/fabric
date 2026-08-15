@@ -179,8 +179,8 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- Match frontend signature
 -- ============================================
 CREATE OR REPLACE FUNCTION create_invite(
-  p_invite_email TEXT,
-  p_invite_role TEXT
+  p_email TEXT,
+  p_role TEXT
 )
 RETURNS TABLE (invite_id UUID, token TEXT) AS $$
 DECLARE
@@ -200,7 +200,7 @@ BEGIN
 
   -- Create invite
   INSERT INTO invites (business_id, email, role, created_by)
-  VALUES (v_business_id, p_invite_email, p_invite_role, v_staff_id)
+  VALUES (v_business_id, p_email, p_role, v_staff_id)
   RETURNING id, token INTO v_invite_id, v_token;
 
   RETURN QUERY SELECT v_invite_id, v_token;
@@ -219,8 +219,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER IF NOT EXISTS projects_updated_at BEFORE UPDATE ON projects FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER IF NOT EXISTS leave_requests_updated_at BEFORE UPDATE ON leave_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS projects_updated_at ON projects;
+CREATE TRIGGER projects_updated_at BEFORE UPDATE ON projects FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS leave_requests_updated_at ON leave_requests;
+CREATE TRIGGER leave_requests_updated_at BEFORE UPDATE ON leave_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
 -- ============================================
 -- FIX AUTH CONTEXT QUERY

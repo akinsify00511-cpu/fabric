@@ -20,6 +20,14 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- ltree: used by 023_organogram (reporting_structure hierarchy type).
 CREATE EXTENSION IF NOT EXISTS ltree;
 
+-- supabase_realtime publication: migrations ALTER this to add tables for
+-- realtime subscriptions. Create it here so ALTER PUBLICATION succeeds.
+-- (CREATE PUBLICATION IF NOT EXISTS is not supported; use a DO block.)
+DO $$ BEGIN
+  CREATE PUBLICATION supabase_realtime;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
+
 -- ------------------------------------------------------------------
 -- Supabase roles (bare Postgres lacks them; migrations GRANT to these)
 -- ------------------------------------------------------------------
@@ -60,6 +68,16 @@ LANGUAGE sql STABLE AS $$ SELECT '{}'::JSONB; $$;
 CREATE OR REPLACE FUNCTION auth.role() RETURNS TEXT
 LANGUAGE sql STABLE AS $$ SELECT 'authenticated'; $$;
 
+-- update_updated_at_column() — defined in 025/026/027 but referenced by
+-- 023 (which sorts before 025). Provide it here so 023's triggers apply.
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$;
+
 -- auth.users — 001's create_business RPC inserts (email, encrypted_password,
 -- raw_user_meta_data) and RETURNING id. Provide those columns + an id PK.
 CREATE TABLE IF NOT EXISTS auth.users (
@@ -80,6 +98,12 @@ CREATE TABLE IF NOT EXISTS storage.buckets (
   public BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- storage.foldername(name) — Supabase storage helper used in RLS policies
+-- (030). Returns the folder path components as a text array.
+CREATE OR REPLACE FUNCTION storage.foldername(p_name TEXT)
+RETURNS TEXT[] LANGUAGE sql STABLE AS $$
+  SELECT string_to_array(p_name, '/');
+$$;
 CREATE TABLE IF NOT EXISTS storage.objects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   bucket_id TEXT REFERENCES storage.buckets(id),

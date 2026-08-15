@@ -10,51 +10,51 @@
 -- ============================================
 -- 1. recognition — CompanyWall.tsx
 -- ============================================
-ALTER TABLE recognition ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "recognition business read"
-  ON recognition FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "recognition business write"
-  ON recognition FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE recognition ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "recognition business read"
+    ON recognition FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  CREATE POLICY "recognition business write"
+    ON recognition FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'recognition not found, skipping'; END $$;
 
 -- ============================================
 -- 2. polls — CompanyWall.tsx
 -- ============================================
-ALTER TABLE polls ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "polls business read"
-  ON polls FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "polls business write"
-  ON polls FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE polls ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "polls business read"
+    ON polls FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  CREATE POLICY "polls business write"
+    ON polls FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'polls not found, skipping'; END $$;
 
 -- ============================================
 -- 3. poll_votes — CompanyWall.tsx
 -- ============================================
-ALTER TABLE poll_votes ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "poll_votes business read"
-  ON poll_votes FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "poll_votes business write"
-  ON poll_votes FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE poll_votes ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "poll_votes business read"
+    ON poll_votes FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  CREATE POLICY "poll_votes business write"
+    ON poll_votes FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'poll_votes not found, skipping'; END $$;
 
 -- ============================================
 -- 4. legal_cases
 -- ============================================
-ALTER TABLE legal_cases ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "legal_cases business read"
+DO $$ BEGIN
+  ALTER TABLE legal_cases ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "legal_cases business read"
   ON legal_cases FOR SELECT
   USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
@@ -63,12 +63,13 @@ CREATE POLICY "legal_cases business write"
   USING (business_id IN (SELECT business_id FROM get_current_staff()))
   WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
 
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'legal_cases not found, skipping'; END $$;
 -- ============================================
 -- 5. legal_contracts
 -- ============================================
-ALTER TABLE legal_contracts ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "legal_contracts business read"
+DO $$ BEGIN
+  ALTER TABLE legal_contracts ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "legal_contracts business read"
   ON legal_contracts FOR SELECT
   USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
@@ -77,12 +78,13 @@ CREATE POLICY "legal_contracts business write"
   USING (business_id IN (SELECT business_id FROM get_current_staff()))
   WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
 
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'legal_contracts not found, skipping'; END $$;
 -- ============================================
 -- 6. legal_obligations
 -- ============================================
-ALTER TABLE legal_obligations ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "legal_obligations business read"
+DO $$ BEGIN
+  ALTER TABLE legal_obligations ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "legal_obligations business read"
   ON legal_obligations FOR SELECT
   USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
@@ -91,40 +93,43 @@ CREATE POLICY "legal_obligations business write"
   USING (business_id IN (SELECT business_id FROM get_current_staff()))
   WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
 
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'legal_obligations not found, skipping'; END $$;
 -- ============================================
 -- 7. decision_log
 -- ============================================
-ALTER TABLE decision_log ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "decision_log business read"
-  ON decision_log FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "decision_log business write"
-  ON decision_log FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE decision_log ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "decision_log business read"
+    ON decision_log FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  
+  CREATE POLICY "decision_log business write"
+    ON decision_log FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'decision_log not found, skipping'; END $$;
 
 -- ============================================
 -- 8. organizational_memory
 -- ============================================
-ALTER TABLE organizational_memory ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "organizational_memory business read"
-  ON organizational_memory FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "organizational_memory business write"
-  ON organizational_memory FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE organizational_memory ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "organizational_memory business read"
+    ON organizational_memory FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  
+  CREATE POLICY "organizational_memory business write"
+    ON organizational_memory FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'organizational_memory not found, skipping'; END $$;
 
 -- ============================================
 -- 9. reality_gaps
 -- ============================================
-ALTER TABLE reality_gaps ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "reality_gaps business read"
+DO $$ BEGIN
+  ALTER TABLE reality_gaps ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "reality_gaps business read"
   ON reality_gaps FOR SELECT
   USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
@@ -133,34 +138,37 @@ CREATE POLICY "reality_gaps business write"
   USING (business_id IN (SELECT business_id FROM get_current_staff()))
   WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
 
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'reality_gaps not found, skipping'; END $$;
 -- ============================================
 -- 10. purchase_requests — procurement
 -- ============================================
-ALTER TABLE purchase_requests ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "purchase_requests business read"
-  ON purchase_requests FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "purchase_requests business write"
-  ON purchase_requests FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+DO $$ BEGIN
+  ALTER TABLE purchase_requests ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "purchase_requests business read"
+    ON purchase_requests FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  CREATE POLICY "purchase_requests business write"
+    ON purchase_requests FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'purchase_requests not found, skipping';
+END $$;
 
 -- ============================================
 -- 11. rfqs — procurement (Request for Quotation)
 -- ============================================
-ALTER TABLE rfqs ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "rfqs business read"
-  ON rfqs FOR SELECT
-  USING (business_id IN (SELECT business_id FROM get_current_staff()));
-
-CREATE POLICY "rfqs business write"
-  ON rfqs FOR ALL
-  USING (business_id IN (SELECT business_id FROM get_current_staff()))
-  WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
-
+DO $$ BEGIN
+  ALTER TABLE rfqs ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "rfqs business read"
+    ON rfqs FOR SELECT
+    USING (business_id IN (SELECT business_id FROM get_current_staff()));
+  
+  CREATE POLICY "rfqs business write"
+    ON rfqs FOR ALL
+    USING (business_id IN (SELECT business_id FROM get_current_staff()))
+    WITH CHECK (business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'rfqs not found, skipping';
+END $$;
 -- ============================================
 -- 12. payroll_items — no direct business_id, joins via payroll_runs
 -- ============================================

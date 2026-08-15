@@ -164,7 +164,7 @@ CREATE TRIGGER authority_graph_updated_at BEFORE UPDATE ON authority_graph
 -- authority (considering active delegation).
 CREATE OR REPLACE FUNCTION can_approve(
   p_business_id UUID, p_staff_id UUID, p_entity_type TEXT, p_amount NUMERIC DEFAULT 0
-) RETURNS TABLE(can BOOLEAN, via UUID, limit NUMERIC, reason TEXT) AS $$
+) RETURNS TABLE(can BOOLEAN, via UUID, approval_limit NUMERIC, reason TEXT) AS $$
 DECLARE
   a RECORD; v_limit NUMERIC;
 BEGIN
@@ -275,7 +275,7 @@ WITH RECURSIVE walk AS (
   WHERE ce.business_id = p_business_id
 )
 SELECT * FROM walk ORDER BY depth, name;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$$ LANGUAGE sql STABLE SECURITY DEFINER;
 
 COMMENT ON TABLE decisions IS 'Organizational memory + learning loop (Doc1 §31; Doc2 §15, §20).';
 COMMENT ON TABLE authority_graph IS 'Authority graph: ownership/approval-limits/delegation/access (Doc1 §15).';

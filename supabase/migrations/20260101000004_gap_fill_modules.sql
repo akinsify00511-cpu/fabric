@@ -248,12 +248,13 @@ DECLARE t TEXT;
 BEGIN
   FOR t IN SELECT unnest(ARRAY[
     'legal_contracts','legal_cases','legal_obligations',
-    'purchase_requests','purchase_request_items','rfqs','rfq_line_items',
+    'purchase_requests','rfqs',
     'polls','poll_votes',
     'organizational_memory','decision_log',
     'reality_gaps','action_reversals'
   ])
   LOOP
+    EXECUTE format('ALTER TABLE %I ADD COLUMN IF NOT EXISTS business_id UUID;', t);
     EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY;', t);
     EXECUTE format(
       'CREATE POLICY %I ON %I FOR ALL USING (business_id IN (SELECT business_id FROM staff WHERE user_id = auth.uid()));',

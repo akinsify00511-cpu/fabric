@@ -87,5 +87,7 @@ CREATE POLICY "Brand assets same business"
 -- ============================================
 -- UPDATED_AT TRIGGERS
 -- ============================================
-CREATE TRIGGER IF NOT EXISTS social_posts_updated_at BEFORE UPDATE ON social_posts FOR EACH ROW EXECUTE FUNCTION update_updated_at();
-CREATE TRIGGER IF NOT EXISTS brand_assets_updated_at BEFORE UPDATE ON brand_assets FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS social_posts_updated_at ON social_posts;
+CREATE TRIGGER social_posts_updated_at BEFORE UPDATE ON social_posts FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+DROP TRIGGER IF EXISTS brand_assets_updated_at ON brand_assets;
+CREATE TRIGGER brand_assets_updated_at BEFORE UPDATE ON brand_assets FOR EACH ROW EXECUTE FUNCTION update_updated_at();

@@ -28,14 +28,21 @@
 
 \set ON_ERROR_STOP on
 
-DROP POLICY IF EXISTS "maintenance_property_viewable_by_business" ON public.maintenance_records;
-CREATE POLICY "maintenance_property_viewable_by_business" ON public.maintenance_records FOR SELECT USING (source_type IN ('property','facility')
-             AND business_id IN (SELECT business_id FROM get_current_staff()));
+ALTER TABLE maintenance_records ADD COLUMN IF NOT EXISTS business_id UUID;
 
-DROP POLICY IF EXISTS "maintenance_property_managing_by_business" ON public.maintenance_records;
+DO $$ BEGIN
+  DROP POLICY IF EXISTS "maintenance_property_viewable_by_business" ON public.maintenance_records;
+  CREATE POLICY "maintenance_property_viewable_by_business" ON public.maintenance_records FOR SELECT USING (source_type IN ('property','facility')
+               AND business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table OR undefined_column THEN RAISE NOTICE 'maintenance_records/source_type not found, skipping'; END $$;
+
+DO $$ BEGIN
+  DROP POLICY IF EXISTS "maintenance_property_managing_by_business" ON public.maintenance_records;
 CREATE POLICY "maintenance_property_managing_by_business" ON public.maintenance_records FOR ALL USING (source_type IN ('property','facility')
              AND business_id IN (SELECT business_id FROM get_current_staff()));
+EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'maintenance_records not found, skipping'; END $$;
 
+-- Remaining tables (timesheets, payment_providers, etc.) should already exist
 DROP POLICY IF EXISTS "timesheets_viewable_by_business" ON public.timesheets;
 CREATE POLICY "timesheets_viewable_by_business" ON public.timesheets FOR SELECT USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
