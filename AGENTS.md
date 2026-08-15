@@ -805,3 +805,45 @@ The Lighthouse Performance CI workflow (`.github/workflows/ux-tests.yml`) was fa
 
 ### Contrast methodology (reusable)
 Small text (text-xs = 12px, text-sm = 14px) needs 4.5:1. Colored text on a soft-tint background of the SAME color (e.g. `color: #1B6FE0` on `rgba(21,91,180,0.08)` = `#e6eef8`) has LOWER contrast than on pure white because the background is a lightened version of the text color. Always calculate contrast against the ACTUAL rendered background, not white. Use `python3` with the WCAG luminance formula (0.2126R + 0.7152G + 0.0722B, gamma-corrected) to verify before shipping.
+
+## Session 19 (2026-08-15): Branch consolidation + RPC signature drift fix + live-DB deployment drift discovery
+
+### Branch consolidation (all branches resolved)
+Audited all 6 open PRs against main using GitHub full-history merge status + CI results + file-level conflict maps + what's already on main.
+- **PR #12 MERGED** (fix/onboarding-loop-pricing-tiers-ci): onboarding loop fix + 5-tier pricing + Deploy Preview CI fix (replaced broken `amondnet/vercel-action@v25` with direct `npm i -g vercel` CLI). This was the blocker — its deploy.yml fix unblocked every other PR's Deploy Preview check.
+- **PR #10 MERGED** (fix/service-worker-release-cache): isolated `public/sw.js` change, zero file overlap. Used GitHub's `update-branch` API (PUT /pulls/{n}/update-branch) to merge main into the PR branch server-side (shallow clone can't merge locally — "unrelated histories"). All checks passed post-update.
+- **PR #6 CLOSED** (feat/dashboard-view-engine): DUPLICATE of main's existing `RepresentationEngine.tsx` (Session 16) + Dashboard's `ViewPicker`. Its migration `20260815130500` fails schema-drift CI (`ALTER TABLE user_preferences` but no migration creates that table). Closing avoids a second competing view engine.
+- **PR #7 CLOSED** (feat/fabric-workspace-phase2): DUPLICATE dashboard; main's Dashboard already implements the same `Representation` type + `RepresentationPicker`. Also failed CI (TS error: `'Icon' cannot be used as a JSX component` at FabricWorkspace.tsx:119 — tuple-array type inference).
+- **PR #5 CLOSED** (fix/production-ci-current): stale, would REVERT main work (migration 110, RepresentationEngine+tests, Landing/Pricing redesigns). Its one unique fix — `send-email-notification` recipient rename — was already on main. CI intent superseded by #12.
+- **PR #2 CLOSED** (fix/ux-test-demo-auth): oldest draft (Aug 6), superseded by main's Session 4/6 UX work. Migrations 035/036 conflict with main.
+- **PR #13 MERGED** (fix/rpc-signature-mismatches): the RPC signature fixes below.
+- **Key lesson:** main already had the "choose your representation" feature the user asked for (Dashboard.tsx ViewPicker + RepresentationEngine.tsx). PRs #6/#7 were parallel duplicate attempts. Always check what's already on main before building.
+
+### RPC signature drift fix (PR #13)
+Systematic scan: `grep -rhoE "\.rpc\('[a-z_]+'" src/` → compare caller params against `CREATE FUNCTION` signatures in migrations. Found 4 flagged; 2 real bugs, 2 false positives (regex artifacts from multi-line signatures / nested Object.fromEntries).
+- **Calendar.tsx `get_events_in_range`:** caller used old 013 signature `(p_start, p_end)` but live DB has 998's signature `(p_business_id, p_start_date, p_end_date)`. Confirmed via PostgREST hint: "Perhaps you meant to call the function get_events_in_range(p_business_id, p_end_date, p_start_date)". Calendar was broken on every load. Fixed to pass business-scoped params.
+- **MarketIndex.tsx `market_intelligence`:** caller passed `{p_business_id}` but migration 063 defines `(p_metric, p_geography)` returning `{benchmarks, count, type, note}`. Caller rendered a non-existent shape (position/benchmark_gap/index_score/signals). Rewrote to call with correct signature across several benchmark metrics + render the actual benchmarks array with provenance. Cleaned error UX (friendly message instead of raw Postgrest dump).
+
+### CRITICAL discovery: live-DB deployment drift (13 of 14 sampled RPCs missing)
+Probed the live Supabase (project `kgsgqvatyleetyquffya`) directly via REST API using the publishable key extracted from the deployed JS bundle (new `sb_publishable_` format, not a JWT — found via `grep -oE '.{0,50}kgsgqvatyleetyquffya.supabase.co.{0,200}'` on the index chunk).
+- **Method to distinguish truly-missing vs signature-mismatch:** call the RPC with `{}` and check the error `details`. `"no matches found in the schema cache"` = function truly doesn't exist. `"Searched for the function with parameter X"` = exists but wrong args (or empty-body test artifact). The empty-body test alone is unreliable — it returns PGRST202 for ANY function requiring params.
+- **Result:** `market_intelligence`, `compute_business_health`, `run_system_health_audit`, `run_recommendation_rules`, `scan_data_quality`, `refresh_business_metrics`, `monthly_review`, `trust_health`, `capacity_intelligence`, `get_org_chart`, `can_access_module`, `create_business_and_owner`, `accept_invite` are ALL TRULY MISSING. Only `get_my_channels` exists.
+- **Root cause:** migrations `063` + `080`–`110` have NOT been applied to the live database. This is deployment drift, not a code bug.
+- **Impact:** `create_business_and_owner` missing = NEW USERS CANNOT ONBOARD (Onboarding.tsx shows "business creation service is not yet configured" — graceful but broken). `can_access_module` missing = module gate treats unknowns as not-ready (safe-closed, but most modules hidden). Entire intelligence layer non-functional.
+- **Frontend already degrades gracefully** for most (best-effort empty states per §24), but some pages surface raw PostgREST errors (MarketIndex was one — now fixed).
+- **BLOCKED on user action:** the user must apply pending migrations (`063` + `080`–`110`) to the live Supabase via `supabase db push` or the dashboard. This cannot be done from the codebase — requires DB credentials/service-role key. This is the single highest-priority deployment action.
+
+### Reusable scan: live-DB RPC existence check
+```bash
+SUPA_URL="https://kgsgqvatyleetyquffya.supabase.co"
+KEY="sb_publishable_..."  # extracted from deployed JS bundle
+for rpc in market_intelligence create_business_and_owner can_access_module; do
+  detail=$(curl -s -X POST "$SUPA_URL/rest/v1/rpc/$rpc" \
+    -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" \
+    -d '{}' | grep -oE '"details":"[^"]*"' | head -1)
+  echo "$detail" | grep -q "no matches" && echo "MISSING: $rpc" || echo "exists: $rpc"
+done
+```
+
+### Verification
+tsc clean, vite build succeeds, 88/88 tests pass. PRs #12, #10, #13 merged to main; #2, #5, #6, #7 closed with explanatory comments. Production deploying.
