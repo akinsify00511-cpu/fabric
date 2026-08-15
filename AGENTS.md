@@ -716,3 +716,23 @@ The reconciliation explicitly verified that all Session 13–14 intelligence/eve
 - Vercel production: ✅ deployed (33d041b). Build + Deploy green.
 - CI: ✅ all jobs green — Type Check, Schema Drift Check (0 drift), Unit Tests (73/73), Migrations Apply Clean (58 applied / 54 historical baseline, smoke test passed), Build.
 - ⚠️ Still needs live DB: apply migrations 080–109, verify RLS, tenant-isolation testing, auth chain verification. All documented in LAYER1_CANONICAL_SCHEMA.md.
+## Session 15 (2026-08-15): Migration chain fully green + schema reconciliation matrix + drift CI gate
+
+Directive: tighten infrastructure so Avenize works as 1 organ (brain coordinating a body = business).
+
+### Migration chain: 16 FAIL to 0 FAIL (112/112 pass)
+Fixed all 16 failing migrations via 20+ test-fix rounds (local Postgres 15 Docker + CI shim). Root causes: generated column chains (031), FK to non-existent clients table (039), missing columns (036/037/038/039/054/998), duplicate policies/triggers (040/998/020/044/053), function signature conflicts (998 get_my_channels, 20260101000002 accept_invite), type mismatches (039 uuid cast, 20260101000006 JOIN/column names), dollar-quote collisions (051), unsupported CREATE TYPE/ADD CONSTRAINT IF NOT EXISTS (998/044), pg_cron/pg_net unavailable in CI (051), seed FK violations (037/031), ON CONFLICT without unique constraint (998), sequence privileges (998), column ordering (20260101000001).
+
+### Schema reconciliation matrix (SCHEMA_MANIFEST.md)
+- Layer 1 (Core): 200 frontend tables backed by CREATE TABLE.
+- Layer 2 (Historical drift): repaired - all column/type mismatches fixed.
+- Layer 3 (Frontend-only): 4 refs verified as views/buckets (0 gaps).
+- Summary: 204/204 tables backed, 78/78 RPCs backed, 0 drift.
+
+### Schema-drift CI gate
+- scripts/schema-drift-check.sh: checks all .from(table) and .rpc(fn) against migrations.
+- .github/workflows/schema-drift.yml: schema-drift + migration-test jobs (Postgres 15, all 112 migrations).
+- Current: 0 drift, 112/112 pass.
+
+### Verification: tsc clean, build succeeds, vitest 73/73, drift 0, migrations 112/112.
+### Commits: 307cb05 (migration fixes, 49 files), 2626858 (manifest + CI gate, 3 files). Both pushed to main.
