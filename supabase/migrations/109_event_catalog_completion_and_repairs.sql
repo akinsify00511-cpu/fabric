@@ -350,7 +350,9 @@ ON CONFLICT (event_type, handler_fn) DO NOTHING;
 -- 6. pg_cron schedules for the detectors (best-effort if pg_cron absent)
 -- ============================================================
 -- Runs daily at 02:15 (after detect_customer_inactive at 02:00 from 090).
-DO $$ BEGIN
+-- Note: outer block uses $_$ delimiter (not $$) because cron.schedule's
+-- SQL argument is itself dollar-quoted with $$.
+DO $_$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron') THEN
     PERFORM cron.schedule(
       'avenize-detect-contracts-expiring',
@@ -364,4 +366,4 @@ DO $$ BEGIN
     );
   END IF;
 EXCEPTION WHEN OTHERS THEN NULL;
-END $$;
+END $_$;

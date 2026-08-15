@@ -56,16 +56,18 @@ CREATE TRIGGER evt_invoice_paid AFTER UPDATE OF status ON invoices
   FOR EACH ROW WHEN (NEW.status = 'paid')
   EXECUTE FUNCTION emit_payment_received();
 
--- DealWon: when a deal/opportunity moves to closed_won. Tolerates either a
+-- DealWon: when a deal/opportunity moves to won. Tolerates either a
 -- 'deals' or 'opportunities' table; uses dynamic SQL so a missing table
--- is a no-op rather than a migration failure.
+-- is a no-op rather than a migration failure. NOTE: deals uses `stage`
+-- (not `status`) per 001; 090 drops+recreates this trigger with the
+-- correct column — this definition is kept in sync so 059 applies clean.
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables
              WHERE table_schema='public' AND table_name='deals') THEN
     EXECUTE $sql$
       CREATE OR REPLACE FUNCTION emit_deal_won() RETURNS TRIGGER AS $fn$
       BEGIN
-        IF (OLD).status IS DISTINCT FROM 'closed_won' AND (NEW).status = 'closed_won' THEN
+        IF (OLD).stage IS DISTINCT FROM 'won' AND (NEW).stage = 'won' THEN
           PERFORM emit_business_event(
             p_business_id := (NEW).business_id,
             p_event_type := 'DealWon',
@@ -81,7 +83,8 @@ DO $$ BEGIN
         RETURN NEW;
       END;
       $fn$ LANGUAGE plpgsql SECURITY DEFINER;
-      CREATE TRIGGER evt_deal_won AFTER UPDATE OF status ON deals
+      DROP TRIGGER IF EXISTS evt_deal_won ON deals;
+      CREATE TRIGGER evt_deal_won AFTER UPDATE OF stage ON deals
         FOR EACH ROW EXECUTE FUNCTION emit_deal_won();
     $sql$;
   END IF;

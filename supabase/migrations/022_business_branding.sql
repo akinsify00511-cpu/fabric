@@ -256,10 +256,12 @@ ALTER TABLE public_pages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_assets ENABLE ROW LEVEL SECURITY;
 
 -- Branding: business owners/managers
+DROP POLICY IF EXISTS "Branding view" ON business_branding;
 CREATE POLICY "Branding view"
   ON business_branding FOR SELECT
   USING (business_id IN (SELECT business_id FROM get_current_staff()));
 
+DROP POLICY IF EXISTS "Branding manage" ON business_branding;
 CREATE POLICY "Branding manage"
   ON business_branding FOR ALL
   USING (business_id IN (SELECT business_id FROM get_current_staff() WHERE role IN ('owner', 'manager')));
