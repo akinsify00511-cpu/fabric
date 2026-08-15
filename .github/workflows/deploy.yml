@@ -33,12 +33,18 @@ jobs:
           VITE_GIT_SHA: ${{ github.sha }}
 
       - name: Deploy to Vercel Preview
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./
+        # Mirrors the production step (which succeeds on main) but without
+        # --prod so Vercel creates a preview deployment. We install the
+        # latest vercel CLI (not a pinned 25.1.0 via the unmaintained
+        # amondnet action) because the pinned CLI rejected `--yes` and could
+        # not retrieve project settings. VERCEL_ORG_ID/VERCEL_PROJECT_ID env
+        # vars link the project without a committed .vercel directory.
+        run: |
+          npm i -g vercel
+          vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   deploy-production:
     name: Deploy Production
