@@ -1,0 +1,71 @@
+name: Schema Drift Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'supabase/migrations/**'
+      - 'scripts/schema-drift-check.sh'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/migrations/**'
+      - 'scripts/schema-drift-check.sh'
+
+jobs:
+  schema-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run schema drift check
+        run: bash scripts/schema-drift-check.sh
+
+  migration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_avenize
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install psql extras (pgcrypto, etc.)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Apply CI shim
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 \
+            -f tests/database/ci_shim.sql
+
+      - name: Run all migrations
+        env:
+          PGPASSWORD: postgres
+        run: |
+          FAIL=0
+          for m in $(ls supabase/migrations/*.sql | sort); do
+            if psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f "$m" > /tmp/migration.log 2>&1; then
+              echo "OK $(basename $m)"
+            else
+              echo "FAIL $(basename $m)"
+              cat /tmp/migration.log
+              FAIL=1
+            fi
+          done
+          exit $FAIL
