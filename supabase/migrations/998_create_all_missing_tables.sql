@@ -751,10 +751,31 @@ CREATE POLICY "Business members can manage monitors" ON monitors FOR ALL
 -- 16. GRANT PERMISSIONS
 -- ============================================
 
+-- Least-privilege grants (§84). Previously this granted ALL functions and
+-- ALL table verbs to BOTH anon and authenticated — a blanket that exposed
+-- every SECURITY DEFINER function (which bypasses RLS) to unauthenticated
+-- callers. RLS is the row-level boundary; these grants are the
+-- verb/function-level boundary.
+--
+-- The only functions anon (unauthenticated) may call are the deliberately
+-- public ones, each granted explicitly in its own migration:
+--   • signing-by-token: 050_public_signing_flow.sql (4 functions)
+--   • SSO provider lookup: 053_sso_providers.sql
+--   • invite info: 20260101000002_auth_functions.sql
+-- Those explicit grants remain; the blanket below no longer extends anon
+-- access to every function in the schema.
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
-GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO anon, authenticated;
+-- Tables: only the CRUD verbs RLS then gates (no TRUNCATE/REFERENCES to
+-- anon/authenticated — those are service-role only).
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+-- anon gets table USAGE so it can reach explicitly-granted public RPCs, but
+-- no blanket table verbs (RLS policies on public-facing tables gate anon).
+GRANT USAGE ON SCHEMA public TO anon;
+-- Functions: authenticated keeps the blanket (app users are authenticated;
+-- RLS + SECURITY DEFINER checks still apply). anon does NOT — it may only
+-- call the explicitly-granted public functions above.
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
 
 -- ============================================
 -- 17. REFRESH SCHEMA CACHE

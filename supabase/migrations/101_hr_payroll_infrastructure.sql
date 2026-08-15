@@ -4,17 +4,11 @@
 -- ============================================
 
 -- Branches / Locations
-CREATE TABLE IF NOT EXISTS branches (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  address TEXT,
-  phone TEXT,
-  email TEXT,
-  is_headquarters BOOLEAN DEFAULT FALSE,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Reconciles with the branches table created by 031_business_infrastructure
+-- (which runs first and wins the CREATE TABLE IF NOT EXISTS). This adds the
+-- is_headquarters column the frontend (BusinessInfrastructure.tsx) expects,
+-- without recreating the table. Idempotent.
+ALTER TABLE branches ADD COLUMN IF NOT EXISTS is_headquarters BOOLEAN DEFAULT FALSE;
 
 -- Staff branch assignments (many-to-many)
 CREATE TABLE IF NOT EXISTS staff_branch_assignments (
