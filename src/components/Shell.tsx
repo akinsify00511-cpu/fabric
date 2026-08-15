@@ -17,6 +17,7 @@ import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
 import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
 import { useUsageTracking } from '../lib/useUsageTracking'
+import { useBusinessPulse } from '../lib/useBusinessPulse'
 import { useLocale } from '../lib/LocaleContext'
 import { useDbState } from '../lib/useDbState'
 import { AvenizeMark } from './AvenizeMark'
@@ -215,6 +216,7 @@ export default function Shell() {
   const { tools: accessibleTools, loading } = useAccessibleTools()
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
   useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
+  const { events: pulseEvents, live: pulseLive } = useBusinessPulse(staff?.business_id)
   const { t } = useLocale()
   const dbState = useDbState()
   const location = useLocation()
@@ -432,6 +434,18 @@ export default function Shell() {
           <kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">\u2318K</kbd>
         </button>
         <div className="ml-auto flex items-center gap-1">
+          {pulseEvents.length > 0 && (
+            <a
+              href="/app/activity"
+              title={pulseLive ? 'Live — business is active' : 'Recent activity'}
+              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] transition"
+            >
+              <span
+                className={`inline-block h-2 w-2 rounded-full ${pulseLive ? 'bg-[var(--av-success)] animate-pulse' : 'bg-[var(--av-text-disabled)]'}`}
+              />
+              {pulseEvents.length}
+            </a>
+          )}
           <NotificationBell />
         </div>
       </header>
