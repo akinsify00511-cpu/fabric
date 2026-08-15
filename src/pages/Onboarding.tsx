@@ -52,10 +52,22 @@ const INDUSTRIES = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { session, refreshStaff, signOut } = useAuth()
+  const { session, staff, refreshStaff, signOut } = useAuth()
   const [step, setStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // A confirmed business membership is the canonical onboarded state. If a
+  // user reaches /onboarding after a refresh, direct URL entry, or a transient
+  // route race, never expose the onboarding wizard again. We deliberately do
+  // NOT check onboarding_completed here: that flag is stale on live DBs that
+  // have not had migration 110 applied, which caused already-onboarded owners
+  // to be trapped in a /app <-> /onboarding loop.
+  useEffect(() => {
+    if (staff?.business_id) {
+      navigate('/app', { replace: true })
+    }
+  }, [staff, navigate])
 
   // Check if already onboarded - redirect to app
   useEffect(() => {
@@ -69,11 +81,11 @@ export default function Onboarding() {
       try {
         const { data: staffData } = await supabase
           .from('staff')
-          .select('onboarding_completed, business_id')
+          .select('business_id')
           .eq('user_id', session.user.id)
           .maybeSingle()
 
-        if (staffData?.business_id && staffData?.onboarding_completed) {
+        if (staffData?.business_id) {
           navigate('/app', { replace: true })
         }
       } catch (err) {

@@ -18,6 +18,7 @@ import RequireModule from './components/RequireModule'
 import type { ModuleKey } from './lib/useModuleAccess'
 import { getUserMfa, mfaRequired, isMfaVerified } from './lib/mfa'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcuts'
+import OnboardingGate from './components/OnboardingGate'
 
 // Initialize QC system on app load
 setupGlobalErrorHandlers()
@@ -296,16 +297,27 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
   // User has a session - check staff record
   if (!staff) {
-    // No staff record - send to onboarding
+    // No staff record at all - this is a genuinely new authenticated user
+    // who has not created/joined a business. Send to onboarding.
     return <Navigate to="/onboarding" replace />
   }
 
-  // Check if onboarding is complete in database
-  if (!staff.onboarding_completed) {
+  // A staff row with a business_id is the authoritative "this user belongs
+  // to an organization" signal. We deliberately do NOT gate on the
+  // onboarding_completed flag here: that flag is a legacy column whose value
+  // is stale on live databases that have not had migration 110 applied
+  // (owners created before the backfill carry onboarding_completed = FALSE).
+  // Gating on it sent already-onboarded users back to /onboarding, where
+  // create_business_and_owner raised "User already belongs to a business",
+  // refreshStaff re-read the still-stale FALSE, and RequireAuth bounced them
+  // straight back — an infinite /app <-> /onboarding loop. business_id is the
+  // real membership record; treat its presence as "onboarded".
+  if (!staff.business_id) {
     return <Navigate to="/onboarding" replace />
   }
 
-  // User is fully authenticated and onboarded - verify MFA then show app
+  // User is fully authenticated and belongs to an organization - verify
+  // MFA then show app
   return (
     <MfaGate>
       <TrialBanner />
@@ -344,7 +356,7 @@ function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/update-password" element={<UpdatePassword />} />
-        <Route path="/onboarding" element={<RequireSession><Onboarding /></RequireSession>} />
+        <Route path="/onboarding" element={<OnboardingGate><Onboarding /></OnboardingGate>} />
         <Route path="/join/:inviteId" element={<Join />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />

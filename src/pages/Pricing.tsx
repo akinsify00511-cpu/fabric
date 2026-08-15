@@ -21,12 +21,16 @@ const BRAND = {
   success: 'var(--av-success)',
 }
 
+// Five tiers mirror the plans defined in the subscription-management edge
+// function (starter / team / business / pro / scale). "Free" is the 7-day
+// trial entry point, not a paid tier. Each card answers the buyer's three
+// questions — Who is this for? What does it solve? When do I move up?
 const PLANS = [
   {
     name: 'Starter',
     price: '₦15,000',
     period: '/month',
-    desc: 'For getting started',
+    desc: 'One person running a simple operation',
     features: ['Core CRM & deals', 'Invoicing with VAT & WHT', 'Tasks & basic approvals', 'Up to 5 team members'],
     cta: 'Start 7-day trial',
     popular: false,
@@ -35,7 +39,7 @@ const PLANS = [
     name: 'Team',
     price: '₦48,000',
     period: '/month',
-    desc: 'For growing teams',
+    desc: 'A small team working together',
     features: ['Everything in Starter', 'AI-assisted capture', 'Department groups', 'Up to 15 seats'],
     cta: 'Start 7-day trial',
     popular: false,
@@ -44,17 +48,26 @@ const PLANS = [
     name: 'Business',
     price: '₦112,000',
     period: '/month',
-    desc: 'For scaling',
+    desc: 'Multiple teams and departments',
     features: ['Everything in Team', 'Multi-location inventory', 'Approval workflows', 'Up to 30 seats'],
     cta: 'Start 7-day trial',
     popular: true,
   },
   {
+    name: 'Pro',
+    price: '₦186,000',
+    period: '/month',
+    desc: 'A growing, complex organization',
+    features: ['Everything in Business', 'Committees & OKRs', 'Advanced intelligence & risk', 'Up to 60 seats'],
+    cta: 'Start 7-day trial',
+    popular: false,
+  },
+  {
     name: 'Scale',
     price: '₦380,000',
     period: '/month',
-    desc: 'For enterprises',
-    features: ['Everything in Business', 'SSO & custom roles', 'Committees & multi-subsidiary', 'Dedicated support'],
+    desc: 'Large or multi-subsidiary operations',
+    features: ['Everything in Pro', 'SSO & custom roles', 'Multi-subsidiary & audit trail', 'Dedicated support'],
     cta: 'Contact sales',
     popular: false,
   },
@@ -186,8 +199,8 @@ export default function Pricing() {
 
       {/* Plans */}
       <section className="py-16 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {PLANS.map(p => <PricingCard key={p.name} plan={p} />)}
           </div>
           <p className="text-center text-sm mt-8" style={{ color: BRAND.textMuted }}>
