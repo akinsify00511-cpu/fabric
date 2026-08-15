@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
-  BarChart3,
   Check,
   ChevronDown,
   CircleDot,
   Grid2X2,
-  List,
   LineChart,
   PieChart,
   Table2,
