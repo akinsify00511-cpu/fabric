@@ -276,14 +276,14 @@ serve(async (req) => {
       emailConfig = await getEmailConfig(supabase, notification.business_id)
     }
 
-    // Get user email
-    const { data: user } = await supabase
+    // Get recipient email (the notification's target user, not the caller)
+    const { data: recipient } = await supabase
       .from('staff')
       .select('email, full_name')
       .eq('user_id', notification.user_id)
       .single()
 
-    if (!user?.email) {
+    if (!recipient?.email) {
       return new Response(JSON.stringify({ 
         error: 'User email not found' 
       }), {
@@ -327,14 +327,14 @@ serve(async (req) => {
     }
 
     // Generate email content
-    const emailHtml = generateEmailHTML(notification, user, appUrl)
+    const emailHtml = generateEmailHTML(notification, recipient, appUrl)
     const emailSubject = notification.title.replace(/[\p{Emoji}]/gu, '').trim()
 
     // Send email via Resend if configured
     if (emailConfig.apiKey) {
       const result = await sendEmailViaResend(
         emailConfig.apiKey,
-        user.email,
+        recipient.email,
         emailSubject,
         emailHtml,
         emailConfig.fromEmail || 'notifications@avenize.com'
@@ -347,7 +347,7 @@ serve(async (req) => {
       }
     } else {
       console.log('📧 Email notification (no API key configured):')
-      console.log('To:', user.email)
+      console.log('To:', recipient.email)
       console.log('Subject:', emailSubject)
     }
 
@@ -362,7 +362,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       success: true,
-      to: user.email,
+      to: recipient.email,
       subject: emailSubject,
       notificationId: notification.id,
       provider: emailConfig.apiKey ? 'resend' : 'none',
