@@ -15,46 +15,48 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_SUPABASE_URL: https://example.supabase.co
-      VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4YW1wbGUiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MTc2OTIwMCwiZXhwIjoxOTU3MzQ1MjAwfQ.fake
+      VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkV4YW1wbGUiLCJyb2xlIjoiYW5vbiJ9.fake
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-      
+
       - run: npm ci
-      
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium webkit
-      
+
       - name: Run accessibility tests
         run: npx playwright test tests/ux/accessibility.spec.ts
         continue-on-error: true
-      
+
       - name: Run keyboard navigation tests
         run: npx playwright test tests/ux/keyboard-navigation.spec.ts
         continue-on-error: true
-      
+
       - name: Run error message tests
         run: npx playwright test tests/ux/error-messages.spec.ts
         continue-on-error: true
-      
+
       - name: Run tap target tests
         run: npx playwright test tests/ux/tap-targets.spec.ts
         continue-on-error: true
-      
+
       - name: Run empty state tests
         run: npx playwright test tests/ux/empty-states.spec.ts
         continue-on-error: true
-      
+
       - name: Run visual regression tests
         run: npx playwright test tests/ux/visual-regression.spec.ts
         continue-on-error: true
+
       - name: Run gap-fill module tests
         run: npx playwright test tests/ux/gap-fill-modules.spec.ts
         continue-on-error: true
+
       - name: Run module gate tests
         run: npx playwright test tests/ux/module-gate.spec.ts
         continue-on-error: true
@@ -67,20 +69,20 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VITE_SUPABASE_URL: https://example.supabase.co
-      VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4YW1wbGUiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MTc2OTIwMCwiZXhwIjoxOTU3MzQ1MjAwfQ.fake
+      VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkV4YW1wbGUiLCJyb2xlIjoiYW5vbiJ9.fake
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-      
+
       - run: npm ci
-      
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium webkit
-      
+
       - name: Run mobile tap target tests
         run: npx playwright test tests/ux/tap-targets.spec.ts --project=Mobile\ Safari
         continue-on-error: true
@@ -93,15 +95,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run build
-      
+
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v11
         with:
