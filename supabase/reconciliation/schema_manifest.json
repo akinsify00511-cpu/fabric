@@ -1,0 +1,3687 @@
+{
+  "generated_by": "scripts/generate_reconciliation_matrix.py",
+  "note": "deployment_status=UNKNOWN for all until live DB checked. has_migration = a CREATE TABLE exists in migrations.",
+  "summary": {
+    "frontend_tables_total": 202,
+    "migration_tables_total": 393,
+    "frontend_rpcs_total": 4,
+    "migration_rpcs_total": 299,
+    "rpcs_with_migration": 4,
+    "rpcs_without_migration": 0,
+    "classification_counts": {
+      "A": 48,
+      "C": 138,
+      "B": 16
+    },
+    "layer1_tables_count": 48,
+    "layer1_missing_migration": []
+  },
+  "tables": [
+    {
+      "table": "accounts",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "010_accounting.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Accounting.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "activity_timeline",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CommentsAndTimeline.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "ai_agents",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "065_ai_roles_automation_convenience_veneer_continuity.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/GovernanceHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "analytics_events",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "019_reports_analytics.sql",
+        "029_beta_testing_infrastructure.sql",
+        "037_analytics_events_system.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/GamificationContext.tsx",
+        "lib/analytics.tsx",
+        "lib/eventTracker.ts"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "announcement_views",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Announcements.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "announcements",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Announcements.tsx",
+        "pages/CompanyWall.tsx",
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "anomaly_events",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "068_self_audit_reconciliation_incidents_flags.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ControlAuditHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "api_keys",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "015_api_webhooks.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/APIKeys.tsx",
+        "pages/APISettings.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "appointments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "043_signatures_appointments_schema.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PublicAppointments.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "approval_actions",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/Approvals.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "approval_decisions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "017_requisitions_approvals.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "approval_requests",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql",
+        "080_fix_cross_tenant_rls_subquery.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts",
+        "pages/Approvals.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "approval_rules",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "072_rls_backfill_cross_tenant_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "approvals",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/PropertySales.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "asset_categories",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/AssetManagement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "assets",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "031_business_infrastructure.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/AssetManagement.tsx",
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "attendance_records",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Attendance.tsx",
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "attendance_summary",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Attendance.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "attention_exceptions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "061_observer_exceptions_indexes.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ObserverView.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "audit_logs",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "012_custom_branding.sql",
+        "038_critical_infrastructure.sql",
+        "056_trigger_based_audit_logging.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "lib/auditLogger.ts",
+        "pages/AuditLog.tsx",
+        "pages/OwnerInsights.tsx",
+        "pages/SecuritySettings.tsx",
+        "pages/TrustRecovery.tsx"
+      ],
+      "consumer_count": 5,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "authority_graph",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "064_org_memory_authority_multicompany.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/GovernanceHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "automation_proposals",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "065_ai_roles_automation_convenience_veneer_continuity.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/GovernanceHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "automation_runs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "007_automations.sql",
+        "20240101000001_automation_webhook_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Automations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "automations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "007_automations.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Automations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "bank_accounts",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "010_accounting.sql",
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceCenter.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "beta_feedback",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "029_beta_testing_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "components/BetaFeedbackButton.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "branches",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "brand_assets",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "003_social_media.sql",
+        "022_business_branding.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Social.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "budgets",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Budgets.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_branding",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "012_custom_branding.sql",
+        "022_business_branding.sql",
+        "041_business_insert_policy.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/BrandingContext.tsx",
+        "lib/PDFGenerator.ts"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_entitlements",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "028_business_entitlements.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useEntitlement.ts",
+        "lib/useToolAccess.ts"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_events",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "058_business_event_bus.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "components/FreshnessBadge.tsx",
+        "lib/businessOS.ts",
+        "lib/useBusinessPulse.ts",
+        "lib/useDbState.tsx"
+      ],
+      "consumer_count": 4,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_feature_overrides",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "029_beta_testing_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useFeatureFlag.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_risks",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "095_risk_register.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/RiskRegister.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "business_subscriptions",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "042_push_subscriptions.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useSubscriptionData.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "businesses",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql",
+        "041_business_insert_policy.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/quality-control.ts",
+        "pages/PublicAppointments.tsx",
+        "pages/Services.tsx",
+        "pages/Social.tsx"
+      ],
+      "consumer_count": 4,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "cashflow",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CashFlow.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "channel_members",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "005_chat.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Chat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "channels",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "005_chat.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Chat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "chat_conversations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LiveChat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "chat_messages",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LiveChat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "clients",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "043_signatures_appointments_schema.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PublicAppointments.tsx",
+        "pages/SMSBroadcast.tsx",
+        "pages/WhatsAppIntegration.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "comments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CommentsAndTimeline.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "commission_rules",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SalesPerformance.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "commissions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "company_documents",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "compliance_items",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "contacts",
+      "classification": "A",
+      "reason": "Layer 1 required (crm_sales)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "crm_sales",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/crm.ts",
+        "pages/CRM.tsx",
+        "pages/CustomerPortal.tsx",
+        "pages/VendorPortal.tsx"
+      ],
+      "consumer_count": 4,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "cost_centers",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Budgets.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "creditors",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceCenter.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "daily_time_summaries",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "018_time_tracking.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/TimeTracking.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "data_exports",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/auditLogger.ts",
+        "pages/DataExport.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "deal_analytics",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SalesPerformance.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "deals",
+      "classification": "A",
+      "reason": "Layer 1 required (crm_sales)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "crm_sales",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CRM.tsx",
+        "pages/Dashboard.tsx",
+        "pages/ExecutiveCockpit.tsx",
+        "pages/OwnerInsights.tsx",
+        "pages/Quotes.tsx",
+        "pages/Reports.tsx",
+        "pages/SalesPerformance.tsx"
+      ],
+      "consumer_count": 7,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "debtors",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceCenter.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "decision_log",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/OrganizationalMemory.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "decisions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "064_org_memory_authority_multicompany.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/GovernanceHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "delivery_orders",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Logistics.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "departments",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "023_company_home_blocks.sql",
+        "033_process_workflow_hr.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Budgets.tsx",
+        "pages/Operations.tsx",
+        "pages/Organization.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "document_folders",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/DocumentsHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "documents",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql",
+        "1001_documents_storage_bucket.sql (storage bucket)"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/DocumentsHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "e_invoices",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/EInvoicing.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "email_campaigns",
+      "classification": "A",
+      "reason": "Layer 1 required (crm_sales)",
+      "has_migration": true,
+      "migration_sources": [
+        "009_email_campaigns.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "crm_sales",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Campaigns.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "email_contacts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "009_email_campaigns.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Campaigns.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "entity_freshness",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "058_business_event_bus.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/SelfAudit.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "entity_freshness_status",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "058_business_event_bus.sql",
+        "080_fix_cross_tenant_rls_subquery.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "lib/businessOS.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "equipment",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Equipment.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "events",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "013_notifications_calendar.sql",
+        "020_events.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Calendar.tsx",
+        "pages/CompanyWall.tsx",
+        "pages/Events.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "exchange_rates",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CurrencyExchange.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "expense_categories",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ExpenseClaims.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "expense_claims",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts",
+        "pages/ExpenseClaims.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "feature_flags",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "029_beta_testing_infrastructure.sql",
+        "068_self_audit_reconciliation_incidents_flags.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useFeatureFlag.ts",
+        "pages/ControlAuditHub.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "functional_role_tools",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "027_functional_roles.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/RoleSettings.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "functional_roles",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "027_functional_roles.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/People.tsx",
+        "pages/RoleSettings.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "goods_receipt_lines",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "045_purchase_vendor_workflow.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PurchaseOrders.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "goods_receipts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "045_purchase_vendor_workflow.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PurchaseOrders.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "heartbeats",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "021_monitoring.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Monitoring.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "incidents",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "021_monitoring.sql",
+        "068_self_audit_reconciliation_incidents_flags.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ControlAuditHub.tsx",
+        "pages/Monitoring.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "inventory",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/InventoryNigeria.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "invoice_items",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Quotes.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "invoices",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts",
+        "pages/Dashboard.tsx",
+        "pages/FinanceNigeria.tsx",
+        "pages/OwnerInsights.tsx",
+        "pages/Quotes.tsx",
+        "pages/Reports.tsx",
+        "pages/SelfAudit.tsx"
+      ],
+      "consumer_count": 7,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "issues",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "job_applications",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx",
+        "pages/Recruitment.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "job_postings",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx",
+        "pages/Recruitment.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "job_types",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "026_job_types.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ProjectSettings.tsx",
+        "pages/ProjectsNigeria.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "jobs",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ProjectsNigeria.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "journal_entries",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "010_accounting.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Accounting.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "kb_page_versions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "006_knowledge_base.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Knowledge.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "kb_pages",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "006_knowledge_base.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Knowledge.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "kb_spaces",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "006_knowledge_base.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Knowledge.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "key_results",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "094_okr_engine.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/OKR.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "kpi_metrics",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "019_reports_analytics.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/OKR.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "lab_samples",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LabQC.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "leads",
+      "classification": "A",
+      "reason": "Layer 1 required (crm_sales)",
+      "has_migration": true,
+      "migration_sources": [
+        "041_business_insert_policy.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "crm_sales",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/crm.ts",
+        "pages/LeadCapture.tsx",
+        "pages/Leads.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "lease_agreements",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LeaseManagement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "leave_balances",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LeaveManagement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "leave_requests",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "002_frontend_compat.sql",
+        "032_fix_plan_pricing.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts",
+        "pages/HumanResources.tsx",
+        "pages/LeaveManagement.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "leave_types",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql",
+        "039_operations_backbone.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LeaveManagement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "legal_cases",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Legal.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "legal_contracts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Legal.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "legal_obligations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Legal.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "liabilities",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "loans",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "maintenance_requests",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/MaintenanceRequests.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "meetings",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Dashboard.tsx",
+        "pages/Meetings.tsx",
+        "pages/MeetingsV2.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "merit_entries",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "004_tasks_merit_cashflow.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CompanyHome.tsx",
+        "pages/Merit.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "message_reactions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "005_chat.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Chat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "messages",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "005_chat.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Chat.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "migration_jobs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "065_ai_roles_automation_convenience_veneer_continuity.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/MigrationPipeline.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "monitors",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "021_monitoring.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Monitoring.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "notification_preferences",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "013_notifications_calendar.sql",
+        "036_notifications_system.sql",
+        "040_payments_email_whatsapp.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Notifications.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "notifications",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "013_notifications_calendar.sql",
+        "036_notifications_system.sql",
+        "040_payments_email_whatsapp.sql",
+        "20240101000001_automation_webhook_tables.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "components/NotificationBell.tsx",
+        "components/Notifications.tsx",
+        "pages/Meetings.tsx",
+        "pages/NotificationsCenter.tsx"
+      ],
+      "consumer_count": 4,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "organizational_memory",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/OrganizationalMemory.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "otp_requests",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000003_sms_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/smsService.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "payment_gateways",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "040_payments_email_whatsapp.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PaymentSettings.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "payments",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "010_accounting.sql",
+        "040_payments_email_whatsapp.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceNigeria.tsx",
+        "pages/PaymentSettings.tsx",
+        "pages/Payments.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "payroll_items",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Payroll.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "payroll_records",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "payroll_runs",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx",
+        "pages/Payroll.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "performance_reviews",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "023_company_home_blocks.sql",
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Appraisals.tsx",
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "persona_discovery_iterations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "069_four_reality_persona_intelligence.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PersonaHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "persona_journeys",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "069_four_reality_persona_intelligence.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PersonaHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "persona_need_signals",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "069_four_reality_persona_intelligence.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PersonaHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "persona_profiles",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "069_four_reality_persona_intelligence.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PersonaHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "poll_votes",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CompanyHome.tsx",
+        "pages/CompanyWall.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "polls",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CompanyHome.tsx",
+        "pages/CompanyWall.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "portal_accounts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "065_ai_roles_automation_convenience_veneer_continuity.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/VendorPortal.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "portal_invitations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "016_customer_portal.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CustomerPortal.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "process_drift_findings",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "067_ai_guardrails_drift_config_impact.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ControlAuditHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "process_workflows",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "products",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PurchaseOrders.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "properties",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/OwnerInsights.tsx",
+        "pages/Properties.tsx",
+        "pages/PropertySales.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "property_commissions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "044_property_vertical_completion.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PropertySales.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "property_owners",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "044_property_vertical_completion.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PropertyOwners.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "property_sales",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "044_property_vertical_completion.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PropertySales.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "purchase_order_items",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "045_purchase_vendor_workflow.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PurchaseOrders.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "purchase_orders",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "045_purchase_vendor_workflow.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/approvalWorkflow.ts",
+        "pages/PurchaseOrders.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "purchase_requests",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Procurement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "quotes",
+      "classification": "A",
+      "reason": "Layer 1 required (crm_sales)",
+      "has_migration": true,
+      "migration_sources": [
+        "048_quotes_table.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "crm_sales",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Quotes.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "reality_gaps",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/RealityGap.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "recognition",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20240101000001_automation_webhook_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/CompanyWall.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "reconciliation_runs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "068_self_audit_reconciliation_incidents_flags.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ControlAuditHub.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "recruitment_stages",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Recruitment.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "recurring_expenses",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "rent_payments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/LeaseManagement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "reporting_channels",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "023_company_home_blocks.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Organogram.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "requisition_categories",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "017_requisitions_approvals.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Requisitions.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "requisitions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "017_requisitions_approvals.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Requisitions.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "resource_bookings",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ResourceBooking.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "resources",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ResourceBooking.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "rfqs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000004_gap_fill_modules.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Procurement.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "sales_targets",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SalesPerformance.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "saved_searches",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/auditLogger.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "search_indexes",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/auditLogger.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "self_audit_findings",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "068_self_audit_reconciliation_incidents_flags.sql",
+        "082_schema_drift_repair.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/ControlAuditHub.tsx",
+        "pages/DataQuality.tsx",
+        "pages/SelfAudit.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "services",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "043_signatures_appointments_schema.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/PublicAppointments.tsx",
+        "pages/Services.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "settings",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/smsService.ts",
+        "pages/EInvoicing.tsx",
+        "pages/Integrations.tsx",
+        "pages/SMS.tsx",
+        "pages/WhatsAppIntegration.tsx"
+      ],
+      "consumer_count": 5,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "signature_requests",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "043_signatures_appointments_schema.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ElectronicSignatures.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "signature_signers",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "043_signatures_appointments_schema.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ElectronicSignatures.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "simulations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "062_simulation_compensation_affordability.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Simulation.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "sms_integrations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "025_integrations.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Integrations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "sms_logs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000003_sms_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/smsService.ts",
+        "pages/SMS.tsx",
+        "pages/SMSBroadcast.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "sms_templates",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SMSBroadcast.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "social_integrations",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "025_integrations.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Integrations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "social_metrics",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "003_social_media.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Social.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "social_posts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "003_social_media.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Social.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "sso_providers",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "014_sso_auth.sql",
+        "053_sso_providers.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SSOSettings.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql",
+        "041_business_insert_policy.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/AuthContext.tsx",
+        "lib/auditLogger.ts",
+        "lib/eventTracker.ts",
+        "lib/quality-control.ts",
+        "lib/useEntitlement.ts",
+        "lib/useFeatureFlag.ts",
+        "pages/Appraisals.tsx",
+        "pages/AuthCallback.tsx",
+        "pages/Calendar.tsx",
+        "pages/Chat.tsx",
+        "pages/CommentsAndTimeline.tsx",
+        "pages/CompanyHome.tsx",
+        "pages/CompanyWall.tsx",
+        "pages/Dashboard.tsx",
+        "pages/ExecutiveCockpit.tsx",
+        "pages/FieldLocation.tsx",
+        "pages/HumanResources.tsx",
+        "pages/Leads.tsx",
+        "pages/Login.tsx",
+        "pages/Meetings.tsx",
+        "pages/Merit.tsx",
+        "pages/OKR.tsx",
+        "pages/Onboarding.tsx",
+        "pages/OwnerInsights.tsx",
+        "pages/Payroll.tsx",
+        "pages/People.tsx",
+        "pages/PersonaHub.tsx",
+        "pages/Profile.tsx",
+        "pages/PropertySales.tsx",
+        "pages/PublicAppointments.tsx",
+        "pages/RiskRegister.tsx",
+        "pages/SMSBroadcast.tsx",
+        "pages/StaffProfile.tsx",
+        "pages/Tasks.tsx",
+        "pages/Tickets.tsx",
+        "pages/WhatsAppIntegration.tsx"
+      ],
+      "consumer_count": 36,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff_assignments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Organization.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff_benefits",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff_commissions",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "031_business_infrastructure.sql",
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SalesPerformance.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff_contracts",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "032_fix_plan_pricing.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "staff_functional_roles",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "027_functional_roles.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useToolAccess.ts",
+        "pages/People.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "standard_procedures",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "033_process_workflow_hr.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Operations.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "stock_movements",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "002_frontend_compat.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/InventoryNigeria.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "strategic_objectives",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "063_intelligence_domains.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "pages/OKR.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "subscription_invoices",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "042_push_subscriptions.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useSubscriptionData.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "subscription_payments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "042_push_subscriptions.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/useSubscriptionData.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "task_comments",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "084_task_management_enhancements.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Tasks.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "task_time_logs",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "084_task_management_enhancements.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Tasks.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "tasks",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "004_tasks_merit_cashflow.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Dashboard.tsx",
+        "pages/ExecutiveCockpit.tsx",
+        "pages/FieldLocation.tsx",
+        "pages/Reports.tsx",
+        "pages/SelfAudit.tsx",
+        "pages/Tasks.tsx"
+      ],
+      "consumer_count": 6,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "teams",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "039_operations_backbone.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Departments.tsx",
+        "pages/Organization.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "ticket_replies",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "008_support_tickets.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Tickets.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "tickets",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "008_support_tickets.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/SelfAudit.tsx",
+        "pages/Tickets.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "time_entries",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "018_time_tracking.sql",
+        "031_business_infrastructure.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/BusinessInfrastructure.tsx",
+        "pages/TimeTracking.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "timesheets",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "055_timesheets_approval_cycle.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/TimeTracking.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "training_records",
+      "classification": "A",
+      "reason": "Layer 1 required (hr)",
+      "has_migration": true,
+      "migration_sources": [
+        "046_missing_table_backfill.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "hr",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/HumanResources.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "transactions",
+      "classification": "A",
+      "reason": "Layer 1 required (accounting)",
+      "has_migration": true,
+      "migration_sources": [
+        "001_initial_schema.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "accounting",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/ExecutiveCockpit.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "usage_events",
+      "classification": "B",
+      "reason": "Intelligence/event infrastructure (preserve)",
+      "has_migration": true,
+      "migration_sources": [
+        "20260101000007_usage_telemetry.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": true,
+      "frontend_consumers": [
+        "lib/useUsageTracking.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "user_achievements",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "011_gamification.sql",
+        "037_analytics_events_system.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/GamificationContext.tsx",
+        "lib/eventTracker.ts"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "user_activity_daily",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "037_analytics_events_system.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/eventTracker.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "user_learning",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "037_analytics_events_system.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/eventTracker.ts"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "user_mfa",
+      "classification": "A",
+      "reason": "Layer 1 required (core)",
+      "has_migration": true,
+      "migration_sources": [
+        "012_custom_branding.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "core",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/mfa.ts",
+        "pages/AuthCallback.tsx",
+        "pages/SecuritySettings.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "user_xp",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "011_gamification.sql",
+        "041_business_insert_policy.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "lib/GamificationContext.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "vat_records",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceCenter.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "vendors",
+      "classification": "A",
+      "reason": "Layer 1 required (inventory)",
+      "has_migration": true,
+      "migration_sources": [
+        "045_purchase_vendor_workflow.sql"
+      ],
+      "layer1": true,
+      "layer1_group": "inventory",
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Procurement.tsx",
+        "pages/PurchaseOrders.tsx",
+        "pages/Vendors.tsx"
+      ],
+      "consumer_count": 3,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "webhook_deliveries",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "015_api_webhooks.sql",
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/Webhooks.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "webhooks",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "015_api_webhooks.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/APISettings.tsx",
+        "pages/Webhooks.tsx"
+      ],
+      "consumer_count": 2,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "whatsapp_messages",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "040_payments_email_whatsapp.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/WhatsAppIntegration.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "whatsapp_templates",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "040_payments_email_whatsapp.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/WhatsAppIntegration.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "wht_records",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "034_sales_tax_banking.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/FinanceCenter.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    },
+    {
+      "table": "workflows",
+      "classification": "C",
+      "reason": "Future/extended feature (outside Layer 1)",
+      "has_migration": true,
+      "migration_sources": [
+        "038_critical_infrastructure.sql"
+      ],
+      "layer1": false,
+      "layer1_group": null,
+      "is_intelligence": false,
+      "frontend_consumers": [
+        "pages/WorkflowBuilder.tsx"
+      ],
+      "consumer_count": 1,
+      "deployment_status": "UNKNOWN"
+    }
+  ],
+  "rpcs": [
+    {
+      "rpc": "get_active_time_entry",
+      "has_migration": true,
+      "migration_sources": [
+        "018_time_tracking.sql",
+        "998_create_all_missing_tables.sql"
+      ]
+    },
+    {
+      "rpc": "get_my_channels",
+      "has_migration": true,
+      "migration_sources": [
+        "005_chat.sql",
+        "998_create_all_missing_tables.sql",
+        "998_create_all_missing_tables.sql"
+      ]
+    },
+    {
+      "rpc": "get_org_chart",
+      "has_migration": true,
+      "migration_sources": [
+        "023_company_home_blocks.sql",
+        "998_create_all_missing_tables.sql"
+      ]
+    },
+    {
+      "rpc": "stop_time_tracking",
+      "has_migration": true,
+      "migration_sources": [
+        "018_time_tracking.sql"
+      ]
+    }
+  ]
+}

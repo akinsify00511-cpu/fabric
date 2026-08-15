@@ -31,6 +31,23 @@ jobs:
         name: TypeScript type check
 
   # ============================================
+  # JOB: Schema Drift Check
+  # Verifies every frontend supabase.from()/.rpc()/.storage.from()
+  # reference has a backing migration. Prevents the frontend from
+  # racing ahead of Supabase. (scripts/check_schema_drift.py)
+  # ============================================
+  schema-drift:
+    name: Schema Drift Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 scripts/check_schema_drift.py
+        name: Check frontend references have backing migrations
+
+  # ============================================
   # JOB: Unit Tests (Vitest)
   # ============================================
   unit-tests:
@@ -146,7 +163,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [typecheck, unit-tests, database-tests]
+    needs: [typecheck, unit-tests, database-tests, schema-drift]
     steps:
       - uses: actions/checkout@v4
       
