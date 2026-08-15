@@ -756,3 +756,28 @@ User request: UI/UX upgrade where users can choose how data is represented, flex
 ### Tests: 15 new (88 total). Formatting (currency K/M/B, percent, duration, null->dash) + recommendation logic (trend when 2+ points, progress when target, breakdown when components, priority ordering).
 
 ### Verification: tsc clean, vite build ZERO warnings, vitest 88/88, schema drift 0. Commit e2f3ada pushed to main.
+
+## Session 17 (2026-08-15): Homepage + marketing pages redesigned for new direction
+
+User request: redesign the homepage, the pages and the marketing pages based on the new direction.
+
+The new direction: "More capable than an ERP. Easier than WhatsApp." Avenize runs your entire business as one connected system. Your organization defines itself. Your people see only what they need to act on.
+
+### LandingEnhanced (marketing homepage) — full rewrite
+- New hero: "More capable than an ERP. Easier than WhatsApp." with a live "My Work" preview card showing "Good morning David, 3 things need you" — the actual product concept.
+- 3 pillars: One organ (connected system), Simple like WhatsApp (attention-first), Your shape not ours (flexible organization).
+- Explainable permissions section: "Why can I do this?" with concrete examples. Key differentiator.
+- Removed ALL fake stats: 2,500+ businesses, N2.5B invoices, fake testimonials. Now honest.
+- Simplified pricing (4 tiers), honest FAQ. Consistent brand tokens.
+
+### CompanyHome (app homepage = /app) — transformed
+- Was a "culture hub" (birthdays/awards/polls). Now "My Work": greeting header, loads real pending approvals + tasks due + unread notifications. Culture moved to secondary tab.
+- Quick Capture button in header. Empty state: "You are all caught up."
+
+### Pricing — full rewrite
+- 4 tiers (was 6 + dead paystackLink fields). Removed fake founding-rate urgency, dark theme. Consistent with landing page. Routes to tracked checkout.
+
+### Signup — messaging update
+- Headline + features aligned with new direction.
+
+Verification: tsc clean, vite build ZERO warnings, vitest 88/88, schema drift 0. Commit f34a1eb pushed.
