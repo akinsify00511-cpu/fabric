@@ -4,7 +4,6 @@ import { supabase } from './supabase'
 import { clearMfaVerified } from './mfa'
 import * as Sentry from '@sentry/react'
 
-// Role definitions with permissions
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
 export type Staff = {
@@ -34,7 +33,6 @@ export type Staff = {
   user?: any
 }
 
-// Role permissions mapping
 export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   owner: ['all'],
   admin: ['manage_staff', 'manage_settings', 'view_reports', 'manage_finance', 'approve_requests'],
@@ -43,13 +41,11 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
   staff: ['view_tasks', 'own_data'],
 }
 
-// Check if user has permission
 export function hasPermission(userRole: UserRole, permission: string): boolean {
   const permissions = ROLE_PERMISSIONS[userRole]
   return permissions.includes('all') || permissions.includes(permission)
 }
 
-// Get role display info
 export const ROLE_CONFIG: Record<UserRole, { label: string; color: string }> = {
   owner: { label: 'Owner', color: 'amber' },
   admin: { label: 'Admin', color: 'purple' },
@@ -63,9 +59,9 @@ type AuthContextValue = {
   staff: Staff | null
   loading: boolean
   staffChecked: boolean
+  signingOut: boolean
   signOut: () => Promise<void>
   refreshStaff: () => Promise<void>
-  // Helper functions
   canManageStaff: boolean
   canApproveRequests: boolean
   canViewReports: boolean
@@ -79,29 +75,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [loading, setLoading] = useState(true)
   const [staffChecked, setStaffChecked] = useState(false)
-  // Monotonic request id. Each session change / manual refresh bumps it so a
-  // stale in-flight fetch (or its scheduled retry) cannot overwrite a fresher
-  // staff record.
+  const [signingOut, setSigningOut] = useState(false)
   const fetchIdRef = useRef(0)
 
   useEffect(() => {
+    let mounted = true
     supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return
       setSession(data.session)
       setLoading(false)
+    }).catch(() => {
+      if (mounted) setLoading(false)
     })
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession)
+      if (!newSession) {
+        setStaff(null)
+        setStaffChecked(true)
+        setSigningOut(false)
+      }
     })
 
-    return () => listener.subscription.unsubscribe()
+    return () => {
+      mounted = false
+      listener.subscription.unsubscribe()
+    }
   }, [])
 
-  // userId is passed explicitly (not read from the session closure) so this
-  // callback is stable across re-renders — only a genuine USER change (login,
-  // logout, account switch) re-fetches, not a new session object reference
-  // (Supabase re-fires INITIAL_SESSION on subscribe, which previously caused a
-  // discarded first fetch + a transient null that bounced users to /onboarding).
   const fetchStaff = useCallback(
     async (userId: string, attempt = 1, myId = fetchIdRef.current) => {
       if (!userId) {
@@ -109,9 +110,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setStaffChecked(true)
         return
       }
-      // Keep the auth gate in its loading state until we have a definitive
-      // answer, so a transient null staff does not bounce an already-onboarded
-      // user to /onboarding and back (which also loses the page they were on).
       if (attempt === 1) setStaffChecked(false)
       try {
         const { data, error } = await supabase
@@ -119,17 +117,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .select('*')
           .eq('user_id', userId)
           .maybeSingle()
-        // A newer fetch superseded this one — drop the result.
         if (myId !== fetchIdRef.current) return
         if (data) {
           setStaff({ ...data, user: session?.user } as Staff)
           setStaffChecked(true)
           return
         }
-        // Distinguish a genuine fetch error from "no staff row exists."
-        // An error (network blip, cold start, PostgREST hiccup) must retry,
-        // not be treated as "user has no staff record" — otherwise an
-        // onboarded user is flashed to /onboarding on refresh.
         if (error) {
           if (attempt < 4 && myId === fetchIdRef.current) {
             const delay = [200, 500, 1200][attempt - 1] || 1500
@@ -138,15 +131,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             }, delay)
             return
           }
-          // Exhausted retries on a hard error — keep the gate loading rather
-          // than bounce to onboarding, since we genuinely don't know whether
-          // the user has a staff record.
           console.warn('Failed to fetch staff after retries:', error)
           setStaffChecked(false)
           return
         }
-        // No error, no data: the user genuinely has no staff row. Retry once
-        // to cover a just-created-row race (signup/onboarding), then conclude.
         if (attempt < 2 && myId === fetchIdRef.current) {
           setTimeout(() => {
             if (myId === fetchIdRef.current) fetchStaff(userId, 2, myId)
@@ -172,9 +160,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [session?.user],
   )
 
-  // Re-fetch only when the authenticated USER changes (by id), not when the
-  // session object reference changes. This avoids the INITIAL_SESSION double
-  // fetch and its discarded-result race.
   const userId = session?.user?.id
   useEffect(() => {
     if (userId) {
@@ -186,7 +171,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [fetchStaff, userId])
 
-  // Update Sentry context when staff changes
   useEffect(() => {
     if (staff) {
       Sentry.setUser({ id: staff.id })
@@ -198,21 +182,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [staff])
 
-  const signOut = async () => {
-    Sentry.setUser(null)
-    // Clear the per-business module-access cache so a different user signing
-    // in next doesn't inherit the previous business's gate results.
-    const { clearModuleAccessCache } = await import('./useModuleAccess')
-    clearModuleAccessCache()
-    // Clear the per-user MFA 'verified' flag so the next sign-in re-challenges.
-    if (session?.user?.id) {
-      clearMfaVerified(session.user.id)
-    }
-    await supabase.auth.signOut()
-  }
+  const signOut = useCallback(async () => {
+    if (signingOut) return
+    setSigningOut(true)
+    const currentUserId = session?.user?.id
 
-  // Manual refresh (after a profile/onboarding mutation). Bumps the request id
-  // so any in-flight auto fetch is discarded and this result wins.
+    // Invalidate all staff fetches immediately. A late request must never
+    // resurrect the previous user's staff record after logout.
+    ++fetchIdRef.current
+    Sentry.setUser(null)
+    if (currentUserId) clearMfaVerified(currentUserId)
+
+    try {
+      // The auth operation is the source of truth and MUST happen before any
+      // optional cleanup. A failing/lazy dynamic import must never prevent the
+      // actual Supabase logout.
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+
+      setSession(null)
+      setStaff(null)
+      setStaffChecked(true)
+
+      // Cache cleanup is best-effort and deliberately non-blocking.
+      void import('./useModuleAccess')
+        .then(({ clearModuleAccessCache }) => clearModuleAccessCache())
+        .catch((err) => console.warn('Module-access cache cleanup failed after sign-out:', err))
+    } catch (error) {
+      // Failed sign-out must leave the user authenticated and retryable.
+      setSigningOut(false)
+      throw error
+    }
+  }, [session?.user?.id, signingOut])
+
   const refreshStaff = useCallback(() => {
     if (!session?.user?.id) return Promise.resolve()
     const id = ++fetchIdRef.current
@@ -231,6 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       staff,
       loading,
       staffChecked,
+      signingOut,
       signOut,
       refreshStaff,
       canManageStaff,
