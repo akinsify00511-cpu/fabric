@@ -4,7 +4,7 @@ import { Home, ArrowLeft, Search } from 'lucide-react'
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-4">
-      <div className="text-center max-w-md">
+      <main className="text-center max-w-md">
         {/* 404 Graphic */}
         <div className="mb-8">
           <div className="text-[120px] font-bold text-transparent bg-clip-text bg-gradient-to-br to-[#4285F4] to-[#8B5CF6] leading-none" style={{ WebkitTextStroke: '2px #E0E7FF' }}>
@@ -19,7 +19,7 @@ export default function NotFound() {
         <h1 className="text-2xl font-bold text-black mb-2">
           Page Not Found
         </h1>
-        <p className="text-black mb-8">
+        <p className="text-[#5F6368] mb-8">
           Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
         </p>
 
@@ -46,7 +46,7 @@ export default function NotFound() {
           <p className="text-sm text-black mb-2">Need help finding something?</p>
           <a
             href="/app"
-            className="inline-flex items-center gap-2 text-sm text-[#4285F4] hover:text-[#4285F4] font-medium"
+            className="inline-flex items-center gap-2 text-sm text-[#1B6FE0] hover:text-[#155BB4] font-medium"
           >
             <Search size={14} />
             Browse all features
@@ -55,12 +55,12 @@ export default function NotFound() {
 
         {/* Quick Links */}
         <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm">
-          <Link to="/pricing" className="text-black hover:text-black">Pricing</Link>
-          <Link to="/login" className="text-black hover:text-black">Login</Link>
-          <Link to="/signup" className="text-black hover:text-black">Sign Up</Link>
-          <Link to="/contact" className="text-black hover:text-black">Contact</Link>
+          <Link to="/pricing" className="text-[#5F6368] hover:text-black">Pricing</Link>
+          <Link to="/login" className="text-[#5F6368] hover:text-black">Login</Link>
+          <Link to="/signup" className="text-[#5F6368] hover:text-black">Sign Up</Link>
+          <Link to="/contact" className="text-[#5F6368] hover:text-black">Contact</Link>
         </div>
-      </div>
+      </main>
     </div>
   )
 }

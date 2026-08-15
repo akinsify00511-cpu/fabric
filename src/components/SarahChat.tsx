@@ -239,6 +239,7 @@ export default function SarahChat() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          aria-label="Open help guide"
           className="fixed bottom-20 md:bottom-4 right-4 w-14 h-14 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 z-50 flex items-center justify-center"
         >
           <MessageCircle size={24} />

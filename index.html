@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Analytics 4 - MUST be first -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2H7DTD5DL7"></script>
+    <!-- Google Analytics 4 — deferred, non-blocking -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-2H7DTD5DL7', { send_page_view: true });
     </script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-2H7DTD5DL7"></script>
     
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -208,10 +208,11 @@
     <!-- iOS Icons -->
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
     
-    <!-- Fonts -->
+    <!-- Fonts — non-blocking load pattern -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
     
     <style>
       /* Critical CSS for fast first paint */

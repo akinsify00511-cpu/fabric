@@ -1,6 +1,8 @@
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import { supabase } from './supabase'
+
+// jsPDF and autoTable are dynamically imported so the 137KB (gzip) PDF library
+// only loads when a user actually generates a PDF — not on every page load.
+// This keeps it out of the initial bundle and modulepreload chain.
 
 interface InvoiceItem {
   description: string
@@ -90,6 +92,8 @@ export async function generateQuotePDF(quote: QuoteData): Promise<void> {
   const tagline = branding.custom_tagline || ''
   const address = branding.address || ''
   
+  const { default: jsPDF } = await import('jspdf')
+  const { default: autoTable } = await import('jspdf-autotable')
   const doc = new jsPDF()
   
   // Header
@@ -188,6 +192,8 @@ export async function generateInvoicePDF(invoice: InvoiceData): Promise<void> {
   const companyName = branding.custom_name || 'Your Business'
   const tagline = branding.custom_tagline || ''
   const address = branding.address || ''
+  const { default: jsPDF } = await import('jspdf')
+  const { default: autoTable } = await import('jspdf-autotable')
   const doc = new jsPDF()
   
   // Header

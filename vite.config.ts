@@ -19,6 +19,7 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 600,
+    modulePreload: false,
   },
   server: {
     port: 5173,

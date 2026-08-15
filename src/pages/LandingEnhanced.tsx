@@ -18,16 +18,18 @@ import {
 import SarahChat from '../components/SarahChat'
 
 const BRAND = {
-  primary: 'var(--av-primary)',
-  primarySoft: 'rgba(66, 133, 244, 0.08)',
-  gradient: 'linear-gradient(135deg, var(--av-primary) 0%, var(--av-primary) 50%, var(--av-success) 100%)',
-  amber: 'var(--av-warning)',
+  primary: '#155BB4',          // dark blue — passes WCAG AA on white AND soft-blue backgrounds (6.3:1)
+  primaryVar: 'var(--av-primary)',  // original brand blue for decorative gradients only
+  primarySoft: 'rgba(21, 91, 180, 0.08)',
+  gradient: 'linear-gradient(135deg, #155BB4 0%, #4285F4 50%, #34A853 100%)',
+  amber: '#845400',            // dark amber — passes AA on white and soft-amber bg (5.2:1)
   surface: '#F8F9FA',
   text: '#202124',
   textSecondary: '#5F6368',
-  textMuted: '#9AA0A6',
+  textMuted: '#5F6368',        // was #9AA0A6 (2.5:1) — now #5F6368 (7:1 on white)
   border: '#E8EAED',
-  success: 'var(--av-success)',
+  success: '#157342',          // dark green — passes AA on white (5:1)
+  danger: '#C5221F',           // darker red — passes AA on white
   purple: '#7C3AED',
 }
 
@@ -125,7 +127,7 @@ function Navbar() {
             <Link to="/signup" className="px-4 py-1.5 text-white text-sm font-medium rounded-md transition shadow-sm" style={{ backgroundColor: BRAND.primary }}>
               Get started
             </Link>
-            <button className="lg:hidden p-2 rounded-md" style={{ color: BRAND.text }} onClick={() => setMobileOpen(!mobileOpen)}>
+            <button className="lg:hidden p-2 rounded-md" style={{ color: BRAND.text }} onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation menu" aria-expanded={mobileOpen}>
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -196,7 +198,7 @@ function HeroSection() {
           <div className="space-y-2">
             <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: BRAND.surface }}>
               <span className="text-sm" style={{ color: BRAND.text }}>Approve ₦1.2M invoice</span>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(234,67,53,0.1)', color: '#EA4335' }}>Action needed</span>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(197,34,31,0.1)', color: BRAND.danger }}>Action needed</span>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: BRAND.surface }}>
               <span className="text-sm" style={{ color: BRAND.text }}>Review Eko project status</span>
@@ -204,7 +206,7 @@ function HeroSection() {
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: BRAND.surface }}>
               <span className="text-sm" style={{ color: BRAND.text }}>Respond to Sarah</span>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(251,188,5,0.1)', color: '#FBBC05' }}>Message</span>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(132,84,0,0.12)', color: BRAND.amber }}>Message</span>
             </div>
           </div>
           <p className="text-xs mt-4 text-center" style={{ color: BRAND.textMuted }}>
@@ -466,6 +468,7 @@ export default function LandingEnhanced() {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
+      <main>
       <HeroSection />
       <PillarsSection />
       <CapabilitiesSection />
@@ -473,6 +476,7 @@ export default function LandingEnhanced() {
       <PricingSection />
       <FAQSection />
       <FinalCTA />
+      </main>
       <Footer />
       <SarahChat />
     </div>

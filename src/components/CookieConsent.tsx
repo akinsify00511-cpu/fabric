@@ -106,6 +106,7 @@ export default function CookieConsent() {
                 <button
                   onClick={() => setShowSettings(false)}
                   className="p-2 hover:bg-black/10 rounded-lg transition"
+                  aria-label="Close cookie settings"
                 >
                   <X className="w-5 h-5 text-black" />
                 </button>
@@ -190,7 +191,7 @@ export default function CookieConsent() {
                 </button>
                 <button
                   onClick={handleAcceptAll}
-                  className="flex-1 px-6 py-3 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] transition"
+                  className="flex-1 px-6 py-3 bg-[#1B6FE0] text-white rounded-xl font-medium hover:bg-[#155BB4] transition"
                 >
                   Accept All
                 </button>
@@ -214,7 +215,7 @@ export default function CookieConsent() {
                   <p className="text-sm text-black mb-4">
                     We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.
                     {' '}
-                    <Link to="/cookies" className="text-[var(--av-primary)] hover:underline">
+                    <Link to="/cookies" className="text-[#1B6FE0] hover:underline">
                       Learn more
                     </Link>
                   </p>
@@ -234,7 +235,7 @@ export default function CookieConsent() {
                     </button>
                     <button
                       onClick={handleAcceptAll}
-                      className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] transition"
+                      className="px-4 py-2 bg-[#1B6FE0] text-white rounded-lg text-sm font-medium hover:bg-[#155BB4] transition"
                     >
                       Accept All
                     </button>
@@ -243,6 +244,7 @@ export default function CookieConsent() {
                 <button
                   onClick={handleRejectAll}
                   className="p-2 hover:bg-black/10 rounded-lg transition shrink-0"
+                  aria-label="Dismiss cookie banner"
                 >
                   <X className="w-5 h-5 text-black" />
                 </button>

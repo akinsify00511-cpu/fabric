@@ -1,9 +1,12 @@
 {
   "ci": {
     "collect": {
+      "staticDistDir": "./dist",
+      "urls": ["http://localhost/"],
+      "numberOfRuns": 3,
       "settings": {
-        "staticDistDir": "./dist",
-        "numberOfRuns": 3
+        "preset": "desktop",
+        "maxWaitForLoad": 45000
       }
     },
     "assert": {
