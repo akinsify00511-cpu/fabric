@@ -650,3 +650,44 @@ Three directive gaps closed — all frontend/internal, no new tables, no externa
 - **§14 action layer (commit 0934f8c):** the outcome-loop RPCs existed but the frontend only flipped claim status — no path from "accepted" to a real task. Accepted recommendations now show an "Act → Create task" button that inserts a real `tasks` row + calls `mark_recommendation_acted` (status→acted, linked_action_id set). Reuses existing tasks table — no new action system (§14). Closes the §15 outcome loop on the frontend.
 
 All best-effort/non-blocking (degrade gracefully when migrations not deployed). tsc clean, build succeeds, 73/73 tests pass. All deployed green.
+
+## Session 15 (2026-08-15): Infrastructure tightening — "one organ, brain coordinating a body"
+
+User directive: tighten infrastructure so the app works as one organism — a brain (central event bus) coordinating a body (modules). 5 batches, each committed + verified before the next. All pushed; CI green; Vercel deployed (commit ceca6c9, run 31881465078).
+
+### Batch A — Repair migration spine (93ad97b)
+- Found 8 duplicate-numbered migration files (023, 031, 032, 039, 041, 042, 082, 999 each had TWO files at the same number). Initial approach: renumber second-of-pair to 100-series. **This was REVERTED in Batch C** — see below.
+- Removed `999_grant_scale_access.sql` (hardcoded a real person's email+UUIDs to grant owner/admin — entitlement granting belongs in the app flow, not schema history).
+- Narrowed `998`'s blanket `GRANT EXECUTE ON ALL FUNCTIONS TO anon` → authenticated-only (anon keeps explicit grants from 050/053). Dropped TRUNCATE from table verbs.
+- Added `108_schema_version_tracking.sql`: `db_schema_version()`/`db_is_current()` so the app can verify DB matches codebase.
+
+### Batch B — Complete the event-bus nerve map (674e667)
+The event bus (058) is the nervous system. Audit of 059/090 found events cataloged but never actually fired:
+- **FIXED InventoryLow (drifted):** `emit_inventory_low` read `reorder_level`/`reorder_point`, but `products` uses `low_stock_threshold` (001) → `v_reorder` was always 0 → guard failed → NEVER fired. Now reads the real column with a fallback chain covering both stock models (`products.low_stock_threshold`, `inventory.reorder_level`). Added re-emission guard (only fires on threshold crossing, not every stock touch).
+- **FIXED EmployeeExited (drifted):** only fired on a staff `status` column that doesn't exist (staff uses `active` BOOLEAN, 002). Now fires on `active` true→false, with a status-based fallback.
+- **ADDED CampaignConverted:** trigger on `email_campaigns` status→sent.
+- **ADDED ContractExpiring:** scheduled detector `detect_contracts_expiring()` for `legal_contracts` within 30 days of `end_date` (like CustomerInactive in 090). Idempotent per day. pg_cron daily 02:15.
+- **ADDED PayrollDue:** scheduled detector `detect_payroll_due()` for `payroll_runs` within 7 days of `period_end`, not yet paid. pg_cron daily 02:30.
+- Client wrappers `detectContractsExpiring`/`detectPayrollDue` in businessOS.ts (best-effort, non-blocking).
+- Fixed 059's DealWon drift (referenced `deals.status` but deals uses `stage`; 090 already had the correct version, 059 now matches).
+
+### Batch C — CI hardening + Batch A regression fix (f58ef97)
+- **BATCH A REGRESSION FIX:** the renumbering broke forward dependencies (e.g. `103_property_management` sorted AFTER `044_property_vertical_completion` which needs the `properties` table). Reverted the renumbering and instead **MERGED** each duplicate pair into a single file at the lower number (content concatenated in order). 8 pairs merged. This gives unique migration numbers AND preserves dependency order.
+- **CI migration-apply gate (the real tighten):** the old `database-tests` job swallowed every error with `|| true` and skipped all assertions — a broken migration shipped green. Replaced with:
+  - `tests/database/ci_shim.sql`: minimal Supabase-compatible surface for bare postgres:15 (auth.uid/jwt/role, auth.users, storage.*, pgcrypto, ltree, supabase_migrations, anon/authenticated/service_role roles).
+  - Apply every migration with `ON_ERROR_STOP=1` (no `|| true`). `continue-on-error: true` on the apply step because ~54 historical migrations have pre-existing apply issues (non-idempotent statements, fresh-DB ordering) — the step's value is the FAILURE REPORT (catches new drift + tracks baseline), not a hard gate.
+  - **Smoke test gate:** core tables (businesses, staff) must be queryable or the build fails. This is the real gate.
+  - `build` job now `needs: [typecheck, unit-tests, database-tests]`.
+- **Drift fixes caught by the new gate:** 109 nested dollar-quoting in pg_cron block (`$$` inside `DO $$` → use `$_$`); 082 missing `DROP CONSTRAINT IF EXISTS` before `deals_stage_check`; 022 missing `DROP POLICY IF EXISTS` before branding policies.
+- **CI result:** 58 applied / 54 failed (historical baseline), smoke test PASSED, build green. The 54 historical failures are documented as known debt — the goal is to not INCREASE this count; new migrations that fail to apply are now immediately visible.
+
+### Batch D — Realtime business pulse (ceca6c9)
+- The event bus wrote to `business_events` and 082 added it to `supabase_realtime` — but nothing in the app LISTENED. The brain was deaf.
+- `useBusinessPulse` hook: subscribes to `business_events` INSERT events via Supabase Realtime (business-scoped via RLS filter). Every time ANY part of the body moves, the hook fires live. Seeds with recent events on mount, appends new ones in real time. Best-effort (realtime failures swallowed).
+- Wired into Shell's top bar: a live pulse indicator (green animated dot + event count) linking to `/app/activity`. The dot animates when the realtime channel is SUBSCRIBED.
+- Channel name per-mount randomized (same pattern as NotificationBell) to avoid the cached-channel subscribe crash.
+
+### Deploy status
+- Vercel production: ✅ deployed (ceca6c9). Build + Deploy green.
+- ⚠️ STILL needs live DB: migrations **080–109** must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until then (pulse shows no events, detectors return 0, recommendations empty) because every caller is best-effort/non-blocking.
+- **CI baseline established:** 58/112 migrations apply clean against bare postgres:15; 54 have historical drift (non-idempotent statements, fresh-DB ordering dependencies). The new CI gate reports these visibly and catches NEW drift. Fixing the 54 is a follow-up that needs the live DB to resolve (many are cascading — an early migration fails, so later ones that depend on its tables also fail).
