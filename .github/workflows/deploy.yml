@@ -17,13 +17,11 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          cache: npm
+      - run: npm ci
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -47,19 +45,18 @@ jobs:
     if: >-
       github.event_name == 'workflow_run' &&
       github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_branch == 'main'
     steps:
       - name: Checkout the exact CI-approved commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
+          cache: npm
+      - run: npm ci
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
