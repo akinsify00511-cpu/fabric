@@ -311,3 +311,21 @@ export async function fetchBusinessHealth(businessId: string): Promise<BusinessH
   if (error) throw error
   return (data || null) as BusinessHealth | null
 }
+
+// ---------- Scheduled Event Detectors (109) ----------
+// Time-based events (ContractExpiring, PayrollDue) are not row-change
+// triggers; they fire when a date approaches. These wrappers let the app
+// run them on demand (e.g. a cockpit "refresh pulse"). pg_cron runs them
+// daily on the server; best-effort and non-blocking.
+
+export async function detectContractsExpiring(windowDays = 30): Promise<number> {
+  const { data, error } = await supabase.rpc('detect_contracts_expiring', { p_window_days: windowDays })
+  if (error) return 0
+  return (data as number) ?? 0
+}
+
+export async function detectPayrollDue(windowDays = 7): Promise<number> {
+  const { data, error } = await supabase.rpc('detect_payroll_due', { p_window_days: windowDays })
+  if (error) return 0
+  return (data as number) ?? 0
+}
