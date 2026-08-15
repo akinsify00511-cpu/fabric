@@ -154,6 +154,13 @@ class EventTracker {
   private cachedUserId: string | null = null
   private cachedBusinessId: string | null = null
   private identityResolved = false
+  // Auth lifecycle: the RPC record_analytics_event requires an authenticated
+  // session (auth.uid()). Without these gates the batch processor fires the
+  // RPC before a JWT is available → 401. We queue until auth is ready,
+  // discard when there is no session, and flush on SIGNED_IN.
+  private authReady = false
+  private hasSession = false
+  private authListenerSetup = false
 
   constructor() {
     // Start batch processor
@@ -166,25 +173,63 @@ class EventTracker {
     if (typeof window !== 'undefined') {
       window.addEventListener('beforeunload', () => this.flush())
     }
+
+    // Wire auth lifecycle so analytics only fires with a valid session
+    this.setupAuthListener()
   }
 
-  // Lazily resolve the current user and their business_id from auth,
-  // instead of relying on window globals that were never set.
+  /**
+   * Single onAuthStateChange subscription (guarded against duplicates).
+   * - INITIAL_SESSION / SIGNED_IN / TOKEN_REFRESHED with a session:
+   *   mark auth ready + has session, flush the queue.
+   * - SIGNED_OUT / no session: mark auth ready, clear session, drop the
+   *   queue so no authenticated analytics RPC fires after logout.
+   */
+  private setupAuthListener(): void {
+    if (this.authListenerSetup) return
+    this.authListenerSetup = true
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session && event !== 'SIGNED_OUT') {
+        this.hasSession = true
+        this.authReady = true
+        if (this.cachedUserId !== session.user.id) {
+          this.cachedUserId = session.user.id
+          this.identityResolved = false // re-resolve business_id for new user
+        }
+        // Flush any events queued while auth was initializing
+        if (this.queue.length > 0) {
+          this.flush()
+        }
+      } else {
+        // SIGNED_OUT or no session
+        this.hasSession = false
+        this.authReady = true
+        this.cachedUserId = null
+        this.cachedBusinessId = null
+        this.identityResolved = false
+        this.queue = [] // clear authenticated analytics queue
+      }
+    })
+  }
+
+  // Lazily resolve the business_id for the current user (user id comes from
+  // the auth listener; no auth.getUser() call needed).
   private async resolveIdentity(): Promise<void> {
     if (this.identityResolved) return
+    if (!this.cachedUserId) {
+      this.identityResolved = true
+      return
+    }
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        this.cachedUserId = user.id
-        const { data: staff } = await supabase
-          .from('staff')
-          .select('business_id')
-          .eq('user_id', user.id)
-          .maybeSingle()
-        this.cachedBusinessId = staff?.business_id ?? null
-      }
+      const { data: staff } = await supabase
+        .from('staff')
+        .select('business_id')
+        .eq('user_id', this.cachedUserId)
+        .maybeSingle()
+      this.cachedBusinessId = staff?.business_id ?? null
     } catch {
-      // leave nulls — analytics recorded without attribution
+      // leave null — analytics recorded without business attribution
     }
     this.identityResolved = true
   }
@@ -285,6 +330,17 @@ class EventTracker {
 
   async flush() {
     if (this.queue.length === 0) return
+
+    // Auth not initialized yet → keep events queued, don't fire the RPC
+    // (which would 401 without a valid JWT).
+    if (!this.authReady) return
+
+    // Auth initialized but no session → not authenticated. Discard events
+    // instead of sending an RPC that will be rejected.
+    if (!this.hasSession) {
+      this.queue = []
+      return
+    }
 
     await this.resolveIdentity()
 
