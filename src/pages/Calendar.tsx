@@ -76,8 +76,9 @@ export default function Calendar() {
       const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59)
 
       const { data } = await supabase.rpc('get_events_in_range', {
-        p_start: startOfMonth.toISOString(),
-        p_end: endOfMonth.toISOString(),
+        p_business_id: staff.business_id,
+        p_start_date: startOfMonth.toISOString(),
+        p_end_date: endOfMonth.toISOString(),
       })
 
       const { data: staffData } = await supabase.from('staff').select('id, full_name, name')
