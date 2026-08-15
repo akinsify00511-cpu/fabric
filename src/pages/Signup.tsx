@@ -2,14 +2,14 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PasswordStrength from '../components/PasswordStrength'
-import { Check, Sparkles, Users, Zap, Shield } from 'lucide-react'
+import { Check, Sparkles, Users, Zap, Shield, Brain, MessageSquare, Network } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 
 const FEATURES = [
-  { icon: Sparkles, textKey: 'signupFeatureAI', text: 'AI-assisted capture — describe what happened in plain language' },
-  { icon: Users, textKey: 'signupFeatureTeam', text: 'Manage your team from anywhere in Nigeria' },
-  { icon: Zap, textKey: 'signupFeatureAutomate', text: 'Automate repetitive tasks and save hours' },
-  { icon: Shield, textKey: 'signupFeatureSecurity', text: 'Bank-level security for your business data' },
+  { icon: Brain, textKey: 'signupFeatureBrain', text: 'One system — CRM, finance, HR, projects, all connected' },
+  { icon: MessageSquare, textKey: 'signupFeatureSimple', text: 'Simple like WhatsApp — your team sees only what they need' },
+  { icon: Network, textKey: 'signupFeatureOrg', text: 'Your organization defines itself — we adapt to your structure' },
+  { icon: Shield, textKey: 'signupFeatureSecurity', text: 'Explainable permissions and audited actions' },
 ]
 
 export default function Signup() {
@@ -212,10 +212,10 @@ export default function Signup() {
         <div className="relative z-10 space-y-8">
           <div className="space-y-4">
             <h1 className="text-4xl font-bold text-white leading-tight">
-              {tr('signupHeadline', 'The Business Operating System for Nigeria')}
+              {tr('signupHeadline', 'More capable than an ERP. Easier than WhatsApp.')}
             </h1>
             <p className="text-xl text-white/80">
-              {tr('signupSubheadline', 'Everything you need to run your business in one powerful platform.')}
+              {tr('signupSubheadline', 'Your business runs as one connected system. Your people see only what they need to act on.')}
             </p>
           </div>
 
