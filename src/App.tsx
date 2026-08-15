@@ -18,6 +18,7 @@ import RequireModule from './components/RequireModule'
 import type { ModuleKey } from './lib/useModuleAccess'
 import { getUserMfa, mfaRequired, isMfaVerified } from './lib/mfa'
 import { KeyboardShortcutsModal } from './components/KeyboardShortcuts'
+import OnboardingGate from './components/OnboardingGate'
 
 // Initialize QC system on app load
 setupGlobalErrorHandlers()
@@ -344,7 +345,7 @@ function AppRoutes() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/update-password" element={<UpdatePassword />} />
-        <Route path="/onboarding" element={<RequireSession><Onboarding /></RequireSession>} />
+        <Route path="/onboarding" element={<OnboardingGate><Onboarding /></OnboardingGate>} />
         <Route path="/join/:inviteId" element={<Join />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
