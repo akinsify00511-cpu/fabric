@@ -20,6 +20,7 @@ import {
   CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
+import { RepresentationEngine, type RepresentableData } from '../components/RepresentationEngine'
 
 type Lens = 'ceo' | 'cfo' | 'coo'
 
@@ -217,12 +218,14 @@ export default function ExecutiveCockpit() {
   )
 }
 
-type Metric = { label: string; value: string; sub?: string; delta?: string; trend?: 'up'|'down'|'flat'; claim: string; icon: any; to: string }
+// Each metric now carries representable data (historical/target/breakdown)
+// so the Representation Engine can offer trend/progress/breakdown views.
+type Metric = RepresentableData & { claim: string; icon: any; }
 
 function deriveMetrics(d: any): Record<Lens, Metric[]> {
   const txns = d?.transactions || []
   const deals = d?.deals || []
-  const staff = d?.staff || []
+  const staffList = d?.staff || []
   const fc = d?.forecast
   const cap = d?.capacity
   const proc = d?.process
@@ -230,70 +233,101 @@ function deriveMetrics(d: any): Record<Lens, Metric[]> {
   const collected = txns.filter((t: any) => t.type === 'income' || t.type === 'credit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
   const spent = txns.filter((t: any) => t.type === 'expense' || t.type === 'debit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
   const pipelineValue = deals.reduce((s: number, t: any) => s + Number(t.value || 0), 0)
-  const activeStaff = staff.filter((s: any) => s.active !== false).length
+  const activeStaff = staffList.filter((s: any) => s.active !== false).length
+
+  // Build a simple monthly historical series from transactions for trend views.
+  const monthlyTotals: Record<string, { income: number; expense: number }> = {}
+  txns.forEach((t: any) => {
+    const mo = t.created_at?.slice(0, 7)
+    if (!mo) return
+    if (!monthlyTotals[mo]) monthlyTotals[mo] = { income: 0, expense: 0 }
+    if (t.type === 'income' || t.type === 'credit') monthlyTotals[mo].income += Number(t.total || 0)
+    if (t.type === 'expense' || t.type === 'debit') monthlyTotals[mo].expense += Number(t.total || 0)
+  })
+  const months = Object.keys(monthlyTotals).sort()
+  const incomeHistory = months.map(m => monthlyTotals[m].income)
+  const expenseHistory = months.map(m => monthlyTotals[m].expense)
+  const netHistory = months.map(m => monthlyTotals[m].income - monthlyTotals[m].expense)
+
+  // Deal stage breakdown for the pipeline.
+  const stageBreakdown: Record<string, number> = {}
+  deals.forEach((dl: any) => {
+    const st = dl.stage || 'unknown'
+    stageBreakdown[st] = (stageBreakdown[st] || 0) + Number(dl.value || 0)
+  })
+
   const projected = fc?.projected_next_months
   const monthlyAvg = fc?.monthly_avg_collected
 
   return {
     ceo: [
-      { label: 'Revenue (collected)', value: naira(collected), sub: monthlyAvg ? `${naira(monthlyAvg)} avg/mo` : undefined, claim: 'FACT', icon: DollarSign, to: '/app/finance' },
-      { label: 'Pipeline value', value: naira(pipelineValue), sub: `${deals.length} deals`, claim: 'FACT', icon: TrendingUp, to: '/app/crm' },
-      { label: 'Active people', value: String(activeStaff), claim: 'FACT', icon: Users, to: '/app/hr' },
-      { label: 'Projected next period', value: projected != null ? naira(projected) : '—', sub: fc?.confidence ? `${Math.round(fc.confidence*100)}% confidence` : undefined, claim: 'ESTIMATE', icon: Activity, to: '/app/intelligence' },
+      { metricKey: 'ceo_revenue', label: 'Revenue (collected)', value: collected, unit: 'currency', historical: incomeHistory.length > 1 ? incomeHistory : undefined, sub: monthlyAvg ? `${naira(monthlyAvg)} avg/mo` : undefined, claim: 'FACT', icon: DollarSign, to: '/app/finance' } as any,
+      { metricKey: 'ceo_pipeline', label: 'Pipeline value', value: pipelineValue, unit: 'currency', breakdown: Object.entries(stageBreakdown).map(([label, value]) => ({ label, value })), claim: 'FACT', icon: TrendingUp, to: '/app/crm' } as any,
+      { metricKey: 'ceo_people', label: 'Active people', value: activeStaff, unit: 'number', claim: 'FACT', icon: Users, to: '/app/hr' } as any,
+      { metricKey: 'ceo_forecast', label: 'Projected next period', value: projected ?? null, unit: 'currency', sub: fc?.confidence ? `${Math.round(fc.confidence*100)}% confidence` : undefined, claim: 'ESTIMATE', icon: Activity, to: '/app/intelligence' } as any,
     ],
     cfo: [
-      { label: 'Cash in', value: naira(collected), claim: 'FACT', icon: Banknote, to: '/app/finance' },
-      { label: 'Cash out', value: naira(spent), claim: 'FACT', icon: Receipt, to: '/app/finance' },
-      { label: 'Net cash', value: naira(collected - spent), trend: collected - spent >= 0 ? 'up' : 'down', claim: 'FACT', icon: DollarSign, to: '/app/cashflow' },
-      { label: 'Revenue forecast', value: projected != null ? naira(projected) : '—', claim: 'ESTIMATE', icon: Activity, to: '/app/scenarios' },
+      { metricKey: 'cfo_cash_in', label: 'Cash in', value: collected, unit: 'currency', historical: incomeHistory.length > 1 ? incomeHistory : undefined, claim: 'FACT', icon: Banknote, to: '/app/finance' } as any,
+      { metricKey: 'cfo_cash_out', label: 'Cash out', value: spent, unit: 'currency', historical: expenseHistory.length > 1 ? expenseHistory : undefined, claim: 'FACT', icon: Receipt, to: '/app/finance' } as any,
+      { metricKey: 'cfo_net', label: 'Net cash', value: collected - spent, unit: 'currency', historical: netHistory.length > 1 ? netHistory : undefined, claim: 'FACT', icon: DollarSign, to: '/app/cashflow' } as any,
+      { metricKey: 'cfo_forecast', label: 'Revenue forecast', value: projected ?? null, unit: 'currency', claim: 'ESTIMATE', icon: Activity, to: '/app/scenarios' } as any,
     ],
     coo: [
-      { label: 'Active people', value: String(activeStaff), claim: 'FACT', icon: Users, to: '/app/hr' },
-      { label: 'Open deals', value: String(deals.length), claim: 'FACT', icon: Briefcase, to: '/app/crm' },
-      { label: 'Capacity utilisation', value: cap?.signals?.utilization_pct ? `${Math.round(cap.signals.utilization_pct)}%` : '—', sub: cap?.recommendation, claim: 'INFERENCE', icon: Gauge, to: '/app/intelligence' },
-      { label: 'Bottleneck stage', value: proc?.bottleneck_stage ? String(proc.bottleneck_stage).replace(/_/g,' ') : 'None', sub: proc?.bottleneck_days ? `${proc.bottleneck_days}d avg` : undefined, claim: 'INFERENCE', icon: AlertTriangle, to: '/app/intelligence' },
+      { metricKey: 'coo_people', label: 'Active people', value: activeStaff, unit: 'number', claim: 'FACT', icon: Users, to: '/app/hr' } as any,
+      { metricKey: 'coo_deals', label: 'Open deals', value: deals.length, unit: 'number', breakdown: Object.entries(stageBreakdown).map(([label, value]) => ({ label, value })), claim: 'FACT', icon: Briefcase, to: '/app/crm' } as any,
+      { metricKey: 'coo_capacity', label: 'Capacity utilisation', value: cap?.signals?.utilization_pct ?? null, unit: 'percent', claim: 'INFERENCE', icon: Gauge, to: '/app/intelligence' } as any,
+      { metricKey: 'coo_bottleneck', label: 'Bottleneck stage', value: null, unit: 'number', claim: 'INFERENCE', icon: AlertTriangle, to: '/app/intelligence' } as any,
     ],
   }
 }
 
-function MetricCard({ label, value, sub, delta, trend, claim, icon: Icon, to }: Metric) {
-  return (
-    <Link to={to} className="block rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] hover:shadow-[var(--av-shadow-md)] transition-shadow">
-      <div className="flex items-start justify-between mb-2">
-        <span className="text-xs font-medium text-[var(--av-text-secondary)]">{label}</span>
-        <Icon size={16} className="text-[var(--av-text-muted)]" />
-      </div>
-      <div className="text-2xl font-bold text-[var(--av-text)]">{value}</div>
-      <div className="flex items-center justify-between mt-2">
-        {sub ? <span className="text-xs text-[var(--av-text-muted)]">{sub}</span> : <span />}
-        <ClaimTag type={claim} />
-      </div>
-      {delta && <div className={`text-xs mt-1 ${trend === 'up' ? 'text-[var(--av-success)]' : trend === 'down' ? 'text-[var(--av-danger)]' : 'text-[var(--av-text-muted)]'}`}>{delta}</div>}
-    </Link>
+function MetricCard({ claim, icon: _icon, to, ...rest }: Metric) {
+  // The Representation Engine renders the number/trend/progress/breakdown/table.
+  // We wrap it in a Link so the whole card drills down, with the ClaimTag footer.
+  const content = (
+    <RepresentationEngine
+      data={rest}
+      compact
+      footer={<ClaimTag type={claim} />}
+    />
   )
+  if (to) {
+    return <Link to={to} className="block relative">{content}</Link>
+  }
+  return content
 }
 
 // Governed, explainable metrics from the registry (migration 086). Each row
 // carries its definition, confidence, and an honest "insufficient data"
 // state — never a fabricated number (§21 small-data safety).
+// Now uses the Representation Engine so users can toggle between number /
+// trend / table for each governed metric.
 function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
   if (!metrics || metrics.length === 0) {
     // The governed metric layer isn't deployed yet, or no metrics refreshed.
     // Non-blocking: render nothing rather than a broken panel.
     return null
   }
-  const fmt = (m: GovernedMetric) => {
-    const v = m.current_value
-    if (v == null || Number.isNaN(v)) return '—'
-    if (m.unit === 'percent') return `${Math.round(v)}%`
-    if (m.unit === 'currency') return naira(v)
-    if (m.unit === 'duration_days') return `${Math.round(v)}d`
-    return Number.isInteger(v) ? `${v}` : v.toFixed(2)
-  }
   const confidenceTone = (c: string) =>
     c === 'high' ? 'FACT' : c === 'medium' || c === 'low' ? 'INFERENCE' : c === 'insufficient' ? 'UNKNOWN' : 'UNKNOWN'
+
+  const toRepresentable = (m: GovernedMetric): RepresentableData => {
+    // Build a minimal historical series from previous→current for the trend view.
+    const historical = m.previous_value != null && m.current_value != null
+      ? [m.previous_value, m.current_value]
+      : undefined
+    return {
+      metricKey: `gov_${m.metric_key}`,
+      label: m.name,
+      value: m.current_value,
+      unit: (['currency', 'percent', 'duration_days', 'number', 'ratio'].includes(m.unit) ? m.unit : 'number') as RepresentableData['unit'],
+      historical,
+      confidence: m.confidence,
+    }
+  }
+
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="rounded-2xl bg-[var(--av-surface-elevated)] p-5 shadow-[var(--av-shadow-sm)] mb-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2">
           <Gauge size={18} className="text-[var(--av-primary)]" /> Governed business metrics
@@ -304,27 +338,23 @@ function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
       </div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {metrics.slice(0, 12).map(m => (
-          <div key={m.metric_key} className="rounded-xl bg-[var(--av-surface)] p-3" title={m.formula}>
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-medium text-[var(--av-text-secondary)] truncate">{m.name}</span>
-              <ClaimTag type={confidenceTone(m.confidence)} />
-            </div>
-            {m.confidence === 'insufficient' ? (
-              <p className="text-xs text-[var(--av-text-muted)] mt-2 leading-snug">
-                {m.insufficient_note || 'Not enough data yet.'}
-              </p>
-            ) : (
-              <>
-                <div className="text-xl font-bold text-[var(--av-text)] mt-1">{fmt(m)}</div>
+          <RepresentationEngine
+            key={m.metric_key}
+            data={toRepresentable(m)}
+            compact
+            className="!shadow-none border border-[var(--av-border)]"
+            footer={
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-[var(--av-text-muted)]">n={m.sample_size} · {m.confidence}</span>
                 {m.change_percent != null && (
-                  <div className={`text-[11px] mt-0.5 ${m.change_percent >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
-                    {m.change_percent >= 0 ? '+' : ''}{m.change_percent}% vs prev
-                  </div>
+                  <span className={`text-[10px] ${m.change_percent >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
+                    {m.change_percent >= 0 ? '+' : ''}{m.change_percent}%
+                  </span>
                 )}
-                <div className="text-[10px] text-[var(--av-text-muted)] mt-0.5">n={m.sample_size} · {m.confidence}</div>
-              </>
-            )}
-          </div>
+                <ClaimTag type={confidenceTone(m.confidence)} />
+              </div>
+            }
+          />
         ))}
       </div>
     </div>

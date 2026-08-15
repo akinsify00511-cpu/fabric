@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useRef, ty
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { clearMfaVerified } from './mfa'
+import { clearModuleAccessCache } from './useModuleAccess'
 import * as Sentry from '@sentry/react'
 
 // Role definitions with permissions
@@ -202,7 +203,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Sentry.setUser(null)
     // Clear the per-business module-access cache so a different user signing
     // in next doesn't inherit the previous business's gate results.
-    const { clearModuleAccessCache } = await import('./useModuleAccess')
     clearModuleAccessCache()
     // Clear the per-user MFA 'verified' flag so the next sign-in re-challenges.
     if (session?.user?.id) {
