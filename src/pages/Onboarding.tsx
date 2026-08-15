@@ -52,10 +52,19 @@ const INDUSTRIES = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { session, refreshStaff, signOut } = useAuth()
+  const { session, staff, refreshStaff, signOut } = useAuth()
   const [step, setStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // A completed staff record is the canonical application-side onboarding
+  // state. If a user reaches /onboarding after a refresh, direct URL entry,
+  // or a transient route race, never expose the onboarding wizard again.
+  useEffect(() => {
+    if (staff?.business_id && staff.onboarding_completed) {
+      navigate('/app', { replace: true })
+    }
+  }, [staff, navigate])
 
   // Check if already onboarded - redirect to app
   useEffect(() => {
