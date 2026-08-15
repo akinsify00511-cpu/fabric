@@ -1,8 +1,12 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
-const CACHE_NAME = 'avenize-v2'
-const STATIC_CACHE = 'avenize-static-v2'
-const DYNAMIC_CACHE = 'avenize-dynamic-v2'
-const IMAGE_CACHE = 'avenize-images-v2'
+// Keep the release version in one place. Bump this value when the service-worker
+// behavior or cache contract changes so old caches are removed on activation.
+const CACHE_VERSION = 'v3'
+const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
+const CACHE_NAME = CACHE_PREFIX
+const STATIC_CACHE = `${CACHE_PREFIX}-static`
+const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
+const IMAGE_CACHE = `${CACHE_PREFIX}-images`
 
 const STATIC_ASSETS = [
   '/',
@@ -16,22 +20,18 @@ const MAX_IMAGE_CACHE_ITEMS = 50
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(STATIC_ASSETS)
-    })
+    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
   )
   self.skipWaiting()
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter((name) => !['avenize-v2', 'avenize-static-v2', 'avenize-dynamic-v2', 'avenize-images-v2'].includes(name))
-          .map((name) => caches.delete(name))
-      )
-    })
+    caches.keys().then((cacheNames) => Promise.all(
+      cacheNames
+        .filter((name) => name.startsWith('avenize-') && !name.startsWith(CACHE_PREFIX))
+        .map((name) => caches.delete(name))
+    ))
   )
   self.clients.claim()
 })
@@ -80,7 +80,8 @@ async function networkFirstWithOfflineFallback(request) {
     const networkResponse = await fetch(request)
     if (networkResponse.ok) {
       const cache = await caches.open(DYNAMIC_CACHE)
-      cache.put(request, networkResponse.clone())
+      await cache.put(request, networkResponse.clone())
+      await trimCache(cache, MAX_CACHE_ITEMS)
     }
     return networkResponse
   } catch (error) {
@@ -109,10 +110,10 @@ async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName)
   const cachedResponse = await cache.match(request)
 
-  fetch(request).then((networkResponse) => {
+  fetch(request).then(async (networkResponse) => {
     if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone())
-      trimCache(cache, MAX_CACHE_ITEMS)
+      await cache.put(request, networkResponse.clone())
+      await trimCache(cache, MAX_CACHE_ITEMS)
     }
   }).catch(() => null)
 
@@ -128,8 +129,8 @@ async function cacheFirstForImages(request) {
   try {
     const networkResponse = await fetch(request)
     if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone())
-      trimCache(cache, MAX_IMAGE_CACHE_ITEMS)
+      await cache.put(request, networkResponse.clone())
+      await trimCache(cache, MAX_IMAGE_CACHE_ITEMS)
     }
     return networkResponse
   } catch (error) {
@@ -142,9 +143,10 @@ async function cacheFirstForImages(request) {
 
 async function trimCache(cache, maxItems) {
   const keys = await cache.keys()
-  if (keys.length > maxItems) {
-    await cache.delete(keys[0])
-  }
+  const excess = keys.length - maxItems
+  if (excess <= 0) return
+
+  await Promise.all(keys.slice(0, excess).map((key) => cache.delete(key)))
 }
 
 // Background sync for offline actions
