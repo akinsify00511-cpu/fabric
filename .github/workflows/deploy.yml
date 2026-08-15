@@ -1,10 +1,14 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
 
 jobs:
   deploy-preview:
@@ -13,16 +17,13 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -31,7 +32,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GIT_SHA: ${{ github.sha }}
-
       - name: Deploy to Vercel Preview
         uses: amondnet/vercel-action@v25
         with:
@@ -44,19 +44,22 @@ jobs:
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     steps:
-      - uses: actions/checkout@v4
-
+      - name: Checkout the exact CI-approved commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -64,8 +67,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_GIT_SHA: ${{ github.sha }}
-
+          VITE_GIT_SHA: ${{ github.event.workflow_run.head_sha }}
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
