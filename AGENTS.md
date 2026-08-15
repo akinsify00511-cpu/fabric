@@ -691,3 +691,28 @@ The event bus (058) is the nervous system. Audit of 059/090 found events catalog
 - Vercel production: ✅ deployed (ceca6c9). Build + Deploy green.
 - ⚠️ STILL needs live DB: migrations **080–109** must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until then (pulse shows no events, detectors return 0, recommendations empty) because every caller is best-effort/non-blocking.
 - **CI baseline established:** 58/112 migrations apply clean against bare postgres:15; 54 have historical drift (non-idempotent statements, fresh-DB ordering dependencies). The new CI gate reports these visibly and catches NEW drift. Fixing the 54 is a follow-up that needs the live DB to resolve (many are cascading — an early migration fails, so later ones that depend on its tables also fail).
+
+## Session 15b (2026-08-15): Supabase reconciliation — database contract + schema-drift CI gate
+
+Triggered by a board-level directive: do NOT blindly deploy 116 missing tables. Instead, establish the canonical Layer 1 schema and reconcile the live database against it. The directive classified the "missing tables" into 6 categories (A-F) and demanded a machine-readable manifest + a CI drift check to prevent the frontend from racing ahead of Supabase again.
+
+### The key finding (contradicts the "116 missing tables" premise)
+- Built `scripts/generate_reconciliation_matrix.py` — cross-references frontend `.from()` references (202 tables, excluding storage buckets) against migration `CREATE TABLE`/`CREATE VIEW` (393 tables+views) + `CREATE FUNCTION` (RPCs).
+- **Class F (drift — frontend references a table with NO backing migration) = ZERO.** Every frontend table reference has a backing migration (CREATE TABLE or CREATE VIEW). Every frontend RPC (4) has a backing CREATE FUNCTION. Every storage bucket (3: avatars, documents, signatures) has a backing `INSERT INTO storage.buckets`.
+- The "116 missing tables" gap (frontend 204 vs live 88) is **DEPLOYMENT drift** — migrations exist in Git but haven't been applied to the live Supabase (project `kgsgqvatyleetyquffya`). The fix is to apply pending migrations, NOT to write 116 new ones. This is a critical distinction that changes the entire remediation strategy.
+- Classification: A=48 (Layer 1 required), B=16 (intelligence/event infra — preserve), C=138 (future/extended feature), D=0, E=0, F=0.
+
+### Deliverables
+- **`supabase/reconciliation/RECONCILIATION_MATRIX.md`** — the A-F classified matrix for all 202 frontend-referenced tables, with migration sources, consumer counts, and Layer 1 / intelligence flags.
+- **`supabase/reconciliation/schema_manifest.json`** — the machine-readable database contract (table, classification, has_migration, migration_sources, layer1, is_intelligence, frontend_consumers, deployment_status=UNKNOWN until live DB checked).
+- **`supabase/reconciliation/LAYER1_CANONICAL_SCHEMA.md`** — explicitly defines the 48 Layer 1 tables (CRM/Sales 16, Inventory 12, Accounting 18, HR 18, Core 10 — some overlap) with purpose + migration source for each. Documents the source-of-truth hierarchy, the deployment gate, and the intelligence tables that must be preserved. Lists what needs live DB access.
+- **`scripts/check_schema_drift.py`** — the CI drift detector. Scans frontend for `.from()`, `.rpc()`, `.storage.from()` references; verifies each has a backing migration; exits 1 if any reference is unbacked. Excludes `storage.from()` (storage buckets aren't table queries) and catches `CREATE VIEW` (not just `CREATE TABLE`).
+- **CI job `schema-drift`** — runs on every PR; build now `needs: [typecheck, unit-tests, database-tests, schema-drift]`. A new page querying a table with no migration fails CI before merge.
+
+### Intelligence work verified intact
+The reconciliation explicitly verified that all Session 13–14 intelligence/event tables (business_events, claims, kpi_metrics, business_health_scores, key_results, business_risks, self_audit_findings, action_reversals, etc.) are classified B (preserve) and have backing migrations. The recommendation loop (Insight → Recommendation → Accept → Action → Outcome → Effectiveness) remains intact.
+
+### Deploy status
+- Vercel production: ✅ deployed (33d041b). Build + Deploy green.
+- CI: ✅ all jobs green — Type Check, Schema Drift Check (0 drift), Unit Tests (73/73), Migrations Apply Clean (58 applied / 54 historical baseline, smoke test passed), Build.
+- ⚠️ Still needs live DB: apply migrations 080–109, verify RLS, tenant-isolation testing, auth chain verification. All documented in LAYER1_CANONICAL_SCHEMA.md.
