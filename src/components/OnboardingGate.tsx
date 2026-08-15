@@ -29,7 +29,11 @@ export default function OnboardingGate({ children }: { children: React.ReactNode
     return <Navigate to="/login" replace />
   }
 
-  if (staff?.business_id && staff.onboarding_completed) {
+  if (staff?.business_id) {
+    // A confirmed business membership means the user is already onboarded.
+    // Do NOT gate on onboarding_completed: that flag is stale on live DBs
+    // that have not had migration 110 applied, which previously let an
+    // already-onboarded owner see the wizard on refresh/direct URL entry.
     return <Navigate to="/app" replace />
   }
 
