@@ -736,3 +736,23 @@ Fixed all 16 failing migrations via 20+ test-fix rounds (local Postgres 15 Docke
 
 ### Verification: tsc clean, build succeeds, vitest 73/73, drift 0, migrations 112/112.
 ### Commits: 307cb05 (migration fixes, 49 files), 2626858 (manifest + CI gate, 3 files). Both pushed to main.
+
+## Session 16 (2026-08-15): Representation Engine + build warning fix
+
+User request: UI/UX upgrade where users can choose how data is represented, flexible but beautiful. Also fix the build warning.
+
+### Build warning fixed
+- INEFFECTIVE_DYNAMIC_IMPORT: AuthContext dynamically imported useModuleAccess (to avoid circular dep), but RequireModule + Shell already import it statically so it was in the same chunk. Converted to static import. Build now has ZERO warnings.
+
+### Representation Engine (src/components/RepresentationEngine.tsx)
+- Reusable component: users choose how a metric is displayed - Number / Trend (SVG sparkline) / Progress (bar toward target) / Breakdown (stacked bar + legend) / Table (key/value rows).
+- Smart recommendation: recommends based on available data (historical > target > breakdown > number). User can override via dropdown; choice persists in localStorage per metric.
+- No external charting library - SVG sparklines + CSS bars only (build-from-within).
+
+### Wired into Executive Cockpit
+- MetricCard: metrics now carry historical (monthly income/expense/net from transactions) + breakdown (deal stage values) so users toggle representations.
+- GovernedMetricsCard: each governed metric uses the engine with 2-point trend (previous->current) + table view.
+
+### Tests: 15 new (88 total). Formatting (currency K/M/B, percent, duration, null->dash) + recommendation logic (trend when 2+ points, progress when target, breakdown when components, priority ordering).
+
+### Verification: tsc clean, vite build ZERO warnings, vitest 88/88, schema drift 0. Commit e2f3ada pushed to main.
