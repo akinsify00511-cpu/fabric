@@ -1,0 +1,5 @@
+# Production-sensitive areas require explicit ownership/review.
+* @akinsify00511-cpu
+/.github/workflows/ @akinsify00511-cpu
+/supabase/ @akinsify00511-cpu
+/src/ @akinsify00511-cpu
