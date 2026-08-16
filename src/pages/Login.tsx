@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 import { AvenizeMark } from '../components/AvenizeMark'
 import {
   getUserMfa, mfaRequired, verifyTotpCode, parseBackupCodeHashes,
@@ -29,6 +30,7 @@ const BRAND = {
 
 export default function Login() {
   const navigate = useNavigate()
+  const { session: ctxSession, staff, staffChecked } = useAuth()
   const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -52,11 +54,7 @@ export default function Login() {
       .maybeSingle()
 
     setLoading(false)
-    if (staffData?.business_id) {
-      navigate('/app')
-    } else {
-      navigate('/onboarding')
-    }
+    navigate(resolveDestination(!!staffData?.business_id), { replace: true })
   }
 
   // Verify the TOTP code (or a backup code) and, on success, mark MFA cleared
@@ -93,37 +91,61 @@ export default function Login() {
     }
   }
 
+  // Resolve where to go after a successful login. Honours ?redirect= (set by
+  // RequireAuth when bouncing an expired session) so a user returns to the
+  // page they were on instead of always landing on the dashboard. Falls back
+  // to /app for onboarded users and /onboarding for new users.
+  const resolveDestination = (hasBusiness: boolean): string => {
+    const redirect = searchParams.get('redirect')
+    if (redirect && redirect.startsWith('/app/') && !redirect.includes('//')) {
+      return redirect
+    }
+    return hasBusiness ? '/app' : '/onboarding'
+  }
+
   // If we arrive with an existing session (OAuth callback redirect, or a page
-  // refresh while the session cookie is still valid), honour the MFA gate
-  // instead of silently dropping the user into the app.
+  // refresh while the session cookie is still valid), honour the MFA gate.
+  // This effect does NOT do its own staff lookup: AuthContext's fetchStaff
+  // already does the authoritative, retry-protected read (4 empty-read
+  // retries to absorb the auth-token/RLS readiness race). Doing a separate
+  // single .maybeSingle() here previously raced that protection and sent an
+  // already-onboarded user to /onboarding on a transient empty read. We read
+  // the MFA row ourselves (Login-specific challenge UI) but defer the
+  // business/onboarding decision to AuthContext's `staff`/`staffChecked`.
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
 
+      // MFA challenge is Login-specific: the challenge UI lives here, so we
+      // read the user_mfa row ourselves. RequireAuth's MfaGate handles the
+      // in-app MFA enforcement separately.
       const mfa = await getUserMfa(session)
       if (mfaRequired(mfa)) {
-        // MFA enabled — show challenge, do NOT navigate to /app yet.
+        // MFA enabled — show challenge, do NOT navigate yet.
         setMfaChallenge(mfa)
         setLoading(false)
         return
       }
 
-      const { data: staffData } = await supabase
-        .from('staff')
-        .select('business_id')
-        .eq('user_id', session.user.id)
-        .maybeSingle()
-
-      if (staffData?.business_id) {
-        navigate('/app', { replace: true })
-      } else {
-        navigate('/onboarding', { replace: true })
-      }
+      // No MFA required. Defer the /app vs /onboarding decision to
+      // AuthContext's staff state (retry-protected). The redirect effect
+      // below fires once staffChecked resolves.
     }
     checkSession()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, searchParams.get('mfa')])
+
+  // Redirect an already-authenticated (non-MFA) user away from the login
+  // page, using AuthContext's authoritative staff state. Fires when the
+  // session is present, MFA is not pending, and the staff lookup has settled
+  // (staffChecked) — so it never acts on a transient empty read.
+  useEffect(() => {
+    if (mfaChallenge) return // MFA challenge in progress; stay on Login.
+    if (!ctxSession || !staffChecked) return
+    navigate(resolveDestination(!!staff?.business_id), { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctxSession, staffChecked, staff, mfaChallenge])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()

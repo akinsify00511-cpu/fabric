@@ -959,3 +959,22 @@ The 401 was NOT just an auth-timing issue (the earlier "half-fix" added auth-lif
 
 ### Verification (P0.2)
 tsc clean, vite build 0 warnings, vitest 94/94, schema-drift 0. Migration 111 idempotent (`ADD COLUMN IF NOT EXISTS`, `DROP FUNCTION IF EXISTS`, `CREATE OR REPLACE`). Needs live-DB application (same deploy-gate as the rest of 080–110) to actually stop the 401, but the client now degrades cleanly until then.
+
+### P0.3 -- Authentication/session persistence audit + 2 gaps closed
+Audited all 7 session-persistence scenarios the user listed against the codebase. 5 were already sound (verified, no change). 2 real gaps found and fixed:
+
+**Gap A -- Onboarding flash NOT fully closed (Login.checkSession raced AuthContext).** Login.tsx's existing-session effect did its OWN single `.maybeSingle()` staff lookup with NO retry, racing AuthContext's 4-empty-read-retry-protected `fetchStaff`. Right after an OAuth callback redirect (or any case where the auth token/RLS context isn't ready on the first tick), Login's single read returned empty → navigated to `/onboarding` — re-introducing the onboarding-flash bug AuthContext was hardened against (Session 12). Fix: Login.checkSession now does ONLY the MFA-challenge read (Login-specific UI) and defers the `/app` vs `/onboarding` decision to AuthContext's `staff`/`staffChecked` state via a new redirect effect that fires only when `staffChecked` is true. No more racy independent staff lookup.
+
+**Gap B -- No return-to-page preservation.** When a session expired mid-session, RequireAuth bounced to `/login` and after re-login the user always landed on `/app` (dashboard), losing their place. Fix: RequireAuth now encodes the current `/app/*` path as `?redirect=` when bouncing to `/login`. Login's `resolveDestination()` reads it (validated: must start with `/app/`, no `//` to prevent open-redirect) and navigates there after a successful password login or MFA challenge. Falls back to `/app`/`/onboarding` when no redirect.
+
+**Scenarios verified sound (no change needed):**
+1. Full login → session restoration → onboarding state: `getSession`→`setSession`→`fetchStaff`→`RequireAuth` checks `session+staffChecked+staff.business_id`; `OnboardingGate` mirrors it. Two independent gates converge on `business_id` as the authoritative "onboarded" signal (not the stale `onboarding_completed` flag).
+2. Already-onboarded user never sent back: RequireAuth redirects to `/onboarding` ONLY if `!staff || !staff.business_id`; fetchStaff retries 4× on empty; OnboardingGate + Onboarding.tsx both redirect to `/app` if `staff.business_id`; Onboarding handles the "already belongs to a business" RPC error via `refreshStaff`→`/app`.
+3. Refresh doesn't show wizard: `OnboardingGate`/`RequireAuth` show a spinner while `loading || (session && !staffChecked)`; `staffChecked` stays false while staff resolves.
+4. Logout → login restores correct state: `signOut` clears session+staff+staffChecked, bumps `fetchIdRef`+`authGenerationRef` (stale requests discarded), clears module/experience/mfa caches. Re-login re-fetches staff for the new userId.
+5. Expired sessions don't loop: `SIGNED_OUT` handler clears state + `staffChecked=true`; `TOKEN_REFRESHED` with null session → `setSession(null)` → RequireAuth → `/login`. No loop.
+6. Service-worker cache: closed in R1.2 (`/sw.js` max-age=0, `updatefound`→reload, version-purge).
+7. `create_business_and_owner` anonymous-RPC: handled gracefully client-side (Onboarding + AuthCallback detect PGRST202 → appropriate fallback); genuinely blocked on live-DB migration application (same deploy-gate as #1/#2).
+
+### Verification (P0.3)
+tsc clean, vite build 0 warnings, vitest 94/94. Changes: `src/pages/Login.tsx` (removed racy staff lookup; use AuthContext staff state; returnTo), `src/App.tsx` (RequireAuth encodes `?redirect=`), no migration/RPC changes.

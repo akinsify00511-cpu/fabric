@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
@@ -245,6 +245,7 @@ function RequireSession({ children }: { children: React.ReactNode }) {
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const { session, loading, staff, staffChecked, refreshStaff } = useAuth()
   const [stuck, setStuck] = useState(false)
+  const location = useLocation()
 
   // Safety net: if the staff fetch hasn't resolved after several seconds
   // (DB unreachable / all retries exhausted on a hard error), stop spinning
@@ -291,9 +292,13 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // No session - redirect to login
+  // No session - redirect to login. Preserve the page the user was trying to
+  // reach (only for in-app routes) so re-login returns them there instead of
+  // always dropping them on the dashboard.
   if (!session) {
-    return <Navigate to="/login" replace />
+    const inApp = location.pathname.startsWith('/app/')
+    const dest = inApp ? `/login?redirect=${encodeURIComponent(location.pathname + location.search)}` : '/login'
+    return <Navigate to={dest} replace />
   }
 
   // User has a session - check staff record
