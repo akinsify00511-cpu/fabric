@@ -3,20 +3,17 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import './index.css'
+import './lib/normalizeEscapedUnicode'
 import App from './App.tsx'
 import { initErrorCapture } from './lib/errorCapture'
 
-// Initialize Sentry for error monitoring
-// Set VITE_SENTRY_DSN in .env to enable
 if (import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
-    tracesSampleRate: 0.1, // 10% of transactions
+    tracesSampleRate: 0.1,
     environment: import.meta.env.VITE_APP_ENV || import.meta.env.MODE || 'development',
     release: import.meta.env.VITE_GIT_SHA || 'dev',
-    // Enable global error capture
     beforeSend(event) {
-      // Add app context to every event
       event.tags = {
         ...event.tags,
         app_version: import.meta.env.VITE_GIT_SHA || 'unknown',
@@ -25,8 +22,6 @@ if (import.meta.env.VITE_SENTRY_DSN) {
       return event
     },
   })
-
-  // Initialize console error capture
   initErrorCapture()
 }
 
