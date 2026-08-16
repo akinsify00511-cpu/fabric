@@ -911,3 +911,17 @@ Rewrote `Dashboard.tsx` (was minified, showed the same 4 generic KPIs to every u
 
 ### Verification (P2.10)
 tsc clean, vite build 0 warnings, vitest 88/88, schema-drift 0 (204 tables).
+
+## Session 21 (2026-08-16): ROUND 1 production defect closure + ROUND 2 Experience Context
+
+### R1.2 -- Service-worker cache lifecycle (closed)
+Existing SW (`public/sw.js`) already purges legacy caches on activate (`avenize-*` not matching current `v3` prefix) + `skipWaiting`/`clients.claim`. `vercel.json` already serves `/sw.js` with `Cache-Control: max-age=0, must-revalidate` (browser always revalidates the SW file). The ONE gap: `index.html` registration didn't listen for `updatefound`, so an existing PWA installation installed the new SW but only activated it on the *next* manual navigation. Fixed: registration now adds an `updatefound` -> `statechange` ('installed' + an existing controller) -> `controllerchange` -> one-time `window.location.reload()` chain. An existing installation now receives the new bundle and activates it automatically without manual cache deletion. No infinite loop: after reload there's no newer 'installed' state. Verified: tsc/tests/build green.
+
+### R1.3 -- Repo-wide unicode-escape sweep (clean)
+Searched for `\u2026`/`\u2138`/`\u2318`/`/u2026`/`/u2138k` and any `/u[0-9a-f]{3,}` routes across src/ + public/ + index.html. ZERO malformed route artifacts. The hits in `useToolOnboarding.ts`/`Reports.tsx`/`CashFlow.tsx` are VALID JS string escapes (`\u2019` apostrophe, `\u2014` em-dash, `\u20a6` naira) inside string literals — render correctly, not malformed. No router/command-palette/notification/SW route contains escaped unicode. Already fixed in prior sessions; confirmed clean.
+
+### R1.4 -- Repo-wide FABRIC/stale-naming sweep (clean)
+Searched for `FABRIC` (exact, product-name) + `fabric` in manifest/title/SEO/Landing. ZERO product-name references. Only matches are the English word "fabricated" in code comments (legitimate). Manifest/SEO/onboarding/empty states all present as Avenize. Confirmed clean.
+
+### R1.5 -- Route integrity sweep (clean)
+Reused the Session-12 diff method: registered nested routes (144) vs referenced `/app/*` links (109). Two flagged items, both FALSE POSITIVES: `crm/123` is a code-comment example in `useUsageTracking.ts`; `staff/` is the dynamic link `staff/${id}` matching the registered `staff/:staffId` route (StaffProfile page exists). No dead links. Router fallback, command palette, notification links all resolve.

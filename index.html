@@ -272,7 +272,27 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
-            .then((reg) => console.log('SW registered:', reg.scope))
+            .then((reg) => {
+              console.log('SW registered:', reg.scope)
+              // Detect an updated service worker and activate it immediately.
+              // sw.js already calls skipWaiting()+clients.claim(), so once the
+              // new SW installs, this reload swaps it in without leaving the
+              // old bundle active across navigations.
+              reg.addEventListener('updatefound', () => {
+                const installing = reg.installing
+                if (!installing) return
+                installing.addEventListener('statechange', () => {
+                  if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                    // A new SW took over — reload once so the page uses the
+                    // new precache + handlers. No infinite loop: after reload
+                    // there is no newer 'installed' state to trigger this.
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                      window.location.reload()
+                    }, { once: true })
+                  }
+                })
+              })
+            })
             .catch((err) => console.log('SW registration failed:', err))
         })
       }
