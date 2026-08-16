@@ -16,6 +16,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
 import { useAccessibleTools } from '../lib/useToolAccess'
 import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
+import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
 import { useUsageTracking } from '../lib/useUsageTracking'
 import { useBusinessPulse } from '../lib/useBusinessPulse'
 import { useLocale } from '../lib/LocaleContext'
@@ -215,6 +216,7 @@ export default function Shell() {
   const { branding } = useBranding()
   const { tools: accessibleTools, loading } = useAccessibleTools()
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
+  const { isToolSelected, loading: selectionLoading } = useWorkspaceSelection()
   useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
   const { events: pulseEvents, live: pulseLive } = useBusinessPulse(staff?.business_id)
   const { t } = useLocale()
@@ -226,19 +228,25 @@ export default function Shell() {
 
   const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
 
-  // Two independent gates ANDed:
-  //  (a) tool-role access (existing) — does this user's functional role see it?
-  //  (b) module gate (new)        — is the business entitled AND is it ready?
+  // Three intersecting gates ANDed (selection can NEVER grant access):
+  //  (a) tool-role access   — does this user's functional role see it?
+  //  (b) module gate        — is the business entitled AND is it ready?
+  //  (c) workspace selection — has the user chosen to keep this tool visible?
   // A paying customer on a not-ready module still doesn't see it (readiness
-  // is the safety net); a ready module hidden by role still stays hidden.
+  // is the safety net); a ready module hidden by role stays hidden; a tool the
+  // user deselected is hidden even if entitled+role-allowed. Selection is a
+  // REMOVAL filter only — it can only hide, never reveal.
   const itemVisible = (item: NavItem) => {
-    // While either gate is loading, don't hide (prevents flash of empty nav).
-    if (loading || modulesLoading) return true
+    // While any gate is loading, don't hide (prevents flash of empty nav).
+    if (loading || modulesLoading || selectionLoading) return true
     // Settings/capture/dashboard are always visible (core chrome).
     if (!item.toolKey || item.toolKey === 'settings' || item.toolKey === 'dashboard') return true
-    // Role gate: privileged roles bypass; otherwise tool must be in role set.
+    // Role gate: privileged roles bypass all gates; otherwise tool must be in role set.
     const roleOk = isPrivileged || accessibleTools.includes(item.toolKey as any)
     if (!roleOk) return false
+    // Workspace selection gate: privileged users bypass (they always see the
+    // full authorized set). For everyone else, respect the user's curation.
+    if (!isPrivileged && !isToolSelected(item.toolKey)) return false
     // Module gate: if this route maps to a module, the business must be
     // entitled AND the module must be ready.
     const mod = ROUTE_MODULE[item.to]

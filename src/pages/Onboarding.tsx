@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { TOOLS, type ToolKey } from '../lib/useToolAccess'
 import {
   Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2, Palette
 } from 'lucide-react'
@@ -30,16 +31,41 @@ const STEPS = [
     description: 'Choose your look',
   },
   {
-    icon: Wrench,
-    title: 'What You Do',
-    description: 'Configure your operations',
+    icon: TrendingUp,
+    title: 'Your Industry',
+    description: 'How you work',
   },
   {
-    icon: TrendingUp,
+    icon: Wrench,
+    title: 'What You Do',
+    description: 'Pick your tools',
+  },
+  {
+    icon: Check,
     title: 'Ready to Go',
     description: "You're all set!",
   },
 ]
+
+// Tools a brand-new business can choose to surface in their workspace. We show
+// the high-value capabilities (not the settings/admin ones — those are always
+// available). Selection here is advisory: it curates the sidebar/dashboard,
+// it never grants access (entitlement + role remain the real gates).
+const SELECTABLE_TOOLS = TOOLS.filter((t) =>
+  ['crm', 'projects', 'finance', 'inventory', 'people', 'tasks', 'calendar',
+   'meetings', 'campaigns', 'social', 'reports', 'chat', 'tickets',
+   'knowledge', 'time-tracking', 'approvals'].includes(t.key),
+)
+
+// Sensible defaults per industry — a starting point the user can revise later.
+const INDUSTRY_DEFAULT_TOOLS: Record<string, ToolKey[]> = {
+  construction: ['projects', 'inventory', 'tasks', 'time-tracking', 'people', 'finance', 'calendar'],
+  real_estate: ['crm', 'projects', 'finance', 'people', 'tasks', 'calendar'],
+  manufacturing: ['inventory', 'projects', 'finance', 'tasks', 'people', 'reports'],
+  retail: ['inventory', 'crm', 'finance', 'people', 'tasks'],
+  services: ['crm', 'projects', 'tasks', 'time-tracking', 'finance', 'people', 'calendar'],
+  other: ['crm', 'tasks', 'people', 'finance', 'calendar'],
+}
 
 const INDUSTRIES = [
   { id: 'construction', name: 'Construction', emoji: '🏗️' },
@@ -104,6 +130,10 @@ export default function Onboarding() {
   const [jobTitle, setJobTitle] = useState('')
   const [industry, setIndustry] = useState('')
   const [selectedColor, setSelectedColor] = useState<typeof BRAND_COLORS[0] | null>(null)
+  // Tools the user chose to surface in their workspace. Seeded with sensible
+  // industry defaults once they pick an industry (step 4); the user can toggle
+  // on the tools step (step 3). Persisted after business creation succeeds.
+  const [selectedTools, setSelectedToolsState] = useState<ToolKey[]>([])
 
   const handleNext = async () => {
     if (step === 0 && !businessName.trim()) {
@@ -125,7 +155,14 @@ export default function Onboarding() {
 
     setError(null)
 
-    if (step < 4) {
+    // When the user picks an industry (step 3) and advances, seed the tool
+    // selection with sensible defaults for that industry so the next step
+    // (tools, step 4) starts from a relevant baseline, not an empty list.
+    if (step === 3 && industry && selectedTools.length === 0) {
+      setSelectedToolsState(INDUSTRY_DEFAULT_TOOLS[industry] || INDUSTRY_DEFAULT_TOOLS.other)
+    }
+
+    if (step < 5) {
       setStep(step + 1)
     } else {
       await completeSetup()
@@ -186,6 +223,26 @@ export default function Onboarding() {
       if (selectedColor) {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)
         localStorage.setItem('avenize_theme_text', selectedColor.previewText)
+      }
+      // Persist the workspace tool selection (best-effort — if the table is
+      // missing on this deployment, the cache + show-all default keep things
+      // working). Done before redirect so the app mounts with the curation.
+      if (selectedTools.length > 0 && session.user.id) {
+        try {
+          await supabase
+            .from('user_workspace_selections')
+            .upsert(
+              {
+                user_id: session.user.id,
+                business_id: data,
+                selected_tools: selectedTools,
+                selection_completed: true,
+              },
+              { onConflict: 'user_id' },
+            )
+        } catch {
+          /* non-blocking — selection is advisory, not a hard requirement */
+        }
       }
       window.location.href = '/app'
 
@@ -390,8 +447,55 @@ export default function Onboarding() {
             </div>
           )}
 
-          {/* Step 4: Ready */}
+          {/* Step 4: Tool selection — curate the workspace */}
           {step === 4 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-black">What will you use most?</h2>
+                <p className="text-black mt-2">
+                  Pick the tools you want front and center. You can change these anytime in Settings.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 max-h-[320px] overflow-y-auto pr-1">
+                {SELECTABLE_TOOLS.map((tool) => {
+                  const on = selectedTools.includes(tool.key)
+                  return (
+                    <button
+                      key={tool.key}
+                      type="button"
+                      onClick={() =>
+                        setSelectedToolsState((prev) =>
+                          on ? prev.filter((t) => t !== tool.key) : [...prev, tool.key],
+                        )
+                      }
+                      className={`p-3 rounded-xl border-2 text-left transition-all flex items-center gap-2 ${
+                        on
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-black/10 hover:border-black/20'
+                      }`}
+                    >
+                      <span
+                        className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
+                          on ? 'bg-blue-600 text-white' : 'bg-black/5 text-transparent'
+                        }`}
+                      >
+                        <Check size={14} />
+                      </span>
+                      <span className="text-sm font-medium text-black">{tool.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-xs text-black/60">
+                {selectedTools.length === 0
+                  ? "No tools selected — we'll show everything you're authorized for."
+                  : `${selectedTools.length} selected. Other tools stay available but out of your way.`}
+              </p>
+            </div>
+          )}
+
+          {/* Step 5: Ready */}
+          {step === 5 && (
             <div className="text-center space-y-6">
               <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                 <Check size={40} className="text-green-600" />
@@ -443,7 +547,7 @@ export default function Onboarding() {
             >
               {loading ? (
                 <Loader2 size={20} className="animate-spin" />
-              ) : step === 4 ? (
+              ) : step === 5 ? (
                 <>Launch Avenize <ArrowRight size={20} /></>
               ) : (
                 <>Continue <ArrowRight size={20} /></>

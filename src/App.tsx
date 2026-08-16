@@ -45,6 +45,7 @@ const Pricing = lazy(() => import('./pages/Pricing'))
 const Reports = lazy(() => import('./pages/Reports'))
 const Settings = lazy(() => import('./pages/Settings'))
 const Profile = lazy(() => import('./pages/Profile'))
+const WorkspaceSettings = lazy(() => import('./pages/WorkspaceSettings'))
 const More = lazy(() => import('./pages/More'))
 const Social = lazy(() => import('./pages/Social'))
 const Approvals = lazy(() => import('./pages/Approvals'))
@@ -421,6 +422,7 @@ function AppRoutes() {
         <Route path="settings/projects" element={<ProjectSettings />} />
         <Route path="settings/roles" element={<RoleSettings />} />
         <Route path="settings/profile" element={<Profile />} />
+        <Route path="settings/workspace" element={<WorkspaceSettings />} />
         <Route path="settings/payments" element={<PaymentSettings />} />
         <Route path="settings/webhooks" element={<Webhooks />} />
         <Route path="settings/api-keys" element={mg('api', <APIKeys />)} />

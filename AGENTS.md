@@ -872,3 +872,28 @@ done
 
 ### Verification
 tsc clean, vite build succeeds, 88/88 tests pass. PRs #12, #10, #13 merged to main; #2, #5, #6, #7 closed with explanatory comments. Production deploying.
+
+## Session 20 (2026-08-16): Phase 1 finish + Phase 2 workspace personalization
+
+### P1.5 -- Service worker verified safe (no stale onboarding bundle)
+Read-only audit of `public/sw.js` + `index.html` registration. VERIFIED SAFE:
+- HTML navigations use `networkFirstWithOfflineFallback` -> fresh `index.html` always served when online; cached `/index.html` is only the offline fallback.
+- JS/CSS assets use stale-while-revalidate, BUT Vite content-hashes filenames -> a new deploy's `index.html` references NEW hashes not in cache -> SW fetches fresh from network. Old hashes become orphaned (trimmed later). No stale JS bundle possible.
+- Onboarding state is decided SERVER-SIDE (`staff.business_id` via network-first API calls), so even a stale client bundle couldn't trap a user in onboarding -- RequireAuth reads the live staff record.
+- Cache versioning (`CACHE_VERSION='v3'`) + `skipWaiting`/`clients.claim` evict old caches on activation. No code change needed.
+
+### P2.8 -- Workspace personalization (the "selected" axis)
+Third, user-controlled access axis. Three intersecting gates now decide what a user sees: entitled (plan) AND role (functional) AND selected (user). Selection is a REMOVAL filter only -- can never grant access (empty/no-curation = show all authorized). Degrades gracefully (missing table = "no selection made", fall back to entitled+role set).
+
+- **Migration `100_workspace_personalization.sql`:** `user_workspace_selections` table (per-user, business-scoped, RLS = `user_id = auth.uid()` only). `selected_tools TEXT[]`, `selection_completed BOOLEAN`, updated_at trigger. authenticated-only grant.
+- **`src/lib/useWorkspaceSelection.ts`:** hook loads selection from DB (authoritative) seeded by localStorage optimistic cache. Exposes `toggleTool`/`setSelectedTools`/`isToolSelected(tool)`. Best-effort/non-blocking.
+- **`Shell.tsx` `itemVisible`:** third gate added. Visible only when roleOk AND selected AND moduleOk. Privileged (owner/admin) bypass selection gate. Core chrome always visible. Selection only hides, never reveals.
+- **Onboarding tool-selection step:** new step 4 ("What will you use most?") after industry (step 3). Industry seeds per-industry defaults. Steps: 0 Business, 1 Profile, 2 Theme, 3 Industry, 4 Tools, 5 Ready. Persisted after `create_business_and_owner` succeeds (best-effort).
+- **`WorkspaceSettings.tsx`** (`/app/settings/workspace`): revise-later page. Unauthorized tools locked ("Not in your plan"). Reset-to-all clears curation. Linked from Settings hub + Dashboard "Customize" CTA.
+- **Route layer NOT changed for selection:** selection is UX (nav/dashboard visibility), NOT security. `RequireModule` remains the route guard. An authorized user who deselected a tool can still reach it by URL. Matches Slack/Linear/Notion + PRD "separate selected from authorized".
+
+### Design decision: selection is UX, not security
+"Personalization can never grant unauthorized access" = satisfied (intersection-only). "Direct URL access remains protected" = protected against UNAUTHORIZED access (RequireModule + RequireAuth + RLS already enforce). Security boundary stays entitlement+role+module.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 88/88, schema-drift 0 (new table backed by migration 100).

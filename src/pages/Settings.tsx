@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug, Share2, MessageSquare, CreditCard, KeyRound } from 'lucide-react'
+import { Shield, Palette, Globe, Key, ChevronRight, User, Building, Zap, Users, Plug, Share2, MessageSquare, CreditCard, KeyRound, LayoutGrid } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 
 export default function Settings() {
@@ -10,6 +10,7 @@ export default function Settings() {
 
   const SETTINGS_ITEMS = [
     { to: '/app/settings/profile', icon: User, label: 'Profile', desc: 'Your account details', color: 'bg-purple-50 text-purple-500' },
+    { to: '/app/settings/workspace', icon: LayoutGrid, label: 'Your Workspace', desc: 'Choose which tools you see', color: 'bg-indigo-50 text-indigo-500' },
     { to: '/app/subscription', icon: CreditCard, label: 'Subscription & Billing', desc: 'Plan, payments, invoices', color: 'bg-[#4285F4]/5 text-[#4285F4]' },
     { to: '/app/branding', icon: Palette, label: 'Branding', desc: 'Colors, logo, theme', color: 'bg-pink-50 text-pink-500' },
     { to: '/app/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-red-50 text-red-500' },
