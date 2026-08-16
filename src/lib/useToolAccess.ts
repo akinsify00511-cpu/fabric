@@ -8,7 +8,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 
-// All available tools in the system
 export const TOOLS = [
   { key: 'dashboard', label: 'Dashboard', category: 'core' },
   { key: 'crm', label: 'CRM', category: 'sales' },
@@ -57,6 +56,14 @@ const FEATURE_TO_TOOLS: Record<string, ToolKey[]> = {
 }
 
 const BASE_TOOLS: ToolKey[] = ['dashboard', 'crm', 'people', 'tasks', 'settings', 'approvals', 'calendar', 'events', 'meetings']
+const PRIVILEGED_ROLES = ['owner', 'admin']
+
+type RoleToolAssignment = {
+  functional_role_id: string
+  functional_roles?: Array<{
+    functional_role_tools?: Array<{ tool_key: string }>
+  }>
+}
 
 function derivePlanTools(features: Record<string, boolean> | null | undefined): Set<ToolKey> {
   const set = new Set<ToolKey>(BASE_TOOLS)
@@ -69,19 +76,10 @@ function derivePlanTools(features: Record<string, boolean> | null | undefined): 
   return set
 }
 
-const PRIVILEGED_ROLES = ['owner', 'admin']
-
 interface UseToolAccessResult {
   hasAccess: boolean
   loading: boolean
   error: string | null
-}
-
-type RoleToolAssignment = {
-  functional_role_id: string
-  functional_roles?: Array<{
-    functional_role_tools?: Array<{ tool_key: string }>
-  }>
 }
 
 export function useToolAccess(tool: ToolKey): UseToolAccessResult {
@@ -96,13 +94,11 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
       setLoading(false)
       return
     }
-
     if (PRIVILEGED_ROLES.includes(staff.role || '')) {
       setHasAccess(true)
       setLoading(false)
       return
     }
-
     try {
       const { data: ent } = await supabase
         .from('business_entitlements')
@@ -110,39 +106,26 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
         .eq('business_id', staff.business_id)
         .maybeSingle()
       const planTools = derivePlanTools(ent?.features as any)
-
       if (planTools.has(tool)) {
         const { data: roleData, error: roleError } = await supabase
           .from('staff_functional_roles')
-          .select(`
-            functional_role_id,
-            functional_roles (
-              functional_role_tools (tool_key)
-            )
-          `)
+          .select('functional_role_id, functional_roles ( functional_role_tools (tool_key) )')
           .eq('staff_id', staff.id)
-
         if (roleError) {
           setHasAccess(true)
           setLoading(false)
           return
         }
-
         const allowedTools = new Set<string>()
         for (const assignment of (roleData || []) as RoleToolAssignment[]) {
-          const roles = assignment.functional_roles || []
-          for (const role of roles) {
-            const frt = role.functional_role_tools || []
-            for (const t of frt) allowedTools.add(t.tool_key)
+          for (const role of assignment.functional_roles || []) {
+            for (const t of role.functional_role_tools || []) allowedTools.add(t.tool_key)
           }
         }
-
-        if (allowedTools.size === 0) setHasAccess(true)
-        else setHasAccess(allowedTools.has(tool))
+        setHasAccess(allowedTools.size === 0 || allowedTools.has(tool))
       } else {
         setHasAccess(false)
       }
-
       setError(null)
     } catch (err) {
       console.error('Error checking tool access:', err)
@@ -153,10 +136,7 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
     }
   }, [staff, tool])
 
-  useEffect(() => {
-    checkAccess()
-  }, [checkAccess])
-
+  useEffect(() => { checkAccess() }, [checkAccess])
   return { hasAccess, loading, error }
 }
 
@@ -172,44 +152,55 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
       return
     }
 
-    if (PRIVILEGED_ROLES.includes(staff.role || '')) {
-      setTools(TOOLS.map(t => t.key))
-      setLoading(false)
-      return
-    }
-
     ;(async () => {
-      const { data: ent } = await supabase
-        .from('business_entitlements')
-        .select('features')
-        .eq('business_id', staff.business_id)
-        .maybeSingle()
-      const planTools = derivePlanTools(ent?.features as any)
+      try {
+        let allowedTools = new Set<ToolKey>()
 
-      supabase
-        .from('staff_functional_roles')
-        .select(`
-          functional_roles (
-            functional_role_tools (tool_key)
-          )
-        `)
-        .eq('staff_id', staff.id)
-        .then(({ data, error }) => {
-          if (error) {
-            setTools(Array.from(planTools))
-          } else {
-            const allowedTools = new Set<ToolKey>(planTools)
-            for (const assignment of (data || []) as RoleToolAssignment[]) {
-              const roles = assignment.functional_roles || []
-              for (const role of roles) {
-                const frt = role.functional_role_tools || []
-                for (const t of frt) allowedTools.add(t.tool_key as ToolKey)
+        if (PRIVILEGED_ROLES.includes(staff.role || '')) {
+          allowedTools = new Set(TOOLS.map(t => t.key))
+        } else {
+          const [{ data: ent }, { data: roleData, error: roleError }] = await Promise.all([
+            supabase.from('business_entitlements').select('features').eq('business_id', staff.business_id).maybeSingle(),
+            supabase.from('staff_functional_roles').select('functional_roles ( functional_role_tools (tool_key) )').eq('staff_id', staff.id),
+          ])
+
+          const planTools = derivePlanTools(ent?.features as any)
+          allowedTools = new Set<ToolKey>(planTools)
+
+          if (!roleError) {
+            const roleTools = new Set<ToolKey>()
+            for (const assignment of (roleData || []) as RoleToolAssignment[]) {
+              for (const role of assignment.functional_roles || []) {
+                for (const t of role.functional_role_tools || []) roleTools.add(t.tool_key as ToolKey)
               }
             }
-            setTools(Array.from(allowedTools))
+            if (roleTools.size > 0) allowedTools = new Set(Array.from(allowedTools).filter(t => roleTools.has(t)))
           }
-          setLoading(false)
-        })
+        }
+
+        // Personal selection is a presentation preference layered on top of
+        // authorization. A saved selection can never grant access to a tool.
+        const { data: prefs } = await supabase
+          .from('user_preferences')
+          .select('dashboard_view_preferences')
+          .eq('user_id', staff.user_id)
+          .maybeSingle()
+        const selected = (prefs?.dashboard_view_preferences as any)?.selectedTools
+        if (Array.isArray(selected)) {
+          const selectedSet = new Set<string>(selected)
+          allowedTools = new Set(Array.from(allowedTools).filter(t => selectedSet.has(t)))
+        }
+
+        // Keep core chrome available even when a user has selected a very small workspace.
+        allowedTools.add('dashboard')
+        allowedTools.add('settings')
+        setTools(Array.from(allowedTools))
+      } catch (error) {
+        console.error('[Avenize] Failed to resolve workspace tools:', error)
+        setTools(TOOLS.map(t => t.key))
+      } finally {
+        setLoading(false)
+      }
     })()
   }, [staff])
 
