@@ -1,6 +1,5 @@
 const ESCAPED_UNICODE: Record<string, string> = {
   '\\u2026': '…',
-  '\\u2138': '℘',
 }
 
 function normalizeText(root: Node) {
@@ -14,7 +13,6 @@ function normalizeText(root: Node) {
     for (const [escaped, replacement] of Object.entries(ESCAPED_UNICODE)) {
       value = value.replaceAll(escaped, replacement)
     }
-    // The Shell used an escaped command glyph. Render the platform-appropriate shortcut.
     if (value.includes('\\u2318K')) {
       const isMac = navigator.platform.includes('Mac')
       value = value.replaceAll('\\u2318K', isMac ? '⌘K' : 'Ctrl K')
