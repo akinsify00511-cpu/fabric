@@ -897,3 +897,17 @@ Third, user-controlled access axis. Three intersecting gates now decide what a u
 
 ### Verification
 tsc clean, vite build 0 warnings, vitest 88/88, schema-drift 0 (new table backed by migration 100).
+
+### P2.10 -- Adaptive dashboard (capability-driven, not generic)
+Rewrote `Dashboard.tsx` (was minified, showed the same 4 generic KPIs to every user). Now adapts to three signals: authorized tools (entitled+role), selected tools (workspace curation), and company size.
+
+- **Adaptive KPI cards:** built dynamically from the user's active tools. Revenue card only if finance active; Pipeline only if CRM; Active Projects only if projects; Low Stock only if inventory; People only if people AND not solo. "Needs attention" (overdue) always shown (universal). A solo consultant no longer sees irrelevant "People"/"Pipeline" cards.
+- **Adaptive data fetching:** only fetches tables for active tools — a user without inventory doesn't pay the products query cost. Tasks + staff always fetched (core attention + company-size signal).
+- **Adaptive primary metric (pulse card):** picks the most relevant metric from active tools + data (Revenue > Pipeline > Active Projects > Tasks), so the headline is always contextual.
+- **Adaptive quick actions:** New deal / New invoice / New project / Add product only appear for active tools; "New task" always present.
+- **Company-size complexity:** `isSolo` (people <= 1) hides the People card — a one-person business doesn't need a headcount KPI. This is the first step of the PRD's progressive-complexity requirement; the full solo/team/enterprise tier system is P1 #7 (follow-up).
+- Activities feed falls back CRM deals -> finance invoices -> empty (honest).
+- Rewrote from minified single-lines into readable, maintainable code (the RepresentationEngine/ViewPicker from Session 16 preserved).
+
+### Verification (P2.10)
+tsc clean, vite build 0 warnings, vitest 88/88, schema-drift 0 (204 tables).
