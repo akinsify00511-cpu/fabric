@@ -16,6 +16,7 @@ export const TOOLS = [
   { key: 'finance', label: 'Finance', category: 'finance' },
   { key: 'quotes', label: 'Quotes', category: 'sales' },
   { key: 'payments', label: 'Payments', category: 'finance' },
+  { key: 'payroll', label: 'Payroll', category: 'finance' },
   { key: 'accounting', label: 'Accounting', category: 'finance' },
   { key: 'people', label: 'People', category: 'hr' },
   { key: 'inventory', label: 'Inventory', category: 'ops' },
@@ -44,13 +45,6 @@ export const TOOLS = [
 
 export type ToolKey = typeof TOOLS[number]['key']
 
-// Plan-based entitlements are sourced from the DATABASE (business_entitlements.features
-// JSONB, the same source has_feature() and can_access_module() read), NOT from a
-// hardcoded constant. Previously a hardcoded PLAN_ENTITLEMENTS defaulted every
-// non-privileged user to the 'professional' tool set regardless of their actual
-// plan — a parallel source of truth that could contradict the DB. The mapping
-// below only translates feature-flag keys into the tool keys the nav uses; the
-// entitlement decision itself is the DB's.
 const FEATURE_TO_TOOLS: Record<string, ToolKey[]> = {
   crm: ['crm'], inventory: ['inventory'], projects: ['projects'],
   time_tracking: ['time-tracking'], invoicing: ['payments', 'accounting'],
@@ -62,13 +56,8 @@ const FEATURE_TO_TOOLS: Record<string, ToolKey[]> = {
   advanced_analytics: ['reports'],
 }
 
-// Tools every plan (incl. free) gets — core chrome.
 const BASE_TOOLS: ToolKey[] = ['dashboard', 'crm', 'people', 'tasks', 'settings', 'approvals', 'calendar', 'events', 'meetings']
 
-// Derive the tool set a business is entitled to from its business_entitlements
-// row (plan + features JSONB) — the single DB source of truth, the same one
-// has_feature() and can_access_module() consult. Returns BASE_TOOLS plus every
-// tool mapped from a feature flag that is true for this business.
 function derivePlanTools(features: Record<string, boolean> | null | undefined): Set<ToolKey> {
   const set = new Set<ToolKey>(BASE_TOOLS)
   if (!features) return set
@@ -80,7 +69,6 @@ function derivePlanTools(features: Record<string, boolean> | null | undefined): 
   return set
 }
 
-// Staff role that bypasses functional role filtering (sees everything)
 const PRIVILEGED_ROLES = ['owner', 'admin']
 
 interface UseToolAccessResult {
@@ -89,7 +77,6 @@ interface UseToolAccessResult {
   error: string | null
 }
 
-// Helper type for Supabase nested query
 type RoleToolAssignment = {
   functional_role_id: string
   functional_roles?: Array<{
@@ -110,7 +97,6 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
       return
     }
 
-    // Owners and admins see everything
     if (PRIVILEGED_ROLES.includes(staff.role || '')) {
       setHasAccess(true)
       setLoading(false)
@@ -118,8 +104,6 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
     }
 
     try {
-      // Load the business's ACTUAL entitlements from the DB (single source of
-      // truth) instead of defaulting to the hardcoded professional set.
       const { data: ent } = await supabase
         .from('business_entitlements')
         .select('features')
@@ -128,7 +112,6 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
       const planTools = derivePlanTools(ent?.features as any)
 
       if (planTools.has(tool)) {
-        // Plan allows this tool - check functional role
         const { data: roleData, error: roleError } = await supabase
           .from('staff_functional_roles')
           .select(`
@@ -140,39 +123,29 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
           .eq('staff_id', staff.id)
 
         if (roleError) {
-          // Table might not exist yet - fall back to plan-only
           setHasAccess(true)
           setLoading(false)
           return
         }
 
-        // Get union of all tools from all roles
         const allowedTools = new Set<string>()
         for (const assignment of (roleData || []) as RoleToolAssignment[]) {
           const roles = assignment.functional_roles || []
           for (const role of roles) {
             const frt = role.functional_role_tools || []
-            for (const t of frt) {
-              allowedTools.add(t.tool_key)
-            }
+            for (const t of frt) allowedTools.add(t.tool_key)
           }
         }
 
-        // If no functional roles assigned, fall back to plan
-        if (allowedTools.size === 0) {
-          setHasAccess(true)
-        } else {
-          setHasAccess(allowedTools.has(tool))
-        }
+        if (allowedTools.size === 0) setHasAccess(true)
+        else setHasAccess(allowedTools.has(tool))
       } else {
-        // Plan doesn't include this tool
         setHasAccess(false)
       }
-      
+
       setError(null)
     } catch (err) {
       console.error('Error checking tool access:', err)
-      // On error, be permissive (staff can see tools) - safer for UX
       setHasAccess(true)
       setError('Failed to check tool access')
     } finally {
@@ -187,7 +160,6 @@ export function useToolAccess(tool: ToolKey): UseToolAccessResult {
   return { hasAccess, loading, error }
 }
 
-// Hook to get all tools the current user can access
 export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
   const { staff } = useAuth()
   const [tools, setTools] = useState<ToolKey[]>([])
@@ -200,15 +172,12 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
       return
     }
 
-    // Owners and admins see everything
     if (PRIVILEGED_ROLES.includes(staff.role || '')) {
       setTools(TOOLS.map(t => t.key))
       setLoading(false)
       return
     }
 
-    // Load the business's ACTUAL entitlements from the DB (single source of
-    // truth) before resolving functional-role tools.
     ;(async () => {
       const { data: ent } = await supabase
         .from('business_entitlements')
@@ -217,7 +186,6 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
         .maybeSingle()
       const planTools = derivePlanTools(ent?.features as any)
 
-      // Get functional role tools
       supabase
         .from('staff_functional_roles')
         .select(`
@@ -235,9 +203,7 @@ export function useAccessibleTools(): { tools: ToolKey[]; loading: boolean } {
               const roles = assignment.functional_roles || []
               for (const role of roles) {
                 const frt = role.functional_role_tools || []
-                for (const t of frt) {
-                  allowedTools.add(t.tool_key as ToolKey)
-                }
+                for (const t of frt) allowedTools.add(t.tool_key as ToolKey)
               }
             }
             setTools(Array.from(allowedTools))
