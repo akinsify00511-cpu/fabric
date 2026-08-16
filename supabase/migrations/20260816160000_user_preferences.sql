@@ -2,7 +2,7 @@
 -- This migration is idempotent because some production environments already
 -- contain this table from an earlier out-of-band migration.
 
-create table if not exists public.user_preferences (
+CREATE TABLE IF NOT EXISTS public.user_preferences (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null unique references auth.users(id) on delete cascade,
   show_email boolean default true,
