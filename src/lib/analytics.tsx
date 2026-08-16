@@ -57,17 +57,24 @@ export async function trackEvent(
 }
 
 /**
- * Flush a single event immediately
+ * Flush a single event immediately. Routes through the canonical
+ * record_analytics_event RPC (SECURITY DEFINER, bypasses RLS) — the SAME
+ * path src/lib/eventTracker.ts uses — so there is one insert shape, not two.
+ * Previously this did a direct .from('analytics_events').insert() with
+ * staff_id/meta columns that diverged from the RPC's user_id/metadata shape,
+ * causing a second source of schema drift.
  */
 async function flushEvent(event: AnalyticsEvent): Promise<void> {
   try {
-    await supabase.from('analytics_events').insert({
-      business_id: event.business_id,
-      staff_id: event.staff_id,
-      event_name: event.event_name,
-      meta: event.meta,
+    await supabase.rpc('record_analytics_event', {
+      p_business_id: event.business_id ?? null,
+      p_user_id: null,
+      p_event_name: event.event_name,
+      p_category: 'user_action',
+      p_metadata: event.meta || {},
     })
   } catch (err) {
+    // Analytics is non-essential; never surface to the user.
     console.warn('Analytics event failed:', err)
   }
 }
@@ -87,13 +94,18 @@ async function flushPending(): Promise<void> {
   pendingEvents = []
 
   try {
-    await supabase.from('analytics_events').insert(
-      events.map((e) => ({
-        business_id: e.business_id,
-        staff_id: e.staff_id,
-        event_name: e.event_name,
-        meta: e.meta,
-      }))
+    // Fire each event through the canonical RPC (one insert path). Best-effort
+    // — a missing/unavailable RPC drops the batch rather than throwing.
+    await Promise.all(
+      events.map((e) =>
+        supabase.rpc('record_analytics_event', {
+          p_business_id: e.business_id ?? null,
+          p_user_id: null,
+          p_event_name: e.event_name,
+          p_category: 'user_action',
+          p_metadata: e.meta || {},
+        })
+      )
     )
   } catch (err) {
     console.warn('Analytics batch failed:', err)

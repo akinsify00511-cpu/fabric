@@ -365,13 +365,24 @@ class EventTracker {
         })
       }
     } catch (e: any) {
-      // Silently handle missing tables - analytics is optional
-      if (e?.code && ['PGRST116', '404', '406', '42501', '38000', '42883'].includes(e.code)) {
-        // RPC or table doesn't exist - skip analytics
-        return
+      // Analytics is non-essential. If the RPC/table is missing or not
+      // permitted on this deployment (function not found, no schema-cache
+      // match, permission denied, undefined object), DROP the batch — do
+      // NOT re-queue. Re-queueing a permanently-unavailable RPC grows the
+      // queue unboundedly and retries forever (the original 401 symptom).
+      const code = e?.code as string | undefined
+      const msg = (e?.message || '') as string
+      const unavailable =
+        (code && ['PGRST116', 'PGRST202', '404', '406', '42501', '38000', '42883', '42P01', '42804'].includes(code)) ||
+        /no matches found in the schema cache/i.test(msg) ||
+        /could not find the function/i.test(msg) ||
+        /does not exist/i.test(msg) ||
+        /permission denied/i.test(msg)
+      if (unavailable) {
+        return // drop the batch; analytics is optional
       }
-      console.warn('Analytics not available:', (e as any)?.message)
-      // Put events back in queue for retry
+      // Transient error (network/timeout) — keep the events for next flush.
+      console.warn('Analytics flush failed (will retry):', msg)
       this.queue.unshift(...events)
     }
   }

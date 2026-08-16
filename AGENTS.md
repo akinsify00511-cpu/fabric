@@ -943,3 +943,19 @@ The architectural fix behind the adaptive dashboard. Previously each screen (Das
 
 ### Verification (R2.8/R2.9/R2.11)
 tsc clean, vite build 0 warnings, vitest 94/94, schema-drift 0 (204 tables).
+
+### P0.2 -- Analytics 401 root-caused + closed (migration 111 + client hardening)
+The 401 was NOT just an auth-timing issue (the earlier "half-fix" added auth-lifecycle gating to eventTracker — necessary but insufficient). Root cause was a THREE-WAY RPC + schema conflict:
+- 019 created `analytics_events(event_category TEXT, event_properties, page_url, staff_id, ...)` + a `track_event()` function (unused by the client).
+- 037 created `record_analytics_event(p_category event_category)` expecting `category event_category` / `user_id` / `component` / `action` / `metadata` columns — but 037's `CREATE TABLE IF NOT EXISTS` was a no-op (019 won), so the table never had those columns. Its `CREATE TYPE event_category` may also have failed on the live DB (037 is one of the un-applied migrations).
+- 998 defined `record_analytics_event` TWO more times with different signatures (one inserts into `event_type`/`properties`/`referrer` columns that don't exist anywhere).
+- The live client (`eventTracker.ts`) called the 037 signature with named args. On the live DB, whichever `CREATE OR REPLACE FUNCTION` applied last won — and if the enum type didn't exist, the function couldn't be created → PostgREST returned function-not-found, surfaced to the browser as a 401. The eventTracker's error-catch list didn't include `PGRST202` (function not found), so events were re-queued and retried forever (unbounded queue growth) — the "401 that never stopped".
+
+**Migration 111 (`111_analytics_events_reconciliation.sql`):** normalizes the table to the columns the live caller writes/reads (`user_id, category, component, action, metadata, page, session_id` — added via `ADD COLUMN IF NOT EXISTS`, legacy 019 columns kept + backfilled); drops ALL conflicting `record_analytics_event` overloads (enumerated + a `pg_proc` sweep, guarded so it doesn't error if the `event_category` enum type never got created); creates ONE canonical `record_analytics_event` with `p_category TEXT` (not the enum — eliminates the signature-mismatch + missing-type failure mode), `SECURITY DEFINER` (bypasses the SELECT-only RLS), granted to `authenticated`; adds an INSERT policy keyed on the caller's business; drops the unused 019 `track_event`.
+
+**Client hardening (`eventTracker.ts`):** the catch now distinguishes "permanently unavailable" (function-not-found `PGRST202`, no-schema-cache-match, permission-denied, does-not-exist) → DROP the batch (analytics is optional, don't grow the queue) vs "transient" (network/timeout) → re-queue. Adds `PGRST202`/`42P01`/`42804` + message-pattern matching. This is the "completion" — even if migration 111 isn't applied yet, the client no longer retries forever.
+
+**One insert path (`analytics.tsx`):** the `useAnalytics` hook's `trackEvent` did a DIRECT `.from('analytics_events').insert({business_id, staff_id, event_name, meta})` — a SECOND insert shape (`staff_id`/`meta`, not the RPC's `user_id`/`metadata`) that diverged from the RPC and would hit RLS. Routed through the canonical `record_analytics_event` RPC so there is ONE insert shape. The hook's public API (`track`/`trackImmediate`/`ANALYTICS_EVENTS`) is unchanged — the 3 consumers (SecuritySettings, Automations, SSOSettings) are unaffected.
+
+### Verification (P0.2)
+tsc clean, vite build 0 warnings, vitest 94/94, schema-drift 0. Migration 111 idempotent (`ADD COLUMN IF NOT EXISTS`, `DROP FUNCTION IF EXISTS`, `CREATE OR REPLACE`). Needs live-DB application (same deploy-gate as the rest of 080–110) to actually stop the 401, but the client now degrades cleanly until then.
