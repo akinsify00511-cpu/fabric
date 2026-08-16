@@ -925,3 +925,21 @@ Searched for `FABRIC` (exact, product-name) + `fabric` in manifest/title/SEO/Lan
 
 ### R1.5 -- Route integrity sweep (clean)
 Reused the Session-12 diff method: registered nested routes (144) vs referenced `/app/*` links (109). Two flagged items, both FALSE POSITIVES: `crm/123` is a code-comment example in `useUsageTracking.ts`; `staff/` is the dynamic link `staff/${id}` matching the registered `staff/:staffId` route (StaffProfile page exists). No dead links. Router fallback, command palette, notification links all resolve.
+
+### R2.8/R2.9/R2.11 -- Experience Context + progressive complexity
+The architectural fix behind the adaptive dashboard. Previously each screen (Dashboard, Shell, WorkspaceSettings) independently called `useAccessibleTools` + `useWorkspaceSelection` and made its own decision about what a user needs. Now there is ONE authoritative context every screen derives from.
+
+- **`src/lib/useExperienceContext.ts`:** `useExperienceContext()` COMPOSES the existing access hooks (entitled+role tools via `useAccessibleTools`, workspace selection via `useWorkspaceSelection`) instead of re-fetching them, and adds the three signals that were previously missing or computed ad-hoc per screen:
+  - **industry** — fetched from `businesses.industry` (was never loaded client-side before; Onboarding writes it but nothing read it back).
+  - **companySize** — authoritative headcount via one `staff` count query, centralizing what Dashboard computed inline. Module-level cached (`businessProfileCache`) so Shell + Dashboard + future screens share ONE fetch; cleared on signOut (`clearExperienceContextCache` wired into `AuthContext.signOut`).
+  - **complexity** — `deriveComplexity(companySize, activeModuleCount)` returns the PRD's 4 progressive-complexity tiers: solo (<=1) / small (2-10, <8 modules) / mid (11-50, or 2-10 with >=8 modules) / enterprise (>50). The UI reveals more machinery (departments/approvals/budgeting/compliance) as a business grows — no manual toggle. Pure function, unit-tested.
+  - **activeTools** — the INTERSECTION of authorized ∩ selected (or all authorized if not curated). Selection can never ADD an unauthorized tool. Exposes `isToolActive`/`isToolAuthorized` helpers.
+- **Consumers refactored to the single source:**
+  - `Dashboard.tsx` now reads `isToolActive`/`companySize` from the context (removed its separate `useAccessibleTools`+`useWorkspaceSelection` calls + inline `toolActive`/`companySize` derivation).
+  - `Shell.tsx` `itemVisible` now uses `isToolAuthorized`/`isToolActive` from the context (removed its `useAccessibleTools` import; module gate stays on `useAccessibleModules` — it's a business-level entitlement+readiness check, not a per-user signal).
+  - `WorkspaceSettings.tsx` now uses `isToolAuthorized` from the context.
+- **Sign-out hygiene:** `clearExperienceContextCache()` wired into `AuthContext.signOut` so a different user's industry/size isn't served stale.
+- **Tests:** `tests/frontend/lib/experienceContext.test.ts` (6 tests) lock the progressive-complexity contract (solo/small/mid/enterprise boundaries + the broad-surface nudge + labels). vitest 88 -> 94.
+
+### Verification (R2.8/R2.9/R2.11)
+tsc clean, vite build 0 warnings, vitest 94/94, schema-drift 0 (204 tables).

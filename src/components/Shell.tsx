@@ -14,8 +14,8 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
-import { useAccessibleTools } from '../lib/useToolAccess'
 import { useAccessibleModules, type ModuleKey } from '../lib/useModuleAccess'
+import { useExperienceContext } from '../lib/useExperienceContext'
 import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
 import { useUsageTracking } from '../lib/useUsageTracking'
 import { useBusinessPulse } from '../lib/useBusinessPulse'
@@ -214,9 +214,13 @@ const MOBILE_NAV_ITEMS = [
 export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
-  const { tools: accessibleTools, loading } = useAccessibleTools()
+  // Single authoritative context for the role + selection gates (the same
+  // source the Dashboard and future screens use). The module gate stays on
+  // useAccessibleModules — it's a business-level entitlement+readiness check,
+  // not a per-user experience signal.
+  const { isPrivileged, isToolAuthorized, isToolActive } = useExperienceContext()
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
-  const { isToolSelected, loading: selectionLoading } = useWorkspaceSelection()
+  const { loading: roleSelLoading } = useWorkspaceSelection()
   useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
   const { events: pulseEvents, live: pulseLive } = useBusinessPulse(staff?.business_id)
   const { t } = useLocale()
@@ -225,8 +229,6 @@ export default function Shell() {
   const navigate = useNavigate()
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-
-  const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
 
   // Three intersecting gates ANDed (selection can NEVER grant access):
   //  (a) tool-role access   — does this user's functional role see it?
@@ -238,15 +240,15 @@ export default function Shell() {
   // REMOVAL filter only — it can only hide, never reveal.
   const itemVisible = (item: NavItem) => {
     // While any gate is loading, don't hide (prevents flash of empty nav).
-    if (loading || modulesLoading || selectionLoading) return true
+    if (roleSelLoading || modulesLoading) return true
     // Settings/capture/dashboard are always visible (core chrome).
     if (!item.toolKey || item.toolKey === 'settings' || item.toolKey === 'dashboard') return true
     // Role gate: privileged roles bypass all gates; otherwise tool must be in role set.
-    const roleOk = isPrivileged || accessibleTools.includes(item.toolKey as any)
+    const roleOk = isToolAuthorized(item.toolKey as any)
     if (!roleOk) return false
     // Workspace selection gate: privileged users bypass (they always see the
     // full authorized set). For everyone else, respect the user's curation.
-    if (!isPrivileged && !isToolSelected(item.toolKey)) return false
+    if (!isPrivileged && !isToolActive(item.toolKey as any)) return false
     // Module gate: if this route maps to a module, the business must be
     // entitled AND the module must be ready.
     const mod = ROUTE_MODULE[item.to]

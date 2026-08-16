@@ -2,8 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
-import { useAccessibleTools, type ToolKey } from '../lib/useToolAccess'
-import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
+import { useExperienceContext } from '../lib/useExperienceContext'
 import {
   ArrowRight, Bell, BriefcaseBusiness, CheckCircle2, ChevronDown, CircleAlert,
   Clock3, LayoutGrid, PieChart, Search, Settings2, Table2, TrendingUp,
@@ -85,8 +84,9 @@ const EMPTY_STATS: DashboardStats = {
 
 export default function Dashboard() {
   const { staff } = useAuth()
-  const { tools: accessibleTools } = useAccessibleTools()
-  const { isToolSelected } = useWorkspaceSelection()
+  // Single authoritative context — drives which KPIs/data/actions the dashboard
+  // shows. Replaces the per-screen re-derivation of accessibleTools + selection.
+  const { isToolActive, companySize } = useExperienceContext()
   const [mode, setMode] = useState<Mode>('overview')
   const [view, setView] = useState<View>('recommended')
   const [query, setQuery] = useState('')
@@ -95,19 +95,14 @@ export default function Dashboard() {
   const [activities, setActivities] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
-  // A tool is "active" (shown on the dashboard) when the user is authorized
-  // AND has it selected (or hasn't curated yet — show all authorized).
-  const toolActive = (key: ToolKey) =>
-    (isPrivileged || accessibleTools.includes(key)) && isToolSelected(key)
-
-  const hasFinance = toolActive('finance')
-  const hasCRM = toolActive('crm')
-  const hasInventory = toolActive('inventory')
-  const hasProjects = toolActive('projects')
-  const hasPeople = toolActive('people')
+  const hasFinance = isToolActive('finance')
+  const hasCRM = isToolActive('crm')
+  const hasInventory = isToolActive('inventory')
+  const hasProjects = isToolActive('projects')
+  const hasPeople = isToolActive('people')
   // Company-size tiers drive complexity (solo → minimal, team → full).
-  const companySize = stats.people
+  // companySize comes from the Experience Context (authoritative headcount),
+  // not the stats.staff count the dashboard happens to fetch.
   const isSolo = companySize <= 1
 
   useEffect(() => {

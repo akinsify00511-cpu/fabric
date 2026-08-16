@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Check, RotateCcw, Loader2 } from 'lucide-react'
-import { useAuth } from '../lib/AuthContext'
-import { useAccessibleTools, TOOLS } from '../lib/useToolAccess'
 import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
+import { useExperienceContext, TOOLS } from '../lib/useExperienceContext'
 
 /**
  * WorkspaceSettings — let a user revise which tools surface in their sidebar
@@ -12,9 +11,7 @@ import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
  * (user_workspace_selections) + a localStorage optimistic cache.
  */
 export default function WorkspaceSettings() {
-  const { staff } = useAuth()
-  const isPrivileged = staff?.role === 'owner' || staff?.role === 'admin'
-  const { tools: accessibleTools, loading: accessLoading } = useAccessibleTools()
+  const { isPrivileged, isToolAuthorized, loading: ctxLoading } = useExperienceContext()
   const { selectedTools, selectionCompleted, toggleTool, setSelectedTools, loading: selLoading } =
     useWorkspaceSelection()
   const [saved, setSaved] = useState(false)
@@ -26,7 +23,7 @@ export default function WorkspaceSettings() {
 
   const isSelected = (key: string) =>
     !selectionCompleted || selectedTools.length === 0 ? true : selectedTools.includes(key)
-  const isAuthorized = (key: string) => isPrivileged || accessibleTools.includes(key as any)
+  const isAuthorized = (key: string) => isToolAuthorized(key as any)
 
   const handleToggle = async (key: string) => {
     await toggleTool(key)
@@ -41,7 +38,7 @@ export default function WorkspaceSettings() {
     setTimeout(() => setSaved(false), 1500)
   }
 
-  if (accessLoading || selLoading) {
+  if (ctxLoading || selLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="animate-spin text-[var(--av-primary,#0891B2)]" size={28} />

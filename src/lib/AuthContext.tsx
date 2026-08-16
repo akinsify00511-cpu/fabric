@@ -3,6 +3,7 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { clearMfaVerified } from './mfa'
 import { clearModuleAccessCache } from './useModuleAccess'
+import { clearExperienceContextCache } from './useExperienceContext'
 import * as Sentry from '@sentry/react'
 
 // Role definitions with permissions
@@ -236,6 +237,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     Sentry.setUser(null)
     clearModuleAccessCache()
+    clearExperienceContextCache()
     if (signingOutUserId) clearMfaVerified(signingOutUserId)
 
     // Local scope is the expected UX for a browser's "Log out" action. It
