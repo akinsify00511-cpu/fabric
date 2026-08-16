@@ -430,8 +430,8 @@ export default function Shell() {
           className="flex items-center gap-2 flex-1 max-w-md rounded-lg border border-[var(--av-border)] bg-[var(--av-surface-2)] px-3 py-1.5 text-sm text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)] hover:bg-[var(--av-surface)] transition"
         >
           <Search size={16} />
-          <span>Search or jump to\u2026</span>
-          <kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">\u2318K</kbd>
+          <span>Search or jump to…</span>
+          <kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">⌘K</kbd>
         </button>
         <div className="ml-auto flex items-center gap-1">
           {pulseEvents.length > 0 && (

@@ -122,7 +122,7 @@ export default function CashFlow() {
               <div key={entry.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">{entry.description}</div>
-                  <div className="text-xs text-black">{entry.category} \u2022 {new Date(entry.date).toLocaleDateString()}</div>
+                  <div className="text-xs text-black">{entry.category} • {new Date(entry.date).toLocaleDateString()}</div>
                 </div>
                 <div className={`font-semibold ${entry.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                   {entry.type === 'income' ? '+' : '-'}{formatCurrency(entry.amount)}

@@ -1,5 +1,30 @@
 
-## Session 10 (2026-08-12): Security repair batch (S1–S3, R1) — COMPLETED
+## Session 20 (2026-08-16): Grounded P0 verification - stale-FABRIC + unicode-escape bugs fixed
+
+Triggered by a consolidated remaining-fix list (P0-P2 roadmap). Per the audit protocol, **verified reality before acting** rather than trusting the checklist. Established baseline: `npx tsc -b --noEmit` clean, `npx vite build` succeeds (0 warnings), `npx vitest run` 88/88, HEAD 0b81e93, clean tree.
+
+### Verified (already done - not re-done)
+- **Onboarding/session persistence (P0 #1):** the loop fix is genuinely in place. `RequireAuth` (App.tsx) gates on `staff.business_id`, NOT the stale `onboarding_completed` flag (explicit comment explains the loop + why business_id is the real membership record). `AuthContext.fetchStaff` uses a monotonic `fetchIdRef` to discard stale fetches + a 4-attempt retry-with-backoff on empty reads (prevents the transient-null bounce to /onboarding). `RequireSession` wraps the onboarding route so the `create_business_and_owner` RPC can't fire before `getSession()` resolves. What remains is **browser-side verification**, not code.
+- **Analytics 401 (P0 #2, `record_analytics_event`):** the code-side fix is already implemented. `eventTracker.flush()` gates on `authReady` AND `hasSession` - queues before auth, discards when no session, only fires the RPC when a valid JWT exists. The RPC is defined in `037_analytics_events_system.sql` (SECURITY DEFINER) and granted to `authenticated` via the 998 blanket. The REAL cause of any 401 is **live-DB deployment drift** - migration 037 is not applied to the live Supabase (per Session 19). NOT a code bug.
+- **Routes/router fallback (P0 #5):** repo-wide scan found NO malformed route paths. The `*` -> NotFound fallback exists. CommandPalette routes are clean. No `/u2138k` literal exists in the repo.
+
+### Fixed (real bugs found by the search, NOT on the checklist as bugs)
+1. **Literal unicode-escape sequences rendering as garbage in JSX text.** JSX text content does NOT interpret `\u` escapes (only string/template literals do). Found and fixed:
+   - `Shell.tsx` search bar: literal `\u2026` -> ellipsis char, literal `\u2318K` -> cmd-key glyph. This is the source of the user's `/u2026` and `/u2138k` clues.
+   - `CRM.tsx` (x2): literal `\u20a6` -> naira sign in the new-deal and edit-deal forms.
+   - `CashFlow.tsx`: literal `\u2022` -> bullet char.
+   - The remaining `\u` escapes (Reports.tsx, CashFlow.tsx, useToolOnboarding.ts) are inside string/template literals where JS correctly interprets them - NOT bugs, left as-is.
+2. **Stale product terminology + dead link.** `Dashboard.tsx` had a "Make FABRIC yours" card whose "Customize" button linked to `/app/personalization` - a route that does NOT exist (no page, no route; it would 404). Fixed: "Make FABRIC yours" -> "Make Avenize yours"; "Customize" -> `/app/settings` (the real workspace config surface). This was the only "FABRIC"-as-product-name occurrence in `src/`; all other `fabric` hits were the word "fabricated" in code comments.
+
+### Findings (verified, not fixed - need decisions/DB access)
+- **Supabase production sync (P0 #2):** BLOCKED on live DB credentials. Per Session 19, migrations 063 + 080-110 are NOT applied to the live Supabase (project kgsgqvatyleetyquffya). This is the single highest-priority deployment action and the root cause of: missing RPCs (create_business_and_owner -> new users can't onboard; can_access_module -> module gate hides most modules; the entire intelligence layer), and the analytics 401. Cannot be done from the codebase - requires DB creds/service-role key. Frontend degrades gracefully (best-effort empty states).
+- **Workspace personalization (P0 #3):** the navigation (`Shell.tsx itemVisible`) is gated by role + module (entitled AND ready), but there is NO user-selected-tools personalization layer driving the sidebar. `Dashboard.tsx` promised a `/app/personalization` page that doesn't exist. Personalization is net-new work, not a wiring bug.
+- **Adaptive dashboard (P0 #4):** the `/app` index is now `CompanyHome` (the "My Work" redesign from Session 17 - real pending approvals/tasks/notifications). `Dashboard.tsx` (served at `/app/home`) is still generic KPIs (revenue/pipeline/people/overdue) not driven by workspace selection, role, or company size. Making it adaptive is net-new work.
+
+### Verified after fixes
+`npx tsc -b --noEmit` clean; `npx vite build` succeeds (0 warnings); `npx vitest run` 88/88 pass. Confirmed in the built JS bundle: the ellipsis, cmd-key glyph, naira sign, and bullet render as proper characters; "FABRIC" gone; "Make Avenize yours" present. Files changed: `src/components/Shell.tsx`, `src/pages/CRM.tsx`, `src/pages/CashFlow.tsx`, `src/pages/Dashboard.tsx`. No new dependencies, no migration changes, no external services. Not committed/pushed (awaiting user instruction per the PR policy).
+
+## Session 10 (2026-08-12): Security repair batch (S1-S3, R1) - COMPLETED
 
 Phase 2 security batch executed. All fixes are internal (no new dependencies, no external services).
 
