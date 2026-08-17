@@ -163,18 +163,18 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END
 $$;
 
-DO $$
+DO $cron_$
 BEGIN
   PERFORM extensions.cron.schedule(
     'avenize-scheduled-automations',
     '0 * * * *',  -- hourly at minute 0
-    $$SELECT run_due_automations()$$
+    $job$SELECT run_due_automations()$job$
   );
   RAISE NOTICE 'pg_cron avenize-scheduled-automations scheduled hourly';
 EXCEPTION WHEN OTHERS THEN
   RAISE NOTICE 'pg_cron avenize-scheduled-automations not scheduled: %', SQLERRM;
 END
-$$;
+$cron_$;
 
 COMMENT ON FUNCTION run_due_automations IS 'Scheduled-automation executor (#20): runs enabled time-based automations whose cron window is due. Idempotent per window (last_run_at tracked in trigger_config). Best-effort per automation. The hourly pg_cron job calls this.';
 
