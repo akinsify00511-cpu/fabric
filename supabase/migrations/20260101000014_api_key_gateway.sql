@@ -47,7 +47,16 @@ COMMENT ON COLUMN api_keys.needs_rotation IS 'True for legacy keys stored plaint
 --    Hashes the presented key with sha256, matches key_hash. Enforces
 --    active/expiry/IP-allowlist. Returns business_id + scopes on success,
 --    NULL on any failure (no distinguishable error → no oracle).
+--
+--    NOTE: migration 015 declared a verify_api_key(p_key TEXT) that returned the
+--    FULL api_keys row (including key_hash — a security smell). We DROP that
+--    overload and replace it with this one, which returns only business_id +
+--    scopes (never the hash). The signature differs (adds p_ip), so a plain
+--    CREATE OR REPLACE would error on non-unique name; DROP first.
 -- ============================================================================
+DROP FUNCTION IF EXISTS verify_api_key(TEXT);
+DROP FUNCTION IF EXISTS verify_api_key(TEXT, INET);
+
 CREATE OR REPLACE FUNCTION verify_api_key(p_raw_key TEXT, p_ip INET DEFAULT NULL)
 RETURNS TABLE (
   api_key_id UUID,
@@ -102,4 +111,4 @@ $$;
 -- The function itself is the gate — it returns NULL for any invalid key.
 GRANT EXECUTE ON FUNCTION verify_api_key(TEXT, INET) TO anon, authenticated;
 
-COMMENT ON FUNCTION verify_api_key IS 'Gateway key validator (#extensibility). Hashes the presented raw key (sha256, pgcrypto) and matches api_keys.key_hash. Enforces active/expiry/IP-allowlist/needs_rotation. Returns business_id+scopes on success, NULL on any failure (no oracle). SECURITY DEFINER so it can read the RLS-locked api_keys table. The raw key is never stored or logged.';
+COMMENT ON FUNCTION verify_api_key IS 'Gateway key validator (#extensibility). Hashes the presented raw key (sha256, pgcrypto) and matches api_keys.key_hash. Enforces active/expiry/IP-allowlist/needs_rotation. Returns business_id+scopes on success, NULL on any failure (no oracle). SECURITY DEFINER so it can read the RLS-locked api_keys table. The raw key is never stored or logged. Replaces the 015 overload that returned the full row (including key_hash).';
