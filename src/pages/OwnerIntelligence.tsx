@@ -12,11 +12,11 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { fetchOwnerIntelligence, type OwnerIntelligence } from '../lib/businessOS'
+import { fetchOwnerIntelligence, fetchSectorBenchmark, type OwnerIntelligence, type SectorBenchmark } from '../lib/businessOS'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   ShieldCheck, ShieldAlert, Loader2, Activity, Zap, Clock, AlertTriangle,
-  BarChart3, TrendingDown, Settings2, Lock, CheckCircle2, XCircle,
+  BarChart3, TrendingDown, Settings2, Lock, CheckCircle2, XCircle, Globe,
 } from 'lucide-react'
 
 function useIsOwnerAdmin() {
@@ -38,6 +38,7 @@ export default function OwnerIntelligence() {
   const [data, setData] = useState<OwnerIntelligence | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [benchmark, setBenchmark] = useState<SectorBenchmark | null>(null)
 
   useEffect(() => {
     if (!bid || !isOwnerAdmin) {
@@ -61,6 +62,13 @@ export default function OwnerIntelligence() {
         }
       } finally {
         if (active) setLoading(false)
+      }
+      // #16 sector benchmark (best-effort, non-blocking).
+      try {
+        const sb = await fetchSectorBenchmark(bid)
+        if (active) setBenchmark(sb)
+      } catch (e) {
+        console.error('sector_benchmark failed (non-blocking):', e)
       }
     })()
     return () => { active = false }
@@ -289,6 +297,55 @@ export default function OwnerIntelligence() {
           </div>
         )}
         <ClaimNote tone="muted">Abandonment is inferred (a start with no matching completion within 24h) — not a fact that the user gave up, but a measurable signal.</ClaimNote>
+      </section>
+
+      {/* Sector benchmark — how this business compares to its sector (#16) */}
+      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-gray-900 mb-1 flex items-center gap-2">
+          <Globe className="w-4 h-4 text-indigo-600" />
+          Sector Benchmark
+          <ClaimTag type="INFERENCE" />
+        </h2>
+        <p className="text-xs text-gray-500 mb-3">
+          How your module adoption compares to other businesses in your sector. Aggregated and anonymized — no individual business is ever identified. First-party data only.
+        </p>
+        {(() => {
+          if (!benchmark || !benchmark.modules || benchmark.modules.length === 0) {
+            return <ClaimNote tone="muted">No sector benchmark available yet. As more businesses in your sector configure their workspaces, adoption comparisons will appear here.</ClaimNote>
+          }
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-xs text-gray-500">
+                <span className="px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 font-medium">
+                  Sector: {benchmark.industry}
+                </span>
+                <span>Sample size: {benchmark.sector_sample_size} business{benchmark.sector_sample_size === 1 ? '' : 'es'}</span>
+                {benchmark.sector_sample_size < 5 && (
+                  <span className="text-amber-600">Small sample — treat with caution</span>
+                )}
+              </div>
+              {benchmark.modules.slice(0, 10).map((m) => (
+                <div key={m.module_key} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-gray-900 capitalize flex items-center gap-2">
+                      {m.module_key.replace(/_/g, ' ')}
+                      {m.i_selected && <span className="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">you</span>}
+                      {m.i_used && <span className="text-xs px-1.5 py-0.5 rounded bg-green-50 text-green-700">in use</span>}
+                    </span>
+                    <span className="text-gray-500">{m.sector_adoption_pct ?? '—'}% of sector</span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-indigo-400 rounded-full" style={{ width: `${m.sector_adoption_pct ?? 0}%` }} />
+                  </div>
+                </div>
+              ))}
+              <ClaimNote tone="muted">
+                Modules you haven't enabled but are popular in your sector may surface as recommendations.
+                External market data (industry trends beyond Avenize's customers) is not fabricated — this is a first-party benchmark only.
+              </ClaimNote>
+            </div>
+          )
+        })()}
       </section>
 
       <div className="flex items-center gap-2 text-xs text-gray-400 pt-2">

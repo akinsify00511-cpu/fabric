@@ -412,3 +412,36 @@ export async function fetchOwnerIntelligence(businessId: string): Promise<OwnerI
   if (error) throw error
   return (data as OwnerIntelligence) ?? null
 }
+
+// ---------- Sector Intelligence + Behavior Recommendations (20260101000011 / #16/#17) ----------
+// #16: sector benchmark — the business vs its sector's ANONYMIZED aggregate
+// (count/avg only, never individual businesses). First-party data only; no
+// fabricated external benchmarks (§22). Owner-gated + membership-guarded.
+// #17: behavior-driven recommendation issuer — runs USAGE-001/002 + SECTOR-001
+// alongside the financial/operational rules. Best-effort + non-blocking (§24).
+
+export interface SectorModuleRow {
+  module_key: string
+  i_selected: boolean
+  i_used: boolean
+  sector_businesses_selected: number
+  sector_adoption_pct: number | null
+}
+export interface SectorBenchmark {
+  authorized: boolean
+  industry: string
+  sector_sample_size: number
+  modules: SectorModuleRow[]
+}
+
+export async function fetchSectorBenchmark(businessId: string): Promise<SectorBenchmark | null> {
+  const { data, error } = await supabase.rpc('sector_benchmark', { p_business_id: businessId })
+  if (error) throw error
+  return (data as SectorBenchmark) ?? null
+}
+
+export async function runBehaviorRecommendationRules(businessId: string): Promise<{ rule_id: string; issued_count: number }[] | null> {
+  const { data, error } = await supabase.rpc('run_behavior_recommendation_rules', { p_business_id: businessId })
+  if (error) throw error
+  return (data as { rule_id: string; issued_count: number }[]) ?? null
+}

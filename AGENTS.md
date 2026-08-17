@@ -1096,3 +1096,30 @@ Checklist #18 requires a private intelligence layer ordinary users cannot access
 
 ### Verification (#18)
 tsc clean, vite build 0 warnings, vitest 121/121 (was 107, +14 new). Schema drift 0. Files: `supabase/migrations/20260101000010_owner_intelligence.sql`, `src/lib/businessOS.ts` (types + wrapper), `src/pages/OwnerIntelligence.tsx` (new), `src/App.tsx` (route), `src/components/Shell.tsx` (ownerOnly flag + gate + ROUTE_MODULE + nav link), `tests/frontend/lib/ownerIntelligence.test.ts`. No new deps, no external APIs.
+
+### #16/#17 — Sector intelligence + behavior-driven recommendations (CLOSED)
+Checklist #16 (market intelligence / reality-gap) + #17 (behavior-driven recommendations).
+
+**Honest scope split (§22 anti-fabrication):**
+- BUILDABLE now: the INTERNAL sector benchmark — a business's own module-adoption vs its sector's ANONYMIZED aggregate (count/avg only, never individual businesses). First-party data only.
+- BLOCKED on sourced data (not fabricated): #16 items 4-7 (emerging sector behavior, product-market gaps, new-feature opportunities, industry positioning) need real external market data — a Tavily/sector-report integration. Fabricating these would violate §22. Documented as blocked, same as #12.
+
+**`sector_benchmark(p_business_id)` JSONB RPC (migration 20260101000011):**
+- Owner-gated + membership-guarded (`get_current_staff`): non-members get `{authorized: false, modules: []}` (safe, no leak).
+- Returns the business's own modules (i_selected/i_used) vs the sector's anonymized aggregate (sector_businesses_selected count + sector_adoption_pct + sector_sample_size). NEVER individual business identities or raw rows.
+- §21 small-data guard surfaced in the UI: sample < 5 flagged "treat with caution"; the SECTOR-001 recommendation rule suppresses sectors < 5 entirely.
+- First-party data only (`user_workspace_selections` + `usage_events` + `businesses`). No external API.
+
+**Behavior-driven recommendation rules (#17) — `run_behavior_recommendation_rules(p_business_id)`:**
+- A SEPARATE function (NOT a re-declaration of `run_recommendation_rules` — that would drop the 8 original rules from 091). The cron fan-out calls BOTH.
+- **USAGE-001** (info): modules selected-but-unused in 30 days. Guard: `selection_completed = true`.
+- **USAGE-002** (warning): workflow abandonment > 50%. Guard: ≥ 3 starts.
+- **SECTOR-001** (info): sector-popular module not enabled. Guards: sector sample ≥ 5 AND adoption ≥ 50%.
+- Each: specific, small-data-guarded (§21), idempotent (`has_open_recommendation`), best-effort (EXCEPTION → 0). Wired into the cron: `run_all_recommendation_rules` (092) re-declared to call both per business.
+
+**Client layer:** `fetchSectorBenchmark()` + `runBehaviorRecommendationRules()` wrappers (best-effort §24). OwnerIntelligence.tsx "Sector Benchmark" section (anonymized, sample-size labels, small-sample warning). Recommendations surface in the existing Executive Cockpit `RecommendationsCard` (no new UI — rules write to `claims`, the existing feed reads them).
+
+**Test:** `tests/frontend/lib/sectorIntelligence.test.ts` (8 tests) locks: the privacy allowlist, all three small-data guards, and the §22 boundary.
+
+### Verification (#16/#17)
+tsc clean, vite build 0 warnings, vitest 129/129 (+8), schema drift 0. Files: `supabase/migrations/20260101000011_sector_intelligence_behavior_rules.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx`, `tests/frontend/lib/sectorIntelligence.test.ts`. No new deps, no external APIs.
