@@ -210,8 +210,8 @@ The single source of truth for what is actually done, partial, or blocked — fo
 ### Extensibility / integrations
 | Capability | Status | Notes |
 |---|---|---|
-| Public API coverage | 🟡 | `module_status.api = false`; API key management page exists; key issuance/gating not enforced server-side (no edge fn validates the hash). |
-| Webhooks | 🟡 | `dispatch-webhooks` edge fn exists; `automations` not ready (no execution engine); pg_net/pg_cron need manual enable on live DB. |
+| Public API coverage | ✅ | `api-gateway` edge function — read-only public API (contacts/deals/invoices/products/tasks) gated by `verify_api_key` RPC. API keys now hashed (SHA-256) at rest, not plaintext. Business-scoped + RLS backstop. |
+| Webhooks | 🟡 | `dispatch-webhooks` edge fn exists; automations now fire (data-triggers via Postgres, scheduled via pg_cron — #20 closed). Webhook dispatch still needs pg_net/pg_cron enabled on live DB. |
 | Integration gallery | 🟡 | Integrations page exists; Termii SMS + WhatsApp routing fixed (Session 10); Paystack/Flutterwave live. |
 
 ### Core architecture
@@ -290,10 +290,10 @@ The single source of truth for what is actually done, partial, or blocked — fo
 ## Verification baseline (this closure)
 - **tsc:** clean (0 errors)
 - **vite build:** 0 warnings
-- **vitest:** 150/150 passing (was 61 at Session 9 → +89 across the intelligence phases)
+- **vitest:** 164/164 passing (was 61 at Session 9 → +103 across the intelligence + extensibility phases)
 - **schema drift:** 0 (frontend `.from()`/`.rpc()` references all backed by migrations)
 - **CI:** Schema Drift ✅, CI ✅ (migrations apply clean), Vercel ✅
-- **Commits this session:** #14 telemetry, #18 owner intelligence + cross-tenant fix, #16/#17 sector + behavior rules, #19/#34 builder dashboard, #20 automation health + scheduled executor — all on main, all CI green.
+- **Commits this session:** #14 telemetry, #18 owner intelligence + cross-tenant fix, #16/#17 sector + behavior rules, #19/#34 builder dashboard, #20 automation health + scheduled executor, #extensibility API key gateway + plaintext-storage fix — all on main, all CI green.
 
 ## What "done" means here
-Every ✅ in this checklist is verified in the codebase with tsc clean, build succeeding, tests passing, and CI green. It does NOT mean the live database has the migrations applied, or that production end-to-end testing has run. The deploy caveat (apply `080`–`20260101000012` to live Supabase) is the single remaining blocker for every DB-backed ✅ to become real for actual users. Everything marked 🔴 (external data, generative AI) is deliberately deferred — fabricating it would violate the §22 anti-hallucination rule that has governed the entire intelligence build.
+Every ✅ in this checklist is verified in the codebase with tsc clean, build succeeding, tests passing, and CI green. It does NOT mean the live database has the migrations applied, or that production end-to-end testing has run. The deploy caveat (apply `080`–`20260101000014` to live Supabase, project `kgsgqvatyleetyquffya`) is the single remaining blocker for every DB-backed ✅ to become real for actual users. Everything marked 🔴 (external data, generative AI) is deliberately deferred — fabricating it would violate the §22 anti-hallucination rule that has governed the entire intelligence build.

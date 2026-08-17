@@ -1162,3 +1162,17 @@ Checklist #20 (cross-module intelligence: automation health + deterministic fall
 
 ### Verification (#20)
 tsc clean, vite build 0 warnings, vitest 150/150 (+10), schema drift 0. Files: `supabase/migrations/20260101000013_automation_health_and_scheduled.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx` (health section), `src/pages/Automations.tsx` (scheduled trigger), `tests/frontend/lib/automationHealth.test.ts`. No new deps, no external APIs.
+
+### #extensibility — API key gateway + plaintext-storage fix (CLOSED)
+Checklist Phase-4 extensibility: `module_status.api` was `false` ("key issuance/gating not enforced server-side"). Two defects found + closed.
+
+**Defect 1 — API keys stored PLAINTEXT (security).** `APIKeys.tsx` did `keyHash = rawKey` with a "in production, this would be hashed" comment. The `key_hash` column was named as if hashed but held the raw key. **Fix:** the page now hashes the key with SHA-256 (Web Crypto `crypto.subtle.digest`) before insert; the raw key is shown once. Migration `20260101000014` adds a `needs_rotation` column + backfills any `key_hash` starting with `avenize_` (the plaintext signature) to `needs_rotation=true`. The APIKeys UI surfaces a "Rotate" badge on flagged keys so the owner regenerates them hashed. Legacy plaintext keys are denied by `verify_api_key` until rotated.
+
+**Defect 2 — no gateway (keys unusable).** Created keys had nothing to validate them. **Fix:** migration `20260101000014` adds `verify_api_key(p_raw_key, p_ip)` — SECURITY DEFINER, granted to anon. Hashes the presented key server-side (`pgcrypto digest('sha256')`), matches `key_hash`, enforces `is_active` / not-expired / IP-allowlist / `needs_rotation=false`. Returns `business_id` + `scopes` on success, NULL on any failure (no oracle — all deny-paths return the same generic error). New edge function `supabase/functions/api-gateway/index.ts` is the public read-only API: validates the `Bearer avenize_<key>` header via `verify_api_key`, checks the `data:read` scope, then proxies a GET to the business's data through an explicit resource allowlist (contacts/deals/invoices/products/tasks). Business-scoped: every query is `.eq('business_id', verified.business_id)` — a key for business A can never read business B. Read-only: only GET; no write/insert/update/delete through the gateway.
+
+**Defense-in-depth:** (1) client hashes before storage, (2) `verify_api_key` re-hashes server-side (never compares raw keys), (3) explicit `business_id` filter is the primary boundary, (4) RLS is the backstop, (5) read-only methods enforced, (6) explicit resource allowlist (no wildcard).
+
+**Test:** `tests/frontend/lib/apiKeyGateway.test.ts` (14 tests) locks: the hash-not-plaintext storage rule (rejects the pre-fix defect + prefix-leak), the read-only contract (GET/OPTIONS only, explicit allowlist, `data:read` required), the business-scoping boundary (key business_id drives the query, not user-supplied), and all `verify_api_key` deny-paths (inactive/rotation/expired/IP) + the no-oracle generic-error contract.
+
+### Verification (#extensibility)
+tsc clean, vite build 0 warnings, vitest 164/164 (+14), schema drift 0. Files: `supabase/migrations/20260101000014_api_key_gateway.sql`, `supabase/functions/api-gateway/index.ts`, `src/pages/APIKeys.tsx` (sha256 hash + rotate badge), `tests/frontend/lib/apiKeyGateway.test.ts`. No new deps (Web Crypto + pgcrypto are built-in).
