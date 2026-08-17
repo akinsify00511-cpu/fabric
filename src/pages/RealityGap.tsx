@@ -3,15 +3,21 @@
 // OUTCOME. Surfaces where the business says work happens vs where it
 // actually happens vs what it achieved, so the gap is visible and fixable.
 // Backed by the reality_gaps table.
+//
+// Also surfaces an AUTO-DETECTED "Said vs Used" section (#12): tools the
+// business selected at onboarding but never actually touched, computed by
+// the said_vs_used RPC over user_workspace_selections + usage_events.
 
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { fetchSaidVsUsed, type SaidVsUsedRow } from '../lib/businessOS'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import { useToast } from '../components/Toast'
 import { ClaimTag } from '../components/Evidence'
 import {
   GitCompare, Plus, Loader2, X, AlertTriangle, CheckCircle2, Clock, XCircle,
+  TrendingDown,
 } from 'lucide-react'
 
 export default function RealityGap() {
@@ -20,6 +26,7 @@ export default function RealityGap() {
   const dbState = useDbState()
   const { showToast } = useToast()
   const [gaps, setGaps] = useState<any[]>([])
+  const [saidVsUsed, setSaidVsUsed] = useState<SaidVsUsedRow[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
 
@@ -29,11 +36,17 @@ export default function RealityGap() {
     if (!bid) return
     setLoading(true)
     const { data } = await supabase.from('reality_gaps').select('*').order('detected_at', { ascending: false }).limit(50)
-    setGaps(data || []); setLoading(false)
+    setGaps(data || [])
+    // Best-effort: stays empty if the RPC/migration isn't deployed yet (§24).
+    try { setSaidVsUsed(await fetchSaidVsUsed(bid)) } catch { setSaidVsUsed([]) }
+    setLoading(false)
   }
 
   const open = gaps.filter(g => !g.resolved_at)
   const resolved = gaps.filter(g => g.resolved_at)
+  // The headline auto-gap: tools selected at onboarding but untouched in 30d.
+  const selectedUnused = saidVsUsed.filter(r => r.gap_label === 'selected_unused')
+  const usedUnselected = saidVsUsed.filter(r => r.gap_label === 'used_unselected')
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -57,6 +70,25 @@ export default function RealityGap() {
         <Stat label="Resolved" count={resolved.length} tone="success" icon={CheckCircle2} />
         <Stat label="Critical" count={open.filter(g => g.severity === 'critical').length} tone="danger" icon={XCircle} />
       </div>
+
+      {/* Auto-detected: Said vs Used (#12) — tools selected at onboarding but
+          never touched, and tools used but never selected. Computed from real
+          telemetry, not manual entry. Best-effort: hidden when no data. */}
+      {!loading && (selectedUnused.length > 0 || usedUnselected.length > 0) && (
+        <div className="mb-6">
+          <h2 className="text-sm font-semibold text-[var(--av-text-secondary)] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+            <TrendingDown size={14} /> Auto-detected: said vs used
+          </h2>
+          <div className="space-y-2">
+            {selectedUnused.map(r => (
+              <SaidVsUsedRowCard key={`su-${r.module_key}`} row={r} tone="warn" />
+            ))}
+            {usedUnselected.map(r => (
+              <SaidVsUsedRowCard key={`uu-${r.module_key}`} row={r} tone="info" />
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="p-10 flex justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]" /></div>
@@ -127,6 +159,32 @@ function Reality({ label, value }: { label: string; value?: string }) {
     <div className="rounded-lg bg-[var(--av-surface-3)] p-2">
       <div className="text-[10px] uppercase font-semibold text-[var(--av-text-muted)]">{label}</div>
       <div className="text-[var(--av-text)] text-xs mt-0.5">{value || '—'}</div>
+    </div>
+  )
+}
+
+// A single auto-detected said-vs-used row. tone="warn" = selected but never
+// touched (the headline waste); tone="info" = used but never selected (a
+// hidden need). Honest: derived from real telemetry, tagged INFERENCE.
+function SaidVsUsedRowCard({ row, tone }: { row: SaidVsUsedRow; tone: 'warn' | 'info' }) {
+  const isWarn = tone === 'warn'
+  const color = isWarn ? 'var(--av-warning)' : 'var(--av-primary)'
+  const soft = isWarn ? 'var(--av-warning-soft)' : 'var(--av-primary-soft)'
+  const label = isWarn
+    ? `Selected “${row.module_key}” but no one used it in 30 days`
+    : `“${row.module_key}” is being used but wasn't selected`
+  return (
+    <div className="rounded-xl bg-white p-3 shadow-[var(--av-shadow-sm)] flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded shrink-0" style={{ color, backgroundColor: soft }}>
+          {row.gap_label.replace('_', ' ')}
+        </span>
+        <span className="text-sm text-[var(--av-text)] truncate">{label}</span>
+        <ClaimTag type="INFERENCE" />
+      </div>
+      {row.event_count > 0 && (
+        <span className="text-[11px] text-[var(--av-text-muted)] shrink-0">{row.event_count} events · {row.distinct_staff_used} staff</span>
+      )}
     </div>
   )
 }

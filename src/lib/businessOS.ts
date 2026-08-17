@@ -329,3 +329,25 @@ export async function detectPayrollDue(windowDays = 7): Promise<number> {
   if (error) return 0
   return (data as number) ?? 0
 }
+
+// ---------- Said-vs-Used Reality Gap (20260101000008 / #12) ----------
+// "What you said you need (onboarding) vs what you actually use (telemetry)."
+// Deterministic comparison of user_workspace_selections vs usage_events.
+// Best-effort + non-blocking (§24): stays empty when the RPC/migration is not
+// deployed to the live DB — the page degrades gracefully.
+
+export interface SaidVsUsedRow {
+  module_key: string
+  selected: boolean
+  actually_used: boolean
+  distinct_staff_used: number
+  event_count: number
+  last_seen: string | null
+  gap_label: 'selected_unused' | 'used_unselected' | 'adopted' | 'trying' | 'untouched' | string
+}
+
+export async function fetchSaidVsUsed(businessId: string): Promise<SaidVsUsedRow[]> {
+  const { data, error } = await supabase.rpc('said_vs_used', { p_business_id: businessId })
+  if (error) throw error
+  return (data || []) as SaidVsUsedRow[]
+}

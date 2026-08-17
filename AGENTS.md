@@ -1031,3 +1031,21 @@ Audited #10 (mobile+desktop same design system). Found a **three-way primary-col
 
 ### Verification (P1.10)
 tsc clean, vite build 0 warnings, vitest 94/94. Mobile `theme/index.ts` adds no type errors (the pre-existing RN missing-module errors are deps-not-installed-in-dev-container baseline; CI installs them). Files: `src/styles/avenize-brand.css` (primary + gradient tokens), `src/index.css` (gradient/sales/glow), `mobile/src/theme/index.ts` (primary). No migration/RPC/dependency changes.
+
+### P1.12 -- Market intelligence / reality-gap: "said vs used" (buildable slice CLOSED)
+Audited #12 against its 8-item checklist. The external-market-data variance (items 1-external, 4, 5, 6, 7) requires sourced benchmark data — `market_benchmarks` + `market_intelligence` RPC (063) exist but are empty; fabricating external numbers would violate §22 (anti-hallucination). Flagged as the "eventually" part the directive itself names. The buildable, honest slice — item 3 ("what businesses say they need vs what they actually use") + item 1-internal ("which sectors use what") — was closed using EXISTING tables:
+
+**Migration `20260101000008_said_vs_used_reality_gap.sql`:**
+- `said_vs_used(p_business_id)` (per-business, authenticated): compares `user_workspace_selections.selected_tools` (what they said they need at onboarding) against `usage_events` touches (what they actually use, 30d window matching `usage_module_adoption`). Labels: `selected_unused` (selected but never touched — the headline waste gap), `used_unselected` (used but never selected — a hidden need), `adopted` (3+ distinct staff), `trying` (1-2), `untouched`. Follows the exact precedent of `usage_module_adoption` (SECURITY DEFINER + business_id filter + granted to authenticated).
+- `sector_module_usage()` (builder-only, service role): aggregates across all businesses by `businesses.industry` — for each (industry, module_key): businesses_selecting, businesses_using, adoption_rate. Serves item 1 (sectors using what) + item 2 (over/under-performing by sector). REVOKED from anon/authenticated (cross-business aggregate — builder-facing, matches `usage_cross_business_adoption` precedent). `adoption_rate` is NULL (not 0%) when a sector selected nothing — honest.
+
+**Client + UI:** `fetchSaidVsUsed()` wrapper in businessOS.ts (best-effort, non-blocking per §24 — stays empty if migration not deployed). RealityGap.tsx gained an "Auto-detected: said vs used" section surfacing the two gap types (selected_unused as warn, used_unselected as info) with event/staff counts + INFERENCE tag — turning the previously-manual-only page into one that surfaces AUTOMATIC gaps from real telemetry.
+
+**Test:** `tests/frontend/lib/saidVsUsed.test.ts` (6 tests) locks the gap-label classification contract (selected_unused priority, adopted threshold, untouched never fabricated).
+
+### What remains for #12 (the "eventually" external-data part — blocked on data sourcing, not code)
+- External market benchmarks (item 1-external): need real, sourced benchmark data loaded into `market_benchmarks` (the RPC + table exist; the data doesn't). Per §22, not fabricated.
+- Emerging sector behavior (item 4), product-market gaps (item 5), new-feature opportunities (item 6), industry-specific positioning (item 7): all require the external benchmark data + longitudinal usage history to compute meaningfully. The deterministic plumbing (sector_module_usage) is now in place; it produces real numbers once businesses have usage history.
+
+### Verification (P1.12)
+tsc clean, vite build 0 warnings, vitest 100/100 (was 94, +6 new). Schema drift 0. Files: `supabase/migrations/20260101000008_said_vs_used_reality_gap.sql`, `src/lib/businessOS.ts` (wrapper + type), `src/pages/RealityGap.tsx` (auto-detected section), `tests/frontend/lib/saidVsUsed.test.ts`. No new dependencies, no external APIs — all deterministic SQL over real tables.
