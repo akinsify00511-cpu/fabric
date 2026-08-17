@@ -61,31 +61,41 @@ RETURNS TABLE (
     SELECT module_key FROM used
   )
   SELECT
-    t.module_key,
-    (s.tool_key IS NOT NULL) AS selected,
-    (u.module_key IS NOT NULL) AS actually_used,
-    COALESCE(u.distinct_staff, 0)::INT AS distinct_staff_used,
-    COALESCE(u.events, 0)::BIGINT AS event_count,
-    u.last_seen,
-    CASE
-      WHEN s.tool_key IS NOT NULL AND u.module_key IS NULL       THEN 'selected_unused'
-      WHEN s.tool_key IS NULL AND u.module_key IS NOT NULL       THEN 'used_unselected'
-      WHEN u.distinct_staff >= 3                                 THEN 'adopted'
-      WHEN u.distinct_staff >= 1                                 THEN 'trying'
-      ELSE 'untouched'
-    END AS gap_label
-  FROM all_tools t
-  LEFT JOIN selected s ON s.tool_key = t.module_key
-  LEFT JOIN used     u ON u.module_key = t.module_key
+    q.module_key,
+    q.selected,
+    q.actually_used,
+    q.distinct_staff_used,
+    q.event_count,
+    q.last_seen,
+    q.gap_label
+  FROM (
+    SELECT
+      t.module_key,
+      (s.tool_key IS NOT NULL) AS selected,
+      (u.module_key IS NOT NULL) AS actually_used,
+      COALESCE(u.distinct_staff, 0)::INT AS distinct_staff_used,
+      COALESCE(u.events, 0)::BIGINT AS event_count,
+      u.last_seen,
+      CASE
+        WHEN s.tool_key IS NOT NULL AND u.module_key IS NULL       THEN 'selected_unused'
+        WHEN s.tool_key IS NULL AND u.module_key IS NOT NULL       THEN 'used_unselected'
+        WHEN u.distinct_staff >= 3                                 THEN 'adopted'
+        WHEN u.distinct_staff >= 1                                 THEN 'trying'
+        ELSE 'untouched'
+      END AS gap_label
+    FROM all_tools t
+    LEFT JOIN selected s ON s.tool_key = t.module_key
+    LEFT JOIN used     u ON u.module_key = t.module_key
+  ) q
   ORDER BY
-    CASE gap_label
+    CASE q.gap_label
       WHEN 'selected_unused' THEN 0   -- the headline gap: selected but dead
       WHEN 'used_unselected' THEN 1
       WHEN 'trying'          THEN 2
       WHEN 'adopted'         THEN 3
       ELSE 4
     END,
-    COALESCE(u.events, 0) DESC;
+    COALESCE(q.event_count, 0) DESC;
 $$;
 
 GRANT EXECUTE ON FUNCTION said_vs_used(UUID) TO authenticated;
