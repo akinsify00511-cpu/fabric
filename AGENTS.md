@@ -1018,3 +1018,16 @@ Audited the 3 surfaces (LandingEnhanced, Onboarding, app Shell/Dashboard) agains
 
 ### Verification (P1.9)
 tsc clean, vite build 0 warnings, vitest 94/94. Single file changed: `src/pages/Onboarding.tsx`. No migration/RPC/dependency changes — purely visual-language + copy alignment to the existing LandingEnhanced BRAND tokens.
+
+### P1.10 -- Mobile/desktop design-system consistency (primary-color unification — CLOSED)
+Audited #10 (mobile+desktop same design system). Found a **three-way primary-color drift**: app chrome (`--av-primary` = `#4285F4`), Landing + Onboarding (`BRAND.primary` = `#155BB4`, darkened in Session 18 for WCAG-AA), and mobile (`colors.primary` = `#4285F4`). The web Landing/Onboarding moved to the darker accessible `#155BB4` but the app chrome (65 files consuming `var(--av-primary)`) and the mobile RN app were left on the lighter `#4285F4` (~3.5:1 on white, fails AA for small text). So the app a user landed in after onboarding was a visibly different blue than the onboarding they just completed — the exact #10 gap.
+
+**Closed via single-source-of-truth token change (not 65 file edits):**
+- `src/styles/avenize-brand.css`: `--av-primary` `#4285F4`→`#155BB4`, hover `#3367D6`→`#1247A0`, active `#2A5DB0`→`#0F3B86`, soft/subtle rgba(66,133,244)→rgba(21,91,180). Also `--av-gradient` aligned to the Landing BRAND gradient (`#155BB4→#4285F4→#34A853`). All 65 consuming files inherit the new primary automatically — that's the power of CSS variables.
+- `src/index.css`: `--avenize-gradient-start`/`--avenize-sales` `#4285F4`→`#155BB4`; gradient-mid/end aligned; the radial-gradient glow (line 126) fixed from `var(--av-primary)→rgba(66,133,244,0.18)` (a two-blue mismatch once primary changed) to `rgba(21,91,180,0.18)`.
+- `mobile/src/theme/index.ts`: `colors.primary` family `#4285F4`→`#155BB4` to match web. Mobile RN app now shares the same primary.
+
+**Why this is safe:** `#155BB4` is WCAG-AA (6.3:1 on white, Session 18-verified) — darkening is an accessibility improvement, not just consistency. White-on-`#155BB4` is MORE readable than white-on-`#4285F4`. The visual-regression test (`tests/ux/visual-regression.spec.ts`) has no committed baselines (`tests/ux/baselines/` doesn't exist) so the `if (fs.existsSync(baselinePath))` comparison branch never runs — and all UX steps are `continue-on-error: true`. Semantic tokens (`--av-info` `#4285F4`, accentSales) left intentionally distinct (they're separate semantic colors, not the brand primary).
+
+### Verification (P1.10)
+tsc clean, vite build 0 warnings, vitest 94/94. Mobile `theme/index.ts` adds no type errors (the pre-existing RN missing-module errors are deps-not-installed-in-dev-container baseline; CI installs them). Files: `src/styles/avenize-brand.css` (primary + gradient tokens), `src/index.css` (gradient/sales/glow), `mobile/src/theme/index.ts` (primary). No migration/RPC/dependency changes.

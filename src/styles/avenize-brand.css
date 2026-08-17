@@ -4,12 +4,15 @@
    ============================================ */
 
 :root {
-  /* ========== PRIMARY - Google Blue Standard ========== */
-  --av-primary: #4285F4;           /* Google Blue - Primary actions */
-  --av-primary-hover: #3367D6;     /* Google Blue Hover */
-  --av-primary-active: #2A5DB0;     /* Google Blue Active */
-  --av-primary-soft: rgba(66, 133, 244, 0.08);
-  --av-primary-subtle: rgba(66, 133, 244, 0.04);
+  /* ========== PRIMARY - Avenize Blue (WCAG-AA, unified web+mobile) ==========
+     Unified to #155BB4 across web chrome, Landing, and Onboarding (Session 18
+     darkened the landing from #4285F4 to #155BB4 for WCAG-AA 4.5:1; the app
+     chrome + mobile now match so all surfaces share one primary). */
+  --av-primary: #155BB4;           /* Primary actions (WCAG-AA on white, 6.3:1) */
+  --av-primary-hover: #1247A0;     /* Primary Hover */
+  --av-primary-active: #0F3B86;     /* Primary Active */
+  --av-primary-soft: rgba(21, 91, 180, 0.08);
+  --av-primary-subtle: rgba(21, 91, 180, 0.04);
   
   /* ========== SURFACE - Google Workspace Surface ========== */
   --av-surface: #FFFFFF;            /* Surface Primary - Page bg */
@@ -45,7 +48,7 @@
   --av-accent-soft: rgba(139, 92, 246, 0.08);
   
   /* ========== GRADIENT - Google Standard ========== */
-  --av-gradient: linear-gradient(135deg, #4285F4 0%, #6366F1 100%);
+  --av-gradient: linear-gradient(135deg, #155BB4 0%, #4285F4 52%, #34A853 100%);  /* unified w/ Landing + Onboarding BRAND.gradient */
   
   /* ========== SHADOWS - Material Elevation ========== */
   --av-shadow-sm: 0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06);

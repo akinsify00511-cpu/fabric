@@ -1,11 +1,13 @@
-// Avenize mobile theme — mirrors the web brand tokens (Google Standard).
-// Single source of truth for colors so mobile and web stay in sync.
+// Avenize mobile theme — mirrors the web brand tokens (unified primary #155BB4).
+// Single source of truth for colors so mobile and web stay in sync. The web
+// darkened its primary from #4285F4 to #155BB4 for WCAG-AA (Session 18); mobile
+// matches so all surfaces share one primary.
 
 export const colors = {
-  primary: '#4285F4',
-  primaryHover: '#3367D6',
-  primaryActive: '#2A5DB0',
-  primarySoft: 'rgba(66, 133, 244, 0.08)',
+  primary: '#155BB4',
+  primaryHover: '#1247A0',
+  primaryActive: '#0F3B86',
+  primarySoft: 'rgba(21, 91, 180, 0.08)',
 
   surface: '#FFFFFF',
   surface2: '#F8F9FA',
