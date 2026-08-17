@@ -34,7 +34,7 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM get_current_staff() cs WHERE cs.business_id = p_business_id
   ) THEN
-    RETURN jsonb_build_object('authorized', false, 'modules' => '[]'::JSONB);
+    RETURN jsonb_build_object('authorized', false, 'modules', '[]'::JSONB);
   END IF;
 
   SELECT b.industry INTO v_industry FROM businesses b WHERE b.id = p_business_id;
