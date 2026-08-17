@@ -1070,3 +1070,29 @@ The `usage_events` infra (Session 9) only logged `action='view'` on route change
 
 ### Verification (P1.14)
 tsc clean, vite build 0 warnings, vitest 107/107 (was 100, +7 new). Schema drift 0. Files: `supabase/migrations/20260101000009_self_instrumentation.sql`, `src/lib/useUsageTracking.ts` (logUsageEvent helper), `src/pages/Onboarding.tsx` (complete event), `src/lib/useWorkspaceSelection.ts` (toggle events), `src/pages/Quotes.tsx` (workflow events), `tests/frontend/lib/selfInstrumentation.test.ts`. No new deps, no external APIs.
+
+### #18 — Owner-only business intelligence (the private intelligence layer — CLOSED)
+Checklist #18 requires a private intelligence layer ordinary users cannot access (business/sector/role/feature/module analytics). #21 requires privileged/walled content (legal, disciplinary, board finance, litigation) to stay OUT of the general intelligence layer by default.
+
+**CRITICAL security fix found while building #18:** the 5 per-business RPCs from #14 (`feature_activation`, `quick_turnoff`, `workflow_funnel`, `ignored_automations`, `onboarding_funnel`) were SECURITY DEFINER + granted to authenticated but took a `p_business_id` param WITHOUT verifying the caller belongs to that business. SECURITY DEFINER bypasses RLS, so any authenticated user could pass another business's UUID and read its analytics — a cross-tenant leak I introduced in #14. `onboarding_funnel(p_business_id DEFAULT NULL)` was worse: NULL meant "all businesses" (a builder query exposed to any customer). **Migration `20260101000010` re-declares all 5 with an ownership guard** (`EXISTS (SELECT 1 FROM get_current_staff() cs WHERE cs.business_id = p_business_id)`); `onboarding_funnel` NULL now resolves to the caller's own business via `COALESCE`. Empty result if not a member (safe — no error, no leak). The CI migration-apply gate did NOT catch this (it tests SQL validity, not authorization) — found by the #18 audit forcing me to think about the authorization layer properly. Lesson: SECURITY DEFINER functions that take a business_id param MUST gate on membership; RLS does not protect them.
+
+**The owner_intelligence aggregator (checklist #18):**
+- `owner_intelligence(p_business_id)` JSONB RPC in migration `20260101000010`. PL/pgSQL (not sql) so it can branch on the gate. Verifies the caller's role is `owner`/`admin` AND a member of the business via `get_current_staff()` (the real boundary — defense-in-depth + checklist #18 "Owner/admin permission"). Returns empty JSONB payload if not owner/admin (safe, no leak). Returns feature activation + reuse, quick-turnoff, ignored automations, workflow funnel, and onboarding completion in ONE structured call (not 5 round-trips). `data_scope: 'operational_and_usage_only'` field declares the #21 boundary structurally.
+- **#21 boundary (verified + documented):** the aggregator reads ONLY `usage_events` + `automations` + `automation_runs` — operational/usage data. It NEVER references `legal_cases`, `legal_contracts`, `legal_obligations`, disciplinary records, `payroll_records`/`salary_history`, board finance, or litigation. Excluded BY CONSTRUCTION (the function body never touches those tables), not by a runtime toggle. The page surfaces this boundary as a visible banner.
+
+**Three-layer defense-in-depth (checklist #28 "No client-side security decisions"):**
+1. **Client UX gate** — `Shell.itemVisible` `ownerOnly` flag + `OwnerIntelligence.useIsOwnerAdmin()` hide the nav item + page from non-owners/admins. UX ONLY.
+2. **RPC server gate** — `owner_intelligence` verifies role + membership via `get_current_staff()`. THIS is the security control (SECURITY DEFINER bypasses RLS). A tampered client / direct URL / staff member gets an empty payload.
+3. **RLS** — `usage_events` is business-scoped (Session 9).
+
+**Builder-only cross-business analytics (NOT exposed to customers):** `onboarding_conversion`, `sector_module_usage`, `usage_cross_business_adoption` stay REVOKED from authenticated (service-role only). These serve the Avenize builder/board dashboard (checklist #19/#34), not any customer — a customer never sees another business's data. The customer-facing layer is `owner_intelligence` (own business only).
+
+**Client layer:**
+- `fetchOwnerIntelligence()` wrapper in businessOS.ts (best-effort §24 — returns null when RPC not deployed).
+- **OwnerIntelligence.tsx** page (`/app/owner-intelligence`, `self_audit` gate): onboarding completion, feature adoption + reuse (reused/returning/activated/view_only), modules switched off quickly, ignored automations, workflow completion with abandoned counts. Every section has an evidence tag (FACT for completion/activation, INFERENCE for abandonment/quick-turnoff) + honest empty states. The #21 boundary banner is visible. Non-owners get a "restricted" screen, not the analytics.
+- **Shell.tsx:** `ownerOnly` NavItem flag + gate (Crown icon, in SECONDARY_LINKS). `ROUTE_MODULE` maps `/app/owner-intelligence` → `self_audit`.
+
+**Test:** `tests/frontend/lib/ownerIntelligence.test.ts` (14 tests) locks: the client UX gate (owner/admin yes, manager/team_lead/staff no), the RPC server gate (owner/admin + member = authorized; non-member owner = DENIED — the cross-tenant protection; undefined role = denied), and the #21 boundary allowlist (operational/usage data only; payroll/legal/disciplinary/litigation excluded by construction).
+
+### Verification (#18)
+tsc clean, vite build 0 warnings, vitest 121/121 (was 107, +14 new). Schema drift 0. Files: `supabase/migrations/20260101000010_owner_intelligence.sql`, `src/lib/businessOS.ts` (types + wrapper), `src/pages/OwnerIntelligence.tsx` (new), `src/App.tsx` (route), `src/components/Shell.tsx` (ownerOnly flag + gate + ROUTE_MODULE + nav link), `tests/frontend/lib/ownerIntelligence.test.ts`. No new deps, no external APIs.

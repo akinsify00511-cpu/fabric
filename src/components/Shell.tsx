@@ -47,7 +47,7 @@ const TOOL_KEY_MAP: Record<string, string> = {
 // labels a small-business owner understands, collapses each section, and
 // moves admin/secondary items to a Discord-style user card at the bottom.
 // Routes are unchanged — only the navigation is reorganized.
-type NavItem = { to: string; label: string; icon: typeof Home; toolKey?: string; end?: boolean }
+type NavItem = { to: string; label: string; icon: typeof Home; toolKey?: string; end?: boolean; ownerOnly?: boolean }
 type NavGroup = { id: string; label: string; icon: typeof Home; items: NavItem[]; defaultOpen?: boolean }
 
 // Route → module gate. Drives the two-flag sidebar filter: a nav item only
@@ -65,6 +65,7 @@ const ROUTE_MODULE: Record<string, ModuleKey> = {
   '/app/control': 'self_audit', '/app/data-quality': 'self_audit',
   '/app/risks': 'self_audit',
   '/app/trust': 'self_audit',
+  '/app/owner-intelligence': 'self_audit',
   '/app/review': 'self_audit',
   '/app/chat': 'chat', '/app/live-chat': 'chat',
   '/app/whatsapp': 'chat', '/app/sms': 'chat',
@@ -198,6 +199,7 @@ const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/data-quality', label: 'Data Quality', icon: ShieldCheck, toolKey: 'dashboard' },
   { to: '/app/risks', label: 'Risks', icon: ShieldAlert, toolKey: 'dashboard' },
   { to: '/app/trust', label: 'Trust & Recovery', icon: ShieldCheck, toolKey: 'dashboard' },
+  { to: '/app/owner-intelligence', label: 'Owner Intelligence', icon: Crown, toolKey: 'dashboard', ownerOnly: true },
   { to: '/app/reality-gap', label: 'Reality Gap', icon: GitCompare, toolKey: 'dashboard' },
   { to: '/app/control', label: 'Audit Log', icon: ShieldCheck, toolKey: 'dashboard' },
   { to: '/app/integrations', label: 'Integrations', icon: Network, toolKey: 'integrations' },
@@ -239,6 +241,9 @@ export default function Shell() {
   // user deselected is hidden even if entitled+role-allowed. Selection is a
   // REMOVAL filter only — it can only hide, never reveal.
   const itemVisible = (item: NavItem) => {
+    // Owner-only items (e.g. Owner Intelligence) hidden from non-owners/admins.
+    // Client UX gate only — the RPC re-verifies server-side (defense-in-depth).
+    if (item.ownerOnly && !(staff?.role === 'owner' || staff?.role === 'admin')) return false
     // While any gate is loading, don't hide (prevents flash of empty nav).
     if (roleSelLoading || modulesLoading) return true
     // Settings/capture/dashboard are always visible (core chrome).

@@ -101,6 +101,7 @@ const DataQuality = lazy(() => import('./pages/DataQuality'))
 const OKR = lazy(() => import('./pages/OKR'))
 const RiskRegister = lazy(() => import('./pages/RiskRegister'))
 const TrustRecovery = lazy(() => import('./pages/TrustRecovery'))
+const OwnerIntelligence = lazy(() => import('./pages/OwnerIntelligence'))
 const MonthlyReview = lazy(() => import('./pages/MonthlyReview'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
@@ -469,6 +470,7 @@ function AppRoutes() {
         <Route path="okrs" element={mg('hr', <OKR />)} />
         <Route path="risks" element={mg('self_audit', <RiskRegister />)} />
         <Route path="trust" element={mg('self_audit', <TrustRecovery />)} />
+        <Route path="owner-intelligence" element={mg('self_audit', <OwnerIntelligence />)} />
         <Route path="review" element={mg('self_audit', <MonthlyReview />)} />
         <Route path="more" element={<More />} />
         <Route path="social" element={mg('crm', <Social />)} />

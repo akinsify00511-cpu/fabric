@@ -351,3 +351,64 @@ export async function fetchSaidVsUsed(businessId: string): Promise<SaidVsUsedRow
   if (error) throw error
   return (data || []) as SaidVsUsedRow[]
 }
+
+// ---------- Owner-Only Business Intelligence (20260101000010 / #18) ----------
+// The #18 private intelligence layer: owner/admin-gated analytics ordinary
+// users cannot access. The RPC verifies role IN ('owner','admin') AND business
+// membership via get_current_staff (defense-in-depth — client role check is
+// UX only). Returns one structured JSONB payload (feature activation, quick-
+// turnoff, ignored automations, workflow funnel, onboarding completion).
+// #21 boundary: reads ONLY usage_events + automations — NEVER privileged/
+// walled content (legal, disciplinary, board finance, litigation).
+// Best-effort + non-blocking (§24): returns null when the RPC/migration is not
+// deployed, or when the caller is not owner/admin — the page degrades gracefully.
+
+export interface OwnerFeatureActivation {
+  module_key: string
+  first_active_at: string | null
+  distinct_active_days: number
+  last_active_at: string | null
+  reuse_label: 'reused' | 'returning' | 'activated' | 'view_only' | string
+}
+export interface OwnerQuickTurnoff {
+  tool_key: string
+  selected_at: string
+  deselected_at: string
+  days_until_turnoff: number
+}
+export interface OwnerIgnoredAutomation {
+  id: string
+  name: string
+  trigger_type: string
+  created_at: string
+  last_run_at: string | null
+  run_count: number
+  enabled: boolean
+}
+export interface OwnerWorkflowFunnel {
+  workflow: string
+  started: number
+  completed: number
+  abandoned: number
+  completion_rate: number | null
+}
+export interface OwnerOnboardingCompletion {
+  completed_at: string
+  steps_reached: number
+  duration_seconds: number
+}
+export interface OwnerIntelligence {
+  authorized: boolean
+  feature_activation: OwnerFeatureActivation[]
+  quick_turnoff: OwnerQuickTurnoff[]
+  ignored_automations: OwnerIgnoredAutomation[]
+  workflow_funnel: OwnerWorkflowFunnel[]
+  onboarding_completion: OwnerOnboardingCompletion | null
+  data_scope?: string
+}
+
+export async function fetchOwnerIntelligence(businessId: string): Promise<OwnerIntelligence | null> {
+  const { data, error } = await supabase.rpc('owner_intelligence', { p_business_id: businessId })
+  if (error) throw error
+  return (data as OwnerIntelligence) ?? null
+}
