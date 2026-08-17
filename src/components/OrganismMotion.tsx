@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
+import '../styles/organism.css'
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const location = useLocation()
@@ -16,10 +17,7 @@ export function MotionButton({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button
-      {...props}
-      className={`av-motion-button ${className}`}
-    >
+    <button {...props} className={`av-motion-button ${className}`}>
       {children}
     </button>
   )
