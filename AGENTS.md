@@ -1123,3 +1123,23 @@ Checklist #16 (market intelligence / reality-gap) + #17 (behavior-driven recomme
 
 ### Verification (#16/#17)
 tsc clean, vite build 0 warnings, vitest 129/129 (+8), schema drift 0. Files: `supabase/migrations/20260101000011_sector_intelligence_behavior_rules.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx`, `tests/frontend/lib/sectorIntelligence.test.ts`. No new deps, no external APIs.
+
+### #19/#34 — Builder / board dashboard (platform-operator surface — CLOSED)
+Checklist #19 (sector/module analytics + market reality-gap) + #34 (board dashboard). This is the **platform-operator** surface — distinct from the per-business owner intelligence (#18). The Avenize builder uses it for sprint/product decisions ("which of the 61 modules actually get touched" — empirically, independent of entitlements).
+
+**The platform-admin distinction (critical, NOT a business role):** there was NO existing platform-builder concept (`staff.role` is owner|admin|manager|team_lead|staff — all business roles). A business owner is NOT a platform admin. Migration `20260101000012` adds a `platform_admins` email allowlist table (RLS denies ALL client access — service role only manages it). `is_platform_admin()` checks `auth.uid()`'s email against the allowlist. `builder_dashboard()` is gated by this — a business owner gets `{authorized: false}` (empty, safe, no leak). The builder is a real Avenize operator (their auth email is added to the allowlist by the service role), not a business user.
+
+**`builder_dashboard()` JSONB RPC (migration 20260101000012):** SECURITY DEFINER so it can call the 3 service-role-only cross-business RPCs (`sector_module_usage`, `onboarding_conversion`, `usage_cross_business_adoption`) — which stay REVOKED from authenticated. This RPC is the ONLY authenticated-callable aggregator. Returns one JSONB payload: onboarding conversion (total_authenticated/completed/abandoned, conversion_rate, median_steps, avg_duration), cross-business module adoption (module_key, businesses_touching count, total_events count), sector×module adoption (industry, module_key, selecting/using counts, adoption_rate).
+
+**#21 boundary (aggregate only, verified + documented):** the payload contains ONLY counts/rates/averages — NEVER business names, owner emails, customer names, invoice amounts, legal/disciplinary/payroll data. The RPC reads only `usage_events` + `user_workspace_selections` + `businesses.industry`. The page surfaces this as a visible banner. The underlying cross-business RPCs stay service-role-only; direct client calls are denied.
+
+**Defense-in-depth:** (1) client route behind `RequireAuth` (needs a session), (2) `builder_dashboard` RPC verifies `is_platform_admin()` via `auth.uid()` (the real boundary), (3) `platform_admins` RLS denies client writes (only service role can grant platform access — prevents a business user self-elevating).
+
+**Route:** `/builder` (top-level, NOT under `/app` — it's not a business surface). The RPC gate is the authority; a business user typing `/builder` gets the "unauthorized" screen, not the analytics.
+
+**Client layer:** `fetchBuilderDashboard()` wrapper (best-effort §24). BuilderDashboard.tsx page: onboarding conversion stats, platform-wide module adoption bars, sector×module table (selecting vs using vs adoption%, low-adoption flagged amber), and an honest "what this cannot tell you" section (external market variance blocked-on-sourced-data, §22).
+
+**Test:** `tests/frontend/lib/builderDashboard.test.ts` (11 tests) locks: the platform-admin gate (allowlist yes/no; business owner/admin/undefined-role all = NOT a platform admin), the aggregate-only privacy boundary (no business-identifying fields; walled content excluded), and the §22 boundary.
+
+### Verification (#19/#34)
+tsc clean, vite build 0 warnings, vitest 140/140 (+11), schema drift 0. Files: `supabase/migrations/20260101000012_builder_dashboard.sql`, `src/lib/businessOS.ts`, `src/pages/BuilderDashboard.tsx`, `src/App.tsx` (route), `tests/frontend/lib/builderDashboard.test.ts`. No new deps, no external APIs.

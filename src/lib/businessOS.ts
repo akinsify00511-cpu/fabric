@@ -445,3 +445,44 @@ export async function runBehaviorRecommendationRules(businessId: string): Promis
   if (error) throw error
   return (data as { rule_id: string; issued_count: number }[]) ?? null
 }
+
+// ---------- Builder / Board Dashboard (20260101000012 / #19/#34) ----------
+// The PLATFORM-OPERATOR surface (distinct from per-business owner intelligence
+// #18). Aggregate cross-business patterns: module adoption/abandonment
+// platform-wide, onboarding conversion, sector×module adoption. Gated by a
+// platform_admins email allowlist (NOT a business role) — verified server-side.
+// #21: aggregate only, never business PII or walled content. Best-effort §24.
+
+export interface BuilderOnboardingConversion {
+  total_authenticated: number
+  total_completed: number
+  total_abandoned: number
+  conversion_rate: number | null
+  median_steps_reached: number | null
+  avg_duration_seconds: number | null
+}
+export interface BuilderCrossBusinessAdoption {
+  module_key: string
+  businesses_touching: number
+  total_events: number
+}
+export interface BuilderSectorModuleUsage {
+  industry: string
+  module_key: string
+  businesses_selecting: number
+  businesses_using: number
+  adoption_rate: number | null
+}
+export interface BuilderDashboard {
+  authorized: boolean
+  onboarding_conversion: BuilderOnboardingConversion | null
+  cross_business_adoption: BuilderCrossBusinessAdoption[]
+  sector_module_usage: BuilderSectorModuleUsage[]
+  data_scope?: string
+}
+
+export async function fetchBuilderDashboard(): Promise<BuilderDashboard | null> {
+  const { data, error } = await supabase.rpc('builder_dashboard')
+  if (error) throw error
+  return (data as BuilderDashboard) ?? null
+}
