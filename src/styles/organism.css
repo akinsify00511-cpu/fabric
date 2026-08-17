@@ -5,62 +5,44 @@
   --av-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.av-page-transition {
-  animation: av-page-enter var(--av-motion-context) var(--av-motion-ease) both;
-  min-height: 100%;
+.av-route-enter { animation: av-route-enter 320ms var(--av-motion-ease) both; }
+.av-page-transition { animation: av-page-enter var(--av-motion-context) var(--av-motion-ease) both; min-height: 100%; }
+
+.av-organism button:not(:disabled),
+.av-organism a,
+.av-organism [role="button"] {
+  transition: transform var(--av-motion-fast) var(--av-motion-ease), opacity var(--av-motion-fast) ease, box-shadow var(--av-motion-standard) var(--av-motion-ease), background-color var(--av-motion-standard) ease;
+}
+
+.av-organism button:not(:disabled):hover,
+.av-organism a:hover,
+.av-organism [role="button"]:hover {
+  transform: translateY(-1px);
+}
+
+.av-organism button:not(:disabled):active,
+.av-organism a:active,
+.av-organism [role="button"]:active {
+  transform: translateY(0) scale(.985);
 }
 
 .av-motion-button,
 .av-motion-card {
   transition: transform var(--av-motion-fast) var(--av-motion-ease), opacity var(--av-motion-fast) ease, box-shadow var(--av-motion-standard) var(--av-motion-ease), background-color var(--av-motion-standard) ease;
 }
+.av-motion-button:hover:not(:disabled) { transform: translateY(-1px); }
+.av-motion-button:active:not(:disabled) { transform: translateY(0) scale(.985); }
+.av-motion-card:hover { transform: translateY(-2px); }
 
-.av-motion-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
+.av-state-pulse { display:inline-block; width:8px; height:8px; border-radius:9999px; background:currentColor; }
+.av-state-pulse-active { animation: av-pulse 1.8s ease-in-out infinite; }
 
-.av-motion-button:active:not(:disabled) {
-  transform: translateY(0) scale(0.985);
-}
-
-.av-motion-card:hover {
-  transform: translateY(-2px);
-}
-
-.av-state-pulse {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 9999px;
-  background: currentColor;
-}
-
-.av-state-pulse-active {
-  animation: av-pulse 1.8s ease-in-out infinite;
-}
-
-@keyframes av-page-enter {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes av-pulse {
-  0%, 100% { opacity: .45; transform: scale(.9); }
-  50% { opacity: 1; transform: scale(1); }
-}
+@keyframes av-route-enter { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+@keyframes av-page-enter { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes av-pulse { 0%,100% { opacity:.45; transform:scale(.9); } 50% { opacity:1; transform:scale(1); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .av-page-transition,
-  .av-state-pulse-active {
-    animation: none;
-  }
-  .av-motion-button,
-  .av-motion-card {
-    transition: opacity 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
-  }
-  .av-motion-button:hover:not(:disabled),
-  .av-motion-button:active:not(:disabled),
-  .av-motion-card:hover {
-    transform: none;
-  }
+  .av-route-enter,.av-page-transition,.av-state-pulse-active { animation:none; }
+  .av-organism button:not(:disabled),.av-organism a,.av-organism [role="button"],.av-motion-button,.av-motion-card { transition:opacity 120ms ease,background-color 120ms ease,box-shadow 120ms ease; }
+  .av-organism button:not(:disabled):hover,.av-organism a:hover,.av-organism [role="button"]:hover,.av-organism button:not(:disabled):active,.av-organism a:active,.av-organism [role="button"]:active,.av-motion-button:hover:not(:disabled),.av-motion-button:active:not(:disabled),.av-motion-card:hover { transform:none; }
 }
