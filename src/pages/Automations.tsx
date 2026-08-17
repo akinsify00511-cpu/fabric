@@ -61,6 +61,7 @@ const TRIGGERS: Trigger[] = [
   { type: 'staff_joined', name: 'Staff joined', description: 'When a new team member joins', icon: '👋' },
   { type: 'leave_approved', name: 'Leave approved', description: 'When a leave request is approved', icon: '🏖️' },
   { type: 'product_low_stock', name: 'Low stock', description: 'When a product falls below threshold', icon: '⚠️' },
+  { type: 'scheduled', name: 'Scheduled (hourly)', description: 'Runs automatically on an hourly schedule', icon: '⏲️' },
 ]
 
 const ACTIONS: Action[] = [
@@ -550,6 +551,23 @@ const [automations, setAutomations] = useState<Automation[]>([])
                     </button>
                   ))}
                 </div>
+                {triggerType === 'scheduled' && (
+                  <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                    <label className="text-xs font-medium text-amber-900 block mb-1">
+                      Schedule
+                    </label>
+                    <p className="text-xs text-amber-800 mb-2">
+                      Scheduled automations run on an hourly cadence (checked every hour by the platform). The cron field is informational — every enabled scheduled automation runs hourly.
+                    </p>
+                    <input
+                      type="text"
+                      value={triggerConfig.cron ?? '0 * * * *'}
+                      onChange={(e) => setTriggerConfig({ ...triggerConfig, cron: e.target.value })}
+                      placeholder="0 * * * * (hourly)"
+                      className="w-full px-3 py-2 rounded-lg border border-amber-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Action */}

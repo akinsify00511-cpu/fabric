@@ -1143,3 +1143,22 @@ Checklist #19 (sector/module analytics + market reality-gap) + #34 (board dashbo
 
 ### Verification (#19/#34)
 tsc clean, vite build 0 warnings, vitest 140/140 (+11), schema drift 0. Files: `supabase/migrations/20260101000012_builder_dashboard.sql`, `src/lib/businessOS.ts`, `src/pages/BuilderDashboard.tsx`, `src/App.tsx` (route), `tests/frontend/lib/builderDashboard.test.ts`. No new deps, no external APIs.
+
+### #20 — Automation health + scheduled-automation executor (CLOSED)
+Checklist #20 (cross-module intelligence: automation health + deterministic fallback). Two findings + two fixes.
+
+**Finding 1 — the "automations not ready" claim was STALE.** `module_status.automations = false` said "not wired to a real execution engine — demo only." But migration `007` ALREADY has a real execution engine: `execute_automation_action` actually inserts tasks/notifications/cashflow entries/merit/chat messages, wired as live Postgres `AFTER UPDATE` triggers for 4 data-trigger types (`deal_stage_changed`/`deal_won`/`deal_lost`, invoice, task, staff). The execution engine was real; the readiness flag was wrong. Migration `20260101000013` updates the stale `module_status.automations.note` to reflect reality.
+
+**Finding 2 — two real gaps.** (a) No `automation_health` RPC — owners/builders couldn't see success/failure rates, never-run automations, or recent runs (the #20 "automation health" requirement). (b) No scheduled/time-based automations — only data-trigger automations fired. A "every Monday, create a weekly review task" automation had no executor.
+
+**Fix (migration `20260101000013`):**
+- **`automation_health(p_business_id)` RPC:** owner-gated + membership-guarded via `get_current_staff`. Returns total/enabled automations, total/successful/failed runs, never-run list, recent runs (limit 20). #21: reads only `automation_runs` + `automations` (operational data, no business PII).
+- **`run_due_automations()` scheduled executor:** finds enabled automations with `trigger_type = 'scheduled'` whose cron window is due (idempotent — tracks `last_run_at` in `trigger_config` JSONB, 55-minute floor guards against double-firing within the hourly window). Best-effort per automation (EXCEPTION → log + skip, never aborts the batch). Calls the existing `execute_automation_action`.
+- **pg_cron job:** `avenize-scheduled-automations` hourly (`0 * * * *`). Guarded so a DB without pg_cron no-ops (§24). Unschedule-first so re-running updates, not dupes.
+- **`scheduled` trigger type** added to the Automations page UI (with a cron field; the hourly cadence is the platform default).
+- **`automation_health` surfaced** on the OwnerIntelligence page (success rate bar, recent runs list, never-run flag) — best-effort, non-blocking.
+
+**Test:** `tests/frontend/lib/automationHealth.test.ts` (10 tests) locks: the owner gate, the aggregate-only #21 contract, the scheduled-trigger idempotency (never-run runs; within-window doesn't re-run; after-window re-runs), and the best-effort batch contract (one failure never aborts the batch; all-failing returns; empty is a no-op).
+
+### Verification (#20)
+tsc clean, vite build 0 warnings, vitest 150/150 (+10), schema drift 0. Files: `supabase/migrations/20260101000013_automation_health_and_scheduled.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx` (health section), `src/pages/Automations.tsx` (scheduled trigger), `tests/frontend/lib/automationHealth.test.ts`. No new deps, no external APIs.

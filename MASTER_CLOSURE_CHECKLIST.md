@@ -163,9 +163,9 @@ The single source of truth for what is actually done, partial, or blocked — fo
 ### 20. Cross-module intelligence (deterministic)
 | Level | Status | Outcome |
 |---|---|---|
-| End-user | ✅ | Recommendation engine (8 financial/operational rules + 3 behavior rules) runs hourly; surfaces in Cockpit + MPR. Outcome loop (accept→act→outcome→effectiveness). |
-| Business-owner | ✅ | Governed metrics, Business Health score, OKR progress, risk register, monthly review — all deterministic SQL over real data. |
-| Builder | 🟡 | `module_status.automations = false` (no real execution engine); NL querying + proactive surfacing are Phase-3 generative (deferred per §33). |
+| End-user | ✅ | Recommendation engine (8 financial/operational rules + 3 behavior rules) runs hourly; surfaces in Cockpit + MPR. Outcome loop (accept→act→outcome→effectiveness). Automation execution engine is real (007: deal/invoice/task/staff triggers fire live). |
+| Business-owner | ✅ | Governed metrics, Business Health score, OKR progress, risk register, monthly review — all deterministic SQL over real data. `automation_health` RPC surfaces success/failure rates + recent runs on Owner Intelligence. Scheduled automations now fire hourly. |
+| Builder | 🟡 | `module_status.automations` reason corrected (was stale — the engine was always real). Scheduled-automation executor + pg_cron added. NL querying + proactive surfacing remain Phase-3 generative (deferred per §33). |
 
 ### Intelligence foundation (§28, tenant isolation, walled content)
 | Level | Status | Outcome |
@@ -229,9 +229,9 @@ The single source of truth for what is actually done, partial, or blocked — fo
 ### Automation health (#20 partial)
 | Level | Status | Outcome |
 |---|---|---|
-| End-user | 🟡 | Automations page exists; runs table (`automation_runs.status` = success/failed) tracks outcomes. No execution engine — automations don't fire on triggers. |
-| Business-owner | 🟡 | Ignored automations surfaced in Owner Intelligence. |
-| Builder | 🟡 | `module_status.automations = false`. Needs: real trigger execution (pg_cron for scheduled, event-bus for data triggers), automation_health RPC. |
+| End-user | ✅ | Automations page exists; runs table (`automation_runs.status` = success/failed) tracks outcomes. Data-trigger automations (deal/invoice/task/staff) fire live via Postgres triggers. Scheduled automations fire hourly via pg_cron. |
+| Business-owner | ✅ | Ignored automations + automation health (success rate, recent runs, never-run) surfaced in Owner Intelligence. |
+| Builder | 🟡 | `module_status.automations` reason corrected (was stale — the engine was always real). Scheduled executor + `automation_health` RPC added. Real trigger execution now: data-triggers via Postgres triggers, scheduled via pg_cron. The remaining "not ready" is only until the migration is applied to live DB. |
 
 ---
 
@@ -282,7 +282,7 @@ The single source of truth for what is actually done, partial, or blocked — fo
 | Natural-language querying | 🔴 | Phase 3 generative — deferred per §33 (build only after core modules have real paying customers + transaction history). |
 | Cross-department automation | 🟡 | Event bus coordinates; execution engine incomplete. |
 | Proactive surfacing | ✅ | Critical recommendations notify the owner (Session 14); Cockpit feed. |
-| Automation health | 🟡 | See #20 above. |
+| Automation health | ✅ | `automation_health` RPC + scheduled executor (see #20 above). |
 | Deterministic fallback views | ✅ | All intelligence is deterministic SQL over real tables (§22/§38). |
 
 ---
@@ -290,10 +290,10 @@ The single source of truth for what is actually done, partial, or blocked — fo
 ## Verification baseline (this closure)
 - **tsc:** clean (0 errors)
 - **vite build:** 0 warnings
-- **vitest:** 140/140 passing (was 61 at Session 9 → +79 across the intelligence phases)
+- **vitest:** 150/150 passing (was 61 at Session 9 → +89 across the intelligence phases)
 - **schema drift:** 0 (frontend `.from()`/`.rpc()` references all backed by migrations)
 - **CI:** Schema Drift ✅, CI ✅ (migrations apply clean), Vercel ✅
-- **Commits this session:** #14 telemetry, #18 owner intelligence + cross-tenant fix, #16/#17 sector + behavior rules, #19/#34 builder dashboard — all on main, all CI green.
+- **Commits this session:** #14 telemetry, #18 owner intelligence + cross-tenant fix, #16/#17 sector + behavior rules, #19/#34 builder dashboard, #20 automation health + scheduled executor — all on main, all CI green.
 
 ## What "done" means here
 Every ✅ in this checklist is verified in the codebase with tsc clean, build succeeding, tests passing, and CI green. It does NOT mean the live database has the migrations applied, or that production end-to-end testing has run. The deploy caveat (apply `080`–`20260101000012` to live Supabase) is the single remaining blocker for every DB-backed ✅ to become real for actual users. Everything marked 🔴 (external data, generative AI) is deliberately deferred — fabricating it would violate the §22 anti-hallucination rule that has governed the entire intelligence build.

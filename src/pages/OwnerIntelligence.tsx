@@ -12,7 +12,7 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { fetchOwnerIntelligence, fetchSectorBenchmark, type OwnerIntelligence, type SectorBenchmark } from '../lib/businessOS'
+import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, type OwnerIntelligence, type SectorBenchmark, type AutomationHealth } from '../lib/businessOS'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   ShieldCheck, ShieldAlert, Loader2, Activity, Zap, Clock, AlertTriangle,
@@ -39,6 +39,7 @@ export default function OwnerIntelligence() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [benchmark, setBenchmark] = useState<SectorBenchmark | null>(null)
+  const [health, setHealth] = useState<AutomationHealth | null>(null)
 
   useEffect(() => {
     if (!bid || !isOwnerAdmin) {
@@ -69,6 +70,13 @@ export default function OwnerIntelligence() {
         if (active) setBenchmark(sb)
       } catch (e) {
         console.error('sector_benchmark failed (non-blocking):', e)
+      }
+      // #20 automation health (best-effort, non-blocking).
+      try {
+        const ah = await fetchAutomationHealth(bid)
+        if (active) setHealth(ah)
+      } catch (e) {
+        console.error('automation_health failed (non-blocking):', e)
       }
     })()
     return () => { active = false }
@@ -260,6 +268,65 @@ export default function OwnerIntelligence() {
           </div>
         )}
       </section>
+
+      {/* #20 Automation health — success/failure rates + recent runs */}
+      {health && health.authorized && (
+        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <Activity className="w-4 h-4 text-blue-600" />
+            Automation Health
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <div className="text-xs text-gray-500">Total automations</div>
+              <div className="text-lg font-semibold text-gray-900">{health.total_automations}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500">Enabled</div>
+              <div className="text-lg font-semibold text-gray-900">{health.enabled_automations}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500">Successful runs</div>
+              <div className="text-lg font-semibold text-green-700">{health.successful_runs}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500">Failed runs</div>
+              <div className="text-lg font-semibold text-amber-700">{health.failed_runs}</div>
+            </div>
+          </div>
+          {health.total_automations > 0 && (
+            <div className="mb-3">
+              <div className="text-xs text-gray-500 mb-1">Success rate</div>
+              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-green-500 rounded-full"
+                  style={{ width: `${health.total_runs > 0 ? (health.successful_runs / health.total_runs) * 100 : 0}%` }}
+                />
+              </div>
+              <div className="text-xs text-gray-400 mt-1">
+                {health.total_runs > 0 ? Math.round((health.successful_runs / health.total_runs) * 100) : 0}% of {health.total_runs} runs
+              </div>
+            </div>
+          )}
+          {health.recent_runs.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-xs text-gray-500 font-medium">Recent runs</div>
+              {health.recent_runs.slice(0, 8).map((r) => (
+                <div key={r.id} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+                  <div className="flex items-center gap-2">
+                    {r.status === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-red-500" />}
+                    <span className="text-sm text-gray-900">{r.automation_name}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">{new Date(r.executed_at).toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {health.total_automations === 0 && (
+            <ClaimNote tone="muted">No automations yet. Create automations to see execution health here.</ClaimNote>
+          )}
+        </section>
+      )}
 
       {/* Workflow funnel */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">

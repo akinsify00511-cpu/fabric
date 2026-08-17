@@ -486,3 +486,25 @@ export async function fetchBuilderDashboard(): Promise<BuilderDashboard | null> 
   if (error) throw error
   return (data as BuilderDashboard) ?? null
 }
+
+// ---------- Automation Health (20260101000013 / #20) ----------
+// Success/failure rates, never-run automations, recent runs. Owner-gated +
+// membership-guarded. Powers the #20 "automation health" requirement.
+// Best-effort + non-blocking (§24).
+
+export interface AutomationHealth {
+  authorized: boolean
+  total_automations: number
+  enabled_automations: number
+  total_runs: number
+  successful_runs: number
+  failed_runs: number
+  never_run: { id: string; name: string; trigger_type: string; action_type: string; enabled: boolean; created_at: string }[]
+  recent_runs: { id: string; automation_name: string; trigger_type: string; status: string; error_message: string | null; executed_at: string }[]
+}
+
+export async function fetchAutomationHealth(businessId: string): Promise<AutomationHealth | null> {
+  const { data, error } = await supabase.rpc('automation_health', { p_business_id: businessId })
+  if (error) throw error
+  return (data as AutomationHealth) ?? null
+}
