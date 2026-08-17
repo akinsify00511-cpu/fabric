@@ -1,0 +1,66 @@
+:root {
+  --av-motion-fast: 140ms;
+  --av-motion-standard: 220ms;
+  --av-motion-context: 320ms;
+  --av-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.av-page-transition {
+  animation: av-page-enter var(--av-motion-context) var(--av-motion-ease) both;
+  min-height: 100%;
+}
+
+.av-motion-button,
+.av-motion-card {
+  transition: transform var(--av-motion-fast) var(--av-motion-ease), opacity var(--av-motion-fast) ease, box-shadow var(--av-motion-standard) var(--av-motion-ease), background-color var(--av-motion-standard) ease;
+}
+
+.av-motion-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.av-motion-button:active:not(:disabled) {
+  transform: translateY(0) scale(0.985);
+}
+
+.av-motion-card:hover {
+  transform: translateY(-2px);
+}
+
+.av-state-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: currentColor;
+}
+
+.av-state-pulse-active {
+  animation: av-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes av-page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes av-pulse {
+  0%, 100% { opacity: .45; transform: scale(.9); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .av-page-transition,
+  .av-state-pulse-active {
+    animation: none;
+  }
+  .av-motion-button,
+  .av-motion-card {
+    transition: opacity 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+  }
+  .av-motion-button:hover:not(:disabled),
+  .av-motion-button:active:not(:disabled),
+  .av-motion-card:hover {
+    transform: none;
+  }
+}
