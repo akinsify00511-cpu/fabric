@@ -978,3 +978,17 @@ Audited all 7 session-persistence scenarios the user listed against the codebase
 
 ### Verification (P0.3)
 tsc clean, vite build 0 warnings, vitest 94/94. Changes: `src/pages/Login.tsx` (removed racy staff lookup; use AuthContext staff state; returnTo), `src/App.tsx` (RequireAuth encodes `?redirect=`), no migration/RPC changes.
+
+### P0.4 -- Adaptive Dashboard (4 of 8 checklist gaps closed)
+Audited the Dashboard against the user's 8-item P0.4 checklist. 4 were already done (workspace selection, no irrelevant KPIs, quick actions, active modules — all via `useExperienceContext.isToolActive` from R2.8). 4 real gaps closed:
+
+**#3 Capability-driven sections (partial → complete).** The "Business pulse" card showed a fabricated sparkline even when `primaryMetric.value === 0` (a user with no revenue/pipeline/projects saw a fake bar chart, not an honest state). Now shows an honest "No {metric} data yet. This will fill in as you use this tool." empty state when the value is 0 — no fabricated chart.
+
+**#4 Contextual Attention (task-only → aggregated).** The "What needs you" card only ever showed overdue TASKS. A finance user cares about overdue invoices; an inventory user about low stock; a CRM user about stale deals. Now aggregates every signal the user's active tools surface: overdue tasks (red) + overdue invoices (red, finance) + low-stock products (amber, inventory) + stale deals >14d (amber, CRM), each linking to the right page. The "Needs attention" KPI now counts the TOTAL across all signals (not just overdue tasks), so a finance-only user sees their overdue invoices reflected. New stats fetched: `overdueInvoices` (unpaid, non-draft, >30d old), `staleDeals` (open, >14d — the intelligence threshold).
+
+**#6 Role adaptation (none → role-aware Focus mode).** "My Focus" mode was a generic task list. Now role-aware: owner/admin → "Owner's view" (revenue/oversee-everything hint), manager/team_lead → "Manager's view" (active projects/team blockers), staff → "My work" (own tasks/deadlines). The pulse card's primary metric follows the role in focus mode (role-aware metric wins over the tool-driven default). The "Next actions" section shows the role label + hint in focus mode.
+
+**#7 Company-size complexity (one card → structural).** `isSolo` previously only hid the People card. Now: solo businesses (a) don't see the mode tabs (no "operations" distinction — a one-person business has no teams/departments to run operations across), and (b) don't see the Activity card (a one-person business has little cross-team activity noise; an empty "No recent activity" state is clutter, not value). Mid/enterprise keep the full layout. `isSolo` now derived from `complexity === 'solo'` (the authoritative progressive-complexity signal) instead of `companySize <= 1`.
+
+### Verification (P0.4)
+tsc clean, vite build 0 warnings, vitest 94/94. Single file changed: `src/pages/Dashboard.tsx`. No migration/RPC changes (uses existing `useExperienceContext` signals + existing fetched data, plus 2 new derived stats from already-fetched invoices/deals). No new dependencies.

@@ -75,18 +75,22 @@ interface DashboardStats {
   pendingTasks: number
   lowStock: number
   activeProjects: number
+  overdueInvoices: number
+  staleDeals: number
 }
 
 const EMPTY_STATS: DashboardStats = {
   revenue: 0, revenueChange: 0, pipeline: 0, dealCount: 0,
   people: 0, overdue: 0, pendingTasks: 0, lowStock: 0, activeProjects: 0,
+  overdueInvoices: 0, staleDeals: 0,
 }
 
 export default function Dashboard() {
   const { staff } = useAuth()
   // Single authoritative context — drives which KPIs/data/actions the dashboard
   // shows. Replaces the per-screen re-derivation of accessibleTools + selection.
-  const { isToolActive, companySize } = useExperienceContext()
+  const { isToolActive, complexity, isPrivileged } = useExperienceContext()
+  const role = staff?.role || 'staff'
   const [mode, setMode] = useState<Mode>('overview')
   const [view, setView] = useState<View>('recommended')
   const [query, setQuery] = useState('')
@@ -101,9 +105,10 @@ export default function Dashboard() {
   const hasProjects = isToolActive('projects')
   const hasPeople = isToolActive('people')
   // Company-size tiers drive complexity (solo → minimal, team → full).
-  // companySize comes from the Experience Context (authoritative headcount),
+  // `complexity` is the authoritative progressive-complexity signal from the
+  // Experience Context (derived from headcount + active-module breadth),
   // not the stats.staff count the dashboard happens to fetch.
-  const isSolo = companySize <= 1
+  const isSolo = complexity === 'solo'
 
   useEffect(() => {
     if (!staff?.business_id) return
@@ -143,6 +148,7 @@ export default function Dashboard() {
       const overdue = (pending.data || []).filter((x: any) => x.due_date && new Date(x.due_date) < now).length
 
       let revenue = 0, revenueChange = 0, pipeline = 0, dealCount = 0, lowStock = 0, activeProjects = 0
+      let overdueInvoices = 0, staleDeals = 0
       if (invoices?.data) {
         const paid = invoices.data.filter((x: any) => x.status === 'paid')
         revenue = paid.filter((x: any) => {
@@ -153,10 +159,20 @@ export default function Dashboard() {
           return d.getMonth() === pm && d.getFullYear() === py
         }).reduce((s: number, x: any) => s + (x.total || 0), 0)
         revenueChange = prev ? Math.round(((revenue - prev) / prev) * 100) : 0
+        // Overdue invoices: sent/issued but past some implied due window and unpaid.
+        overdueInvoices = invoices.data.filter((x: any) =>
+          x.status && x.status !== 'paid' && x.status !== 'draft' && x.status !== 'cancelled' &&
+          x.created_at && new Date(x.created_at) < new Date(now.getTime() - 30 * 86400000)
+        ).length
       }
       if (deals?.data) {
         pipeline = deals.data.filter((x: any) => x.stage !== 'lost' && x.stage !== 'won').reduce((s: number, x: any) => s + (x.value || 0), 0)
         dealCount = deals.data.length
+        // Stale deals: open and untouched for >14 days (the intelligence threshold).
+        staleDeals = deals.data.filter((x: any) =>
+          x.stage !== 'won' && x.stage !== 'lost' &&
+          x.created_at && new Date(x.created_at) < new Date(now.getTime() - 14 * 86400000)
+        ).length
       }
       if (products?.data) {
         lowStock = products.data.filter((x: any) =>
@@ -171,6 +187,7 @@ export default function Dashboard() {
         revenue, revenueChange, pipeline, dealCount,
         people: people.data?.length || 0, overdue,
         pendingTasks: pending.data?.length || 0, lowStock, activeProjects,
+        overdueInvoices, staleDeals,
       })
       setTasks(pending.data || [])
       // Activities: prefer deals (CRM), fall back to invoices (finance), then tasks.
@@ -193,6 +210,47 @@ export default function Dashboard() {
   const filteredTasks = useMemo(() =>
     tasks.filter(t => !query || String(t.title).toLowerCase().includes(query.toLowerCase())),
   [tasks, query])
+
+  // ── Contextual "Attention" items (#4) ───────────────────────────────
+  // The "What needs you" card used to show overdue TASKS only. A finance user
+  // cares about overdue invoices; an inventory user about low stock; a CRM
+  // user about stale deals. Aggregate every signal the user's active tools
+  // surface, ordered by urgency, each linking to the right page.
+  type AttentionItem = { id: string; label: string; to: string; tone: 'amber' | 'red' }
+  const attentionItems: AttentionItem[] = []
+  if (stats.overdue > 0) attentionItems.push({ id: 'tasks', label: `${stats.overdue} overdue task${stats.overdue > 1 ? 's' : ''}`, to: '/app/tasks', tone: 'red' })
+  if (hasFinance && stats.overdueInvoices > 0) attentionItems.push({ id: 'inv', label: `${stats.overdueInvoices} overdue invoice${stats.overdueInvoices > 1 ? 's' : ''}`, to: '/app/payments', tone: 'red' })
+  if (hasInventory && stats.lowStock > 0) attentionItems.push({ id: 'stock', label: `${stats.lowStock} low-stock product${stats.lowStock > 1 ? 's' : ''}`, to: '/app/inventory', tone: 'amber' })
+  if (hasCRM && stats.staleDeals > 0) attentionItems.push({ id: 'deals', label: `${stats.staleDeals} stale deal${stats.staleDeals > 1 ? 's' : ''} (>14d)`, to: '/app/crm', tone: 'amber' })
+  if (attentionItems.length === 0 && stats.pendingTasks > 0) attentionItems.push({ id: 'pending', label: `${stats.pendingTasks} pending task${stats.pendingTasks > 1 ? 's' : ''}`, to: '/app/tasks', tone: 'amber' })
+
+  // ── Role-aware focus (#6) ───────────────────────────────────────────
+  // "My Focus" mode adapts to the user's role rather than showing the same
+  // generic task list. Owners/managers see the cross-cutting attention items
+  // (approvals + overdue everywhere); a finance-focused role sees invoices;
+  // a sales role sees pipeline/stale deals.
+  const roleFocus: { label: string; metric: { label: string; value: number; change: number }; hint: string } = useMemo(() => {
+    if (isPrivileged) {
+      return {
+        label: "Owner's view",
+        metric: hasFinance && stats.revenue > 0 ? { label: 'Revenue', value: stats.revenue, change: stats.revenueChange } : { label: 'Pending tasks', value: stats.pendingTasks, change: 0 },
+        hint: 'You oversee the whole business — approvals and overdue items across every team surface here.',
+      }
+    }
+    if (role === 'manager' || role === 'team_lead') {
+      return {
+        label: "Manager's view",
+        metric: hasProjects && stats.activeProjects > 0 ? { label: 'Active projects', value: stats.activeProjects, change: 0 } : { label: 'Pending tasks', value: stats.pendingTasks, change: 0 },
+        hint: 'Your team\'s deliverables and blockers surface first.',
+      }
+    }
+    // staff / default — focus on their own work.
+    return {
+      label: 'My work',
+      metric: { label: 'Tasks due', value: stats.pendingTasks, change: 0 },
+      hint: 'Your assigned tasks and deadlines.',
+    }
+  }, [isPrivileged, role, hasFinance, hasProjects, stats])
 
   // ── Adaptive KPI cards ──────────────────────────────────────────────
   // Build the card set from the user's active tools. Always includes
@@ -231,15 +289,22 @@ export default function Dashboard() {
       sub: 'In your company', subColor: 'text-slate-400',
     })
   }
-  // Always show attention (universal).
+  // Always show attention (universal) — counts every contextual attention
+  // signal, not just overdue tasks, so a finance-only user sees their overdue
+  // invoices reflected here too.
+  const totalAttention = stats.overdue + (hasFinance ? stats.overdueInvoices : 0) + (hasInventory ? stats.lowStock : 0) + (hasCRM ? stats.staleDeals : 0)
   kpiCards.push({
-    label: 'Needs attention', value: String(stats.overdue), icon: AlertTriangle,
-    sub: 'Overdue tasks', subColor: 'text-amber-600',
+    label: 'Needs attention', value: String(totalAttention), icon: AlertTriangle,
+    sub: totalAttention > 0 ? 'Across your tools' : 'All caught up',
+    subColor: totalAttention > 0 ? 'text-amber-600' : 'text-emerald-600',
   })
 
   // ── Adaptive primary metric (the pulse card) ────────────────────────
-  // Pick the most relevant primary metric based on active tools + data.
+  // Pick the most relevant primary metric based on active tools + data. In
+  // focus mode the role-aware metric (roleFocus) wins so the pulse reflects
+  // what THIS role should be watching.
   const primaryMetric: { label: string; value: number; change: number } =
+    mode === 'focus' ? roleFocus.metric :
     hasFinance && stats.revenue > 0 ? { label: 'Revenue', value: stats.revenue, change: stats.revenueChange } :
     hasCRM && stats.pipeline > 0 ? { label: 'Pipeline', value: stats.pipeline, change: 0 } :
     hasProjects && stats.activeProjects > 0 ? { label: 'Active Projects', value: stats.activeProjects, change: 0 } :
@@ -298,13 +363,18 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit">
-        {(['overview', 'operations', 'focus'] as Mode[]).map(m => (
-          <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-white shadow-sm font-medium text-slate-900' : 'text-slate-500'}`}>
-            {m === 'focus' ? 'My Focus' : m}
-          </button>
-        ))}
-      </div>
+      {/* Mode tabs — solo businesses don't need an "operations" distinction
+          (no teams/departments to run operations across), so collapse to the
+          single focus/overview choice that matters to a one-person business. */}
+      {!isSolo && (
+        <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit">
+          {(['overview', 'operations', 'focus'] as Mode[]).map(m => (
+            <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-white shadow-sm font-medium text-slate-900' : 'text-slate-500'}`}>
+              {m === 'focus' ? 'My Focus' : m}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Adaptive KPI cards — only tools the user has selected/authorized */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -337,7 +407,16 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="mt-6 min-h-40 flex items-end gap-2 rounded-xl bg-slate-50 p-5">
-              {recommended === 'number' ? (
+              {primaryMetric.value === 0 ? (
+                // Honest empty state: don't fabricate a sparkline when there
+                // is no underlying data. Tells the user what to do to get a
+                // real metric here.
+                <div className="flex w-full flex-col items-center justify-center gap-2 py-6 text-center">
+                  <TrendingUp size={22} className="text-slate-300" />
+                  <p className="text-sm text-slate-500">No {primaryMetric.label.toLowerCase()} data yet.</p>
+                  <p className="text-xs text-slate-400">This will fill in as you use {primaryMetric.label === 'Revenue' || primaryMetric.label === 'Pipeline' ? 'this tool' : 'your workspace'}.</p>
+                </div>
+              ) : recommended === 'number' ? (
                 <div className="text-5xl font-semibold">{money(primaryMetric.value)}</div>
               ) : recommended === 'progress' ? (
                 <div className="w-full">
@@ -376,17 +455,17 @@ export default function Dashboard() {
                 <p className="text-xs uppercase tracking-wide text-slate-400">Attention</p>
                 <h2 className="mt-1 text-lg font-semibold">What needs you</h2>
               </div>
-              <CircleAlert size={19} className="text-amber-500" />
+              <CircleAlert size={19} className={attentionItems.length > 0 ? 'text-amber-500' : 'text-emerald-500'} />
             </div>
             <div className="mt-4 space-y-2">
-              {tasks.slice(0, 4).map(t => (
-                <Link to="/app/tasks" key={t.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-slate-50">
-                  <span className="h-2 w-2 rounded-full bg-amber-500" />
-                  <span className="min-w-0 flex-1 truncate text-sm">{t.title}</span>
+              {attentionItems.slice(0, 5).map(a => (
+                <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-slate-50">
+                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-red-500' : 'bg-amber-500'}`} />
+                  <span className="min-w-0 flex-1 truncate text-sm">{a.label}</span>
                   <ArrowRight size={15} className="text-slate-400" />
                 </Link>
               ))}
-              {tasks.length === 0 && <p className="py-8 text-center text-sm text-slate-400">You're all caught up.</p>}
+              {attentionItems.length === 0 && <p className="py-8 text-center text-sm text-slate-400">You're all caught up.</p>}
             </div>
           </Card>
         </div>
@@ -396,8 +475,9 @@ export default function Dashboard() {
         <Card className="p-5 lg:col-span-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">{mode === 'focus' ? 'My Focus' : 'Your work'}</p>
+              <p className="text-xs uppercase tracking-wide text-slate-400">{mode === 'focus' ? roleFocus.label : 'Your work'}</p>
               <h2 className="mt-1 text-lg font-semibold">Next actions</h2>
+              {mode === 'focus' && <p className="mt-1 text-xs text-slate-400">{roleFocus.hint}</p>}
             </div>
             <Link to="/app/tasks" className="text-sm font-medium text-slate-700">View all</Link>
           </div>
@@ -413,25 +493,31 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        <Card className="p-5 lg:col-span-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">Recent</p>
-              <h2 className="mt-1 text-lg font-semibold">Activity</h2>
-            </div>
-            <Clock3 size={18} className="text-slate-400" />
-          </div>
-          <div className="mt-4 space-y-3">
-            {activities.map(a => (
-              <div key={a.id} className="flex items-center gap-3 text-sm">
-                <span className="h-2 w-2 rounded-full bg-slate-300" />
-                <span className="flex-1">{a.text}</span>
-                <span className="text-xs text-slate-400">{a.value}</span>
+        {/* Activity card — hidden for solo businesses (a one-person business
+            has little cross-team activity noise; showing an empty/"No recent
+            activity" state is more clutter than value). Enterprise/mid get the
+            full activity feed. */}
+        {!isSolo && (
+          <Card className="p-5 lg:col-span-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-slate-400">Recent</p>
+                <h2 className="mt-1 text-lg font-semibold">Activity</h2>
               </div>
-            ))}
-            {activities.length === 0 && <p className="py-8 text-center text-sm text-slate-400">No recent activity.</p>}
-          </div>
-        </Card>
+              <Clock3 size={18} className="text-slate-400" />
+            </div>
+            <div className="mt-4 space-y-3">
+              {activities.map(a => (
+                <div key={a.id} className="flex items-center gap-3 text-sm">
+                  <span className="h-2 w-2 rounded-full bg-slate-300" />
+                  <span className="flex-1">{a.text}</span>
+                  <span className="text-xs text-slate-400">{a.value}</span>
+                </div>
+              ))}
+              {activities.length === 0 && <p className="py-8 text-center text-sm text-slate-400">No recent activity.</p>}
+            </div>
+          </Card>
+        )}
       </div>
 
       <Card className="p-4">
