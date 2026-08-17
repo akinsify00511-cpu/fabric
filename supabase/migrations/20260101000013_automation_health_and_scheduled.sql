@@ -187,5 +187,5 @@ COMMENT ON FUNCTION run_due_automations IS 'Scheduled-automation executor (#20):
 --    applied to live DB; the reason is now accurate).
 -- ============================================================================
 UPDATE module_status
-SET note = 'Real execution engine (007: execute_automation_action for deal/invoice/task/staff triggers) + scheduled-automations executor (20260101000013: run_due_automations, hourly pg_cron) + automation_health RPC. Ready where the migration is applied.'
+SET notes = 'Real execution engine (007: execute_automation_action for deal/invoice/task/staff triggers) + scheduled-automations executor (20260101000013: run_due_automations, hourly pg_cron) + automation_health RPC. Ready where the migration is applied.'
 WHERE module_key = 'automations';
