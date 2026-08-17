@@ -992,3 +992,19 @@ Audited the Dashboard against the user's 8-item P0.4 checklist. 4 were already d
 
 ### Verification (P0.4)
 tsc clean, vite build 0 warnings, vitest 94/94. Single file changed: `src/pages/Dashboard.tsx`. No migration/RPC changes (uses existing `useExperienceContext` signals + existing fetched data, plus 2 new derived stats from already-fetched invoices/deals). No new dependencies.
+
+### P1.8 -- User-driven feature selection (2 of 6 checklist gaps closed)
+Audited #8 against the 6-item checklist. 4 were already done (feature selection in onboarding step 4 with industry defaults + persistence; revise-later via WorkspaceSettings; "selected" separated from "authorized" with locked/locked tools + "selection never grants access" comment; meaningful-to-role via industry defaults). 2 real gaps closed:
+
+**#4 Explain what each selected capability does.** The `TOOLS` array had only `key`/`label`/`category` — no description. A new user picking "Time Tracking" or "Approvals" saw just the label with no idea what they were choosing. Added a `description` field to all 30 tools (plain-language summary of what each does). Onboarding's tool step + WorkspaceSettings now show the description under the label. RoleSettings (the third TOOLS consumer) uses `tool.label` only — unaffected, but the description is available if needed later.
+
+**#5 Prevent overwhelming users with the full module catalog.** WorkspaceSettings showed all curatable tools in one flat 20+ item grid — overwhelming. Now groups tools by category (Core / Sell / Money / People / Work & Operations / Marketing / Support / Insights / Settings), ordered, each as a labeled section. The page is scannable instead of a wall of toggles. Onboarding already curates to a 16-tool SELECTABLE_TOOLS subset (good) — unchanged.
+
+**Checklist items verified done (no change):**
+1. Feature selection in onboarding — step 4 with industry-default seeding + `user_workspace_selections` upsert.
+2. Revise later — WorkspaceSettings at `/app/settings/workspace` with toggle + reset.
+3. Separate selected from authorized — `isToolAuthorized` gates; locked tools shown as "Not in your plan"; selection is a removal filter only (can never grant access).
+6. Meaningful to role — industry defaults seed the baseline; invited staff inherit business entitlements + role permissions (don't go through onboarding).
+
+### Verification (P1.8)
+tsc clean, vite build 0 warnings, vitest 94/94. Files: `src/lib/useToolAccess.ts` (added `description` to each TOOLS entry — additive field, no type/consumer breakage since `ToolKey` derives from `.key` only), `src/pages/WorkspaceSettings.tsx` (group by category + show description), `src/pages/Onboarding.tsx` (show description in tool step). No migration/RPC/dependency changes.

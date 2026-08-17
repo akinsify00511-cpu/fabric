@@ -2,6 +2,16 @@ import { useState } from 'react'
 import { Check, RotateCcw, Loader2 } from 'lucide-react'
 import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
 import { useExperienceContext, TOOLS } from '../lib/useExperienceContext'
+import type { ToolKey } from '../lib/useToolAccess'
+
+// Category display order + labels, so tools are grouped (not one flat list of
+// 20+ toggles — overwhelming). Grouping by category makes the catalog scannable.
+const CATEGORY_ORDER = ['core', 'sales', 'finance', 'hr', 'ops', 'marketing', 'support', 'analytics', 'settings'] as const
+const CATEGORY_LABELS: Record<string, string> = {
+  core: 'Core', sales: 'Sell', finance: 'Money', hr: 'People',
+  ops: 'Work & Operations', marketing: 'Marketing', support: 'Support',
+  analytics: 'Insights', settings: 'Settings',
+}
 
 /**
  * WorkspaceSettings — let a user revise which tools surface in their sidebar
@@ -11,7 +21,7 @@ import { useExperienceContext, TOOLS } from '../lib/useExperienceContext'
  * (user_workspace_selections) + a localStorage optimistic cache.
  */
 export default function WorkspaceSettings() {
-  const { isPrivileged, isToolAuthorized, loading: ctxLoading } = useExperienceContext()
+  const { isToolAuthorized, loading: ctxLoading } = useExperienceContext()
   const { selectedTools, selectionCompleted, toggleTool, setSelectedTools, loading: selLoading } =
     useWorkspaceSelection()
   const [saved, setSaved] = useState(false)
@@ -22,11 +32,11 @@ export default function WorkspaceSettings() {
   const curatable = TOOLS.filter((t) => t.key !== 'settings')
 
   const isSelected = (key: string) =>
-    !selectionCompleted || selectedTools.length === 0 ? true : selectedTools.includes(key)
-  const isAuthorized = (key: string) => isToolAuthorized(key as any)
+    !selectionCompleted || selectedTools.length === 0 ? true : selectedTools.includes(key as ToolKey)
+  const isAuthorized = (key: string) => isToolAuthorized(key as ToolKey)
 
   const handleToggle = async (key: string) => {
-    await toggleTool(key)
+    await toggleTool(key as ToolKey)
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
   }
@@ -37,6 +47,12 @@ export default function WorkspaceSettings() {
     setSaved(true)
     setTimeout(() => setSaved(false), 1500)
   }
+
+  // Group curatable tools by category (ordered) so the page is scannable, not
+  // a flat 20-item grid.
+  const grouped = CATEGORY_ORDER
+    .map((cat) => ({ cat, tools: curatable.filter((t) => t.category === cat) }))
+    .filter((g) => g.tools.length > 0)
 
   if (ctxLoading || selLoading) {
     return (
@@ -62,42 +78,53 @@ export default function WorkspaceSettings() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {curatable.map((tool) => {
-          const authorized = isAuthorized(tool.key)
-          const selected = isSelected(tool.key)
-          const locked = !authorized
-          return (
-            <button
-              key={tool.key}
-              type="button"
-              disabled={locked}
-              onClick={() => handleToggle(tool.key)}
-              className={`flex items-center gap-3 rounded-xl border p-4 text-left transition-all ${
-                locked
-                  ? 'border-[var(--av-border,#E8EAED)] bg-[var(--av-surface,#F8F9FA)] opacity-60 cursor-not-allowed'
-                  : selected
-                    ? 'border-[var(--av-primary,#0891B2)] bg-[var(--av-primary-soft,rgba(8,145,178,0.08))]'
-                    : 'border-[var(--av-border,#E8EAED)] hover:border-[var(--av-border-strong,#DADCE0)]'
-              }`}
-            >
-              <span
-                className={`flex h-5 w-5 items-center justify-center rounded flex-shrink-0 ${
-                  selected && !locked
-                    ? 'bg-[var(--av-primary,#0891B2)] text-white'
-                    : 'bg-black/5 text-transparent'
-                }`}
-              >
-                <Check size={14} />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[var(--av-text,#202124)]">{tool.label}</p>
-                <p className="text-xs capitalize text-[var(--av-text-muted,#5F6368)]">{tool.category}</p>
-              </div>
-              {locked && <span className="text-[10px] uppercase tracking-wide text-[var(--av-text-muted,#9AA0A6)]">Not in your plan</span>}
-            </button>
-          )
-        })}
+      <div className="space-y-6">
+        {grouped.map(({ cat, tools }) => (
+          <section key={cat}>
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--av-text-muted,#5F6368)]">
+              {CATEGORY_LABELS[cat] || cat}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {tools.map((tool) => {
+                const authorized = isAuthorized(tool.key)
+                const selected = isSelected(tool.key)
+                const locked = !authorized
+                return (
+                  <button
+                    key={tool.key}
+                    type="button"
+                    disabled={locked}
+                    onClick={() => handleToggle(tool.key)}
+                    className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all ${
+                      locked
+                        ? 'border-[var(--av-border,#E8EAED)] bg-[var(--av-surface,#F8F9FA)] opacity-60 cursor-not-allowed'
+                        : selected
+                          ? 'border-[var(--av-primary,#0891B2)] bg-[var(--av-primary-soft,rgba(8,145,178,0.08))]'
+                          : 'border-[var(--av-border,#E8EAED)] hover:border-[var(--av-border-strong,#DADCE0)]'
+                    }`}
+                  >
+                    <span
+                      className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded ${
+                        selected && !locked
+                          ? 'bg-[var(--av-primary,#0891B2)] text-white'
+                          : 'bg-black/5 text-transparent'
+                      }`}
+                    >
+                      <Check size={14} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-medium text-[var(--av-text,#202124)]">{tool.label}</p>
+                        {locked && <span className="text-[10px] uppercase tracking-wide text-[var(--av-text-muted,#9AA0A6)]">Not in your plan</span>}
+                      </div>
+                      <p className="mt-0.5 text-xs text-[var(--av-text-muted,#5F6368)] leading-snug">{tool.description}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </section>
+        ))}
       </div>
 
       <div className="mt-6 flex items-center justify-between">

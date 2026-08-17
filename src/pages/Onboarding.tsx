@@ -468,20 +468,23 @@ export default function Onboarding() {
                           on ? prev.filter((t) => t !== tool.key) : [...prev, tool.key],
                         )
                       }
-                      className={`p-3 rounded-xl border-2 text-left transition-all flex items-center gap-2 ${
+                      className={`p-3 rounded-xl border-2 text-left transition-all flex items-start gap-2 ${
                         on
                           ? 'border-blue-600 bg-blue-50'
                           : 'border-black/10 hover:border-black/20'
                       }`}
                     >
                       <span
-                        className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
+                        className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0 ${
                           on ? 'bg-blue-600 text-white' : 'bg-black/5 text-transparent'
                         }`}
                       >
                         <Check size={14} />
                       </span>
-                      <span className="text-sm font-medium text-black">{tool.label}</span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-black">{tool.label}</span>
+                        <span className="block text-xs text-black/60 leading-snug mt-0.5">{tool.description}</span>
+                      </span>
                     </button>
                   )
                 })}
