@@ -155,7 +155,7 @@ RETURNS TABLE (
   created_at TIMESTAMPTZ,
   last_run_at TIMESTAMPTZ,
   run_count BIGINT,
-  status TEXT
+  enabled BOOLEAN
 ) LANGUAGE sql STABLE SECURITY DEFINER AS $$
   SELECT
     a.id,
@@ -163,8 +163,8 @@ RETURNS TABLE (
     a.trigger_type,
     a.created_at,
     ar.last_run_at,
-    COALESCE(ar.run_count, 0) AS run_count,
-    a.status
+    COALESCE(ar.run_count, 0)::BIGINT AS run_count,
+    a.enabled
   FROM automations a
   LEFT JOIN (
     SELECT automation_id,
