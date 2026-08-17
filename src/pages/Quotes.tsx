@@ -3,6 +3,7 @@ import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Downl
 import { useToast } from '../components/Toast'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { logUsageEvent } from '../lib/useUsageTracking'
 import { generateQuotePDF } from '../lib/PDFGenerator'
 
 type Quote = {
@@ -115,6 +116,10 @@ export default function Quotes() {
     }
     await persistQuote(quote.id, { status: 'converted' })
     success(`Converted to invoice ${invoiceNumber}`)
+    // #14: conversion is the terminal milestone of the quote workflow.
+    if (staff?.business_id) {
+      logUsageEvent({ businessId: staff.business_id, staffId: staff.id, moduleKey: 'quotes', action: 'workflow_complete', context: { workflow: 'quote', milestone: 'converted' } })
+    }
     loadData()
   }
 
@@ -189,6 +194,10 @@ export default function Quotes() {
     }
     setQuotes([quote, ...quotes])
     success('Quote created successfully')
+    // #14: a new quote marks the start of the quote workflow (draft→sent→accepted/converted).
+    if (staff?.business_id) {
+      logUsageEvent({ businessId: staff.business_id, staffId: staff.id, moduleKey: 'quotes', action: 'workflow_start', context: { workflow: 'quote' } })
+    }
     setShowNewQuote(false)
     setConvertingDeal(null)
     setNewQuote({
@@ -202,6 +211,9 @@ export default function Quotes() {
     await persistQuote(quoteId, { status: 'sent' })
     setQuotes(quotes.map(q => q.id === quoteId ? { ...q, status: 'sent' as const } : q))
     success('Quote sent to client')
+    if (staff?.business_id) {
+      logUsageEvent({ businessId: staff.business_id, staffId: staff.id, moduleKey: 'quotes', action: 'workflow_complete', context: { workflow: 'quote', milestone: 'sent' } })
+    }
   }
 
   const acceptQuote = async (quoteId: string) => {

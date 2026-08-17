@@ -1049,3 +1049,24 @@ Audited #12 against its 8-item checklist. The external-market-data variance (ite
 
 ### Verification (P1.12)
 tsc clean, vite build 0 warnings, vitest 100/100 (was 94, +6 new). Schema drift 0. Files: `supabase/migrations/20260101000008_said_vs_used_reality_gap.sql`, `src/lib/businessOS.ts` (wrapper + type), `src/pages/RealityGap.tsx` (auto-detected section), `tests/frontend/lib/saidVsUsed.test.ts`. No new dependencies, no external APIs — all deterministic SQL over real tables.
+
+### P1.14 -- Platform self-instrumentation (the PRD #14 metric capture — CLOSED)
+The `usage_events` infra (Session 9) only logged `action='view'` on route change. The PRD #14 metrics need richer events: onboarding abandonment, setup/feature abandonment, ignored automations, feature activation/reuse, workflow completion/abandonment, modules switched off quickly. Closed the capture + derivation gap.
+
+**Migration `20260101000009_self_instrumentation.sql`:**
+- ADDITIVE `context JSONB` column on `usage_events` (existing 'view' rows stay valid; no breaking change) + action index.
+- 5 per-business RPCs (authenticated): `onboarding_funnel` (completed_at + steps_reached + duration from the onboarding_complete event), `workflow_funnel` (started/completed/abandoned/completion_rate per workflow), `feature_activation` (first-active, distinct active days, reuse_label: reused/returning/activated/view_only), `ignored_automations` (derives from automations + automation_runs — created-but-never-triggered), `quick_turnoff` (tool_select→tool_deselect within 7d = "modules switched off quickly").
+- 1 builder-only RPC: `onboarding_conversion` (cross-business — total_authenticated / total_completed / total_abandoned / conversion_rate / median_steps / avg_duration). **ABANDONMENT IS A FACT, not an inference** — derived from `auth.users` LEFT JOIN `staff` (authenticated user with no staff record = abandoned), stronger than tab-close guessing (§22). REVOKED from anon/authenticated (cross-tenant auth data — service role only).
+
+**Why abandonment as auth-gap, not event-gap:** `usage_events.business_id` is NOT NULL FK→businesses; during onboarding the business doesn't exist until `create_business_and_owner` succeeds, so step events mid-flow can't be logged against a business_id. The honest, schema-correct approach: emit ONE `onboarding_complete` event (with steps_reached + duration context) AFTER success; derive abandonment from the auth.users→staff gap server-side. This captures completion timing/steps (FACT from the event) + abandonment (FACT from the gap) without the tab-close inference problem.
+
+**Client instrumentation (fire-and-forget, never blocks UX):**
+- `logUsageEvent()` helper in `useUsageTracking.ts` — structured events with context.
+- **Onboarding.tsx**: emits `onboarding_complete` (context: steps_reached, duration_seconds, industry) at the success path (after RPC, before redirect). Tracks start time via `useRef`.
+- **useWorkspaceSelection.ts `toggleTool`**: emits `tool_select`/`tool_deselect` (context: tool) — the single source of truth, fires for both onboarding + settings-page toggles. Pairs with `quick_turnoff`.
+- **Quotes.tsx**: emits `workflow_start` at createQuote, `workflow_complete` at sendQuote (milestone:sent) + convertToInvoice (milestone:converted) — the quote workflow lifecycle (draft→sent→converted).
+
+**Test:** `tests/frontend/lib/selfInstrumentation.test.ts` (7 tests) locks the reuse_label contract (reused/returning/activated/view_only) + the onboarding-abandonment-is-a-FACT contract (hasStaff→completed, !hasStaff→abandoned).
+
+### Verification (P1.14)
+tsc clean, vite build 0 warnings, vitest 107/107 (was 100, +7 new). Schema drift 0. Files: `supabase/migrations/20260101000009_self_instrumentation.sql`, `src/lib/useUsageTracking.ts` (logUsageEvent helper), `src/pages/Onboarding.tsx` (complete event), `src/lib/useWorkspaceSelection.ts` (toggle events), `src/pages/Quotes.tsx` (workflow events), `tests/frontend/lib/selfInstrumentation.test.ts`. No new deps, no external APIs.

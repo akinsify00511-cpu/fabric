@@ -1,7 +1,8 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { logUsageEvent } from '../lib/useUsageTracking'
 import { TOOLS, type ToolKey } from '../lib/useToolAccess'
 import {
   Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2, Palette
@@ -102,6 +103,9 @@ export default function Onboarding() {
   const [step, setStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Onboarding-start timestamp for the #14 completion telemetry (duration).
+  const startedAtRef = useRef<number>(Date.now())
 
   // A confirmed business membership is the canonical onboarded state. If a
   // user reaches /onboarding after a refresh, direct URL entry, or a transient
@@ -265,6 +269,24 @@ export default function Onboarding() {
         }
       }
       window.location.href = '/app'
+
+      // #14 self-instrumentation: log onboarding completion (fire-and-forget).
+      // steps_reached + duration_seconds feed the funnel/conversion RPCs. The
+      // abandonment metric (auth.users with no staff) is derived server-side,
+      // so this event only needs to capture the SUCCESS path's steps + duration.
+      if (data) {
+        logUsageEvent({
+          businessId: data,
+          staffId: undefined,
+          moduleKey: 'onboarding',
+          action: 'onboarding_complete',
+          context: {
+            steps_reached: step,
+            duration_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
+            industry,
+          },
+        })
+      }
 
     } catch (err: any) {
       console.error('Setup error:', err)
