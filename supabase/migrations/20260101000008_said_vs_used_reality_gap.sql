@@ -35,8 +35,10 @@ RETURNS TABLE (
   -- The set of tool keys this business selected at onboarding (or later via
   -- WorkspaceSettings). NULL/empty selection = "no curation yet"; we treat
   -- that as "nothing explicitly selected" so the gap is honest, not noisy.
+  -- COALESCE the ARRAY first (guards a NULL selected_tools), then unnest to
+  -- scalar rows. unnest of an empty array yields 0 rows (correct).
   WITH selected AS (
-    SELECT COALESCE(unnest(selected_tools), '{}'::TEXT[]) AS tool_key
+    SELECT unnest(COALESCE(selected_tools, '{}'::TEXT[])) AS tool_key
     FROM user_workspace_selections
     WHERE business_id = p_business_id
   ),
@@ -106,7 +108,7 @@ RETURNS TABLE (
   WITH said AS (
     SELECT b.industry,
            b.id AS business_id,
-           COALESCE(unnest(uws.selected_tools), '{}'::TEXT[]) AS module_key
+           unnest(COALESCE(uws.selected_tools, '{}'::TEXT[])) AS module_key
     FROM businesses b
     JOIN user_workspace_selections uws ON uws.business_id = b.id
   ),
