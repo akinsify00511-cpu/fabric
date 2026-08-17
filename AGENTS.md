@@ -1008,3 +1008,13 @@ Audited #8 against the 6-item checklist. 4 were already done (feature selection 
 
 ### Verification (P1.8)
 tsc clean, vite build 0 warnings, vitest 94/94. Files: `src/lib/useToolAccess.ts` (added `description` to each TOOLS entry — additive field, no type/consumer breakage since `ToolKey` derives from `.key` only), `src/pages/WorkspaceSettings.tsx` (group by category + show description), `src/pages/Onboarding.tsx` (show description in tool step). No migration/RPC/dependency changes.
+
+### P1.9 -- Website→onboarding→app UX continuity (2 of 8 checklist gaps closed)
+Audited the 3 surfaces (LandingEnhanced, Onboarding, app Shell/Dashboard) against the 8-item #9 checklist. 6 were already sound: same value-prop thread ("what needs your attention"/"what matters" runs Landing→Dashboard); information hierarchy consistent (Landing preview "Good morning, David / 3 things need you" ↔ Dashboard "Good morning, {name} / Here's what matters"); onboarding already leads into a personalized workspace (tool-selection step 4); Dashboard is adaptive not generic (P0.4); app Shell uses `--av-*` tokens consistently on mobile+desktop (no raw-color divergence). 2 real gaps closed:
+
+**#2 Same visual language (the jarring jump — CLOSED).** Onboarding used raw Tailwind `bg-blue-600` (#2563EB) + `border-black` + `text-black` — a harsh, different palette from Landing's refined `BRAND` object (primary `#155BB4`, gradient logo, soft `#E4E8EF` borders, `#202124`/`#5F6368` text, `#F7F9FC` surface). The logo differed too (solid blue square vs gradient). Added a `BRAND` constant to Onboarding matching Landing's exactly, and replaced all raw colors: gradient logo, `#155BB4` primary (buttons/active step/selected ring), `#157342` success (completed steps), `#E4E8EF` soft borders (no more `border-black`), `#202124`/`#5F6368`/`#9AA0A6` text (no more `text-black`), `#F7F9FC` surface. The public site → onboarding → app now share ONE visual language.
+
+**#5 Website promise reflected in onboarding (CLOSED).** Onboarding's sidebar was a generic "Welcome to Avenize / Let's set up your business" with no callback to the landing's promise. Added a value-prop line under the header: "Your whole business, connected. We'll set up what matters to you — you can change anything later." — echoing the landing's "one connected system / shows each person what matters to them" so onboarding doesn't feel like a generic setup wizard detached from what brought the user in.
+
+### Verification (P1.9)
+tsc clean, vite build 0 warnings, vitest 94/94. Single file changed: `src/pages/Onboarding.tsx`. No migration/RPC/dependency changes — purely visual-language + copy alignment to the existing LandingEnhanced BRAND tokens.
