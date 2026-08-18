@@ -1602,3 +1602,78 @@ tsc clean, vite build 0 warnings, vitest 291/291 (was 255, +36), schema-drift 0.
 - #7 (Next Best Action): next_best_action.
 - #9 (Value Ledger): business_value_ledger.
 - #8 (the Brain connecting modules): business_brain aggregator — the modules are now connected by a reasoning layer.
+
+## Session 25 (2026-08-18): Underdeveloped/underfixed feature closure + design-system completion
+
+Directive: "continue to fix and find what features are underdeveloped and
+underfixed, find them and fix them" + apply av-* tokens across ALL remaining
+legacy pages. 6 commits (709895d..63d2665), all pushed to main. Baseline held
+green after every step (tsc 0, build 0 warnings, vitest 368/368, drift 0).
+
+### False-success closure (commits 709895d, 31923c6) — §AC/§76
+8 high-traffic module pages had `await supabase.from(t).insert/update/delete`
+with no `{ error }` destructure, then ran optimistic UI (toast/close/reload)
+regardless of whether the write persisted — a failed write looked like
+success. Fixed: Announcements (7), BusinessInfrastructure (7), Organization
+(3), HumanResources (5), FinanceCenter (5), LeaveManagement (2),
+ExpenseClaims (4 — incl. 2 status-updates that the script's closing-brace
+detection missed; fixed manually), Meetings (2 — sendInvites/sendReminder now
+count actual successful inserts: "sent X of N" / "Failed to send" instead of
+unconditional success). Pattern: `const { error } = await ...; if (error)
+{ alert/toast; return }` before optimistic UI. Quotes verified already-clean.
+
+### .single() first-run crashes closed (commit a28ab02) — §R1 Session-10 class
+Audited ~30 `.single()` lookups. Most are post-insert `.select().single()`
+(CORRECT — insert returns one row) or by-id lookups in try/catch (work). Two
+genuine first-run breakers fixed: Services.tsx `businesses.slug` lookup used
+`.single().then(...)` — on a business with no slug, .single() rejects →
+unhandled rejection + bookingLink never set → .maybeSingle(). PDFGenerator.ts
+`business_branding` lookup used `.single()` — a fresh business with no
+branding row threw → PDF generation crashed → .maybeSingle() (the
+`return data || {...}` fallback now actually receives null).
+
+### Rate limiting wired into Login + Signup (commit a28ab02) — §AD
+`check_auth_rate_limit` + `log_security_event` (migration 999) were built but
+had ZERO callers — Login/Signup relied only on Supabase's built-in throttle.
+- Migration 20260818290000: GRANT EXECUTE on the two pre-auth functions to
+  `anon` (they must be callable BEFORE a session; 998 only grants
+  authenticated). Least-privilege — only these two, not the blanket.
+- Login.tsx: calls check_auth_rate_limit(email,'login',5/300s/900s-lockout)
+  BEFORE signInWithPassword; on allowed=false shows "Too many failed
+  attempts. Try again in N minutes" + aborts. On failed signIn, logs
+  login_failed (fire-and-forget). FAILS OPEN if RPC not deployed (console.warn
+  + proceed) — never blocks login because rate-limit infra errored.
+- Signup.tsx: same (signup, 5/3600s/3600s).
+
+### Business Brain degraded-engine flags surfaced (commit fe78aae) — §N
+The §N graceful-degradation layer (migration 20260818240000) isolates each
+Brain sub-engine in its own EXCEPTION block — a failed engine returns
+{degraded:true, error} instead of failing the whole Brain. BUT the UI didn't
+handle the degraded shape: BusinessStateCard showed "undefined / Confidence:
+undefined" (state.state undefined). A user couldn't tell "no data yet"
+(honest empty) from "engine errored" (broken). Fixed: all 4 cards
+(BusinessState/NextBestAction/Diagnosis/ValueLedger) now check
+`if (degraded || error)` FIRST and render an amber "X is temporarily
+unavailable — the rest of your business is unaffected; this will refresh
+automatically" notice. Added `degraded?: boolean` to the 4 interfaces
+(type-safe). The "built but never wired" §N gap closed.
+
+### Design-system completion (commits 824ea95, 63d2665) — the av-* token directive
+- 824ea95: public/auth flow (Signup/NotFound/AuthCallback) — the
+  signup→onboarding→app journey now shares ONE visual language. 10 raw
+  classes → tokens in Signup; LandingEnhanced left (intentional dark mock).
+- 63d2665: SEMANTIC STATUS colors across 116 files / 839 class swaps. Status
+  badges (bg-{green,red,amber,yellow,blue}-100 text-color-700/600/800),
+  soft tints (bg-*-50), hover soft, status borders (-200/300/400),
+  standalone status text (text-{red,green,amber,blue}-500/600/700),
+  solid status bg (bg-{red,green,amber}-500/600) → av-{success,danger,
+  warning,primary} family. Decorative multi-color icon tints + theme
+  swatch pickers + hex-keyed color maps left (not semantic status). The
+  entire app now resolves status colors through the single --av-* source.
+
+### Verified after every commit
+tsc clean; vite build 0 warnings; vitest 368/368; schema-drift 0. No new
+runtime deps; no external APIs. All migrations idempotent; need live-DB
+application (same deploy-gate as 080+). Frontend degrades gracefully until
+then (rate-limit fails open, Brain cards show honest degraded notice).
+
