@@ -1698,3 +1698,248 @@ export async function deleteBoardMember(id: string): Promise<boolean> {
     return false
   }
 }
+
+// ============================================================================
+// MEETING LIFECYCLE (Phase A — sections 6, 7, 9, 11, 12, 31, 32, 34)
+// All best-effort/non-blocking (§24 — degrade gracefully if migration not
+// deployed). Reuses the existing meetings table + emit_business_event
+// telemetry (058/059 — NOT a new event system, per §2 non-negotiable).
+// ============================================================================
+
+export interface Meeting {
+  id: string
+  business_id: string
+  title: string
+  description: string | null
+  meeting_type: string
+  status: string
+  scheduled_start: string | null
+  scheduled_end: string | null
+  actual_start: string | null
+  actual_end: string | null
+  duration_seconds: number | null
+  recording_status: string
+  transcript_status: string
+  visibility: string
+  created_by: string | null
+  meeting_link: string | null
+  created_at: string
+}
+
+export interface MeetingParticipant {
+  id: string
+  meeting_id: string
+  staff_id: string | null
+  guest_name: string | null
+  guest_email: string | null
+  guest_token: string | null
+  role: string
+  status: string
+  invited_at: string | null
+  joined_at: string | null
+  left_at: string | null
+  total_seconds: number
+}
+
+export interface MeetingParticipantEvent {
+  id: string
+  meeting_id: string
+  participant_id: string
+  event_type: string
+  occurred_at: string
+  metadata: Record<string, unknown> | null
+}
+
+export interface MeetingMedia {
+  id: string
+  meeting_id: string
+  media_type: string
+  storage_path: string | null
+  duration_seconds: number | null
+  size_bytes: number | null
+  processing_status: string
+  retention_until: string | null
+  created_at: string
+}
+
+export interface CreateMeetingResult {
+  meeting_id: string
+  join_token: string
+}
+
+export async function createMeeting(
+  businessId: string,
+  title: string,
+  opts?: {
+    scheduledStart?: string
+    scheduledEnd?: string
+    meetingType?: string
+    visibility?: string
+    description?: string
+    createdBy?: string
+  }
+): Promise<CreateMeetingResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('create_meeting', {
+      p_business_id: businessId,
+      p_title: title,
+      p_scheduled_start: opts?.scheduledStart ?? null,
+      p_scheduled_end: opts?.scheduledEnd ?? null,
+      p_meeting_type: opts?.meetingType ?? 'internal',
+      p_visibility: opts?.visibility ?? 'business',
+      p_description: opts?.description ?? null,
+      p_created_by: opts?.createdBy ?? null,
+    })
+    if (error) {
+      console.warn('[meetings] create_meeting failed:', error.message)
+      return null
+    }
+    return data as CreateMeetingResult
+  } catch (e) {
+    console.warn('[meetings] create_meeting error:', e)
+    return null
+  }
+}
+
+export async function startMeeting(meetingId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('start_meeting', { p_meeting_id: meetingId })
+    if (error) {
+      console.warn('[meetings] start_meeting failed:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[meetings] start_meeting error:', e)
+    return false
+  }
+}
+
+export async function joinMeeting(
+  meetingId: string,
+  guestToken?: string
+): Promise<{ participantId: string; authorized: boolean } | null> {
+  try {
+    const { data, error } = await supabase.rpc('join_meeting', {
+      p_meeting_id: meetingId,
+      p_guest_token: guestToken ?? null,
+    })
+    if (error) {
+      console.warn('[meetings] join_meeting failed:', error.message)
+      return null
+    }
+    const row = data as { participant_id: string; authorized: boolean } | null
+    if (!row || !row.authorized) return null
+    return { participantId: row.participant_id, authorized: true }
+  } catch (e) {
+    console.warn('[meetings] join_meeting error:', e)
+    return null
+  }
+}
+
+export async function leaveMeeting(meetingId: string, participantId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('leave_meeting', {
+      p_meeting_id: meetingId,
+      p_participant_id: participantId,
+    })
+    if (error) {
+      console.warn('[meetings] leave_meeting failed:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[meetings] leave_meeting error:', e)
+    return false
+  }
+}
+
+export async function endMeeting(meetingId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('end_meeting', { p_meeting_id: meetingId })
+    if (error) {
+      console.warn('[meetings] end_meeting failed:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[meetings] end_meeting error:', e)
+    return false
+  }
+}
+
+export async function generateMeetingToken(
+  meetingId: string,
+  guestEmail: string,
+  guestName?: string
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('generate_meeting_token', {
+      p_meeting_id: meetingId,
+      p_guest_email: guestEmail,
+      p_guest_name: guestName ?? null,
+    })
+    if (error) {
+      console.warn('[meetings] generate_meeting_token failed:', error.message)
+      return null
+    }
+    return data as string
+  } catch (e) {
+    console.warn('[meetings] generate_meeting_token error:', e)
+    return null
+  }
+}
+
+export async function fetchMeetings(businessId: string): Promise<Meeting[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meetings')
+      .select('*')
+      .eq('business_id', businessId)
+      .order('scheduled_start', { ascending: false, nullsFirst: false })
+    if (error) {
+      console.warn('[meetings] fetch failed:', error.message)
+      return []
+    }
+    return (data as Meeting[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] fetch error:', e)
+    return []
+  }
+}
+
+export async function fetchMeetingParticipants(meetingId: string): Promise<MeetingParticipant[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meeting_participants')
+      .select('*')
+      .eq('meeting_id', meetingId)
+      .order('joined_at', { ascending: true, nullsFirst: false })
+    if (error) {
+      console.warn('[meetings] fetch participants failed:', error.message)
+      return []
+    }
+    return (data as MeetingParticipant[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] fetch participants error:', e)
+    return []
+  }
+}
+
+export async function fetchMeetingEvidence(meetingId: string): Promise<MeetingParticipantEvent[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meeting_participant_events')
+      .select('*')
+      .eq('meeting_id', meetingId)
+      .order('occurred_at', { ascending: true })
+    if (error) {
+      console.warn('[meetings] fetch evidence failed:', error.message)
+      return []
+    }
+    return (data as MeetingParticipantEvent[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] fetch evidence error:', e)
+    return []
+  }
+}

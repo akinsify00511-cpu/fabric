@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS time_entries (
   invoiced BOOLEAN DEFAULT FALSE,
   invoice_id UUID REFERENCES invoices(id) ON DELETE SET NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMZT DEFAULT NOW()
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS daily_time_summaries (
