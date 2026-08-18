@@ -2210,3 +2210,94 @@ Then apply ci_shim.sql (bare-postgres surface) + 001 + deps (002, 024, 028...)
 BEFORE the migration under test, or column/type errors will be false positives
 (missing dependency, not a real bug). Run the migration TWICE — second run is
 the idempotency test.
+
+## Session 24 (2026-08-18): Meeting Lifecycle Phase A — canonical meeting subsystem foundation
+
+Triggered by the comprehensive "Meeting, Communication & Meeting Intelligence"
+build instruction (48 sections). Per section 48 final instruction: audit
+before building, reuse canonical systems, implement Phase A only (lifecycle +
+room + participant evidence). 1 commit (3c991e5), pushed to main.
+
+### Audit findings (section 2 FIRST RULE)
+Existing meeting infrastructure:
+- meetings table (998): basic JSONB attendees, no participant evidence, no
+  lifecycle states, pre-080 RLS pattern (tenant-safe but inconsistent).
+- Meetings.tsx (1102 lines) + MeetingsV2.tsx (361 lines): two competing pages.
+- VideoRoom.tsx (347 lines): Jitsi Meet iframe — the clean media-provider
+  abstraction section 5 requires (kept, unchanged).
+- MeetingComponents.tsx (557 lines): real MediaRecorder recording.
+- transcribe-audio edge fn (232 lines): Whisper + GPT-4, JWT-verified — the
+  AI processing boundary (extend in Phase C, not now).
+- events table (020): TIMESTAMPTZ + recurrence — the scheduling foundation.
+
+Gaps found:
+- meeting-recordings storage bucket MISSING — recording uploads silently failed.
+- host_id drift: MeetingsV2 inserts host_id but table has staff_id (insert
+  silently failed on live DB).
+- No participant evidence (attendees were a JSONB blob, no join/leave
+  timestamps, no attendance proof per section 12).
+- No lifecycle states (just scheduled/in_progress/completed).
+- No external guest system (section 11).
+
+Canonical systems reused (NOT recreated, per section 2 non-negotiable):
+- get_current_staff() RLS helper (001) — meetings RLS rewritten to use it.
+- emit_business_event telemetry (058/059) — lifecycle RPCs emit events via
+  it, NOT a new event system.
+- storage.buckets pattern (030/046/1001) — meeting-recordings bucket created.
+- signing_token anon-RPC pattern (043/050) — external guest join via token.
+- update_updated_at trigger helper (007) — reused for the new tables.
+
+### Phase A deliverables (migration 20260818400000)
+- EXTENDED meetings table additively: meeting_type, scheduled_start/end
+  (TIMESTAMPTZ), actual_start/end, duration_seconds, recording_status,
+  transcript_status, visibility, created_by (authoritative host),
+  organization_id. Backfilled from existing columns. Widened status CHECK to
+  the full section-7 lifecycle.
+- meeting_participants (relational, replaces JSONB attendees): staff_id OR
+  guest_token (CHECK enforces one-or-the-other). role, status, invited_at,
+  joined_at, left_at, total_seconds.
+- meeting_participant_events (the evidence trail — section 12): append-only.
+- meeting_media (recording metadata, PRIVATE storage_path — section 13/32).
+- meeting-recordings storage bucket (PRIVATE — never getPublicUrl).
+- FIXES meetings RLS to use get_current_staff() (the canonical helper).
+- 6 lifecycle RPCs (SECURITY DEFINER, membership-guarded, idempotent per
+  section 34): create_meeting, start_meeting, join_meeting (internal OR
+  guest-token), leave_meeting, end_meeting, generate_meeting_token. All emit
+  business_events via emit_business_event (058/059).
+
+### Client layer (businessOS.ts)
+Meeting/MeetingParticipant/MeetingParticipantEvent/MeetingMedia types +
+createMeeting/startMeeting/joinMeeting/leaveMeeting/endMeeting/
+generateMeetingToken/fetchMeetings/fetchMeetingParticipants/
+fetchMeetingEvidence wrappers (best-effort/non-blocking section 24).
+
+### UI routes
+Consolidated /app/meetings (canonical). /app/meetings-new -> redirect (per
+section 41, MeetingsV2.tsx file kept for data preservation, lazy import
+removed). VideoRoom (Jitsi) remains the media layer (unchanged).
+
+### Also fixed (found during audit)
+- 998 TIMESTAMZT typo (TIMESTAMZT -> TIMESTAMPTZ) — a real bug that made the
+  time_entries updated_at column fail to apply.
+
+### Verification
+tsc clean; vite build 0 warnings; vitest 447/447 (was 429, +18 new
+meetingLifecycle); schema-drift 0. Migration applies clean + idempotent
+against postgres:15 (Docker, ON_ERROR_STOP=1, two consecutive applies).
+All 6 RPCs created + granted.
+
+### Phases B-F deferred per section 43/48
+- B: recording + capture (Loom-style async).
+- C: transcript + summary + decisions + actions (extend transcribe-audio).
+- D: tasks + notifications + follow-through (reuse tasks + notifications).
+- E: analytics + meeting productivity intelligence.
+- F: advanced collaboration + enterprise controls.
+Each phase leaves the app stable; Phase A is stable (green baseline).
+
+### Deploy status
+- Vercel production: deploying via main-push workflow.
+- STILL needs live DB: migration 20260818400000 must be applied to Supabase
+  (project kgsgqvatyleetyquffya). Idempotent. Frontend degrades gracefully
+  until then (meeting lifecycle RPCs return errors -> wrappers return null ->
+  UI shows existing meetings only, no lifecycle actions) because every caller
+  is best-effort/non-blocking.
