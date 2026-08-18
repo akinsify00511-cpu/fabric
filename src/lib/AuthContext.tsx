@@ -19,6 +19,7 @@ export type Staff = {
   email?: string
   phone?: string
   role: UserRole
+  active_role?: UserRole | null
   job_title: string | null
   department?: string
   avatar_url?: string

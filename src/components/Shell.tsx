@@ -24,6 +24,7 @@ import { useDbState } from '../lib/useDbState'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
 import ToolOnboardingPopup from './ToolOnboardingPopup'
+import { RoleSwitcher } from './RoleSwitcher'
 
 // Map nav routes to tool keys (for onboarding popups)
 const TOOL_KEY_MAP: Record<string, string> = {
@@ -414,7 +415,7 @@ export default function Shell() {
             </div>
             <div className="min-w-0 flex-1 text-left">
               <p className="text-sm font-medium truncate text-[var(--av-text)]">{staff?.full_name ?? staff?.name ?? 'User'}</p>
-              <p className="text-[11px] text-[var(--av-text-muted)] truncate">{staff?.email ?? ''}</p>
+              <p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.active_role ?? staff?.role ?? ''}</p>
             </div>
             <Settings2 size={16} className="text-[var(--av-text-muted)] shrink-0" />
           </button>
@@ -424,6 +425,9 @@ export default function Shell() {
               <UserMenuItem to="/app/settings" icon={SettingsIcon} label="Settings" onClick={() => setUserMenuOpen(false)} />
               <UserMenuItem to="/app/branding" icon={Palette} label="Branding" onClick={() => setUserMenuOpen(false)} />
               <UserMenuItem to="/app/notifications" icon={Bell} label="Notifications" onClick={() => setUserMenuOpen(false)} />
+              <div className="border-t border-[var(--av-border)]">
+                <RoleSwitcher />
+              </div>
               <div className="border-t border-[var(--av-border)]">
                 <button
                   onClick={() => { setUserMenuOpen(false); signOut() }}

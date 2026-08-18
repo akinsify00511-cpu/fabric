@@ -91,7 +91,9 @@ export default function Dashboard() {
   // Single authoritative context — drives which KPIs/data/actions the dashboard
   // shows. Replaces the per-screen re-derivation of accessibleTools + selection.
   const { isToolActive, complexity, isPrivileged } = useExperienceContext()
-  const role = staff?.role || 'staff'
+  // §K: the active persona (if the user switched roles) drives the context-aware
+  // dashboard; falls back to the primary role. Security stays staff.role + RLS.
+  const role = (staff?.active_role ?? staff?.role) || 'staff'
   const [mode, setMode] = useState<Mode>('overview')
   const [view, setView] = useState<View>('recommended')
   const [query, setQuery] = useState('')

@@ -3,6 +3,7 @@
 // RPCs/views created in migrations 058+ so pages stay thin.
 
 import { supabase } from './supabase'
+import type { UserRole } from './AuthContext'
 
 // ---------- Business Event Bus (058) ----------
 
@@ -545,6 +546,55 @@ export async function reviveDeadLetteredAutomation(runId: string): Promise<boole
     return true
   } catch (e) {
     console.error('reviveDeadLetteredAutomation failed (non-blocking):', e)
+    return false
+  }
+}
+
+// ============================================================================
+// §K Multi-role switching. A user can hold secondary business roles beyond
+// their primary staff.role, and switch which persona they're operating as.
+// UX/context only — security stays staff.role + RLS + functional_roles.
+// ============================================================================
+
+export interface StaffRoles {
+  authorized: boolean
+  primary: UserRole
+  secondary: UserRole[]
+  roles: UserRole[]       // primary + secondary (for the switcher)
+  effective: UserRole    // MAX-level role (permission precedence)
+  effective_level: number
+}
+export async function fetchStaffRoles(staffId: string): Promise<StaffRoles | null> {
+  try {
+    const { data, error } = await supabase.rpc('get_staff_roles', { p_staff_id: staffId })
+    if (error) throw error
+    return (data as StaffRoles) ?? null
+  } catch (e) {
+    console.error('fetchStaffRoles failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** Switch the active persona. Server-validates the user holds the role. */
+export async function setActiveRole(staffId: string, role: UserRole): Promise<UserRole | null> {
+  try {
+    const { data, error } = await supabase.rpc('set_active_role', { p_staff_id: staffId, p_role: role })
+    if (error) throw error
+    return (data as UserRole) ?? null
+  } catch (e) {
+    console.error('setActiveRole failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** Reset to the primary role. */
+export async function clearActiveRole(staffId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('clear_active_role', { p_staff_id: staffId })
+    if (error) throw error
+    return true
+  } catch (e) {
+    console.error('clearActiveRole failed (non-blocking):', e)
     return false
   }
 }
