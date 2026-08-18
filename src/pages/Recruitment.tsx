@@ -67,7 +67,7 @@ const STATUS_COLORS = {
 
 const APPLICATION_STATUS_COLORS = {
   new: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
-  screening: 'bg-amber-100 text-amber-700',
+  screening: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   interview: 'bg-purple-100 text-purple-700',
   offer: 'bg-teal-100 text-teal-700',
   hired: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
@@ -551,14 +551,14 @@ export default function RecruitmentPage() {
                                     showToast('Posting closed', 'success')
                                     fetchPostings()
                                   }}
-                                  className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm hover:bg-amber-700"
+                                  className="flex items-center gap-2 px-4 py-2 bg-[var(--av-warning)] text-white rounded-lg text-sm hover:bg-amber-700"
                                 >
                                   <XCircle className="w-4 h-4" /> Close
                                 </button>
                               )}
                               <button
                                 onClick={(e) => { e.stopPropagation(); deletePosting(posting.id) }}
-                                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
+                                className="flex items-center gap-2 px-4 py-2 bg-[var(--av-danger-soft)] text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
                               >
                                 <Trash2 className="w-4 h-4" /> Delete
                               </button>
@@ -566,7 +566,7 @@ export default function RecruitmentPage() {
                           )}
                           <a
                             href={`/app/leads?source=recruitment&job=${posting.id}`}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-[var(--av-primary)] border border-[var(--av-primary-soft)] rounded-lg text-sm hover:bg-[var(--av-primary-soft)]"
+                            className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary-soft)] text-[var(--av-primary)] border border-[var(--av-primary-soft)] rounded-lg text-sm hover:bg-[var(--av-primary-soft)]"
                           >
                             <Users className="w-4 h-4" /> View Applications
                           </a>

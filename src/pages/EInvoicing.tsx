@@ -270,7 +270,7 @@ export default function EInvoicingPage() {
                   Configured
                 </span>
               ) : (
-                <span className="ml-2 inline-flex items-center text-amber-600">
+                <span className="ml-2 inline-flex items-center text-[var(--av-warning)]">
                   <AlertCircle className="w-4 h-4 mr-1" />
                   Not configured
                 </span>
@@ -336,7 +336,7 @@ export default function EInvoicingPage() {
             </div>
 
             {/* Info Banner */}
-            <div className="bg-blue-50 rounded-xl border border-[var(--av-primary-soft)] p-4 mb-6">
+            <div className="bg-[var(--av-primary-soft)] rounded-xl border border-[var(--av-primary-soft)] p-4 mb-6">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-[var(--av-primary)] mt-0.5" />
                 <div>
@@ -425,7 +425,7 @@ export default function EInvoicingPage() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setShowDetails(invoice)}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
@@ -461,7 +461,7 @@ export default function EInvoicingPage() {
                             {invoice.itcmn && (
                               <button
                                 onClick={() => downloadEInvoice(invoice)}
-                                className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
+                                className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-[var(--av-success-soft)] rounded"
                                 title="Download E-Invoice"
                               >
                                 <Download className="w-4 h-4" />
@@ -483,12 +483,12 @@ export default function EInvoicingPage() {
             <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
               <h3 className="font-medium text-[var(--av-text)] mb-4">NRS/FIRS Configuration</h3>
               
-              <div className="bg-amber-50 rounded-lg border border-amber-200 p-4 mb-6">
+              <div className="bg-[var(--av-warning-soft)] rounded-lg border border-[var(--av-warning)]/30 p-4 mb-6">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
+                  <AlertCircle className="w-5 h-5 text-[var(--av-warning)] mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-amber-900">Tax Compliance Required</p>
-                    <p className="text-sm text-amber-700 mt-1">
+                    <p className="text-sm text-[var(--av-warning)] mt-1">
                       Nigerian businesses are required to report all invoices above ₦100,000 
                       to the Federal Inland Revenue Service (FIRS) via the NRS system.
                     </p>

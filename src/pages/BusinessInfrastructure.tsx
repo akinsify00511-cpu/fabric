@@ -111,7 +111,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
 
   const cards = [
     { label: 'Branches', value: stats.branches, icon: MapPin, color: 'text-blue-500' },
-    { label: 'Total Assets', value: `₦${(stats.totalAssets / 1000000).toFixed(1)}M`, icon: Building2, color: 'text-green-500' },
+    { label: 'Total Assets', value: `₦${(stats.totalAssets / 1000000).toFixed(1)}M`, icon: Building2, color: 'text-[var(--av-success)]' },
     { label: 'Net Worth', value: `₦${(stats.netWorth / 1000000).toFixed(1)}M`, icon: TrendingUp, color: 'text-purple-500' },
     { label: 'Active Loans', value: `₦${(stats.totalLoans / 1000000).toFixed(1)}M`, icon: Landmark, color: 'text-orange-500' },
     { label: 'Monthly Recurring', value: `₦${(stats.monthlyRecurring / 1000).toFixed(0)}K`, icon: Receipt, color: 'text-teal-500' },
@@ -129,9 +129,9 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         ))}
       </div>
 
-      <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
+      <div className="mt-6 bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4">
         <h3 className="font-medium text-amber-800 mb-2">💡 Getting Started</h3>
-        <p className="text-sm text-amber-700">
+        <p className="text-sm text-[var(--av-warning)]">
           Track your complete business health: branches, assets, liabilities, loans, and recurring expenses. 
           Each module gives you a complete picture of your business infrastructure.
         </p>
@@ -200,7 +200,7 @@ function BranchesTab({ businessId }: { businessId?: string }) {
         <div className="space-y-3">
           {branches.map((branch) => (
             <div key={branch.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center"><MapPin size={18} className="text-blue-500" /></div>
+              <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center"><MapPin size={18} className="text-blue-500" /></div>
               <div className="flex-1">
                 <div className="flex items-center gap-2"><span className="font-medium">{branch.name}</span>
                   {branch.is_headquarters && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">HQ</span>}
@@ -231,9 +231,9 @@ function PayrollTab({ businessId }: { businessId?: string }) {
 
   const statusColors: Record<string, string> = {
     draft: 'bg-white text-black',
-    processing: 'bg-amber-100 text-amber-700',
-    completed: 'bg-green-100 text-green-700',
-    cancelled: 'bg-red-100 text-red-700',
+    processing: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    completed: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    cancelled: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -257,8 +257,8 @@ function PayrollTab({ businessId }: { businessId?: string }) {
               </div>
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div><span className="text-black">Gross</span><div className="font-medium">₦{run.total_gross?.toLocaleString()}</div></div>
-                <div><span className="text-black">Deductions</span><div className="font-medium text-red-600">-₦{run.total_deductions?.toLocaleString()}</div></div>
-                <div><span className="text-black">Net Pay</span><div className="font-medium text-green-600">₦{run.total_net?.toLocaleString()}</div></div>
+                <div><span className="text-black">Deductions</span><div className="font-medium text-[var(--av-danger)]">-₦{run.total_deductions?.toLocaleString()}</div></div>
+                <div><span className="text-black">Net Pay</span><div className="font-medium text-[var(--av-success)]">₦{run.total_net?.toLocaleString()}</div></div>
               </div>
             </div>
           ))}
@@ -304,9 +304,9 @@ function LoansTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    active: 'bg-green-100 text-green-700',
-    paid_off: 'bg-blue-100 text-blue-700',
-    defaulted: 'bg-red-100 text-red-700',
+    active: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    paid_off: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    defaulted: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -389,9 +389,9 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-700',
-    approved: 'bg-blue-100 text-blue-700',
-    paid: 'bg-green-100 text-green-700',
+    pending: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    approved: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    paid: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   }
 
   return (
@@ -426,7 +426,7 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
                 <span className="font-medium capitalize">{comm.commission_type} Commission</span>
                 <span className={`text-xs px-2 py-1 rounded-full ${statusColors[comm.status]}`}>{comm.status}</span>
               </div>
-              <div className="text-2xl font-semibold text-green-600">₦{comm.amount?.toLocaleString()}</div>
+              <div className="text-2xl font-semibold text-[var(--av-success)]">₦{comm.amount?.toLocaleString()}</div>
               {comm.description && <p className="text-sm text-black mt-1">{comm.description}</p>}
             </div>
           ))}
@@ -566,7 +566,7 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="text-sm text-black">Total Liabilities</div>
-        <div className="text-xl font-semibold text-red-600">₦{totalBalance.toLocaleString()}</div>
+        <div className="text-xl font-semibold text-[var(--av-danger)]">₦{totalBalance.toLocaleString()}</div>
       </div>
 
       <div className="flex justify-end mb-4">
@@ -603,11 +603,11 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
             <div key={liability.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{liability.name}</span>
-                <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded capitalize">{liability.liability_type.replace('_', ' ')}</span>
+                <span className="text-xs bg-[var(--av-danger-soft)] text-[var(--av-danger)] px-2 py-1 rounded capitalize">{liability.liability_type.replace('_', ' ')}</span>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div><span className="text-black">Original</span><div className="font-medium">₦{liability.original_amount?.toLocaleString()}</div></div>
-                <div><span className="text-black">Balance</span><div className="font-medium text-red-600">₦{liability.current_balance?.toLocaleString()}</div></div>
+                <div><span className="text-black">Balance</span><div className="font-medium text-[var(--av-danger)]">₦{liability.current_balance?.toLocaleString()}</div></div>
               </div>
             </div>
           ))}
@@ -700,7 +700,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
               </div>
               <div className="text-right">
                 <div className="font-semibold">₦{expense.amount?.toLocaleString()}</div>
-                <div className={`text-xs ${expense.is_active ? 'text-green-600' : 'text-black'}`}>{expense.is_active ? 'Active' : 'Paused'}</div>
+                <div className={`text-xs ${expense.is_active ? 'text-[var(--av-success)]' : 'text-black'}`}>{expense.is_active ? 'Active' : 'Paused'}</div>
               </div>
             </div>
           ))}
@@ -750,7 +750,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="text-sm text-black">Billable Hours</div>
-          <div className="text-2xl font-semibold text-green-600">{billableHours}h</div>
+          <div className="text-2xl font-semibold text-[var(--av-success)]">{billableHours}h</div>
         </div>
       </div>
 
@@ -782,7 +782,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
             <div key={entry.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2"><span className="font-medium">{entry.hours}h</span>
-                  {entry.billable && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">Billable</span>}
+                  {entry.billable && <span className="text-xs bg-[var(--av-success-soft)] text-[var(--av-success)] px-2 py-0.5 rounded">Billable</span>}
                 </div>
                 <p className="text-sm text-black">{entry.description || 'No description'}</p>
               </div>

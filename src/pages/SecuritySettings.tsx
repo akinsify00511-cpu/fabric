@@ -295,7 +295,7 @@ Each code can only be used once!`
             <div className="p-6">
               {mfa?.enabled ? (
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-green-50">
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-[var(--av-success-soft)]">
                     <div className="flex items-center gap-3">
                       <Smartphone className="w-5 h-5 text-[var(--av-success)]" />
                       <div>
@@ -323,7 +323,7 @@ Each code can only be used once!`
 
                   <button
                     onClick={disable2FA}
-                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium hover:bg-red-50"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium hover:bg-[var(--av-danger-soft)]"
                   >
                     Disable 2FA
                   </button>
@@ -331,15 +331,15 @@ Each code can only be used once!`
               ) : (
                 <div className="space-y-4">
                   {!twoFactorEnabled && (
-                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div className="p-4 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30">
                       <div className="flex items-start gap-3">
-                        <Clock4 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                        <Clock4 className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
                         <div>
                           <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
                             Beta Feature
                             <BetaBadge />
                           </p>
-                          <p className="text-xs text-amber-700 mt-1">
+                          <p className="text-xs text-[var(--av-warning)] mt-1">
                             Two-factor authentication is being tested with beta users. Contact support if you'd like early access.
                           </p>
                         </div>
@@ -512,7 +512,7 @@ Each code can only be used once!`
 
               {setupStep === 'backup' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-green-50 border border-[var(--av-success-soft)]">
+                  <div className="p-4 rounded-xl bg-[var(--av-success-soft)] border border-[var(--av-success-soft)]">
                     <div className="flex items-center gap-2 mb-2">
                       <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
                       <p className="text-sm font-medium text-[var(--av-success)]">2FA Enabled!</p>
@@ -522,7 +522,7 @@ Each code can only be used once!`
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-yellow-50 border border-[var(--av-warning-soft)]">
+                  <div className="p-4 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning-soft)]">
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
                       <div>

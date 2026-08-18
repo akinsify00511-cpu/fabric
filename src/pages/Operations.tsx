@@ -114,8 +114,8 @@ function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; s
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-              <AlertCircle size={20} className="text-red-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-danger-soft)]0/10 flex items-center justify-center">
+              <AlertCircle size={20} className="text-[var(--av-danger)]" />
             </div>
             <div className="text-2xl font-bold">{stats.openIssues}</div>
           </div>
@@ -123,8 +123,8 @@ function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; s
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <Scale size={20} className="text-amber-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-warning-soft)]0/10 flex items-center justify-center">
+              <Scale size={20} className="text-[var(--av-warning)]" />
             </div>
             <div className="text-2xl font-bold">{stats.pendingCompliance}</div>
           </div>
@@ -132,8 +132,8 @@ function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; s
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-              <BookOpen size={20} className="text-green-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-success-soft)]0/10 flex items-center justify-center">
+              <BookOpen size={20} className="text-[var(--av-success)]" />
             </div>
             <div className="text-2xl font-bold">{stats.activeSOPs}</div>
           </div>
@@ -141,7 +141,7 @@ function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; s
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center">
               <GitBranch size={20} className="text-blue-500" />
             </div>
             <div className="text-2xl font-bold">{stats.pendingApprovals}</div>
@@ -184,8 +184,8 @@ function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; s
               {recentAnnouncements.map((ann) => (
                 <div key={ann.id} className="p-3 bg-black/10 rounded-xl">
                   <div className="flex items-center gap-2">
-                    {ann.priority === 'urgent' && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">Urgent</span>}
-                    {ann.is_pinned && <Pin size={12} className="text-amber-500" />}
+                    {ann.priority === 'urgent' && <span className="text-xs bg-[var(--av-danger-soft)] text-[var(--av-danger)] px-2 py-0.5 rounded">Urgent</span>}
+                    {ann.is_pinned && <Pin size={12} className="text-[var(--av-warning)]" />}
                   </div>
                   <p className="font-medium text-sm mt-1">{ann.title}</p>
                   <p className="text-xs text-black mt-1">{new Date(ann.created_at).toLocaleDateString()}</p>
@@ -244,9 +244,9 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
 
   const priorityColors: Record<string, string> = {
     low: 'bg-white text-black',
-    normal: 'bg-blue-100 text-blue-700',
-    high: 'bg-amber-100 text-amber-700',
-    urgent: 'bg-red-100 text-red-700',
+    normal: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    high: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    urgent: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -319,7 +319,7 @@ function AnnouncementsTab({ businessId, staffId }: { businessId?: string; staffI
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    {ann.is_pinned && <Pin size={14} className="text-amber-500" />}
+                    {ann.is_pinned && <Pin size={14} className="text-[var(--av-warning)]" />}
                     <span className={`text-xs px-2 py-0.5 rounded-full ${priorityColors[ann.priority]}`}>{ann.priority}</span>
                     <span className="text-xs bg-black/10 px-2 py-0.5 rounded-full text-black capitalize">{ann.category}</span>
                   </div>
@@ -373,16 +373,16 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
 
   const priorityColors: Record<string, string> = {
     low: 'bg-white text-black',
-    medium: 'bg-blue-100 text-blue-700',
-    high: 'bg-amber-100 text-amber-700',
-    critical: 'bg-red-100 text-red-700',
+    medium: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    high: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    critical: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   const statusColors: Record<string, string> = {
-    open: 'bg-red-100 text-red-700',
-    acknowledged: 'bg-amber-100 text-amber-700',
-    in_progress: 'bg-blue-100 text-blue-700',
-    resolved: 'bg-green-100 text-green-700',
+    open: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
+    acknowledged: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    in_progress: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    resolved: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
     closed: 'bg-white text-black',
   }
 
@@ -390,7 +390,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-medium">Issue Tracker</h2>
-        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 text-white text-sm">
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--av-danger-soft)]0 text-white text-sm">
           <Plus size={16} /> Report Issue
         </button>
       </div>
@@ -415,7 +415,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
               <option value="critical">Critical</option>
             </select>
           </div>
-          <button type="submit" className="w-full py-2 rounded-lg bg-red-500 text-white">Submit Issue</button>
+          <button type="submit" className="w-full py-2 rounded-lg bg-[var(--av-danger-soft)]0 text-white">Submit Issue</button>
         </form>
       )}
 
@@ -423,7 +423,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : issues.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <CheckCircle2 size={48} className="mx-auto text-green-500 mb-3" />
+          <CheckCircle2 size={48} className="mx-auto text-[var(--av-success)] mb-3" />
           <p className="text-black">No open issues!</p>
           <p className="text-sm text-black mt-1">Everything is running smoothly</p>
         </div>
@@ -445,7 +445,7 @@ function IssuesTab({ businessId, staffId }: { businessId?: string; staffId?: str
                   await supabase.from('issues').update({ status: 'resolved' }).eq('id', issue.id)
                   showToast('Issue resolved!', 'success')
                   loadIssues()
-                }} className="text-sm text-green-600 hover:underline">Resolve</button>
+                }} className="text-sm text-[var(--av-success)] hover:underline">Resolve</button>
               </div>
             </div>
           ))}
@@ -496,9 +496,9 @@ function SOPsTab({ businessId }: { businessId?: string }) {
 
   const statusColors: Record<string, string> = {
     draft: 'bg-white text-black',
-    review: 'bg-amber-100 text-amber-700',
-    approved: 'bg-blue-100 text-blue-700',
-    active: 'bg-green-100 text-green-700',
+    review: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    approved: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    active: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
     archived: 'bg-white text-black',
   }
 
@@ -577,7 +577,7 @@ function SOPsTab({ businessId }: { businessId?: string }) {
             return (
               <div key={sop.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center">
                     <Icon size={20} className="text-blue-500" />
                   </div>
                   <div className="flex-1">
@@ -710,7 +710,7 @@ function WorkflowsTab({ businessId }: { businessId?: string }) {
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <span className="text-xs bg-black/10 px-2 py-0.5 rounded text-black capitalize">{wf.workflow_type}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${wf.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}>{wf.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
                     <h3 className="font-medium mt-1">{wf.name}</h3>
                     {wf.description && <p className="text-sm text-black mt-1">{wf.description}</p>}
@@ -768,10 +768,10 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-700',
-    in_progress: 'bg-blue-100 text-blue-700',
-    compliant: 'bg-green-100 text-green-700',
-    non_compliant: 'bg-red-100 text-red-700',
+    pending: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    in_progress: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    compliant: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    non_compliant: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -865,7 +865,7 @@ function ComplianceTab({ businessId }: { businessId?: string }) {
                   await supabase.from('compliance_items').update({ status: 'compliant', reviewed_at: new Date().toISOString() }).eq('id', item.id)
                   showToast('Marked as compliant!', 'success')
                   loadItems()
-                }} className="text-sm text-green-600 hover:underline">Mark Compliant</button>
+                }} className="text-sm text-[var(--av-success)] hover:underline">Mark Compliant</button>
               </div>
             </div>
           ))}
@@ -931,11 +931,11 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
   }
 
   const typeColors: Record<string, string> = {
-    policy: 'bg-red-500/10 text-red-500',
-    procedure: 'bg-blue-500/10 text-blue-500',
+    policy: 'bg-[var(--av-danger-soft)]0/10 text-[var(--av-danger)]',
+    procedure: 'bg-[var(--av-primary-soft)]0/10 text-blue-500',
     contract: 'bg-purple-500/10 text-purple-500',
-    template: 'bg-amber-500/10 text-amber-500',
-    report: 'bg-green-500/10 text-green-500',
+    template: 'bg-[var(--av-warning-soft)]0/10 text-[var(--av-warning)]',
+    report: 'bg-[var(--av-success-soft)]0/10 text-[var(--av-success)]',
     legal: 'bg-black/10 text-black',
     training: 'bg-teal-500/10 text-teal-500',
     other: 'bg-black/10 text-black',
@@ -1010,13 +1010,13 @@ function DocumentsTab({ businessId }: { businessId?: string }) {
           {documents.map((doc) => (
             <div key={doc.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center">
                   <ScrollText size={20} className="text-blue-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`text-xs px-2 py-0.5 rounded ${typeColors[doc.document_type]}`}>{doc.document_type}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>v{doc.version}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${doc.status === 'active' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}>v{doc.version}</span>
                   </div>
                   <h3 className="font-medium">{doc.title}</h3>
                 </div>

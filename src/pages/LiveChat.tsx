@@ -42,7 +42,7 @@ interface ChatMessage {
 const STATUS_COLORS = {
   open: 'bg-[var(--av-success)]',
   closed: 'bg-[var(--av-text-disabled)]',
-  pending: 'bg-amber-500',
+  pending: 'bg-[var(--av-warning-soft)]0',
 }
 
 export default function LiveChatPage() {
@@ -319,7 +319,7 @@ export default function LiveChatPage() {
               <span className="text-[var(--av-text-muted)]">{stats.open} open</span>
             </div>
             <div className="flex items-center gap-1">
-              <Circle className="w-2 h-2 text-amber-500 fill-amber-500" />
+              <Circle className="w-2 h-2 text-[var(--av-warning)] fill-amber-500" />
               <span className="text-[var(--av-text-muted)]">{stats.pending} pending</span>
             </div>
           </div>
@@ -371,7 +371,7 @@ export default function LiveChatPage() {
                 key={conversation.id}
                 onClick={() => setSelectedConversation(conversation)}
                 className={`p-4 border-b border-[var(--av-border)] cursor-pointer hover:bg-gray-50 ${
-                  selectedConversation?.id === conversation.id ? 'bg-blue-50' : ''
+                  selectedConversation?.id === conversation.id ? 'bg-[var(--av-primary-soft)]' : ''
                 }`}
               >
                 <div className="flex items-start gap-3">

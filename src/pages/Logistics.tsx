@@ -45,7 +45,7 @@ export default function Logistics() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 text-center">
-          <div className="text-2xl font-bold text-amber-600">{pendingCount}</div>
+          <div className="text-2xl font-bold text-[var(--av-warning)]">{pendingCount}</div>
           <div className="text-sm text-[var(--av-text)]">Pending</div>
         </div>
         <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 text-center">
@@ -76,12 +76,12 @@ export default function Logistics() {
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     delivery.status === 'delivered' ? 'bg-[var(--av-success)]/10' :
                     delivery.status === 'in_transit' ? 'bg-[var(--av-primary-soft)]/10' :
-                    'bg-amber-500/10'
+                    'bg-[var(--av-warning-soft)]0/10'
                   }`}>
                     <Truck size={20} className={
                       delivery.status === 'delivered' ? 'text-[var(--av-success)]' :
                       delivery.status === 'in_transit' ? 'text-[var(--av-primary)]' :
-                      'text-amber-500'
+                      'text-[var(--av-warning)]'
                     } />
                   </div>
                   <div>
@@ -93,7 +93,7 @@ export default function Logistics() {
                   delivery.status === 'delivered' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
                   delivery.status === 'in_transit' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
                   delivery.status === 'assigned' ? 'bg-purple-100 text-purple-700' :
-                  'bg-amber-100 text-amber-700'
+                  'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                 }`}>
                   {delivery.status?.replace('_', ' ')}
                 </span>

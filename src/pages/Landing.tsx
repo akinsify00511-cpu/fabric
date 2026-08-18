@@ -63,7 +63,7 @@ const DASHBOARDS = [
   {
     role: "Team Lead / Supervisor",
     icon: "🎯",
-    color: "bg-blue-500",
+    color: "bg-[var(--av-primary-soft)]0",
     tagline: "Manage your team without chasing them.",
     features: [
       "Track field staff location and job status in real-time",
@@ -123,7 +123,7 @@ const DASHBOARDS = [
   {
     role: "Sales Head",
     icon: "📈",
-    color: "bg-red-500",
+    color: "bg-[var(--av-danger-soft)]0",
     tagline: "Never lose a deal. Never miss a follow-up.",
     features: [
       "Pipeline view: enquiry → quote → won/lost",
@@ -138,7 +138,7 @@ const DASHBOARDS = [
   {
     role: "Business Development",
     icon: "🚀",
-    color: "bg-amber-500",
+    color: "bg-[var(--av-warning-soft)]0",
     tagline: "Find opportunities. Close them faster.",
     features: [
       "Lead capture from multiple sources",
@@ -470,9 +470,9 @@ function HeroSection() {
               {/* Device Header */}
               <div className="flex items-center justify-between pb-4 border-b border-black mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--av-danger-soft)]0" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--av-warning-soft)]0" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--av-success-soft)]0" />
                 </div>
                 <span className="text-xs text-black uppercase tracking-wider">6:45 AM</span>
               </div>
@@ -490,13 +490,13 @@ function HeroSection() {
                   </button>
                 </div>
                 
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
+                <div className="bg-[var(--av-danger-soft)]0/10 border border-red-500/30 rounded-xl p-3">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-xs font-bold text-red-400 uppercase">7 Days Overdue</span>
                     <span className="text-xs text-red-400 font-mono font-bold">N680,000</span>
                   </div>
                   <p className="text-white text-sm mb-2">Client: ABC Company. Called twice. No answer.</p>
-                  <button className="w-full py-2 rounded-lg bg-red-500 text-white text-xs font-medium hover:bg-red-600 transition-colors">
+                  <button className="w-full py-2 rounded-lg bg-[var(--av-danger-soft)]0 text-white text-xs font-medium hover:bg-[var(--av-danger)] transition-colors">
                     Send Reminder
                   </button>
                 </div>

@@ -368,7 +368,7 @@ export default function Onboarding() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-6">
+            <div className="bg-[var(--av-danger-soft)] border border-[var(--av-danger)]/30 text-[var(--av-danger)] rounded-lg px-4 py-3 text-sm mb-6">
               {error}
             </div>
           )}
@@ -467,7 +467,7 @@ export default function Onboarding() {
                   </button>
                 ))}
               </div>
-              <div className="bg-[#155BB4]/8 border border-blue-200 rounded-lg px-4 py-3">
+              <div className="bg-[#155BB4]/8 border border-[var(--av-primary)]/30 rounded-lg px-4 py-3">
                 <p className="text-xs text-[#155BB4] text-center">
                   Text color auto-adjusts for optimal readability
                 </p>

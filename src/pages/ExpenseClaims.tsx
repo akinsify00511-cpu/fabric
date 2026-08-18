@@ -132,10 +132,10 @@ export default function ExpenseClaimsPage() {
 
   const statusConfig: Record<string, { bg: string; text: string; icon: any }> = {
     draft: { bg: 'bg-white', text: 'text-black', icon: FileText },
-    pending: { bg: 'bg-amber-100', text: 'text-amber-600', icon: Clock },
-    approved: { bg: 'bg-green-100', text: 'text-green-600', icon: CheckCircle },
-    rejected: { bg: 'bg-red-100', text: 'text-red-600', icon: XCircle },
-    reimbursed: { bg: 'bg-blue-100', text: 'text-blue-600', icon: CreditCard },
+    pending: { bg: 'bg-amber-100', text: 'text-[var(--av-warning)]', icon: Clock },
+    approved: { bg: 'bg-green-100', text: 'text-[var(--av-success)]', icon: CheckCircle },
+    rejected: { bg: 'bg-red-100', text: 'text-[var(--av-danger)]', icon: XCircle },
+    reimbursed: { bg: 'bg-blue-100', text: 'text-[var(--av-primary)]', icon: CreditCard },
   }
 
   const filteredClaims = filter === 'all' 
@@ -176,19 +176,19 @@ export default function ExpenseClaimsPage() {
           title="Pending" 
           value={`₦${claims.filter(c => c.status === 'pending').reduce((sum, c) => sum + c.amount, 0).toLocaleString()}`}
           icon={<Clock size={18} />} 
-          color="bg-amber-500" 
+          color="bg-[var(--av-warning-soft)]0" 
         />
         <StatCard 
           title="Approved" 
           value={`₦${claims.filter(c => ['approved', 'reimbursed'].includes(c.status)).reduce((sum, c) => sum + c.amount, 0).toLocaleString()}`}
           icon={<CheckCircle size={18} />} 
-          color="bg-green-500" 
+          color="bg-[var(--av-success-soft)]0" 
         />
         <StatCard 
           title="Rejected" 
           value={claims.filter(c => c.status === 'rejected').length.toString()}
           icon={<XCircle size={18} />} 
-          color="bg-red-500" 
+          color="bg-[var(--av-danger-soft)]0" 
         />
       </div>
 
@@ -302,7 +302,7 @@ export default function ExpenseClaimsPage() {
 
           {pendingApprovals.length === 0 ? (
             <div className="p-12 text-center text-black">
-              <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
+              <CheckCircle size={48} className="mx-auto mb-4 text-[var(--av-success)]" />
               <p className="font-medium mb-2">All caught up!</p>
               <p className="text-sm">No pending expense claims</p>
             </div>
@@ -336,19 +336,19 @@ export default function ExpenseClaimsPage() {
                       <div className="mt-3 flex gap-2">
                         <button
                           onClick={() => handleApprove(claim.id)}
-                          className="flex-1 py-2 rounded-lg bg-green-500 text-white text-sm font-medium"
+                          className="flex-1 py-2 rounded-lg bg-[var(--av-success-soft)]0 text-white text-sm font-medium"
                         >
                           Approve
                         </button>
                         <button
                           onClick={() => handleReject(claim.id)}
-                          className="flex-1 py-2 rounded-lg bg-red-50 text-red-600 text-sm font-medium"
+                          className="flex-1 py-2 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium"
                         >
                           Reject
                         </button>
                         <button
                           onClick={() => handleMarkReimbursed(claim.id)}
-                          className="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 text-sm font-medium"
+                          className="px-4 py-2 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] text-sm font-medium"
                         >
                           Mark Paid
                         </button>
@@ -488,8 +488,8 @@ function ExpenseModal({
             />
           </div>
 
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700">
+          <div className="p-4 bg-[var(--av-primary-soft)] rounded-lg">
+            <p className="text-sm text-[var(--av-primary)]">
               <strong>Note:</strong> Upload receipts after submitting. Supported formats: JPG, PNG, PDF.
             </p>
           </div>

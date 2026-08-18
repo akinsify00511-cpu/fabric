@@ -167,14 +167,14 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         <div className="rounded-2xl p-6" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
           <h3 className="font-semibold mb-4" style={{ color: 'var(--av-text)' }}>Upcoming</h3>
           <div className="space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-amber-50 rounded-xl">
-              <Calendar size={20} className="text-amber-500" />
+            <div className="flex items-center gap-3 p-3 bg-[var(--av-warning-soft)] rounded-xl">
+              <Calendar size={20} className="text-[var(--av-warning)]" />
               <div>
                 <div className="text-sm font-medium">Public Holiday</div>
                 <div className="text-xs text-black">Tomorrow</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl">
+            <div className="flex items-center gap-3 p-3 bg-[var(--av-primary-soft)] rounded-xl">
               <Award size={20} className="text-blue-500" />
               <div>
                 <div className="text-sm font-medium">Performance Review</div>
@@ -247,9 +247,9 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
   }
 
   const statusColors: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-700',
-    approved: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
+    pending: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    approved: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    rejected: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -426,12 +426,12 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
           ) : !isCheckedOut ? (
             <button
               onClick={handleCheckOut}
-              className="px-8 py-3 rounded-xl bg-red-500 text-white font-medium"
+              className="px-8 py-3 rounded-xl bg-[var(--av-danger-soft)]0 text-white font-medium"
             >
               Check Out
             </button>
           ) : (
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--av-success-soft)] text-[var(--av-success)] rounded-full">
               <Check size={16} /> Done for today
             </div>
           )}
@@ -452,9 +452,9 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
           <div className="bg-white rounded-xl border border-black/[0.06] p-4 text-center">
             <div className="text-sm text-black">Status</div>
             <div className={`text-lg font-semibold capitalize ${
-              todayRecord.status === 'present' ? 'text-green-600' :
-              todayRecord.status === 'late' ? 'text-amber-600' :
-              todayRecord.status === 'absent' ? 'text-red-600' : 'text-black/60'
+              todayRecord.status === 'present' ? 'text-[var(--av-success)]' :
+              todayRecord.status === 'late' ? 'text-[var(--av-warning)]' :
+              todayRecord.status === 'absent' ? 'text-[var(--av-danger)]' : 'text-black/60'
             }`}>{todayRecord.status}</div>
           </div>
         </div>
@@ -476,8 +476,8 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
                 <span>In: {record.check_in || '--'}</span>
                 <span>Out: {record.check_out || '--'}</span>
                 <span className={`capitalize ${
-                  record.status === 'present' ? 'text-green-600' :
-                  record.status === 'late' ? 'text-amber-600' : 'text-red-600'
+                  record.status === 'present' ? 'text-[var(--av-success)]' :
+                  record.status === 'late' ? 'text-[var(--av-warning)]' : 'text-[var(--av-danger)]'
                 }`}>{record.status}</span>
               </div>
             </div>
@@ -610,12 +610,12 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
   }
 
   const statusColors: Record<string, string> = {
-    new: 'bg-blue-100 text-blue-700',
-    screening: 'bg-amber-100 text-amber-700',
+    new: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    screening: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
     interview: 'bg-purple-100 text-purple-700',
-    offer: 'bg-green-100 text-green-700',
-    hired: 'bg-green-100 text-green-700',
-    rejected: 'bg-red-100 text-red-700',
+    offer: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    hired: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    rejected: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   return (
@@ -699,11 +699,11 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
                     {job.department && `${job.department} • `}{job.location}
                   </p>
                 </div>
-                <span className={`text-xs px-3 py-1 rounded-full ${job.status === 'open' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
+                <span className={`text-xs px-3 py-1 rounded-full ${job.status === 'open' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}>
                   {job.status}
                 </span>
               </div>
-              {job.salary_range && <p className="text-sm text-green-600 mt-2">{job.salary_range}</p>}
+              {job.salary_range && <p className="text-sm text-[var(--av-success)] mt-2">{job.salary_range}</p>}
             </div>
           ))}
 
@@ -752,9 +752,9 @@ function ContractsTab({ businessId }: { businessId?: string }) {
   }
 
   const typeColors: Record<string, string> = {
-    permanent: 'bg-green-100 text-green-700',
-    contract: 'bg-blue-100 text-blue-700',
-    internship: 'bg-amber-100 text-amber-700',
+    permanent: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    contract: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    internship: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
     casual: 'bg-white text-black',
   }
 
@@ -929,7 +929,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
                 </div>
                 <div className="flex items-center gap-2">
                   <span className={`text-xs px-3 py-1 rounded-full ${
-                    payslip.status === 'paid' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                    payslip.status === 'paid' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                   }`}>
                     {payslip.status}
                   </span>
@@ -981,7 +981,7 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
                   {selectedPayslip.bonus > 0 && (
                     <div className="flex justify-between">
                       <span>Bonus</span>
-                      <span className="text-green-600">{formatCurrency(selectedPayslip.bonus)}</span>
+                      <span className="text-[var(--av-success)]">{formatCurrency(selectedPayslip.bonus)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-semibold border-t border-black/10 pt-2">
@@ -998,39 +998,39 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
                   {selectedPayslip.tax_deduction > 0 && (
                     <div className="flex justify-between">
                       <span>PAYE Tax</span>
-                      <span className="text-red-600">-{formatCurrency(selectedPayslip.tax_deduction)}</span>
+                      <span className="text-[var(--av-danger)]">-{formatCurrency(selectedPayslip.tax_deduction)}</span>
                     </div>
                   )}
                   {selectedPayslip.pension_deduction > 0 && (
                     <div className="flex justify-between">
                       <span>Pension (Employee)</span>
-                      <span className="text-red-600">-{formatCurrency(selectedPayslip.pension_deduction)}</span>
+                      <span className="text-[var(--av-danger)]">-{formatCurrency(selectedPayslip.pension_deduction)}</span>
                     </div>
                   )}
                   {selectedPayslip.health_insurance > 0 && (
                     <div className="flex justify-between">
                       <span>Health Insurance</span>
-                      <span className="text-red-600">-{formatCurrency(selectedPayslip.health_insurance)}</span>
+                      <span className="text-[var(--av-danger)]">-{formatCurrency(selectedPayslip.health_insurance)}</span>
                     </div>
                   )}
                   {selectedPayslip.other_deductions > 0 && (
                     <div className="flex justify-between">
                       <span>Other Deductions</span>
-                      <span className="text-red-600">-{formatCurrency(selectedPayslip.other_deductions)}</span>
+                      <span className="text-[var(--av-danger)]">-{formatCurrency(selectedPayslip.other_deductions)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-semibold border-t border-black/10 pt-2">
                     <span>Total Deductions</span>
-                    <span className="text-red-600">-{formatCurrency(selectedPayslip.total_deductions)}</span>
+                    <span className="text-[var(--av-danger)]">-{formatCurrency(selectedPayslip.total_deductions)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Net Pay */}
-              <div className="bg-green-50 rounded-xl p-4">
+              <div className="bg-[var(--av-success-soft)] rounded-xl p-4">
                 <div className="flex justify-between items-center">
                   <span className="font-semibold">NET PAY</span>
-                  <span className="text-2xl font-bold text-green-600">{formatCurrency(selectedPayslip.net_pay)}</span>
+                  <span className="text-2xl font-bold text-[var(--av-success)]">{formatCurrency(selectedPayslip.net_pay)}</span>
                 </div>
               </div>
 
@@ -1081,9 +1081,9 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
           <div key={benefit.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
             <div className="flex items-center gap-3 mb-3">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                benefit.id === 'health' ? 'bg-red-100 text-red-500' :
+                benefit.id === 'health' ? 'bg-red-100 text-[var(--av-danger)]' :
                 benefit.id === 'pension' ? 'bg-blue-100 text-blue-500' :
-                'bg-green-100 text-green-500'
+                'bg-green-100 text-[var(--av-success)]'
               }`}>
                 {benefit.id === 'health' ? <Heart size={20} /> :
                  benefit.id === 'pension' ? <Wallet size={20} /> :
@@ -1095,7 +1095,7 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${benefit.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${benefit.status === 'active' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}>
                 {benefit.status}
               </span>
               <span className="text-sm font-medium">{benefit.coverage}</span>
@@ -1104,12 +1104,12 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
         ))}
       </div>
 
-      <div className="mt-6 bg-amber-50 rounded-2xl p-4">
-        <div className="flex items-center gap-2 text-amber-700">
+      <div className="mt-6 bg-[var(--av-warning-soft)] rounded-2xl p-4">
+        <div className="flex items-center gap-2 text-[var(--av-warning)]">
           <AlertCircle size={20} />
           <span className="font-medium">Benefits Enrollment</span>
         </div>
-        <p className="text-sm text-amber-600 mt-2">
+        <p className="text-sm text-[var(--av-warning)] mt-2">
           Contact HR to enroll in additional benefit schemes or make changes to your existing coverage.
         </p>
       </div>
@@ -1154,10 +1154,10 @@ function TrainingTab({ businessId }: { businessId?: string }) {
   }
 
   const typeColors: Record<string, string> = {
-    internal: 'bg-blue-100 text-blue-700',
+    internal: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
     external: 'bg-purple-100 text-purple-700',
-    certification: 'bg-amber-100 text-amber-700',
-    workshop: 'bg-green-100 text-green-700',
+    certification: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    workshop: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   }
 
   return (
@@ -1267,7 +1267,7 @@ function TrainingTab({ businessId }: { businessId?: string }) {
                   {training.end_date && ` - ${new Date(training.end_date).toLocaleDateString()}`}
                 </span>
                 {training.certificate && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)]">
                     ✓ {training.certificate}
                   </span>
                 )}

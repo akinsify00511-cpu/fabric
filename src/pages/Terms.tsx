@@ -29,8 +29,8 @@ export default function Terms() {
           </div>
 
           {/* Important Notice */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4 mb-8 flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800">
               <strong>Important:</strong> By using Avenize, you agree to these Terms of Service. Please read them carefully before using our platform.
             </p>

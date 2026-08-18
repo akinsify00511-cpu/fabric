@@ -351,7 +351,7 @@ export default function BrandingSettings() {
                 <p className="text-xs text-black mt-2">Recommended: 200x200px, PNG or SVG</p>
                 <button
                   onClick={() => updateBranding({ logo_url: null })}
-                  className="text-xs text-red-500 mt-2 hover:underline"
+                  className="text-xs text-[var(--av-danger)] mt-2 hover:underline"
                 >
                   Remove logo
                 </button>

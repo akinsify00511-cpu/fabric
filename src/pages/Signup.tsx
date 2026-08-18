@@ -167,7 +167,7 @@ export default function Signup() {
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-blue-900/5 p-8 text-center space-y-6">
           <div className="flex justify-center">
             <div className="w-16 h-16 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center">
-              <Check className="w-8 h-8 text-green-600" />
+              <Check className="w-8 h-8 text-[var(--av-success)]" />
             </div>
           </div>
 
@@ -330,7 +330,7 @@ export default function Signup() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  {tr('businessName', 'Business Name')} <span className="text-red-500">*</span>
+                  {tr('businessName', 'Business Name')} <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <input
                   required
@@ -362,7 +362,7 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  {tr('fullName', 'Full Name')} <span className="text-red-500">*</span>
+                  {tr('fullName', 'Full Name')} <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <input
                   required
@@ -375,7 +375,7 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  {tr('workEmail', 'Work Email')} <span className="text-red-500">*</span>
+                  {tr('workEmail', 'Work Email')} <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <input
                   type="email"
@@ -389,7 +389,7 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  {tr('password', 'Password')} <span className="text-red-500">*</span>
+                  {tr('password', 'Password')} <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -423,7 +423,7 @@ export default function Signup() {
 
               <div>
                 <label className="block text-sm font-medium text-black mb-1.5">
-                  Confirm Password <span className="text-red-500">*</span>
+                  Confirm Password <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <div className="relative">
                   <input
@@ -450,7 +450,7 @@ export default function Signup() {
                   </button>
                 </div>
                 {passwordError && (
-                  <p className="text-xs text-red-500 mt-1.5">{passwordError}</p>
+                  <p className="text-xs text-[var(--av-danger)] mt-1.5">{passwordError}</p>
                 )}
               </div>
             </div>

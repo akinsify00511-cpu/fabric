@@ -182,9 +182,9 @@ export default function AnnouncementsPage() {
 
   const priorityConfig: Record<string, { bg: string; text: string; border: string; icon: any }> = {
     low: { bg: 'bg-white', text: 'text-black', border: 'border-black', icon: Info },
-    normal: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: Info },
-    high: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-200', icon: AlertTriangle },
-    urgent: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-200', icon: AlertCircle },
+    normal: { bg: 'bg-[var(--av-primary-soft)]', text: 'text-[var(--av-primary)]', border: 'border-[var(--av-primary)]/30', icon: Info },
+    high: { bg: 'bg-[var(--av-warning-soft)]', text: 'text-[var(--av-warning)]', border: 'border-[var(--av-warning)]/30', icon: AlertTriangle },
+    urgent: { bg: 'bg-[var(--av-danger-soft)]', text: 'text-[var(--av-danger)]', border: 'border-[var(--av-danger)]/30', icon: AlertCircle },
   }
 
   const filteredAnnouncements = isAdmin 
@@ -336,7 +336,7 @@ function AnnouncementCard({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              {announcement.is_pinned && <Pin size={14} className="text-amber-500 fill-amber-500" />}
+              {announcement.is_pinned && <Pin size={14} className="text-[var(--av-warning)] fill-amber-500" />}
               <span className={`px-2 py-0.5 rounded text-xs font-medium uppercase ${priority.bg} ${priority.text}`}>
                 {announcement.priority}
               </span>
@@ -390,13 +390,13 @@ function AnnouncementCard({
             {isAdmin && (
               <>
                 <button onClick={onTogglePin} className="p-1.5 rounded hover:bg-black/10">
-                  <Pin size={16} className={announcement.is_pinned ? 'text-amber-500' : 'text-black'} />
+                  <Pin size={16} className={announcement.is_pinned ? 'text-[var(--av-warning)]' : 'text-black'} />
                 </button>
                 <button onClick={onEdit} className="p-1.5 rounded hover:bg-black/10">
                   <Edit2 size={16} className="text-black" />
                 </button>
-                <button onClick={onDelete} className="p-1.5 rounded hover:bg-red-50">
-                  <Trash2 size={16} className="text-red-500" />
+                <button onClick={onDelete} className="p-1.5 rounded hover:bg-[var(--av-danger-soft)]">
+                  <Trash2 size={16} className="text-[var(--av-danger)]" />
                 </button>
               </>
             )}

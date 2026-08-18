@@ -94,10 +94,10 @@ export default function PaymentSettingsPage() {
   }
 
   const statusConfig: Record<string, { bg: string; text: string }> = {
-    successful: { bg: 'bg-green-100', text: 'text-green-600' },
-    pending: { bg: 'bg-amber-100', text: 'text-amber-600' },
-    failed: { bg: 'bg-red-100', text: 'text-red-600' },
-    processing: { bg: 'bg-blue-100', text: 'text-blue-600' },
+    successful: { bg: 'bg-green-100', text: 'text-[var(--av-success)]' },
+    pending: { bg: 'bg-amber-100', text: 'text-[var(--av-warning)]' },
+    failed: { bg: 'bg-red-100', text: 'text-[var(--av-danger)]' },
+    processing: { bg: 'bg-blue-100', text: 'text-[var(--av-primary)]' },
   }
 
   const availableProviders = [
@@ -148,7 +148,7 @@ export default function PaymentSettingsPage() {
           title="Total Received" 
           value={`₦${payments.filter(p => p.status === 'successful').reduce((sum, p) => sum + p.amount, 0).toLocaleString()}`}
           icon={<DollarSign size={18} />} 
-          color="bg-green-500" 
+          color="bg-[var(--av-success-soft)]0" 
         />
         <StatCard 
           title="Successful" 
@@ -160,13 +160,13 @@ export default function PaymentSettingsPage() {
           title="Pending" 
           value={payments.filter(p => p.status === 'pending').length.toString()}
           icon={<RefreshCw size={18} />} 
-          color="bg-amber-500" 
+          color="bg-[var(--av-warning-soft)]0" 
         />
         <StatCard 
           title="Failed" 
           value={payments.filter(p => p.status === 'failed').length.toString()}
           icon={<XCircle size={18} />} 
-          color="bg-red-500" 
+          color="bg-[var(--av-danger-soft)]0" 
         />
       </div>
 
@@ -203,12 +203,12 @@ export default function PaymentSettingsPage() {
                       <div className="font-medium">{providerNames[gw.provider] || gw.provider}</div>
                       <div className="flex items-center gap-2 text-sm text-black">
                         <span className={`px-2 py-0.5 rounded text-xs ${
-                          gw.is_active ? 'bg-green-100 text-green-600' : 'bg-white text-black'
+                          gw.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'
                         }`}>
                           {gw.is_active ? 'Active' : 'Inactive'}
                         </span>
                         {gw.is_test_mode && (
-                          <span className="px-2 py-0.5 rounded text-xs bg-amber-100 text-amber-600">
+                          <span className="px-2 py-0.5 rounded text-xs bg-[var(--av-warning-soft)] text-[var(--av-warning)]">
                             Test Mode
                           </span>
                         )}
@@ -429,7 +429,7 @@ function AddGatewayModal({
               />
             </div>
 
-            <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+            <div className="p-3 bg-[var(--av-primary-soft)] rounded-lg text-sm text-[var(--av-primary)]">
               <strong>Note:</strong> Get your API keys from {provider?.name} dashboard. Test keys start with <code>pk_test_</code> and <code>sk_test_</code>.
             </div>
 

@@ -53,26 +53,26 @@ function VisualDiff({ oldValues, newValues, changedFields }: {
           <div 
             key={key} 
             className={`grid grid-cols-[1fr_auto_1fr] gap-3 items-center p-2 rounded-lg ${
-              hasChanged ? 'bg-amber-50' : 'bg-black/[0.02]'
+              hasChanged ? 'bg-[var(--av-warning-soft)]' : 'bg-black/[0.02]'
             }`}
           >
             {/* Old Value */}
             <div className="text-sm">
               <div className="text-xs text-black mb-0.5">{key}</div>
-              <div className={`font-mono ${hasChanged ? 'text-red-600 line-through opacity-60' : 'text-black/70'}`}>
+              <div className={`font-mono ${hasChanged ? 'text-[var(--av-danger)] line-through opacity-60' : 'text-black/70'}`}>
                 {formatValue(oldVal)}
               </div>
             </div>
             
             {/* Arrow */}
             {hasChanged && (
-              <ArrowRight size={16} className="text-amber-500 shrink-0" />
+              <ArrowRight size={16} className="text-[var(--av-warning)] shrink-0" />
             )}
             
             {/* New Value */}
             <div className="text-sm">
               <div className="text-xs text-black mb-0.5">&nbsp;</div>
-              <div className={`font-mono ${hasChanged ? 'text-green-600 font-medium' : 'text-black/70'}`}>
+              <div className={`font-mono ${hasChanged ? 'text-[var(--av-success)] font-medium' : 'text-black/70'}`}>
                 {formatValue(newVal)}
               </div>
             </div>
@@ -147,7 +147,7 @@ export default function AuditLogPage() {
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <Shield size={48} className="text-amber-500 mb-4" />
+        <Shield size={48} className="text-[var(--av-warning)] mb-4" />
         <h1 className="text-xl font-bold text-black mb-2">Access Restricted</h1>
         <p className="text-black">Only administrators can view audit logs.</p>
       </div>
@@ -175,12 +175,12 @@ export default function AuditLogPage() {
   }
 
   const actionColors: Record<string, string> = {
-    create: 'bg-green-100 text-green-600',
-    update: 'bg-blue-100 text-blue-600',
-    delete: 'bg-red-100 text-red-600',
+    create: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    update: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    delete: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
     login: 'bg-purple-100 text-purple-600',
     logout: 'bg-white text-black',
-    export: 'bg-amber-100 text-amber-600',
+    export: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
     import: 'bg-teal-100 text-teal-600',
   }
 
@@ -274,7 +274,7 @@ export default function AuditLogPage() {
           {(filter.action || filter.entityType || filter.dateFrom || filter.dateTo) && (
             <button
               onClick={() => setFilter({})}
-              className="px-3 py-2 rounded-lg bg-red-50 text-red-600 text-sm hover:bg-red-100"
+              className="px-3 py-2 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm hover:bg-red-100"
             >
               Clear Filters
             </button>
@@ -288,25 +288,25 @@ export default function AuditLogPage() {
           title="Total Logs"
           value={filteredLogs.length}
           icon={<Activity size={20} />}
-          color="bg-blue-500"
+          color="bg-[var(--av-primary-soft)]0"
         />
         <StatCard
           title="Creates"
           value={filteredLogs.filter(l => l.action === 'create').length}
           icon={<Plus size={20} />}
-          color="bg-green-500"
+          color="bg-[var(--av-success-soft)]0"
         />
         <StatCard
           title="Updates"
           value={filteredLogs.filter(l => l.action === 'update').length}
           icon={<Edit2 size={20} />}
-          color="bg-amber-500"
+          color="bg-[var(--av-warning-soft)]0"
         />
         <StatCard
           title="Deletes"
           value={filteredLogs.filter(l => l.action === 'delete').length}
           icon={<Trash2 size={20} />}
-          color="bg-red-500"
+          color="bg-[var(--av-danger-soft)]0"
         />
       </div>
 

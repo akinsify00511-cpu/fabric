@@ -19,10 +19,10 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
 
   const statusColors: Record<string, string> = {
     draft: 'bg-white text-black',
-    sent: 'bg-blue-100 text-blue-700',
-    partially_paid: 'bg-yellow-100 text-yellow-700',
-    paid: 'bg-green-100 text-green-700',
-    overdue: 'bg-red-100 text-red-700',
+    sent: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    partially_paid: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    paid: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+    overdue: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
     cancelled: 'bg-white text-black',
   }
 
@@ -50,13 +50,13 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
             </svg>
             Download PDF
           </button>
-          <button onClick={onSendEmail} className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition">
+          <button onClick={onSendEmail} className="flex items-center gap-2 px-4 py-2 bg-[var(--av-success-soft)]0 text-white rounded-lg text-sm font-medium hover:bg-[var(--av-success)] transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             Send Email
           </button>
-          <button onClick={onGeneratePaymentLink} className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition">
+          <button onClick={onGeneratePaymentLink} className="flex items-center gap-2 px-4 py-2 bg-[var(--av-warning-soft)]0 text-white rounded-lg text-sm font-medium hover:bg-[var(--av-warning)] transition">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
             </svg>
@@ -70,7 +70,7 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
               <div>
                 <h1 className="text-2xl font-bold text-black">INVOICE</h1>
                 <p className="text-black text-sm mt-1">{invoice.invoice_number}</p>
-                {invoice.is_proforma && <span className="inline-block mt-2 px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded">PROFORMA</span>}
+                {invoice.is_proforma && <span className="inline-block mt-2 px-2 py-1 bg-[var(--av-warning-soft)] text-[var(--av-warning)] text-xs rounded">PROFORMA</span>}
               </div>
               <div className="text-right">
                 {branding.logo_url ? (
@@ -147,11 +147,11 @@ export default function InvoicePreview({ invoice, onClose, onSendEmail, onDownlo
                   <>
                     <div className="flex justify-between py-2 text-sm">
                       <span className="text-black">Paid</span>
-                      <span className="text-green-600">-{formatCurrency(invoice.amount_paid)}</span>
+                      <span className="text-[var(--av-success)]">-{formatCurrency(invoice.amount_paid)}</span>
                     </div>
                     <div className="flex justify-between py-2 text-sm font-bold">
                       <span>Balance Due</span>
-                      <span className="text-red-600">{formatCurrency(invoice.balance)}</span>
+                      <span className="text-[var(--av-danger)]">{formatCurrency(invoice.balance)}</span>
                     </div>
                   </>
                 )}

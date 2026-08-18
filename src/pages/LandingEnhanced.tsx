@@ -253,7 +253,7 @@ function OrganizationSection() {
             <div className="h-8 w-px bg-white/15 mx-auto" />
             <div className="grid grid-cols-2 gap-3"><div className="p-4 rounded-xl bg-white/10 border border-white/10 text-sm">Operations</div><div className="p-4 rounded-xl bg-white/10 border border-white/10 text-sm">Finance</div></div>
             <div className="h-8 w-px bg-white/15 mx-auto" />
-            <div className="p-4 rounded-xl bg-blue-500/20 border border-blue-400/20 text-sm">Procurement Committee · cross-functional</div>
+            <div className="p-4 rounded-xl bg-[var(--av-primary-soft)]0/20 border border-blue-400/20 text-sm">Procurement Committee · cross-functional</div>
           </div>
           <div>
             <p className="font-semibold text-sm uppercase tracking-wider mb-3" style={{ color: BRAND.primary }}>Your shape. Your rules.</p>

@@ -133,7 +133,7 @@ export default function Join() {
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto">
-            <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-10 h-10 text-[var(--av-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
             </svg>
           </div>
@@ -164,7 +164,7 @@ export default function Join() {
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-10 h-10 text-[var(--av-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
@@ -217,7 +217,7 @@ export default function Join() {
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+            <div className="bg-[var(--av-danger-soft)] border border-[var(--av-danger)]/30 text-[var(--av-danger)] rounded-xl px-4 py-3 text-sm">
               {error}
             </div>
           )}
@@ -297,7 +297,7 @@ export default function Join() {
                 </button>
               </div>
               {passwordError && (
-                <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
+                <p className="text-xs text-[var(--av-danger)] mt-1.5 flex items-center gap-1">
                   <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
                   {passwordError}
                 </p>
@@ -384,7 +384,7 @@ export default function Join() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm">
+          <div className="bg-[var(--av-danger-soft)] border border-[var(--av-danger)]/30 text-[var(--av-danger)] rounded-xl px-4 py-3 text-sm">
             {error}
           </div>
         )}

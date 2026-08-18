@@ -148,9 +148,9 @@ export default function OwnerInsights() {
                   <div key={item.id} className="flex items-center justify-between p-3 bg-[#F8F9FA] rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className={`w-2 h-2 rounded-full ${
-                        item.entity_type === 'invoice' ? 'bg-green-500' :
+                        item.entity_type === 'invoice' ? 'bg-[var(--av-success-soft)]0' :
                         item.entity_type === 'deal' ? 'bg-[#4285F4]' :
-                        item.entity_type === 'property' ? 'bg-amber-500' : 'bg-purple-500'
+                        item.entity_type === 'property' ? 'bg-[var(--av-warning-soft)]0' : 'bg-purple-500'
                       }`} />
                       <div>
                         <p className="text-sm font-medium text-black capitalize">{item.action}</p>
@@ -213,11 +213,11 @@ export default function OwnerInsights() {
 
 function MetricCard({ label, value, change, icon: Icon, color, loading }: { label: string, value: string, change?: number | null, icon: any, color: string, loading?: boolean }) {
   const colorClasses: Record<string, string> = {
-    green: 'bg-green-50 text-green-600',
+    green: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
     indigo: 'bg-[#4285F4]/5 text-[#4285F4]',
     purple: 'bg-purple-50 text-purple-600',
-    blue: 'bg-blue-50 text-blue-600',
-    amber: 'bg-amber-50 text-amber-600',
+    blue: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    amber: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   }
   return (
     <div className="bg-white rounded-xl p-5 shadow-sm">
@@ -226,7 +226,7 @@ function MetricCard({ label, value, change, icon: Icon, color, loading }: { labe
           <Icon size={20} />
         </div>
         {change !== undefined && change !== null && (
-          <span className={`flex items-center gap-1 text-sm font-medium ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <span className={`flex items-center gap-1 text-sm font-medium ${change >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
             {change >= 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
             {Math.abs(change).toFixed(1)}%
           </span>

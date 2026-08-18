@@ -102,11 +102,11 @@ export default function AssetManagementPage() {
   })
 
   const statusConfig: Record<string, { bg: string; text: string }> = {
-    active: { bg: 'bg-green-100', text: 'text-green-600' },
-    in_maintenance: { bg: 'bg-amber-100', text: 'text-amber-600' },
+    active: { bg: 'bg-green-100', text: 'text-[var(--av-success)]' },
+    in_maintenance: { bg: 'bg-amber-100', text: 'text-[var(--av-warning)]' },
     retired: { bg: 'bg-white', text: 'text-black' },
-    disposed: { bg: 'bg-red-100', text: 'text-red-600' },
-    lost: { bg: 'bg-red-100', text: 'text-red-600' },
+    disposed: { bg: 'bg-red-100', text: 'text-[var(--av-danger)]' },
+    lost: { bg: 'bg-red-100', text: 'text-[var(--av-danger)]' },
   }
 
   // Stats
@@ -142,8 +142,8 @@ export default function AssetManagementPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <StatCard title="Total Assets" value={totalAssets.toString()} icon={<Package size={18} />} color="bg-[var(--av-primary)]" />
-        <StatCard title="Active" value={activeAssets.toString()} icon={<CheckCircle size={18} />} color="bg-green-500" />
-        <StatCard title="In Maintenance" value={inMaintenance.toString()} icon={<Wrench size={18} />} color="bg-amber-500" />
+        <StatCard title="Active" value={activeAssets.toString()} icon={<CheckCircle size={18} />} color="bg-[var(--av-success-soft)]0" />
+        <StatCard title="In Maintenance" value={inMaintenance.toString()} icon={<Wrench size={18} />} color="bg-[var(--av-warning-soft)]0" />
         <StatCard title="Total Value" value={`₦${totalValue.toLocaleString()}`} icon={<Package size={18} />} color="bg-purple-500" />
       </div>
 
@@ -332,7 +332,7 @@ function AssetCard({
       <div className="px-4 py-3 bg-black/[0.02] flex items-center justify-between text-xs text-black">
         <span>Added {new Date(asset.created_at).toLocaleDateString()}</span>
         {asset.next_maintenance && (
-          <span className="flex items-center gap-1 text-amber-600">
+          <span className="flex items-center gap-1 text-[var(--av-warning)]">
             <Clock size={12} />
             Maintenance due
           </span>

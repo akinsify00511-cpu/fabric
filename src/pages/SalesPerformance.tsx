@@ -178,7 +178,7 @@ function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: st
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium capitalize">{target.target_type}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${target.status === 'achieved' ? 'bg-green-100 text-green-700' : target.status === 'missed' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${target.status === 'achieved' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : target.status === 'missed' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' : 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'}`}>
                       {target.status}
                     </span>
                   </div>
@@ -292,11 +292,11 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
             <div key={rule.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="font-medium">{rule.name}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-green-100 text-green-700' : 'bg-white text-black'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${rule.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}>
                   {rule.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>
-              <p className="text-2xl font-bold text-green-600">{rule.rate_percentage}%</p>
+              <p className="text-2xl font-bold text-[var(--av-success)]">{rule.rate_percentage}%</p>
               <p className="text-sm text-black">Min deal: ₦{rule.min_deal_value?.toLocaleString()}</p>
             </div>
           ))}
@@ -321,9 +321,9 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
                 <p className="text-sm text-black">Deal: ₦{comm.deal_value?.toLocaleString()}</p>
               </div>
               <span className={`text-xs px-3 py-1 rounded-full ${
-                comm.status === 'paid' ? 'bg-green-100 text-green-700' :
-                comm.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                'bg-amber-100 text-amber-700'
+                comm.status === 'paid' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                comm.status === 'approved' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
+                'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
               }`}>
                 {comm.status}
               </span>
@@ -382,15 +382,15 @@ function ForecastingTab({ businessId }: { businessId?: string }) {
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <p className="text-sm text-black">Commit</p>
-          <h2 className="text-xl font-bold text-green-600">₦{(forecasts.reduce((sum, f) => sum + f.commit, 0) / 1000000).toFixed(1)}M</h2>
+          <h2 className="text-xl font-bold text-[var(--av-success)]">₦{(forecasts.reduce((sum, f) => sum + f.commit, 0) / 1000000).toFixed(1)}M</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <p className="text-sm text-black">Best Case</p>
-          <h2 className="text-xl font-bold text-blue-600">₦{(forecasts.reduce((sum, f) => sum + f.best, 0) / 1000000).toFixed(1)}M</h2>
+          <h2 className="text-xl font-bold text-[var(--av-primary)]">₦{(forecasts.reduce((sum, f) => sum + f.best, 0) / 1000000).toFixed(1)}M</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <p className="text-sm text-black">Worst Case</p>
-          <h2 className="text-xl font-bold text-amber-600">₦{(forecasts.reduce((sum, f) => sum + f.worst, 0) / 1000000).toFixed(1)}M</h2>
+          <h2 className="text-xl font-bold text-[var(--av-warning)]">₦{(forecasts.reduce((sum, f) => sum + f.worst, 0) / 1000000).toFixed(1)}M</h2>
         </div>
       </div>
 
@@ -411,9 +411,9 @@ function ForecastingTab({ businessId }: { businessId?: string }) {
               <tr key={i} className="border-t border-black/5">
                 <td className="px-4 py-3 font-medium">{forecast.period}</td>
                 <td className="text-right px-4 py-3">₦{(forecast.pipeline / 1000000).toFixed(1)}M</td>
-                <td className="text-right px-4 py-3 text-green-600 font-medium">₦{(forecast.commit / 1000000).toFixed(1)}M</td>
-                <td className="text-right px-4 py-3 text-blue-600">₦{(forecast.best / 1000000).toFixed(1)}M</td>
-                <td className="text-right px-4 py-3 text-amber-600">₦{(forecast.worst / 1000000).toFixed(1)}M</td>
+                <td className="text-right px-4 py-3 text-[var(--av-success)] font-medium">₦{(forecast.commit / 1000000).toFixed(1)}M</td>
+                <td className="text-right px-4 py-3 text-[var(--av-primary)]">₦{(forecast.best / 1000000).toFixed(1)}M</td>
+                <td className="text-right px-4 py-3 text-[var(--av-warning)]">₦{(forecast.worst / 1000000).toFixed(1)}M</td>
               </tr>
             ))}
           </tbody>
@@ -466,11 +466,11 @@ function WinLossTab({ businessId }: { businessId?: string }) {
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6 text-center">
           <p className="text-sm text-black">Deals Won</p>
-          <h2 className="text-3xl font-bold text-green-600">{wonDeals.length}</h2>
+          <h2 className="text-3xl font-bold text-[var(--av-success)]">{wonDeals.length}</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-6 text-center">
           <p className="text-sm text-black">Deals Lost</p>
-          <h2 className="text-3xl font-bold text-red-600">{lostDeals.length}</h2>
+          <h2 className="text-3xl font-bold text-[var(--av-danger)]">{lostDeals.length}</h2>
         </div>
       </div>
 
@@ -485,9 +485,9 @@ function WinLossTab({ businessId }: { businessId?: string }) {
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
                   {item.outcome === 'won' ? (
-                    <CheckCircle2 size={20} className="text-green-500 mt-1" />
+                    <CheckCircle2 size={20} className="text-[var(--av-success)] mt-1" />
                   ) : (
-                    <XCircle size={20} className="text-red-500 mt-1" />
+                    <XCircle size={20} className="text-[var(--av-danger)] mt-1" />
                   )}
                   <div>
                     <h3 className="font-medium">{item.deal_name}</h3>
@@ -495,12 +495,12 @@ function WinLossTab({ businessId }: { businessId?: string }) {
                       <p className="text-sm text-black">Lost to: {item.lost_to_competitor}</p>
                     )}
                     {item.loss_reason && (
-                      <p className="text-sm text-red-600">Reason: {item.loss_reason}</p>
+                      <p className="text-sm text-[var(--av-danger)]">Reason: {item.loss_reason}</p>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${item.outcome === 'won' ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className={`font-semibold ${item.outcome === 'won' ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
                     ₦{(item.final_value / 1000000).toFixed(1)}M
                   </p>
                   <p className="text-xs text-black">{item.days_to_close} days to close</p>

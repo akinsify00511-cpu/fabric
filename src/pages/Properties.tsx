@@ -37,7 +37,7 @@ interface Property {
 
 const STATUS_COLORS = {
   available: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
-  under_offer: 'bg-amber-100 text-amber-700',
+  under_offer: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   sold: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
   rented: 'bg-purple-100 text-purple-700',
   withdrawn: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
@@ -346,7 +346,7 @@ export default function PropertiesPage() {
           <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
-                <CheckCircle2 className="w-5 h-5 text-amber-600" />
+                <CheckCircle2 className="w-5 h-5 text-[var(--av-warning)]" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--av-text)]">{stats.available}</p>
@@ -397,13 +397,13 @@ export default function PropertiesPage() {
             <div className="flex border border-[var(--av-border)] rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-blue-50 text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
+                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-blue-50 text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
+                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -516,13 +516,13 @@ export default function PropertiesPage() {
                       <>
                         <button
                           onClick={() => openModal(property)}
-                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded-lg"
+                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded-lg"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => deleteProperty(property.id)}
-                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded-lg"
+                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded-lg"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -585,7 +585,7 @@ export default function PropertiesPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setSelectedProperty(property)}
-                          className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
+                          className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -593,13 +593,13 @@ export default function PropertiesPage() {
                           <>
                             <button
                               onClick={() => openModal(property)}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => deleteProperty(property.id)}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

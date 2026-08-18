@@ -450,7 +450,7 @@ export default function Knowledge() {
               </button>
               <button
                 onClick={() => deletePage(selectedPage.id)}
-                className="p-2 hover:bg-red-50 rounded-lg text-red-400"
+                className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-red-400"
                 title="Archive"
               >
                 <Trash2 size={16} />

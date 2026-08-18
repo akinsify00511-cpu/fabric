@@ -42,7 +42,7 @@ type BrandAsset = {
 const PLATFORMS = [
   { id: 'instagram', name: 'Instagram', icon: Camera, color: 'bg-pink-500' },
   { id: 'linkedin', name: 'LinkedIn', icon: Globe, color: 'bg-blue-600' },
-  { id: 'facebook', name: 'Facebook', icon: Globe, color: 'bg-blue-500' },
+  { id: 'facebook', name: 'Facebook', icon: Globe, color: 'bg-[var(--av-primary-soft)]0' },
   { id: 'twitter', name: 'X/Twitter', icon: Globe, color: 'bg-black' },
   { id: 'tiktok', name: 'TikTok', icon: () => <span className="text-lg">🎵</span>, color: 'bg-pink-600' },
 ]
@@ -298,8 +298,8 @@ export default function Social() {
                       </span>
                       <span className="text-sm font-medium text-black capitalize">{post.platform}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        post.status === 'published' ? 'bg-green-100 text-green-700' :
-                        post.status === 'scheduled' ? 'bg-blue-100 text-blue-700' :
+                        post.status === 'published' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                        post.status === 'scheduled' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
                         'bg-white text-black'
                       }`}>
                         {post.status}
@@ -316,7 +316,7 @@ export default function Social() {
                       )}
                       <button
                         onClick={() => deletePost(post.id)}
-                        className="text-xs text-red-500 hover:underline"
+                        className="text-xs text-[var(--av-danger)] hover:underline"
                       >
                         Delete
                       </button>

@@ -50,10 +50,10 @@ type BalanceSheetRow = {
 }
 
 const ACCOUNT_TYPES = [
-  { id: 'asset', label: 'Assets', icon: Wallet, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { id: 'liability', label: 'Liabilities', icon: CreditCard, color: 'text-red-600', bg: 'bg-red-50' },
+  { id: 'asset', label: 'Assets', icon: Wallet, color: 'text-[var(--av-primary)]', bg: 'bg-[var(--av-primary-soft)]' },
+  { id: 'liability', label: 'Liabilities', icon: CreditCard, color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]' },
   { id: 'equity', label: 'Equity', icon: Building2, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { id: 'revenue', label: 'Revenue', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
+  { id: 'revenue', label: 'Revenue', icon: TrendingUp, color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]' },
   { id: 'expense', label: 'Expenses', icon: Receipt, color: 'text-orange-600', bg: 'bg-orange-50' },
 ]
 
@@ -346,7 +346,7 @@ export default function Accounting() {
 
               {/* Assets */}
               <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-blue-600 mb-3">ASSETS</p>
+                <p className="text-sm font-medium text-[var(--av-primary)] mb-3">ASSETS</p>
                 {accountsByType.find((t) => t.id === 'asset')?.accounts.map((a) => (
                   <div key={a.id} className="flex justify-between py-1.5 text-sm">
                     <span className="text-black/70">{a.name}</span>
@@ -361,7 +361,7 @@ export default function Accounting() {
 
               {/* Liabilities */}
               <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-red-600 mb-3">LIABILITIES</p>
+                <p className="text-sm font-medium text-[var(--av-danger)] mb-3">LIABILITIES</p>
                 {accountsByType.find((t) => t.id === 'liability')?.accounts.map((a) => (
                   <div key={a.id} className="flex justify-between py-1.5 text-sm">
                     <span className="text-black/70">{a.name}</span>
@@ -401,14 +401,14 @@ export default function Accounting() {
 
               {/* Revenue */}
               <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-green-600 mb-3">REVENUE</p>
+                <p className="text-sm font-medium text-[var(--av-success)] mb-3">REVENUE</p>
                 {accountsByType.find((t) => t.id === 'revenue')?.accounts.map((a) => (
                   <div key={a.id} className="flex justify-between py-1.5 text-sm">
                     <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono text-green-600">{a.opening_balance?.toLocaleString()}</span>
+                    <span className="font-mono text-[var(--av-success)]">{a.opening_balance?.toLocaleString()}</span>
                   </div>
                 ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-green-600">
+                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-[var(--av-success)]">
                   <span>Total Revenue</span>
                   <span className="font-mono">{revenue.toLocaleString()}</span>
                 </div>
@@ -416,24 +416,24 @@ export default function Accounting() {
 
               {/* Expenses */}
               <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-red-600 mb-3">EXPENSES</p>
+                <p className="text-sm font-medium text-[var(--av-danger)] mb-3">EXPENSES</p>
                 {accountsByType.find((t) => t.id === 'expense')?.accounts.map((a) => (
                   <div key={a.id} className="flex justify-between py-1.5 text-sm">
                     <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono text-red-600">{a.opening_balance?.toLocaleString()}</span>
+                    <span className="font-mono text-[var(--av-danger)]">{a.opening_balance?.toLocaleString()}</span>
                   </div>
                 ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-red-600">
+                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-[var(--av-danger)]">
                   <span>Total Expenses</span>
                   <span className="font-mono">{expenses.toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Net Income */}
-              <div className="px-6 py-4 bg-green-50">
+              <div className="px-6 py-4 bg-[var(--av-success-soft)]">
                 <div className="flex justify-between font-bold text-lg">
                   <span>NET INCOME</span>
-                  <span className="font-mono text-green-600">{(revenue - expenses).toLocaleString()}</span>
+                  <span className="font-mono text-[var(--av-success)]">{(revenue - expenses).toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -572,7 +572,7 @@ export default function Accounting() {
                       />
                       <button
                         onClick={() => removeLine(i)}
-                        className="col-span-1 p-2 text-red-400 hover:bg-red-50 rounded"
+                        className="col-span-1 p-2 text-red-400 hover:bg-[var(--av-danger-soft)] rounded"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -586,7 +586,7 @@ export default function Accounting() {
                   <div className="text-sm text-black">Debit: <span className="font-mono">{totalDebit.toFixed(2)}</span></div>
                   <div className="text-sm text-black">Credit: <span className="font-mono">{totalCredit.toFixed(2)}</span></div>
                   {Math.abs(totalDebit - totalCredit) > 0.01 && (
-                    <div className="text-xs text-red-500 mt-1">⚠️ Debits must equal credits</div>
+                    <div className="text-xs text-[var(--av-danger)] mt-1">⚠️ Debits must equal credits</div>
                   )}
                 </div>
               </div>

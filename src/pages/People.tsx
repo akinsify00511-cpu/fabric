@@ -183,7 +183,7 @@ export default function People() {
         <h1 className="text-2xl font-bold text-black">People</h1>
         <div className="flex items-center gap-3">
           {!teamLimitLoading && !canAddTeamMember && (
-            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
+            <span className="text-xs text-[var(--av-warning)] bg-[var(--av-warning-soft)] px-2 py-1 rounded">
               Team limit reached ({teamCount}/{teamLimit})
             </span>
           )}

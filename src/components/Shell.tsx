@@ -491,7 +491,7 @@ export default function Shell() {
       {/* Content */}
       <main className="md:ml-60 md:mt-14 p-4 md:p-6 pb-28 md:pb-8">
         {dbState === 'migrations-missing' && (
-          <div className="rounded-xl bg-amber-50 border border-amber-300 p-4 text-sm text-amber-800 mb-4">
+          <div className="rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/40 p-4 text-sm text-amber-800 mb-4">
             <strong>Database setup incomplete.</strong> Some features may not work because database migrations
             haven't been applied yet. An administrator needs to run the migrations in the Supabase Dashboard
             (SQL Editor → paste <code className="bg-amber-100 px-1 rounded">APPLY_ALL_MIGRATIONS.sql</code> → Run).

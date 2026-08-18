@@ -262,10 +262,10 @@ export default function Budgets() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-[var(--av-success)] bg-green-50'
-      case 'draft': return 'text-[var(--av-warning)] bg-yellow-50'
+      case 'active': return 'text-[var(--av-success)] bg-[var(--av-success-soft)]'
+      case 'draft': return 'text-[var(--av-warning)] bg-[var(--av-warning-soft)]'
       case 'closed': return 'text-[var(--av-text-muted)] bg-gray-50'
-      case 'overbudget': return 'text-[var(--av-danger)] bg-red-50'
+      case 'overbudget': return 'text-[var(--av-danger)] bg-[var(--av-danger-soft)]'
       default: return 'text-[var(--av-text-muted)] bg-gray-50'
     }
   }
@@ -457,20 +457,20 @@ export default function Budgets() {
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => toggleBudgetStatus(budget)}
-                                    className={`p-2 rounded-lg ${budget.status === 'active' ? 'text-[var(--av-success)] hover:bg-green-50' : 'text-[var(--av-text-disabled)] hover:bg-[var(--av-surface-2)]'}`}
+                                    className={`p-2 rounded-lg ${budget.status === 'active' ? 'text-[var(--av-success)] hover:bg-[var(--av-success-soft)]' : 'text-[var(--av-text-disabled)] hover:bg-[var(--av-surface-2)]'}`}
                                     title={budget.status === 'active' ? 'Close Budget' : 'Activate Budget'}
                                   >
                                     <CheckCircle2 size={18} />
                                   </button>
                                   <button
                                     onClick={() => openEditModal(budget)}
-                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded-lg"
+                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded-lg"
                                   >
                                     <Edit2 size={18} />
                                   </button>
                                   <button
                                     onClick={() => deleteBudget(budget)}
-                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded-lg"
+                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded-lg"
                                   >
                                     <Trash2 size={18} />
                                   </button>
@@ -629,9 +629,9 @@ function SummaryCard({
   subtitle?: string
 }) {
   const colorClasses = {
-    blue: 'bg-blue-50 border-[var(--av-primary-soft)]',
+    blue: 'bg-[var(--av-primary-soft)] border-[var(--av-primary-soft)]',
     purple: 'bg-purple-50 border-purple-100',
-    green: 'bg-green-50 border-[var(--av-success-soft)]',
+    green: 'bg-[var(--av-success-soft)] border-[var(--av-success-soft)]',
   }
 
   return (

@@ -224,7 +224,7 @@ export default function ProjectSettings() {
               <button
                 onClick={addJobType}
                 disabled={saving || !newLabel.trim()}
-                className="p-2 bg-green-500 text-white rounded-lg disabled:opacity-50"
+                className="p-2 bg-[var(--av-success-soft)]0 text-white rounded-lg disabled:opacity-50"
               >
                 <Check size={18} />
               </button>
@@ -291,7 +291,7 @@ export default function ProjectSettings() {
                     <span className="text-xs text-black">{jt.is_active ? 'Active' : 'Inactive'}</span>
                     <button
                       onClick={() => toggleActive(jt)}
-                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-green-100 text-green-600' : 'bg-white text-black'}`}
+                      className={`px-2 py-1 text-xs rounded ${jt.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'}`}
                     >
                       {jt.is_active ? 'Disable' : 'Enable'}
                     </button>
@@ -303,7 +303,7 @@ export default function ProjectSettings() {
                     </button>
                     <button
                       onClick={() => deleteJobType(jt.id)}
-                      className="p-1.5 hover:bg-red-50 rounded text-red-400"
+                      className="p-1.5 hover:bg-[var(--av-danger-soft)] rounded text-red-400"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -316,7 +316,7 @@ export default function ProjectSettings() {
       </div>
 
       {/* Info Box */}
-      <div className="mt-6 p-4 bg-blue-50 rounded-xl">
+      <div className="mt-6 p-4 bg-[var(--av-primary-soft)] rounded-xl">
         <p className="text-sm text-blue-800">
           <strong>Tip:</strong> Job types help categorize your projects. They appear in the Projects page filter and can be used to organize your work. Disabling a type won't delete existing projects using it.
         </p>

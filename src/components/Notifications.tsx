@@ -19,9 +19,9 @@ interface Notification {
 
 const categoryConfig: Record<NotificationCategory, { icon: typeof Bell; color: string; bg: string }> = {
   onboarding: { icon: Sparkles, color: 'text-purple-500', bg: 'bg-purple-100' },
-  task: { icon: Check, color: 'text-green-500', bg: 'bg-green-100' },
+  task: { icon: Check, color: 'text-[var(--av-success)]', bg: 'bg-green-100' },
   payment: { icon: CreditCard, color: 'text-blue-500', bg: 'bg-blue-100' },
-  reminder: { icon: Clock, color: 'text-amber-500', bg: 'bg-amber-100' },
+  reminder: { icon: Clock, color: 'text-[var(--av-warning)]', bg: 'bg-amber-100' },
   marketing: { icon: Sparkles, color: 'text-pink-500', bg: 'bg-pink-100' },
   social: { icon: Users, color: 'text-[#4285F4]', bg: 'bg-[#4285F4]/10' },
   system: { icon: AlertCircle, color: 'text-black', bg: 'bg-white' },
@@ -136,7 +136,7 @@ export default function NotificationBell() {
       >
         <Bell size={20} className={unreadCount > 0 ? 'text-[var(--av-primary, #0891B2)]' : 'text-black'} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[var(--av-danger-soft)]0 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}

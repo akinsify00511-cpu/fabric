@@ -48,7 +48,7 @@ export default function EntitlementGate({
       modal ? 'w-full max-w-md mx-auto' : ''
     }`}>
       <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-        <Lock size={24} className="text-amber-600" />
+        <Lock size={24} className="text-[var(--av-warning)]" />
       </div>
       <h3 className="text-lg font-semibold text-black mb-2">
         {featureInfo?.label} requires a higher plan
@@ -129,17 +129,17 @@ export function FeatureBanner({ feature, requiredPlan }: FeatureBannerProps) {
   const planLabel = requiredPlan || 'Professional'
   
   return (
-    <div className="bg-amber-50 border-b border-amber-200 p-4">
+    <div className="bg-[var(--av-warning-soft)] border-b border-[var(--av-warning)]/30 p-4">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Lock size={18} className="text-amber-600" />
+          <Lock size={18} className="text-[var(--av-warning)]" />
           <span className="text-sm text-amber-800">
             <strong>{FEATURES[feature]?.label}</strong> is available on {planLabel}+ plans
           </span>
         </div>
         <button
           onClick={() => navigate('/app/subscription')}
-          className="flex items-center gap-1.5 text-sm font-medium text-amber-700 hover:text-amber-800"
+          className="flex items-center gap-1.5 text-sm font-medium text-[var(--av-warning)] hover:text-amber-800"
         >
           <Crown size={14} />
           Upgrade

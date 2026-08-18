@@ -219,7 +219,7 @@ export default function Departments() {
                   </button>
                   <button
                     onClick={() => handleDelete(team.id)}
-                    className="p-2 hover:bg-red-50 rounded-lg"
+                    className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg"
                   >
                     <Trash2 size={18} className="text-red-400" />
                   </button>

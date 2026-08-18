@@ -84,7 +84,7 @@ export default function StaffProfile() {
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'owner': return 'bg-amber-100 text-amber-800'
+      case 'owner': return 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
       case 'admin': return 'bg-purple-100 text-purple-800'
       case 'manager': return 'bg-[var(--av-primary-soft)] text-[var(--av-primary-hover)]'
       case 'team_lead': return 'bg-emerald-100 text-emerald-800'

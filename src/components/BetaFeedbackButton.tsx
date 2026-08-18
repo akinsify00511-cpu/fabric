@@ -115,7 +115,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
         <Bug size={18} />
         <span className="text-sm font-medium">Feedback</span>
         {capturedErrors.length > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--av-danger-soft)]0 text-white text-xs rounded-full flex items-center justify-center">
             {capturedErrors.length}
           </span>
         )}
@@ -129,7 +129,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
             <div className="flex items-center justify-between p-4 border-b border-black/5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                  <Bug size={20} className="text-amber-600" />
+                  <Bug size={20} className="text-[var(--av-warning)]" />
                 </div>
                 <div>
                   <h2 className="font-semibold">Report a Bug</h2>
@@ -151,7 +151,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
               {submitted ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 size={32} className="text-green-600" />
+                    <CheckCircle2 size={32} className="text-[var(--av-success)]" />
                   </div>
                   <h3 className="font-semibold text-lg">Thanks for your feedback!</h3>
                   <p className="text-sm text-black mt-1">
@@ -177,27 +177,27 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
 
                   {/* Captured Errors */}
                   {capturedErrors.length > 0 && (
-                    <div className="bg-red-50 rounded-xl overflow-hidden">
+                    <div className="bg-[var(--av-danger-soft)] rounded-xl overflow-hidden">
                       <button
                         onClick={() => setShowErrors(!showErrors)}
                         className="w-full flex items-center justify-between p-3 hover:bg-red-100/50 transition"
                       >
                         <div className="flex items-center gap-2">
-                          <AlertTriangle size={16} className="text-red-500" />
-                          <span className="text-sm font-medium text-red-700">
+                          <AlertTriangle size={16} className="text-[var(--av-danger)]" />
+                          <span className="text-sm font-medium text-[var(--av-danger)]">
                             {capturedErrors.length} console error
                             {capturedErrors.length !== 1 ? 's' : ''} captured
                           </span>
                         </div>
                         {showErrors ? (
-                          <ChevronUp size={16} className="text-red-500" />
+                          <ChevronUp size={16} className="text-[var(--av-danger)]" />
                         ) : (
-                          <ChevronDown size={16} className="text-red-500" />
+                          <ChevronDown size={16} className="text-[var(--av-danger)]" />
                         )}
                       </button>
                       {showErrors && (
                         <div className="px-3 pb-3">
-                          <pre className="text-xs text-red-700 bg-red-100 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono">
+                          <pre className="text-xs text-[var(--av-danger)] bg-red-100 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap font-mono">
                             {formatErrorsForDisplay()}
                           </pre>
                         </div>
@@ -212,7 +212,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
 
                   {/* Error Message */}
                   {submitError && (
-                    <div className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
+                    <div className="text-sm text-[var(--av-danger)] bg-[var(--av-danger-soft)] rounded-lg px-3 py-2">
                       {submitError}
                     </div>
                   )}

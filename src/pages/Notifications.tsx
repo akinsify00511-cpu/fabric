@@ -232,7 +232,7 @@ export default function NotificationSettings() {
       <section className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-            <Mail size={20} className="text-blue-600" />
+            <Mail size={20} className="text-[var(--av-primary)]" />
           </div>
           <div>
             <h2 className="font-semibold">Email Notifications</h2>
@@ -307,7 +307,7 @@ export default function NotificationSettings() {
       <section className="bg-white rounded-2xl border border-black/[0.06] p-6 mb-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-            <MessageSquare size={20} className="text-green-600" />
+            <MessageSquare size={20} className="text-[var(--av-success)]" />
           </div>
           <div>
             <h2 className="font-semibold">SMS Notifications</h2>
@@ -358,13 +358,13 @@ export default function NotificationSettings() {
         <div className="mt-4 pt-4 border-t border-black/[0.06]">
           <p className="text-xs text-black">
             <strong>Note:</strong> SMS charges may apply based on your Termii plan. 
-            Configure your SMS settings in <a href="/app/settings?tab=sms" className="text-blue-600 hover:underline">Settings</a>.
+            Configure your SMS settings in <a href="/app/settings?tab=sms" className="text-[var(--av-primary)] hover:underline">Settings</a>.
           </p>
         </div>
       </section>
 
       {/* Info Box */}
-      <div className="bg-blue-50 rounded-xl p-4 text-sm text-blue-700">
+      <div className="bg-[var(--av-primary-soft)] rounded-xl p-4 text-sm text-[var(--av-primary)]">
         <p>
           <strong>💡 Tip:</strong> You'll always receive emails for security-related notifications 
           and payment confirmations, regardless of your settings.
@@ -389,7 +389,7 @@ function PreferenceToggle({
 }) {
   return (
     <label className={`flex items-start gap-3 p-3 rounded-xl cursor-pointer transition ${
-      highlight ? 'bg-amber-50/50 hover:bg-amber-50' : 'hover:bg-black/10'
+      highlight ? 'bg-[var(--av-warning-soft)]/50 hover:bg-[var(--av-warning-soft)]' : 'hover:bg-black/10'
     }`}>
       <div className="relative mt-0.5">
         <input

@@ -35,7 +35,7 @@ interface Staff {
 
 const STATUS_CONFIG = {
   new: { label: 'New', color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]', icon: Clock },
-  contacted: { label: 'Contacted', color: 'bg-amber-100 text-amber-700', icon: Phone },
+  contacted: { label: 'Contacted', color: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]', icon: Phone },
   qualified: { label: 'Qualified', color: 'bg-purple-100 text-purple-700', icon: CheckCircle2 },
   converted: { label: 'Converted', color: 'bg-[var(--av-success-soft)] text-[var(--av-success)]', icon: TrendingUp },
   lost: { label: 'Lost', color: 'bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]', icon: XCircle },

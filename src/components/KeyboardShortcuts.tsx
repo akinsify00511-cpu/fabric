@@ -76,7 +76,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsPro
         <div className="flex items-center justify-between px-6 py-4 border-b border-black/5">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <Keyboard size={20} className="text-blue-600" />
+              <Keyboard size={20} className="text-[var(--av-primary)]" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-black">Keyboard Shortcuts</h2>

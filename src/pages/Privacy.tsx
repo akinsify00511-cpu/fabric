@@ -30,15 +30,15 @@ export default function Privacy() {
 
           {/* Quick Summary */}
           <div className="grid md:grid-cols-3 gap-4 mb-12">
-            <div className="bg-green-50 rounded-xl p-4 text-center">
-              <Lock className="w-6 h-6 text-green-600 mx-auto mb-2" />
+            <div className="bg-[var(--av-success-soft)] rounded-xl p-4 text-center">
+              <Lock className="w-6 h-6 text-[var(--av-success)] mx-auto mb-2" />
               <h3 className="font-semibold text-green-800">Your Data is Secure</h3>
-              <p className="text-sm text-green-700 mt-1">256-bit encryption protects all data</p>
+              <p className="text-sm text-[var(--av-success)] mt-1">256-bit encryption protects all data</p>
             </div>
-            <div className="bg-blue-50 rounded-xl p-4 text-center">
-              <Eye className="w-6 h-6 text-blue-600 mx-auto mb-2" />
+            <div className="bg-[var(--av-primary-soft)] rounded-xl p-4 text-center">
+              <Eye className="w-6 h-6 text-[var(--av-primary)] mx-auto mb-2" />
               <h3 className="font-semibold text-blue-800">We Don't Sell Data</h3>
-              <p className="text-sm text-blue-700 mt-1">Your information stays private</p>
+              <p className="text-sm text-[var(--av-primary)] mt-1">Your information stays private</p>
             </div>
             <div className="bg-purple-50 rounded-xl p-4 text-center">
               <FileText className="w-6 h-6 text-purple-600 mx-auto mb-2" />

@@ -227,14 +227,14 @@ export default function Campaigns() {
     <div className="pb-20">
       {/* Coming Soon Banner */}
       {!emailSendingAvailable && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+        <div className="mb-6 p-4 bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl">
           <div className="flex items-start gap-3">
             <div className="p-2 bg-amber-100 rounded-lg">
-              <Mail size={20} className="text-amber-600" />
+              <Mail size={20} className="text-[var(--av-warning)]" />
             </div>
             <div className="flex-1">
               <h3 className="font-medium text-amber-900">Email Sending: Coming Soon</h3>
-              <p className="text-sm text-amber-700 mt-1">
+              <p className="text-sm text-[var(--av-warning)] mt-1">
                 Email campaigns are currently in development. You can create and save campaigns, 
                 but actual email delivery requires integration with an email provider (SendGrid, Mailgun, or Resend).
               </p>
@@ -365,7 +365,7 @@ export default function Campaigns() {
                       )}
                       <button
                         onClick={() => deleteCampaign(campaign.id)}
-                        className="p-2 hover:bg-red-50 rounded-lg text-[var(--av-danger)]"
+                        className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                       >
                         <Trash2 size={14} />
                       </button>

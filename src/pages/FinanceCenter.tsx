@@ -105,8 +105,8 @@ function OverviewTab({ businessId }: { businessId?: string }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
-              <TrendingDown size={20} className="text-red-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-danger-soft)]0/10 flex items-center justify-center">
+              <TrendingDown size={20} className="text-[var(--av-danger)]" />
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.totalDebtors / 1000000).toFixed(1)}M</div>
@@ -116,8 +116,8 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <TrendingUp size={20} className="text-amber-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-warning-soft)]0/10 flex items-center justify-center">
+              <TrendingUp size={20} className="text-[var(--av-warning)]" />
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.totalCreditors / 1000000).toFixed(1)}M</div>
@@ -127,7 +127,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center">
               <FileText size={20} className="text-blue-500" />
             </div>
             <div>
@@ -138,8 +138,8 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
-              <Banknote size={20} className="text-green-500" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-success-soft)]0/10 flex items-center justify-center">
+              <Banknote size={20} className="text-[var(--av-success)]" />
             </div>
             <div>
               <div className="text-2xl font-bold">₦{(stats.bankBalance / 1000000).toFixed(1)}M</div>
@@ -242,7 +242,7 @@ function BankingTab({ businessId }: { businessId?: string }) {
           {accounts.map((account) => (
             <div key={account.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-[var(--av-primary-soft)]0/10 flex items-center justify-center">
                   <Building2 size={24} className="text-blue-500" />
                 </div>
                 <div>
@@ -358,7 +358,7 @@ function VATTab({ businessId }: { businessId?: string }) {
             <div key={record.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'sales' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'sales' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'}`}>
                     {record.record_type}
                   </span>
                   <span className="text-sm text-black">{record.invoice_number}</span>
@@ -367,7 +367,7 @@ function VATTab({ businessId }: { businessId?: string }) {
               </div>
               <div className="text-right">
                 <p className="font-semibold">₦{record.vat_amount?.toLocaleString()}</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${record.status === 'filed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${record.status === 'filed' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'}`}>
                   {record.status}
                 </span>
               </div>
@@ -425,7 +425,7 @@ function WHTTab({ businessId }: { businessId?: string }) {
 
   return (
     <div>
-      <div className="bg-amber-600 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-[var(--av-warning)] rounded-2xl p-6 text-white mb-6">
         <p className="text-sm opacity-80">Total WHT</p>
         <h2 className="text-3xl font-bold">₦{totalWHT.toLocaleString()}</h2>
       </div>
@@ -466,7 +466,7 @@ function WHTTab({ businessId }: { businessId?: string }) {
             <div key={record.id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'withheld' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded ${record.record_type === 'withheld' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' : 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'}`}>
                     {record.record_type}
                   </span>
                   <span className="text-sm text-black">{record.service_type}</span>
@@ -475,8 +475,8 @@ function WHTTab({ businessId }: { businessId?: string }) {
                 <p className="text-sm text-black">₦{record.gross_amount?.toLocaleString()} @ {record.withholding_rate}%</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-amber-600">₦{record.withholding_amount?.toLocaleString()}</p>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${record.status === 'remitted' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
+                <p className="font-semibold text-[var(--av-warning)]">₦{record.withholding_amount?.toLocaleString()}</p>
+                <span className={`text-xs px-2 py-0.5 rounded-full ${record.status === 'remitted' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'}`}>
                   {record.status}
                 </span>
               </div>
@@ -536,13 +536,13 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
   return (
     <div>
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-red-600 rounded-2xl p-4 text-white">
+        <div className="bg-[var(--av-danger)] rounded-2xl p-4 text-white">
           <p className="text-sm opacity-80">Total Outstanding</p>
           <h2 className="text-2xl font-bold">₦{totalOutstanding.toLocaleString()}</h2>
         </div>
         <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
           <p className="text-sm text-black">Overdue</p>
-          <h2 className="text-2xl font-bold text-red-600">{overdueCount}</h2>
+          <h2 className="text-2xl font-bold text-[var(--av-danger)]">{overdueCount}</h2>
         </div>
       </div>
 
@@ -574,7 +574,7 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
         <div className="flex justify-center py-8"><Loader2 className="animate-spin text-black" /></div>
       ) : debtors.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <CheckCircle2 size={48} className="mx-auto text-green-500 mb-3" />
+          <CheckCircle2 size={48} className="mx-auto text-[var(--av-success)] mb-3" />
           <p className="text-black">No outstanding debtors!</p>
         </div>
       ) : (
@@ -587,11 +587,11 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
                   <p className="text-sm text-black">{debtor.invoice_number}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-red-600">₦{debtor.outstanding_amount?.toLocaleString()}</p>
+                  <p className="font-semibold text-[var(--av-danger)]">₦{debtor.outstanding_amount?.toLocaleString()}</p>
                   {debtor.days_overdue > 0 ? (
-                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">{debtor.days_overdue} days overdue</span>
+                    <span className="text-xs bg-[var(--av-danger-soft)] text-[var(--av-danger)] px-2 py-0.5 rounded">{debtor.days_overdue} days overdue</span>
                   ) : (
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">On track</span>
+                    <span className="text-xs bg-[var(--av-success-soft)] text-[var(--av-success)] px-2 py-0.5 rounded">On track</span>
                   )}
                 </div>
               </div>
@@ -649,7 +649,7 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
 
   return (
     <div>
-      <div className="bg-amber-600 rounded-2xl p-6 text-white mb-6">
+      <div className="bg-[var(--av-warning)] rounded-2xl p-6 text-white mb-6">
         <p className="text-sm opacity-80">Total Payable</p>
         <h2 className="text-3xl font-bold">₦{totalOutstanding.toLocaleString()}</h2>
       </div>
@@ -692,11 +692,11 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
                   <p className="text-sm text-black">{creditor.invoice_number}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-amber-600">₦{creditor.outstanding_amount?.toLocaleString()}</p>
+                  <p className="font-semibold text-[var(--av-warning)]">₦{creditor.outstanding_amount?.toLocaleString()}</p>
                   {creditor.days_overdue > 0 ? (
-                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded">{creditor.days_overdue} days overdue</span>
+                    <span className="text-xs bg-[var(--av-danger-soft)] text-[var(--av-danger)] px-2 py-0.5 rounded">{creditor.days_overdue} days overdue</span>
                   ) : creditor.due_date ? (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Due {new Date(creditor.due_date).toLocaleDateString()}</span>
+                    <span className="text-xs bg-[var(--av-primary-soft)] text-[var(--av-primary)] px-2 py-0.5 rounded">Due {new Date(creditor.due_date).toLocaleDateString()}</span>
                   ) : null}
                 </div>
               </div>

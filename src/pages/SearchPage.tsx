@@ -10,10 +10,10 @@ import { search, saveSearch, getSavedSearches, getSearchSuggestions, highlightMa
 import { supabase } from '../lib/supabase'
 
 const ENTITY_COLORS: Record<string, string> = {
-  contacts: 'bg-blue-100 text-blue-600',
-  tasks: 'bg-green-100 text-green-600',
+  contacts: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+  tasks: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   staff: 'bg-purple-100 text-purple-600',
-  invoices: 'bg-amber-100 text-amber-600',
+  invoices: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   quotes: 'bg-teal-100 text-teal-600',
   projects: 'bg-pink-100 text-pink-600',
   documents: 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]',
@@ -327,7 +327,7 @@ export default function SearchPage() {
                         {result.entityType}
                       </span>
                       {result.rank > 0.8 && (
-                        <span className="flex items-center gap-1 text-xs text-amber-500">
+                        <span className="flex items-center gap-1 text-xs text-[var(--av-warning)]">
                           <Star size={10} className="fill-amber-500" />
                           Relevant
                         </span>
@@ -418,9 +418,9 @@ export default function SearchPage() {
             <h3 className="text-sm font-medium text-black mb-3">Quick Access</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { icon: User, label: 'Contacts', color: 'bg-blue-50 text-blue-500' },
-                { icon: FileText, label: 'Tasks', color: 'bg-green-50 text-green-500' },
-                { icon: DollarSign, label: 'Invoices', color: 'bg-amber-50 text-amber-500' },
+                { icon: User, label: 'Contacts', color: 'bg-[var(--av-primary-soft)] text-blue-500' },
+                { icon: FileText, label: 'Tasks', color: 'bg-[var(--av-success-soft)] text-[var(--av-success)]' },
+                { icon: DollarSign, label: 'Invoices', color: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' },
                 { icon: Folder, label: 'Projects', color: 'bg-pink-50 text-pink-500' },
                 { icon: Briefcase, label: 'Staff', color: 'bg-purple-50 text-purple-500' },
                 { icon: Tag, label: 'Inventory', color: 'bg-orange-50 text-orange-500' },

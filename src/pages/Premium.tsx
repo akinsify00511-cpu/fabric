@@ -165,7 +165,7 @@ export default function Premium() {
       <div className="max-w-6xl mx-auto pb-20">
         {/* Hero */}
         <div className="text-center py-12 px-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 text-sm font-medium mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-amber-100 to-orange-100 text-[var(--av-warning)] text-sm font-medium mb-6">
             <Crown size={16} />
             <span>Unlock Your Business Potential</span>
           </div>
@@ -227,11 +227,11 @@ export default function Premium() {
                 )}
                 
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                  plan.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                  plan.color === 'blue' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
                   plan.color === 'indigo' ? 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]' :
                   plan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
                   plan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
-                  'bg-amber-100 text-amber-600'
+                  'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                 }`}>
                   <PlanIcon size={24} />
                 </div>
@@ -306,19 +306,19 @@ export default function Premium() {
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Job & Project Tracking</td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Invoicing & VAT/WHT</td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Inventory Management</td>
@@ -331,18 +331,18 @@ export default function Premium() {
                 <tr>
                   <td className="p-4 text-black">Advanced Analytics</td>
                   <td className="p-4 text-center bg-[var(--av-primary)]/5">❌</td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">API Access</td>
                   <td className="p-4 text-center bg-[var(--av-primary)]/5">❌</td>
                   <td className="p-4 text-center">❌</td>
                   <td className="p-4 text-center">❌</td>
-                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-green-500" /></td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center bg-[var(--av-primary)]/5"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
                 </tr>
                 <tr>
                   <td className="p-4 text-black">Custom Branding</td>
@@ -350,7 +350,7 @@ export default function Premium() {
                   <td className="p-4 text-center">❌</td>
                   <td className="p-4 text-center">❌</td>
                   <td className="p-4 text-center bg-[var(--av-primary)]/5">❌</td>
-                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-green-500" /></td>
+                  <td className="p-4 text-center"><Check size={18} className="mx-auto text-[var(--av-success)]" /></td>
                 </tr>
                 <tr className="bg-black/[0.02]">
                   <td className="p-4 text-black">Support</td>
@@ -428,8 +428,8 @@ export default function Premium() {
               selectedPlan.color === 'indigo' ? 'bg-[var(--av-primary)]/10 text-[var(--av-primary)]' :
               selectedPlan.color === 'violet' ? 'bg-violet-100 text-violet-600' :
               selectedPlan.color === 'purple' ? 'bg-purple-100 text-purple-600' :
-              selectedPlan.color === 'amber' ? 'bg-amber-100 text-amber-600' :
-              'bg-blue-100 text-blue-600'
+              selectedPlan.color === 'amber' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
+              'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
             }`}>
               {(() => {
                 const Icon = PLAN_ICONS[selectedPlan.id]
@@ -498,7 +498,7 @@ export default function Premium() {
                 </span>
               </div>
               {billingCycle === 'yearly' && (
-                <div className="flex justify-between text-sm text-green-600">
+                <div className="flex justify-between text-sm text-[var(--av-success)]">
                   <span>Annual savings</span>
                   <span className="font-medium">
                     {formatCurrency((selectedPlan.monthlyPrice * 12 - selectedPlan.yearlyTotal) * 1.075)}
@@ -514,7 +514,7 @@ export default function Premium() {
             <div className="space-y-2">
               {selectedPlan.features.map((feature, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm">
-                  <Check size={16} className="text-green-500 shrink-0" />
+                  <Check size={16} className="text-[var(--av-success)] shrink-0" />
                   <span className="text-black">{feature}</span>
                 </div>
               ))}
@@ -547,11 +547,11 @@ export default function Premium() {
       </div>
 
       {/* Money Back Guarantee */}
-      <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
-        <Shield size={20} className="text-green-600 shrink-0 mt-0.5" />
+      <div className="bg-[var(--av-success-soft)] border border-[var(--av-success)]/30 rounded-xl p-4 flex items-start gap-3">
+        <Shield size={20} className="text-[var(--av-success)] shrink-0 mt-0.5" />
         <div>
           <p className="font-medium text-green-800">30-Day Money Back Guarantee</p>
-          <p className="text-xs text-green-700 mt-1">
+          <p className="text-xs text-[var(--av-success)] mt-1">
             If you're not satisfied within the first 30 days, we'll refund your payment in full. No questions asked.
           </p>
         </div>

@@ -218,9 +218,9 @@ export default function OrganizationPage() {
           title="Total Staff" 
           value={departments.reduce((sum, d) => sum + (d.staff?.length || 0), 0)} 
           icon={<User size={18} />} 
-          color="bg-blue-500" 
+          color="bg-[var(--av-primary-soft)]0" 
         />
-        <StatCard title="Managers" value={departments.filter(d => d.head_id).length} icon={<Crown size={18} />} color="bg-amber-500" />
+        <StatCard title="Managers" value={departments.filter(d => d.head_id).length} icon={<Crown size={18} />} color="bg-[var(--av-warning-soft)]0" />
       </div>
 
       {/* Organization Tree */}
@@ -359,8 +359,8 @@ function DepartmentRow({
             <button onClick={onEdit} className="p-2 hover:bg-black/10 rounded-lg">
               <Edit2 size={16} className="text-black" />
             </button>
-            <button onClick={onDelete} className="p-2 hover:bg-red-50 rounded-lg">
-              <Trash2 size={16} className="text-red-500" />
+            <button onClick={onDelete} className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg">
+              <Trash2 size={16} className="text-[var(--av-danger)]" />
             </button>
           </div>
         )}
@@ -398,7 +398,7 @@ function TeamRow({ team, onEdit, onDelete, isAdmin }: { team: Team; onEdit: () =
           <button onClick={onEdit} className="p-1 hover:bg-black/10 rounded">
             <Edit2 size={14} className="text-black" />
           </button>
-          <button onClick={onDelete} className="p-1 hover:bg-red-50 rounded">
+          <button onClick={onDelete} className="p-1 hover:bg-[var(--av-danger-soft)] rounded">
             <Trash2 size={14} className="text-red-400" />
           </button>
         </div>

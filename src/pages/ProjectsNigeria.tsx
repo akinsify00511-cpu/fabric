@@ -197,11 +197,11 @@ export default function ProjectsNigeria() {
     // Map colors to Tailwind bg/text classes
     const colorMap: Record<string, string> = {
       '#6366F1': 'bg-[#4285F4]/10 text-[#4285F4]', // indigo
-      '#10B981': 'bg-green-100 text-green-700',   // green
-      '#F59E0B': 'bg-amber-100 text-amber-700',  // amber
+      '#10B981': 'bg-[var(--av-success-soft)] text-[var(--av-success)]',   // green
+      '#F59E0B': 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',  // amber
       '#8B5CF6': 'bg-purple-100 text-purple-700', // purple
-      '#EF4444': 'bg-red-100 text-red-700',       // red
-      '#3B82F6': 'bg-blue-100 text-blue-700',     // blue
+      '#EF4444': 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',       // red
+      '#3B82F6': 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',     // blue
     }
     return colorMap[color] || 'bg-white text-black'
   }
@@ -381,7 +381,7 @@ export default function ProjectsNigeria() {
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Overdue</p>
-          <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
+          <p className="text-2xl font-bold text-[var(--av-danger)]">{stats.overdue}</p>
         </div>
       </div>
 
@@ -495,9 +495,9 @@ export default function ProjectsNigeria() {
                 <div className="text-right">
                   <p className="font-semibold text-[var(--av-primary, #4285F4)]">{formatCurrency(job.value)}</p>
                   <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium mt-1 ${
-                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'green' ? 'bg-green-100 text-green-700' :
-                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'red' ? 'bg-red-100 text-red-700' :
-                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
+                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'green' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'red' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
+                    PIPELINE_STAGES.find(s => s.key === job.stage)?.color === 'yellow' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
                     'bg-white text-black'
                   }`}>
                     {PIPELINE_STAGES.find(s => s.key === job.stage)?.label}
@@ -514,7 +514,7 @@ export default function ProjectsNigeria() {
                 )}
                 {job.end_date && (
                   <span className={`flex items-center gap-1 ${
-                    new Date(job.end_date) < new Date() && job.stage !== 'paid' ? 'text-red-600' : ''
+                    new Date(job.end_date) < new Date() && job.stage !== 'paid' ? 'text-[var(--av-danger)]' : ''
                   }`}>
                     <Clock size={12} />
                     Due: {new Date(job.end_date).toLocaleDateString()}
@@ -668,7 +668,7 @@ export default function ProjectsNigeria() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => deleteJob(selectedJob.id)}
-                  className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                  className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -712,7 +712,7 @@ export default function ProjectsNigeria() {
                           isCurrent
                             ? 'avenize-gradient text-white'
                             : isComplete
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]'
                             : 'bg-white text-black'
                         }`}
                       >
@@ -747,7 +747,7 @@ export default function ProjectsNigeria() {
                     <p className="text-xs text-black">Due Date</p>
                     <p className={`font-medium ${
                       new Date(selectedJob.end_date) < new Date() && selectedJob.stage !== 'paid'
-                        ? 'text-red-600'
+                        ? 'text-[var(--av-danger)]'
                         : ''
                     }`}>
                       {new Date(selectedJob.end_date).toLocaleDateString()}

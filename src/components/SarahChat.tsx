@@ -243,7 +243,7 @@ export default function SarahChat() {
           className="fixed bottom-20 md:bottom-4 right-4 w-14 h-14 rounded-full bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 z-50 flex items-center justify-center"
         >
           <MessageCircle size={24} />
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--av-success-soft)]0 rounded-full border-2 border-white flex items-center justify-center">
             <Sparkles size={10} />
           </span>
         </button>

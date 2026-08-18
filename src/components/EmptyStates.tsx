@@ -34,12 +34,12 @@ export function EmptyState({ icon, title, description, action, tips }: EmptyStat
       <p className="text-black max-w-sm mb-6">{description}</p>
       
       {tips && tips.length > 0 && (
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left w-full max-w-sm">
+        <div className="bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4 mb-6 text-left w-full max-w-sm">
           <p className="text-xs font-medium text-amber-800 mb-2">Quick tips:</p>
           <ul className="space-y-1">
             {tips.map((tip, i) => (
-              <li key={i} className="text-xs text-amber-700 flex items-start gap-2">
-                <span className="text-amber-500 mt-0.5">•</span>
+              <li key={i} className="text-xs text-[var(--av-warning)] flex items-start gap-2">
+                <span className="text-[var(--av-warning)] mt-0.5">•</span>
                 {tip}
               </li>
             ))}
@@ -335,7 +335,7 @@ export function ErrorState({
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mb-4">
-        <AlertCircle size={32} className="text-red-500" />
+        <AlertCircle size={32} className="text-[var(--av-danger)]" />
       </div>
       <h3 className="text-lg font-semibold text-black mb-2">Oops!</h3>
       <p className="text-black max-w-sm mb-6">{message}</p>

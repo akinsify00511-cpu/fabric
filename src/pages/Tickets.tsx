@@ -354,7 +354,7 @@ export default function Tickets() {
                 key={reply.id}
                 className={`rounded-2xl p-4 border ${
                   reply.is_internal
-                    ? 'bg-yellow-50 border-[var(--av-warning-soft)]'
+                    ? 'bg-[var(--av-warning-soft)] border-[var(--av-warning-soft)]'
                     : 'bg-[var(--av-surface)] border-[var(--av-border-strong)]/[0.06]'
                 }`}
               >

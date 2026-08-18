@@ -139,7 +139,7 @@ export default function SSOSettings() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium">
+                <span className="px-3 py-1 rounded-full bg-[var(--av-warning-soft)]0/20 text-amber-300 text-xs font-medium">
                   Beta Feature
                 </span>
                 <span className="px-3 py-1 rounded-full bg-white text-white/70 text-xs">
@@ -199,7 +199,7 @@ export default function SSOSettings() {
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-amber-600" />
+                <Lock className="w-5 h-5 text-[var(--av-warning)]" />
               </div>
               <h3 className="font-medium">Enforced Security</h3>
             </div>
@@ -212,7 +212,7 @@ export default function SSOSettings() {
           <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-blue-600" />
+                <Building2 className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <h3 className="font-medium">Multi-Domain</h3>
             </div>
@@ -229,12 +229,12 @@ export default function SSOSettings() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { name: 'Okta', color: 'bg-blue-600' },
-              { name: 'Azure AD', color: 'bg-blue-500' },
-              { name: 'Google', color: 'bg-red-500' },
+              { name: 'Azure AD', color: 'bg-[var(--av-primary-soft)]0' },
+              { name: 'Google', color: 'bg-[var(--av-danger-soft)]0' },
               { name: 'OneLogin', color: 'bg-purple-600' },
               { name: 'Ping Identity', color: 'bg-orange-500' },
               { name: 'Duo', color: 'bg-teal-500' },
-              { name: 'JumpCloud', color: 'bg-red-600' },
+              { name: 'JumpCloud', color: 'bg-[var(--av-danger)]' },
               { name: 'Custom SAML', color: 'bg-black' },
             ].map((provider) => (
               <div
@@ -251,14 +251,14 @@ export default function SSOSettings() {
         </div>
 
         {/* Beta Note */}
-        <div className="mt-6 p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="mt-6 p-4 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30">
           <div className="flex items-start gap-3">
-            <Clock4 className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <Clock4 className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
                 Beta Access <BetaBadge />
               </p>
-              <p className="text-xs text-amber-700 mt-1">
+              <p className="text-xs text-[var(--av-warning)] mt-1">
                 SSO requires Supabase Auth SAML configuration and identity provider setup.
                 This feature is currently in beta testing. Contact sales to join the beta program.
               </p>
@@ -280,10 +280,10 @@ export default function SSOSettings() {
         <BetaBadge />
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+      <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
-          <Shield size={20} className="text-blue-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-blue-700">
+          <Shield size={20} className="text-[var(--av-primary)] shrink-0 mt-0.5" />
+          <p className="text-sm text-[var(--av-primary)]">
             Enable an identity provider so your team can sign in with their corporate credentials. Google Workspace and Microsoft Entra ID use Supabase's built-in OAuth; custom SAML/OIDC providers require metadata configured in your Supabase Auth settings.
           </p>
         </div>
@@ -304,7 +304,7 @@ export default function SSOSettings() {
               >
                 <Plus size={15} />
                 {PROVIDER_LABELS[p]}
-                {added && <Check size={14} className="text-green-500" />}
+                {added && <Check size={14} className="text-[var(--av-success)]" />}
               </button>
             )
           })}
@@ -344,7 +344,7 @@ export default function SSOSettings() {
                     />
                     Enabled
                   </label>
-                  <button onClick={() => removeRow(row.provider)} className="p-2 hover:bg-red-50 rounded-lg text-red-500" title="Remove">
+                  <button onClick={() => removeRow(row.provider)} className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]" title="Remove">
                     <Trash2 size={16} />
                   </button>
                 </div>

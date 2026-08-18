@@ -180,7 +180,7 @@ export default function MeetingsV2() {
 
         <button
           onClick={() => setShowStartModal(true)}
-          className="bg-[var(--av-surface)] border-2 border-[var(--av-border)] rounded-2xl p-6 text-left hover:border-[var(--av-primary-soft)] hover:bg-blue-50 transition"
+          className="bg-[var(--av-surface)] border-2 border-[var(--av-border)] rounded-2xl p-6 text-left hover:border-[var(--av-primary-soft)] hover:bg-[var(--av-primary-soft)] transition"
         >
           <div className="w-12 h-12 bg-[var(--av-primary-soft)] rounded-xl flex items-center justify-center mb-4">
             <Calendar size={24} className="text-[var(--av-primary)]" />

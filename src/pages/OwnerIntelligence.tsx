@@ -26,9 +26,9 @@ function useIsOwnerAdmin() {
 }
 
 const REUSE_COLORS: Record<string, string> = {
-  reused: 'text-green-700 bg-green-50',
-  returning: 'text-blue-700 bg-blue-50',
-  activated: 'text-amber-700 bg-amber-50',
+  reused: 'text-[var(--av-success)] bg-[var(--av-success-soft)]',
+  returning: 'text-[var(--av-primary)] bg-[var(--av-primary-soft)]',
+  activated: 'text-[var(--av-warning)] bg-[var(--av-warning-soft)]',
   view_only: 'text-gray-600 bg-gray-100',
 }
 
@@ -94,11 +94,11 @@ export default function OwnerIntelligence() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="flex items-center gap-3 mb-4">
-          <Lock className="w-6 h-6 text-amber-600" />
+          <Lock className="w-6 h-6 text-[var(--av-warning)]" />
           <h1 className="text-xl font-semibold text-gray-900">Owner Intelligence</h1>
         </div>
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-          <ShieldAlert className="w-8 h-8 text-amber-600 mb-3" />
+        <div className="rounded-xl border border-[var(--av-warning)]/30 bg-[var(--av-warning-soft)] p-6">
+          <ShieldAlert className="w-8 h-8 text-[var(--av-warning)] mb-3" />
           <p className="text-sm text-amber-800">
             This area is restricted to business owners and admins. The analytics here
             cover how your team uses Avenize, which modules are adopted or abandoned,
@@ -141,7 +141,7 @@ export default function OwnerIntelligence() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-blue-600" />
+            <ShieldCheck className="w-6 h-6 text-[var(--av-primary)]" />
             Owner Intelligence
           </h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -152,8 +152,8 @@ export default function OwnerIntelligence() {
       </div>
 
       {/* #21 boundary declaration */}
-      <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 flex items-start gap-2">
-        <Lock className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+      <div className="rounded-lg border border-blue-100 bg-[var(--av-primary-soft)] p-3 flex items-start gap-2">
+        <Lock className="w-4 h-4 text-[var(--av-primary)] mt-0.5 shrink-0" />
         <p className="text-xs text-blue-800">
           <strong>Data scope:</strong> operational and usage data only. This view never surfaces
           privileged or walled content (legal, disciplinary, board finance, litigation). Access is
@@ -165,7 +165,7 @@ export default function OwnerIntelligence() {
       {oc && (
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
+            <CheckCircle2 className="w-4 h-4 text-[var(--av-success)]" />
             Onboarding Completion
           </h2>
           <div className="grid grid-cols-3 gap-4 text-sm">
@@ -188,7 +188,7 @@ export default function OwnerIntelligence() {
       {/* Feature activation + reuse */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-blue-600" />
+          <Activity className="w-4 h-4 text-[var(--av-primary)]" />
           Feature Adoption & Reuse
         </h2>
         {fa.length === 0 ? (
@@ -220,7 +220,7 @@ export default function OwnerIntelligence() {
       {/* Quick turnoff — modules switched off quickly */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <TrendingDown className="w-4 h-4 text-amber-600" />
+          <TrendingDown className="w-4 h-4 text-[var(--av-warning)]" />
           Modules Switched Off Quickly
           <ClaimTag type="INFERENCE" />
         </h2>
@@ -257,7 +257,7 @@ export default function OwnerIntelligence() {
               return (
                 <div key={a.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-2">
-                    {ignored ? <XCircle className="w-4 h-4 text-red-500" /> : <CheckCircle2 className="w-4 h-4 text-green-500" />}
+                    {ignored ? <XCircle className="w-4 h-4 text-[var(--av-danger)]" /> : <CheckCircle2 className="w-4 h-4 text-[var(--av-success)]" />}
                     <div>
                       <div className="text-sm font-medium text-gray-900">{a.name}</div>
                       <div className="text-xs text-gray-500">{a.trigger_type} · created {new Date(a.created_at).toLocaleDateString()}</div>
@@ -278,7 +278,7 @@ export default function OwnerIntelligence() {
       {health && health.authorized && (
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-blue-600" />
+            <Activity className="w-4 h-4 text-[var(--av-primary)]" />
             Automation Health
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -292,11 +292,11 @@ export default function OwnerIntelligence() {
             </div>
             <div>
               <div className="text-xs text-gray-500">Successful runs</div>
-              <div className="text-lg font-semibold text-green-700">{health.successful_runs}</div>
+              <div className="text-lg font-semibold text-[var(--av-success)]">{health.successful_runs}</div>
             </div>
             <div>
               <div className="text-xs text-gray-500">Failed runs</div>
-              <div className="text-lg font-semibold text-amber-700">{health.failed_runs}</div>
+              <div className="text-lg font-semibold text-[var(--av-warning)]">{health.failed_runs}</div>
             </div>
           </div>
           {health.total_automations > 0 && (
@@ -304,7 +304,7 @@ export default function OwnerIntelligence() {
               <div className="text-xs text-gray-500 mb-1">Success rate</div>
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-green-500 rounded-full"
+                  className="h-full bg-[var(--av-success-soft)]0 rounded-full"
                   style={{ width: `${health.total_runs > 0 ? (health.successful_runs / health.total_runs) * 100 : 0}%` }}
                 />
               </div>
@@ -319,7 +319,7 @@ export default function OwnerIntelligence() {
               {health.recent_runs.slice(0, 8).map((r) => (
                 <div key={r.id} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-2">
-                    {r.status === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" /> : <XCircle className="w-3.5 h-3.5 text-red-500" />}
+                    {r.status === 'success' ? <CheckCircle2 className="w-3.5 h-3.5 text-[var(--av-success)]" /> : <XCircle className="w-3.5 h-3.5 text-[var(--av-danger)]" />}
                     <span className="text-sm text-gray-900">{r.automation_name}</span>
                   </div>
                   <span className="text-xs text-gray-400">{new Date(r.executed_at).toLocaleString()}</span>
@@ -337,22 +337,22 @@ export default function OwnerIntelligence() {
       {dlq && dlq.authorized && dlq.summary.dead_lettered_count > 0 && (
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <Inbox className="w-4 h-4 text-red-600" />
+            <Inbox className="w-4 h-4 text-[var(--av-danger)]" />
             Dead-Letter Queue
           </h2>
           <p className="text-xs text-gray-500 mb-3">Automation runs that failed and exhausted all retries. Review the error, fix the cause, then revive to retry.</p>
           <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="rounded-lg bg-red-50 p-3">
+            <div className="rounded-lg bg-[var(--av-danger-soft)] p-3">
               <div className="text-xs text-gray-500">Dead-lettered</div>
-              <div className="text-lg font-semibold text-red-700">{dlq.summary.dead_lettered_count}</div>
+              <div className="text-lg font-semibold text-[var(--av-danger)]">{dlq.summary.dead_lettered_count}</div>
             </div>
-            <div className="rounded-lg bg-amber-50 p-3">
+            <div className="rounded-lg bg-[var(--av-warning-soft)] p-3">
               <div className="text-xs text-gray-500">Total failed</div>
-              <div className="text-lg font-semibold text-amber-700">{dlq.summary.total_failed}</div>
+              <div className="text-lg font-semibold text-[var(--av-warning)]">{dlq.summary.total_failed}</div>
             </div>
-            <div className="rounded-lg bg-green-50 p-3">
+            <div className="rounded-lg bg-[var(--av-success-soft)] p-3">
               <div className="text-xs text-gray-500">Recovered via retry</div>
-              <div className="text-lg font-semibold text-green-700">{dlq.summary.total_retried}</div>
+              <div className="text-lg font-semibold text-[var(--av-success)]">{dlq.summary.total_retried}</div>
             </div>
           </div>
           <div className="space-y-2">
@@ -361,7 +361,7 @@ export default function OwnerIntelligence() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-900 truncate">{d.automation_name}</span>
-                    <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] text-red-700">{d.retry_count} retries</span>
+                    <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] text-[var(--av-danger)]">{d.retry_count} retries</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-0.5 truncate">{d.error_message || 'Unknown error'}</p>
                   <p className="text-[10px] text-gray-400 mt-0.5">Failed {new Date(d.executed_at).toLocaleString()}</p>
@@ -387,7 +387,7 @@ export default function OwnerIntelligence() {
       {/* Workflow funnel */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-blue-600" />
+          <BarChart3 className="w-4 h-4 text-[var(--av-primary)]" />
           Workflow Completion
         </h2>
         <p className="text-xs text-gray-500 mb-3">Which workflows get finished vs abandoned. "Abandoned" = started with no completion within 24 hours.</p>
@@ -403,14 +403,14 @@ export default function OwnerIntelligence() {
                 </div>
                 <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 rounded-full"
+                    className="h-full bg-[var(--av-primary-soft)]0 rounded-full"
                     style={{ width: `${w.completion_rate ?? 0}%` }}
                   />
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>{w.completion_rate ?? '—'}% completion</span>
                   {w.abandoned > 0 && (
-                    <span className="text-amber-600 flex items-center gap-1">
+                    <span className="text-[var(--av-warning)] flex items-center gap-1">
                       <AlertTriangle className="w-3 h-3" /> {w.abandoned} abandoned
                     </span>
                   )}
@@ -444,7 +444,7 @@ export default function OwnerIntelligence() {
                 </span>
                 <span>Sample size: {benchmark.sector_sample_size} business{benchmark.sector_sample_size === 1 ? '' : 'es'}</span>
                 {benchmark.sector_sample_size < 5 && (
-                  <span className="text-amber-600">Small sample — treat with caution</span>
+                  <span className="text-[var(--av-warning)]">Small sample — treat with caution</span>
                 )}
               </div>
               {benchmark.modules.slice(0, 10).map((m) => (
@@ -452,8 +452,8 @@ export default function OwnerIntelligence() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium text-gray-900 capitalize flex items-center gap-2">
                       {m.module_key.replace(/_/g, ' ')}
-                      {m.i_selected && <span className="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">you</span>}
-                      {m.i_used && <span className="text-xs px-1.5 py-0.5 rounded bg-green-50 text-green-700">in use</span>}
+                      {m.i_selected && <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--av-primary-soft)] text-[var(--av-primary)]">you</span>}
+                      {m.i_used && <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--av-success-soft)] text-[var(--av-success)]">in use</span>}
                     </span>
                     <span className="text-gray-500">{m.sector_adoption_pct ?? '—'}% of sector</span>
                   </div>

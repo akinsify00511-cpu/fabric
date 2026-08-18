@@ -572,9 +572,9 @@ export default function ElectronicSignatures() {
                     <button
                       type="button"
                       onClick={() => removeSigner(index)}
-                      className="p-2 hover:bg-red-50 rounded-xl transition"
+                      className="p-2 hover:bg-[var(--av-danger-soft)] rounded-xl transition"
                     >
-                      <Trash2 size={16} className="text-red-500" />
+                      <Trash2 size={16} className="text-[var(--av-danger)]" />
                     </button>
                   )}
                 </div>

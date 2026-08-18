@@ -213,7 +213,7 @@ export default function AuthCallback() {
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-[var(--av-danger-soft)] flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-[var(--av-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
@@ -237,7 +237,7 @@ export default function AuthCallback() {
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <div className="text-center">
         <div className="w-16 h-16 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-green-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-[var(--av-success)] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>

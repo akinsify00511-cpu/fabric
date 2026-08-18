@@ -75,18 +75,18 @@ export default function BuilderDashboardPage() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12">
         <div className="flex items-center gap-3 mb-4">
-          <Lock className="w-6 h-6 text-amber-600" />
+          <Lock className="w-6 h-6 text-[var(--av-warning)]" />
           <h1 className="text-xl font-semibold text-gray-900">Builder Dashboard</h1>
         </div>
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-          <ShieldCheck className="w-8 h-8 text-amber-600 mb-3" />
+        <div className="rounded-xl border border-[var(--av-warning)]/30 bg-[var(--av-warning-soft)] p-6">
+          <ShieldCheck className="w-8 h-8 text-[var(--av-warning)] mb-3" />
           <p className="text-sm text-amber-800">
             This is the platform-operator dashboard for the Avenize team. It is
             not available to business accounts. Access is controlled by a
             platform-admin allowlist, verified server-side.
           </p>
           {userEmail && (
-            <p className="text-xs text-amber-700 mt-3">Signed in as {userEmail}.</p>
+            <p className="text-xs text-[var(--av-warning)] mt-3">Signed in as {userEmail}.</p>
           )}
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function BuilderDashboardPage() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-blue-600" />
+            <BarChart3 className="w-6 h-6 text-[var(--av-primary)]" />
             Builder Dashboard
           </h1>
           <p className="text-sm text-gray-500 mt-1">
@@ -114,8 +114,8 @@ export default function BuilderDashboardPage() {
       </div>
 
       {/* #21 boundary */}
-      <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 flex items-start gap-2">
-        <Lock className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+      <div className="rounded-lg border border-blue-100 bg-[var(--av-primary-soft)] p-3 flex items-start gap-2">
+        <Lock className="w-4 h-4 text-[var(--av-primary)] mt-0.5 shrink-0" />
         <p className="text-xs text-blue-800">
           <strong>Data scope:</strong> aggregate counts and rates only. This view never exposes
           business names, owner identities, customer data, or privileged/walled content. The
@@ -127,7 +127,7 @@ export default function BuilderDashboardPage() {
       {oc && (
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-600" />
+            <TrendingUp className="w-4 h-4 text-[var(--av-success)]" />
             Onboarding Conversion (All Businesses)
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -153,7 +153,7 @@ export default function BuilderDashboardPage() {
       {/* Cross-business module adoption */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-blue-600" />
+          <Activity className="w-4 h-4 text-[var(--av-primary)]" />
           Module Adoption (Platform-Wide)
         </h2>
         <p className="text-xs text-gray-500 mb-3">
@@ -174,7 +174,7 @@ export default function BuilderDashboardPage() {
                     </span>
                   </div>
                   <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(m.businesses_touching / max) * 100}%` }} />
+                    <div className="h-full bg-[var(--av-primary-soft)]0 rounded-full" style={{ width: `${(m.businesses_touching / max) * 100}%` }} />
                   </div>
                 </div>
               )
@@ -215,7 +215,7 @@ export default function BuilderDashboardPage() {
                     <td className="py-2 pr-4 text-right text-gray-600">{s.businesses_using}</td>
                     <td className="py-2 text-right">
                       {s.adoption_rate != null ? (
-                        <span className={s.adoption_rate < 30 ? 'text-amber-600 font-medium' : 'text-green-600 font-medium'}>
+                        <span className={s.adoption_rate < 30 ? 'text-[var(--av-warning)] font-medium' : 'text-[var(--av-success)] font-medium'}>
                           {s.adoption_rate}%
                         </span>
                       ) : (
@@ -236,7 +236,7 @@ export default function BuilderDashboardPage() {
       {/* Honest product-gap note (#16 items 4-7, blocked) */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600" />
+          <AlertTriangle className="w-4 h-4 text-[var(--av-warning)]" />
           What this dashboard cannot tell you yet
         </h2>
         <ClaimNote tone="muted">
@@ -256,7 +256,7 @@ export default function BuilderDashboardPage() {
 }
 
 function Stat({ label, value, tone }: { label: string; value: number | string; tone?: 'green' | 'amber' }) {
-  const color = tone === 'green' ? 'text-green-700' : tone === 'amber' ? 'text-amber-700' : 'text-gray-900'
+  const color = tone === 'green' ? 'text-[var(--av-success)]' : tone === 'amber' ? 'text-[var(--av-warning)]' : 'text-gray-900'
   return (
     <div>
       <div className="text-xs text-gray-500">{label}</div>

@@ -237,14 +237,14 @@ export default function APISettings() {
       {activeTab === 'keys' && (
         <div className="space-y-6">
           {/* Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+          <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-2xl p-6">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                <Zap className="w-5 h-5 text-blue-600" />
+                <Zap className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <div>
                 <h3 className="font-medium text-blue-900">API Access</h3>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="text-sm text-[var(--av-primary)] mt-1">
                   Use API keys to connect Avenize to your apps via REST API or Zapier/Make.
                   Keep your keys secure - they provide full access to your data.
                 </p>
@@ -286,7 +286,7 @@ export default function APISettings() {
                       <div className="flex items-center gap-2">
                         <p className="font-medium">{key.name}</p>
                         <span className={`px-2 py-0.5 rounded-full text-xs ${
-                          key.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          key.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                         }`}>
                           {key.is_active ? 'Active' : 'Inactive'}
                         </span>
@@ -304,7 +304,7 @@ export default function APISettings() {
                     </div>
                     <button
                       onClick={() => deleteApiKey(key)}
-                      className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                      className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -320,10 +320,10 @@ export default function APISettings() {
       {activeTab === 'webhooks' && (
         <div className="space-y-6">
           {/* BETA STATUS BANNER */}
-          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+          <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-2xl p-4">
             <div className="flex items-start gap-3">
               <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                <Webhook className="w-5 h-5 text-blue-600" />
+                <Webhook className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
@@ -389,7 +389,7 @@ export default function APISettings() {
                           webhook.is_active ? 'bg-green-100' : 'bg-black/[0.05]'
                         }`}>
                           {webhook.is_active ? (
-                            <CheckCircle2 size={18} className="text-green-600" />
+                            <CheckCircle2 size={18} className="text-[var(--av-success)]" />
                           ) : (
                             <AlertTriangle size={18} className="text-black" />
                           )}
@@ -398,7 +398,7 @@ export default function APISettings() {
                           <div className="flex items-center gap-2">
                             <p className="font-medium">{webhook.name}</p>
                             <span className={`px-2 py-0.5 rounded-full text-xs ${
-                              webhook.is_active ? 'bg-green-100 text-green-700' : 'bg-black/[0.05]'
+                              webhook.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-black/[0.05]'
                             }`}>
                               {webhook.is_active ? 'Active' : 'Paused'}
                             </span>
@@ -412,14 +412,14 @@ export default function APISettings() {
                         <button
                           onClick={() => toggleWebhook(webhook)}
                           className={`px-3 py-1 rounded-lg text-xs font-medium ${
-                            webhook.is_active ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'
+                            webhook.is_active ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' : 'bg-[var(--av-success-soft)] text-[var(--av-success)]'
                           }`}
                         >
                           {webhook.is_active ? 'Pause' : 'Resume'}
                         </button>
                         <button
                           onClick={() => deleteWebhook(webhook)}
-                          className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                          className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -440,7 +440,7 @@ export default function APISettings() {
                         </span>
                       )}
                       {webhook.last_error && (
-                        <span className="flex items-center gap-1 text-red-500">
+                        <span className="flex items-center gap-1 text-[var(--av-danger)]">
                           <AlertTriangle size={12} />
                           Error: {webhook.last_error}
                         </span>
@@ -483,12 +483,12 @@ export default function APISettings() {
             <div className="p-6">
               {newKey ? (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                  <div className="p-4 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30">
                     <div className="flex items-center gap-2 text-amber-800">
                       <AlertTriangle size={16} />
                       <span className="font-medium">Save this key securely</span>
                     </div>
-                    <p className="text-sm text-amber-700 mt-1">
+                    <p className="text-sm text-[var(--av-warning)] mt-1">
                       You won't see it again after closing this dialog.
                     </p>
                   </div>

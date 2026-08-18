@@ -122,14 +122,14 @@ export default function StartMeetingModal({ isOpen, onClose, onStartMeeting }: S
                   </code>
                   <button
                     onClick={handleCopyLink}
-                    className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition"
+                    className="p-2 bg-[var(--av-primary-soft)] text-[var(--av-primary)] rounded-lg hover:bg-blue-200 transition"
                     title="Copy link"
                   >
                     <Copy size={18} />
                   </button>
                 </div>
                 {copied && (
-                  <p className="text-green-600 text-sm mt-2">✓ Link copied to clipboard!</p>
+                  <p className="text-[var(--av-success)] text-sm mt-2">✓ Link copied to clipboard!</p>
                 )}
               </div>
 
@@ -205,14 +205,14 @@ export default function StartMeetingModal({ isOpen, onClose, onStartMeeting }: S
           )}
 
           {/* Info */}
-          <div className="bg-blue-50 rounded-xl p-4">
+          <div className="bg-[var(--av-primary-soft)] rounded-xl p-4">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Users size={16} className="text-blue-600" />
+                <Users size={16} className="text-[var(--av-primary)]" />
               </div>
               <div>
                 <p className="text-sm font-medium text-blue-900">No account needed</p>
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="text-xs text-[var(--av-primary)] mt-1">
                   Anyone with the link can join your meeting. Powered by Jitsi Meet.
                 </p>
               </div>

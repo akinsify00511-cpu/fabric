@@ -72,7 +72,7 @@ const STATUS_COLORS = {
 
 const TEMPLATE_STATUS_COLORS = {
   draft: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
-  pending: 'bg-amber-100 text-amber-700',
+  pending: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   approved: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   rejected: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   disabled: 'bg-[var(--av-surface-2)] text-[var(--av-text-disabled)]',
@@ -415,7 +415,7 @@ export default function WhatsAppIntegrationPage() {
                   Connected
                 </span>
               ) : (
-                <span className="ml-2 inline-flex items-center text-amber-600">
+                <span className="ml-2 inline-flex items-center text-[var(--av-warning)]">
                   <Clock className="w-4 h-4 mr-1" />
                   Not configured
                 </span>
@@ -584,7 +584,7 @@ export default function WhatsAppIntegrationPage() {
                     <p className="text-xs text-[var(--av-text-muted)] line-clamp-3">{template.content.body}</p>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {template.variables?.map(v => (
-                        <span key={v} className="px-1.5 py-0.5 bg-green-50 text-[var(--av-success)] text-xs rounded">
+                        <span key={v} className="px-1.5 py-0.5 bg-[var(--av-success-soft)] text-[var(--av-success)] text-xs rounded">
                           {`{${v}}`}
                         </span>
                       ))}
@@ -634,7 +634,7 @@ export default function WhatsAppIntegrationPage() {
                                 applyTemplate(template.name)
                                 setShowCompose(true)
                               }}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-[var(--av-success-soft)] rounded"
                             >
                               <Send className="w-4 h-4" />
                             </button>
@@ -758,7 +758,7 @@ export default function WhatsAppIntegrationPage() {
               </div>
             </div>
 
-            <div className="mt-6 bg-blue-50 rounded-xl border border-[var(--av-primary-soft)] p-4">
+            <div className="mt-6 bg-[var(--av-primary-soft)] rounded-xl border border-[var(--av-primary-soft)] p-4">
               <h4 className="text-sm font-medium text-[var(--av-primary-active)] mb-2">Setup Instructions</h4>
               <ol className="text-sm text-[var(--av-primary)] space-y-2 list-decimal list-inside">
                 <li>Create a Meta Business account at business.meta.com</li>

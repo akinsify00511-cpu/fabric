@@ -204,8 +204,8 @@ export default function Monitoring() {
 
       {/* Status Banner */}
       <div className={`rounded-2xl p-6 mb-6 ${
-        overallStatus === 'operational' ? 'bg-green-50' :
-        overallStatus === 'degraded' ? 'bg-yellow-50' : 'bg-red-50'
+        overallStatus === 'operational' ? 'bg-[var(--av-success-soft)]' :
+        overallStatus === 'degraded' ? 'bg-[var(--av-warning-soft)]' : 'bg-[var(--av-danger-soft)]'
       }`}>
         <div className="flex items-center gap-4">
           {overallStatus === 'operational' ? (

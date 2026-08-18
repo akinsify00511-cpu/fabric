@@ -322,7 +322,7 @@ export default function CurrencyExchangePage() {
                     {isAdmin && (
                       <button
                         onClick={() => handleDeleteRate(rate.id)}
-                        className="p-2 rounded-lg hover:bg-red-50 text-red-500"
+                        className="p-2 rounded-lg hover:bg-[var(--av-danger-soft)] text-[var(--av-danger)]"
                       >
                         <Trash2 size={16} />
                       </button>

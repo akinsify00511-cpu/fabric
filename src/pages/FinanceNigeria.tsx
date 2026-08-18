@@ -357,11 +357,11 @@ export default function FinanceNigeria() {
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Overdue</p>
-          <p className="text-xl font-bold text-red-600">{formatCurrency(stats.overdueAmount)}</p>
+          <p className="text-xl font-bold text-[var(--av-danger)]">{formatCurrency(stats.overdueAmount)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Total Collected</p>
-          <p className="text-xl font-bold text-green-600">{formatCurrency(stats.totalPaid)}</p>
+          <p className="text-xl font-bold text-[var(--av-success)]">{formatCurrency(stats.totalPaid)}</p>
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">This Month</p>
@@ -458,7 +458,7 @@ export default function FinanceNigeria() {
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-mono text-black">{inv.invoice_number}</span>
                         {inv.is_proforma && (
-                          <span className="px-2 py-0.5 rounded text-xs bg-yellow-100 text-yellow-700">
+                          <span className="px-2 py-0.5 rounded text-xs bg-[var(--av-warning-soft)] text-[var(--av-warning)]">
                             Proforma
                           </span>
                         )}
@@ -469,10 +469,10 @@ export default function FinanceNigeria() {
                       )}
                     </div>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      inv.status === 'paid' ? 'bg-green-100 text-green-700' :
-                      inv.status === 'overdue' || isOverdue ? 'bg-red-100 text-red-700' :
-                      inv.status === 'partially_paid' ? 'bg-yellow-100 text-yellow-700' :
-                      inv.status === 'sent' ? 'bg-blue-100 text-blue-700' :
+                      inv.status === 'paid' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                      inv.status === 'overdue' || isOverdue ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
+                      inv.status === 'partially_paid' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
+                      inv.status === 'sent' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
                       'bg-white text-black'
                     }`}>
                       {isOverdue && inv.status !== 'paid' ? 'Overdue' : STATUS_LABELS[inv.status].label}
@@ -483,7 +483,7 @@ export default function FinanceNigeria() {
                     <div className="flex items-center gap-4">
                       <div className="text-sm">
                         <span className="text-black">Due: </span>
-                        <span className={isOverdue ? 'text-red-600 font-medium' : ''}>
+                        <span className={isOverdue ? 'text-[var(--av-danger)] font-medium' : ''}>
                           {new Date(inv.due_date).toLocaleDateString()}
                         </span>
                       </div>
@@ -525,7 +525,7 @@ export default function FinanceNigeria() {
             payments.map((pay) => (
               <div key={pay.id} className="p-4 flex items-center gap-3">
                 <span className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle2 size={14} className="text-green-600" />
+                  <CheckCircle2 size={14} className="text-[var(--av-success)]" />
                 </span>
                 <div className="flex-1">
                   <p className="font-medium">{formatCurrency(pay.amount)}</p>
@@ -652,7 +652,7 @@ export default function FinanceNigeria() {
                       <button
                         type="button"
                         onClick={() => removeInvoiceItem(index)}
-                        className="p-2 text-red-500"
+                        className="p-2 text-[var(--av-danger)]"
                       >
                         <X size={14} />
                       </button>
@@ -672,7 +672,7 @@ export default function FinanceNigeria() {
                   <span>{formatCurrency(totals.vatAmount)}</span>
                 </div>
                 {totals.whtAmount > 0 && (
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-[var(--av-danger)]">
                     <span>WHT (-5%)</span>
                     <span>-{formatCurrency(totals.whtAmount)}</span>
                   </div>
@@ -847,7 +847,7 @@ export default function FinanceNigeria() {
                   <span>{formatCurrency(selectedInvoice.vat_amount)}</span>
                 </div>
                 {selectedInvoice.wht_amount > 0 && (
-                  <div className="flex justify-between text-sm text-red-600">
+                  <div className="flex justify-between text-sm text-[var(--av-danger)]">
                     <span>WHT ({(selectedInvoice.wht_rate || 0) * 100}%)</span>
                     <span>-{formatCurrency(selectedInvoice.wht_amount)}</span>
                   </div>
@@ -856,11 +856,11 @@ export default function FinanceNigeria() {
                   <span>Total</span>
                   <span>{formatCurrency(selectedInvoice.total)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-green-600">
+                <div className="flex justify-between text-sm text-[var(--av-success)]">
                   <span>Paid</span>
                   <span>{formatCurrency(selectedInvoice.amount_paid)}</span>
                 </div>
-                <div className="flex justify-between font-semibold text-red-600">
+                <div className="flex justify-between font-semibold text-[var(--av-danger)]">
                   <span>Balance</span>
                   <span>{formatCurrency(selectedInvoice.balance)}</span>
                 </div>

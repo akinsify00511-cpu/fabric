@@ -375,7 +375,7 @@ export default function Quotes() {
                   >
                     <Download size={14} /> PDF
                   </button>
-                  <button onClick={() => deleteQuote(quote.id)} className="flex items-center gap-1 px-3 py-1.5 hover:bg-red-50 text-[var(--av-danger)] rounded-lg text-xs transition ml-auto">
+                  <button onClick={() => deleteQuote(quote.id)} className="flex items-center gap-1 px-3 py-1.5 hover:bg-[var(--av-danger-soft)] text-[var(--av-danger)] rounded-lg text-xs transition ml-auto">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -422,7 +422,7 @@ export default function Quotes() {
                       <input type="text" value={item.description} onChange={(e) => updateItem(index, 'description', e.target.value)} className="flex-1 rounded-lg border border-[var(--av-border-strong)] px-3 py-2 text-sm" placeholder="Description" />
                       <input type="number" value={item.quantity} onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)} className="w-20 rounded-lg border border-[var(--av-border-strong)] px-3 py-2 text-sm" placeholder="Qty" />
                       <input type="number" value={item.unit_price} onChange={(e) => updateItem(index, 'unit_price', parseInt(e.target.value) || 0)} className="w-32 rounded-lg border border-[var(--av-border-strong)] px-3 py-2 text-sm" placeholder="Price" />
-                      <button onClick={() => removeItem(index)} className="p-2 text-[var(--av-danger)] hover:bg-red-50 rounded-lg"><Trash2 size={16} /></button>
+                      <button onClick={() => removeItem(index)} className="p-2 text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded-lg"><Trash2 size={16} /></button>
                     </div>
                   ))}
                 </div>

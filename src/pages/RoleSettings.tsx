@@ -181,12 +181,12 @@ export default function RoleSettings() {
       <h1 className="text-xl font-medium text-black mb-6">Team Roles</h1>
 
       {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+      <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
-          <UserCog size={20} className="text-blue-600 shrink-0 mt-0.5" />
+          <UserCog size={20} className="text-[var(--av-primary)] shrink-0 mt-0.5" />
           <div>
             <p className="font-medium text-blue-800">Functional Role Management</p>
-            <p className="text-sm text-blue-700 mt-1">
+            <p className="text-sm text-[var(--av-primary)] mt-1">
               Define roles (like Sales, Marketing, Finance) and assign which tools each role can access. 
               Staff members can hold multiple roles - they'll see the union of all tools.
             </p>
@@ -210,7 +210,7 @@ export default function RoleSettings() {
             <button
               onClick={createRole}
               disabled={saving || !newRoleName.trim()}
-              className="p-2 bg-green-500 text-white rounded-lg disabled:opacity-50"
+              className="p-2 bg-[var(--av-success-soft)]0 text-white rounded-lg disabled:opacity-50"
             >
               <Check size={18} />
             </button>
@@ -267,7 +267,7 @@ export default function RoleSettings() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteRole(role.id); }}
-                    className="p-2 hover:bg-red-50 rounded-lg text-red-400"
+                    className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-red-400"
                     title="Delete role"
                   >
                     <Trash2 size={16} />

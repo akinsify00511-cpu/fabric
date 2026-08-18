@@ -318,7 +318,7 @@ export default function PublicAppointmentsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[var(--av-primary)]" />
       </div>
     )
   }
@@ -371,7 +371,7 @@ export default function PublicAppointmentsPage() {
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
+          <div className="mb-6 p-4 bg-[var(--av-danger-soft)] border border-[var(--av-danger)]/30 rounded-lg flex items-center gap-3 text-[var(--av-danger)]">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             {error}
           </div>
@@ -388,7 +388,7 @@ export default function PublicAppointmentsPage() {
                   onClick={() => setForm(prev => ({ ...prev, service_id: service.id }))}
                   className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
                     form.service_id === service.id
-                      ? 'border-blue-600 bg-blue-50'
+                      ? 'border-blue-600 bg-[var(--av-primary-soft)]'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -487,7 +487,7 @@ export default function PublicAppointmentsPage() {
                           : isSelected(date)
                           ? 'bg-blue-600 text-white'
                           : isToday(date)
-                          ? 'bg-blue-100 text-blue-600'
+                          ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
                           : 'hover:bg-gray-100'
                       }`}
                     >
@@ -629,7 +629,7 @@ export default function PublicAppointmentsPage() {
           <div className="max-w-lg mx-auto text-center">
             <div className="bg-white rounded-xl border border-gray-200 p-8">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="w-8 h-8 text-green-600" />
+                <CheckCircle2 className="w-8 h-8 text-[var(--av-success)]" />
               </div>
 
               <h2 className="text-xl font-semibold text-gray-900 mb-2">Booking Confirmed!</h2>

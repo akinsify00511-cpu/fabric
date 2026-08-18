@@ -38,9 +38,9 @@ const TRIGGER_TYPES = [
 ]
 
 const ACTION_TYPES = [
-  { value: 'send_email', label: 'Send Email', icon: Mail, color: 'bg-blue-100 text-blue-600' },
-  { value: 'send_notification', label: 'Send Notification', icon: Bell, color: 'bg-amber-100 text-amber-600' },
-  { value: 'update_record', label: 'Update Record', icon: Database, color: 'bg-green-100 text-green-600' },
+  { value: 'send_email', label: 'Send Email', icon: Mail, color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' },
+  { value: 'send_notification', label: 'Send Notification', icon: Bell, color: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' },
+  { value: 'update_record', label: 'Update Record', icon: Database, color: 'bg-[var(--av-success-soft)] text-[var(--av-success)]' },
   { value: 'create_task', label: 'Create Task', icon: FileText, color: 'bg-purple-100 text-purple-600' },
   { value: 'assign_user', label: 'Assign User', icon: User, color: 'bg-pink-100 text-pink-600' },
   { value: 'webhook', label: 'Webhook', icon: Zap, color: 'bg-[#4285F4]/10 text-[#4285F4]' },
@@ -236,7 +236,7 @@ export default function WorkflowBuilderPage() {
               <div className="p-4 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   workflow.is_active 
-                    ? 'bg-green-100 text-green-600' 
+                    ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' 
                     : 'bg-black/10 text-black'
                 }`}>
                   <Zap size={24} />
@@ -246,7 +246,7 @@ export default function WorkflowBuilderPage() {
                     <span className="font-medium">{workflow.name}</span>
                     <span className={`px-2 py-0.5 rounded text-xs ${
                       workflow.is_active 
-                        ? 'bg-green-100 text-green-600' 
+                        ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' 
                         : 'bg-black/10 text-black'
                     }`}>
                       {workflow.is_active ? 'Active' : 'Inactive'}
@@ -265,8 +265,8 @@ export default function WorkflowBuilderPage() {
                     onClick={() => handleToggleWorkflow(workflow)}
                     className={`p-2 rounded-lg ${
                       workflow.is_active 
-                        ? 'bg-amber-50 text-amber-500 hover:bg-amber-100' 
-                        : 'bg-green-50 text-green-500 hover:bg-green-100'
+                        ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)] hover:bg-amber-100' 
+                        : 'bg-[var(--av-success-soft)] text-[var(--av-success)] hover:bg-green-100'
                     }`}
                     title={workflow.is_active ? 'Pause' : 'Activate'}
                   >
@@ -280,7 +280,7 @@ export default function WorkflowBuilderPage() {
                   </button>
                   <button
                     onClick={() => handleDeleteWorkflow(workflow.id)}
-                    className="p-2 rounded-lg hover:bg-red-50 text-red-500"
+                    className="p-2 rounded-lg hover:bg-[var(--av-danger-soft)] text-[var(--av-danger)]"
                   >
                     <Trash2 size={18} />
                   </button>
@@ -290,7 +290,7 @@ export default function WorkflowBuilderPage() {
               {/* Last Error */}
               {workflow.last_error && (
                 <div className="px-4 pb-4">
-                  <div className="p-3 bg-red-50 rounded-lg flex items-center gap-2 text-red-600 text-sm">
+                  <div className="p-3 bg-[var(--av-danger-soft)] rounded-lg flex items-center gap-2 text-[var(--av-danger)] text-sm">
                     <AlertTriangle size={16} />
                     {workflow.last_error}
                   </div>
@@ -401,7 +401,7 @@ export default function WorkflowBuilderPage() {
                         </div>
                         <button
                           onClick={() => removeStep(step.id)}
-                          className="p-1.5 rounded hover:bg-red-50 text-red-500"
+                          className="p-1.5 rounded hover:bg-[var(--av-danger-soft)] text-[var(--av-danger)]"
                         >
                           <Trash2 size={16} />
                         </button>

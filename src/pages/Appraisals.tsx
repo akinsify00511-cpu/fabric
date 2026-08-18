@@ -352,7 +352,7 @@ export default function AppraisalsPage() {
           <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
-                <Star className="w-5 h-5 text-amber-600" />
+                <Star className="w-5 h-5 text-[var(--av-warning)]" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--av-text)]">{stats.avgRating}</p>
@@ -515,7 +515,7 @@ export default function AppraisalsPage() {
                         </button>
                         <button
                           onClick={() => deleteReview(review.id)}
-                          className="flex items-center gap-2 px-3 py-2 bg-red-50 text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
+                          className="flex items-center gap-2 px-3 py-2 bg-[var(--av-danger-soft)] text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
                         >
                           <Trash2 className="w-4 h-4" /> Delete
                         </button>

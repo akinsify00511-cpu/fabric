@@ -307,7 +307,7 @@ export default function Dashboard() {
     kpiCards.push({
       label: 'Low Stock', value: String(stats.lowStock), icon: Package,
       sub: stats.lowStock > 0 ? 'Needs reorder' : 'All healthy',
-      subColor: stats.lowStock > 0 ? 'text-amber-600' : 'text-emerald-600',
+      subColor: stats.lowStock > 0 ? 'text-[var(--av-warning)]' : 'text-emerald-600',
     })
   }
   if (hasPeople && !isSolo) {
@@ -323,7 +323,7 @@ export default function Dashboard() {
   kpiCards.push({
     label: 'Needs attention', value: String(totalAttention), icon: AlertTriangle,
     sub: totalAttention > 0 ? 'Across your tools' : 'All caught up',
-    subColor: totalAttention > 0 ? 'text-amber-600' : 'text-emerald-600',
+    subColor: totalAttention > 0 ? 'text-[var(--av-warning)]' : 'text-emerald-600',
   })
 
   // ── Adaptive primary metric (the pulse card) ────────────────────────
@@ -544,12 +544,12 @@ export default function Dashboard() {
                 <p className="text-xs uppercase tracking-wide text-slate-400">Attention</p>
                 <h2 className="mt-1 text-lg font-semibold">What needs you</h2>
               </div>
-              <CircleAlert size={19} className={attentionItems.length > 0 ? 'text-amber-500' : 'text-emerald-500'} />
+              <CircleAlert size={19} className={attentionItems.length > 0 ? 'text-[var(--av-warning)]' : 'text-emerald-500'} />
             </div>
             <div className="mt-4 space-y-2">
               {attentionItems.slice(0, 5).map(a => (
                 <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-slate-50">
-                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-amber-500'}`} />
+                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-[var(--av-warning-soft)]0'}`} />
                   <span className="min-w-0 flex-1 truncate text-sm">{a.label}</span>
                   <ArrowRight size={15} className="text-slate-400" />
                 </Link>

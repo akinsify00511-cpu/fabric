@@ -34,13 +34,13 @@ const notificationIcons: Record<string, any> = {
 }
 
 const notificationColors: Record<string, string> = {
-  invoice: 'bg-blue-500',
-  payment: 'bg-green-500',
+  invoice: 'bg-[var(--av-primary-soft)]0',
+  payment: 'bg-[var(--av-success-soft)]0',
   leave: 'bg-purple-500',
-  task: 'bg-amber-500',
+  task: 'bg-[var(--av-warning-soft)]0',
   mention: 'bg-[#4285F4]',
   reminder: 'bg-cyan-500',
-  alert: 'bg-red-500',
+  alert: 'bg-[var(--av-danger-soft)]0',
   staff: 'bg-pink-500',
 }
 
@@ -205,7 +205,7 @@ export default function NotificationsCenterPage() {
                 <div
                   key={notification.id}
                   className={`p-4 hover:bg-black/10 transition ${
-                    !notification.is_read ? 'bg-blue-50/50' : ''
+                    !notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''
                   }`}
                 >
                   <div className="flex items-start gap-4">
@@ -218,7 +218,7 @@ export default function NotificationsCenterPage() {
                           {notification.title}
                         </span>
                         {!notification.is_read && (
-                          <span className="w-2 h-2 rounded-full bg-blue-500" />
+                          <span className="w-2 h-2 rounded-full bg-[var(--av-primary-soft)]0" />
                         )}
                       </div>
                       {notification.message && (
@@ -241,10 +241,10 @@ export default function NotificationsCenterPage() {
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
-                        className="p-2 hover:bg-red-50 rounded-lg"
+                        className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg"
                         title="Delete"
                       >
-                        <Trash2 size={16} className="text-red-500" />
+                        <Trash2 size={16} className="text-[var(--av-danger)]" />
                       </button>
                     </div>
                   </div>
@@ -304,7 +304,7 @@ export function NotificationBadge({ className = '' }: { className?: string }) {
 
   return (
     <div className={`relative ${className}`}>
-      <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+      <div className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--av-danger-soft)]0 rounded-full flex items-center justify-center">
         <span className="text-[10px] text-white font-bold">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>

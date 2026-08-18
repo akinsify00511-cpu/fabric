@@ -22,14 +22,14 @@ export default function CookiePolicy() {
           {/* Title */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
-              <Cookie className="w-8 h-8 text-amber-600" />
+              <Cookie className="w-8 h-8 text-[var(--av-warning)]" />
             </div>
             <h1 className="text-3xl font-bold text-black mb-2">Cookie Policy</h1>
             <p className="text-black">Last updated: August 3, 2026</p>
           </div>
 
           {/* Quick Summary */}
-          <div className="bg-blue-50 rounded-xl p-4 mb-8">
+          <div className="bg-[var(--av-primary-soft)] rounded-xl p-4 mb-8">
             <p className="text-blue-800 text-sm">
               <strong>TL;DR:</strong> We use cookies to improve your experience. You can manage your preferences below.
               We don't sell cookies to third parties.

@@ -122,7 +122,7 @@ export default function Merit() {
           <h1 className="text-xl font-medium text-[var(--av-text)]">Merit Points</h1>
           <p className="text-sm text-[var(--av-text)] mt-0.5">Recognize and reward great work</p>
         </div>
-        <div className="flex items-center gap-1.5 bg-yellow-50 text-[var(--av-warning)] px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-1.5 bg-[var(--av-warning-soft)] text-[var(--av-warning)] px-3 py-1.5 rounded-full">
           <Star size={14} />
           <span className="text-sm font-medium">
             {leaderboard.reduce((sum, e) => sum + e.total_points, 0)} total awarded
@@ -279,7 +279,7 @@ export default function Merit() {
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
                   index === 0 ? 'avenize-gradient text-white' :
                   index === 1 ? 'bg-[var(--av-surface)] text-[var(--av-text)]' :
-                  index === 2 ? 'bg-amber-100 text-amber-700' :
+                  index === 2 ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
                   'bg-black/[0.05] text-[var(--av-text)]'
                 }`}>
                   {index + 1}

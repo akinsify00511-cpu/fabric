@@ -238,10 +238,10 @@ export default function DataExportPage() {
   }
 
   const statusConfig: Record<string, { icon: any; color: string; text: string }> = {
-    pending: { icon: Clock, color: 'text-amber-500 bg-amber-50', text: 'Pending' },
-    processing: { icon: RefreshCw, color: 'text-blue-500 bg-blue-50', text: 'Processing' },
-    completed: { icon: CheckCircle, color: 'text-green-500 bg-green-50', text: 'Completed' },
-    failed: { icon: XCircle, color: 'text-red-500 bg-red-50', text: 'Failed' },
+    pending: { icon: Clock, color: 'text-[var(--av-warning)] bg-[var(--av-warning-soft)]', text: 'Pending' },
+    processing: { icon: RefreshCw, color: 'text-blue-500 bg-[var(--av-primary-soft)]', text: 'Processing' },
+    completed: { icon: CheckCircle, color: 'text-[var(--av-success)] bg-[var(--av-success-soft)]', text: 'Completed' },
+    failed: { icon: XCircle, color: 'text-[var(--av-danger)] bg-[var(--av-danger-soft)]', text: 'Failed' },
   }
 
   return (
@@ -312,7 +312,7 @@ export default function DataExportPage() {
               return (
                 <div key={exp.id} className="p-4 hover:bg-black/10 transition">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--av-primary-soft)] flex items-center justify-center">
                       <Icon size={24} className="text-blue-500" />
                     </div>
                     <div className="flex-1">
@@ -401,7 +401,7 @@ export default function DataExportPage() {
               </div>
 
               {/* Note */}
-              <div className="p-4 bg-amber-50 rounded-xl">
+              <div className="p-4 bg-[var(--av-warning-soft)] rounded-xl">
                 <p className="text-sm text-amber-800">
                   <strong>Note:</strong> Exports are stored for 7 days. Large exports may take a few minutes to process.
                 </p>

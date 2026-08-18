@@ -45,7 +45,7 @@ export default function PersonalizationHub() {
       <div className="p-4">
         <div className="flex items-start gap-3 mb-4">
           <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-            <Sparkles size={24} className="text-amber-500" />
+            <Sparkles size={24} className="text-[var(--av-warning)]" />
           </div>
           <div>
             <p className="text-sm font-medium mb-1">Based on your activity</p>
@@ -172,7 +172,7 @@ export function UserInsightsPanel() {
               key={achievement.key}
               className={`aspect-square rounded-xl flex items-center justify-center ${
                 achievement.unlocked 
-                  ? 'bg-amber-100 text-amber-600' 
+                  ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' 
                   : 'bg-black/10 text-black'
               }`}
               title={achievement.name}
@@ -229,7 +229,7 @@ export function ActivityStreak({ streak }: { streak: number }) {
   if (streak < 2) return null
 
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full text-sm">
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--av-warning-soft)] text-[var(--av-warning)] rounded-full text-sm">
       <Flame size={14} />
       <span className="font-medium">{streak} day streak!</span>
     </div>
@@ -282,12 +282,12 @@ export function AchievementCelebration({ achievement, onDismiss }: { achievement
           <Award size={40} className="text-white" />
         </div>
         
-        <div className="text-amber-500 text-sm font-medium mb-1">Achievement Unlocked!</div>
+        <div className="text-[var(--av-warning)] text-sm font-medium mb-1">Achievement Unlocked!</div>
         <h2 className="text-2xl font-bold mb-2">{achievement.name}</h2>
         <p className="text-black/60 mb-4">{achievement.description}</p>
         
         <div className="flex items-center justify-center gap-2 mb-6">
-          <Star size={16} className="text-amber-500 fill-amber-500" />
+          <Star size={16} className="text-[var(--av-warning)] fill-amber-500" />
           <span className="font-bold text-lg">+{achievement.points} points</span>
         </div>
         

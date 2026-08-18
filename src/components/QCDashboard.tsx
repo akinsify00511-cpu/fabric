@@ -116,13 +116,13 @@ export default function QCDashboard() {
             </button>
             <button
               onClick={reportIssue}
-              className="px-3 py-1.5 rounded-lg bg-red-100 text-red-600 text-sm font-medium hover:bg-red-200"
+              className="px-3 py-1.5 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium hover:bg-red-200"
             >
               Report Issue
             </button>
             <button
               onClick={clearAll}
-              className="p-2 rounded-lg hover:bg-black/10 text-red-500"
+              className="p-2 rounded-lg hover:bg-black/10 text-[var(--av-danger)]"
               title="Clear All Data"
             >
               <Trash2 size={18} />
@@ -222,18 +222,18 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
               key={check.key}
               className={`p-4 rounded-xl border-2 ${
                 isHealthy 
-                  ? 'border-green-200 bg-green-50' 
+                  ? 'border-[var(--av-success)]/30 bg-[var(--av-success-soft)]' 
                   : status?.[check.key] === false 
-                    ? 'border-red-200 bg-red-50' 
+                    ? 'border-[var(--av-danger)]/30 bg-[var(--av-danger-soft)]' 
                     : 'border-black bg-white'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
                 {check.icon}
                 {isHealthy ? (
-                  <CheckCircle size={18} className="text-green-500" />
+                  <CheckCircle size={18} className="text-[var(--av-success)]" />
                 ) : status?.[check.key] === false ? (
-                  <XCircle size={18} className="text-red-500" />
+                  <XCircle size={18} className="text-[var(--av-danger)]" />
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-black" />
                 )}
@@ -264,9 +264,9 @@ function HealthTab({ status, onCheck }: { status: any; onCheck: () => void }) {
 function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; stats: any; filterLevel: string; onFilterChange: (level: string) => void }) {
   const levelColors: Record<string, string> = {
     debug: 'bg-white text-black',
-    info: 'bg-blue-100 text-blue-600',
-    warn: 'bg-amber-100 text-amber-600',
-    error: 'bg-red-100 text-red-600',
+    info: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    warn: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    error: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
     critical: 'bg-red-200 text-red-800 font-bold',
   }
 
@@ -332,8 +332,8 @@ function LogsTab({ logs, stats, filterLevel, onFilterChange }: { logs: any[]; st
               )}
               {log.error && (
                 <details className="mt-2">
-                  <summary className="text-xs text-red-500 cursor-pointer">Error</summary>
-                  <pre className="mt-1 p-2 bg-red-50 rounded text-xs overflow-x-auto">
+                  <summary className="text-xs text-[var(--av-danger)] cursor-pointer">Error</summary>
+                  <pre className="mt-1 p-2 bg-[var(--av-danger-soft)] rounded text-xs overflow-x-auto">
                     {log.error.stack || `${log.error.name}: ${log.error.message}`}
                   </pre>
                 </details>
@@ -368,13 +368,13 @@ function PerformanceTab() {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-black/10 rounded-xl">
           <div className="text-sm text-black mb-1">Average API Response</div>
-          <div className={`text-2xl font-bold ${avgApi > 3000 ? 'text-red-500' : avgApi > 1000 ? 'text-amber-500' : 'text-green-500'}`}>
+          <div className={`text-2xl font-bold ${avgApi > 3000 ? 'text-[var(--av-danger)]' : avgApi > 1000 ? 'text-[var(--av-warning)]' : 'text-[var(--av-success)]'}`}>
             {Math.round(avgApi)}ms
           </div>
         </div>
         <div className="p-4 bg-black/10 rounded-xl">
           <div className="text-sm text-black mb-1">Average Render Time</div>
-          <div className={`text-2xl font-bold ${avgRender > 500 ? 'text-red-500' : avgRender > 100 ? 'text-amber-500' : 'text-green-500'}`}>
+          <div className={`text-2xl font-bold ${avgRender > 500 ? 'text-[var(--av-danger)]' : avgRender > 100 ? 'text-[var(--av-warning)]' : 'text-[var(--av-success)]'}`}>
             {Math.round(avgRender)}ms
           </div>
         </div>
@@ -386,8 +386,8 @@ function PerformanceTab() {
           <div key={i} className="flex items-center justify-between p-2 bg-black/[0.02] rounded">
             <span className="text-sm font-mono">{metric.name.replace('_api', '')}</span>
             <span className={`text-sm font-mono ${
-              metric.value > 3000 ? 'text-red-500' : 
-              metric.value > 1000 ? 'text-amber-500' : 'text-green-500'
+              metric.value > 3000 ? 'text-[var(--av-danger)]' : 
+              metric.value > 1000 ? 'text-[var(--av-warning)]' : 'text-[var(--av-success)]'
             }`}>
               {Math.round(metric.value)}ms
             </span>
@@ -400,16 +400,16 @@ function PerformanceTab() {
 
 function ReportsTab({ reports }: { reports: any[] }) {
   const severityColors: Record<string, string> = {
-    low: 'bg-blue-100 text-blue-600',
-    medium: 'bg-amber-100 text-amber-600',
+    low: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    medium: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
     high: 'bg-orange-100 text-orange-600',
-    critical: 'bg-red-100 text-red-600',
+    critical: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   }
 
   const statusIcons: Record<string, React.ReactNode> = {
-    open: <AlertCircle size={14} className="text-amber-500" />,
+    open: <AlertCircle size={14} className="text-[var(--av-warning)]" />,
     investigating: <RefreshCw size={14} className="text-blue-500" />,
-    fixed: <CheckCircle size={14} className="text-green-500" />,
+    fixed: <CheckCircle size={14} className="text-[var(--av-success)]" />,
     wontfix: <XCircle size={14} className="text-black" />,
   }
 

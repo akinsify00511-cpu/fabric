@@ -206,7 +206,7 @@ export default function CookieConsent() {
             <div className="bg-white rounded-2xl shadow-2xl border border-black/5 p-6 animate-slide-up">
               <div className="flex items-start gap-4">
                 <div className="hidden sm:flex items-center justify-center w-12 h-12 bg-amber-100 rounded-full shrink-0">
-                  <Cookie className="w-6 h-6 text-amber-600" />
+                  <Cookie className="w-6 h-6 text-[var(--av-warning)]" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-black mb-1">

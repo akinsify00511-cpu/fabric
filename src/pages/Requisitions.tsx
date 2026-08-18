@@ -374,7 +374,7 @@ export default function Requisitions() {
                   {req.status === 'draft' && (
                     <button
                       onClick={() => handleSubmitForApproval(req)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-[var(--av-primary)] text-sm"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] text-sm"
                     >
                       <Send size={14} />
                       Submit
@@ -395,7 +395,7 @@ export default function Requisitions() {
                     <>
                       <button
                         onClick={() => handleApprove(req)}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-[var(--av-success)] text-sm"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--av-success-soft)] text-[var(--av-success)] text-sm"
                       >
                         <CheckCircle2 size={14} />
                         Approve
@@ -405,7 +405,7 @@ export default function Requisitions() {
                           const reason = prompt('Denial reason:')
                           if (reason) handleDeny(req, reason)
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-[var(--av-danger)] text-sm"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm"
                       >
                         <XCircle size={14} />
                         Deny
@@ -423,7 +423,7 @@ export default function Requisitions() {
 
                 {/* Denial reason */}
                 {req.status === 'denied' && req.denial_reason && (
-                  <div className="mt-3 p-3 rounded-lg bg-red-50 text-[var(--av-danger)] text-sm">
+                  <div className="mt-3 p-3 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm">
                     <strong>Denial reason:</strong> {req.denial_reason}
                   </div>
                 )}
@@ -605,7 +605,7 @@ export default function Requisitions() {
               )}
 
               {selectedReq.status === 'denied' && selectedReq.denial_reason && (
-                <div className="p-4 rounded-xl bg-red-50">
+                <div className="p-4 rounded-xl bg-[var(--av-danger-soft)]">
                   <p className="text-sm text-[var(--av-danger)] font-medium mb-1">Denial Reason</p>
                   <p className="text-sm text-[var(--av-danger)]">{selectedReq.denial_reason}</p>
                 </div>

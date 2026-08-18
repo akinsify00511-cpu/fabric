@@ -256,12 +256,12 @@ export default function APIKeysPage() {
 
       <div className="p-6">
         {/* Info Banner */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+        <div className="bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4 mb-6">
           <div className="flex gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-[var(--av-warning)] flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-amber-900">Security Notice</p>
-              <p className="text-sm text-amber-700 mt-1">
+              <p className="text-sm text-[var(--av-warning)] mt-1">
                 API keys are only shown once when created. Store them securely and never share them publicly.
               </p>
             </div>
@@ -348,7 +348,7 @@ export default function APIKeysPage() {
                           {apiKey.is_active ? 'Active' : 'Inactive'}
                         </span>
                         {apiKey.needs_rotation && (
-                          <span className="ml-1 px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700" title="This key was stored insecurely (plaintext) before the hashing fix. Regenerate it.">
+                          <span className="ml-1 px-2 py-1 text-xs rounded-full bg-[var(--av-warning-soft)] text-[var(--av-warning)]" title="This key was stored insecurely (plaintext) before the hashing fix. Regenerate it.">
                             Rotate
                           </span>
                         )}
@@ -359,8 +359,8 @@ export default function APIKeysPage() {
                             onClick={() => toggleAPIKey(apiKey)}
                             className={`p-1.5 rounded ${
                               apiKey.is_active
-                                ? 'text-amber-600 hover:bg-amber-50'
-                                : 'text-[var(--av-success)] hover:bg-green-50'
+                                ? 'text-[var(--av-warning)] hover:bg-[var(--av-warning-soft)]'
+                                : 'text-[var(--av-success)] hover:bg-[var(--av-success-soft)]'
                             }`}
                             title={apiKey.is_active ? 'Disable' : 'Enable'}
                           >
@@ -369,7 +369,7 @@ export default function APIKeysPage() {
                           {canManage && (
                             <button
                               onClick={() => deleteAPIKey(apiKey.id)}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -410,7 +410,7 @@ export default function APIKeysPage() {
 
             {newlyCreatedKey ? (
               <div className="p-6 space-y-4">
-                <div className="bg-green-50 border border-[var(--av-success-soft)] rounded-lg p-4">
+                <div className="bg-[var(--av-success-soft)] border border-[var(--av-success-soft)] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
                     <p className="font-medium text-[var(--av-success)]">API Key Created</p>

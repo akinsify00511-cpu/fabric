@@ -58,7 +58,7 @@ interface Staff {
 const STATUS_COLORS = {
   draft: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
   calculated: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
-  approved: 'bg-amber-100 text-amber-700',
+  approved: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   paid: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
 }
 
@@ -324,7 +324,7 @@ export default function PayrollPage() {
           <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
-                <Clock className="w-5 h-5 text-amber-600" />
+                <Clock className="w-5 h-5 text-[var(--av-warning)]" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-[var(--av-text)]">{stats.pendingRuns}</p>
@@ -432,7 +432,7 @@ export default function PayrollPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => viewRunDetails(run)}
-                            className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
+                            className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-[var(--av-primary-soft)] rounded"
                             title="View details"
                           >
                             <Eye className="w-4 h-4" />
@@ -440,7 +440,7 @@ export default function PayrollPage() {
                           {run.status === 'draft' && canManage && (
                             <button
                               onClick={() => updateRunStatus(run, 'calculated')}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-amber-600 hover:bg-amber-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-warning)] hover:bg-[var(--av-warning-soft)] rounded"
                               title="Calculate"
                             >
                               <FileText className="w-4 h-4" />
@@ -449,7 +449,7 @@ export default function PayrollPage() {
                           {run.status === 'calculated' && canApprove && (
                             <button
                               onClick={() => updateRunStatus(run, 'approved')}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-[var(--av-success-soft)] rounded"
                               title="Approve"
                             >
                               <CheckCircle2 className="w-4 h-4" />
@@ -467,7 +467,7 @@ export default function PayrollPage() {
                           {run.status === 'draft' && canManage && (
                             <button
                               onClick={() => deleteRun(run.id)}
-                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] rounded"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -558,11 +558,11 @@ export default function PayrollPage() {
                   <p className="text-xs text-[var(--av-text-muted)] uppercase">Gross Pay</p>
                   <p className="text-xl font-bold text-[var(--av-text)]">{formatCurrency(selectedRun.total_gross || 0)}</p>
                 </div>
-                <div className="bg-red-50 rounded-lg p-4">
+                <div className="bg-[var(--av-danger-soft)] rounded-lg p-4">
                   <p className="text-xs text-[var(--av-text-muted)] uppercase">Deductions</p>
                   <p className="text-xl font-bold text-[var(--av-danger)]">-{formatCurrency(selectedRun.total_deductions || 0)}</p>
                 </div>
-                <div className="bg-green-50 rounded-lg p-4">
+                <div className="bg-[var(--av-success-soft)] rounded-lg p-4">
                   <p className="text-xs text-[var(--av-text-muted)] uppercase">Net Pay</p>
                   <p className="text-xl font-bold text-[var(--av-success)]">{formatCurrency(selectedRun.total_net || 0)}</p>
                 </div>

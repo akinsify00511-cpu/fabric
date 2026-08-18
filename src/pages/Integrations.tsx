@@ -48,17 +48,17 @@ export default function Integrations() {
   const [socialPlatforms, setSocialPlatforms] = useState<SocialPlatform[]>([
     { id: '1', platform: 'instagram', name: 'Instagram', icon: '📸', color: 'bg-pink-500', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
     { id: '2', platform: 'linkedin', name: 'LinkedIn', icon: '💼', color: 'bg-blue-600', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
-    { id: '3', platform: 'facebook', name: 'Facebook', icon: '👥', color: 'bg-blue-500', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
+    { id: '3', platform: 'facebook', name: 'Facebook', icon: '👥', color: 'bg-[var(--av-primary-soft)]0', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
     { id: '4', platform: 'twitter', name: 'X (Twitter)', icon: '🐦', color: 'bg-black', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
     { id: '5', platform: 'tiktok', name: 'TikTok', icon: '🎵', color: 'bg-pink-600', connected: false, connected_at: null, account_name: null, account_id: null, followers_count: null },
   ])
 
   // SMS providers state
   const [smsProviders, setSmsProviders] = useState<SMSProvider[]>([
-    { id: '1', provider: 'twilio', name: 'Twilio', icon: '📱', color: 'bg-red-500', connected: false, configured_at: null, phone_number: null, sender_id: null },
-    { id: '2', provider: 'africastalking', name: 'Africa\'s Talking', icon: '🌍', color: 'bg-green-500', connected: false, configured_at: null, phone_number: null, sender_id: null },
+    { id: '1', provider: 'twilio', name: 'Twilio', icon: '📱', color: 'bg-[var(--av-danger-soft)]0', connected: false, configured_at: null, phone_number: null, sender_id: null },
+    { id: '2', provider: 'africastalking', name: 'Africa\'s Talking', icon: '🌍', color: 'bg-[var(--av-success-soft)]0', connected: false, configured_at: null, phone_number: null, sender_id: null },
     { id: '3', provider: 'termii', name: 'Termii', icon: '📲', color: 'bg-purple-500', connected: false, configured_at: null, phone_number: null, sender_id: null },
-    { id: '4', provider: 'vonage', name: 'Vonage', icon: '📞', color: 'bg-blue-500', connected: false, configured_at: null, phone_number: null, sender_id: null },
+    { id: '4', provider: 'vonage', name: 'Vonage', icon: '📞', color: 'bg-[var(--av-primary-soft)]0', connected: false, configured_at: null, phone_number: null, sender_id: null },
   ])
 
   // Twilio config form
@@ -393,12 +393,12 @@ export default function Integrations() {
 
       {activeTab === 'social' && (
         <div className="space-y-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <div className="bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
-              <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+              <AlertCircle size={20} className="text-[var(--av-warning)] shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-amber-800">Coming Soon</p>
-                <p className="text-sm text-amber-700 mt-1">
+                <p className="text-sm text-[var(--av-warning)] mt-1">
                   Social media integrations are in development. OAuth connections will allow you to post directly to your social accounts and view analytics.
                 </p>
               </div>
@@ -415,7 +415,7 @@ export default function Integrations() {
                   <div className="flex items-center gap-2">
                     <p className="font-medium">{platform.name}</p>
                     {platform.connected && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-600 text-xs">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)] text-xs">
                         <Check size={12} />
                         Connected
                       </span>
@@ -441,7 +441,7 @@ export default function Integrations() {
                       </button>
                       <button
                         onClick={() => disconnectSocialPlatform(platform)}
-                        className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                        className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                         title="Disconnect"
                       >
                         <Trash2 size={18} />
@@ -465,12 +465,12 @@ export default function Integrations() {
 
       {activeTab === 'sms' && (
         <div className="space-y-4">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <div className="bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
-              <AlertCircle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+              <AlertCircle size={20} className="text-[var(--av-warning)] shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-amber-800">Configuration Required</p>
-                <p className="text-sm text-amber-700 mt-1">
+                <p className="text-sm text-[var(--av-warning)] mt-1">
                   Enter your SMS provider credentials below to enable SMS sending. Your credentials are encrypted and stored securely.
                 </p>
               </div>
@@ -487,7 +487,7 @@ export default function Integrations() {
                   <div className="flex items-center gap-2">
                     <p className="font-medium">{provider.name}</p>
                     {provider.connected && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-600 text-xs">
+                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)] text-xs">
                         <Check size={12} />
                         Connected
                       </span>
@@ -506,7 +506,7 @@ export default function Integrations() {
                   {provider.connected ? (
                     <button
                       onClick={() => disconnectSmsProvider(provider)}
-                      className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                      className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                       title="Disconnect"
                     >
                       <Trash2 size={18} />
@@ -533,12 +533,12 @@ export default function Integrations() {
 
       {activeTab === 'email' && (
         <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+          <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-xl p-4 mb-6">
             <div className="flex items-start gap-3">
-              <Mail size={20} className="text-blue-600 shrink-0 mt-0.5" />
+              <Mail size={20} className="text-[var(--av-primary)] shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium text-blue-800">Transactional Email</p>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="text-sm text-[var(--av-primary)] mt-1">
                   Avenize sends notifications, signature requests, and invoices via email. Connect a Resend account to deliver these from your own domain. Without a key, email notifications are queued but never sent.
                 </p>
               </div>
@@ -554,7 +554,7 @@ export default function Integrations() {
                 <div className="flex items-center gap-2">
                   <p className="font-medium">Resend</p>
                   {emailConfigLoaded && emailConfig.resendApiKey ? (
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-600 text-xs">
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)] text-xs">
                       <Check size={12} />
                       Connected
                     </span>

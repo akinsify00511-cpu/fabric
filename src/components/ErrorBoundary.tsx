@@ -68,7 +68,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <div className="min-h-[400px] flex items-center justify-center p-8">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle size={32} className="text-red-500" />
+              <AlertTriangle size={32} className="text-[var(--av-danger)]" />
             </div>
             <h2 className="text-xl font-bold text-black mb-2">Something went wrong</h2>
             <p className="text-black mb-6">
@@ -101,11 +101,11 @@ export default class ErrorBoundary extends Component<Props, State> {
 
             {/* Show detailed error in dev mode */}
             {import.meta.env.DEV && this.state.error && (
-              <details className="mt-6 p-4 bg-red-50 rounded-lg text-left">
-                <summary className="text-xs font-medium text-red-600 cursor-pointer">
+              <details className="mt-6 p-4 bg-[var(--av-danger-soft)] rounded-lg text-left">
+                <summary className="text-xs font-medium text-[var(--av-danger)] cursor-pointer">
                   Technical Details
                 </summary>
-                <pre className="mt-2 p-2 bg-white rounded text-xs text-red-700 overflow-x-auto max-h-40">
+                <pre className="mt-2 p-2 bg-white rounded text-xs text-[var(--av-danger)] overflow-x-auto max-h-40">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack?.split('\n').slice(0, 8).join('\n')}

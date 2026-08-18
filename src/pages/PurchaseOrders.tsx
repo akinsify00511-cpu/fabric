@@ -421,7 +421,7 @@ export default function PurchaseOrders() {
                             <button onClick={() => openEdit(po)} className="flex items-center gap-1 px-3 py-1.5 border border-black/10 rounded-lg text-sm font-medium hover:bg-black/5 transition">
                               <Edit size={14} /> Edit
                             </button>
-                            <button onClick={() => remove(po)} className="flex items-center gap-1 px-3 py-1.5 border border-red-200 text-red-500 rounded-lg text-sm font-medium hover:bg-red-50 transition">
+                            <button onClick={() => remove(po)} className="flex items-center gap-1 px-3 py-1.5 border border-[var(--av-danger)]/30 text-[var(--av-danger)] rounded-lg text-sm font-medium hover:bg-[var(--av-danger-soft)] transition">
                               <Trash2 size={14} /> Delete
                             </button>
                           </>
@@ -514,8 +514,8 @@ export default function PurchaseOrders() {
                     {fmtMoney(Number(line.quantity) * Number(line.unit_price))}
                   </span>
                   {form.lines.length > 1 && (
-                    <button type="button" onClick={() => removeLine(idx)} className="p-2 hover:bg-red-50 rounded-lg transition">
-                      <X size={16} className="text-red-500" />
+                    <button type="button" onClick={() => removeLine(idx)} className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg transition">
+                      <X size={16} className="text-[var(--av-danger)]" />
                     </button>
                   )}
                 </div>

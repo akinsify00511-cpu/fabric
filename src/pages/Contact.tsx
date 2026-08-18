@@ -50,7 +50,7 @@ export default function Contact() {
           // Success State
           <div className="bg-white rounded-2xl border border-black/5 p-12 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+              <CheckCircle className="w-8 h-8 text-[var(--av-success)]" />
             </div>
             <h2 className="text-2xl font-bold text-black mb-2">Message Sent!</h2>
             <p className="text-black mb-6 max-w-md mx-auto">

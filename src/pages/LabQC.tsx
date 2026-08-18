@@ -134,15 +134,15 @@ export default function LabQC() {
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    sample.status === 'reported' ? 'bg-green-500/10' :
-                    sample.status === 'completed' ? 'bg-blue-500/10' :
-                    sample.status === 'testing' ? 'bg-amber-500/10' :
+                    sample.status === 'reported' ? 'bg-[var(--av-success-soft)]0/10' :
+                    sample.status === 'completed' ? 'bg-[var(--av-primary-soft)]0/10' :
+                    sample.status === 'testing' ? 'bg-[var(--av-warning-soft)]0/10' :
                     'bg-white0/10'
                   }`}>
                     <FlaskConical size={24} className={
-                      sample.status === 'reported' ? 'text-green-500' :
+                      sample.status === 'reported' ? 'text-[var(--av-success)]' :
                       sample.status === 'completed' ? 'text-blue-500' :
-                      sample.status === 'testing' ? 'text-amber-500' :
+                      sample.status === 'testing' ? 'text-[var(--av-warning)]' :
                       'text-black'
                     } />
                   </div>
@@ -154,9 +154,9 @@ export default function LabQC() {
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full capitalize ${
-                  sample.status === 'reported' ? 'bg-green-100 text-green-700' :
-                  sample.status === 'completed' ? 'bg-blue-100 text-blue-700' :
-                  sample.status === 'testing' ? 'bg-amber-100 text-amber-700' :
+                  sample.status === 'reported' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                  sample.status === 'completed' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
+                  sample.status === 'testing' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
                   'bg-white text-black'
                 }`}>
                   {sample.status}

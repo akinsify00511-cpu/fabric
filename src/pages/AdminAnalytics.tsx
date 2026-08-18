@@ -99,7 +99,7 @@ export default function AdminAnalytics() {
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <AlertTriangle size={48} className="text-amber-500 mb-4" />
+        <AlertTriangle size={48} className="text-[var(--av-warning)] mb-4" />
         <h1 className="text-xl font-bold text-black mb-2">Access Restricted</h1>
         <p className="text-black">This page is only visible to administrators.</p>
       </div>
@@ -120,11 +120,11 @@ export default function AdminAnalytics() {
   }
 
   const categoryColors: Record<string, string> = {
-    page_view: 'bg-blue-100 text-blue-600',
-    user_action: 'bg-green-100 text-green-600',
+    page_view: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+    user_action: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
     feature_usage: 'bg-purple-100 text-purple-600',
-    search: 'bg-amber-100 text-amber-600',
-    error: 'bg-red-100 text-red-600',
+    search: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
+    error: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
     payment: 'bg-emerald-100 text-emerald-600',
     notification: 'bg-[#4285F4]/10 text-[#4285F4]',
     auth: 'bg-white text-black',
@@ -196,21 +196,21 @@ export default function AdminAnalytics() {
           value={analytics?.totalEvents?.toLocaleString() || '0'}
           subtitle={`Last ${timeRange} days`}
           icon={<Activity size={20} />}
-          color="bg-blue-500"
+          color="bg-[var(--av-primary-soft)]0"
         />
         <SummaryCard
           title="Active Users"
           value={new Set(recentEvents.map(e => e.user_id)).size.toString()}
           subtitle="Unique users"
           icon={<Users size={20} />}
-          color="bg-green-500"
+          color="bg-[var(--av-success-soft)]0"
         />
         <SummaryCard
           title="Errors"
           value={analytics?.errorCount?.toString() || '0'}
           subtitle={analytics?.totalEvents ? `${((analytics.errorCount / analytics.totalEvents) * 100).toFixed(2)}%` : '0%'}
           icon={<AlertTriangle size={20} />}
-          color="bg-red-500"
+          color="bg-[var(--av-danger-soft)]0"
         />
         <SummaryCard
           title="Avg Events/User"
@@ -340,7 +340,7 @@ export default function AdminAnalytics() {
               {analytics?.topFeatures.map((feature, i) => (
                 <div key={feature.action} className="flex items-center gap-4 p-3 bg-black/[0.02] rounded-xl">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold ${
-                    i === 0 ? 'bg-amber-500' : i === 1 ? 'bg-black' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black'
+                    i === 0 ? 'bg-[var(--av-warning-soft)]0' : i === 1 ? 'bg-black' : i === 2 ? 'bg-amber-700' : 'bg-black/10 text-black'
                   }`}>
                     #{i + 1}
                   </div>

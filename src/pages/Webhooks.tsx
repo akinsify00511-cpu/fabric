@@ -312,7 +312,7 @@ export default function WebhooksPage() {
 
       <div className="p-6">
         {/* Info Banner */}
-        <div className="bg-blue-50 border border-[var(--av-primary-soft)] rounded-xl p-4 mb-6">
+        <div className="bg-[var(--av-primary-soft)] border border-[var(--av-primary-soft)] rounded-xl p-4 mb-6">
           <div className="flex gap-3">
             <Zap className="w-5 h-5 text-[var(--av-primary)] flex-shrink-0 mt-0.5" />
             <div>
@@ -414,7 +414,7 @@ export default function WebhooksPage() {
                         <h3 className="font-medium text-[var(--av-text)]">{webhook.name}</h3>
                         <span className={`px-2 py-0.5 text-xs rounded-full ${
                           webhook.status === 'active' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
-                          webhook.status === 'paused' ? 'bg-amber-100 text-amber-700' :
+                          webhook.status === 'paused' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
                           'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                         }`}>
                           {webhook.status}
@@ -434,7 +434,7 @@ export default function WebhooksPage() {
                       {canManage && (
                         <button
                           onClick={(e) => { e.stopPropagation(); toggleWebhook(webhook) }}
-                          className={`p-2 rounded-lg ${webhook.is_active ? 'text-amber-600 hover:bg-amber-50' : 'text-[var(--av-success)] hover:bg-green-50'}`}
+                          className={`p-2 rounded-lg ${webhook.is_active ? 'text-[var(--av-warning)] hover:bg-[var(--av-warning-soft)]' : 'text-[var(--av-success)] hover:bg-[var(--av-success-soft)]'}`}
                           title={webhook.is_active ? 'Pause' : 'Enable'}
                         >
                           {webhook.is_active ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -463,7 +463,7 @@ export default function WebhooksPage() {
                           {webhook.last_error && (
                             <div className="mt-4">
                               <h4 className="text-xs font-medium text-[var(--av-danger)] uppercase mb-1">Last Error</h4>
-                              <p className="text-sm text-[var(--av-danger)] bg-red-50 p-2 rounded">{webhook.last_error}</p>
+                              <p className="text-sm text-[var(--av-danger)] bg-[var(--av-danger-soft)] p-2 rounded">{webhook.last_error}</p>
                             </div>
                           )}
                         </div>
@@ -486,7 +486,7 @@ export default function WebhooksPage() {
                               </button>
                               <button
                                 onClick={() => deleteWebhook(webhook.id)}
-                                className="flex items-center gap-2 px-3 py-2 bg-red-50 text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
+                                className="flex items-center gap-2 px-3 py-2 bg-[var(--av-danger-soft)] text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
                               >
                                 <Trash2 className="w-4 h-4" /> Delete
                               </button>
@@ -528,7 +528,7 @@ export default function WebhooksPage() {
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             delivery.status === 'success' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
                             delivery.status === 'failed' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
-                            delivery.status === 'retrying' ? 'bg-amber-100 text-amber-700' :
+                            delivery.status === 'retrying' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
                             'bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]'
                           }`}>
                             {delivery.status}

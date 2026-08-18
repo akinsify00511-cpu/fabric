@@ -33,11 +33,11 @@ type Contact = {
 type ViewMode = 'deals' | 'contacts' | 'pipeline'
 
 const STAGES = [
-  { key: 'hot', label: 'Hot', color: 'bg-red-500', textColor: 'text-white', probability: 80 },
-  { key: 'active', label: 'Active', color: 'bg-blue-500', textColor: 'text-white', probability: 50 },
+  { key: 'hot', label: 'Hot', color: 'bg-[var(--av-danger-soft)]0', textColor: 'text-white', probability: 80 },
+  { key: 'active', label: 'Active', color: 'bg-[var(--av-primary-soft)]0', textColor: 'text-white', probability: 50 },
   { key: 'proposal', label: 'Proposal', color: 'bg-purple-500', textColor: 'text-white', probability: 60 },
-  { key: 'negotiation', label: 'Negotiating', color: 'bg-amber-500', textColor: 'text-white', probability: 75 },
-  { key: 'won', label: 'Won', color: 'bg-green-500', textColor: 'text-white', probability: 100 },
+  { key: 'negotiation', label: 'Negotiating', color: 'bg-[var(--av-warning-soft)]0', textColor: 'text-white', probability: 75 },
+  { key: 'won', label: 'Won', color: 'bg-[var(--av-success-soft)]0', textColor: 'text-white', probability: 100 },
   { key: 'lost', label: 'Lost', color: 'bg-black', textColor: 'text-white', probability: 0 },
 ]
 
@@ -459,7 +459,7 @@ export default function CRM() {
               <div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={editingDeal.notes || ''} onChange={e => setEditingDeal(prev => prev ? { ...prev, notes: e.target.value } : null)} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
             </div>
             <div className="p-4 border-t border-black/10 flex gap-3">
-              <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-red-500 font-medium">Delete</button>
+              <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-[var(--av-danger)] font-medium">Delete</button>
               <button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Save Changes</button>
             </div>
           </div>

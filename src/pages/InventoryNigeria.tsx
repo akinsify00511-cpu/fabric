@@ -315,7 +315,7 @@ export default function InventoryNigeria() {
         </div>
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <p className="text-xs text-black mb-1">Out of Stock</p>
-          <p className="text-2xl font-bold text-red-600">{stats.outOfStock}</p>
+          <p className="text-2xl font-bold text-[var(--av-danger)]">{stats.outOfStock}</p>
         </div>
       </div>
 
@@ -407,7 +407,7 @@ export default function InventoryNigeria() {
                   selectedItem?.id === item.id
                     ? 'border-[var(--av-primary, #4285F4)] ring-1 ring-[var(--av-primary, #4285F4)]'
                     : isOut
-                    ? 'border-red-200'
+                    ? 'border-[var(--av-danger)]/30'
                     : isLow
                     ? 'border-orange-200 hover:border-orange-300'
                     : 'border-black/[0.06] hover:border-[var(--av-primary, #4285F4)]/20'
@@ -428,7 +428,7 @@ export default function InventoryNigeria() {
                   </div>
                   <div className="text-right">
                     <p className={`text-xl font-bold ${
-                      isOut ? 'text-red-600' : isLow ? 'text-orange-600' : 'text-black'
+                      isOut ? 'text-[var(--av-danger)]' : isLow ? 'text-orange-600' : 'text-black'
                     }`}>
                       {item.quantity}
                       <span className="text-xs font-normal text-black ml-1">
@@ -460,10 +460,10 @@ export default function InventoryNigeria() {
             {movements.slice(0, 10).map((m) => (
               <div key={m.id} className="p-3 flex items-center gap-3">
                 <span className={`w-2 h-2 rounded-full ${
-                  m.type === 'received' ? 'bg-green-500' :
-                  m.type === 'used' ? 'bg-red-500' :
-                  m.type === 'allocated' ? 'bg-blue-500' :
-                  m.type === 'returned' ? 'bg-yellow-500' :
+                  m.type === 'received' ? 'bg-[var(--av-success-soft)]0' :
+                  m.type === 'used' ? 'bg-[var(--av-danger-soft)]0' :
+                  m.type === 'allocated' ? 'bg-[var(--av-primary-soft)]0' :
+                  m.type === 'returned' ? 'bg-[var(--av-warning-soft)]0' :
                   'bg-white0'
                 }`} />
                 <div className="flex-1">

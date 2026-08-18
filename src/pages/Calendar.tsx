@@ -34,7 +34,7 @@ const EVENT_COLORS = {
   event: { bg: 'bg-[var(--av-primary-soft)]', border: 'border-[var(--av-primary-soft)]', text: 'text-[var(--av-primary)]' },
   meeting: { bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-700' },
   deadline: { bg: 'bg-[var(--av-danger-soft)]', border: 'border-[var(--av-danger)]', text: 'text-[var(--av-danger)]' },
-  reminder: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
+  reminder: { bg: 'bg-amber-100', border: 'border-[var(--av-warning)]/40', text: 'text-[var(--av-warning)]' },
 }
 
 export default function Calendar() {
@@ -534,7 +534,7 @@ export default function Calendar() {
               {editingEvent ? (
                 <button
                   onClick={deleteEvent}
-                  className="px-4 py-2 rounded-lg text-[var(--av-danger)] hover:bg-red-50"
+                  className="px-4 py-2 rounded-lg text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)]"
                 >
                   Delete
                 </button>

@@ -33,10 +33,10 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }
   trialing: { color: 'text-[var(--av-primary)]', bg: 'bg-[var(--av-primary-soft)]', label: 'Trial' },
   cancelled: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Cancelled' },
   expired: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Expired' },
-  past_due: { color: 'text-amber-600', bg: 'bg-amber-100', label: 'Past Due' },
+  past_due: { color: 'text-[var(--av-warning)]', bg: 'bg-amber-100', label: 'Past Due' },
   paused: { color: 'text-[var(--av-text-muted)]', bg: 'bg-[var(--av-surface-2)]', label: 'Paused' },
   successful: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Paid' },
-  pending: { color: 'text-amber-600', bg: 'bg-amber-100', label: 'Pending' },
+  pending: { color: 'text-[var(--av-warning)]', bg: 'bg-amber-100', label: 'Pending' },
   failed: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Failed' },
   refunded: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Refunded' },
   paid: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Paid' },
@@ -145,7 +145,7 @@ export default function Subscription() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-[var(--av-danger-soft)] rounded-xl flex items-center gap-3">
+        <div className="mb-6 p-4 bg-[var(--av-danger-soft)] border border-[var(--av-danger-soft)] rounded-xl flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-[var(--av-danger)] shrink-0" />
           <p className="text-sm text-[var(--av-danger)]">{error}</p>
         </div>
@@ -436,7 +436,7 @@ export default function Subscription() {
                     {payment.status === 'successful' ? (
                       <Check className="w-5 h-5 text-[var(--av-success)]" />
                     ) : payment.status === 'pending' ? (
-                      <Clock className="w-5 h-5 text-amber-600" />
+                      <Clock className="w-5 h-5 text-[var(--av-warning)]" />
                     ) : (
                       <X className="w-5 h-5 text-[var(--av-danger)]" />
                     )}

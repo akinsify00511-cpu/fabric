@@ -205,7 +205,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-medium">
+                <span className="px-3 py-1 rounded-full bg-[var(--av-warning-soft)]0/20 text-amber-300 text-xs font-medium">
                   Beta Feature
                 </span>
                 <BetaBadge />
@@ -218,7 +218,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
               <div className="flex items-center gap-4">
                 <a
                   href="mailto:support@avenize.com?subject=Automations%20Beta%20Access%20Request"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-900 rounded-xl text-sm font-medium hover:bg-blue-50 transition"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-900 rounded-xl text-sm font-medium hover:bg-[var(--av-primary-soft)] transition"
                 >
                   <Sparkles className="w-4 h-4" />
                   Request Beta Access
@@ -236,7 +236,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
           <div className="bg-white rounded-2xl  p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-amber-600" />
+                <Zap className="w-5 h-5 text-[var(--av-warning)]" />
               </div>
               <h3 className="font-medium">Smart Triggers</h3>
             </div>
@@ -271,14 +271,14 @@ const [automations, setAutomations] = useState<Automation[]>([])
         </div>
 
         {/* Beta Note */}
-        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
+        <div className="p-4 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30">
           <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <Sparkles className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-amber-800 flex items-center gap-2">
                 Beta Access <BetaBadge />
               </p>
-              <p className="text-xs text-amber-700 mt-1">
+              <p className="text-xs text-[var(--av-warning)] mt-1">
                 Automations are currently being tested with beta users. Contact support to join the beta program.
               </p>
             </div>
@@ -291,10 +291,10 @@ const [automations, setAutomations] = useState<Automation[]>([])
   return (
     <div className="pb-20">
       {/* BETA STATUS BANNER */}
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+      <div className="mb-6 p-4 bg-[var(--av-primary-soft)] border border-[var(--av-primary)]/30 rounded-xl">
         <div className="flex items-start gap-3">
           <div className="p-2 bg-blue-100 rounded-lg shrink-0">
-            <Zap size={20} className="text-blue-600" />
+            <Zap size={20} className="text-[var(--av-primary)]" />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -331,7 +331,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-white rounded-2xl  p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Activity size={14} className="text-green-500" />
+            <Activity size={14} className="text-[var(--av-success)]" />
             <span className="text-xs text-black uppercase tracking-wide">Active</span>
           </div>
           <p className="text-2xl font-bold text-black">
@@ -434,8 +434,8 @@ const [automations, setAutomations] = useState<Automation[]>([])
                         <span className="text-xs px-2 py-0.5 rounded-full bg-white text-black">Paused</span>
                       )}
                       {auto.enabled && (
-                        <span className="flex items-center gap-1 text-xs text-green-600">
-                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span className="flex items-center gap-1 text-xs text-[var(--av-success)]">
+                          <span className="w-2 h-2 rounded-full bg-[var(--av-success-soft)]0 animate-pulse"></span>
                           Active
                         </span>
                       )}
@@ -457,14 +457,14 @@ const [automations, setAutomations] = useState<Automation[]>([])
                     </button>
                     <button
                       onClick={() => toggleAutomation(auto)}
-                      className={`p-2 rounded-lg ${auto.enabled ? 'text-amber-500 hover:bg-amber-50' : 'text-green-500 hover:bg-green-50'}`}
+                      className={`p-2 rounded-lg ${auto.enabled ? 'text-[var(--av-warning)] hover:bg-[var(--av-warning-soft)]' : 'text-[var(--av-success)] hover:bg-[var(--av-success-soft)]'}`}
                       title={auto.enabled ? 'Pause' : 'Enable'}
                     >
                       {auto.enabled ? <Pause size={16} /> : <Play size={16} />}
                     </button>
                     <button
                       onClick={() => deleteAutomation(auto.id)}
-                      className="p-2 hover:bg-red-50 rounded-lg text-red-400"
+                      className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-red-400"
                       title="Delete"
                     >
                       <Trash2 size={16} />
@@ -552,7 +552,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                   ))}
                 </div>
                 {triggerType === 'scheduled' && (
-                  <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                  <div className="mt-3 p-3 rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30">
                     <label className="text-xs font-medium text-amber-900 block mb-1">
                       Schedule
                     </label>
@@ -564,7 +564,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                       value={triggerConfig.cron ?? '0 * * * *'}
                       onChange={(e) => setTriggerConfig({ ...triggerConfig, cron: e.target.value })}
                       placeholder="0 * * * * (hourly)"
-                      className="w-full px-3 py-2 rounded-lg border border-amber-300 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                      className="w-full px-3 py-2 rounded-lg border border-[var(--av-warning)]/40 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
                     />
                   </div>
                 )}
@@ -735,9 +735,9 @@ const [automations, setAutomations] = useState<Automation[]>([])
                     <div key={run.id} className="p-3 rounded-xl bg-black/[0.02]">
                       <div className="flex items-center gap-2 mb-1">
                         {run.status === 'success' ? (
-                          <CheckCircle2 size={14} className="text-green-500" />
+                          <CheckCircle2 size={14} className="text-[var(--av-success)]" />
                         ) : (
-                          <XCircle size={14} className="text-red-500" />
+                          <XCircle size={14} className="text-[var(--av-danger)]" />
                         )}
                         <span className="text-sm font-medium capitalize">{run.status}</span>
                         <span className="text-xs text-black">
@@ -745,7 +745,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
                         </span>
                       </div>
                       {run.error_message && (
-                        <p className="text-xs text-red-500">{run.error_message}</p>
+                        <p className="text-xs text-[var(--av-danger)]">{run.error_message}</p>
                       )}
                     </div>
                   ))}

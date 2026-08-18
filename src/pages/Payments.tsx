@@ -242,31 +242,31 @@ export default function Payments() {
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-              <ArrowUpRight size={16} className="text-green-600" />
+              <ArrowUpRight size={16} className="text-[var(--av-success)]" />
             </div>
             <span className="text-xs text-black">Total Income</span>
           </div>
-          <p className="text-xl font-bold text-green-600">{formatCurrency(stats.totalIncome)}</p>
+          <p className="text-xl font-bold text-[var(--av-success)]">{formatCurrency(stats.totalIncome)}</p>
         </div>
         
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-              <ArrowDownRight size={16} className="text-red-600" />
+              <ArrowDownRight size={16} className="text-[var(--av-danger)]" />
             </div>
             <span className="text-xs text-black">Total Expenses</span>
           </div>
-          <p className="text-xl font-bold text-red-600">{formatCurrency(stats.totalExpenses)}</p>
+          <p className="text-xl font-bold text-[var(--av-danger)]">{formatCurrency(stats.totalExpenses)}</p>
         </div>
         
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-              <Wallet size={16} className="text-blue-600" />
+              <Wallet size={16} className="text-[var(--av-primary)]" />
             </div>
             <span className="text-xs text-black">Net Balance</span>
           </div>
-          <p className={`text-xl font-bold ${netBalance >= 0 ? 'text-[var(--av-primary, #4285F4)]' : 'text-red-600'}`}>
+          <p className={`text-xl font-bold ${netBalance >= 0 ? 'text-[var(--av-primary, #4285F4)]' : 'text-[var(--av-danger)]'}`}>
             {formatCurrency(netBalance)}
           </p>
         </div>
@@ -274,14 +274,14 @@ export default function Payments() {
         <div className="bg-white rounded-xl border border-black/[0.06] p-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-              <Calendar size={16} className="text-amber-600" />
+              <Calendar size={16} className="text-[var(--av-warning)]" />
             </div>
             <span className="text-xs text-black">This Month</span>
           </div>
           <p className="text-lg font-bold">
-            <span className="text-green-600">{formatCurrency(stats.thisMonth.income)}</span>
+            <span className="text-[var(--av-success)]">{formatCurrency(stats.thisMonth.income)}</span>
             <span className="text-black mx-1">/</span>
-            <span className="text-red-600">{formatCurrency(stats.thisMonth.expenses)}</span>
+            <span className="text-[var(--av-danger)]">{formatCurrency(stats.thisMonth.expenses)}</span>
           </p>
         </div>
       </div>
@@ -383,9 +383,9 @@ export default function Payments() {
                     payment.type === 'income' ? 'bg-green-100' : 'bg-red-100'
                   }`}>
                     {payment.type === 'income' ? (
-                      <ArrowUpRight size={18} className="text-green-600" />
+                      <ArrowUpRight size={18} className="text-[var(--av-success)]" />
                     ) : (
-                      <ArrowDownRight size={18} className="text-red-600" />
+                      <ArrowDownRight size={18} className="text-[var(--av-danger)]" />
                     )}
                   </div>
                   <div>
@@ -405,7 +405,7 @@ export default function Payments() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={`font-semibold ${payment.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className={`font-semibold ${payment.type === 'income' ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
                     {payment.type === 'income' ? '+' : '-'}{formatCurrency(payment.amount)}
                   </p>
                   <p className="text-xs text-black">
@@ -436,7 +436,7 @@ export default function Payments() {
                   onClick={() => setNewPayment(prev => ({ ...prev, type: 'income' }))}
                   className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 ${
                     newPayment.type === 'income' 
-                      ? 'bg-green-600 text-white' 
+                      ? 'bg-[var(--av-success)] text-white' 
                       : 'bg-white text-black/60 hover:bg-white'
                   }`}
                 >
@@ -447,7 +447,7 @@ export default function Payments() {
                   onClick={() => setNewPayment(prev => ({ ...prev, type: 'expense' }))}
                   className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 ${
                     newPayment.type === 'expense' 
-                      ? 'bg-red-600 text-white' 
+                      ? 'bg-[var(--av-danger)] text-white' 
                       : 'bg-white text-black/60 hover:bg-white'
                   }`}
                 >
@@ -587,7 +587,7 @@ export default function Payments() {
                   className={`flex-1 px-4 py-3 rounded-xl font-medium text-white ${
                     newPayment.type === 'income' 
                       ? 'avenize-gradient' 
-                      : 'bg-red-600 hover:bg-red-700'
+                      : 'bg-[var(--av-danger)] hover:bg-red-700'
                   }`}
                 >
                   Record {newPayment.type === 'income' ? 'Income' : 'Expense'}
@@ -614,15 +614,15 @@ export default function Payments() {
                 selectedPayment.type === 'income' ? 'bg-green-100' : 'bg-red-100'
               }`}>
                 {selectedPayment.type === 'income' ? (
-                  <ArrowUpRight size={28} className="text-green-600" />
+                  <ArrowUpRight size={28} className="text-[var(--av-success)]" />
                 ) : (
-                  <ArrowDownRight size={28} className="text-red-600" />
+                  <ArrowDownRight size={28} className="text-[var(--av-danger)]" />
                 )}
               </div>
               
               <div className="text-center">
                 <p className={`text-3xl font-bold ${
-                  selectedPayment.type === 'income' ? 'text-green-600' : 'text-red-600'
+                  selectedPayment.type === 'income' ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'
                 }`}>
                   {selectedPayment.type === 'income' ? '+' : '-'}{formatCurrency(selectedPayment.amount)}
                 </p>
@@ -633,7 +633,7 @@ export default function Payments() {
                 <div className="flex justify-between">
                   <span className="text-sm text-black">Type</span>
                   <span className={`text-sm font-medium capitalize ${
-                    selectedPayment.type === 'income' ? 'text-green-600' : 'text-red-600'
+                    selectedPayment.type === 'income' ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'
                   }`}>
                     {selectedPayment.type}
                   </span>

@@ -73,7 +73,7 @@ export default function WorkspaceSettings() {
       </div>
 
       {saved && (
-        <div className="mb-4 rounded-lg bg-green-50 border border-green-200 px-4 py-2.5 text-sm text-green-700 flex items-center gap-2">
+        <div className="mb-4 rounded-lg bg-[var(--av-success-soft)] border border-[var(--av-success)]/30 px-4 py-2.5 text-sm text-[var(--av-success)] flex items-center gap-2">
           <Check size={16} /> Saved.
         </div>
       )}

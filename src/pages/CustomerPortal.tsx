@@ -228,9 +228,9 @@ export default function CustomerPortal() {
                         : 'bg-black/[0.05]'
                     }`}>
                       {invitation.status === 'accepted' ? (
-                        <Check className="w-5 h-5 text-green-600" />
+                        <Check className="w-5 h-5 text-[var(--av-success)]" />
                       ) : invitation.status === 'pending' ? (
-                        <Mail className="w-5 h-5 text-yellow-600" />
+                        <Mail className="w-5 h-5 text-[var(--av-warning)]" />
                       ) : (
                         <X className="w-5 h-5 text-black" />
                       )}
@@ -242,9 +242,9 @@ export default function CustomerPortal() {
                         </p>
                         <span className={`px-2 py-0.5 rounded-full text-xs ${
                           invitation.status === 'accepted'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]'
                             : invitation.status === 'pending'
-                            ? 'bg-yellow-100 text-yellow-700'
+                            ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                             : 'bg-black/[0.05]'
                         }`}>
                           {invitation.status}
@@ -253,7 +253,7 @@ export default function CustomerPortal() {
                       <p className="text-sm text-black">{invitation.email}</p>
                       <div className="flex items-center gap-2 mt-1">
                         {invitation.can_view_invoices && (
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--av-primary-soft)] text-[var(--av-primary)]">
                             <FileText size={10} className="inline mr-0.5" /> Invoices
                           </span>
                         )}
@@ -263,7 +263,7 @@ export default function CustomerPortal() {
                           </span>
                         )}
                         {invitation.can_submit_tickets && (
-                          <span className="text-xs px-1.5 py-0.5 rounded bg-green-50 text-green-600">
+                          <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--av-success-soft)] text-[var(--av-success)]">
                             <MessageSquare size={10} className="inline mr-0.5" /> Tickets
                           </span>
                         )}
@@ -282,7 +282,7 @@ export default function CustomerPortal() {
                     )}
                     <button
                       onClick={() => deleteInvitation(invitation)}
-                      className="p-2 hover:bg-red-50 rounded-lg text-red-500"
+                      className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg text-[var(--av-danger)]"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -316,12 +316,12 @@ export default function CustomerPortal() {
             <div className="p-6">
               {newInvitation ? (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-green-50 border border-green-200">
-                    <div className="flex items-center gap-2 text-green-700">
+                  <div className="p-4 rounded-xl bg-[var(--av-success-soft)] border border-[var(--av-success)]/30">
+                    <div className="flex items-center gap-2 text-[var(--av-success)]">
                       <CheckCircle2 className="w-5 h-5" />
                       <span className="font-medium">Invitation ready!</span>
                     </div>
-                    <p className="text-sm text-green-600 mt-1">
+                    <p className="text-sm text-[var(--av-success)] mt-1">
                       Share this link with {email}. It expires in 30 days.
                     </p>
                   </div>

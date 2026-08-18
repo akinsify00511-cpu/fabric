@@ -144,7 +144,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
       {/* Header */}
       <div className="bg-gray-900 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+          <div className="w-3 h-3 bg-[var(--av-success-soft)]0 rounded-full animate-pulse" />
           <span className="text-white font-medium">{roomName}</span>
           <span className="text-gray-400 text-sm">• {participants.length + 1} participants</span>
         </div>
@@ -204,7 +204,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
 
         {/* Error overlay */}
         {error && (
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[var(--av-danger)] text-white px-6 py-3 rounded-lg shadow-lg">
             <p>{error}</p>
           </div>
         )}
@@ -236,8 +236,8 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
                   <p className="text-gray-500 text-xs">You</p>
                 </div>
                 <div className="flex gap-1">
-                  {!isAudioMuted ? <Mic size={14} className="text-green-500" /> : <MicOff size={14} className="text-red-500" />}
-                  {!isVideoOff ? <Video size={14} className="text-green-500" /> : <VideoOff size={14} className="text-red-500" />}
+                  {!isAudioMuted ? <Mic size={14} className="text-[var(--av-success)]" /> : <MicOff size={14} className="text-[var(--av-danger)]" />}
+                  {!isVideoOff ? <Video size={14} className="text-[var(--av-success)]" /> : <VideoOff size={14} className="text-[var(--av-danger)]" />}
                 </div>
               </div>
               
@@ -254,8 +254,8 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
                     <p className="text-white text-sm">{p.name}</p>
                   </div>
                   <div className="flex gap-1">
-                    {p.hasAudio ? <Mic size={14} className="text-green-500" /> : <MicOff size={14} className="text-red-500" />}
-                    {p.hasVideo ? <Video size={14} className="text-green-500" /> : <VideoOff size={14} className="text-red-500" />}
+                    {p.hasAudio ? <Mic size={14} className="text-[var(--av-success)]" /> : <MicOff size={14} className="text-[var(--av-danger)]" />}
+                    {p.hasVideo ? <Video size={14} className="text-[var(--av-success)]" /> : <VideoOff size={14} className="text-[var(--av-danger)]" />}
                   </div>
                 </div>
               ))}
@@ -272,7 +272,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
             onClick={toggleAudio}
             className={`w-14 h-14 rounded-full flex items-center justify-center transition ${
               isAudioMuted 
-                ? 'bg-red-600 hover:bg-red-700' 
+                ? 'bg-[var(--av-danger)] hover:bg-red-700' 
                 : 'bg-gray-700 hover:bg-gray-600'
             } text-white`}
             title={isAudioMuted ? 'Unmute' : 'Mute'}
@@ -285,7 +285,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
             onClick={toggleVideo}
             className={`w-14 h-14 rounded-full flex items-center justify-center transition ${
               isVideoOff 
-                ? 'bg-red-600 hover:bg-red-700' 
+                ? 'bg-[var(--av-danger)] hover:bg-red-700' 
                 : 'bg-gray-700 hover:bg-gray-600'
             } text-white`}
             title={isVideoOff ? 'Start video' : 'Stop video'}
@@ -317,7 +317,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
             title="Participants"
           >
             <Users size={24} />
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full text-xs flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--av-primary-soft)]0 rounded-full text-xs flex items-center justify-center">
               {participants.length + 1}
             </span>
           </button>
@@ -325,7 +325,7 @@ export default function VideoRoom({ roomName, displayName, onClose, isHost = fal
           {/* End call */}
           <button
             onClick={endCall}
-            className="w-14 h-14 rounded-full bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition ml-4"
+            className="w-14 h-14 rounded-full bg-[var(--av-danger)] hover:bg-red-700 flex items-center justify-center text-white transition ml-4"
             title="End call"
           >
             <PhoneOff size={24} />

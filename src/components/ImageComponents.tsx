@@ -241,8 +241,8 @@ export function IconPlaceholder({ icon, size = 24, className = '' }: IconPlaceho
   const colors = {
     user: 'bg-blue-100 text-blue-500',
     company: 'bg-purple-100 text-purple-500',
-    document: 'bg-amber-100 text-amber-500',
-    image: 'bg-green-100 text-green-500',
+    document: 'bg-amber-100 text-[var(--av-warning)]',
+    image: 'bg-green-100 text-[var(--av-success)]',
     folder: 'bg-indigo-100 text-indigo-500',
   }
   

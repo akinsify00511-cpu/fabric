@@ -372,7 +372,7 @@ export default function ResourceBookingPage() {
                 </div>
                 <button
                   onClick={() => handleCancelBooking(booking.id)}
-                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-sm"
+                  className="px-3 py-1.5 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm"
                 >
                   Cancel
                 </button>

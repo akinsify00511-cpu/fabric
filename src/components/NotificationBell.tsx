@@ -34,19 +34,19 @@ const NOTIFICATION_ICONS: Record<string, typeof Bell> = {
 }
 
 const NOTIFICATION_COLORS: Record<string, string> = {
-  chat_message: 'text-blue-500 bg-blue-50',
+  chat_message: 'text-blue-500 bg-[var(--av-primary-soft)]',
   meeting: 'text-indigo-500 bg-indigo-50',
   reminder: 'text-indigo-500 bg-indigo-50',
-  task_assigned: 'text-green-500 bg-green-50',
-  task_due: 'text-amber-500 bg-amber-50',
-  task_completed: 'text-green-500 bg-green-50',
+  task_assigned: 'text-[var(--av-success)] bg-[var(--av-success-soft)]',
+  task_due: 'text-[var(--av-warning)] bg-[var(--av-warning-soft)]',
+  task_completed: 'text-[var(--av-success)] bg-[var(--av-success-soft)]',
   invoice_paid: 'text-emerald-500 bg-emerald-50',
-  invoice_overdue: 'text-red-500 bg-red-50',
+  invoice_overdue: 'text-[var(--av-danger)] bg-[var(--av-danger-soft)]',
   payment: 'text-emerald-500 bg-emerald-50',
-  leave_approved: 'text-green-500 bg-green-50',
-  leave_rejected: 'text-red-500 bg-red-50',
+  leave_approved: 'text-[var(--av-success)] bg-[var(--av-success-soft)]',
+  leave_rejected: 'text-[var(--av-danger)] bg-[var(--av-danger-soft)]',
   mention: 'text-pink-500 bg-pink-50',
-  comment: 'text-blue-500 bg-blue-50',
+  comment: 'text-blue-500 bg-[var(--av-primary-soft)]',
   system: 'text-gray-500 bg-gray-50',
   achievement: 'text-purple-500 bg-purple-50',
   intelligence: 'text-violet-500 bg-violet-50',
@@ -217,7 +217,7 @@ export default function NotificationBell() {
       >
         <Bell size={20} className="text-black/60" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-xs font-medium rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[var(--av-danger-soft)]0 text-white text-xs font-medium rounded-full flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -231,7 +231,7 @@ export default function NotificationBell() {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-xs text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium"
                 >
                   Mark all read
                 </button>
@@ -269,7 +269,7 @@ export default function NotificationBell() {
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-medium text-black truncate">{notification.title}</p>
                         {!notification.is_read && (
-                          <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />
+                          <span className="w-2 h-2 bg-[var(--av-primary-soft)]0 rounded-full flex-shrink-0 mt-1.5" />
                         )}
                       </div>
                       {notification.message && (
@@ -293,7 +293,7 @@ export default function NotificationBell() {
                     key={notification.id}
                     to={notification.link}
                     className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
-                      !notification.is_read ? 'bg-blue-50/50' : ''
+                      !notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''
                     }`}
                     onClick={() => markAsRead(notification.id)}
                   >
@@ -303,7 +303,7 @@ export default function NotificationBell() {
                   <div
                     key={notification.id}
                     className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
-                      !notification.is_read ? 'bg-blue-50/50' : ''
+                      !notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''
                     }`}
                     onClick={() => markAsRead(notification.id)}
                   >
@@ -316,7 +316,7 @@ export default function NotificationBell() {
 
           {notifications.length > 0 && (
             <div className="px-4 py-3 border-t border-black/5 text-center">
-              <Link to="/app/notifications" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+              <Link to="/app/notifications" className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium">
                 View all notifications
               </Link>
             </div>

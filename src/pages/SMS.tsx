@@ -250,7 +250,7 @@ export default function SMSSettings() {
           <p className="text-sm text-black mt-0.5">Configure Termii SMS for notifications</p>
         </div>
         {balance !== null && (
-          <div className="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-lg">
+          <div className="flex items-center gap-2 bg-[var(--av-success-soft)] text-[var(--av-success)] px-4 py-2 rounded-lg">
             <Zap size={16} />
             <span className="text-sm font-medium">Balance: ₦{balance.toFixed(2)}</span>
             <button onClick={checkBalance} disabled={checkingBalance} className="ml-1 hover:bg-green-100 p-1 rounded">
@@ -312,7 +312,7 @@ export default function SMSSettings() {
                   </button>
                 </div>
                 <p className="text-xs text-black mt-1.5">
-                  Get your API key from <a href="https://termii.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">termii.com <ExternalLink size={10} className="inline" /></a>
+                  Get your API key from <a href="https://termii.com" target="_blank" rel="noopener noreferrer" className="text-[var(--av-primary)] hover:underline">termii.com <ExternalLink size={10} className="inline" /></a>
                 </p>
               </div>
 
@@ -418,7 +418,7 @@ export default function SMSSettings() {
               <button
                 onClick={sendTestSMS}
                 disabled={sendingTest || !apiKeySet}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-green-600 text-white font-medium hover:bg-green-700 disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-success)] text-white font-medium hover:bg-green-700 disabled:opacity-50"
               >
                 <Send size={16} />
                 {sendingTest ? 'Sending...' : 'Send Test SMS'}
@@ -436,7 +436,7 @@ export default function SMSSettings() {
             <button
               onClick={loadHistory}
               disabled={historyLoading}
-              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700"
+              className="flex items-center gap-2 text-sm text-[var(--av-primary)] hover:text-[var(--av-primary)]"
             >
               <RefreshCw size={14} className={historyLoading ? 'animate-spin' : ''} />
               Refresh
@@ -482,10 +482,10 @@ export default function SMSSettings() {
                       </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          sms.status === 'sent' ? 'bg-green-100 text-green-700' :
-                          sms.status === 'delivered' ? 'bg-blue-100 text-blue-700' :
-                          sms.status === 'failed' ? 'bg-red-100 text-red-700' :
-                          'bg-yellow-100 text-yellow-700'
+                          sms.status === 'sent' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                          sms.status === 'delivered' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
+                          sms.status === 'failed' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
+                          'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                         }`}>
                           {sms.status === 'failed' && <AlertCircle size={12} />}
                           {SMSUtils.getStatusName(sms.status)}
@@ -527,7 +527,7 @@ export default function SMSSettings() {
       {/* Templates Tab */}
       {activeTab === 'templates' && (
         <div className="space-y-4">
-          <div className="bg-blue-50 rounded-xl p-4 text-sm text-blue-700">
+          <div className="bg-[var(--av-primary-soft)] rounded-xl p-4 text-sm text-[var(--av-primary)]">
             <p>
               <strong>💡 Tip:</strong> These templates use variable placeholders like <code className="bg-blue-100 px-1 rounded">{'{{customer_name}}'}</code> that will be replaced with actual values when sending.
             </p>
@@ -542,7 +542,7 @@ export default function SMSSettings() {
                 </div>
                 <button
                   onClick={() => copyToClipboard(template.message)}
-                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+                  className="flex items-center gap-1 text-xs text-[var(--av-primary)] hover:text-[var(--av-primary)]"
                 >
                   <Copy size={12} />
                   Copy

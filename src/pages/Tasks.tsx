@@ -49,9 +49,9 @@ type TimeLog = {
 
 const PRIORITY_COLORS: Record<Priority, string> = {
   low: 'bg-slate-100 text-slate-600',
-  medium: 'bg-amber-100 text-amber-700',
+  medium: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   high: 'bg-orange-100 text-orange-700',
-  urgent: 'bg-red-100 text-red-700',
+  urgent: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
 }
 
 const STATUS_LABELS: Record<TaskStatus, string> = {
@@ -62,8 +62,8 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
 
 const REVIEW_BADGE: Record<ReviewStatus, { label: string; cls: string; icon: typeof Check }> = {
   pending: { label: 'Review', cls: 'bg-slate-100 text-slate-500', icon: Clock },
-  satisfactory: { label: 'Satisfactory', cls: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  needs_rework: { label: 'Needs Rework', cls: 'bg-red-100 text-red-700', icon: AlertCircle },
+  satisfactory: { label: 'Satisfactory', cls: 'bg-[var(--av-success-soft)] text-[var(--av-success)]', icon: CheckCircle2 },
+  needs_rework: { label: 'Needs Rework', cls: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]', icon: AlertCircle },
 }
 
 export default function Tasks() {
@@ -398,7 +398,7 @@ export default function Tasks() {
                       }}
                       className={`shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition ${
                         task.status === 'done'
-                          ? 'bg-green-500 border-green-500 text-white'
+                          ? 'bg-[var(--av-success-soft)]0 border-green-500 text-white'
                           : task.status === 'in_progress'
                             ? 'border-amber-400 text-amber-400'
                             : 'border-black/20 hover:border-black/40'
@@ -423,7 +423,7 @@ export default function Tasks() {
                           </span>
                         )}
                         {task.due_date && (
-                          <span className={`text-xs ${isOverdue ? 'text-red-600 font-medium' : 'text-black/50'}`}>
+                          <span className={`text-xs ${isOverdue ? 'text-[var(--av-danger)] font-medium' : 'text-black/50'}`}>
                             · {isOverdue ? 'Overdue ' : 'Due '}
                             {new Date(task.due_date).toLocaleDateString()}
                           </span>
@@ -446,7 +446,7 @@ export default function Tasks() {
                         e.stopPropagation()
                         deleteTask(task.id)
                       }}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded text-red-500 transition shrink-0"
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[var(--av-danger-soft)] rounded text-[var(--av-danger)] transition shrink-0"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -762,7 +762,7 @@ function TaskDetail({
                 <div className="text-xs text-black/50">
                   {totalLogged}h logged of {task.estimated_hours}h estimated
                   {totalLogged > (task.estimated_hours || 0) && (
-                    <span className="text-amber-600"> · over estimate</span>
+                    <span className="text-[var(--av-warning)]"> · over estimate</span>
                   )}
                 </div>
               )}
@@ -803,13 +803,13 @@ function TaskDetail({
                   <div className="flex gap-2">
                     <button
                       onClick={() => reviewTask('satisfactory')}
-                      className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white text-sm hover:bg-green-700"
+                      className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-success)] text-white text-sm hover:bg-green-700"
                     >
                       <CheckCircle2 size={14} className="inline mr-1" /> Satisfactory
                     </button>
                     <button
                       onClick={() => reviewTask('needs_rework')}
-                      className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700"
+                      className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-danger)] text-white text-sm hover:bg-red-700"
                     >
                       <AlertCircle size={14} className="inline mr-1" /> Needs Rework
                     </button>

@@ -209,9 +209,9 @@ export default function LeaveManagementPage() {
   }
 
   const statusColors: Record<string, { bg: string; text: string; icon: any }> = {
-    pending: { bg: 'bg-amber-50', text: 'text-amber-600', icon: Clock },
-    approved: { bg: 'bg-green-50', text: 'text-green-600', icon: CheckCircle },
-    rejected: { bg: 'bg-red-50', text: 'text-red-600', icon: XCircle },
+    pending: { bg: 'bg-[var(--av-warning-soft)]', text: 'text-[var(--av-warning)]', icon: Clock },
+    approved: { bg: 'bg-[var(--av-success-soft)]', text: 'text-[var(--av-success)]', icon: CheckCircle },
+    rejected: { bg: 'bg-[var(--av-danger-soft)]', text: 'text-[var(--av-danger)]', icon: XCircle },
     cancelled: { bg: 'bg-white', text: 'text-black', icon: XCircle },
   }
 
@@ -254,7 +254,7 @@ export default function LeaveManagementPage() {
             </div>
             <div className="mt-2 flex items-center gap-4 text-xs text-black">
               <span>{bal.used_days} used</span>
-              {bal.pending_days > 0 && <span className="text-amber-500">{bal.pending_days} pending</span>}
+              {bal.pending_days > 0 && <span className="text-[var(--av-warning)]">{bal.pending_days} pending</span>}
             </div>
           </div>
         ))}
@@ -333,7 +333,7 @@ export default function LeaveManagementPage() {
                           <div className="mt-2 text-sm text-black">{req.reason}</div>
                         )}
                         {req.status === 'rejected' && req.rejection_reason && (
-                          <div className="mt-2 p-2 bg-red-50 rounded-lg text-sm text-red-600">
+                          <div className="mt-2 p-2 bg-[var(--av-danger-soft)] rounded-lg text-sm text-[var(--av-danger)]">
                             Reason: {req.rejection_reason}
                           </div>
                         )}
@@ -356,7 +356,7 @@ export default function LeaveManagementPage() {
 
           {pendingApprovals.length === 0 ? (
             <div className="p-12 text-center text-black">
-              <CheckCircle size={48} className="mx-auto mb-4 text-green-500" />
+              <CheckCircle size={48} className="mx-auto mb-4 text-[var(--av-success)]" />
               <p className="font-medium mb-2">All caught up!</p>
               <p className="text-sm">No pending leave requests to approve</p>
             </div>
@@ -399,7 +399,7 @@ export default function LeaveManagementPage() {
                         <div className="mt-3 flex gap-2">
                           <button
                             onClick={() => handleApprove(pending.id)}
-                            className="flex-1 py-2 rounded-lg bg-green-500 text-white text-sm font-medium flex items-center justify-center gap-2"
+                            className="flex-1 py-2 rounded-lg bg-[var(--av-success-soft)]0 text-white text-sm font-medium flex items-center justify-center gap-2"
                           >
                             <CheckCircle size={16} />
                             Approve
@@ -409,7 +409,7 @@ export default function LeaveManagementPage() {
                               const reason = prompt('Rejection reason:')
                               if (reason) handleReject(pending.id, reason)
                             }}
-                            className="flex-1 py-2 rounded-lg bg-red-50 text-red-600 text-sm font-medium flex items-center justify-center gap-2"
+                            className="flex-1 py-2 rounded-lg bg-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium flex items-center justify-center gap-2"
                           >
                             <XCircle size={16} />
                             Reject
@@ -604,7 +604,7 @@ function LeaveRequestModal({
           </div>
 
           {totalDays > 0 && (
-            <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+            <div className="p-3 bg-[var(--av-primary-soft)] rounded-lg text-sm text-[var(--av-primary)]">
               <strong>{form.half_day ? 0.5 : totalDays}</strong> day{totalDays !== 1 ? 's' : ''} will be deducted from your balance
             </div>
           )}

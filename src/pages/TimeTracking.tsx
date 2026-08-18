@@ -32,8 +32,8 @@ type DailySummary = {
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const LEAVE_TYPES = [
-  { value: 'vacation', label: 'Vacation', icon: Plane, color: 'bg-blue-100 text-blue-600' },
-  { value: 'sick', label: 'Sick Leave', icon: Heart, color: 'bg-red-100 text-red-600' },
+  { value: 'vacation', label: 'Vacation', icon: Plane, color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' },
+  { value: 'sick', label: 'Sick Leave', icon: Heart, color: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' },
   { value: 'personal', label: 'Personal', icon: User, color: 'bg-purple-100 text-purple-600' },
   { value: 'unpaid', label: 'Unpaid', icon: Clock, color: 'bg-white text-black' },
 ]
@@ -357,7 +357,7 @@ export default function TimeTracking() {
               <button
                 onClick={handleStop}
                 disabled={saving}
-                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-500 text-white font-medium disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--av-danger-soft)]0 text-white font-medium disabled:opacity-50"
               >
                 <Square size={18} />
                 Stop
@@ -396,9 +396,9 @@ export default function TimeTracking() {
           </h2>
           {timesheet && (
             <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              timesheet.status === 'approved' ? 'bg-green-100 text-green-700' :
-              timesheet.status === 'submitted' ? 'bg-blue-100 text-blue-700' :
-              timesheet.status === 'rejected' ? 'bg-red-100 text-red-700' :
+              timesheet.status === 'approved' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+              timesheet.status === 'submitted' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
+              timesheet.status === 'rejected' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
               'bg-gray-100 text-gray-600'
             }`}>
               {timesheet.status === 'reopened' ? 'needs edits' : timesheet.status}
@@ -462,7 +462,7 @@ export default function TimeTracking() {
               {summary ? `${Math.round(summary.total_minutes / 60)}h` : '—'}
             </p>
             {summary?.goal_met && (
-              <CheckCircle2 size={14} className={`mx-auto mt-1 ${isToday ? 'text-white' : 'text-green-500'}`} />
+              <CheckCircle2 size={14} className={`mx-auto mt-1 ${isToday ? 'text-white' : 'text-[var(--av-success)]'}`} />
             )}
           </div>
         ))}
@@ -489,7 +489,7 @@ export default function TimeTracking() {
             <TrendingUp size={16} />
             <span className="text-xs">Progress</span>
           </div>
-          <p className="text-2xl font-bold text-green-600">
+          <p className="text-2xl font-bold text-[var(--av-success)]">
             {Math.round((weekTotal / (40 * 60)) * 100)}%
           </p>
         </div>
@@ -509,7 +509,7 @@ export default function TimeTracking() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Clock size={18} className="text-blue-600" />
+                    <Clock size={18} className="text-[var(--av-primary)]" />
                   </div>
                   <div>
                     <p className="font-medium">{entry.description || 'No description'}</p>
@@ -525,7 +525,7 @@ export default function TimeTracking() {
                     {entry.duration_minutes ? `${Math.round(entry.duration_minutes / 60 * 10) / 10}h` : 'Active'}
                   </p>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    entry.billable ? 'bg-green-100 text-green-700' : 'bg-white text-black'
+                    entry.billable ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-white text-black'
                   }`}>
                     {entry.billable ? 'Billable' : 'Non-billable'}
                   </span>

@@ -162,8 +162,8 @@ export default function Vendors() {
                     <button onClick={() => openEdit(v)} className="p-2 hover:bg-black/5 rounded-lg transition" title="Edit">
                       <Edit size={16} className="text-black/60" />
                     </button>
-                    <button onClick={() => remove(v)} className="p-2 hover:bg-red-50 rounded-lg transition" title="Remove">
-                      <Trash2 size={16} className="text-red-500" />
+                    <button onClick={() => remove(v)} className="p-2 hover:bg-[var(--av-danger-soft)] rounded-lg transition" title="Remove">
+                      <Trash2 size={16} className="text-[var(--av-danger)]" />
                     </button>
                   </div>
                 </div>

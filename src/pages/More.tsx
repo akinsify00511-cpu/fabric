@@ -140,7 +140,7 @@ export default function More() {
         <div className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
           plan === 'enterprise' ? 'bg-purple-100 text-purple-700' :
           plan === 'pro' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
-          plan === 'starter' ? 'bg-blue-100 text-blue-700' :
+          plan === 'starter' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
           'bg-[var(--av-surface-3)] text-[var(--av-text-secondary)]'
         }`}>
           {plan} Plan

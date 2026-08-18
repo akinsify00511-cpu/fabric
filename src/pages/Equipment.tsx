@@ -145,14 +145,14 @@ export default function Equipment() {
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    item.status === 'operational' ? 'bg-green-500/10' :
-                    item.status === 'maintenance' ? 'bg-amber-500/10' :
-                    'bg-red-500/10'
+                    item.status === 'operational' ? 'bg-[var(--av-success-soft)]0/10' :
+                    item.status === 'maintenance' ? 'bg-[var(--av-warning-soft)]0/10' :
+                    'bg-[var(--av-danger-soft)]0/10'
                   }`}>
                     <Wrench size={24} className={
-                      item.status === 'operational' ? 'text-green-500' :
-                      item.status === 'maintenance' ? 'text-amber-500' :
-                      'text-red-500'
+                      item.status === 'operational' ? 'text-[var(--av-success)]' :
+                      item.status === 'maintenance' ? 'text-[var(--av-warning)]' :
+                      'text-[var(--av-danger)]'
                     } />
                   </div>
                   <div>
@@ -161,9 +161,9 @@ export default function Equipment() {
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full capitalize ${
-                  item.status === 'operational' ? 'bg-green-100 text-green-700' :
-                  item.status === 'maintenance' ? 'bg-amber-100 text-amber-700' :
-                  item.status === 'broken' ? 'bg-red-100 text-red-700' :
+                  item.status === 'operational' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                  item.status === 'maintenance' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
+                  item.status === 'broken' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
                   'bg-white text-black'
                 }`}>
                   {item.status}

@@ -429,7 +429,7 @@ export default function SMSBroadcastPage() {
                           key={contact.id}
                           onClick={() => toggleRecipient(contact)}
                           className={`p-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${
-                            isSelected ? 'bg-blue-50' : ''
+                            isSelected ? 'bg-[var(--av-primary-soft)]' : ''
                           } ${contact !== filteredContacts[filteredContacts.length - 1] ? 'border-b border-[var(--av-border)]' : ''}`}
                         >
                           <input
@@ -554,7 +554,7 @@ export default function SMSBroadcastPage() {
                             log.status === 'sent' || log.status === 'delivered'
                               ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]'
                               : log.status === 'pending'
-                              ? 'bg-amber-100 text-amber-700'
+                              ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                               : 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                           }`}>
                             {log.status}

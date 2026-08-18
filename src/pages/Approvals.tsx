@@ -252,7 +252,7 @@ export default function Approvals() {
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                      <TypeIcon size={24} className="text-amber-600" />
+                      <TypeIcon size={24} className="text-[var(--av-warning)]" />
                     </div>
                     
                     <div className="flex-1 min-w-0">

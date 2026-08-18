@@ -53,18 +53,18 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
 
   const colorClasses: Record<string, string> = {
     gray: 'bg-white',
-    red: 'bg-red-500',
-    yellow: 'bg-yellow-500',
-    blue: 'bg-blue-500',
-    green: 'bg-green-500',
+    red: 'bg-[var(--av-danger-soft)]0',
+    yellow: 'bg-[var(--av-warning-soft)]0',
+    blue: 'bg-[var(--av-primary-soft)]0',
+    green: 'bg-[var(--av-success-soft)]0',
   }
 
   const textClasses: Record<string, string> = {
     gray: 'text-black',
-    red: 'text-red-600',
-    yellow: 'text-yellow-600',
-    blue: 'text-blue-600',
-    green: 'text-green-600',
+    red: 'text-[var(--av-danger)]',
+    yellow: 'text-[var(--av-warning)]',
+    blue: 'text-[var(--av-primary)]',
+    green: 'text-[var(--av-success)]',
   }
 
   const requirementItems = [
@@ -97,7 +97,7 @@ export default function PasswordStrength({ password, showDetails = true }: Passw
         {requirementItems.map(({ key, label }) => (
           <div key={key} className="flex items-center gap-1.5 text-xs">
             {requirements[key as keyof typeof requirements] ? (
-              <Check className="w-3.5 h-3.5 text-green-500 shrink-0" />
+              <Check className="w-3.5 h-3.5 text-[var(--av-success)] shrink-0" />
             ) : (
               <X className="w-3.5 h-3.5 text-black shrink-0" />
             )}
