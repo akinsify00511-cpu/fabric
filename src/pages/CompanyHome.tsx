@@ -14,29 +14,30 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { fetchBusinessBrain, type BusinessBrain } from '../lib/businessOS'
 import {
   CheckCircle2, Clock, AlertCircle, MessageSquare, ListTodo, Calendar,
   Sparkles, ChevronRight, Cake, Award, Trophy, Users, Vote, Heart,
-  Crown, Zap, ArrowRight,
+  Zap, ArrowRight, Activity, Lightbulb, TrendingUp,
 } from 'lucide-react'
 
 const BRAND = {
   primary: 'var(--av-primary)',
-  primarySoft: 'rgba(66, 133, 244, 0.08)',
+  primarySoft: 'var(--av-primary-soft)',
   gradient: 'linear-gradient(135deg, var(--av-primary) 0%, var(--av-primary) 50%, var(--av-success) 100%)',
-  surface: '#F8F9FA',
-  surface2: '#F1F3F4',
-  surfaceElevated: '#FFFFFF',
-  text: '#202124',
-  textSecondary: '#5F6368',
-  textMuted: '#9AA0A6',
-  border: '#E8EAED',
+  surface: 'var(--av-surface-2)',
+  surface2: 'var(--av-surface-3)',
+  surfaceElevated: 'var(--av-surface-elevated)',
+  text: 'var(--av-text)',
+  textSecondary: 'var(--av-text-secondary)',
+  textMuted: 'var(--av-text-muted)',
+  border: 'var(--av-border)',
   success: 'var(--av-success)',
-  successSoft: 'rgba(52, 168, 83, 0.08)',
+  successSoft: 'var(--av-success-soft)',
   warning: 'var(--av-warning)',
-  warningSoft: 'rgba(251, 188, 5, 0.08)',
+  warningSoft: 'var(--av-warning-soft)',
   danger: 'var(--av-danger)',
-  dangerSoft: 'rgba(234, 67, 53, 0.08)',
+  dangerSoft: 'var(--av-danger-soft)',
   purple: '#7C3AED',
   purpleSoft: 'rgba(124, 58, 237, 0.08)',
   pink: '#BE185D',
@@ -71,6 +72,13 @@ export default function CompanyHome() {
   const [loading, setLoading] = useState(true)
   const [birthdays, setBirthdays] = useState<{ name: string; date: string; department: string; avatar: string }[]>([])
   const [awards, setAwards] = useState<{ id: string; recipient: string; reason: string }[]>([])
+  // §A intelligence-first: the Business Brain (state + next best action) leads
+  // the home page, above the personal My Work list. This is the "what is
+  // happening / what should I do" layer; My Work below is "what needs me".
+  // Best-effort: stays null if the brain migration isn't deployed (the hero
+  // just doesn't render — no error). Any staff member can call business_brain
+  // (membership-guarded, not owner-only).
+  const [brain, setBrain] = useState<BusinessBrain | null>(null)
 
   useEffect(() => {
     if (!staff?.business_id) return
@@ -197,6 +205,11 @@ export default function CompanyHome() {
 
     loadWork()
     loadCulture()
+    // §A: fetch the Business Brain so the home page leads with intelligence.
+    // Fire-and-forget alongside the work/culture loads; non-blocking (§24).
+    fetchBusinessBrain(staff.business_id)
+      .then(b => { if (active) setBrain(b) })
+      .catch(() => { /* migration not deployed — hero simply doesn't render */ })
     return () => { active = false }
   }, [staff?.business_id, staff?.id, staff?.user_id])
 
@@ -260,6 +273,12 @@ export default function CompanyHome() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 py-6">
+        {/* §A intelligence-first: the Business Brain leads the home page.
+            State (how the business is doing) + Next Best Action (what to do
+            now) — the "what is happening / what should I do" surface, above
+            the personal "what needs me" list. Falls back to nothing (no error)
+            if the brain migration isn't deployed yet. */}
+        <BrainHero brain={brain} />
         {tab === 'my-work' && (
           <MyWorkTab actions={actions} loading={loading} />
         )}
@@ -267,6 +286,105 @@ export default function CompanyHome() {
           <CultureTab birthdays={birthdays} awards={awards} month={getCurrentMonth()} />
         )}
       </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Brain Hero — the intelligence-first lead (compact State + Next Best Action)
+// ---------------------------------------------------------------------------
+
+const STATE_TONE: Record<string, { color: string; soft: string; label: string }> = {
+  growing: { color: BRAND.success, soft: BRAND.successSoft, label: 'Growing' },
+  stable: { color: BRAND.primary, soft: BRAND.primarySoft, label: 'Stable' },
+  scaling: { color: BRAND.primary, soft: BRAND.primarySoft, label: 'Scaling' },
+  stressed: { color: BRAND.warning, soft: BRAND.warningSoft, label: 'Stressed' },
+  recovering: { color: BRAND.primary, soft: BRAND.primarySoft, label: 'Recovering' },
+  at_risk: { color: BRAND.danger, soft: BRAND.dangerSoft, label: 'At risk' },
+  cash_constrained: { color: BRAND.danger, soft: BRAND.dangerSoft, label: 'Cash constrained' },
+  sales_constrained: { color: BRAND.warning, soft: BRAND.warningSoft, label: 'Sales constrained' },
+  capacity_constrained: { color: BRAND.warning, soft: BRAND.warningSoft, label: 'Capacity constrained' },
+  opportunity_rich: { color: BRAND.success, soft: BRAND.successSoft, label: 'Opportunity-rich' },
+  insufficient_data: { color: BRAND.textMuted, soft: BRAND.surface2, label: 'Building a picture' },
+}
+
+function BrainHero({ brain }: { brain: BusinessBrain | null }) {
+  // No brain (migration not deployed, or not authorized) → don't render. The
+  // home page still works (greeting + My Work). This is the §24 safe-failure.
+  if (!brain || !brain.authorized) return null
+
+  const state = brain.state
+  const nba = brain.next_best_action
+  // If both state and nba are degraded/absent, there's nothing intelligent to
+  // lead with — hide the hero rather than show a broken shell.
+  const stateUsable = state && !state.degraded && !state.error && state.state
+  const nbaUsable = nba && !nba.degraded && !nba.error
+  if (!stateUsable && !nbaUsable) return null
+
+  const tone = stateUsable ? (STATE_TONE[state.state] ?? { color: BRAND.textMuted, soft: BRAND.surface2, label: state.state }) : null
+
+  return (
+    <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Business State — "how is my business doing right now" */}
+      {stateUsable && tone && (
+        <div className="rounded-2xl p-5" style={{ backgroundColor: BRAND.surfaceElevated, boxShadow: 'var(--av-shadow-sm)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Activity size={16} style={{ color: tone.color }} />
+            <span className="text-xs uppercase tracking-wide" style={{ color: BRAND.textMuted }}>Business state</span>
+            <span className="text-xs" style={{ color: BRAND.textMuted }}>· {state.confidence}</span>
+          </div>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl font-semibold" style={{ color: tone.color }}>{tone.label}</span>
+            <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: tone.soft, color: tone.color }}>
+              {state.confidence === 'high' ? 'high confidence' : state.confidence === 'insufficient' ? 'needs more data' : 'estimating'}
+            </span>
+          </div>
+          {state.reasons && state.reasons.length > 0 && (
+            <p className="text-sm" style={{ color: BRAND.textSecondary }}>
+              {state.reasons[0].label}
+            </p>
+          )}
+          <Link to="/app/cockpit" className="inline-flex items-center gap-1 mt-3 text-xs font-medium" style={{ color: BRAND.primary }}>
+            See the full picture <ChevronRight size={12} />
+          </Link>
+        </div>
+      )}
+
+      {/* Next Best Action — "what should I do now" */}
+      {nbaUsable && nba.action && (
+        <div className="rounded-2xl p-5 border-l-4" style={{ backgroundColor: BRAND.surfaceElevated, boxShadow: 'var(--av-shadow-sm)', borderLeftColor: nba.action.severity === 'critical' ? BRAND.danger : nba.action.severity === 'warning' ? BRAND.warning : BRAND.primary }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Lightbulb size={16} style={{ color: BRAND.primary }} />
+            <span className="text-xs uppercase tracking-wide" style={{ color: BRAND.textMuted }}>Next best action</span>
+            {nba.business_state && (
+              <span className="text-xs" style={{ color: BRAND.textMuted }}>· for your {nba.business_state.replace(/_/g, ' ')} state</span>
+            )}
+          </div>
+          <p className="text-sm font-medium mb-2" style={{ color: BRAND.text }}>{nba.action.statement}</p>
+          {nba.action.expected_impact && nba.action.expected_impact.amount != null && nba.action.expected_impact.amount > 0 && (
+            <p className="text-sm mb-2" style={{ color: BRAND.success }}>
+              <TrendingUp size={12} className="inline mr-1" />
+              Expected impact: ₦{nba.action.expected_impact.amount.toLocaleString()}
+              {nba.action.expected_impact.description ? ` — ${nba.action.expected_impact.description}` : ''}
+            </p>
+          )}
+          <Link to="/app/cockpit" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white" style={{ backgroundColor: BRAND.primary }}>
+            Take action <ArrowRight size={12} />
+          </Link>
+        </div>
+      )}
+
+      {/* Next Best Action — nothing needs attention (the healthy state) */}
+      {nbaUsable && !nba.action && (
+        <div className="rounded-2xl p-5 border-l-4" style={{ backgroundColor: BRAND.surfaceElevated, boxShadow: 'var(--av-shadow-sm)', borderLeftColor: BRAND.success }}>
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle2 size={16} style={{ color: BRAND.success }} />
+            <span className="text-xs uppercase tracking-wide" style={{ color: BRAND.textMuted }}>Next best action</span>
+          </div>
+          <p className="text-sm font-medium" style={{ color: BRAND.text }}>Nothing needs your attention right now</p>
+          <p className="text-sm mt-1" style={{ color: BRAND.textSecondary }}>{nba.note ?? 'You are all caught up.'}</p>
+        </div>
+      )}
     </div>
   )
 }
