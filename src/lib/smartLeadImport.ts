@@ -32,12 +32,20 @@ const normalizeEmail = (value: unknown) => {
   const result = text(value)?.toLowerCase()
   return result && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result) ? result : undefined
 }
+
+/** Normalize common local/international phone formats without changing the country code.
+ * Nigerian local numbers such as 0803... become +234803..., while an existing
+ * +234... or other international number is preserved.
+ */
 const normalizePhone = (value: unknown) => {
   const raw = text(value)
   if (!raw) return undefined
   const digits = raw.replace(/\D/g, '')
   if (digits.length < 7) return undefined
-  return `+${digits.startsWith('0') ? digits.slice(1) : digits}`
+  if (raw.trim().startsWith('+')) return `+${digits}`
+  if (digits.startsWith('234') && digits.length >= 10) return `+${digits}`
+  if (digits.startsWith('0') && digits.length >= 10) return `+234${digits.slice(1)}`
+  return `+${digits}`
 }
 const get = (row: LeadImportRow, mapping: LeadImportMapping, field: LeadField) => mapping[field] ? row[mapping[field]!] : undefined
 
