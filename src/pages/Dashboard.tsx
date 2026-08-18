@@ -30,7 +30,7 @@ const money = (v: number) =>
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded-2xl bg-[var(--av-surface)] shadow-[0_1px_3px_rgba(0,0,0,.06),0_8px_24px_rgba(0,0,0,.03)] ${className}`}>
+    <section className={`av-card p-5 ${className}`}>
       {children}
     </section>
   )
@@ -41,16 +41,16 @@ function ViewPicker({ value, onChange }: { value: View; onChange: (v: View) => v
   const Icon = VIEW_ICONS[value]
   return (
     <div className="relative">
-      <button onClick={() => setOpen(v => !v)} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">
+      <button onClick={() => setOpen(v => !v)} className="inline-flex items-center gap-2 rounded-lg border border-[var(--av-border)] px-3 py-2 text-sm text-[var(--av-text)] hover:bg-[var(--av-surface-2)]">
         <Icon size={15} />{VIEW_LABELS[value]}<ChevronDown size={14} />
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 w-64 rounded-xl border border-slate-200 bg-[var(--av-surface)] p-2 shadow-xl">
-          <p className="px-3 py-2 text-xs font-medium uppercase tracking-wide text-slate-400">How do you want to understand this?</p>
+        <div className="absolute right-0 z-30 mt-2 w-64 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] p-2 shadow-xl">
+          <p className="px-3 py-2 text-xs font-medium uppercase tracking-wide text-[var(--av-text-muted)]">How do you want to understand this?</p>
           {(Object.keys(VIEW_LABELS) as View[]).map(v => {
             const I = VIEW_ICONS[v]
             return (
-              <button key={v} onClick={() => { onChange(v); setOpen(false) }} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm ${value === v ? 'bg-slate-100 font-medium' : 'hover:bg-slate-50'}`}>
+              <button key={v} onClick={() => { onChange(v); setOpen(false) }} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm ${value === v ? 'bg-[var(--av-surface-2)] font-medium' : 'hover:bg-[var(--av-surface-2)]'}`}>
                 <I size={16} /><span>{VIEW_LABELS[v]}</span>
                 {v === 'recommended' && <span className="ml-auto text-[10px] text-[var(--av-primary)]">BEST</span>}
               </button>
@@ -294,13 +294,13 @@ export default function Dashboard() {
   if (hasCRM) {
     kpiCards.push({
       label: 'Pipeline', value: money(stats.pipeline), icon: TrendingUp,
-      sub: `${stats.dealCount} open opportunities`, subColor: 'text-slate-400',
+      sub: `${stats.dealCount} open opportunities`, subColor: 'text-[var(--av-text-muted)]',
     })
   }
   if (hasProjects) {
     kpiCards.push({
       label: 'Active Projects', value: String(stats.activeProjects), icon: FolderKanban,
-      sub: 'In progress', subColor: 'text-slate-400',
+      sub: 'In progress', subColor: 'text-[var(--av-text-muted)]',
     })
   }
   if (hasInventory) {
@@ -313,7 +313,7 @@ export default function Dashboard() {
   if (hasPeople && !isSolo) {
     kpiCards.push({
       label: 'People', value: String(stats.people), icon: Users2,
-      sub: 'In your company', subColor: 'text-slate-400',
+      sub: 'In your company', subColor: 'text-[var(--av-text-muted)]',
     })
   }
   // Always show attention (universal) — counts every contextual attention
@@ -353,9 +353,9 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="space-y-4 animate-pulse">
-        <div className="h-10 w-72 rounded bg-slate-100" />
-        <div className="h-40 rounded-2xl bg-slate-100" />
-        <div className="h-64 rounded-2xl bg-slate-100" />
+        <div className="h-10 w-72 rounded bg-[var(--av-surface-2)]" />
+        <div className="h-40 rounded-2xl bg-[var(--av-surface-2)]" />
+        <div className="h-64 rounded-2xl bg-[var(--av-surface-2)]" />
       </div>
     )
   }
@@ -364,16 +364,16 @@ export default function Dashboard() {
     <div className="mx-auto max-w-7xl space-y-5 pb-20">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm text-slate-500">Your workspace</p>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-950">Good morning, {firstName}</h1>
-          <p className="mt-1 text-sm text-slate-500">Here's what matters right now.</p>
+          <p className="text-sm text-[var(--av-text-secondary)]">Your workspace</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-[var(--av-text)]">Good morning, {firstName}</h1>
+          <p className="mt-1 text-sm text-[var(--av-text-secondary)]">Here's what matters right now.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
-            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search anything…" className="w-48 rounded-lg border border-slate-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-slate-400" />
+            <Search size={16} className="absolute left-3 top-2.5 text-[var(--av-text-muted)]" />
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search anything…" className="w-48 rounded-lg border border-[var(--av-border)] py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--av-border-strong)]" />
           </div>
-          <Link to="/app/notifications" className="rounded-lg border border-slate-200 p-2 hover:bg-slate-50" aria-label="Notifications">
+          <Link to="/app/notifications" className="rounded-lg border border-[var(--av-border)] p-2 hover:bg-[var(--av-surface-2)]" aria-label="Notifications">
             <Bell size={17} />
           </Link>
         </div>
@@ -383,15 +383,15 @@ export default function Dashboard() {
           receive via email, surfaced on the Dashboard itself. Owner/admin
           only. Each line is one fact with a one-tap action (§5.5). */}
       {digest?.authorized && digest.lines.length > 0 && (
-        <div className="rounded-2xl bg-[var(--av-surface)] p-4 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-[var(--av-surface)] p-4 shadow-sm ring-1 ring-[var(--av-border)]">
           <div className="mb-2 flex items-center gap-2">
             <Mail size={15} className="text-[#155BB4]" />
-            <h2 className="text-sm font-semibold text-slate-900">Today's digest</h2>
-            <span className="text-xs text-slate-400">· arrives by email too</span>
+            <h2 className="text-sm font-semibold text-[var(--av-text)]">Today's digest</h2>
+            <span className="text-xs text-[var(--av-text-muted)]">· arrives by email too</span>
           </div>
           <ul className="space-y-1.5">
             {digest.lines.map((l, i) => (
-              <li key={i} className="flex items-center justify-between gap-3 text-sm text-slate-700">
+              <li key={i} className="flex items-center justify-between gap-3 text-sm text-[var(--av-text)]">
                 <span>{l.text}</span>
                 {l.action && l.route && (
                   <Link to={l.route} className="shrink-0 text-xs font-medium text-[#155BB4] hover:underline">
@@ -409,11 +409,11 @@ export default function Dashboard() {
           Avenize notices "you haven't explored Inventory" and shows why it
           matters (₦X in trapped capital), with an Explore action. */}
       {discovery?.authorized && discovery.suggestions.length > 0 && (
-        <div className="rounded-2xl bg-gradient-to-br from-[#155BB4]/5 to-[#34A853]/5 p-4 ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-gradient-to-br from-[#155BB4]/5 to-[#34A853]/5 p-4 ring-1 ring-[var(--av-border)]">
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp size={15} className="text-[#155BB4]" />
-            <h2 className="text-sm font-semibold text-slate-900">Worth exploring</h2>
-            <span className="text-xs text-slate-400">· based on your business</span>
+            <h2 className="text-sm font-semibold text-[var(--av-text)]">Worth exploring</h2>
+            <span className="text-xs text-[var(--av-text-muted)]">· based on your business</span>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
             {discovery.suggestions.slice(0, 4).map((s) => {
@@ -422,15 +422,15 @@ export default function Dashboard() {
                 <Link
                   key={s.module_key}
                   to={s.explore_route}
-                  className="group rounded-xl bg-[var(--av-surface)] p-3 ring-1 ring-slate-200 hover:ring-[#155BB4]/40 hover:shadow-sm transition"
+                  className="group rounded-xl bg-[var(--av-surface)] p-3 ring-1 ring-[var(--av-border)] hover:ring-[#155BB4]/40 hover:shadow-sm transition"
                 >
-                  <p className="text-sm font-semibold text-slate-900">{s.value_headline}</p>
+                  <p className="text-sm font-semibold text-[var(--av-text)]">{s.value_headline}</p>
                   {estimate && (
                     <p className="mt-0.5 text-lg font-bold text-[#155BB4]">
-                      {estimate} <span className="text-xs font-normal text-slate-500">{s.value_estimate_label}</span>
+                      {estimate} <span className="text-xs font-normal text-[var(--av-text-secondary)]">{s.value_estimate_label}</span>
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-slate-500 line-clamp-2">{s.value_explanation}</p>
+                  <p className="mt-1 text-xs text-[var(--av-text-secondary)] line-clamp-2">{s.value_explanation}</p>
                   <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-[#155BB4] group-hover:underline">
                     Explore {s.display_name} <ArrowRight size={12} />
                   </span>
@@ -445,7 +445,7 @@ export default function Dashboard() {
       {quickActions.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {quickActions.map((a, i) => (
-            <Link key={i} to={a.to} className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">
+            <Link key={i} to={a.to} className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--av-primary)] px-3 py-2 text-sm font-medium text-white hover:bg-[var(--av-primary-hover)]">
               <a.icon size={15} /> {a.label}
             </Link>
           ))}
@@ -456,9 +456,9 @@ export default function Dashboard() {
           (no teams/departments to run operations across), so collapse to the
           single focus/overview choice that matters to a one-person business. */}
       {!isSolo && (
-        <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit">
+        <div className="flex gap-1 rounded-xl bg-[var(--av-surface-2)] p-1 w-fit">
           {(['overview', 'operations', 'focus'] as Mode[]).map(m => (
-            <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-[var(--av-surface)] shadow-sm font-medium text-slate-900' : 'text-slate-500'}`}>
+            <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-[var(--av-surface)] shadow-sm font-medium text-[var(--av-text)]' : 'text-[var(--av-text-secondary)]'}`}>
               {m === 'focus' ? 'My Focus' : m}
             </button>
           ))}
@@ -472,8 +472,8 @@ export default function Dashboard() {
           return (
             <Card key={i} className="p-4">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-500">{c.label}</p>
-                <Icon size={15} className="text-slate-300" />
+                <p className="text-xs text-[var(--av-text-secondary)]">{c.label}</p>
+                <Icon size={15} className="text-[var(--av-text-muted)]" />
               </div>
               <p className="mt-2 text-2xl font-semibold">{c.value}</p>
               <p className={`mt-1 text-xs ${c.subColor}`}>{c.sub}</p>
@@ -487,15 +487,15 @@ export default function Dashboard() {
           <Card className="p-5 lg:col-span-3">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">Business pulse</p>
+                <p className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">Business pulse</p>
                 <h2 className="mt-1 text-lg font-semibold">{primaryMetric.label}</h2>
               </div>
               <div className="flex gap-2">
                 <ViewPicker value={view} onChange={setView} />
-                <button className="rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50">Explain</button>
+                <button className="rounded-lg border border-[var(--av-border)] px-3 py-2 text-sm hover:bg-[var(--av-surface-2)]">Explain</button>
               </div>
             </div>
-            <div className="mt-6 min-h-40 flex items-end gap-2 rounded-xl bg-slate-50 p-5">
+            <div className="mt-6 min-h-40 flex items-end gap-2 rounded-xl bg-[var(--av-surface-2)] p-5">
               {primaryMetric.value === 0 ? (
                 // Honest + gamified empty state: don't fabricate a sparkline
                 // when there is no underlying data. Frames the first action as
@@ -515,7 +515,7 @@ export default function Dashboard() {
               ) : recommended === 'progress' ? (
                 <div className="w-full">
                   <div className="flex justify-between text-sm"><span>Monthly goal</span><span>{money(primaryMetric.value)}</span></div>
-                  <div className="mt-3 h-4 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full bg-slate-800" style={{ width: '70%' }} /></div>
+                  <div className="mt-3 h-4 overflow-hidden rounded-full bg-[var(--av-surface-3)]"><div className="h-full rounded-full bg-[var(--av-primary)]" style={{ width: '70%' }} /></div>
                 </div>
               ) : recommended === 'breakdown' ? (
                 <div className="w-full space-y-3">
@@ -533,30 +533,30 @@ export default function Dashboard() {
                 <div className="w-full">
                   <div className="flex h-28 items-end gap-2">
                     {[42, 55, 48, 68, 60, 82, Math.max(18, Math.min(100, 60 + primaryMetric.change))].map((h, i) => (
-                      <div key={i} className="flex-1 rounded-t-md bg-slate-800/80" style={{ height: `${h}%` }} />
+                      <div key={i} className="flex-1 rounded-t-md bg-[var(--av-primary)]" style={{ height: `${h}%` }} />
                     ))}
                   </div>
-                  <div className="mt-2 flex justify-between text-[10px] text-slate-400"><span>7 months ago</span><span>Now</span></div>
+                  <div className="mt-2 flex justify-between text-[10px] text-[var(--av-text-muted)]"><span>7 months ago</span><span>Now</span></div>
                 </div>
               )}
             </div>
-            <p className="mt-3 text-xs text-slate-400">Recommended view is based on the information and can be changed anytime.</p>
+            <p className="mt-3 text-xs text-[var(--av-text-muted)]">Recommended view is based on the information and can be changed anytime.</p>
           </Card>
 
           <Card className="p-5 lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">Attention</p>
+                <p className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">Attention</p>
                 <h2 className="mt-1 text-lg font-semibold">What needs you</h2>
               </div>
               <CircleAlert size={19} className={attentionItems.length > 0 ? 'text-[var(--av-warning)]' : 'text-emerald-500'} />
             </div>
             <div className="mt-4 space-y-2">
               {attentionItems.slice(0, 5).map(a => (
-                <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-slate-50">
+                <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-[var(--av-surface-2)]">
                   <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-[var(--av-warning-soft)]0'}`} />
                   <span className="min-w-0 flex-1 truncate text-sm">{a.label}</span>
-                  <ArrowRight size={15} className="text-slate-400" />
+                  <ArrowRight size={15} className="text-[var(--av-text-muted)]" />
                 </Link>
               ))}
               {attentionItems.length === 0 && (
@@ -577,21 +577,21 @@ export default function Dashboard() {
         <Card className="p-5 lg:col-span-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">{mode === 'focus' ? roleFocus.label : 'Your work'}</p>
+              <p className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">{mode === 'focus' ? roleFocus.label : 'Your work'}</p>
               <h2 className="mt-1 text-lg font-semibold">Next actions</h2>
-              {mode === 'focus' && <p className="mt-1 text-xs text-slate-400">{roleFocus.hint}</p>}
+              {mode === 'focus' && <p className="mt-1 text-xs text-[var(--av-text-muted)]">{roleFocus.hint}</p>}
             </div>
-            <Link to="/app/tasks" className="text-sm font-medium text-slate-700">View all</Link>
+            <Link to="/app/tasks" className="text-sm font-medium text-[var(--av-text)]">View all</Link>
           </div>
           <div className="mt-4 space-y-1">
             {filteredTasks.slice(0, 6).map(t => (
-              <Link key={t.id} to="/app/tasks" className="flex items-center gap-3 rounded-xl px-2 py-3 hover:bg-slate-50">
-                <CheckCircle2 size={18} className="text-slate-300" />
+              <Link key={t.id} to="/app/tasks" className="flex items-center gap-3 rounded-xl px-2 py-3 hover:bg-[var(--av-surface-2)]">
+                <CheckCircle2 size={18} className="text-[var(--av-text-muted)]" />
                 <span className="flex-1 truncate text-sm">{t.title}</span>
-                <span className="text-xs text-slate-400">{t.due_date ? new Date(t.due_date).toLocaleDateString() : 'No date'}</span>
+                <span className="text-xs text-[var(--av-text-muted)]">{t.due_date ? new Date(t.due_date).toLocaleDateString() : 'No date'}</span>
               </Link>
             ))}
-            {filteredTasks.length === 0 && <p className="py-8 text-center text-sm text-slate-400">Nothing here yet.</p>}
+            {filteredTasks.length === 0 && <p className="py-8 text-center text-sm text-[var(--av-text-muted)]">Nothing here yet.</p>}
           </div>
         </Card>
 
@@ -603,20 +603,20 @@ export default function Dashboard() {
           <Card className="p-5 lg:col-span-2">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-400">Recent</p>
+                <p className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">Recent</p>
                 <h2 className="mt-1 text-lg font-semibold">Activity</h2>
               </div>
-              <Clock3 size={18} className="text-slate-400" />
+              <Clock3 size={18} className="text-[var(--av-text-muted)]" />
             </div>
             <div className="mt-4 space-y-3">
               {activities.map(a => (
                 <div key={a.id} className="flex items-center gap-3 text-sm">
-                  <span className="h-2 w-2 rounded-full bg-slate-300" />
+                  <span className="h-2 w-2 rounded-full bg-[var(--av-text-disabled)]" />
                   <span className="flex-1">{a.text}</span>
-                  <span className="text-xs text-slate-400">{a.value}</span>
+                  <span className="text-xs text-[var(--av-text-muted)]">{a.value}</span>
                 </div>
               ))}
-              {activities.length === 0 && <p className="py-8 text-center text-sm text-slate-400">No recent activity.</p>}
+              {activities.length === 0 && <p className="py-8 text-center text-sm text-[var(--av-text-muted)]">No recent activity.</p>}
             </div>
           </Card>
         )}
@@ -625,14 +625,14 @@ export default function Dashboard() {
       <Card className="p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Settings2 size={18} className="text-slate-500" />
+            <Settings2 size={18} className="text-[var(--av-text-secondary)]" />
             <div>
               <p className="text-sm font-medium">Make Avenize yours</p>
-              <p className="text-xs text-slate-400">Set up your organization, then choose what matters to you.</p>
+              <p className="text-xs text-[var(--av-text-muted)]">Set up your organization, then choose what matters to you.</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <Link to="/app/settings/workspace" className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800">Customize</Link>
+            <Link to="/app/settings/workspace" className="rounded-lg bg-[var(--av-primary)] px-3 py-2 text-sm text-white hover:bg-[var(--av-primary-hover)]">Customize</Link>
           </div>
         </div>
       </Card>

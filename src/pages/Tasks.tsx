@@ -48,7 +48,7 @@ type TimeLog = {
 }
 
 const PRIORITY_COLORS: Record<Priority, string> = {
-  low: 'bg-slate-100 text-slate-600',
+  low: 'bg-[var(--av-surface-3)] text-[var(--av-text-secondary)]',
   medium: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]',
   high: 'bg-orange-100 text-orange-700',
   urgent: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
@@ -61,7 +61,7 @@ const STATUS_LABELS: Record<TaskStatus, string> = {
 }
 
 const REVIEW_BADGE: Record<ReviewStatus, { label: string; cls: string; icon: typeof Check }> = {
-  pending: { label: 'Review', cls: 'bg-slate-100 text-slate-500', icon: Clock },
+  pending: { label: 'Review', cls: 'bg-[var(--av-surface-3)] text-[var(--av-text-secondary)]', icon: Clock },
   satisfactory: { label: 'Satisfactory', cls: 'bg-[var(--av-success-soft)] text-[var(--av-success)]', icon: CheckCircle2 },
   needs_rework: { label: 'Needs Rework', cls: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]', icon: AlertCircle },
 }
@@ -280,7 +280,7 @@ export default function Tasks() {
 
       {(totalEstimated > 0 || totalActual > 0) && (
         <div className="bg-white rounded-xl p-3 border border-black/[0.06] mb-6 flex items-center gap-4 text-sm">
-          <Timer size={16} className="text-slate-400" />
+          <Timer size={16} className="text-[var(--av-text-muted)]" />
           <span className="text-black">
             Time tracked: <b>{totalActual}h</b> logged / <b>{totalEstimated}h</b> estimated
           </span>
@@ -682,7 +682,7 @@ function TaskDetail({
                 <p className="text-sm text-black/40 text-center py-4">No follow-ups yet</p>
               )}
               {comments.map((c) => (
-                <div key={c.id} className="bg-slate-50 rounded-lg p-3">
+                <div key={c.id} className="bg-[var(--av-surface-2)] rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-medium text-black/70">
                       {memberName(c.author_id) || 'Someone'}
@@ -745,7 +745,7 @@ function TaskDetail({
                 timeLogs.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between bg-slate-50 rounded-lg p-3"
+                    className="flex items-center justify-between bg-[var(--av-surface-2)] rounded-lg p-3"
                   >
                     <div>
                       <p className="text-sm text-black/80">
@@ -788,7 +788,7 @@ function TaskDetail({
                     </span>
                   </div>
                   {task.review_comment && (
-                    <div className="bg-slate-50 rounded-lg p-3">
+                    <div className="bg-[var(--av-surface-2)] rounded-lg p-3">
                       <p className="text-xs text-black/40 mb-1">Review feedback</p>
                       <p className="text-sm text-black/80">{task.review_comment}</p>
                     </div>

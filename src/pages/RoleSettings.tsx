@@ -326,9 +326,9 @@ export default function RoleSettings() {
       <div className="mt-6 p-5 bg-white rounded-2xl">
         <div className="flex items-center gap-2 mb-1">
           <ShieldCheck size={18} className="text-[#155BB4]" />
-          <h3 className="text-base font-semibold text-slate-900">Approval thresholds</h3>
+          <h3 className="text-base font-semibold text-[var(--av-text)]">Approval thresholds</h3>
         </div>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-[var(--av-text-secondary)] mb-4">
           Decide when a human needs to approve money or access changes. A solo founder needs none; a growing team needs some. These are your business's rules — never hardcoded globally.
         </p>
         <div className="space-y-4">
@@ -337,22 +337,22 @@ export default function RoleSettings() {
               type="checkbox"
               checked={approvalCfg.bypass_all_approvals}
               onChange={e => setApprovalCfg(c => ({ ...c, bypass_all_approvals: e.target.checked }))}
-              className="mt-1 h-4 w-4 rounded border-slate-300 text-[#155BB4] focus:ring-[#155BB4]"
+              className="mt-1 h-4 w-4 rounded border-[var(--av-border-strong)] text-[#155BB4] focus:ring-[#155BB4]"
             />
             <div>
-              <span className="text-sm font-medium text-slate-900">Bypass all approvals</span>
-              <p className="text-xs text-slate-500">For sole proprietors — you're the only person, so approval gates are a no-op. Turn this on to skip them entirely.</p>
+              <span className="text-sm font-medium text-[var(--av-text)]">Bypass all approvals</span>
+              <p className="text-xs text-[var(--av-text-secondary)]">For sole proprietors — you're the only person, so approval gates are a no-op. Turn this on to skip them entirely.</p>
             </div>
           </label>
           <div>
-            <label className="text-sm font-medium text-slate-900">Auto-approve below (₦)</label>
-            <p className="text-xs text-slate-500 mb-1">Small decisions shouldn't be bureaucratic. Purchases/expenses below this amount skip approval (category-level thresholds still win when more specific). Leave blank to require approval regardless of amount.</p>
+            <label className="text-sm font-medium text-[var(--av-text)]">Auto-approve below (₦)</label>
+            <p className="text-xs text-[var(--av-text-secondary)] mb-1">Small decisions shouldn't be bureaucratic. Purchases/expenses below this amount skip approval (category-level thresholds still win when more specific). Leave blank to require approval regardless of amount.</p>
             <input
               type="number"
               value={approvalCfg.auto_approve_below ?? ''}
               onChange={e => setApprovalCfg(c => ({ ...c, auto_approve_below: e.target.value === '' ? null : Number(e.target.value) }))}
               placeholder="e.g. 5000"
-              className="w-40 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+              className="w-40 rounded-lg border border-[var(--av-border)] px-3 py-2 text-sm outline-none focus:border-[var(--av-border-strong)]"
             />
           </div>
           <button

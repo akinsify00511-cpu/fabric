@@ -103,6 +103,36 @@
 .av-surface { background-color: var(--av-surface); }
 .av-surface-2 { background-color: var(--av-surface-2); }
 .av-surface-elevated { background-color: var(--av-surface-elevated); }
+
+/* ── Premium card utilities (Session 28) ──────────────────────────────
+   Two card styles so every page shares ONE visual language:
+   .av-card       — solid elevated surface + float shadow + large radius.
+                    For data tables, lists, forms — anywhere opacity would
+                    hurt readability. Premium but legible.
+   .av-glass-card — translucent glass + blur + soft border + float shadow.
+                    For intelligence/hero surfaces (BusinessHome, Cockpit).
+   Use these instead of ad-hoc `bg-white rounded-2xl shadow-sm`. */
+.av-card {
+  background-color: var(--av-surface-elevated);
+  border-radius: var(--av-radius-xl);
+  box-shadow: var(--av-shadow-float);
+  border: 1px solid rgba(232, 234, 237, 0.7);
+}
+.av-glass-card {
+  background: var(--av-glass-bg);
+  backdrop-filter: blur(var(--av-glass-blur));
+  -webkit-backdrop-filter: blur(var(--av-glass-blur));
+  border: 1px solid var(--av-glass-border);
+  border-radius: var(--av-radius-xl);
+  box-shadow: var(--av-shadow-float);
+}
+/* The atmospheric app backdrop — applied to the Shell content wrapper so
+   EVERY page sits on the same premium gradient as the home (one organism). */
+.av-backdrop {
+  background-color: var(--av-home-bg);
+  background-image: var(--av-atmosphere);
+  background-attachment: fixed;
+}
 .av-text { color: var(--av-text); }
 .av-text-secondary { color: var(--av-text-secondary); }
 .av-text-muted { color: var(--av-text-muted); }

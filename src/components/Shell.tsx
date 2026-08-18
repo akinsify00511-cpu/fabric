@@ -281,9 +281,10 @@ export default function Shell() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--av-surface-2)]">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-60 shrink-0 bg-[var(--av-surface)] border-r border-[var(--av-border)] flex-col fixed inset-y-0 left-0 z-30">
+    <div className="min-h-screen av-backdrop">
+      {/* Desktop sidebar — translucent glass over the atmospheric backdrop */}
+      <aside className="hidden md:flex w-60 shrink-0 border-r flex-col fixed inset-y-0 left-0 z-30"
+        style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
         {/* Workspace header */}
         <div className="px-4 py-3.5 flex items-center gap-2 border-b border-[var(--av-border)]">
           {branding.logo_url ? (
@@ -442,8 +443,9 @@ export default function Shell() {
         </div>
       </aside>
 
-      {/* Desktop top bar */}
-      <header className="hidden md:flex items-center gap-3 fixed top-0 right-0 left-60 h-14 px-6 bg-[var(--av-surface)] border-b border-[var(--av-border)] z-20">
+      {/* Desktop top bar — glass over the atmospheric backdrop */}
+      <header className="hidden md:flex items-center gap-3 fixed top-0 right-0 left-60 h-14 px-6 border-b z-20"
+        style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
         <button
           onClick={handleSearch}
           className="flex items-center gap-2 flex-1 max-w-md rounded-lg border border-[var(--av-border)] bg-[var(--av-surface-2)] px-3 py-1.5 text-sm text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)] hover:bg-[var(--av-surface)] transition"
@@ -478,7 +480,8 @@ export default function Shell() {
       </header>
 
       {/* Mobile top header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-[var(--av-border)] sticky top-0 z-10 bg-[var(--av-surface)]">
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10"
+        style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
         <div className="flex items-center gap-2">
           {!branding.logo_url && <AvenizeMark size={20} />}
           {branding.logo_url && (
@@ -513,7 +516,8 @@ export default function Shell() {
       <ToolOnboardingPopup toolKey={TOOL_KEY_MAP[location.pathname] || ''} />
 
       {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-[var(--av-border)] px-2 py-2 z-20 bg-[var(--av-surface)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20"
+        style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
         <div className="flex items-center justify-around">
           {MOBILE_NAV_ITEMS.map((item) => {
             const Icon = item.icon

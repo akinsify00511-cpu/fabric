@@ -435,7 +435,7 @@ function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
   }
 
   return (
-    <div className="rounded-2xl bg-[var(--av-surface-elevated)] p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="av-card p-5 mb-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2">
           <Gauge size={18} className="text-[var(--av-primary)]" /> Governed business metrics
@@ -477,7 +477,7 @@ function EbitdaCard({ ebitda }: { ebitda: EbitdaResult | null }) {
     n == null ? '—' : '₦' + Math.round(n).toLocaleString()
   if (!ebitda || !ebitda.authorized || ebitda.insufficient_data) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6 flex items-center gap-3">
+      <div className="av-card p-5 mb-6 flex items-center gap-3">
         <Banknote size={20} className="text-[var(--av-text-muted)]" />
         <div>
           <p className="text-sm font-semibold text-[var(--av-text)]">Operating profitability — not enough data yet</p>
@@ -490,7 +490,7 @@ function EbitdaCard({ ebitda }: { ebitda: EbitdaResult | null }) {
   }
   const tone = ebitda.ebitda > 0 ? 'var(--av-success)' : ebitda.ebitda === 0 ? 'var(--av-warning)' : 'var(--av-danger)'
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="av-card p-5 mb-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
           <Banknote size={16} style={{ color: tone }} /> Operating profitability (EBITDA)
@@ -541,7 +541,7 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
   // target per metric). Honest "insufficient data" when no targets are set.
   if (!health || health.overall_score == null) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6 flex items-center gap-3">
+      <div className="av-card p-5 mb-6 flex items-center gap-3">
         <HeartPulse size={20} className="text-[var(--av-text-muted)]" />
         <div>
           <p className="text-sm font-semibold text-[var(--av-text)]">Business Health — not yet available</p>
@@ -563,7 +563,7 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
     .filter(([k]) => k !== '_meta') as [string, HealthDimension][]
   const meta = (health.dimension_scores as any)?._meta
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="av-card p-5 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
           <HeartPulse size={16} style={{ color: tone }} /> Business Health
@@ -649,7 +649,7 @@ function RecommendationsCard({
   const sevColor = (s: string) =>
     s === 'critical' ? 'var(--av-danger)' : s === 'warning' ? 'var(--av-warning)' : 'var(--av-info)'
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="av-card p-5 mb-6">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
           <Lightbulb size={16} className="text-[var(--av-primary)]" /> What needs my attention
@@ -754,7 +754,7 @@ function RecommendationsCard({
 function EffectivenessCard({ rows }: { rows: any[] }) {
   const nairaFmt = (n: number | null) => n == null || !Number.isFinite(n) ? '—' : naira(n)
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+    <div className="av-card p-5 mb-6">
       <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5 mb-1">
         <Sparkles size={16} className="text-[var(--av-primary)]" /> Did the recommendations work?
       </h3>
@@ -809,7 +809,7 @@ function ExceptionsCard({ early, risk }: { early: any; risk: any }) {
     ...anomalies.map((a: any) => ({ label: a.type?.replace(/_/g,' ') || 'Anomaly', detail: a.note || JSON.stringify(a.detail).slice(0,80), tone: 'danger' as const })),
   ]
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)]">
+    <div className="av-card p-5">
       <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2 mb-3">
         <ShieldAlert size={18} className="text-[var(--av-danger)]" /> Exceptions needing attention
         <ClaimTag type="INFERENCE" />
@@ -839,7 +839,7 @@ function ExceptionsCard({ early, risk }: { early: any; risk: any }) {
 function DrillCard({ lens, data }: { lens: Lens; data: any }) {
   const title = lens === 'cfo' ? 'Cash breakdown' : lens === 'coo' ? 'Operational signals' : 'Revenue & pipeline'
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)]">
+    <div className="av-card p-5">
       <h2 className="font-semibold text-[var(--av-text)] flex items-center gap-2 mb-3">
         <Activity size={18} className="text-[var(--av-primary)]" /> {title} <ClaimTag type="FACT" />
       </h2>
@@ -1212,7 +1212,7 @@ function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }
     leakage.stale_receivables.length > 0
   if (!hasFindings) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <Wallet size={16} className="text-[var(--av-success)]" />
           <span className="text-sm font-medium text-[var(--av-text)]">Leakage detection</span>
@@ -1223,7 +1223,7 @@ function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+    <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
         <AlertTriangle size={16} className="text-[var(--av-warning)]" />
         <span className="text-sm font-medium text-[var(--av-text)]">Where you might be losing money</span>
@@ -1287,7 +1287,7 @@ function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesRe
   if (!pricing || !pricing.authorized) return null
   if (pricing.high_margin.length === 0 && pricing.low_margin.length === 0) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <Tag size={16} className="text-[var(--av-primary)]" />
           <span className="text-sm font-medium text-[var(--av-text)]">Pricing opportunities</span>
@@ -1298,7 +1298,7 @@ function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesRe
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+    <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
         <Tag size={16} className="text-[var(--av-primary)]" />
         <span className="text-sm font-medium text-[var(--av-text)]">Pricing opportunities</span>
@@ -1341,7 +1341,7 @@ function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
   if (!graph || !graph.authorized) return null
   if (graph.total_edges === 0) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <Network size={16} className="text-[var(--av-primary)]" />
           <span className="text-sm font-medium text-[var(--av-text)]">Your business graph</span>
@@ -1351,7 +1351,7 @@ function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+    <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
         <Network size={16} className="text-[var(--av-primary)]" />
         <span className="text-sm font-medium text-[var(--av-text)]">Your business graph — one connected system</span>
@@ -1402,7 +1402,7 @@ function ProfitabilitySegmentCard({
   const rows = segments.segments ?? []
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <BarChart3 size={16} className="text-[var(--av-primary)]" />
           <span className="text-sm font-medium text-[var(--av-text)]">Profitability by segment</span>
@@ -1413,7 +1413,7 @@ function ProfitabilitySegmentCard({
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+    <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
         <BarChart3 size={16} className="text-[var(--av-primary)]" />
         <span className="text-sm font-medium text-[var(--av-text)]">Where you make money — by {lens}</span>
@@ -1471,7 +1471,7 @@ function ImpactSimulatorCard({
   const hub = graph?.hub_entities?.[0]
   if (!graph || !graph.authorized || graph.total_edges === 0 || !hub) {
     return (
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles size={16} className="text-[var(--av-primary)]" />
           <span className="text-sm font-medium text-[var(--av-text)]">Scenario simulator — "what if?"</span>
@@ -1481,7 +1481,7 @@ function ImpactSimulatorCard({
     )
   }
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+    <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
         <Sparkles size={16} className="text-[var(--av-primary)]" />
         <span className="text-sm font-medium text-[var(--av-text)]">Scenario simulator — "what happens if?"</span>

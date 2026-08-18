@@ -88,7 +88,7 @@ export default function StaffProfile() {
       case 'admin': return 'bg-purple-100 text-purple-800'
       case 'manager': return 'bg-[var(--av-primary-soft)] text-[var(--av-primary-hover)]'
       case 'team_lead': return 'bg-emerald-100 text-emerald-800'
-      default: return 'bg-slate-700 text-[var(--av-text)]'
+      default: return 'bg-[var(--av-text-secondary)] text-white'
     }
   }
 

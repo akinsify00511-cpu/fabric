@@ -338,7 +338,7 @@ export default function Approvals() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[var(--av-border)]">
                 {filteredHistory.map(request => (
                   <tr key={request.id} className="hover:bg-[var(--av-surface)]">
                     <td className="px-4 py-3">
