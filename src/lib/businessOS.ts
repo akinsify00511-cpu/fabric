@@ -996,3 +996,45 @@ export function formatNaira(amount: number | null | undefined): string {
   if (amount == null || amount === 0) return ''
   return '₦' + Math.round(amount).toLocaleString()
 }
+
+// ============================================================================
+// P0 #16 — Autonomous trial assistance
+// ============================================================================
+
+export interface TrialNudge {
+  type: string
+  headline: string
+  body: string
+  action_label: string
+  action_route: string
+}
+
+export interface TrialAssistanceResult {
+  authorized: boolean
+  in_trial?: boolean
+  trial_ends_at?: string | null
+  days_left?: number
+  phase?: string
+  setup_complete?: boolean
+  steps_reached?: number
+  paid_modules_used?: number
+  health_score?: number
+  nudge?: TrialNudge | null
+  error?: string
+}
+
+/**
+ * P0 #16: the trial-assistance engine. Returns the ONE nudge that best moves
+ * a trial user toward value, based on their trial phase + setup completeness +
+ * feature usage. Deterministic (§22). Best-effort, non-blocking (§24).
+ */
+export async function fetchTrialAssistance(businessId: string): Promise<TrialAssistanceResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('trial_assistance', { p_business_id: businessId })
+    if (error) throw error
+    return (data as TrialAssistanceResult) ?? null
+  } catch (e) {
+    console.error('fetchTrialAssistance failed (non-blocking):', e)
+    return null
+  }
+}
