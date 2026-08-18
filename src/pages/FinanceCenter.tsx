@@ -187,11 +187,12 @@ function BankingTab({ businessId }: { businessId?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('bank_accounts').insert({
+    const { error } = await supabase.from('bank_accounts').insert({
       ...form,
       business_id: businessId,
       balance: parseFloat(form.balance) || 0,
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Bank account added!', 'success')
     setShowForm(false)
     loadAccounts()
@@ -290,13 +291,14 @@ function VATTab({ businessId }: { businessId?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('vat_records').insert({
+    const { error } = await supabase.from('vat_records').insert({
       ...form,
       business_id: businessId,
       base_amount: parseFloat(form.base_amount),
       vat_amount: parseFloat(form.vat_amount),
       total_amount: parseFloat(form.base_amount) + parseFloat(form.vat_amount),
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('VAT record added!', 'success')
     setShowForm(false)
     loadRecords()
@@ -406,13 +408,14 @@ function WHTTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const withholding_amount = (parseFloat(form.gross_amount) * parseFloat(form.withholding_rate)) / 100
-    await supabase.from('wht_records').insert({
+    const { error } = await supabase.from('wht_records').insert({
       ...form,
       business_id: businessId,
       gross_amount: parseFloat(form.gross_amount),
       withholding_rate: parseFloat(form.withholding_rate),
       withholding_amount,
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('WHT record added!', 'success')
     setShowForm(false)
     loadRecords()
@@ -515,12 +518,13 @@ function DebtorsTab({ businessId }: { businessId?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('debtors').insert({
+    const { error } = await supabase.from('debtors').insert({
       ...form,
       business_id: businessId,
       original_amount: parseFloat(form.original_amount),
       outstanding_amount: parseFloat(form.outstanding_amount),
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Debtor added!', 'success')
     setShowForm(false)
     loadDebtors()
@@ -629,12 +633,13 @@ function CreditorsTab({ businessId }: { businessId?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('creditors').insert({
+    const { error } = await supabase.from('creditors').insert({
       ...form,
       business_id: businessId,
       original_amount: parseFloat(form.original_amount),
       outstanding_amount: parseFloat(form.outstanding_amount),
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Creditor added!', 'success')
     setShowForm(false)
     loadCreditors()

@@ -91,20 +91,22 @@ export default function AnnouncementsPage() {
 
     try {
       if (editing) {
-        await supabase.from('announcements').update(data).eq('id', editing.id)
+        const { error } = await supabase.from('announcements').update(data).eq('id', editing.id)
+        if (error) throw error
       } else {
-        await supabase.from('announcements').insert({
+        const { error } = await supabase.from('announcements').insert({
           ...data,
           business_id: staff.business_id,
           author_id: staff.id,
           status: 'active',
         })
+        if (error) throw error
       }
       setShowModal(false)
       setEditing(null)
       loadData()
     } catch (e) {
-      console.error('Failed to save announcement:', e)
+      alert('Failed to save announcement: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
@@ -112,25 +114,27 @@ export default function AnnouncementsPage() {
     if (!confirm('Delete this announcement?')) return
 
     try {
-      await supabase.from('announcements').delete().eq('id', id)
+      const { error } = await supabase.from('announcements').delete().eq('id', id)
+      if (error) throw error
       loadData()
     } catch (e) {
-      console.error('Failed to delete:', e)
+      alert('Failed to delete: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
   async function handleTogglePin(ann: Announcement) {
     try {
-      await supabase.from('announcements').update({ is_pinned: !ann.is_pinned }).eq('id', ann.id)
+      const { error } = await supabase.from('announcements').update({ is_pinned: !ann.is_pinned }).eq('id', ann.id)
+      if (error) throw error
       loadData()
     } catch (e) {
-      console.error('Failed to toggle pin:', e)
+      alert('Failed to toggle pin: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
   async function handleDismiss(announcementId: string) {
     try {
-      await supabase.from('announcement_views').upsert({
+      const { error } = await supabase.from('announcement_views').upsert({
         announcement_id: announcementId,
         staff_id: staff?.id,
         dismissed: true,
@@ -138,6 +142,7 @@ export default function AnnouncementsPage() {
       }, {
         onConflict: 'announcement_id,staff_id',
       })
+      if (error) throw error
       loadData()
     } catch (e) {
       console.error('Failed to dismiss:', e)
@@ -154,17 +159,19 @@ export default function AnnouncementsPage() {
         .maybeSingle()
 
       if (!existing.data) {
-        await supabase.from('announcement_views').insert({
+        const { error: insErr } = await supabase.from('announcement_views').insert({
           announcement_id: announcementId,
           staff_id: staff?.id,
         })
-        
+        if (insErr) throw insErr
+
         // Increment view count
         const ann = announcements.find(a => a.id === announcementId)
         if (ann) {
-          await supabase.from('announcements').update({
+          const { error: updErr } = await supabase.from('announcements').update({
             view_count: (ann.view_count || 0) + 1
           }).eq('id', announcementId)
+          if (updErr) throw updErr
         }
       }
       loadData()

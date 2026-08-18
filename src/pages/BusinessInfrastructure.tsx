@@ -162,7 +162,8 @@ function BranchesTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('branches').insert({ ...form, business_id: businessId })
+    const { error } = await supabase.from('branches').insert({ ...form, business_id: businessId })
+    if (error) { alert('Failed to save branch: ' + error.message); return }
     setForm({ name: '', address: '', phone: '', email: '', is_headquarters: false })
     setShowForm(false)
     loadBranches()
@@ -289,13 +290,14 @@ function LoansTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('loans').insert({ 
+    const { error } = await supabase.from('loans').insert({ 
       ...form, business_id: businessId,
       principal_amount: parseFloat(form.principal_amount),
       interest_rate: parseFloat(form.interest_rate) || 0,
       tenure_months: parseInt(form.tenure_months) || null,
       outstanding_balance: parseFloat(form.principal_amount),
     })
+    if (error) { alert('Failed to save loan: ' + error.message); return }
     setForm({ lender_name: '', loan_type: 'business', principal_amount: '', interest_rate: '', tenure_months: '' })
     setShowForm(false)
     loadLoans()
@@ -375,7 +377,8 @@ function CommissionsTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('commissions').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
+    const { error } = await supabase.from('commissions').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
+    if (error) { alert('Failed to save commission: ' + error.message); return }
     setForm({ commission_type: 'sales', amount: '', description: '' })
     setShowForm(false)
     loadCommissions()
@@ -455,11 +458,12 @@ function AssetsTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('assets').insert({ 
+    const { error } = await supabase.from('assets').insert({ 
       ...form, business_id: businessId,
       purchase_price: parseFloat(form.purchase_price) || null,
       current_value: parseFloat(form.current_value) || parseFloat(form.purchase_price) || null,
     })
+    if (error) { alert('Failed to save asset: ' + error.message); return }
     setForm({ name: '', asset_type: 'equipment', purchase_price: '', current_value: '', description: '' })
     setShowForm(false)
     loadAssets()
@@ -545,11 +549,12 @@ function LiabilitiesTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('liabilities').insert({ 
+    const { error } = await supabase.from('liabilities').insert({ 
       ...form, business_id: businessId,
       original_amount: parseFloat(form.original_amount),
       current_balance: parseFloat(form.current_balance) || parseFloat(form.original_amount),
     })
+    if (error) { alert('Failed to save liability: ' + error.message); return }
     setForm({ name: '', liability_type: 'bond', original_amount: '', current_balance: '', creditor: '' })
     setShowForm(false)
     loadLiabilities()
@@ -634,7 +639,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    await supabase.from('recurring_expenses').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
+    const { error } = await supabase.from('recurring_expenses').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
     setForm({ name: '', category: 'rent', amount: '', frequency: 'monthly', vendor: '' })
     setShowForm(false)
     loadExpenses()
@@ -727,7 +732,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId || !staffId) return
-    await supabase.from('time_entries').insert({ ...form, business_id: businessId, staff_id: staffId, hours: parseFloat(form.hours) })
+    const { error } = await supabase.from('time_entries').insert({ ...form, business_id: businessId, staff_id: staffId, hours: parseFloat(form.hours) })
     setForm({ date: new Date().toISOString().split('T')[0], hours: '', description: '', billable: true })
     setShowForm(false)
     loadEntries()

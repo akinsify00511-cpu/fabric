@@ -92,7 +92,7 @@ export default function ExpenseClaimsPage() {
 
   async function handleApprove(claimId: string) {
     try {
-      await supabase.from('expense_claims').update({
+      const { error } = await supabase.from('expense_claims').update({
         status: 'approved',
       }).eq('id', claimId)
       loadData()
@@ -106,25 +106,27 @@ export default function ExpenseClaimsPage() {
     if (!reason) return
 
     try {
-      await supabase.from('expense_claims').update({
+      const { error } = await supabase.from('expense_claims').update({
         status: 'rejected',
       }).eq('id', claimId)
+      if (error) throw error
       loadData()
     } catch (e) {
-      console.error('Failed to reject:', e)
+      alert('Failed to reject: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
   async function handleMarkReimbursed(claimId: string) {
     try {
-      await supabase.from('expense_claims').update({
+      const { error } = await supabase.from('expense_claims').update({
         status: 'reimbursed',
         reimbursed_at: new Date().toISOString(),
         reimbursed_by: staff?.id,
       }).eq('id', claimId)
+      if (error) throw error
       loadData()
     } catch (e) {
-      console.error('Failed to mark reimbursed:', e)
+      alert('Failed to mark reimbursed: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
@@ -407,7 +409,7 @@ function ExpenseModal({
 
     setSubmitting(true)
     try {
-      await supabase.from('expense_claims').insert({
+      const { error } = await supabase.from('expense_claims').insert({
         staff_id: staff.id,
         business_id: staff.business_id,
         category_id: form.category_id,
@@ -418,6 +420,7 @@ function ExpenseModal({
         status: 'pending',
         receipt_urls: [],
       })
+      if (error) { alert('Failed to save: ' + error.message); return }
       onSuccess()
     } catch (e) {
       console.error('Failed to submit:', e)

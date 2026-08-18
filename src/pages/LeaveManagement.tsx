@@ -468,7 +468,7 @@ function LeaveRequestModal({
 
     setSubmitting(true)
     try {
-      await supabase.from('leave_requests').insert({
+      const { error } = await supabase.from('leave_requests').insert({
         staff_id: staff.id,
         leave_type_id: form.leave_type_id,
         start_date: form.start_date,
@@ -479,10 +479,11 @@ function LeaveRequestModal({
         reason: form.reason,
         status: 'pending',
       })
+      if (error) { alert('Failed to save: ' + error.message); return }
 
       // Update pending balance
       if (selectedBalance) {
-        await supabase.from('leave_balances').upsert({
+        const { error } = await supabase.from('leave_balances').upsert({
           staff_id: staff.id,
           leave_type_id: form.leave_type_id,
           year: new Date().getFullYear(),
@@ -490,6 +491,7 @@ function LeaveRequestModal({
         }, {
           onConflict: 'staff_id,leave_type_id,year',
         })
+        if (error) { alert('Failed to save: ' + error.message); return }
       }
 
       onSuccess()

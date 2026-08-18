@@ -123,18 +123,20 @@ export default function OrganizationPage() {
 
     try {
       if (editingItem) {
-        await supabase.from('departments').update(data).eq('id', editingItem.id)
+        const { error } = await supabase.from('departments').update(data).eq('id', editingItem.id)
+        if (error) throw error
       } else {
-        await supabase.from('departments').insert({
+        const { error } = await supabase.from('departments').insert({
           ...data,
           business_id: staff.business_id
         })
+        if (error) throw error
       }
       setShowModal(null)
       setEditingItem(null)
       loadData()
     } catch (e) {
-      console.error('Failed to save department:', e)
+      alert('Failed to save department: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
@@ -143,18 +145,20 @@ export default function OrganizationPage() {
 
     try {
       if (editingItem) {
-        await supabase.from('teams').update(data).eq('id', editingItem.id)
+        const { error } = await supabase.from('teams').update(data).eq('id', editingItem.id)
+        if (error) throw error
       } else {
-        await supabase.from('teams').insert({
+        const { error } = await supabase.from('teams').insert({
           ...data,
           business_id: staff.business_id
         })
+        if (error) throw error
       }
       setShowModal(null)
       setEditingItem(null)
       loadData()
     } catch (e) {
-      console.error('Failed to save team:', e)
+      alert('Failed to save team: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 
@@ -163,10 +167,11 @@ export default function OrganizationPage() {
 
     try {
       const table = type === 'dept' ? 'departments' : 'teams'
-      await supabase.from(table).update({ is_active: false }).eq('id', id)
+      const { error } = await supabase.from(table).update({ is_active: false }).eq('id', id)
+      if (error) throw error
       loadData()
     } catch (e) {
-      console.error('Failed to delete:', e)
+      alert('Failed to delete: ' + (e instanceof Error ? e.message : String(e)))
     }
   }
 

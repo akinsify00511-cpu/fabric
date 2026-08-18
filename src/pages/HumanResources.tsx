@@ -231,7 +231,7 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
     const end = new Date(form.end_date)
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
-    await supabase.from('leave_requests').insert({
+    const { error } = await supabase.from('leave_requests').insert({
       staff_id: staffId,
       leave_type_id: leaveTypes.find(l => l.id === form.leave_type)?.id || '',
       start_date: form.start_date,
@@ -239,6 +239,7 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
       days_requested: days,
       reason: form.reason,
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Leave request submitted!', 'success')
     setShowForm(false)
     setForm({ leave_type: 'annual', start_date: '', end_date: '', reason: '' })
@@ -377,12 +378,13 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
     const today = now.toISOString().split('T')[0]
     const time = now.toTimeString().split(' ')[0]
 
-    await supabase.from('attendance_records').insert({
+    const { error } = await supabase.from('attendance_records').insert({
       staff_id: staffId,
       date: today,
       check_in: time,
       status: 'present',
     })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Checked in successfully!', 'success')
     loadRecords()
     setCheckingIn(false)
@@ -395,7 +397,8 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
 
     const todayRecord = records.find(r => r.date === today)
     if (todayRecord) {
-      await supabase.from('attendance_records').update({ check_out: time }).eq('id', todayRecord.id)
+      const { error } = await supabase.from('attendance_records').update({ check_out: time }).eq('id', todayRecord.id)
+      if (error) { alert('Failed to save: ' + error.message); return }
       showToast('Checked out successfully!', 'success')
       loadRecords()
     }
@@ -598,7 +601,8 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
 
   async function handleCreateJob(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('job_postings').insert({ ...jobForm, business_id: businessId })
+    const { error } = await supabase.from('job_postings').insert({ ...jobForm, business_id: businessId })
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Job posting created!', 'success')
     setShowJobForm(false)
     setJobForm({ title: '', department: '', location: '', employment_type: 'full_time', description: '', salary_range: '' })
@@ -1142,7 +1146,8 @@ function TrainingTab({ businessId }: { businessId?: string }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('training_records').insert(form)
+    const { error } = await supabase.from('training_records').insert(form)
+    if (error) { alert('Failed to save: ' + error.message); return }
     showToast('Training record added!', 'success')
     setShowForm(false)
     loadTrainings()
