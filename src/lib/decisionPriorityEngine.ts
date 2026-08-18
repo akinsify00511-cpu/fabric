@@ -19,12 +19,12 @@ export type PrioritizedDecision = DecisionCandidate & {
 
 export function prioritizeDecisions(candidates: DecisionCandidate[], now = Date.now()): PrioritizedDecision[] {
   const maxImpact = Math.max(1, ...candidates.map((c) => Math.max(c.financialImpactMinor, c.riskExposureMinor ?? 0)))
-  return candidates.map((candidate) => {
+  return candidates.map((candidate): PrioritizedDecision => {
     const impact = Math.max(candidate.financialImpactMinor, candidate.riskExposureMinor ?? 0) / maxImpact
     const deadlineUrgency = candidate.deadlineAt ? Math.max(0, Math.min(1, 1 - (Date.parse(candidate.deadlineAt) - now) / (7 * 86400000))) : 0.35
     const statusBoost = candidate.status === 'blocked' ? 0.15 : candidate.status === 'in_progress' ? 0.05 : 0
     const priorityScore = Math.min(100, 100 * (impact * 0.4 + candidate.urgency * 0.25 + candidate.confidence * 0.15 + candidate.crossBusinessImpact * 0.2 + deadlineUrgency * 0.15 + statusBoost))
-    const priority = priorityScore >= 75 ? 'critical' : priorityScore >= 55 ? 'high' : priorityScore >= 30 ? 'medium' : 'low'
+    const priority: PrioritizedDecision['priority'] = priorityScore >= 75 ? 'critical' : priorityScore >= 55 ? 'high' : priorityScore >= 30 ? 'medium' : 'low'
     const rationale: string[] = []
     if (impact >= 0.7) rationale.push('Large financial or risk exposure.')
     if (candidate.urgency >= 0.7) rationale.push('Time-sensitive business issue.')
