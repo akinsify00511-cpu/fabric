@@ -1929,3 +1929,93 @@ transformation (atmospheric backdrop + glass chrome + premium cards)
 renders immediately — pure CSS, no migration needed. The Brain cards still
 populate only once pending migrations are applied to the live Supabase
 (same deploy-gate as prior sessions).
+
+## Session 29 (2026-08-18): Function × Seniority — Marketing/Sales/Finance/HR/Ops/Projects homes
+
+Triggered by the user's focused directive: "The new BusinessHome is approved
+as the foundation. Now evolve its role system from Owner/Manager/Team
+Lead/Staff into Function × Seniority × Permission × Personal Work ×
+Business Brain." Then build Marketing/Sales/Finance/HR/Operations/Projects
+homes while retaining the single Business Brain underneath. The architecture
+(Session 27 roleHomeConfig + BusinessHomeCards) was explicitly designed for
+this extension — so I extended, did not rebuild. 1 commit (0e2d8bb), pushed
+to main.
+
+### Architecture — Function × Seniority
+The business roles (owner/admin/manager/team_lead/staff) express SENIORITY
+(how much of the business you oversee). They do NOT express FUNCTION (which
+part of the business you run). A "Marketing Manager" and a "Finance Manager"
+are both `manager` seniority, but need substantially different intelligence
+windows.
+
+- `src/lib/functionHome.ts` — `deriveFunction(jobTitle, department,
+  activeTools)` → the 7 functions (general/marketing/sales/finance/hr/
+  operations/projects). Signal priority: explicit department > job-title
+  keyword scan > dominant active tool > 'general' fallback. `deriveSeniority
+  (role)` maps the DB role to executive/manager/lead/individual.
+  `getFunctionHome(fn, sen)` composes the final config, with seniority
+  modifiers (individuals get a trimmed personal view; executives/managers see
+  the function's priority cards + the whole-business pulse — they oversee the
+  function, not just do work in it).
+- `roleHomeConfig CardKind` extended with 7 function-specific kinds backed by
+  REAL tables (verified against migrations, §22): campaign_performance
+  (email_campaigns 009), lead_quality (leads 041), receivables (invoices 001),
+  attendance (attendance_records 032, business_id added in 039), leave_balance
+  (leave_requests 002), project_delivery (projects 002), workload (tasks 004
+  + projects 002).
+- `BusinessHomeCards.tsx`: 7 new pure card primitives
+  (CampaignPerformanceCard, LeadQualityCard, ReceivablesCard, AttendanceCard,
+  LeaveBalanceCard, ProjectDeliveryCard, WorkloadCard) — each takes a data
+  prop, renders via the same GlassCard shell, FACT/INFERENCE confidence tags,
+  honest "—" empty states with gamified instructions. No fabricated metrics.
+- `BusinessHome.tsx`: resolves fn × sen, fires the 7 function-specific loads
+  in parallel (best-effort, non-blocking — a missing/empty table degrades to
+  "—" honestly), passes the data through CardConfig → CardByKey. Adaptive hero
+  eyebrow now reads "{Function} engine at a glance · {Seniority}" for function
+  homes; "Your business at a glance · Executive" for general.
+
+### The function homes
+- Marketing → campaign performance, lead quality, pipeline contribution,
+  pulse. Pulse sequence: Campaigns→Reach→Leads→Qualified→Opportunities→
+  Pipeline→Revenue.
+- Sales → pipeline, revenue, customers, pulse. Pulse: Leads→Qualified→
+  Opportunities→Proposals→Negotiations→Won→Revenue.
+- Finance → cash, receivables, profit, pulse. Pulse: Invoicing→Receivables→
+  Cash→Expenses→Payables→Profit→Health.
+- HR → people, attendance, leave, pulse. Pulse: Headcount→Hiring→Attendance→
+  Leave→Payroll→Engagement→Retention.
+- Operations → operations, workload, pulse. Pulse: Suppliers→Inventory→
+  Orders→Fulfillment→Capacity→Throughput→Cost.
+- Projects → project delivery, workload, pulse. Pulse: Backlog→Active→
+  Milestones→Workload→Blocked→Delivery→Margin.
+
+### SECURITY (the critical invariant)
+Function personalization is UX ONLY — it emphasizes cards, never grants
+access. RLS + backend authorization remain the final authority. A marketing
+user whose home emphasizes marketing cards still cannot read finance rows
+RLS denies — `deriveFunction` only changes what is EMPHASIZED, never what is
+EXPOSED. The seniority axis (from the DB role) and the existing module gate
+(RequireModule) are unchanged. The role model didn't change — the same 5
+DB-valid roles are stored; we DERIVE the function from job_title/department,
+which are display fields, not security boundaries.
+
+### Resilience (§24)
+If any function table is empty/missing, that card renders an honest "—" +
+gamified instruction ("Launch your first campaign", "Capture your first
+lead", "Add team members to track attendance"). One load failing never
+collapses the home — the Brain RPC cards populate independently. Every load
+is best-effort + non-blocking.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 383/383 (was 368, +15 new
+functionHome tests locking the derivation + composition + seniority
+contracts), schema-drift 0. No migration/RPC/dep changes — pure frontend
+orchestration over existing REAL tables. Backend, RLS, auth, security all
+preserved.
+
+### Deploy status
+Vercel production: deploying via main-push workflow. The function-specific
+cards render immediately against real tables (no migration needed — the
+tables already exist from prior sessions). The Brain RPC cards still populate
+only once pending migrations are applied to the live Supabase (same
+deploy-gate; the function cards are independent of the Brain RPCs).
