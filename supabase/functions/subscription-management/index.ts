@@ -47,6 +47,42 @@ const PLAN_NAMES: Record<string, string> = {
   professional: "Pro",
 };
 
+// ----------------------------------------------------------------------------
+// P0 #14: pricing_tiers is the SINGLE source of truth (migration
+// 20260818200000). The hardcoded PLAN_PRICES above is the FALLBACK, used only
+// if the DB query fails (e.g. migration not yet applied). This makes a price
+// change, the founding-period end date, or a future 30-50% increase a config
+// change (UPDATE pricing_tiers), not a code change + redeploy.
+// ----------------------------------------------------------------------------
+async function getActiveTierPrice(
+  supabaseAdmin: any,
+  planCode: string,
+  billingCycle: "monthly" | "yearly"
+): Promise<{ amountKobo: number; priceLocked: boolean; planName: string } | null> {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("pricing_tiers")
+      .select("plan_code, display_name, founding_monthly_cents, founding_yearly_cents, future_monthly_cents, future_yearly_cents, founding_period_ends_at")
+      .eq("plan_code", planCode)
+      .eq("is_sellable", true)
+      .maybeSingle();
+    if (error || !data) return null;
+    const foundingEnded = data.founding_period_ends_at
+      && new Date(data.founding_period_ends_at) < new Date()
+      && (billingCycle === "monthly" ? data.future_monthly_cents : data.future_yearly_cents) != null;
+    const monthlyCents = foundingEnded ? data.future_monthly_cents : data.founding_monthly_cents;
+    const yearlyCents = foundingEnded ? data.future_yearly_cents : data.founding_yearly_cents;
+    const amountKobo = billingCycle === "yearly" ? yearlyCents : monthlyCents;
+    return {
+      amountKobo,
+      priceLocked: !foundingEnded, // founding subscribers are price-locked
+      planName: data.display_name,
+    };
+  } catch {
+    return null; // fall back to PLAN_PRICES
+  }
+}
+
 interface SubscriptionDetails {
   id: string;
   plan: string;
@@ -137,7 +173,7 @@ Deno.serve(async (req) => {
         return await handleCreateCheckout(supabase, businessId, await req.json(), user.email);
       
       case "available_plans":
-        return handleGetAvailablePlans();
+        return await handleGetAvailablePlans(supabase);
       
       default:
         return json({ error: `Unknown action: ${action}` }, 400);
@@ -290,8 +326,18 @@ async function handleCreateCheckout(
     return json({ error: "Invalid plan code" }, 400);
   }
 
-  const amountKobo = PLAN_PRICES[plan_code][billing_cycle as keyof typeof PLAN_PRICES[typeof plan_code]];
-  const planName = PLAN_NAMES[plan_code];
+  // P0 #14: read the ACTIVE price from pricing_tiers (single source of truth).
+  // Falls back to the hardcoded PLAN_PRICES if the table isn't deployed yet.
+  // priceLocked: founding subscribers keep their signup price on renewal.
+  let amountKobo = PLAN_PRICES[plan_code][billing_cycle as keyof typeof PLAN_PRICES[typeof plan_code]];
+  let planName = PLAN_NAMES[plan_code];
+  let priceLocked = false;
+  const tierPrice = await getActiveTierPrice(supabase, plan_code, billing_cycle as "monthly" | "yearly");
+  if (tierPrice) {
+    amountKobo = tierPrice.amountKobo;
+    planName = tierPrice.planName;
+    priceLocked = tierPrice.priceLocked;
+  }
 
   // Create a checkout session with Paystack
   const callbackUrl = `${DEFAULT_CALLBACK_URL}/app/subscription?success=true`;
@@ -324,7 +370,8 @@ async function handleCreateCheckout(
       return json({ error: result.message || "Failed to create checkout" }, 400);
     }
 
-    // Store pending subscription info
+    // Store pending subscription info. price_locked: founding subscribers keep
+    // their signup price on renewal (P0 #14 price-lock guarantee).
     await supabase.from("business_subscriptions").upsert({
       business_id: businessId,
       provider: "paystack",
@@ -333,6 +380,7 @@ async function handleCreateCheckout(
       status: "trialing",
       billing_cycle,
       amount_cents: amountKobo,
+      price_locked: priceLocked,
       currency: "NGN",
       start_date: new Date().toISOString(),
       next_billing_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
@@ -348,7 +396,29 @@ async function handleCreateCheckout(
   }
 }
 
-function handleGetAvailablePlans(): Response {
+// P0 #14: reads from pricing_tiers (single source of truth) with the hardcoded
+// PLAN_PRICES as fallback. Returns the ACTIVE price (founding or future).
+async function handleGetAvailablePlans(supabase: any): Promise<Response> {
+  let dbPlans: any[] | null = null;
+  try {
+    const { data, error } = await supabase.rpc("get_pricing_tiers");
+    if (!error && Array.isArray(data)) dbPlans = data;
+  } catch { /* fall back to PLAN_PRICES */ }
+
+  if (dbPlans && dbPlans.length > 0) {
+    const plans = dbPlans.map((p: any) => ({
+      code: p.plan_code,
+      name: p.display_name,
+      monthly_price: p.monthly_cents / 100,
+      yearly_price: p.yearly_cents / 100,
+      yearly_monthly_equivalent: p.yearly_cents / 100 / 12,
+      savings_percent: Math.round((1 - p.yearly_cents / (p.monthly_cents * 12)) * 100),
+      is_founding_price: p.is_founding_price,
+      founding_label: p.founding_label,
+    }));
+    return json({ plans });
+  }
+
   const plans = Object.entries(PLAN_PRICES).map(([code, prices]) => ({
     code,
     name: PLAN_NAMES[code],
