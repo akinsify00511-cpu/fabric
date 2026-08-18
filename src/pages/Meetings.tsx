@@ -289,8 +289,9 @@ export default function Meetings() {
   // Send Invites
   const sendInvites = async (meeting: Meeting) => {
     try {
+      let sent = 0
       for (const attendee of meeting.attendees) {
-        await supabase.from('notifications').insert({
+        const { error } = await supabase.from('notifications').insert({
           business_id: staff?.business_id,
           staff_id: attendee.id,
           title: 'Meeting Invitation',
@@ -298,18 +299,26 @@ export default function Meetings() {
           type: 'meeting',
           related_id: meeting.id,
         })
+        if (!error) sent++
       }
-      showToast(`Invitations sent to ${meeting.attendees.length} attendees`, 'success')
+      if (sent === 0) {
+        showToast('Failed to send invitations', 'error')
+      } else if (sent < meeting.attendees.length) {
+        showToast(`Invitations sent to ${sent} of ${meeting.attendees.length} attendees`, 'success')
+      } else {
+        showToast(`Invitations sent to ${meeting.attendees.length} attendees`, 'success')
+      }
     } catch (err) {
-      console.error('Failed to send invites:', err)
+      showToast('Failed to send invites', 'error')
     }
   }
 
   // Send Reminder
   const sendReminder = async (meeting: Meeting) => {
     try {
+      let sent = 0
       for (const attendee of meeting.attendees) {
-        await supabase.from('notifications').insert({
+        const { error } = await supabase.from('notifications').insert({
           business_id: staff?.business_id,
           staff_id: attendee.id,
           title: 'Meeting Reminder',
@@ -317,10 +326,16 @@ export default function Meetings() {
           type: 'reminder',
           related_id: meeting.id,
         })
+        if (!error) sent++
       }
-      showToast(`Reminders sent to ${meeting.attendees.length} attendees`, 'success')
+      if (sent === 0) {
+        showToast('Failed to send reminders', 'error')
+      } else if (sent < meeting.attendees.length) {
+        showToast(`Reminders sent to ${sent} of ${meeting.attendees.length} attendees`, 'success')
+      } else {
+        showToast(`Reminders sent to ${meeting.attendees.length} attendees`, 'success')
+      }
     } catch (err) {
-      console.error('Failed to send reminders:', err)
       showToast('Failed to send reminders', 'error')
     }
   }
