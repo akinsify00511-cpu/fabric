@@ -1879,3 +1879,53 @@ kgsgqvatyleetyquffya) for the Brain cards to populate. Until then the home
 degrades gracefully to greeting + My Work + honest "—" cards — no error,
 no broken shell. The visual transformation (glass/gradient/Pulse) renders
 immediately (pure CSS).
+
+## Session 28 (2026-08-18): App-wide visual consistency — atmospheric backdrop + glass chrome + premium cards
+
+Triggered by the user: "okay there is a need for consistency across the
+app." The new BusinessHome (Session 27) established a premium glass/
+gradient language, but the Shell content area still used flat
+bg-surface-2 and adjacent intelligence surfaces (Dashboard, Cockpit) used
+flat white cards — a visible seam between the home and every other page.
+This unifies the whole app to ONE visual language without rewriting 129
+page files. 1 commit (cd2bb0e), pushed to main.
+
+### Highest-leverage change — Shell atmospheric backdrop (affects all pages)
+- The Shell root + content wrapper now use `.av-backdrop` (the same
+  --av-home-bg + --av-atmosphere soft blue/lavender/mint gradients the home
+  uses). Every page now sits on the premium atmospheric backdrop — the seam
+  between home and other pages disappears instantly for all 129 pages
+  without touching 129 files. This is the single most impactful consistency
+  change: one CSS class swap unified the backdrop for the entire app.
+- Sidebar, desktop top bar, mobile header, mobile bottom nav softened to
+  translucent glass (rgba white + backdrop-blur) over the backdrop. The
+  chrome now matches the home's glass language — one organism, not
+  home=modern + chrome=old.
+
+### Shared premium card utilities (the "one card system")
+- avenize-brand.css adds `.av-card` (solid elevated surface + float shadow
+  + large radius — for data tables/lists/forms where opacity would hurt
+  readability) and `.av-glass-card` (translucent glass + blur — for
+  intelligence/hero surfaces). Pages opt in via class instead of ad-hoc
+  `bg-white rounded-2xl shadow-sm`. This is the reusable primitive future
+  pages adopt to stay consistent.
+
+### Adjacent intelligence surfaces aligned
+- Dashboard `Card` → `.av-card`; replaced all 24 slate-* tokens with av-*
+  (the flat white + raw-shadow intelligence cards now match the home).
+- ExecutiveCockpit: 18 flat-white helper cards → `.av-card` (premium solid).
+- Tasks, Approvals, StaffProfile, RoleSettings, SSOSettings: all slate-*
+  tokens replaced with av-* (zero slate residue across app pages — only
+  Landing marketing retains its own palette, by design).
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 368/368, schema-drift 0. Zero
+slate residue in app pages. No migration/RPC/dep changes — pure CSS token
+unification. The whole app now feels like one premium intelligent surface.
+
+### Deploy status
+Vercel production: deploying via main-push workflow. The visual
+transformation (atmospheric backdrop + glass chrome + premium cards)
+renders immediately — pure CSS, no migration needed. The Brain cards still
+populate only once pending migrations are applied to the live Supabase
+(same deploy-gate as prior sessions).
