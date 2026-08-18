@@ -155,6 +155,7 @@ const CommentsPage = lazy(() => import('./pages/CommentsAndTimeline').then(m => 
 const CurrencyExchange = lazy(() => import('./pages/CurrencyExchange'))
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'))
 const Organization = lazy(() => import('./pages/Organization'))
+const Subsidiaries = lazy(() => import('./pages/Subsidiaries'))
 const LeaveManagement = lazy(() => import('./pages/LeaveManagement'))
 const Announcements = lazy(() => import('./pages/Announcements'))
 const ExpenseClaims = lazy(() => import('./pages/ExpenseClaims'))
@@ -527,6 +528,7 @@ function AppRoutes() {
         <Route path="currency" element={<CurrencyExchange />} />
         <Route path="workflows" element={<WorkflowBuilder />} />
         <Route path="organization" element={<Organization />} />
+        <Route path="subsidiaries" element={<Subsidiaries />} />
         <Route path="leave" element={<LeaveManagement />} />
         <Route path="announcements" element={<Announcements />} />
         <Route path="expenses" element={<ExpenseClaims />} />

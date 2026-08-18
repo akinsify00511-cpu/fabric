@@ -45,13 +45,15 @@ export function buildGeographicMarketInsights(observations: CustomerLocationObse
     groups.set(key, group)
   }
 
-  return [...groups.entries()].map(([compoundKey, items]) => {
+  return [...groups.entries()].map(([compoundKey, items]): GeographicMarketInsight => {
     const first = items[0]
     const customers = new Set(items.map((item) => item.customerId)).size
     const revenueMinor = items.reduce((sum, item) => sum + item.revenueMinor, 0)
     const conversions = items.filter((item) => item.converted).length
     const spend = items.reduce((sum, item) => sum + (item.acquisitionSpendMinor ?? 0), 0)
     const ltvValues = items.map((item) => item.ltvMinor).filter((value): value is number => typeof value === 'number')
+    const confidence: GeographicMarketInsight['confidence'] =
+      customers >= 50 || items.length >= 100 ? 'high' : customers >= 15 || items.length >= 30 ? 'medium' : 'low'
     return {
       marketKey: compoundKey,
       label: labelOf(first),
@@ -63,7 +65,7 @@ export function buildGeographicMarketInsights(observations: CustomerLocationObse
       averageLtvMinor: ltvValues.length ? ltvValues.reduce((sum, value) => sum + value, 0) / ltvValues.length : 0,
       estimatedCacMinor: conversions ? spend / conversions : undefined,
       roas: spend ? revenueMinor / spend : undefined,
-      confidence: customers >= 50 || items.length >= 100 ? 'high' : customers >= 15 || items.length >= 30 ? 'medium' : 'low',
+      confidence,
     }
   }).sort((a, b) => b.revenueMinor - a.revenueMinor)
 }
