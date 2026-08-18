@@ -1176,3 +1176,45 @@ Checklist Phase-4 extensibility: `module_status.api` was `false` ("key issuance/
 
 ### Verification (#extensibility)
 tsc clean, vite build 0 warnings, vitest 164/164 (+14), schema drift 0. Files: `supabase/migrations/20260101000014_api_key_gateway.sql`, `supabase/functions/api-gateway/index.ts`, `src/pages/APIKeys.tsx` (sha256 hash + rotate badge), `tests/frontend/lib/apiKeyGateway.test.ts`. No new deps (Web Crypto + pgcrypto are built-in).
+
+## Session 22 (2026-08-18): PR consolidation + org-hierarchy fix + Riverwayse Platform Ops Dashboard
+
+### PR consolidation (3 open PRs resolved — prior-session lesson applied: verify against main, don't assume duplicates)
+- **PR #16 MERGED** (fix/bottom-up-foundation): Section 2.3 org hierarchy — `organizations`, `organization_memberships`, `businesses.organization_id`/`parent_business_id`/`entity_type`, backfill preserving single-business behavior, `get_current_accessible_businesses()` resolver, explicit membership rows (no inference). Genuinely new (AGENTS.md note claiming it was "already applied to production" was WRONG — only marketing copy in Landing/SSO referenced it). Marked ready via GraphQL (`markPullRequestReadyForReview`) then squash-merged. Commit 874fd5a.
+- **PR #15 MERGED** (feat/presence-field-organism): Section 4.4 attendance geofencing — `attendance_policies`, `business_locations` (PostGIS geo-indexed, one-primary guard), `attendance_events`, `field_visits`, `field_visit_events`; extends `attendance_records` additively (§0.5). RPCs `clock_in_staff`/`clock_out_staff`/`create_field_visit`/`start_field_visit`/`complete_field_visit` (server-authoritative, geofence-verified, idempotent via `client_event_id`, explicit `verification_status` verified/outside_geofence/unverified = the §4.4 standard). Offline `presenceQueue.ts`. Subtle motion (organism.css, respects `prefers-reduced-motion`). Marked ready via GraphQL, branch updated against main, squash-merged. Commit ff8995c.
+- **PR #14 CLOSED** (fix/workspace-personalization-ui): DUPLICATE of Session 20's `user_workspace_selections` (migration 100) + the already-fixed unicode escapes. Creates a parallel `user_preferences` table — exactly the duplicate-table anti-pattern §0.5 warns against. CONFLICTING/DIRTY. Closed with explanatory comment. (Same pattern as prior session's #6/#7.)
+
+### Real bugs found while merging (verified against reality, not the checklist)
+1. **PR #16 `is_active` column bug (DATA INTEGRITY, in the migration I merged).** `get_current_accessible_businesses()` + the `organizations_select_member` RLS policy referenced `s.is_active`, but the `staff` table uses `active BOOLEAN` (migration 002), NOT `is_active`. Latent: `plpgsql` defers column resolution to execution so CREATE succeeded and the Supabase-aware migration job applied it; the bare-postgres `migration-test` job (which executes the membership backfill touching `staff.active`) surfaced the error. No frontend consumer of the resolver yet → no user impact, but would break subsidiary access once used. **Fix (migration `20260818100000`):** re-declared the function + policy with `s.active` (staff) while keeping `om.is_active` (organization_memberships, a real column from the same migration). Commit 24068fc. **Lesson: the bare-postgres migration-test job catches function-body column bugs the Supabase-aware job misses — value both.**
+2. **schema-drift-check.sh RPC regex was case-sensitive (DRIFT false-negative exposed by PR #15).** PR #15's migrations use lowercase `create or replace function public.x`; the script's sed strip (`s/CREATE (OR REPLACE )?FUNCTION (public\.)?//`) was case-sensitive, so the `public.` prefix wasn't stripped for lowercase defs → `clock_in_staff`/`clock_out_staff`/`create_field_visit` falsely reported as unbacked. Main's other migrations use uppercase so they matched. **Fix:** made the sed case-insensitive. Now 0 unbacked RPCs. Commit a7663dd.
+3. **postgis hard-fail in bare-postgres migration-test (ENVIRONMENTAL, same class as pg_cron/pg_net).** PR #15's `create extension if not exists postgis` fails in CI's bare postgres:15 (no postgis installed). Live Supabase has PostGIS; `Migrations Apply Clean` (Supabase-aware) + `Schema Drift Check` both passed. **Fix:** guarded the extension creation with `DO $$ EXCEPTION` (matches 051 pg_cron pattern). The dependent geofence tables/RPCs genuinely need postgis — they're correct on Supabase; the guard just stops the extension line itself from being the failure point. Commit a7663dd.
+
+### Riverwayse Platform Operations Dashboard (the scope doc — built in full)
+A SEPARATE system from Owner Intelligence (#18). Owner Intelligence answers "is THIS business healthy" for one tenant. This answers "is THE PLATFORM working, right now, for everyone" across all tenants. Different audience (Riverwayse on-call, NOT business owners), different data, different privacy boundary. Sits behind the EXISTING `is_platform_admin()` boundary (migration 20260101000012) — the prerequisite the scope flagged, which already exists.
+
+**Migration `20260818120000_platform_ops_dashboard.sql`** — 6 tables + 8 RPCs, all RLS-denied to clients:
+- `platform_error_events` (source/severity/message/business_id nullable/resolved_at; idempotent via `client_event_id`)
+- `platform_integration_status` (Paystack/Flutterwave/Termii/Resend/Supabase — **WhatsApp/Meta intentionally excluded per product direction: no external dependency built there**)
+- `platform_alert_thresholds` (TUNABLE: what counts as degraded/critical per system, adjusted by Riverwayse, not hardcoded — the scope's explicit standard)
+- `platform_incidents` (auto-opened on threshold cross, stays open til resolved, postmortem attachable)
+- `platform_oncall_contacts` (push paging config, service-role-managed)
+- `platform_incident_investigations` (AUDIT TRAIL for tenant drill-down — drilling into a tenant's data is an explicit logged action, never silent; the scope's critical privacy boundary)
+- `log_platform_error` (authenticated, fire-and-forget, swallow-on-failure — never breaks a user's request path, idempotent)
+- `record_integration_check` (service-role only; the scheduled health checker writes here)
+- `evaluate_platform_alerts()` (threshold→incident automation, idempotent — no duplicate incidents, auto-resolves when condition clears, best-effort per rule, pg_cron every 3 min guarded like 051)
+- `platform_ops()` (the aggregator — `is_platform_admin()`-gated, ONE call returns the live-status-strip payload: per-system traffic-lights, recent errors, integration health, open incidents; **aggregate + structural only — no PII, no financials**)
+- `resolve_platform_error` / `update_platform_incident` / `investigate_business_incident` (platform-admin-gated mutation RPCs)
+
+**Client layer:**
+- `PlatformOpsDashboard.tsx` at `/platform-ops` (top-level, NOT `/app` — not a business surface; mirrors `/builder`). Behind `RequireAuth` + the `is_platform_admin()` gate (non-admins get the "restricted" screen). Live status strip (traffic-light per major system), realtime error feed (filterable by severity), integration health panel, incident log with postmortem. **Realtime** subscription to `platform_error_events` + `platform_incidents` inserts (per-mount channel name, no polling — the NotificationBell pattern).
+- `errorCapture.ts`: wired `logPlatformError` (fire-and-forget, throttled 30s/signature, dynamic import to avoid circular dep) into `window.onerror` + `unhandledrejection` so unhandled frontend errors actually reach the ops feed.
+- `businessOS.ts`: `fetchPlatformOps`/`logPlatformError`/`resolvePlatformError`/`updatePlatformIncident`/`investigateBusinessIncident` wrappers (best-effort, non-blocking — degrade gracefully if migration not deployed, per §24).
+
+**Tests (24):** `tests/frontend/lib/platformOps.test.ts` locks: the platform-admin gate (NOT a business role), the aggregate-only privacy boundary (no PII/financials), the async/non-blocking ingest contract (swallow-on-failure), the threshold→incident idempotency (no dupes, auto-resolve on clear), the tunable-threshold contract (data not code), the audit-logged tenant drill-down boundary, integration failure-streak reset. vitest 164 → 188.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 188/188, schema-drift 0. CI green on push (Type Check, Unit Tests, Schema Drift, Migrations Apply Clean, Build all success). Commits: 874fd5a, 24068fc, ff8995c, a7663dd, 7b785c8 — all pushed to main.
+
+### Deploy status
+- Vercel production: deploying via the main-push workflow.
+- ⚠️ STILL needs live DB: pending migrations must be applied to Supabase (project `kgsgqvatyleetyquffya`). All idempotent. Frontend degrades gracefully until then (ops dashboard shows "couldn't load — migration may not be applied yet" with retry; the platform-admin gate returns `authorized:false` for everyone until `is_platform_admin()` exists). No new external dependencies; no WhatsApp/Meta.
