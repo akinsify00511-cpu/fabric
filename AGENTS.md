@@ -1783,3 +1783,99 @@ Vercel production: deploying via main-push workflow.
 must be applied to Supabase (project kgsgqvatyleetyquffya) for the Brain hero
 to render. Until then the home page degrades gracefully to greeting + My Work
 (the hero returns null) — no error, no broken shell.
+
+## Session 27 (2026-08-18): Role-aware intelligence-first BusinessHome + premium visual language (§A, role-aware home)
+
+Triggered by the master redesign brief: the user wants the ACTUAL product
+shell redesigned (not patched) around a premium glass/gradient visual
+language + role-aware Business Brain orchestration. "The current `/app`
+still feels like the old application even though the underlying intelligence
+has been improved." The Pinterest reference = visual inspiration only; the
+Business Brain = product identity; combine the two. ONE Brain, MANY role
+windows. 1 commit (749f7f2), pushed to main.
+
+### Architecture — composition, not 8 separate homepages
+- `src/lib/roleHomeConfig.ts` — the centralized role→config map. Each role
+  (owner/admin, manager, team_lead, staff — all 5 DB-valid roles) declares
+  its hero framing + ordered card kinds (primary + secondary) + primary CTA
+  + work route. Extensible: add Procurement/Legal later without rebuilding
+  the home architecture. SECURITY: role personalization is UX ONLY —
+  emphasizes cards, never grants access. RLS + backend authorization stay
+  the final authority (a marketing user's home emphasizes marketing cards
+  but they cannot read finance rows RLS denies).
+- `src/components/BusinessHomeCards.tsx` — reusable intelligent card
+  primitives: `GlassCard` shell + 13 cards (State, NextBestAction, Revenue,
+  Cash, Profit, Pulse, Operations, People, ValueLedger, Opportunities,
+  Risks, Diagnoses, Pipeline, Customers). Each is a self-contained
+  "intelligent object": Title, current state, dominant metric, trend,
+  confidence tag (FACT/INFERENCE/UNKNOWN via ClaimTag), explanation, action
+  link. No fabricated metrics (§22) — every number from a real RPC
+  (business_brain / current_metrics / current_business_health /
+  open_recommendations / profitability_leakage / value_ledger).
+- `src/pages/BusinessHome.tsx` — the orchestrator. Fires all intelligence
+  loads in parallel (best-effort, §24 — one engine failing never collapses
+  the home). Adaptive hero: greeting + subtitle by REAL business state
+  (healthy / needs attention / brand-new). New businesses get a gamified
+  onboarding hero ("Your Business Brain is waking up" + first-entry steps:
+  first customer, first invoice, first team member, first capture). My Work
+  (personal attention: approvals + overdue tasks) preserved BELOW the
+  intelligence layer — not removed, no longer primary.
+
+### Premium visual language (Pinterest reference inspiration, not a copy)
+- `avenize-brand.css`: glass tokens (`--av-glass-bg/blur/border`),
+  atmospheric background (`--av-atmosphere`: soft blue/lavender/mint radial
+  gradients), float shadow (`--av-shadow-float`), semantic atmospheric card
+  gradients (`--av-grad-health/revenue/cash/risk/opportunity/operations/
+  people/intelligence`) — one design system, mood by domain. All derive
+  from the existing brand palette so the rest of the app stays consistent.
+- Glass cards: translucent surface + backdrop-blur + soft border + float
+  shadow + hover lift. Large rounded containers (rounded-3xl), generous
+  whitespace, dominant large numbers (text-4xl). Premium SaaS, not ERP.
+- Subtle motion communicates life: ambient state glow (pulsing dot coloured
+  by state — Growing=green, Stressed=amber, At risk=red), Business Pulse
+  connected nodes (each dimension a glowing node). No excessive animation.
+
+### Business Pulse (the signature element)
+The PulseCard renders the overall health score + each health dimension
+(Finance/Sales/Customers/Ops/People/Projects) as a connected glowing node —
+visually communicating "your business is one connected organism." Clicking
+opens the cockpit. Insufficient-data dimensions are excluded (honest, §21).
+
+### Role composition (one brain, many windows)
+- Owner/Admin → whole-business: state, NBA, revenue, cash, profit, pulse +
+  opportunities, risks, operations, value ledger, diagnoses.
+- Manager → cross-functional execution: state, NBA, operations, people,
+  pipeline, pulse.
+- Team Lead → delivery: NBA, operations, people, pulse.
+- Staff → personal work: NBA, operations (limited business visibility).
+
+### Route + Shell
+- `/app` index → `BusinessHome`. `CompanyHome` moved to `/app/community`
+  (Culture hub preserved, no longer primary). The old module-first home is
+  no longer the /app experience.
+- Shell: added "Ask Avenize" primary entry point in the desktop top bar
+  (gradient pill) + mobile (gradient Ask button) — the intelligence entry
+  point the brief named as important. Existing Quick Capture sidebar button
+  preserved.
+
+### Resilience (§N)
+If the Brain migration isn't deployed, cards degrade gracefully (honest "—"
++ "building your picture"), hero falls back to greeting, My Work still
+renders. One engine failing → degraded banner on that card, rest unaffected.
+No fake success states (§11/§76). Every intelligence load is best-effort +
+non-blocking.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 368/368, schema-drift 0. No
+migration/RPC/dep changes — pure frontend orchestration over existing
+intelligence. Backend, RLS, auth, security all preserved. Backward
+compatible (CompanyHome reachable at /app/community; old nav unchanged).
+
+### Deploy status
+Vercel production: deploying via main-push workflow.
+⚠️ STILL needs live DB: pending migrations (incl. 20260818220000
+business_brain) must be applied to Supabase (project
+kgsgqvatyleetyquffya) for the Brain cards to populate. Until then the home
+degrades gracefully to greeting + My Work + honest "—" cards — no error,
+no broken shell. The visual transformation (glass/gradient/Pulse) renders
+immediately (pure CSS).
