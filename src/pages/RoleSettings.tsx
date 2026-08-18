@@ -3,9 +3,10 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { TOOLS, ToolKey } from '../lib/useToolAccess'
+import { fetchBusinessApprovalConfig, saveBusinessApprovalConfig } from '../lib/businessOS'
 import {
   ChevronRight, Plus, Edit2, Trash2, Check, X,
-  Users, Settings, Shield, UserCog
+  Users, Settings, Shield, UserCog, ShieldCheck
 } from 'lucide-react'
 
 type FunctionalRole = {
@@ -36,10 +37,19 @@ export default function RoleSettings() {
   const [newRoleName, setNewRoleName] = useState('')
   const [showNewForm, setShowNewForm] = useState(false)
   const [expandedRole, setExpandedRole] = useState<string | null>(null)
+  const [approvalCfg, setApprovalCfg] = useState<{ bypass_all_approvals: boolean; auto_approve_below: number | null }>({
+    bypass_all_approvals: false, auto_approve_below: null,
+  })
+  const [savingApproval, setSavingApproval] = useState(false)
 
   useEffect(() => {
     loadRoles()
-  }, [])
+    if (staff?.business_id) {
+      fetchBusinessApprovalConfig(staff.business_id).then(c => {
+        if (c) setApprovalCfg({ bypass_all_approvals: c.bypass_all_approvals, auto_approve_below: c.auto_approve_below })
+      })
+    }
+  }, [staff?.business_id])
 
   const loadRoles = async () => {
     if (!staff?.business_id) return
@@ -311,6 +321,60 @@ export default function RoleSettings() {
           ))}
         </div>
       )}
+
+      {/* §7.3: Approval threshold configuration — per-business, never global. */}
+      <div className="mt-6 p-5 bg-white rounded-2xl">
+        <div className="flex items-center gap-2 mb-1">
+          <ShieldCheck size={18} className="text-[#155BB4]" />
+          <h3 className="text-base font-semibold text-slate-900">Approval thresholds</h3>
+        </div>
+        <p className="text-sm text-slate-500 mb-4">
+          Decide when a human needs to approve money or access changes. A solo founder needs none; a growing team needs some. These are your business's rules — never hardcoded globally.
+        </p>
+        <div className="space-y-4">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={approvalCfg.bypass_all_approvals}
+              onChange={e => setApprovalCfg(c => ({ ...c, bypass_all_approvals: e.target.checked }))}
+              className="mt-1 h-4 w-4 rounded border-slate-300 text-[#155BB4] focus:ring-[#155BB4]"
+            />
+            <div>
+              <span className="text-sm font-medium text-slate-900">Bypass all approvals</span>
+              <p className="text-xs text-slate-500">For sole proprietors — you're the only person, so approval gates are a no-op. Turn this on to skip them entirely.</p>
+            </div>
+          </label>
+          <div>
+            <label className="text-sm font-medium text-slate-900">Auto-approve below (₦)</label>
+            <p className="text-xs text-slate-500 mb-1">Small decisions shouldn't be bureaucratic. Purchases/expenses below this amount skip approval (category-level thresholds still win when more specific). Leave blank to require approval regardless of amount.</p>
+            <input
+              type="number"
+              value={approvalCfg.auto_approve_below ?? ''}
+              onChange={e => setApprovalCfg(c => ({ ...c, auto_approve_below: e.target.value === '' ? null : Number(e.target.value) }))}
+              placeholder="e.g. 5000"
+              className="w-40 rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none focus:border-slate-400"
+            />
+          </div>
+          <button
+            onClick={async () => {
+              if (!staff?.business_id) return
+              setSavingApproval(true)
+              try {
+                await saveBusinessApprovalConfig(staff.business_id, approvalCfg)
+                showToast('Approval settings saved', 'success')
+              } catch {
+                showToast('Could not save approval settings', 'error')
+              } finally {
+                setSavingApproval(false)
+              }
+            }}
+            disabled={savingApproval}
+            className="rounded-lg bg-[#155BB4] px-4 py-2 text-sm font-medium text-white hover:bg-[#1247A0] disabled:opacity-50"
+          >
+            {savingApproval ? 'Saving…' : 'Save approval settings'}
+          </button>
+        </div>
+      </div>
 
       {/* Help Text */}
       <div className="mt-6 p-4 bg-white rounded-xl">

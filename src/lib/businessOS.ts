@@ -848,3 +848,66 @@ export async function computeEbitda(
     return null
   }
 }
+
+// ============================================================================
+// §7.3 — Business approval threshold configuration
+// ============================================================================
+
+export interface BusinessApprovalConfig {
+  business_id: string
+  bypass_all_approvals: boolean
+  auto_approve_below: number | null
+  updated_at?: string
+}
+
+export interface ApprovalRequiredResult {
+  requires_approval: boolean
+  reason: string
+}
+
+/** §7.3: load the business approval config. Best-effort, non-blocking (§24). */
+export async function fetchBusinessApprovalConfig(businessId: string): Promise<BusinessApprovalConfig | null> {
+  try {
+    const { data, error } = await supabase
+      .from('business_approval_config')
+      .select('*')
+      .eq('business_id', businessId)
+      .maybeSingle()
+    if (error) throw error
+    return data as BusinessApprovalConfig | null
+  } catch (e) {
+    console.error('fetchBusinessApprovalConfig failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** §7.3: save the business approval config (owner/admin only via RLS). */
+export async function saveBusinessApprovalConfig(
+  businessId: string,
+  config: { bypass_all_approvals: boolean; auto_approve_below: number | null },
+): Promise<void> {
+  const { error } = await supabase
+    .from('business_approval_config')
+    .upsert({ business_id: businessId, ...config })
+  if (error) throw error
+}
+
+/** §7.3: the centralized approval-decision helper. Best-effort, non-blocking. */
+export async function isApprovalRequired(
+  businessId: string,
+  amount?: number,
+  categoryId?: string,
+): Promise<ApprovalRequiredResult> {
+  try {
+    const { data, error } = await supabase.rpc('is_approval_required', {
+      p_business_id: businessId,
+      p_amount: amount ?? null,
+      p_category_id: categoryId ?? null,
+    })
+    if (error) throw error
+    return (data as ApprovalRequiredResult) ?? { requires_approval: true, reason: 'Default' }
+  } catch (e) {
+    // Fail SAFE — require approval if the RPC isn't available.
+    return { requires_approval: true, reason: 'Approval check unavailable — fail-safe' }
+  }
+}
