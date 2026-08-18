@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useExperienceContext } from '../lib/useExperienceContext'
+import { composeBusinessDigest, type BusinessDigest } from '../lib/businessOS'
 import {
   ArrowRight, Bell, BriefcaseBusiness, CheckCircle2, ChevronDown, CircleAlert,
   Clock3, LayoutGrid, PieChart, Search, Settings2, Table2, TrendingUp,
-  Package, FolderKanban, Users2, Wallet, AlertTriangle, Plus,
+  Package, FolderKanban, Users2, Wallet, AlertTriangle, Plus, Mail,
 } from 'lucide-react'
 
 type View = 'recommended' | 'number' | 'trend' | 'progress' | 'breakdown' | 'table'
@@ -98,6 +99,7 @@ export default function Dashboard() {
   const [tasks, setTasks] = useState<any[]>([])
   const [activities, setActivities] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [digest, setDigest] = useState<BusinessDigest | null>(null)
 
   const hasFinance = isToolActive('finance')
   const hasCRM = isToolActive('crm')
@@ -205,6 +207,16 @@ export default function Dashboard() {
     load().catch(() => setLoading(false))
     return () => { cancelled = true }
   }, [staff?.business_id, hasFinance, hasCRM, hasInventory, hasProjects])
+
+  // §7.4: load the composed business digest preview (owner/admin only, best-effort).
+  // Surfaces the plain-language summary the owner would receive via email, so
+  // the Dashboard IS the digest. Non-blocking — stays null if the RPC isn't deployed.
+  useEffect(() => {
+    if (!staff?.business_id || !isPrivileged) return
+    let active = true
+    composeBusinessDigest(staff.business_id, 'daily').then(d => { if (active) setDigest(d) })
+    return () => { active = false }
+  }, [staff?.business_id, isPrivileged])
 
   const firstName = staff?.full_name?.split(' ')[0] || staff?.name?.split(' ')[0] || 'there'
   const filteredTasks = useMemo(() =>
@@ -351,6 +363,31 @@ export default function Dashboard() {
           </Link>
         </div>
       </header>
+
+      {/* §7.4: Today's digest — the plain-language summary the owner would
+          receive via email, surfaced on the Dashboard itself. Owner/admin
+          only. Each line is one fact with a one-tap action (§5.5). */}
+      {digest?.authorized && digest.lines.length > 0 && (
+        <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="mb-2 flex items-center gap-2">
+            <Mail size={15} className="text-[#155BB4]" />
+            <h2 className="text-sm font-semibold text-slate-900">Today's digest</h2>
+            <span className="text-xs text-slate-400">· arrives by email too</span>
+          </div>
+          <ul className="space-y-1.5">
+            {digest.lines.map((l, i) => (
+              <li key={i} className="flex items-center justify-between gap-3 text-sm text-slate-700">
+                <span>{l.text}</span>
+                {l.action && l.route && (
+                  <Link to={l.route} className="shrink-0 text-xs font-medium text-[#155BB4] hover:underline">
+                    {l.action} →
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Quick actions — adapted to the user's active tools */}
       {quickActions.length > 0 && (

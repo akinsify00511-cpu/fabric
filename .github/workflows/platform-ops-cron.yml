@@ -30,3 +30,15 @@ jobs:
             -H "Content-Type: application/json" \
             "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/platform-pager" \
             || echo "pager failed (non-fatal)"
+
+  daily-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send daily business digests (§7.4)
+        run: |
+          curl -sS -X POST \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"type":"daily"}' \
+            "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/send-business-digest" \
+            || echo "daily-digest failed (non-fatal)"

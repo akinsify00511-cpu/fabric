@@ -718,3 +718,89 @@ export async function updatePlatformThreshold(params: {
   })
   if (error) throw error
 }
+
+// ============================================================================
+// §5.5 / §7.4 — Proactive alert delivery + digest (no WhatsApp dependency)
+// ============================================================================
+
+export interface DigestLine {
+  text: string
+  source: string
+  action?: string
+  route?: string
+}
+
+export interface BusinessDigest {
+  authorized: boolean
+  business_id?: string
+  digest_type?: string
+  recipient_email?: string
+  recipient_name?: string
+  lines: DigestLine[]
+  stats: {
+    overall_score?: number | null
+    overdue_invoices: number
+    overdue_total: number
+    low_stock: number
+    stale_deals: number
+    tasks_due: number
+    open_recommendations: number
+  }
+  recommendations?: unknown[]
+  composed_at?: string
+}
+
+/** §7.4: compose (but do not send) a business digest. Best-effort, non-blocking (§24). */
+export async function composeBusinessDigest(
+  businessId: string,
+  digestType: 'daily' | 'weekly' = 'daily',
+): Promise<BusinessDigest | null> {
+  try {
+    const { data, error } = await supabase.rpc('compose_business_digest', {
+      p_business_id: businessId,
+      p_digest_type: digestType,
+    })
+    if (error) throw error
+    return data as BusinessDigest | null
+  } catch (e) {
+    console.error('composeBusinessDigest failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** §7.4: send the digest to the owner (idempotent, opt-in, audited). Best-effort. */
+export async function sendBusinessDigest(
+  businessId: string,
+  digestType: 'daily' | 'weekly' = 'daily',
+): Promise<{ ok: boolean; skipped?: string; error?: string } | null> {
+  try {
+    const { data, error } = await supabase.rpc('send_business_digest', {
+      p_business_id: businessId,
+      p_digest_type: digestType,
+    })
+    if (error) throw error
+    return data as { ok: boolean; skipped?: string; error?: string } | null
+  } catch (e) {
+    console.error('sendBusinessDigest failed (non-blocking):', e)
+    return null
+  }
+}
+
+export interface AlertAction {
+  rule_id: string
+  label: string
+  route: string
+  type: string
+}
+
+/** §5.5: the one-tap resolving action per alert rule. Best-effort. */
+export async function fetchAlertActions(businessId: string): Promise<AlertAction[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_alert_actions', { p_business_id: businessId })
+    if (error) throw error
+    return (data as AlertAction[] | null) ?? []
+  } catch (e) {
+    console.error('fetchAlertActions failed (non-blocking):', e)
+    return []
+  }
+}
