@@ -39,6 +39,9 @@ import { useAuth } from '../lib/AuthContext'
 import { useExperienceContext } from '../lib/useExperienceContext'
 import { getRoleHomeConfig, roleLabel, type CardKind } from '../lib/roleHomeConfig'
 import {
+  deriveFunction, deriveSeniority, getFunctionHome, functionLabel, seniorityLabel,
+} from '../lib/functionHome'
+import {
   fetchBusinessBrain, fetchCurrentMetrics, refreshBusinessMetrics,
   fetchBusinessHealth, computeBusinessHealth, fetchOpenRecommendations,
   fetchProfitabilityLeakage, fetchValueLedger,
@@ -49,6 +52,10 @@ import {
   GlassCard, StateCard, NextBestActionCard, RevenueCard, CashCard, ProfitCard,
   PulseCard, OperationsCard, PeopleCard, ValueLedgerCard, OpportunitiesCard,
   RisksCard, DiagnosesCard, PipelineCard, CustomersCard, BigNumber,
+  CampaignPerformanceCard, LeadQualityCard, ReceivablesCard, AttendanceCard,
+  LeaveBalanceCard, ProjectDeliveryCard, WorkloadCard,
+  type CampaignData, type LeadQualityData, type ReceivablesData, type AttendanceData,
+  type LeaveBalanceData, type ProjectDeliveryData, type WorkloadData,
 } from '../components/BusinessHomeCards'
 import { Sparkles, ArrowRight, ListTodo, CheckCircle2, Loader2 } from 'lucide-react'
 
@@ -59,7 +66,17 @@ export default function BusinessHome() {
   const ctx = useExperienceContext()
   const bid = staff?.business_id ?? null
   const role = staff?.active_role ?? staff?.role ?? null
-  const config = useMemo(() => getRoleHomeConfig(role), [role])
+  // Function × Seniority resolution. The seniority (from the DB role) is
+  // the existing axis; the function is derived from job_title / department /
+  // active tools. Falls back to 'general' (the whole-business window).
+  const fn = useMemo(
+    () => deriveFunction(staff?.job_title, staff?.department, ctx.activeTools ?? []),
+    [staff?.job_title, staff?.department, ctx.activeTools],
+  )
+  const sen = useMemo(() => deriveSeniority(role), [role])
+  const config = useMemo(() => getFunctionHome(fn, sen), [fn, sen])
+  // Keep the legacy role config for fallback hero copy when function=general.
+  const roleConfig = useMemo(() => getRoleHomeConfig(role), [role])
 
   const [brain, setBrain] = useState<BusinessBrain | null>(null)
   const [metrics, setMetrics] = useState<GovernedMetric[]>([])
@@ -68,6 +85,14 @@ export default function BusinessHome() {
   const [leakage, setLeakage] = useState<ProfitabilityLeakageResult | null>(null)
   const [ledger, setLedger] = useState<ValueLedger | null>(null)
   const [actions, setActions] = useState<ActionItem[]>([])
+  // Function-specific data (backed by REAL tables — fetched in parallel).
+  const [campaign, setCampaign] = useState<CampaignData | null>(null)
+  const [leads, setLeads] = useState<LeadQualityData | null>(null)
+  const [receivables, setReceivables] = useState<ReceivablesData | null>(null)
+  const [attendance, setAttendance] = useState<AttendanceData | null>(null)
+  const [leave, setLeave] = useState<LeaveBalanceData | null>(null)
+  const [projects, setProjects] = useState<ProjectDeliveryData | null>(null)
+  const [workload, setWorkload] = useState<WorkloadData | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -86,6 +111,16 @@ export default function BusinessHome() {
       fetchOpenRecommendations(bid, 20).then(r => active && setRecommendations(r ?? [])).catch(() => {})
       fetchProfitabilityLeakage(bid).then(l => active && setLeakage(l)).catch(() => {})
       fetchValueLedger(bid).then(v => active && setLedger(v)).catch(() => {})
+
+      // Function-specific loads — each backed by a REAL table. Best-effort,
+      // non-blocking; a missing table degrades the card to "—" (§24).
+      loadCampaignData(bid).then(d => active && setCampaign(d)).catch(() => {})
+      loadLeadQuality(bid).then(d => active && setLeads(d)).catch(() => {})
+      loadReceivables(bid).then(d => active && setReceivables(d)).catch(() => {})
+      loadAttendance(bid).then(d => active && setAttendance(d)).catch(() => {})
+      loadLeave(bid).then(d => active && setLeave(d)).catch(() => {})
+      loadProjectDelivery(bid).then(d => active && setProjects(d)).catch(() => {})
+      loadWorkload(bid).then(d => active && setWorkload(d)).catch(() => {})
 
       // Personal "what needs me" — pending approvals + overdue tasks.
       try {
@@ -115,7 +150,19 @@ export default function BusinessHome() {
   // Adaptive hero: pick the subtitle by the real business state.
   const isNew = (ctx.companySize === 0 || !state || state.state === 'insufficient_data') && actions.length === 0
   const needsAttention = state && ['stressed', 'at_risk', 'cash_constrained', 'sales_constrained', 'capacity_constrained'].includes(state.state)
-  const heroSubtitle = isNew ? config.heroNew : needsAttention ? config.heroAttention : state && ['growing', 'opportunity_rich'].includes(state.state) ? config.heroHealthy : config.heroHealthy
+  // Function-specific hero copy takes precedence when a function is detected;
+  // the general (whole-business) config falls back to the legacy role copy.
+  const baseSubtitle = fn === 'general'
+    ? (isNew ? roleConfig.heroNew : needsAttention ? roleConfig.heroAttention : roleConfig.heroHealthy)
+    : (isNew ? config.heroNew : needsAttention ? config.heroAttention : config.heroHealthy)
+  const heroSubtitle = baseSubtitle
+  // Hero eyebrow: "{Function} · {Seniority}" for function homes, or the
+  // general eyebrow for whole-business.
+  const fnLabel = functionLabel(fn)
+  const senLabel = seniorityLabel(sen)
+  const eyebrow = fn === 'general'
+    ? `${roleConfig.heroEyebrow}${senLabel ? ` · ${senLabel}` : ''}`
+    : `${fnLabel} engine at a glance${senLabel ? ` · ${senLabel}` : ''}`
 
   const greeting = getGreeting()
 
@@ -130,7 +177,7 @@ export default function BusinessHome() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--av-text-muted)' }}>
-                {config.heroEyebrow}{roleLabel(role) ? ` · ${roleLabel(role)}` : ''}
+                {eyebrow}
               </p>
               <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight" style={{ color: 'var(--av-text)' }}>
                 {greeting}, {firstName}.
@@ -166,7 +213,7 @@ export default function BusinessHome() {
             {/* ── Primary intelligence cards (first viewport) ────────── */}
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
               {config.primaryCards.map(kind => (
-                <CardByKey key={kind} kind={kind} config={{ brain, metrics, health, recommendations, leakage, ledger, companySize: ctx.companySize, actionCount: actions.length }} />
+                <CardByKey key={kind} kind={kind} config={{ brain, metrics, health, recommendations, leakage, ledger, companySize: ctx.companySize, actionCount: actions.length, campaign, leads, receivables, attendance, leave, projects, workload }} />
               ))}
             </section>
 
@@ -184,7 +231,7 @@ export default function BusinessHome() {
             {config.secondaryCards.length > 0 && (
               <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {config.secondaryCards.map(kind => (
-                  <CardByKey key={kind} kind={kind} config={{ brain, metrics, health, recommendations, leakage, ledger, companySize: ctx.companySize, actionCount: actions.length }} />
+                  <CardByKey key={kind} kind={kind} config={{ brain, metrics, health, recommendations, leakage, ledger, companySize: ctx.companySize, actionCount: actions.length, campaign, leads, receivables, attendance, leave, projects, workload }} />
                 ))}
               </section>
             )}
@@ -205,6 +252,14 @@ interface CardConfig {
   ledger: ValueLedger | null
   companySize: number
   actionCount: number
+  // Function-specific data (Session 29) — REAL tables.
+  campaign: CampaignData | null
+  leads: LeadQualityData | null
+  receivables: ReceivablesData | null
+  attendance: AttendanceData | null
+  leave: LeaveBalanceData | null
+  projects: ProjectDeliveryData | null
+  workload: WorkloadData | null
 }
 
 function CardByKey({ kind, config }: { kind: CardKind; config: CardConfig }) {
@@ -227,6 +282,14 @@ function CardByKey({ kind, config }: { kind: CardKind; config: CardConfig }) {
     case 'risks': return <RisksCard count={riskCount} />
     case 'value_ledger': return <ValueLedgerCard ledger={config.ledger} />
     case 'diagnoses': return <DiagnosesCard diagnoses={config.brain?.diagnoses} />
+    // ── Function-specific kinds (Session 29) ──
+    case 'campaign_performance': return <CampaignPerformanceCard data={config.campaign} />
+    case 'lead_quality': return <LeadQualityCard data={config.leads} />
+    case 'receivables': return <ReceivablesCard data={config.receivables} />
+    case 'attendance': return <AttendanceCard data={config.attendance} />
+    case 'leave_balance': return <LeaveBalanceCard data={config.leave} />
+    case 'project_delivery': return <ProjectDeliveryCard data={config.projects} />
+    case 'workload': return <WorkloadCard data={config.workload} />
   }
 }
 
@@ -316,4 +379,123 @@ function getGreeting() {
   if (h < 12) return 'Good morning'
   if (h < 17) return 'Good afternoon'
   return 'Good evening'
+}
+
+// ── Function-specific data loaders (Session 29) ─────────────────────────
+// Each is backed by a REAL table (verified against migrations). Best-effort:
+// a missing/empty table returns a zero-state (the card renders "—" honestly,
+// no fabrication per §22). All are business-scoped via RLS.
+
+const todayISO = () => new Date().toISOString().slice(0, 10)
+const weekAhead = () => new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10)
+
+/** email_campaigns (009): active/sent counts + total recipients + top reach. */
+async function loadCampaignData(bid: string): Promise<CampaignData> {
+  const { data } = await supabase.from('email_campaigns')
+    .select('id, name, status, contact_count')
+    .eq('business_id', bid)
+  const rows = (data ?? []) as Array<{ id: string; name: string; status: string; contact_count: number }>
+  const active = rows.filter(c => c.status === 'scheduled' || c.status === 'sending' || c.status === 'draft').length
+  const sent = rows.filter(c => c.status === 'sent').length
+  const recipients = rows.reduce((s, c) => s + (c.contact_count ?? 0), 0)
+  let topName: string | null = null
+  let topRecipients: number | null = null
+  for (const c of rows) {
+    if ((c.contact_count ?? 0) > (topRecipients ?? -1)) { topName = c.name; topRecipients = c.contact_count ?? 0 }
+  }
+  return { total: rows.length, active, sent, recipients, topName: topName ?? null, topRecipients: topRecipients ?? null }
+}
+
+/** leads (041): funnel + stagnation (new >7d = stale). */
+async function loadLeadQuality(bid: string): Promise<LeadQualityData> {
+  const { data } = await supabase.from('leads')
+    .select('id, status, created_at')
+    .eq('business_id', bid)
+  const rows = (data ?? []) as Array<{ id: string; status: string; created_at: string }>
+  const sevenDaysAgo = Date.now() - 7 * 86400000
+  const stale = rows.filter(l => l.status === 'new' && new Date(l.created_at).getTime() < sevenDaysAgo).length
+  return {
+    total: rows.length,
+    new: rows.filter(l => l.status === 'new').length,
+    qualified: rows.filter(l => l.status === 'qualified').length,
+    converted: rows.filter(l => l.status === 'converted').length,
+    stale,
+  }
+}
+
+/** invoices (001): unpaid + overdue aging + amount at risk. */
+async function loadReceivables(bid: string): Promise<ReceivablesData> {
+  const { data } = await supabase.from('invoices')
+    .select('id, status, total, due_date')
+    .eq('business_id', bid)
+  const rows = (data ?? []) as Array<{ id: string; status: string; total: number; due_date: string | null }>
+  const unpaid = rows.filter(i => i.status !== 'paid' && i.status !== 'cancelled' && i.status !== 'draft')
+  const now = Date.now()
+  const overdue = unpaid.filter(i => i.due_date && new Date(i.due_date).getTime() < now)
+  const sum = (arr: typeof rows) => arr.reduce((s, i) => s + Number(i.total ?? 0), 0)
+  return {
+    unpaid: unpaid.length,
+    unpaidAmount: sum(unpaid),
+    overdue: overdue.length,
+    overdueAmount: sum(overdue),
+  }
+}
+
+/** attendance_records (032): today's roll. */
+async function loadAttendance(bid: string): Promise<AttendanceData> {
+  const today = todayISO()
+  const [attRes, staffRes] = await Promise.all([
+    supabase.from('attendance_records').select('id, status, staff_id').eq('business_id', bid).eq('date', today),
+    supabase.from('staff').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('active', true),
+  ])
+  const rows = (attRes.data ?? []) as Array<{ id: string; status: string; staff_id: string }>
+  return {
+    present: rows.filter(a => a.status === 'present').length,
+    absent: rows.filter(a => a.status === 'absent').length,
+    late: rows.filter(a => a.status === 'late').length,
+    onLeave: rows.filter(a => a.status === 'on_leave' || a.status === 'half_day').length,
+    expected: staffRes.count ?? 0,
+  }
+}
+
+/** leave_requests (002): pending approvals + upcoming approved leave. */
+async function loadLeave(bid: string): Promise<LeaveBalanceData> {
+  const weekEnd = weekAhead()
+  const [pendRes, upRes] = await Promise.all([
+    supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'pending'),
+    supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'approved').gte('start_date', todayISO()).lte('start_date', weekEnd),
+  ])
+  return { pending: pendRes.count ?? 0, upcoming: upRes.count ?? 0 }
+}
+
+/** projects (002): delivery rollup + due-soon. */
+async function loadProjectDelivery(bid: string): Promise<ProjectDeliveryData> {
+  const weekEnd = weekAhead()
+  const { data } = await supabase.from('projects')
+    .select('id, status, due_date')
+    .eq('business_id', bid)
+  const rows = (data ?? []) as Array<{ id: string; status: string; due_date: string | null }>
+  const active = rows.filter(p => p.status === 'active')
+  return {
+    active: active.length,
+    done: rows.filter(p => p.status === 'done').length,
+    onHold: rows.filter(p => p.status === 'on_hold').length,
+    dueSoon: active.filter(p => p.due_date && p.due_date >= todayISO() && p.due_date <= weekEnd).length,
+  }
+}
+
+/** tasks (004) + projects (002): workload / capacity signal. */
+async function loadWorkload(bid: string): Promise<WorkloadData> {
+  const [tRes, pRes] = await Promise.all([
+    supabase.from('tasks').select('id, status, due_date, priority, assignee_id').eq('business_id', bid).neq('status', 'done'),
+    supabase.from('projects').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'active'),
+  ])
+  const rows = (tRes.data ?? []) as Array<{ id: string; status: string; due_date: string | null; priority: string; assignee_id: string | null }>
+  const now = Date.now()
+  return {
+    openTasks: rows.length,
+    overdueTasks: rows.filter(t => t.due_date && new Date(t.due_date).getTime() < now).length,
+    urgentTasks: rows.filter(t => t.priority === 'urgent' || t.priority === 'high').length,
+    activeProjects: pRes.count ?? 0,
+  }
 }

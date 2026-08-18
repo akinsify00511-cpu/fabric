@@ -36,6 +36,14 @@ export type CardKind =
   | 'customers'        // Customer / CRM health
   | 'value_ledger'     // Avenize value created (business_value_ledger)
   | 'diagnoses'        // Cross-module diagnosis (diagnose_business)
+  // ── Function-specific kinds (Session 29) — backed by REAL tables ──
+  | 'campaign_performance' // email_campaigns: active/sent, recipients, performance
+  | 'lead_quality'         // leads: new/qualified/converted funnel + stagnation
+  | 'receivables'          // invoices: unpaid/overdue aging + collection risk
+  | 'attendance'           // attendance_records: present/absent/late today
+  | 'leave_balance'        // leave_requests: pending approvals + upcoming leave
+  | 'project_delivery'     // projects: active/done/on_hold + deadlines
+  | 'workload'             // tasks + projects: capacity / overload signal
 
 export interface RoleHomeConfig {
   /** The hero eyebrow + framing line template. `{name}` is the user's first name. */

@@ -379,6 +379,209 @@ export function CustomersCard({ metrics }: { metrics: GovernedMetric[] }) {
   )
 }
 
+// ── Function-specific cards (Session 29) ────────────────────────────────
+// Each is backed by REAL tables (verified against migrations, §22):
+//   email_campaigns (009), leads (041), invoices (001), attendance_records
+//   (032), leave_requests (002), projects (002), tasks (004).
+// The data is fetched by BusinessHome and passed in as props — the cards
+// never query the DB directly (keeps them pure + testable).
+
+export interface CampaignData {
+  total: number
+  active: number
+  sent: number
+  recipients: number
+  /** Best-performing campaign (by recipient count) — honest "—" if none. */
+  topName: string | null
+  topRecipients: number | null
+}
+
+export function CampaignPerformanceCard({ data }: { data: CampaignData | null }) {
+  if (!data || data.total === 0) {
+    return <GlassCard title="Campaign Performance" gradient="var(--av-grad-opportunity)" action={{ label: 'New Campaign', to: '/app/campaigns' }}>
+      <BigNumber value="—" sub="Launch your first campaign to start reaching customers." />
+    </GlassCard>
+  }
+  return (
+    <GlassCard title="Campaign Performance" gradient="var(--av-grad-opportunity)" accent={<ClaimTag type="FACT" />} action={{ label: 'Open Campaigns', to: '/app/campaigns' }}>
+      <BigNumber value={data.recipients} sub={`${data.total} campaigns · ${data.active} active`} />
+      {data.topName && (
+        <div className="mt-3 pt-3 border-t" style={{ borderColor: 'var(--av-glass-border)' }}>
+          <p className="text-xs" style={{ color: 'var(--av-text-muted)' }}>Best reach</p>
+          <p className="text-sm font-medium truncate" style={{ color: 'var(--av-text)' }} title={data.topName}>{data.topName}</p>
+          {data.topRecipients != null && <p className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>{data.topRecipients.toLocaleString()} recipients</p>}
+        </div>
+      )}
+    </GlassCard>
+  )
+}
+
+export interface LeadQualityData {
+  total: number
+  new: number
+  qualified: number
+  converted: number
+  /** Leads that have been 'new' for >7 days (stagnation signal). */
+  stale: number
+}
+
+export function LeadQualityCard({ data }: { data: LeadQualityData | null }) {
+  if (!data || data.total === 0) {
+    return <GlassCard title="Lead Quality" gradient="var(--av-grad-revenue)" action={{ label: 'View Leads', to: '/app/leads' }}>
+      <BigNumber value="—" sub="Capture your first lead to see quality trends." />
+    </GlassCard>
+  }
+  const convRate = data.total > 0 ? Math.round((data.converted / data.total) * 100) : 0
+  return (
+    <GlassCard title="Lead Quality" gradient="var(--av-grad-revenue)" accent={<ClaimTag type="FACT" />} action={{ label: 'View Leads', to: '/app/leads' }}>
+      <BigNumber value={`${convRate}%`} sub={`${data.converted} converted of ${data.total} leads`} />
+      <div className="mt-3 flex gap-1.5">
+        {[['New', data.new], ['Qualified', data.qualified], ['Stale', data.stale]].map(([label, n]) => (
+          <span key={label as string} className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-surface-3)', color: 'var(--av-text-secondary)' }}>
+            {label}: {n as number}
+          </span>
+        ))}
+      </div>
+      {data.stale > 0 && (
+        <p className="mt-2 text-xs" style={{ color: 'var(--av-warning)' }}>{data.stale} leads need a follow-up.</p>
+      )}
+    </GlassCard>
+  )
+}
+
+export interface ReceivablesData {
+  unpaid: number
+  unpaidAmount: number
+  overdue: number
+  overdueAmount: number
+}
+
+export function ReceivablesCard({ data }: { data: ReceivablesData | null }) {
+  if (!data || data.unpaid === 0) {
+    return <GlassCard title="Receivables" gradient="var(--av-grad-cash)" action={{ label: 'Open Finance', to: '/app/finance' }}>
+      <BigNumber value="—" sub="No outstanding invoices. Cash is collected." />
+    </GlassCard>
+  }
+  return (
+    <GlassCard title="Receivables" gradient="var(--av-grad-cash)" accent={<ClaimTag type={data.overdue > 0 ? 'INFERENCE' : 'FACT'} />} action={{ label: 'Open Finance', to: '/app/finance' }}>
+      <BigNumber value={money(data.unpaidAmount)} sub={`${data.unpaid} unpaid invoices`} />
+      {data.overdue > 0 && (
+        <p className="mt-3 text-sm" style={{ color: 'var(--av-danger)' }}>
+          {data.overdue} overdue · {money(data.overdueAmount)} at risk
+        </p>
+      )}
+    </GlassCard>
+  )
+}
+
+export interface AttendanceData {
+  present: number
+  absent: number
+  late: number
+  onLeave: number
+  /** total staff expected today */
+  expected: number
+}
+
+export function AttendanceCard({ data }: { data: AttendanceData | null }) {
+  if (!data || data.expected === 0) {
+    return <GlassCard title="Attendance" gradient="var(--av-grad-people)" action={{ label: 'Open People', to: '/app/people' }}>
+      <BigNumber value="—" sub="Add team members to track attendance." />
+    </GlassCard>
+  }
+  const presentRate = Math.round((data.present / data.expected) * 100)
+  return (
+    <GlassCard title="Attendance Today" gradient="var(--av-grad-people)" accent={<ClaimTag type="FACT" />} action={{ label: 'Open Attendance', to: '/app/attendance' }}>
+      <BigNumber value={`${presentRate}%`} sub={`${data.present} of ${data.expected} present`} />
+      <div className="mt-3 flex gap-1.5">
+        {data.late > 0 && <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-warning-soft)', color: 'var(--av-warning)' }}>{data.late} late</span>}
+        {data.absent > 0 && <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-danger-soft)', color: 'var(--av-danger)' }}>{data.absent} absent</span>}
+        {data.onLeave > 0 && <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-surface-3)', color: 'var(--av-text-secondary)' }}>{data.onLeave} on leave</span>}
+      </div>
+    </GlassCard>
+  )
+}
+
+export interface LeaveBalanceData {
+  pending: number
+  /** approved leave starting within 7 days */
+  upcoming: number
+}
+
+export function LeaveBalanceCard({ data }: { data: LeaveBalanceData | null }) {
+  if (!data || (data.pending === 0 && data.upcoming === 0)) {
+    return <GlassCard title="Leave" gradient="var(--av-grad-people)" action={{ label: 'Open Leave', to: '/app/leave' }}>
+      <BigNumber value="—" sub="No pending or upcoming leave." />
+    </GlassCard>
+  }
+  return (
+    <GlassCard title="Leave" gradient="var(--av-grad-people)" accent={<ClaimTag type="FACT" />} action={{ label: 'Open Leave', to: '/app/leave' }}>
+      {data.pending > 0 ? (
+        <BigNumber value={data.pending} sub={`${data.pending} request${data.pending === 1 ? '' : 's'} need approval`} />
+      ) : (
+        <BigNumber value={data.upcoming} sub={`${data.upcoming} upcoming leave this week`} />
+      )}
+      {data.pending > 0 && (
+        <p className="mt-2 text-xs" style={{ color: 'var(--av-text-secondary)' }}>Approve or reject to keep the team plan accurate.</p>
+      )}
+    </GlassCard>
+  )
+}
+
+export interface ProjectDeliveryData {
+  active: number
+  done: number
+  onHold: number
+  /** active projects due within 7 days */
+  dueSoon: number
+}
+
+export function ProjectDeliveryCard({ data }: { data: ProjectDeliveryData | null }) {
+  if (!data || (data.active + data.done + data.onHold) === 0) {
+    return <GlassCard title="Project Delivery" gradient="var(--av-grad-operations)" action={{ label: 'New Project', to: '/app/projects' }}>
+      <BigNumber value="—" sub="Create your first project to track delivery." />
+    </GlassCard>
+  }
+  return (
+    <GlassCard title="Project Delivery" gradient="var(--av-grad-operations)" accent={<ClaimTag type="FACT" />} action={{ label: 'Open Projects', to: '/app/projects' }}>
+      <BigNumber value={data.active} sub={`${data.done} done · ${data.onHold} on hold`} />
+      {data.dueSoon > 0 && (
+        <p className="mt-3 text-sm" style={{ color: 'var(--av-warning)' }}>{data.dueSoon} project{data.dueSoon === 1 ? '' : 's'} due this week.</p>
+      )}
+    </GlassCard>
+  )
+}
+
+export interface WorkloadData {
+  /** open tasks */
+  openTasks: number
+  /** tasks overdue */
+  overdueTasks: number
+  /** tasks assigned to unassigned/overloaded staff */
+  urgentTasks: number
+  /** active projects */
+  activeProjects: number
+}
+
+export function WorkloadCard({ data }: { data: WorkloadData | null }) {
+  if (!data || data.openTasks === 0) {
+    return (
+      <GlassCard title="Workload" gradient="var(--av-grad-operations)" action={{ label: 'Open Tasks', to: '/app/tasks' }}>
+        <BigNumber value="—" sub="No open tasks. The team is clear." />
+      </GlassCard>
+    )
+  }
+  return (
+    <GlassCard title="Workload" gradient="var(--av-grad-operations)" accent={<ClaimTag type={data.overdueTasks > 0 ? 'INFERENCE' : 'FACT'} />} action={{ label: 'Open Tasks', to: '/app/tasks' }}>
+      <BigNumber value={data.openTasks} sub={data.activeProjects ? `${data.activeProjects} active projects` : 'Open tasks'} />
+      <div className="mt-3 flex gap-1.5">
+        {data.urgentTasks > 0 && <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-danger-soft)', color: 'var(--av-danger)' }}>{data.urgentTasks} urgent</span>}
+        {data.overdueTasks > 0 && <span className="text-[11px] px-2 py-1 rounded-md" style={{ background: 'var(--av-warning-soft)', color: 'var(--av-warning)' }}>{data.overdueTasks} overdue</span>}
+      </div>
+    </GlassCard>
+  )
+}
+
 // ── helpers ─────────────────────────────────────────────────────────────
 
 function money(n: number | null | undefined): string {
