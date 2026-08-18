@@ -148,6 +148,9 @@ export default function PropertyOwners() {
           title="No property owners yet"
           description="Add an owner to link them to their properties and track payouts"
           action={{ label: 'New Owner', onClick: openCreate }}
+          gamified
+          hint="Owners are the connective tissue of your property business — link them to properties and commissions flow automatically."
+          tip="Add the owner's name and contact — you can attach properties and payouts next."
         />
       ) : (
         <>

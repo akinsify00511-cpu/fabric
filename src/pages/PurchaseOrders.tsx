@@ -317,6 +317,9 @@ export default function PurchaseOrders() {
           title="No purchase orders yet"
           description="Create a PO to order goods from a vendor — status and stock update automatically"
           action={{ label: 'New PO', onClick: openCreate }}
+          gamified
+          hint="A purchase order is how you control what you buy. Your first PO kick-starts the receive → stock → pay loop."
+          tip="Pick a vendor, add line items from your product catalog, and Avenize tracks the rest."
         />
       ) : (
         <>

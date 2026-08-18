@@ -135,6 +135,9 @@ export default function Vendors() {
           title="No vendors yet"
           description="Add a supplier so you can create purchase orders against them"
           action={{ label: 'New Vendor', onClick: openCreate }}
+          gamified
+          hint="Every order you receive starts with a vendor. Add your first supplier and the rest of your procurement flow unlocks."
+          tip="Add the vendor's name, contact, and payment terms — you can fill the rest later."
         />
       ) : (
         <>

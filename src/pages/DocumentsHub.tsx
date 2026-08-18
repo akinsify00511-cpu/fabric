@@ -321,6 +321,9 @@ export default function DocumentsHub() {
             label: "Upload Document",
             onClick: () => setShowUploadModal(true)
           }}
+          gamified={!searchQuery}
+          hint={!searchQuery ? "Your documents hub is the single source of truth for contracts, invoices, and records — your first upload builds the searchable library." : undefined}
+          tip={!searchQuery ? "Drag a file in or create a folder — you can organize and share from here anytime." : undefined}
         />
       ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-4 gap-4">

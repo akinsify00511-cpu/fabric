@@ -322,6 +322,9 @@ export default function MaintenanceRequests() {
             label: "New Request",
             onClick: () => setShowModal(true)
           }}
+          gamified={!(searchQuery || filterPriority !== 'all' || filterStatus !== 'all')}
+          hint={!(searchQuery || filterPriority !== 'all' || filterStatus !== 'all') ? "Maintenance requests keep your assets running — your first one sets up the track → assign → resolve loop." : undefined}
+          tip={!(searchQuery || filterPriority !== 'all' || filterStatus !== 'all') ? "Describe the issue, set priority, and assign it — the team picks it up from there." : undefined}
         />
       ) : (
         <div className="space-y-4">

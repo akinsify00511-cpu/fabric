@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, Users, X, Trash2 } from 'lucide-react'
+import { Plus, Search, Users, X, Trash2, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
@@ -279,10 +279,16 @@ export default function CRM() {
         <div className="space-y-3">
           {filteredDeals.length === 0 ? (
             <div className="rounded-2xl p-12 text-center" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-              <Users size={48} className="mx-auto mb-4" style={{ color: 'var(--av-text-muted)' }} />
+              <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}>
+                <Users size={28} style={{ color: 'var(--av-primary)' }} />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}>
+                <Sparkles size={12} /> Your first deal
+              </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No deals yet</h3>
-              <p className="text-sm mb-4" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p>
-              <button onClick={() => setShowAddDeal(true)} className="px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-text)' }}>Add Deal</button>
+              <p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p>
+              <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Every sale starts here — your pipeline grows as you add opportunities.</p>
+              <button onClick={() => setShowAddDeal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Deal</button>
             </div>
           ) : (
             filteredDeals.map(deal => {
@@ -322,10 +328,16 @@ export default function CRM() {
         <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
           {filteredContacts.length === 0 ? (
             <div className="p-12 text-center">
-              <Users size={48} className="mx-auto mb-4" style={{ color: 'var(--av-text-muted)' }} />
+              <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}>
+                <Users size={28} style={{ color: 'var(--av-primary)' }} />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}>
+                <Sparkles size={12} /> Your first contact
+              </div>
               <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No contacts yet</h3>
-              <p className="text-sm mb-4" style={{ color: 'var(--av-text-secondary)' }}>Add your first contact to get started</p>
-              <button onClick={() => setShowAddContact(true)} className="px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-text)' }}>Add Contact</button>
+              <p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Add your first contact to get started</p>
+              <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Contacts are the people behind every deal, invoice, and conversation.</p>
+              <button onClick={() => setShowAddContact(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Contact</button>
             </div>
           ) : (
             <table className="w-full">

@@ -185,6 +185,9 @@ export default function Services() {
           title="No services yet"
           description="Add a service so customers can book it on your public page"
           action={{ label: 'New Service', onClick: openCreate }}
+          gamified
+          hint="Your services catalog powers your public booking page. Add one and customers can schedule you directly."
+          tip="Name the service, set a duration and price — the booking calendar fills in automatically."
         />
       ) : (
         <>

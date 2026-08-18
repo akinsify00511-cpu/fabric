@@ -271,6 +271,9 @@ export default function PropertySales() {
           title="No sales recorded yet"
           description="Record a property sale to track its offer status and agent commissions"
           action={{ label: 'New Sale', onClick: openCreate }}
+          gamified
+          hint="Each sale you record builds your property performance story — offers, closings, and commissions, all in one place."
+          tip="Start with the property, the buyer's offer, and the agent — commissions flow to approvals automatically."
         />
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">

@@ -394,6 +394,9 @@ export default function ElectronicSignatures() {
             label: "New Request",
             onClick: () => setShowModal(true)
           }}
+          gamified={!(searchQuery || filterStatus !== 'all')}
+          hint={!(searchQuery || filterStatus !== 'all') ? "Signature requests make agreements official — your first one sends a secure signing link and tracks completion." : undefined}
+          tip={!(searchQuery || filterStatus !== 'all') ? "Add the document, the signers, and Avenize generates the signing link and audit trail." : undefined}
         />
       ) : (
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">

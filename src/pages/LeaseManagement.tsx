@@ -380,6 +380,9 @@ export default function LeaseManagement() {
               label: "Create Lease",
               onClick: () => setShowLeaseModal(true)
             }}
+            gamified={!(searchQuery || filterStatus !== 'all')}
+            hint={!(searchQuery || filterStatus !== 'all') ? "Leases are the heartbeat of rental income — your first one starts the rent schedule and renewal reminders." : undefined}
+            tip={!(searchQuery || filterStatus !== 'all') ? "Pick the property, the tenant, and the term — Avenize tracks payments and renewals." : undefined}
           />
         ) : (
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">

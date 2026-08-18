@@ -7,7 +7,7 @@ import { composeBusinessDigest, fetchFeatureDiscovery, formatNaira, type Busines
 import {
   ArrowRight, Bell, BriefcaseBusiness, CheckCircle2, ChevronDown, CircleAlert,
   Clock3, LayoutGrid, PieChart, Search, Settings2, Table2, TrendingUp,
-  Package, FolderKanban, Users2, Wallet, AlertTriangle, Plus, Mail,
+  Package, FolderKanban, Users2, Wallet, AlertTriangle, Plus, Mail, Sparkles,
 } from 'lucide-react'
 
 type View = 'recommended' | 'number' | 'trend' | 'progress' | 'breakdown' | 'table'
@@ -497,13 +497,18 @@ export default function Dashboard() {
             </div>
             <div className="mt-6 min-h-40 flex items-end gap-2 rounded-xl bg-slate-50 p-5">
               {primaryMetric.value === 0 ? (
-                // Honest empty state: don't fabricate a sparkline when there
-                // is no underlying data. Tells the user what to do to get a
-                // real metric here.
+                // Honest + gamified empty state: don't fabricate a sparkline
+                // when there is no underlying data. Frames the first action as
+                // the start of building this metric — not a dead end.
                 <div className="flex w-full flex-col items-center justify-center gap-2 py-6 text-center">
-                  <TrendingUp size={22} className="text-slate-300" />
-                  <p className="text-sm text-slate-500">No {primaryMetric.label.toLowerCase()} data yet.</p>
-                  <p className="text-xs text-slate-400">This will fill in as you use {primaryMetric.label === 'Revenue' || primaryMetric.label === 'Pipeline' ? 'this tool' : 'your workspace'}.</p>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}>
+                    <TrendingUp size={22} style={{ color: 'var(--av-primary)' }} />
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mt-1" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}>
+                    <Sparkles size={12} /> Building your {primaryMetric.label.toLowerCase()} story
+                  </div>
+                  <p className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>No {primaryMetric.label.toLowerCase()} data yet.</p>
+                  <p className="text-xs max-w-xs" style={{ color: 'var(--av-text-muted)' }}>This fills in as you use {primaryMetric.label === 'Revenue' || primaryMetric.label === 'Pipeline' ? 'this tool' : 'your workspace'} — your first entry starts the trend.</p>
                 </div>
               ) : recommended === 'number' ? (
                 <div className="text-5xl font-semibold">{money(primaryMetric.value)}</div>
@@ -554,7 +559,15 @@ export default function Dashboard() {
                   <ArrowRight size={15} className="text-slate-400" />
                 </Link>
               ))}
-              {attentionItems.length === 0 && <p className="py-8 text-center text-sm text-slate-400">You're all caught up.</p>}
+              {attentionItems.length === 0 && (
+                <div className="py-8 text-center">
+                  <div className="w-12 h-12 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: 'var(--av-success-soft)' }}>
+                    <CheckCircle2 size={22} style={{ color: 'var(--av-success)' }} />
+                  </div>
+                  <p className="text-sm font-medium" style={{ color: 'var(--av-text)' }}>You're all caught up</p>
+                  <p className="text-xs mt-1" style={{ color: 'var(--av-text-muted)' }}>Nothing needs your attention right now — a clear desk is progress.</p>
+                </div>
+              )}
             </div>
           </Card>
         </div>

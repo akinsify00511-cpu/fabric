@@ -406,10 +406,15 @@ function MyWorkTab({ actions, loading }: { actions: ActionItem[]; loading: boole
   if (actions.length === 0) {
     return (
       <div className="text-center py-20">
-        <CheckCircle2 size={48} className="mx-auto mb-4" style={{ color: BRAND.success }} />
+        <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: BRAND.successSoft }}>
+          <CheckCircle2 size={28} style={{ color: BRAND.success }} />
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: BRAND.successSoft, color: BRAND.success }}>
+          <Sparkles size={12} /> Inbox zero
+        </div>
         <h2 className="text-xl font-semibold mb-2" style={{ color: BRAND.text }}>You are all caught up</h2>
         <p className="text-sm" style={{ color: BRAND.textSecondary }}>
-          Nothing needs your attention right now. Use Quick Capture to log something.
+          Nothing needs your attention right now — a clear desk is progress. Use Quick Capture to log something new.
         </p>
         <Link
           to="/app/capture"
