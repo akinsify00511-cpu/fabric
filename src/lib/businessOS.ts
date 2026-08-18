@@ -1375,6 +1375,7 @@ export interface BusinessState {
   reasons: Array<{ label: string; evidence: string; detail?: string }>
   signals?: Record<string, number | null>
   error?: boolean
+  degraded?: boolean
 }
 
 export interface Diagnosis {
@@ -1394,6 +1395,7 @@ export interface DiagnosisResult {
   diagnoses: Diagnosis[]
   note?: string
   error?: boolean
+  degraded?: boolean
 }
 
 export interface NextBestAction {
@@ -1412,6 +1414,7 @@ export interface NextBestAction {
   business_state?: string | null
   note?: string
   error?: boolean
+  degraded?: boolean
 }
 
 export interface ValueLedger {
@@ -1426,6 +1429,7 @@ export interface ValueLedger {
   recent?: unknown[]
   note?: string | null
   error?: boolean
+  degraded?: boolean
 }
 
 export interface BusinessBrain {

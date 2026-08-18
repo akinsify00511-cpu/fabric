@@ -934,6 +934,17 @@ const STATE_STYLE: Record<string, { tone: string; label: string }> = {
 
 function BusinessStateCard({ state }: { state?: BusinessState | null }) {
   if (!state) return null
+  if (state.degraded || state.error) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: 'var(--av-warning)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Business state is temporarily unavailable</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">The state engine could not complete just now — the rest of your business is unaffected. This will refresh automatically.</p>
+      </div>
+    )
+  }
   const style = STATE_STYLE[state.state] ?? { tone: 'muted', label: state.state }
   const toneColor = {
     success: 'var(--av-success)', info: 'var(--av-info)', warning: 'var(--av-warning)',
@@ -970,6 +981,17 @@ function BusinessStateCard({ state }: { state?: BusinessState | null }) {
 
 function NextBestActionCard({ nba }: { nba?: NextBestAction | null }) {
   if (!nba) return null
+  if (nba.degraded || nba.error) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: 'var(--av-warning)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Next best action is temporarily unavailable</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">The prioritisation engine could not complete just now. Your data is safe; this will refresh automatically.</p>
+      </div>
+    )
+  }
   const action = nba.action
   if (!action) {
     return (
@@ -1017,6 +1039,17 @@ function NextBestActionCard({ nba }: { nba?: NextBestAction | null }) {
 
 function DiagnosisCard({ diagnoses, bid }: { diagnoses?: DiagnosisResult | null; bid?: string | null }) {
   if (!diagnoses) return null
+  if (diagnoses.degraded || diagnoses.error) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: 'var(--av-warning)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Diagnosis is temporarily unavailable</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">The diagnosis engine could not complete just now. This will refresh automatically.</p>
+      </div>
+    )
+  }
   const list = diagnoses.diagnoses ?? []
   if (list.length === 0) {
     return diagnoses.note ? (
@@ -1106,6 +1139,17 @@ function DiagnosisItem({ d, bid }: { d: any; bid?: string | null }) {
 
 function ValueLedgerCard({ ledger }: { ledger?: ValueLedger | null }) {
   if (!ledger) return null
+  if (ledger.degraded || ledger.error) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: 'var(--av-warning)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Value ledger is temporarily unavailable</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">The value-tracking engine could not complete just now. Your recorded outcomes are safe; this will refresh automatically.</p>
+      </div>
+    )
+  }
   const hasValue = ledger.total_value > 0 || ledger.identified > 0
   if (!hasValue && ledger.note) {
     return (
