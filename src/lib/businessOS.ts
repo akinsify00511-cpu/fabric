@@ -951,3 +951,48 @@ export async function fetchPlanRecommendation(businessId: string): Promise<PlanR
     return null
   }
 }
+
+// ============================================================================
+// P0 #13 — Autonomous trial feature-discovery engine
+// ============================================================================
+
+export interface FeatureSuggestion {
+  module_key: string
+  display_name: string
+  value_headline: string
+  value_explanation: string
+  explore_route: string
+  value_estimate: number | null
+  value_estimate_label: string | null
+  viewed_but_unused: boolean
+}
+
+export interface FeatureDiscoveryResult {
+  authorized: boolean
+  current_tier?: number
+  modules_used_count?: number
+  suggestions: FeatureSuggestion[]
+  error?: string
+}
+
+/**
+ * P0 #13: the feature-discovery engine. Returns unexplored tools with plain-
+ * language value propositions + REAL value estimates from the business's data.
+ * Best-effort, non-blocking (§24).
+ */
+export async function fetchFeatureDiscovery(businessId: string): Promise<FeatureDiscoveryResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('feature_discovery', { p_business_id: businessId })
+    if (error) throw error
+    return (data as FeatureDiscoveryResult) ?? null
+  } catch (e) {
+    console.error('fetchFeatureDiscovery failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** Format a value estimate as naira (e.g. 45000 -> "₦45,000"). */
+export function formatNaira(amount: number | null | undefined): string {
+  if (amount == null || amount === 0) return ''
+  return '₦' + Math.round(amount).toLocaleString()
+}

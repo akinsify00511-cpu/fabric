@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useExperienceContext } from '../lib/useExperienceContext'
-import { composeBusinessDigest, type BusinessDigest } from '../lib/businessOS'
+import { composeBusinessDigest, fetchFeatureDiscovery, formatNaira, type BusinessDigest, type FeatureDiscoveryResult } from '../lib/businessOS'
 import {
   ArrowRight, Bell, BriefcaseBusiness, CheckCircle2, ChevronDown, CircleAlert,
   Clock3, LayoutGrid, PieChart, Search, Settings2, Table2, TrendingUp,
@@ -100,6 +100,7 @@ export default function Dashboard() {
   const [activities, setActivities] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [digest, setDigest] = useState<BusinessDigest | null>(null)
+  const [discovery, setDiscovery] = useState<FeatureDiscoveryResult | null>(null)
 
   const hasFinance = isToolActive('finance')
   const hasCRM = isToolActive('crm')
@@ -215,6 +216,18 @@ export default function Dashboard() {
     if (!staff?.business_id || !isPrivileged) return
     let active = true
     composeBusinessDigest(staff.business_id, 'daily').then(d => { if (active) setDigest(d) })
+    return () => { active = false }
+  }, [staff?.business_id, isPrivileged])
+
+  // P0 #13: the autonomous feature-discovery engine. Suggests unexplored tools
+  // with a REAL value estimate computed from the business's own data ("Inventory
+  // could help you identify ₦X in trapped capital"). Best-effort, non-blocking.
+  // Only for privileged users (discovery is a decision-owner surface) and only
+  // when there's something to suggest.
+  useEffect(() => {
+    if (!staff?.business_id || !isPrivileged) return
+    let active = true
+    fetchFeatureDiscovery(staff.business_id).then(d => { if (active) setDiscovery(d) })
     return () => { active = false }
   }, [staff?.business_id, isPrivileged])
 
@@ -386,6 +399,43 @@ export default function Dashboard() {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* P0 #13: feature discovery — suggests unexplored tools with a REAL value
+          estimate from the business's own data. The autonomous trial experience:
+          Avenize notices "you haven't explored Inventory" and shows why it
+          matters (₦X in trapped capital), with an Explore action. */}
+      {discovery?.authorized && discovery.suggestions.length > 0 && (
+        <div className="rounded-2xl bg-gradient-to-br from-[#155BB4]/5 to-[#34A853]/5 p-4 ring-1 ring-slate-200">
+          <div className="mb-3 flex items-center gap-2">
+            <TrendingUp size={15} className="text-[#155BB4]" />
+            <h2 className="text-sm font-semibold text-slate-900">Worth exploring</h2>
+            <span className="text-xs text-slate-400">· based on your business</span>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {discovery.suggestions.slice(0, 4).map((s) => {
+              const estimate = formatNaira(s.value_estimate)
+              return (
+                <Link
+                  key={s.module_key}
+                  to={s.explore_route}
+                  className="group rounded-xl bg-white p-3 ring-1 ring-slate-200 hover:ring-[#155BB4]/40 hover:shadow-sm transition"
+                >
+                  <p className="text-sm font-semibold text-slate-900">{s.value_headline}</p>
+                  {estimate && (
+                    <p className="mt-0.5 text-lg font-bold text-[#155BB4]">
+                      {estimate} <span className="text-xs font-normal text-slate-500">{s.value_estimate_label}</span>
+                    </p>
+                  )}
+                  <p className="mt-1 text-xs text-slate-500 line-clamp-2">{s.value_explanation}</p>
+                  <span className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-[#155BB4] group-hover:underline">
+                    Explore {s.display_name} <ArrowRight size={12} />
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
         </div>
       )}
 
