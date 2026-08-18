@@ -2123,3 +2123,90 @@ get_current_accessible_businesses RPC).
   then (SubsidiarySwitcher shows nothing when get_current_accessible_businesses
   errors/returns empty -- single-business default; CRM/Meetings fall back to
   staff.business_id) because every consumer is best-effort/non-blocking.
+
+## Session 23b (2026-08-18): Enterprise onboarding hardening — migration idempotency + alert->toast
+
+User scenario: onboard a business with 5 subsidiaries, 250 staff, 10 board
+members, across 5 countries (UK, Canada, Nigeria, Ghana, Europe). "Continue to
+fix." 3 commits (19c9cc1, a769cf9 + prior 79ee427), all pushed to main.
+
+### Migration idempotency + apply-cleanliness (commit 19c9cc1) — the highest-value work
+Spun up a local postgres:15 Docker container and applied the FULL dependency
+chain (ci_shim -> 001 -> 002 -> 024 -> 028 -> org -> fix -> sub0 -> sub1 ->
+sub2 -> board) with ON_ERROR_STOP=1. Found + fixed 7 real migration defects.
+ALL 11 migrations now apply clean AND idempotently (re-apply tested). This
+reduces the "54 historical migration failures" CI baseline by 1 (the org
+hierarchy migration now applies clean on first run).
+
+Defects fixed (all same root pattern: SQL isn't idempotent / has stale
+overloads):
+1. board_members invites_role_check constraint drop failed — Postgres
+   normalizes CHECK (role IN (...)) to role = ANY (ARRAY[...]) internally, so
+   the ILIKE pattern never matched the system catalog. Fixed: drop by
+   deterministic name invites_role_check. LESSON: never pattern-match CHECK
+   constraints; DROP CONSTRAINT IF EXISTS by name.
+2. board_members 4 RLS policies lacked DROP POLICY IF EXISTS -> re-application
+   failed with "policy already exists". Added drops (idempotency).
+3. board_members create_invite stale 2-arg overload (001/002, the UNSAFE
+   no-seat-check version) made COMMENT/GRANT ambiguous. Fixed: DROP FUNCTION
+   IF EXISTS create_invite(TEXT, TEXT) before CREATE.
+4. board_members + subsidiary migrations: COMMENT ON FUNCTION without full
+   arg list failed when overloads existed. Fixed: qualify all COMMENTs with
+   (TEXT, TEXT, UUID, INT) etc.
+5. board_members accept_invite stale 5-arg/3-arg overloads from 001. Added
+   DROP FUNCTION IF EXISTS for stale signatures.
+6. subsidiary_creation (sub0): create_subsidiary overload ambiguity on
+   re-apply. Added DROP of prior 6-arg/4-text overloads before CREATE.
+7. org hierarchy migration (20260817150000): s.is_active -> s.active. The
+   staff table uses active BOOLEAN (migration 002), NOT is_active. This was
+   the root cause of the org migration failing at line 136 with ON_ERROR_STOP=1,
+   skipping downstream objects. The fix migration (20260818100000) recovered
+   it, but fixing at source means the org migration applies clean on first run.
+
+### Subsidiary data isolation — verified SOUND (not a gap)
+Investigated whether switching subsidiaries actually scopes data. VERIFIED:
+- create_subsidiary (sub2) creates a staff row for the creator in the new
+  subsidiary (line 112). Comment confirms: "Give the creator a real staff row
+  in the new subsidiary so they can operate inside it (RLS keys off
+  staff.business_id)."
+- get_current_staff() returns ALL staff rows for the user (parent + each
+  subsidiary) via WHERE s.user_id = auth.uid().
+- RLS policies business_id IN (SELECT business_id FROM get_current_staff())
+  allow reading ALL subsidiaries the user has a staff row in.
+- get_current_accessible_businesses() returns all accessible businesses
+  (direct staff rows + org memberships). The switcher only offers these.
+- activeBusinessId scopes which subsidiary the UI shows.
+- A user CANNOT switch to a subsidiary they have no staff row + no org
+  membership in (not in accessibleBusinesses -> switcher doesn't offer it ->
+  RLS would deny anyway). No leak.
+- EDGE CASE (acceptable): a group_owner/group_admin with an org_membership
+  but NO staff row in a particular subsidiary sees empty data on switch (RLS
+  denies). Documented in BusinessContext. The full fix (RLS using
+  get_current_accessible_businesses instead of get_current_staff) would touch
+  111 policies — too risky for this session; current design is sound (no leak,
+  correct for creators, graceful degradation).
+
+### alert() -> toast in enterprise-critical pages (commit a769cf9)
+A 250-person org hits these pages daily. alert() blocks the UI thread and
+doesn't fit the Avenize design system. Replaced 10 alert() calls across 3
+pages:
+- Organization.tsx: 3 -> showToast (dept save, team save, delete).
+- Approvals.tsx: 5 -> showToast (blocked, approve fail, reject fail, audit-
+  trail gap). Includes the control-plane audit-trail-missing warning.
+- LeaveManagement.tsx: 2 -> showToast in LeaveRequestModal (was HALF-FIXED —
+  imported useToast at page level but the modal sub-component still used
+  alert()). Added useToast() to the modal.
+
+Critical pages now toast-clean: Organization, Approvals, LeaveManagement,
+Subsidiaries, People (0 alert() calls remain in these 5 enterprise pages).
+
+### Verification (every commit + final)
+tsc clean; vite build 0 warnings; vitest 429/429; schema-drift 0. All 11
+migrations apply clean + idempotent against postgres:15 (local Docker test).
+
+### Reusable method (local migration testing without Supabase)
+docker run --rm -d --name pg-test -e POSTGRES_PASSWORD=test -e POSTGRES_DB=avenize -p 5432:5432 postgres:15
+Then apply ci_shim.sql (bare-postgres surface) + 001 + deps (002, 024, 028...)
+BEFORE the migration under test, or column/type errors will be false positives
+(missing dependency, not a real bug). Run the migration TWICE — second run is
+the idempotency test.
