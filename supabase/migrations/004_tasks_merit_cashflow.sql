@@ -1,4 +1,4 @@
--- FABRIC Layer 1 - Tasks, Merit Points, and Cash Flow
+-- Avenize Layer 1 - Tasks, Merit Points, and Cash Flow
 -- Frontend pages for these tables already exist or will be created
 
 -- ============================================

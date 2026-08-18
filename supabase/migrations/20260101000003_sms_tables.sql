@@ -1,4 +1,4 @@
--- FABRIC: SMS Notifications via Termii
+-- Avenize: SMS Notifications via Termii
 -- Multi-tenant SMS logging with Row-Level Security
 
 -- ============================================

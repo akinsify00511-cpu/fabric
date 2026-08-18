@@ -1,4 +1,4 @@
--- FABRIC Layer 1 - Social Media Module
+-- Avenize Layer 1 - Social Media Module
 -- Posts, scheduling, metrics for IG/LinkedIn, branding
 
 -- ============================================

@@ -1,4 +1,4 @@
--- FABRIC Layer 1 - Schema fixes to match frontend
+-- Avenize Layer 1 - Schema fixes to match frontend
 -- Adds missing tables and fixes field names
 
 -- ============================================

@@ -1,4 +1,4 @@
--- FABRIC Layer 1 Schema
+-- Avenize Layer 1 Schema
 -- Multi-tenant business OS with Row-Level Security
 
 -- ============================================
