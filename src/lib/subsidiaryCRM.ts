@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { DEFAULT_CRM_STAGES } from './crmStageDefaults'
 
 export interface CRMStage {
   id: string
@@ -20,11 +21,6 @@ export interface CRMConfiguration {
   automation_rules: Record<string, unknown>[]
 }
 
-/**
- * Load the CRM operating configuration for one subsidiary.
- * The subsidiary id is explicit so callers cannot accidentally fall back to
- * a group-wide CRM configuration.
- */
 export async function getSubsidiaryCRMConfiguration(businessId: string) {
   if (!businessId) throw new Error('A subsidiary/business id is required')
 
@@ -56,11 +52,7 @@ export async function getSubsidiaryCRMConfiguration(businessId: string) {
   }
 }
 
-/**
- * Create a sensible pipeline only when a subsidiary has none. This keeps
- * provisioning idempotent and prevents the CRM from silently overwriting a
- * business owner's custom sales process.
- */
+/** Create the default pipeline only when this subsidiary has none. */
 export async function ensureSubsidiaryPipeline(businessId: string) {
   if (!businessId) throw new Error('A subsidiary/business id is required')
 
@@ -73,24 +65,16 @@ export async function ensureSubsidiaryPipeline(businessId: string) {
   if (readError) throw readError
   if (existing?.length) return
 
-  const defaults = [
-    ['new', 'New Lead', 0, 10, false, false],
-    ['qualified', 'Qualified', 1, 30, false, false],
-    ['proposal', 'Proposal', 2, 60, false, false],
-    ['negotiation', 'Negotiation', 3, 80, false, false],
-    ['won', 'Won', 4, 100, true, true],
-    ['lost', 'Lost', 5, 0, true, false],
-  ]
-
   const { error } = await supabase.from('crm_pipeline_stages').insert(
-    defaults.map(([stage_key, name, position, probability, is_closed, is_won]) => ({
+    DEFAULT_CRM_STAGES.map((stage) => ({
       business_id: businessId,
-      stage_key,
-      name,
-      position,
-      probability,
-      is_closed,
-      is_won,
+      stage_key: stage.key,
+      name: stage.name,
+      position: stage.sort_order,
+      probability: stage.probability,
+      color: stage.color,
+      is_closed: stage.key === 'won' || stage.key === 'lost',
+      is_won: stage.key === 'won',
     })),
   )
 
