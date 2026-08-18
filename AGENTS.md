@@ -1,4 +1,138 @@
 
+## Session 23 (2026-08-18): Trial-experience engine — P0 #1, #13, #14, #15, #16 (deterministic, zero LLM)
+
+Triggered by the master checklist P0 trial-experience items. Per §22 (anti-
+hallucination), the entire trial experience is DETERMINISTIC SQL over real
+usage/onboarding data — no LLM, no fabricated numbers, no fabricated urgency.
+Every "AI-assisted" feature is rule-based intelligence consuming the self-
+instrumentation infra built in Session 21 #14. 5 commits (a7b22a1..dd5758c),
+all pushed to main. tsc clean, vite build 0 warnings, vitest 255/255 (was
+226, +29 new), schema-drift 0.
+
+### P0 #1 -- FABRIC rebrand finished (commit ccc2e56)
+The 5 migration SQL comment headers still said "FABRIC Layer 1" (internal-
+only, never rendered). Replaced with Avenize. Remaining repo-wide "FABRIC"
+hits: the English word "fabricate/fabrication" in code comments (legitimate),
+the GitHub repo slug "akinsify00511-cpu/fabric" (the actual repo name — not
+user-facing), and historical AGENTS.md session logs. ZERO user-facing FABRIC
+product-name references remain.
+
+### P0 #13 -- Autonomous feature-discovery engine (commit 413ed34)
+The directive: during the trial, Avenize notices "you haven't explored
+Inventory" and explains why it matters ("could help you identify ₦X in
+trapped capital"), with an Explore action.
+- Migration 20260818190000: `module_value_propositions` table (the "why this
+  tool matters" copy per module + a SQL snippet computing a REAL value
+  estimate). Tunable by Avenize operators (service role) — Riverwayse decides
+  the copy, not hardcoded in app code. Seeded for 8 modules.
+- `feature_discovery(business_id)` RPC: returns modules the business is
+  ENTITLED to but has NOT meaningfully used (not in feature_activation, or
+  view_only). Each: value headline + explanation + REAL value estimate
+  (computed via EXECUTE of the per-module snippet, business_id substituted
+  via format(%L) — never string concat from client input) + explore route.
+  Ordered: non-zero estimates first (desc by value — highest-impact unexplored
+  tool first), then display_order. Best-effort per module (§24).
+- SECURITY: the value_estimate_sql is stored server-side (service-role-
+  managed, NOT client-writable) + executed via EXECUTE with format(%L). The
+  client never supplies SQL.
+- Client: Dashboard "Worth exploring" card (owner/admin only) + formatNaira.
+  The estimate line is hidden when 0/null (never shows "₦0" — the §22 anti-
+  fabrication contract).
+
+### P0 #14 -- Pricing engine: founding pricing + price-lock + future increase (commit 287b346)
+The directive: treat current pricing as "2026 Founding Pricing" (not
+permanent). Founding-period language, price-lock rules, future pricing config,
+architect so a 30-50% increase is a config change not a rebuild.
+- PROBLEM FIXED: prices were hardcoded in TWO places (edge fn PLAN_PRICES +
+  Pricing.tsx PLANS) — a §0.5 single-source-of-truth violation. And
+  business_entitlements.plan CHECK only allowed 4 codes while the others used
+  5 (three sources, near-drift).
+- Migration 20260818200000: `pricing_tiers` table — the SINGLE source of
+  truth. Each tier: founding_* prices (current), future_* prices (the 30-50%
+  increase, ~40% seeded, NOT active until founding_period_ends_at is set),
+  founding_label, seats, is_popular. RLS: public read (catalog), service-role
+  writes. `get_pricing_tiers()` RPC returns the ACTIVE price (founding if
+  ongoing, future if past founding_period_ends_at).
+- `price_locked` flag on business_subscriptions: founding subscribers keep
+  their signup price on renewal (the edge fn reads amount_cents at renewal,
+  not the current tier price — the price-lock guarantee).
+- Widened business_entitlements.plan CHECK to all 8 plan codes
+  (free/starter/team/business/professional/pro/scale/enterprise).
+- Edge fn (subscription-management): `getActiveTierPrice` helper reads the
+  active price from pricing_tiers at checkout (PLAN_PRICES fallback). createCheckout
+  uses the DB price + sets price_locked. available_plans reads from
+  get_pricing_tiers RPC.
+- A price change / founding-period end / future-increase activation is now an
+  UPDATE to pricing_tiers — NO code change, NO redeploy.
+- Pricing.tsx: loads tiers from get_pricing_tiers (FALLBACK_TIERS if not
+  deployed), billing cycle toggle (monthly/yearly ~17% savings), founding-
+  period banner, per-card founding label + lock icon, new FAQ on the price-lock.
+
+### P0 #15 -- AI plan recommendation at trial end (commit a7b22a1)
+The directive: at end of trial, "Based on how you use Avenize, we recommend
+Business." Explain: features used, why the plan fits, what additional value
+becomes available. Do NOT simply say "Upgrade now."
+- Migration 20260818180000: `recommend_plan(business_id)` RPC. SECURITY
+  DEFINER, membership-guarded. Computes the MIN plan tier across used modules
+  (0=Free/1=Starter/2=Business/3=Scale). should_upgrade = recommended >
+  current. Evidence lines cite REAL usage (reuse_label + distinct_active_days
+  — never fabricated, §22). reasons: why the plan fits. additional_value_unlocks:
+  OTHER modules the tier enables that the business has NOT used yet. If only
+  free-tier modules used: recommend Free, no upgrade, honest "keep exploring"
+  nudge. Best-effort (never blocks the trial flow).
+- BUG FOUND + FIXED while writing tests: resolve_plan_tier (20260101000005)
+  lacked 'business' and 'team' plan names — a Business-plan user got tier 0,
+  causing a false "upgrade" recommendation. recommend_plan's CASE is
+  comprehensive. Flagged the drift in a comment.
+- Anti-gouging + anti-churn: recommends the MINIMUM tier usage justifies
+  (never upsells beyond usage), never below what's needed (never churns).
+  Unknown modules default to free-tier (safe, no false upgrade).
+- Client: fetchPlanRecommendation wrapper. Subscription.tsx "Recommended for
+  you" card (free/trial users only): evidence ("What you've used"), reasons
+  ("Why this plan fits"), additional_value_unlocks ("What else this unlocks"),
+  + a Get {plan} CTA routing through createCheckout (tracked, not a bare link).
+
+### P0 #16 -- Autonomous trial assistance (commit dd5758c)
+The directive: personalized engagement during the trial, assistance at key
+friction points (setup incomplete, feature unused, trial ending), onboarding
+completion incentives.
+- Migration 20260818210000: `trial_assistance(business_id)` RPC. Consumes
+  onboarding_funnel + feature_activation + business_entitlements.trial_ends_at
+  + compute_business_health. Returns the trial phase + a single prioritized
+  nudge (headline + body + action_label + action_route).
+- Phase taxonomy (priority-ordered, deterministic): setup_incomplete (highest)
+  > trial_ending_no_usage (<=2d + <2 paid modules) > trial_ending_healthy
+  (<=3d with usage) > feature_unused (0 paid modules) > trial_midpoint (<=5d)
+  > healthy (no nudge — don't nag). Not in trial -> no nudge.
+- Client: fetchTrialAssistance wrapper. TrialBanner now ADAPTIVE — shows the
+  nudge headline + body + a TARGETED action button (e.g. "Continue setup" ->
+  /onboarding, "See your recommended plan" -> /app/subscription). Falls back
+  to the generic trial countdown if the RPC isn't deployed. Per-nudge
+  dismissal (a new phase resets it). Updated the banner gradient to the
+  unified #155BB4 primary (P1.10).
+
+### The trial-experience loop (how P0 #13/#15/#16 compose)
+- P0 #16 (trial_assistance) detects the phase + surfaces the ONE nudge.
+- If phase = feature_unused -> the nudge links to the Dashboard, where P0 #13
+  (feature_discovery) shows "Worth exploring" with REAL value estimates.
+- If phase = trial_ending_healthy -> the nudge links to the Subscription page,
+  where P0 #15 (recommend_plan) shows the evidence-based plan recommendation.
+- If phase = setup_incomplete -> the nudge links to /onboarding.
+The three compose into a single, coherent, deterministic trial experience —
+no LLM, no fabricated urgency, every number traceable to real usage data.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 255/255 (+29: planRecommendation 8,
+featureDiscovery 6, pricingEngine 7, trialAssistance 8), schema-drift 0.
+No new runtime deps, no external APIs. All deterministic SQL over real tables.
+
+### Still pending (blocked on live DB)
+Apply migrations 080-20260818210000 to live Supabase (project
+kgsgqvatyleetyquffya). Frontend degrades gracefully until then (nudge = null
+-> generic banner; discovery = null -> no card; recommendation = null -> no
+card; pricing = FALLBACK_TIERS) because every caller is best-effort/non-
+blocking (§24).
+
 ## Session 20 (2026-08-16): Grounded P0 verification - stale-FABRIC + unicode-escape bugs fixed
 
 Triggered by a consolidated remaining-fix list (P0-P2 roadmap). Per the audit protocol, **verified reality before acting** rather than trusting the checklist. Established baseline: `npx tsc -b --noEmit` clean, `npx vite build` succeeds (0 warnings), `npx vitest run` 88/88, HEAD 0b81e93, clean tree.
