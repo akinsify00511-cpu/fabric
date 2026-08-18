@@ -51,17 +51,25 @@ END $$;
 -- ------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS auth;
 
--- auth.uid() — Supabase returns the current session user's UUID. In CI
--- there is no session, so return NULL. RLS policies that gate on
--- auth.uid() will simply match no rows (safe: deny by default).
+-- auth.uid() — Supabase returns the current session user's UUID. In
+-- production this reads from the JWT claim `sub`. Here we read from a
+-- settable GUC (`request.jwt.claims`) so RLS attack tests can switch users
+-- via set_config(). Returns NULL when no claims are set (safe: deny by
+-- default), matching real Supabase behavior for an unauthenticated session.
 CREATE OR REPLACE FUNCTION auth.uid() RETURNS UUID
-LANGUAGE sql STABLE AS $$ SELECT NULL::UUID; $$;
+LANGUAGE sql STABLE AS $$
+  SELECT COALESCE(
+    NULLIF(current_setting('request.jwt.claims', true)::json->>'sub', ''),
+    NULL
+  )::UUID;
+$$;
 
--- auth.jwt() — Supabase returns the current session's JWT claims. In CI
--- there is no session; return an empty JSONB so claim-extraction expressions
--- (e.g. auth.jwt() ->> 'sub') resolve to NULL instead of erroring.
+-- auth.jwt() — Supabase returns the current session's JWT claims. Read from
+-- the same settable GUC so tests can inject claims. Empty JSONB when unset.
 CREATE OR REPLACE FUNCTION auth.jwt() RETURNS JSONB
-LANGUAGE sql STABLE AS $$ SELECT '{}'::JSONB; $$;
+LANGUAGE sql STABLE AS $$
+  SELECT COALESCE(NULLIF(current_setting('request.jwt.claims', true), '')::JSONB, '{}'::JSONB);
+$$;
 
 -- auth.role() — Supabase returns the current role string. In CI return
 -- 'authenticated' so role-checking expressions resolve without erroring.
