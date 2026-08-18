@@ -1038,3 +1038,138 @@ export async function fetchTrialAssistance(businessId: string): Promise<TrialAss
     return null
   }
 }
+
+// ============================================================================
+// THE AVENIZE BUSINESS BRAIN — State + Diagnosis + Next Best Action + Value Ledger
+// The four engines that turn isolated modules into one intelligent organism.
+// ============================================================================
+
+export interface BusinessState {
+  state: string
+  confidence: string
+  reasons: Array<{ label: string; evidence: string; detail?: string }>
+  signals?: Record<string, number | null>
+  error?: boolean
+}
+
+export interface Diagnosis {
+  rule_id: string
+  symptom_metric: string
+  symptom_change_pct: number
+  cause_metric: string
+  cause_change_pct: number
+  relationship: string
+  impact_amount: number | null
+  severity: string
+  evidence: { symptom: string; cause_link: string }
+  headline: string
+}
+
+export interface DiagnosisResult {
+  diagnoses: Diagnosis[]
+  note?: string
+  error?: boolean
+}
+
+export interface NextBestAction {
+  action: {
+    id: string
+    rule_id?: string
+    statement: string
+    severity: string
+    expected_impact?: { amount?: number; description?: string }
+    action_type?: string
+    _nba_score?: number
+    _nba_reason?: string
+    _nba_owner_id?: string | null
+    _nba_due_at?: string
+  } | null
+  business_state?: string | null
+  note?: string
+  error?: boolean
+}
+
+export interface ValueLedger {
+  total_value: number
+  recovered: number
+  saved: number
+  generated: number
+  identified: number
+  recommendations_acted: number
+  outcomes_recorded: number
+  successful_outcomes: number
+  recent?: unknown[]
+  note?: string | null
+  error?: boolean
+}
+
+export interface BusinessBrain {
+  authorized: boolean
+  state?: BusinessState
+  pulse?: Record<string, unknown>
+  diagnoses?: DiagnosisResult
+  next_best_action?: NextBestAction
+  value_ledger?: ValueLedger
+  error?: boolean
+  message?: string
+}
+
+/** The Business State Engine. Classifies the business (growing/stressed/at-risk/etc). Deterministic, best-effort. */
+export async function classifyBusinessState(businessId: string): Promise<BusinessState | null> {
+  try {
+    const { data, error } = await supabase.rpc('classify_business_state', { p_business_id: businessId })
+    if (error) throw error
+    return (data as BusinessState) ?? null
+  } catch (e) {
+    console.error('classifyBusinessState failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** The Diagnosis Engine. Cross-module causal reasoning (symptom=FACT, cause=INFERENCE). Deterministic, best-effort. */
+export async function fetchDiagnoses(businessId: string): Promise<DiagnosisResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('diagnose_business', { p_business_id: businessId })
+    if (error) throw error
+    return (data as DiagnosisResult) ?? null
+  } catch (e) {
+    console.error('fetchDiagnoses failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** The Next Best Action engine. The SINGLE most valuable thing to do now. Deterministic, best-effort. */
+export async function fetchNextBestAction(businessId: string): Promise<NextBestAction | null> {
+  try {
+    const { data, error } = await supabase.rpc('next_best_action', { p_business_id: businessId })
+    if (error) throw error
+    return (data as NextBestAction) ?? null
+  } catch (e) {
+    console.error('fetchNextBestAction failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** The Business Value Ledger. "Avenize helped recover ₦X." Aggregates real outcomes. Deterministic, best-effort. */
+export async function fetchValueLedger(businessId: string): Promise<ValueLedger | null> {
+  try {
+    const { data, error } = await supabase.rpc('business_value_ledger', { p_business_id: businessId })
+    if (error) throw error
+    return (data as ValueLedger) ?? null
+  } catch (e) {
+    console.error('fetchValueLedger failed (non-blocking):', e)
+    return null
+  }
+}
+
+/** The Avenize Business Brain. ONE call returns State + Pulse + Diagnoses + Next Best Action + Value Ledger. */
+export async function fetchBusinessBrain(businessId: string): Promise<BusinessBrain | null> {
+  try {
+    const { data, error } = await supabase.rpc('business_brain', { p_business_id: businessId })
+    if (error) throw error
+    return (data as BusinessBrain) ?? null
+  } catch (e) {
+    console.error('fetchBusinessBrain failed (non-blocking):', e)
+    return null
+  }
+}

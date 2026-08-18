@@ -14,6 +14,7 @@ import {
   fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, markRecommendationActed, type Recommendation,
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
   computeEbitda, type EbitdaResult,
+  fetchBusinessBrain, type BusinessBrain, type BusinessState, type DiagnosisResult, type NextBestAction, type ValueLedger,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
@@ -53,6 +54,10 @@ export default function ExecutiveCockpit() {
   const [health, setHealth] = useState<BusinessHealth | null>(null)
   const [effectiveness, setEffectiveness] = useState<any[]>([])
   const [ebitda, setEbitda] = useState<EbitdaResult | null>(null)
+  // THE BUSINESS BRAIN (State + Diagnosis + Next Best Action + Value Ledger).
+  // One call renders the intelligence-first surface. Best-effort — stays null
+  // (cards show honest empty states) if the brain migration isn't deployed.
+  const [brain, setBrain] = useState<BusinessBrain | null>(null)
 
   useEffect(() => {
     if (!bid) return
@@ -81,6 +86,10 @@ export default function ExecutiveCockpit() {
       // Best-effort: stays empty if the migration isn't deployed.
       fetchRecommendationEffectiveness(bid).then(e => { if (active) setEffectiveness(e) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
+      // THE BUSINESS BRAIN — State + Diagnosis + Next Best Action + Value Ledger
+      // in one call. This is the intelligence-first surface (#1,#2,#5,#6,#7,#9).
+      fetchBusinessBrain(bid).then(b => { if (active) setBrain(b) })
+        .catch(() => { /* brain migration not deployed yet — non-blocking */ })
       // Pull several real signals in parallel; tolerate missing RPCs/tables.
       const [
         revenue, cash, pipeline, people, exceptions, forecast, capacity, process, risk,
@@ -152,6 +161,15 @@ export default function ExecutiveCockpit() {
           <p className="text-xs text-[var(--av-text-muted)] mb-3">
             {LENSES.find(l => l.key === lens)?.blurb}
           </p>
+
+          {/* THE AVENIZE BUSINESS BRAIN — the intelligence-first surface.
+              State + Next Best Action + Diagnosis + Value Ledger, before the
+              metrics. This is "what is happening / why / what should I do /
+              how much value did Avenize create" — the directive's core. */}
+          <BusinessStateCard state={brain?.state} />
+          <NextBestActionCard nba={brain?.next_best_action} />
+          <DiagnosisCard diagnoses={brain?.diagnoses} />
+          <ValueLedgerCard ledger={brain?.value_ledger} />
 
           <BusinessHealthCard health={health} />
           <EbitdaCard ebitda={ebitda} />
@@ -771,6 +789,196 @@ function GoalsRow({ lens }: { lens: Lens }) {
             {g.label} <ArrowRight size={12} className="text-[var(--av-text-muted)]" />
           </Link>
         ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// THE AVENIZE BUSINESS BRAIN — State, Next Best Action, Diagnosis, Value Ledger.
+// The four engines that turn isolated modules into one intelligent organism.
+// Every card degrades to an honest empty state when the brain migration isn't
+// deployed (§24) — no error, no fabricated numbers.
+// ============================================================================
+
+const STATE_STYLE: Record<string, { tone: string; label: string }> = {
+  growing: { tone: 'success', label: 'Growing' },
+  stable: { tone: 'info', label: 'Stable' },
+  scaling: { tone: 'success', label: 'Scaling' },
+  stressed: { tone: 'warning', label: 'Stressed' },
+  recovering: { tone: 'info', label: 'Recovering' },
+  at_risk: { tone: 'danger', label: 'At risk' },
+  cash_constrained: { tone: 'danger', label: 'Cash constrained' },
+  sales_constrained: { tone: 'warning', label: 'Sales constrained' },
+  capacity_constrained: { tone: 'warning', label: 'Capacity constrained' },
+  operationally_constrained: { tone: 'warning', label: 'Operationally constrained' },
+  opportunity_rich: { tone: 'success', label: 'Opportunity-rich' },
+  insufficient_data: { tone: 'muted', label: 'Building a picture' },
+}
+
+function BusinessStateCard({ state }: { state?: BusinessState | null }) {
+  if (!state) return null
+  const style = STATE_STYLE[state.state] ?? { tone: 'muted', label: state.state }
+  const toneColor = {
+    success: 'var(--av-success)', info: 'var(--av-info)', warning: 'var(--av-warning)',
+    danger: 'var(--av-danger)', muted: 'var(--av-text-muted)',
+  }[style.tone] ?? 'var(--av-text-muted)'
+  return (
+    <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4">
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <Activity size={16} style={{ color: toneColor }} />
+            <span className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">Business state</span>
+            <ClaimTag type={state.confidence === 'high' ? 'FACT' : state.confidence === 'insufficient' ? 'UNKNOWN' : 'INFERENCE'} />
+          </div>
+          <h3 className="text-xl font-semibold" style={{ color: toneColor }}>{style.label}</h3>
+        </div>
+        <div className="text-xs text-[var(--av-text-muted)]">
+          Confidence: {state.confidence}
+        </div>
+      </div>
+      {state.reasons?.length > 0 && (
+        <ul className="space-y-1.5">
+          {state.reasons.slice(0, 3).map((r, i) => (
+            <li key={i} className="text-sm text-[var(--av-text-secondary)] flex items-start gap-2">
+              <ClaimTag type={r.evidence as any} />
+              <span>{r.label}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+function NextBestActionCard({ nba }: { nba?: NextBestAction | null }) {
+  if (!nba) return null
+  const action = nba.action
+  if (!action) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: 'var(--av-success)' }}>
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles size={16} className="text-[var(--av-success)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Nothing needs your attention right now</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">{nba.note ?? 'You are all caught up.'}</p>
+      </div>
+    )
+  }
+  const sevColor = action.severity === 'critical' ? 'var(--av-danger)'
+    : action.severity === 'warning' ? 'var(--av-warning)' : 'var(--av-info)'
+  return (
+    <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4 border-l-4" style={{ borderLeftColor: sevColor }}>
+      <div className="flex items-center gap-2 mb-2">
+        <Lightbulb size={16} style={{ color: sevColor }} />
+        <span className="text-xs uppercase tracking-wide text-[var(--av-text-muted)]">Next best action</span>
+        {nba.business_state && (
+          <span className="text-xs text-[var(--av-text-muted)]">· relevant to your {nba.business_state.replace(/_/g, ' ')} state</span>
+        )}
+      </div>
+      <p className="text-base font-medium text-[var(--av-text)] mb-2">{action.statement}</p>
+      {action.expected_impact?.amount != null && action.expected_impact.amount > 0 && (
+        <p className="text-sm mb-2" style={{ color: 'var(--av-success)' }}>
+          Expected impact: {naira(action.expected_impact.amount)}
+          {action.expected_impact.description ? ` — ${action.expected_impact.description}` : ''}
+        </p>
+      )}
+      {action._nba_reason && (
+        <p className="text-xs text-[var(--av-text-muted)] mb-3">
+          Why this: {action._nba_reason}
+          {action._nba_due_at && ` · suggested by ${new Date(action._nba_due_at).toLocaleDateString()}`}
+        </p>
+      )}
+      {action.action_type && (
+        <Link to="/app/tasks" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-white" style={{ backgroundColor: 'var(--av-primary)' }}>
+          {action.action_type === 'create_task' ? 'Create task' : action.action_type === 'create_po' ? 'Create PO' : 'Take action'} <ArrowRight size={12} />
+        </Link>
+      )}
+    </div>
+  )
+}
+
+function DiagnosisCard({ diagnoses }: { diagnoses?: DiagnosisResult | null }) {
+  if (!diagnoses) return null
+  const list = diagnoses.diagnoses ?? []
+  if (list.length === 0) {
+    return diagnoses.note ? (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <HelpCircle size={16} className="text-[var(--av-text-muted)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Diagnoses</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">{diagnoses.note}</p>
+      </div>
+    ) : null
+  }
+  return (
+    <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">What we found — and why</span>
+      </div>
+      <div className="space-y-4">
+        {list.slice(0, 4).map((d, i) => (
+          <div key={i} className="border-l-2 pl-3" style={{ borderLeftColor: d.severity === 'critical' ? 'var(--av-danger)' : 'var(--av-warning)' }}>
+            <p className="text-sm font-medium text-[var(--av-text)] mb-1">{d.headline}</p>
+            <p className="text-sm text-[var(--av-text-secondary)] mb-1.5">{d.relationship}</p>
+            <div className="flex items-center gap-3 text-xs text-[var(--av-text-muted)]">
+              <ClaimTag type="FACT" /> symptom
+              <ClaimTag type="INFERENCE" /> cause link
+              {d.impact_amount != null && <span>· ~{naira(d.impact_amount)} monthly exposure</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ValueLedgerCard({ ledger }: { ledger?: ValueLedger | null }) {
+  if (!ledger) return null
+  const hasValue = ledger.total_value > 0 || ledger.identified > 0
+  if (!hasValue && ledger.note) {
+    return (
+      <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <DollarSign size={16} className="text-[var(--av-text-muted)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Value Avenize has created</span>
+        </div>
+        <p className="text-sm text-[var(--av-text-secondary)]">{ledger.note}</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-[var(--av-surface)] p-5 mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <DollarSign size={16} className="text-[var(--av-success)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Value Avenize has created</span>
+        <ClaimTag type="FACT" />
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-3">
+        <div>
+          <div className="text-2xl font-bold text-[var(--av-success)]">{naira(ledger.recovered)}</div>
+          <div className="text-xs text-[var(--av-text-muted)]">Recovered</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[var(--av-info)]">{naira(ledger.saved)}</div>
+          <div className="text-xs text-[var(--av-text-muted)]">Saved</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[var(--av-primary)]">{naira(ledger.generated)}</div>
+          <div className="text-xs text-[var(--av-text-muted)]">Generated</div>
+        </div>
+        <div>
+          <div className="text-2xl font-bold text-[var(--av-text-secondary)]">{naira(ledger.identified)}</div>
+          <div className="text-xs text-[var(--av-text-muted)]">Identified</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 text-xs text-[var(--av-text-muted)]">
+        <span>{ledger.recommendations_acted} acted on</span>
+        <span>· {ledger.outcomes_recorded} outcomes recorded</span>
+        <span>· {ledger.successful_outcomes} successful</span>
       </div>
     </div>
   )
