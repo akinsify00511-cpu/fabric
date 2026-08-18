@@ -509,6 +509,46 @@ export async function fetchAutomationHealth(businessId: string): Promise<Automat
   return (data as AutomationHealth) ?? null
 }
 
+/** §N automation health WITH the dead-letter queue view. Best-effort. */
+export interface AutomationDLQEntry {
+  id: string
+  automation_name: string
+  error_message: string | null
+  retry_count: number
+  executed_at: string
+  last_attempted_at: string | null
+}
+export interface AutomationDLQHealth {
+  authorized: boolean
+  summary: {
+    total_failed: number
+    total_retried: number
+    dead_lettered_count: number
+    avg_retries_to_success: number
+  }
+  dead_lettered: AutomationDLQEntry[]
+}
+export async function fetchAutomationDLQHealth(businessId: string): Promise<AutomationDLQHealth | null> {
+  try {
+    const { data, error } = await supabase.rpc('automation_health_with_dlq', { p_business_id: businessId })
+    if (error) throw error
+    return (data as AutomationDLQHealth) ?? null
+  } catch (e) {
+    console.error('fetchAutomationDLQHealth failed (non-blocking):', e)
+    return null
+  }
+}
+export async function reviveDeadLetteredAutomation(runId: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('revive_dead_lettered_automation', { p_run_id: runId })
+    if (error) throw error
+    return true
+  } catch (e) {
+    console.error('reviveDeadLetteredAutomation failed (non-blocking):', e)
+    return false
+  }
+}
+
 // ============================================================================
 // Riverwayse Platform Operations Dashboard
 // Separate system from Owner Intelligence. Answers "is the platform working

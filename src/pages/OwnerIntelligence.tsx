@@ -12,11 +12,12 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, type OwnerIntelligence, type SectorBenchmark, type AutomationHealth } from '../lib/businessOS'
+import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, fetchAutomationDLQHealth, reviveDeadLetteredAutomation, type OwnerIntelligence, type SectorBenchmark, type AutomationHealth, type AutomationDLQHealth } from '../lib/businessOS'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   ShieldCheck, ShieldAlert, Loader2, Activity, Zap, Clock, AlertTriangle,
   BarChart3, TrendingDown, Settings2, Lock, CheckCircle2, XCircle, Globe,
+  Inbox, RotateCcw,
 } from 'lucide-react'
 
 function useIsOwnerAdmin() {
@@ -40,6 +41,7 @@ export default function OwnerIntelligence() {
   const [error, setError] = useState<string | null>(null)
   const [benchmark, setBenchmark] = useState<SectorBenchmark | null>(null)
   const [health, setHealth] = useState<AutomationHealth | null>(null)
+  const [dlq, setDlq] = useState<AutomationDLQHealth | null>(null)
 
   useEffect(() => {
     if (!bid || !isOwnerAdmin) {
@@ -78,6 +80,9 @@ export default function OwnerIntelligence() {
       } catch (e) {
         console.error('automation_health failed (non-blocking):', e)
       }
+      // §N automation dead-letter queue health (best-effort, non-blocking).
+      fetchAutomationDLQHealth(bid).then(d => { if (active) setDlq(d) })
+        .catch(() => { /* migration not deployed — non-blocking */ })
     })()
     return () => { active = false }
   }, [bid, isOwnerAdmin])
@@ -325,6 +330,57 @@ export default function OwnerIntelligence() {
           {health.total_automations === 0 && (
             <ClaimNote tone="muted">No automations yet. Create automations to see execution health here.</ClaimNote>
           )}
+        </section>
+      )}
+
+      {/* §N Dead-letter queue — failed automation runs after exhausting retries */}
+      {dlq && dlq.authorized && dlq.summary.dead_lettered_count > 0 && (
+        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <Inbox className="w-4 h-4 text-red-600" />
+            Dead-Letter Queue
+          </h2>
+          <p className="text-xs text-gray-500 mb-3">Automation runs that failed and exhausted all retries. Review the error, fix the cause, then revive to retry.</p>
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="rounded-lg bg-red-50 p-3">
+              <div className="text-xs text-gray-500">Dead-lettered</div>
+              <div className="text-lg font-semibold text-red-700">{dlq.summary.dead_lettered_count}</div>
+            </div>
+            <div className="rounded-lg bg-amber-50 p-3">
+              <div className="text-xs text-gray-500">Total failed</div>
+              <div className="text-lg font-semibold text-amber-700">{dlq.summary.total_failed}</div>
+            </div>
+            <div className="rounded-lg bg-green-50 p-3">
+              <div className="text-xs text-gray-500">Recovered via retry</div>
+              <div className="text-lg font-semibold text-green-700">{dlq.summary.total_retried}</div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            {dlq.dead_lettered.slice(0, 8).map((d) => (
+              <div key={d.id} className="flex items-start justify-between gap-3 py-2 border-b border-gray-100 last:border-0">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-900 truncate">{d.automation_name}</span>
+                    <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] text-red-700">{d.retry_count} retries</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-0.5 truncate">{d.error_message || 'Unknown error'}</p>
+                  <p className="text-[10px] text-gray-400 mt-0.5">Failed {new Date(d.executed_at).toLocaleString()}</p>
+                </div>
+                <button
+                  onClick={async () => {
+                    const ok = await reviveDeadLetteredAutomation(d.id)
+                    if (ok) {
+                      const fresh = await fetchAutomationDLQHealth(bid!)
+                      if (fresh) setDlq(fresh)
+                    }
+                  }}
+                  className="shrink-0 inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs text-gray-700 hover:bg-gray-200"
+                >
+                  <RotateCcw className="w-3 h-3" /> Revive
+                </button>
+              </div>
+            ))}
+          </div>
         </section>
       )}
 
