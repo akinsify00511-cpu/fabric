@@ -103,6 +103,7 @@ const RiskRegister = lazy(() => import('./pages/RiskRegister'))
 const TrustRecovery = lazy(() => import('./pages/TrustRecovery'))
 const OwnerIntelligence = lazy(() => import('./pages/OwnerIntelligence'))
 const BuilderDashboard = lazy(() => import('./pages/BuilderDashboard'))
+const PlatformOpsDashboard = lazy(() => import('./pages/PlatformOpsDashboard'))
 const MonthlyReview = lazy(() => import('./pages/MonthlyReview'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
@@ -380,6 +381,11 @@ function AppRoutes() {
             Gated by the builder_dashboard RPC (platform_admins allowlist), NOT
             a business role. Requires a session to call the RPC. */}
         <Route path="/builder" element={<RequireAuth><BuilderDashboard /></RequireAuth>} />
+        {/* Riverwayse platform operations dashboard — separate system from
+            Owner Intelligence. "Is the platform working, right now, for
+            everyone." Gated by is_platform_admin() (same allowlist as
+            /builder). Not a business-owner surface. */}
+        <Route path="/platform-ops" element={<RequireAuth><PlatformOpsDashboard /></RequireAuth>} />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />

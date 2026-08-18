@@ -508,3 +508,136 @@ export async function fetchAutomationHealth(businessId: string): Promise<Automat
   if (error) throw error
   return (data as AutomationHealth) ?? null
 }
+
+// ============================================================================
+// Riverwayse Platform Operations Dashboard
+// Separate system from Owner Intelligence. Answers "is the platform working
+// right now, for everyone" — NOT "is this business healthy". Sits behind the
+// is_platform_admin() boundary. Aggregate + structural only by default;
+// tenant drill-down is a separate audit-logged RPC. Best-effort/non-blocking.
+// ============================================================================
+
+export interface PlatformSystemStatus {
+  status: 'healthy' | 'degraded' | 'down' | 'unknown'
+  error_count_5m?: number
+}
+
+export interface PlatformOps {
+  authorized: boolean
+  data_scope: string
+  systems?: Record<string, PlatformSystemStatus>
+  integrations?: Array<{
+    integration: string
+    display_name: string
+    status: string
+    consecutive_failures: number
+    last_check_at: string | null
+    last_error: string | null
+    last_success_at: string | null
+    latency_ms: number | null
+  }>
+  recent_errors?: Array<{
+    id: string
+    captured_at: string
+    source: string
+    source_detail: string | null
+    severity: string
+    message: string
+    has_business: boolean
+    resolved_at: string | null
+  }>
+  open_incidents?: Array<{
+    id: string
+    opened_at: string
+    trigger_key: string
+    severity: string
+    status: string
+    title: string
+    summary: string | null
+    affected_business_count: number
+  }>
+  recent_incidents?: Array<{
+    id: string
+    opened_at: string
+    closed_at: string | null
+    severity: string
+    status: string
+    title: string
+    summary: string | null
+  }>
+  error_counts?: {
+    last_5m: number
+    last_1h: number
+    last_24h: number
+    unresolved: number
+  }
+}
+
+export async function fetchPlatformOps(): Promise<PlatformOps | null> {
+  const { data, error } = await supabase.rpc('platform_ops')
+  if (error) throw error
+  return (data as PlatformOps) ?? null
+}
+
+/** Fire-and-forget error ingest. Never throws — logging must not break a user's request path. */
+export function logPlatformError(params: {
+  source: string
+  severity?: string
+  message?: string
+  sourceDetail?: string
+  businessId?: string
+  stack?: string
+  clientEventId?: string
+}): void {
+  try {
+    void supabase.rpc('log_platform_error', {
+      p_source: params.source,
+      p_severity: params.severity ?? 'error',
+      p_message: params.message ?? null,
+      p_source_detail: params.sourceDetail ?? null,
+      p_business_id: params.businessId ?? null,
+      p_stack: params.stack ?? null,
+      p_client_event_id: params.clientEventId ?? null,
+    })
+  } catch {
+    // Swallowed: logging is best-effort.
+  }
+}
+
+export async function resolvePlatformError(errorId: string, note?: string): Promise<void> {
+  const { error } = await supabase.rpc('resolve_platform_error', {
+    p_error_id: errorId,
+    p_resolution_note: note ?? null,
+  })
+  if (error) throw error
+}
+
+export async function updatePlatformIncident(params: {
+  incidentId: string
+  status?: string
+  resolutionNotes?: string
+  postmortem?: string
+}): Promise<void> {
+  const { error } = await supabase.rpc('update_platform_incident', {
+    p_incident_id: params.incidentId,
+    p_status: params.status ?? null,
+    p_resolution_notes: params.resolutionNotes ?? null,
+    p_postmortem: params.postmortem ?? null,
+  })
+  if (error) throw error
+}
+
+export async function investigateBusinessIncident(params: {
+  incidentId: string
+  businessId: string
+  reason: string
+  accessedTables?: string[]
+}): Promise<void> {
+  const { error } = await supabase.rpc('investigate_business_incident', {
+    p_incident_id: params.incidentId,
+    p_business_id: params.businessId,
+    p_reason: params.reason,
+    p_accessed_tables: params.accessedTables ?? [],
+  })
+  if (error) throw error
+}
