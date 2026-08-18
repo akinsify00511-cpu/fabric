@@ -1677,3 +1677,109 @@ runtime deps; no external APIs. All migrations idempotent; need live-DB
 application (same deploy-gate as 080+). Frontend degrades gracefully until
 then (rate-limit fails open, Brain cards show honest degraded notice).
 
+
+## Session 26 (2026-08-18): Intelligence-first home flow + gamified empty states (§A, §AC)
+
+Triggered by the user's directive: "fix the empty states in the app with
+gamified instructions. the users flow is not fully implemented and also the
+ui/ux app branding fix is still [not] completed, the interface has not changed
+fully, still the old flow." Two real, user-facing gaps — both about the ACTUAL
+experience, not just source code (checklist §A "verify deployed UI, not just
+source code"). 3 commits (837100c, 5b224d2, 010e641), all pushed to main.
+
+### Gap 1 — The /app flow was STILL the old module-first experience (§A #1-3)
+The user's core complaint verified: landing on `/app` rendered `CompanyHome`
+(My Work / Culture tabs) — the attention page from Session 17 — with the
+Business Brain (the entire intelligence layer built in 20260818220000) buried
+behind a "Cockpit" link in a quick-actions grid. Checklist §A items #2
+("remove the old My Work/Culture primary") + #3 ("replace module-first with
+intelligence-first") were NOT done — a user's first screen was the old flow.
+
+**Fix (commit 5b224d2):** embedded a compact `BrainHero` at the TOP of
+CompanyHome, above the My Work / Culture tabs. A user now lands on an
+intelligence-first surface:
+- **Business State card** — "how is my business doing right now" — the
+  `classify_business_state` result (Growing / Stressed / Cash constrained /
+  Opportunity-rich / Building a picture) with tone color + confidence label
+  + the top reason + "See the full picture" → /app/cockpit.
+- **Next Best Action card** — "what should I do now" — the `next_best_action`
+  result with statement + expected impact (₦) + "Take action" → cockpit, or
+  the healthy "Nothing needs your attention right now" state.
+
+The personal attention layer (approvals/tasks/messages) is preserved BELOW —
+not removed, but no longer the PRIMARY lead. The first screen now answers
+"what is happening / what should I do" (the checklist's final definition)
+instead of "here are your tabs."
+- `business_brain` RPC is membership-guarded (any staff member, not owner-
+  only) → the hero is safe for ALL users; a staff member sees the same
+  business state as the owner.
+- Best-effort (§24): brain stays null if migration not deployed → hero simply
+  doesn't render; the home page still works (greeting + My Work). No error.
+- Degraded-engine aware: if state/nba return `{degraded:true}`, that card is
+  hidden rather than showing garbage (the §N fix applied at the home surface).
+- Tokenized the CompanyHome BRAND object (raw #F8F9FA/#202124/#E8EAED →
+  var(--av-surface-2/text/border)) so the home page resolves through the
+  single --av-* source.
+
+### Gap 2 — Empty states were flat dead-end notices, not gamified (§AC)
+The user: "fix the empty states in the app with gamified instructions." Empty
+states were flat "No X yet" + description + button — a dead-end notice that
+made an empty module feel like a failure rather than the START of progress.
+
+**Fix (commit 010e641):** built a gamified `EmptyState` variant (the shared
+default-export component):
+- New optional props: `gamified`, `milestone`, `hint`, `tip`.
+- When gamified, the empty state becomes an encouraging "first step of a
+  journey" surface: a milestone badge ("Your first deal"), a coaching hint
+  that frames the action as building toward a story, and a concrete tip chip.
+  When no action is provided, a "You're making progress" cue shows instead.
+- `deriveMilestone()` auto-turns "No deals yet" → "Your first deal".
+- Backward compatible: existing callers (no gamified fields) render exactly
+  as before. No consumer broke.
+- Tokenized the legacy raw colors (text-black/bg-white/bg-slate-700 →
+  var(--av-text)/surface/primary-soft) so the shared component resolves
+  through the single --av-* source.
+
+Applied gamified empty states to the 9 module pages using the shared component
+(Vendors, PurchaseOrders, PropertySales, Services, PropertyOwners,
+DocumentsHub, LeaseManagement, MaintenanceRequests, ElectronicSignatures) —
+each with a module-specific coaching hint + tip explaining WHY the first entry
+matters and HOW to start. Search/filter branches stay non-gamified (they're
+"no results", not "first step").
+
+Gamified the inline empty states on the highest-traffic surfaces:
+- Dashboard primaryMetric empty: "Building your [revenue] story" milestone +
+  honest "this fills in as you use this tool — your first entry starts the
+  trend" (replaces the flat sparkline-gap + "No data yet").
+- Dashboard + CompanyHome "all caught up": reframed to a positive milestone
+  ("Inbox zero" / "a clear desk is progress") — absence of work is framed as
+  achievement, not emptiness.
+- CRM deals + contacts inline empties: "Your first deal/contact" milestone +
+  coaching ("Every sale starts here" / "Contacts are the people behind every
+  deal") — gamifies the CRM onboarding moment.
+
+Also tokenized the `EmptyStates.tsx` (plural) base component (bg-slate-700,
+text-black, text-amber-800 → av-* tokens) — the duplicate-pair from the
+Session 10 audit, now consistent with the primary component's design system.
+
+### Also this session (commit 837100c, before the two above)
+- **Intelligent notification priority ordering (§Z "no notification spam").**
+  NotificationBell ordered ONLY by created_at desc — a brand-new
+  'achievement' buried a 1-day-old 'invoice_overdue'. Added a priority weight
+  map (invoice_overdue=100 > task_due=90 > payment=70 > ... > achievement=10)
+  + `prioritise()` sort: unread always beats read within a band, then
+  priority, then recency. markAsRead/markAllAsRead re-prioritise so a read
+  notification correctly sinks below unread ones.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 368/368, schema-drift 0. No new
+migration/RPC/dep changes — the Brain was already built (20260818220000); this
+session wired it into the landing surface + gamified the empty-state UX.
+Backward compatible (non-gamified callers + non-Brain home both unchanged).
+
+### Deploy status
+Vercel production: deploying via main-push workflow.
+⚠️ STILL needs live DB: pending migrations (incl. 20260818220000 business_brain)
+must be applied to Supabase (project kgsgqvatyleetyquffya) for the Brain hero
+to render. Until then the home page degrades gracefully to greeting + My Work
+(the hero returns null) — no error, no broken shell.
