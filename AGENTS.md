@@ -1,4 +1,121 @@
 
+## Session 25 (2026-08-18): Ready-pillars — Memory Recall (§I), Resilience (§N), Multi-role switching (§K)
+
+Directive: build the genuine gaps from the 600-item master checklist using
+composition-first architecture (reuse the established spine, no parallel
+systems), proceeding in the right order (avoid duplicate-collision with the
+remote Brain commit `becd7e2`, which is authoritative for §D/E/F/H). Three
+ready-pillars shipped, each verified green + pushed.
+
+### Composition-first audit principle (reused throughout)
+Before building, audited what already exists. The biggest risk (§0.5) is a
+parallel implementation colliding with an established one. Every §I/§N/§K
+addition COMPOSES on existing tables/RPCs: record_diagnosis writes to the
+existing `claims` (060); recall reads existing `claims` + `decisions` (064) +
+`organizational_memory`; Brain graceful degradation re-declares `business_brain`
+(20260818220000) with per-engine isolation; the DLQ is additive columns on
+`automation_runs` (007); multi-role reuses `staff.role` (002/024) as the primary
+security boundary + `functional_roles` (027) + `ROLE_HIERARCHY` (permissions.ts)
++ the adaptive Dashboard (Session 21). No new write stores, no parallel
+permission system, no duplicate brain.
+
+### §I — Business Memory Recall ("What happened before?") — commit 5dfe294
+The system remembers. `recall_similar_problems(business_id, rule_id,
+symptom_metric)` recalls prior similar problems + what was tried + the outcome
+by matching a current diagnosis against historical diagnosis claims, reviewed
+decisions (064), and organizational_memory.
+
+- **Persistence gap fixed:** the Brain's `diagnose_business` was EPHEMERAL —
+  fired diagnoses vanished. `record_diagnosis` now persists each fired
+  diagnosis as an INFERENCE claim (a diagnosis IS an inference, §20) into the
+  existing `claims` table (060). Idempotent per (business, rule, day). Re-
+  declared `diagnose_business` (CREATE OR REPLACE) to call it best-effort
+  inside the existing per-rule EXCEPTION block (§24 — a persistence failure
+  never breaks the diagnosis).
+- **Evidence-tag contract (§20/§22 anti-fabrication core):** prior_diagnosis
+  → FACT (it happened); decision w/ actual_outcome → FACT; decision w/o
+  outcome → INFERENCE; organizational_memory → INFERENCE (a learned lesson
+  is a generalization). Honest empty note when nothing matches — NEVER
+  fabricates a "similar problem."
+- **Surfaced on ExecutiveCockpit DiagnosisCard:** each diagnosis gets a
+  "Similar past problems" expander (lazy fetch on first open, best-effort).
+  Shows the prior problem + what was tried + the outcome + relevance + evidence
+  tag — the directive's "you encountered this 6 months ago; you tried X, result
+  was Y." Client wrappers in businessOS.ts.
+- **Tests:** `businessMemoryRecall.test.ts` (13) lock the evidence-tag contract,
+  tenant isolation, the "today's diagnosis excluded" rule, and the honest-empty
+  contract.
+
+### §N — Platform Resilience ("too good to fail or break down") — commit 51db179
+Audit found the AI-agent circuit breaker (067) + the platform-ops surface
+(Session 22: error events/integration status/incidents/paging) already exist.
+Two genuine gaps:
+
+- **Brain graceful degradation:** `business_brain` called all 5 sub-engines
+  inline — if ANY threw, the outer EXCEPTION blanked the ENTIRE response
+  (losing state/diagnoses/nba even when 4/5 succeeded). Re-declared with per-
+  engine EXCEPTION isolation: a failure degrades ONE slot (`degraded:true` +
+  error), the rest still render. The UI shows which engine failed, not a blank
+  Brain. This is the §N "graceful degradation / service fallback" at the
+  deterministic-engine level.
+- **Automation retry + dead-letter queue:** `automation_runs` (007) logged
+  failures but never retried or dead-lettered. Additive columns
+  (retry_count, max_retries, next_retry_at, dead_lettered, last_attempted_at)
+  turn the existing table into a retry+DLQ state — no new table (§0.5).
+  Exponential backoff (30s/2m/8m), dead-letter after max_retries (default 3).
+  `reprocess_failed_automations()` sweeper (pg_cron every 2 min) retries due
+  runs + dead-letters disabled/exhausted ones. `revive_dead_lettered_automation`
+  for manual recovery. `automation_health_with_dlq` surfaces it on
+  OwnerIntelligence with a Revive action.
+- **Tests:** `platformResilience.test.ts` (11) lock the per-slot degradation
+  contract, the exponential backoff schedule, the dead-letter threshold, the
+  disabled-automation-is-immediately-DLQ rule, and the DLQ summary math.
+
+### §K — Multi-role switching ("Owner vs Staff vs Multiple Roles") — commit 9981ec0
+A user can hold secondary business roles beyond their primary `staff.role`,
+switch which persona they're operating as, and have the dashboard adapt.
+
+- **Composition-first (the security boundary stays):** `staff.role` (002/024)
+  stays the authoritative primary role (RLS + permissions.ts use it).
+  `functional_roles` (027) is already many-to-many for tool access; NOT
+  duplicated. `ROLE_HIERARCHY` (permissions.ts) reused for the effective-level
+  computation. The adaptive Dashboard (Session 21 P0.4 #6) wired to `activeRole`.
+- **staff_secondary_roles** table — secondary business roles. Effective
+  permission level = MAX(primary, secondary) — a secondary role can only ADD
+  access the user is entitled to, never remove (UNION). RLS: self-manage +
+  owner/admin business-wide.
+- **active_role session state** — which persona the user is operating as now.
+  `set_active_role` server-validates the user actually HOLDS the role (primary
+  or secondary) before recording it. A user CANNOT switch to a role they don't
+  hold. UX/context ONLY — RLS + staff.role remain the security boundary (matches
+  the Session-20 selection-is-UX-not-security principle).
+- **Client:** `RoleSwitcher` component in the Shell user card (only appears when
+  the user holds >1 role — the common single-role case sees nothing). Shows each
+  held role + its hint, checkmark on active, reset-to-primary. Uses a dynamic
+  import for businessOS to preserve the chunk split (zero build warnings).
+  Dashboard reads `active_role` (falls back to primary).
+- **Tests:** `multiRoleSwitching.test.ts` (15) lock the effective-role
+  computation (UNION-adds-access-never-removes), the switch-validation guard
+  (can't switch to a role you don't hold), the switcher-only-when-multi-role
+  UX contract, and the security-boundary invariant (active_role doesn't change
+  RLS).
+
+### Verification (every commit + final)
+tsc clean; vite build 0 warnings (the RoleSwitcher dynamic-import warning was
+caught + fixed in-commit); vitest 330/330 (was 291 at session start, +39:
+§I 13 + §N 11 + §K 15); schema-drift 0 (207 tables, 9 RPCs, 3 storage buckets).
+No new runtime dependencies; no external APIs. All deterministic SQL over real
+tables (§22/§38 anti-hallucination). Commits 5dfe294, 51db179, 9981ec0 all
+pushed to main.
+
+### Still pending (blocked on live DB — same gate as prior sessions)
+Apply migrations 20260818230000 (§I), 20260818240000 (§N), 20260818250000 (§K)
+to live Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend
+degrades gracefully until then (recall shows "no similar past problems",
+DLQ section hidden when 0 dead-lettered, switcher hidden when single-role,
+Brain degraded slots flagged) because every caller is best-effort/non-blocking
+(§24).
+
 ## Session 23 (2026-08-18): Trial-experience engine — P0 #1, #13, #14, #15, #16 (deterministic, zero LLM)
 
 Triggered by the master checklist P0 trial-experience items. Per §22 (anti-
