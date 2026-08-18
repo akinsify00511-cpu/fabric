@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
+import { BusinessProvider } from './lib/BusinessContext'
 import { ToastProvider } from './components/Toast'
 import { GamificationProvider } from './lib/GamificationContext'
 import { BrandingProvider } from './lib/BrandingContext'
@@ -603,7 +604,9 @@ function AppShell() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppShell />
+      <BusinessProvider>
+        <AppShell />
+      </BusinessProvider>
     </AuthProvider>
   )
 }

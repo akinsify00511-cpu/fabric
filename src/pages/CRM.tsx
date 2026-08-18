@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { Plus, Search, Users, X, Trash2, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useBusiness } from '../lib/BusinessContext'
 import { useToast } from '../components/Toast'
+import { canCreate, canDelete, canEdit } from '../lib/permissions'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import { Avatar } from '../components/ImageComponents'
 
@@ -18,6 +20,8 @@ type Deal = {
   probability: number
   notes?: string
   created_at: string
+  assignee_id?: string | null
+  owner_id?: string | null
 }
 
 type Contact = {
@@ -43,8 +47,22 @@ const STAGES = [
 
 export default function CRM() {
   const { staff } = useAuth()
+  const { activeBusinessId } = useBusiness()
   const { showToast } = useToast()
-  
+
+  // Role-aware permissions (UX only — RLS is the authority). A staff member
+  // sees the pipeline but can't create/delete deals; a salesperson sees their
+  // own deals emphasized. owner/admin/manager get the full CRM.
+  const role = staff?.active_role ?? staff?.role ?? 'staff'
+  const canCreateDeal = canCreate(role, 'deals')
+  const canDeleteDeal = canDelete(role, 'deals')
+  const canEditDeal = canEdit(role, 'deals')
+  const canCreateContact = canCreate(role, 'clients')
+  const canDeleteContact = canDelete(role, 'clients')
+  // Sales individuals (staff/team_lead) default to "My deals" view; managers+ see all.
+  const isSalesIndividual = role === 'staff' || role === 'team_lead'
+  const [mineOnly, setMineOnly] = useState(isSalesIndividual)
+
   const [viewMode, setViewMode] = useState<ViewMode>('deals')
   const [searchQuery, setSearchQuery] = useState('')
   const [deals, setDeals] = useState<Deal[]>([])
@@ -56,20 +74,25 @@ export default function CRM() {
   const [newDealForm, setNewDealForm] = useState({ title: '', contact_name: '', contact_email: '', contact_phone: '', value: '', stage: 'active' as Deal['stage'], notes: '' })
   const [newContactForm, setNewContactForm] = useState({ full_name: '', email: '', phone: '', company: '' })
 
+  // Use the active subsidiary (switchable via SubsidiarySwitcher) — falls
+  // back to the staff's own business_id when not switched (single-business
+  // users see no change). This makes CRM per-subsidiary.
+  const bid = activeBusinessId ?? staff?.business_id ?? null
+
   useEffect(() => {
-    if (staff?.business_id) {
+    if (bid) {
       loadData()
     }
-  }, [staff?.business_id])
+  }, [bid])
 
   const loadData = async () => {
-    if (!staff?.business_id) return
-    
+    if (!bid) return
+
     setLoading(true)
     try {
       const [dealsResult, contactsResult] = await Promise.all([
-        supabase.from('deals').select('*').eq('business_id', staff.business_id).order('created_at', { ascending: false }),
-        supabase.from('contacts').select('*').eq('business_id', staff.business_id).order('created_at', { ascending: false })
+        supabase.from('deals').select('*').eq('business_id', bid).order('created_at', { ascending: false }),
+        supabase.from('contacts').select('*').eq('business_id', bid).order('created_at', { ascending: false })
       ])
 
       if (dealsResult.data) setDeals(dealsResult.data)
@@ -83,7 +106,7 @@ export default function CRM() {
   }
 
   const addDeal = async () => {
-    if (!newDealForm.title || !newDealForm.contact_name || !staff?.business_id) {
+    if (!newDealForm.title || !newDealForm.contact_name || !bid) {
       showToast('Please fill required fields', 'error')
       return
     }
@@ -92,7 +115,7 @@ export default function CRM() {
     
     try {
       const { data, error } = await supabase.from('deals').insert({
-        business_id: staff.business_id,
+        business_id: bid,
         title: newDealForm.title,
         contact_name: newDealForm.contact_name,
         contact_email: newDealForm.contact_email || null,
@@ -155,14 +178,14 @@ export default function CRM() {
   }
 
   const addContact = async () => {
-    if (!newContactForm.full_name || !newContactForm.email || !staff?.business_id) {
+    if (!newContactForm.full_name || !newContactForm.email || !bid) {
       showToast('Please fill required fields', 'error')
       return
     }
 
     try {
       const { data, error } = await supabase.from('contacts').insert({
-        business_id: staff.business_id,
+        business_id: bid,
         full_name: newContactForm.full_name,
         email: newContactForm.email,
         phone: newContactForm.phone || null,
@@ -182,8 +205,11 @@ export default function CRM() {
   }
 
   const filteredDeals = deals.filter(d =>
-    d.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    d.contact_name?.toLowerCase().includes(searchQuery.toLowerCase())
+    (d.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    d.contact_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
+    // "My deals" (sales individuals) filters to deals assigned to the current
+    // user — the assignee_id is set on deal create/edit. Managers+ see all.
+    (!mineOnly || d.assignee_id === staff?.id || d.owner_id === staff?.id)
   )
 
   const filteredContacts = contacts.filter(c =>
@@ -228,12 +254,16 @@ export default function CRM() {
           <p className="text-sm text-black">{deals.length} deals - {contacts.length} contacts</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium">
-            <Plus size={18} /> Add Deal
-          </button>
-          <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10">
-            <Users size={18} /> Add Contact
-          </button>
+          {canCreateDeal && (
+            <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium">
+              <Plus size={18} /> Add Deal
+            </button>
+          )}
+          {canCreateContact && (
+            <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10">
+              <Users size={18} /> Add Contact
+            </button>
+          )}
         </div>
       </div>
 
@@ -273,6 +303,17 @@ export default function CRM() {
       <div className="relative mb-6">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
         <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={`Search ${viewMode}...`} className="w-full pl-11 pr-4 py-3 rounded-xl border border-black/10 bg-white text-sm" />
+        {isSalesIndividual && viewMode === 'deals' && (
+          <button
+            onClick={() => setMineOnly(m => !m)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium px-3 py-1.5 rounded-lg transition"
+            style={mineOnly
+              ? { background: 'var(--av-primary)', color: 'white' }
+              : { background: 'var(--av-surface-2)', color: 'var(--av-text-secondary)' }}
+          >
+            {mineOnly ? 'My deals' : 'All deals'}
+          </button>
+        )}
       </div>
 
       {viewMode === 'deals' && (
@@ -288,7 +329,9 @@ export default function CRM() {
               <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No deals yet</h3>
               <p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p>
               <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Every sale starts here — your pipeline grows as you add opportunities.</p>
+              {canCreateDeal ? (
               <button onClick={() => setShowAddDeal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Deal</button>
+            ) : null}
             </div>
           ) : (
             filteredDeals.map(deal => {
@@ -471,7 +514,9 @@ export default function CRM() {
               <div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={editingDeal.notes || ''} onChange={e => setEditingDeal(prev => prev ? { ...prev, notes: e.target.value } : null)} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
             </div>
             <div className="p-4 border-t border-black/10 flex gap-3">
+              {canDeleteDeal && (
               <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-[var(--av-danger)] font-medium">Delete</button>
+            )}
               <button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Save Changes</button>
             </div>
           </div>

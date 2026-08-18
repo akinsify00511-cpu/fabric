@@ -2,14 +2,19 @@ import { useState, useEffect, type FormEvent, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import { Camera, Loader2, Trash2, AlertTriangle } from 'lucide-react'
+import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
+import { TOOLS } from '../lib/useToolAccess'
+import { roleLabel } from '../lib/roleHomeConfig'
+import { deriveFunction, functionLabel, deriveSeniority, seniorityLabel } from '../lib/functionHome'
+import { Camera, Loader2, Trash2, AlertTriangle, Briefcase, Check, X } from 'lucide-react'
 
 export default function Profile() {
   const navigate = useNavigate()
   const { staff, refreshStaff, signOut } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  
-  const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile')
+  const { selectedTools, toggleTool, selectionCompleted } = useWorkspaceSelection()
+
+  const [activeTab, setActiveTab] = useState<'profile' | 'tools' | 'security'>('profile')
   
   // Profile state
   const [fullName, setFullName] = useState('')
@@ -256,6 +261,16 @@ export default function Profile() {
           Profile
         </button>
         <button
+          onClick={() => setActiveTab('tools')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+            activeTab === 'tools'
+              ? 'bg-[var(--av-primary)] text-white'
+              : 'text-black hover:text-black'
+          }`}
+        >
+          Role & Tools
+        </button>
+        <button
           onClick={() => setActiveTab('security')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'security'
@@ -497,6 +512,15 @@ export default function Profile() {
         </>
       )}
 
+      {activeTab === 'tools' && staff && (
+        <RoleAndToolsSection
+          staff={staff}
+          selectedTools={selectedTools}
+          toggleTool={toggleTool}
+          selectionCompleted={selectionCompleted}
+        />
+      )}
+
       {activeTab === 'security' && (
         <>
           {/* Change Password */}
@@ -639,6 +663,96 @@ export default function Profile() {
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+// ── Role & Tools section — surfaces the user's role, derived function, and
+// the tools they use vs. have hidden. Lets the user adjust their workspace
+// (the same toggle as WorkspaceSettings, surfaced here as a personal pref).
+function RoleAndToolsSection({
+  staff, selectedTools, toggleTool, selectionCompleted,
+}: {
+  staff: any
+  selectedTools: string[]
+  toggleTool: (tool: string) => Promise<void>
+  selectionCompleted: boolean
+}) {
+  const role = staff.active_role ?? staff.role ?? 'staff'
+  const fn = deriveFunction(staff.job_title, staff.department, selectedTools)
+  const sen = deriveSeniority(role)
+  const curated = selectionCompleted && selectedTools.length > 0
+
+  // A tool is "used" (kept visible) when the user hasn't curated, OR curated
+  // and kept it. "Hidden" = curated and removed it.
+  const isUsed = (key: string) => !curated || selectedTools.includes(key)
+
+  return (
+    <div className="space-y-6">
+      {/* Role + function summary */}
+      <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'var(--av-primary-soft, rgba(66,133,244,0.1))' }}>
+            <Briefcase size={22} style={{ color: 'var(--av-primary)' }} />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-semibold text-lg" style={{ color: 'var(--av-text)' }}>Your role</h3>
+            <p className="text-sm mt-1" style={{ color: 'var(--av-text-secondary)' }}>
+              {roleLabel(role)}{seniorityLabel(sen) ? ` · ${seniorityLabel(sen)}` : ''} — {functionLabel(fn)} window
+            </p>
+            <p className="text-xs mt-2" style={{ color: 'var(--av-text-muted)' }}>
+              {staff.job_title || 'No job title set'}{staff.department ? ` · ${staff.department}` : ''}
+            </p>
+            <p className="text-[11px] mt-3 leading-relaxed" style={{ color: 'var(--av-text-muted)' }}>
+              Your home adapts to this role. Update your job title or department above to change which function Avenize emphasizes.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tools you use / have hidden */}
+      <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="font-semibold text-lg" style={{ color: 'var(--av-text)' }}>Your tools</h3>
+          <span className="text-xs px-2 py-1 rounded-md" style={{ background: 'var(--av-surface-2, #F1F3F4)', color: 'var(--av-text-secondary)' }}>
+            {curated ? `${selectedTools.length} shown` : 'All shown (not curated)'}
+          </span>
+        </div>
+        <p className="text-sm mb-4" style={{ color: 'var(--av-text-secondary)' }}>
+          {curated
+            ? "Tools you keep visible vs. ones you've hidden from your workspace."
+            : "You're seeing every tool you're authorized for. Turn one off to declutter your workspace."}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {TOOLS.map(tool => {
+            const used = isUsed(tool.key)
+            return (
+              <button
+                key={tool.key}
+                onClick={() => toggleTool(tool.key)}
+                className="flex items-center gap-3 p-3 rounded-xl text-left transition"
+                style={used
+                  ? { background: 'var(--av-surface-2, #F1F3F4)', border: '1px solid var(--av-border, #E8EAED)' }
+                  : { background: 'transparent', border: '1px solid var(--av-border, #E8EAED)', opacity: 0.6 }}
+              >
+                <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center" style={{ background: used ? 'var(--av-success, #34A853)' : 'var(--av-text-disabled, #DADCE0)' }}>
+                  {used ? <Check size={13} className="text-white" /> : <X size={13} className="text-white" />}
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm font-medium" style={{ color: 'var(--av-text)' }}>{tool.label}</span>
+                  <span className="block text-[11px] truncate" style={{ color: 'var(--av-text-muted)' }}>{tool.description}</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-wide font-medium" style={{ color: used ? 'var(--av-success, #34A853)' : 'var(--av-text-muted)' }}>
+                  {used ? 'Using' : 'Hidden'}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+        <p className="text-[11px] mt-4" style={{ color: 'var(--av-text-muted)' }}>
+          Hiding a tool removes it from your sidebar and dashboard — it doesn't revoke access. You can still reach any tool by URL.
+        </p>
+      </div>
     </div>
   )
 }

@@ -2019,3 +2019,107 @@ cards render immediately against real tables (no migration needed — the
 tables already exist from prior sessions). The Brain RPC cards still populate
 only once pending migrations are applied to the live Supabase (same
 deploy-gate; the function cards are independent of the Brain RPCs).
+
+
+## Session 30 (2026-08-18): Per-subsidiary workspace + role-aware CRM/Meetings + personal role&tools
+
+Multi-part request: (1) per-subsidiary CRM, (2) subsidiary profile creation,
+(3) in-app virtual meeting infra (video/audio/text), (4) role-aware interface
+that doesn't overburden, (5) personal profile with role + tool access. Built
+on the org-hierarchy schema from Session 22 (organizations, organization_
+memberships, businesses.organization_id/parent_business_id/entity_type,
+get_current_accessible_businesses RPC).
+
+### S30-1 -- BusinessContext provider (`src/lib/BusinessContext.tsx`)
+- A React context exposing `activeBusinessId` (the subsidiary the user has
+  switched into) + `accessible` (the list of businesses the user can access)
+  + `setActiveBusiness` + `refresh`.
+- Loads accessible businesses via the existing `get_current_accessible_businesses`
+  RPC, joins names from `businesses`. Persists the chosen subsidiary per-user
+  in localStorage (`avenize_active_business:<userId>`), restoring only if still
+  accessible. Falls back to the staff's own business_id when not switched
+  (single-business users see zero change).
+- App.tsx wraps `<AppShell>` in `<BusinessProvider>` inside `<AuthProvider>`.
+- A semicolon was added before the load IIFE to fix an ASI hazard
+  (`setLoading(true)\n(async () => {...` was parsed as a call on setLoading's
+  return -- TS error TS2349).
+
+### S30-2 -- SubsidiarySwitcher wired into Shell (`src/components/SubsidiarySwitcher.tsx`)
+- Dropdown showing the active business + the list of accessible subsidiaries;
+  switch updates the context (which re-scopes every consumer). Only renders
+  when >1 accessible business (single-business users see nothing -- no clutter).
+  Includes a "Create subsidiary" entry opening the creation modal.
+- Wired into Shell.tsx BOTH the desktop top bar (after the pulse indicator)
+  AND the mobile header (before NotificationBell). Toast signature corrected
+  to `toast(type, message)` (the useToast contract is `addToast(type, message)`).
+
+### S30-3 -- Subsidiary creation (`supabase/migrations/20260818300000_subsidiary_creation.sql`)
+- `create_subsidiary(p_name, p_entity_type, p_parent_business_id, p_industry)`
+  SECURITY DEFINER RPC. Gated: caller must be a group_owner/group_admin of the
+  org OR the owner of the parent business. If no parent given, uses the
+  creator's own business (so subsidiaries nest under the creator's org).
+  Creates the subsidiary business (sharing the parent's organization_id) +
+  grants the creator an org-level membership (group_admin) so
+  get_current_accessible_businesses returns it. Granted to authenticated;
+  anon revoked. Idempotent (CREATE OR REPLACE).
+- The SubsidiarySwitcher creation modal calls it (omitting parent -> defaults
+  to the creator's business).
+
+### S30-4 -- Per-subsidiary CRM (`src/pages/CRM.tsx`)
+- Replaced all `staff.business_id` references with `bid = activeBusinessId
+  ?? staff?.business_id ?? null`. Every query/insert now scopes to the active
+  subsidiary -- a group owner switching into subsidiary B sees B's pipeline,
+  contacts, and stats. Single-business users see no change (bid falls back to
+  their own business_id).
+
+### S30-5 -- Per-subsidiary Meetings + meeting infra note
+- Meetings.tsx likewise refactored to use `bid` (active subsidiary). VideoRoom
+  already uses Jitsi Meet (free, no API key -- verified sound) for video/audio.
+  Text chat in meetings reuses the existing `chat_conversations`/
+  `chat_messages` infrastructure (migration 046) -- no new infra needed.
+- The meeting infra is already real: schedule/invite/record/summarize in
+  Meetings.tsx; Jitsi embed in VideoRoom.tsx; `meetings` table (business_id,
+  title, date, meeting_link, attendees). Per-subsidiary scoping is the only
+  change needed.
+
+### S30-6 -- Role-aware interface (doesn't overburden)
+- CRM now gates the Add Deal / Add Contact / Delete buttons by the real
+  permission matrix (`canCreate`/`canDelete` from permissions.ts). A staff
+  member sees the pipeline but the create/delete buttons are hidden (RLS is
+  the authority; this is UX gating that matches it).
+- "My deals" filter: sales individuals (staff/team_lead) default to a
+  mineOnly view (deals where `assignee_id === staff.id` or `owner_id ===
+  staff.id`), with a toggle to see all. Managers+ default to all. This is
+  the "role-aware interface that doesn't overburden" -- a salesperson isn't
+  drowned in the whole company's pipeline.
+
+### S30-7 -- Personal profile with role + tools (`src/pages/Profile.tsx`)
+- New "Role & Tools" tab (between Profile and Security). Surfaces:
+  - Role label + seniority + derived function window (reuses Session 29's
+    deriveFunction/deriveSeniority/functionLabel/seniorityLabel + roleLabel).
+  - Job title + department (editable in the Profile tab).
+  - The full TOOLS list with per-tool "Using" / "Hidden" state + a one-tap
+    toggle (reuses useWorkspaceSelection.toggleTool -- the SAME source the
+    sidebar/dashboard read). Hiding a tool removes it from the sidebar/
+    dashboard but doesn't revoke access (direct URL still works --
+    RequireModule + RLS are the security boundary). Honest copy explains this.
+- Lets a user adjust their personal workspace from their profile, not just
+  from the separate WorkspaceSettings page.
+
+### Verification
+- `npx tsc -b --noEmit` clean.
+- `npx vite build` succeeds, 0 warnings.
+- `npx vitest run` 391/391 (was 383, +8 new crmRoleGating: permission matrix
+  contract for deals/clients across all 5 roles + the mineOnly filter logic).
+- Schema drift 0 (no new frontend table/RPC references beyond the existing
+  get_current_accessible_businesses + create_subsidiary, both backed).
+- No new runtime dependencies. No external APIs.
+
+### Deploy status
+- Vercel production: deploying via main-push workflow.
+- STILL needs live DB: migration 20260818300000 (create_subsidiary) + the
+  broader pending set must be applied to Supabase (project
+  kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until
+  then (SubsidiarySwitcher shows nothing when get_current_accessible_businesses
+  errors/returns empty -- single-business default; CRM/Meetings fall back to
+  staff.business_id) because every consumer is best-effort/non-blocking.

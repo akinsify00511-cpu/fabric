@@ -23,6 +23,7 @@ import { useLocale } from '../lib/LocaleContext'
 import { useDbState } from '../lib/useDbState'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
+import { SubsidiarySwitcher } from './SubsidiarySwitcher'
 import ToolOnboardingPopup from './ToolOnboardingPopup'
 import { RoleSwitcher } from './RoleSwitcher'
 
@@ -467,6 +468,7 @@ export default function Shell() {
               {pulseEvents.length}
             </a>
           )}
+          <SubsidiarySwitcher />
           {/* Ask Avenize — the primary intelligence entry point */}
           <button
             onClick={() => navigate('/app/capture')}
@@ -492,6 +494,7 @@ export default function Shell() {
           </span>
         </div>
         <div className="flex items-center gap-2">
+          <SubsidiarySwitcher />
           <NotificationBell />
           <button onClick={() => navigate('/app/capture')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white">
             <Sparkles size={14} strokeWidth={2} />

@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
+import { useBusiness } from '../lib/BusinessContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { Avatar } from '../components/ImageComponents'
@@ -79,7 +80,11 @@ type ViewMode = 'list' | 'detail' | 'create' | 'edit'
 
 export default function Meetings() {
   const { staff } = useAuth()
+  const { activeBusinessId } = useBusiness()
   const { showToast } = useToast()
+  // Per-subsidiary: meetings scope to the active subsidiary (switchable via
+  // the SubsidiarySwitcher). Falls back to the staff's own business.
+  const bid = activeBusinessId ?? staff?.business_id ?? null
   
   // Core state
   const [meetings, setMeetings] = useState<Meeting[]>([])
@@ -114,14 +119,14 @@ export default function Meetings() {
 
   // Load meetings
   const loadMeetings = useCallback(async () => {
-    if (!staff?.business_id) return
+    if (!bid) return
     
     setLoading(true)
     try {
       const { data, error } = await supabase
         .from('meetings')
         .select('*')
-        .eq('business_id', staff.business_id)
+        .eq('business_id', bid)
         .order('date', { ascending: false })
         .order('start_time', { ascending: false })
         .limit(100)
@@ -140,23 +145,23 @@ export default function Meetings() {
     } finally {
       setLoading(false)
     }
-  }, [staff?.business_id, showToast])
+  }, [bid, showToast])
 
   // Load staff for invitees
   const loadStaff = useCallback(async () => {
-    if (!staff?.business_id) return
+    if (!bid) return
     
     try {
       const { data } = await supabase
         .from('staff')
         .select('id, full_name, email')
-        .eq('business_id', staff.business_id)
+        .eq('business_id', bid)
       
       setAllStaff(data || [])
     } catch (err) {
       console.error('Failed to load staff:', err)
     }
-  }, [staff?.business_id])
+  }, [bid])
 
   useEffect(() => {
     loadMeetings()
@@ -205,7 +210,7 @@ export default function Meetings() {
 
   // Create Meeting
   const createMeeting = async () => {
-    if (!formData.title.trim() || !staff?.business_id || !staff?.id) {
+    if (!formData.title.trim() || !bid || !staff?.id) {
       showToast('Please enter meeting title', 'error')
       return
     }
@@ -224,7 +229,7 @@ export default function Meetings() {
         attendees: invitees,
         status: 'scheduled' as const,
         staff_id: staff.id,
-        business_id: staff.business_id,
+        business_id: bid,
       }
 
       const { data, error } = await supabase
@@ -292,7 +297,7 @@ export default function Meetings() {
       let sent = 0
       for (const attendee of meeting.attendees) {
         const { error } = await supabase.from('notifications').insert({
-          business_id: staff?.business_id,
+          business_id: bid,
           staff_id: attendee.id,
           title: 'Meeting Invitation',
           message: `You've been invited to: ${meeting.title} on ${formatDate(meeting.date)} at ${formatTime12h(meeting.start_time)}`,
@@ -319,7 +324,7 @@ export default function Meetings() {
       let sent = 0
       for (const attendee of meeting.attendees) {
         const { error } = await supabase.from('notifications').insert({
-          business_id: staff?.business_id,
+          business_id: bid,
           staff_id: attendee.id,
           title: 'Meeting Reminder',
           message: `Reminder: ${meeting.title} starts at ${formatTime12h(meeting.start_time)}`,
