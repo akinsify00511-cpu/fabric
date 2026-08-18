@@ -15,11 +15,13 @@ import {
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
   computeEbitda, type EbitdaResult,
   fetchBusinessBrain, type BusinessBrain, type BusinessState, type DiagnosisResult, type NextBestAction, type ValueLedger,
+  recallSimilarProblems, type RecallResult,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
   CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
+  History, ChevronDown,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 import { RepresentationEngine, type RepresentableData } from '../components/RepresentationEngine'
@@ -168,7 +170,7 @@ export default function ExecutiveCockpit() {
               how much value did Avenize create" — the directive's core. */}
           <BusinessStateCard state={brain?.state} />
           <NextBestActionCard nba={brain?.next_best_action} />
-          <DiagnosisCard diagnoses={brain?.diagnoses} />
+          <DiagnosisCard diagnoses={brain?.diagnoses} bid={bid} />
           <ValueLedgerCard ledger={brain?.value_ledger} />
 
           <BusinessHealthCard health={health} />
@@ -899,7 +901,7 @@ function NextBestActionCard({ nba }: { nba?: NextBestAction | null }) {
   )
 }
 
-function DiagnosisCard({ diagnoses }: { diagnoses?: DiagnosisResult | null }) {
+function DiagnosisCard({ diagnoses, bid }: { diagnoses?: DiagnosisResult | null; bid?: string | null }) {
   if (!diagnoses) return null
   const list = diagnoses.diagnoses ?? []
   if (list.length === 0) {
@@ -921,17 +923,69 @@ function DiagnosisCard({ diagnoses }: { diagnoses?: DiagnosisResult | null }) {
       </div>
       <div className="space-y-4">
         {list.slice(0, 4).map((d, i) => (
-          <div key={i} className="border-l-2 pl-3" style={{ borderLeftColor: d.severity === 'critical' ? 'var(--av-danger)' : 'var(--av-warning)' }}>
-            <p className="text-sm font-medium text-[var(--av-text)] mb-1">{d.headline}</p>
-            <p className="text-sm text-[var(--av-text-secondary)] mb-1.5">{d.relationship}</p>
-            <div className="flex items-center gap-3 text-xs text-[var(--av-text-muted)]">
-              <ClaimTag type="FACT" /> symptom
-              <ClaimTag type="INFERENCE" /> cause link
-              {d.impact_amount != null && <span>· ~{naira(d.impact_amount)} monthly exposure</span>}
-            </div>
-          </div>
+          <DiagnosisItem key={i} d={d} bid={bid} />
         ))}
       </div>
+    </div>
+  )
+}
+
+// §I: each diagnosis can expand to recall prior similar problems + what was
+// tried + the outcome. Best-effort + non-blocking (§24).
+function DiagnosisItem({ d, bid }: { d: any; bid?: string | null }) {
+  const [open, setOpen] = useState(false)
+  const [recall, setRecall] = useState<RecallResult | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  const toggle = () => {
+    if (!open && bid && !recall) {
+      setLoading(true)
+      recallSimilarProblems(bid, d.rule_id, d.symptom_metric)
+        .then(r => setRecall(r))
+        .catch(() => { /* migration not deployed — non-blocking */ })
+        .finally(() => setLoading(false))
+    }
+    setOpen(!open)
+  }
+
+  return (
+    <div className="border-l-2 pl-3" style={{ borderLeftColor: d.severity === 'critical' ? 'var(--av-danger)' : 'var(--av-warning)' }}>
+      <p className="text-sm font-medium text-[var(--av-text)] mb-1">{d.headline}</p>
+      <p className="text-sm text-[var(--av-text-secondary)] mb-1.5">{d.relationship}</p>
+      <div className="flex items-center gap-3 text-xs text-[var(--av-text-muted)]">
+        <ClaimTag type="FACT" /> symptom
+        <ClaimTag type="INFERENCE" /> cause link
+        {d.impact_amount != null && <span>· ~{naira(d.impact_amount)} monthly exposure</span>}
+      </div>
+      {bid && (
+        <button onClick={toggle}
+          className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--av-primary)] hover:underline">
+          <History size={12} />
+          {loading ? 'Recalling…' : open ? 'Hide similar past problems' : 'Similar past problems'}
+          {!loading && <ChevronDown size={12} className={open ? 'rotate-180 transition-transform' : 'transition-transform'} />}
+        </button>
+      )}
+      {open && recall && (
+        <div className="mt-2 space-y-2 rounded-lg bg-[var(--av-surface-3)] p-3">
+          {recall.matches.length === 0 ? (
+            <p className="text-xs text-[var(--av-text-muted)]">{recall.note ?? 'No similar past problems found yet.'}</p>
+          ) : (
+            recall.matches.map((m, j) => (
+              <div key={j} className="text-xs">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-[var(--av-text)]">{m.title}</span>
+                  <ClaimTag type={m.evidence_tag} />
+                  {m.relevance === 'high' && <span className="rounded bg-[var(--av-primary-soft)] px-1 py-0.5 text-[9px] text-[var(--av-primary)]">strong match</span>}
+                </div>
+                {m.what_happened && <p className="mt-0.5 text-[var(--av-text-secondary)]">{m.what_happened}</p>}
+                {m.what_was_tried && <p className="mt-0.5 text-[var(--av-text-secondary)]"><span className="text-[var(--av-text-muted)]">Tried:</span> {m.what_was_tried}</p>}
+                {(m.outcome || m.lesson) && <p className="mt-0.5 text-[var(--av-text-secondary)]"><span className="text-[var(--av-text-muted)]">Outcome:</span> {m.outcome ?? m.lesson}</p>}
+                {m.date && <p className="mt-0.5 text-[10px] text-[var(--av-text-muted)]">{new Date(m.date).toLocaleDateString()}</p>}
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   )
 }

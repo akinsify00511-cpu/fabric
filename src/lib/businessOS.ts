@@ -1173,3 +1173,40 @@ export async function fetchBusinessBrain(businessId: string): Promise<BusinessBr
     return null
   }
 }
+
+/** §I Business Memory recall: prior similar problems + what was tried + the outcome. Deterministic, best-effort. */
+export interface MemoryMatch {
+  source: 'prior_diagnosis' | 'decision' | 'organizational_memory'
+  title: string
+  what_happened?: string | null
+  what_was_tried?: string | null
+  outcome?: string | null
+  lesson?: string | null
+  date?: string
+  relevance: 'high' | 'medium' | 'low'
+  evidence_tag: 'FACT' | 'INFERENCE'
+  times_applied?: number | null
+}
+export interface RecallResult {
+  authorized: boolean
+  matches: MemoryMatch[]
+  note?: string
+}
+export async function recallSimilarProblems(
+  businessId: string,
+  ruleId?: string | null,
+  symptomMetric?: string | null
+): Promise<RecallResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('recall_similar_problems', {
+      p_business_id: businessId,
+      p_rule_id: ruleId ?? null,
+      p_symptom_metric: symptomMetric ?? null,
+    })
+    if (error) throw error
+    return (data as RecallResult) ?? null
+  } catch (e) {
+    console.error('recallSimilarProblems failed (non-blocking):', e)
+    return null
+  }
+}
