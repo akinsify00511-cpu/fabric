@@ -3,7 +3,7 @@
  * Shows current plan, subscription details, payment history, invoices
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   CreditCard,
@@ -22,9 +22,11 @@ import {
   ExternalLink,
   Loader2,
   ArrowUpCircle,
+  Sparkles,
 } from 'lucide-react'
 import { useSubscriptionData } from '../lib/useSubscriptionData'
 import { useAuth } from '../lib/AuthContext'
+import { fetchPlanRecommendation, type PlanRecommendation } from '../lib/businessOS'
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
   active: { color: 'text-green-600', bg: 'bg-green-100', label: 'Active' },
@@ -60,6 +62,16 @@ export default function Subscription() {
   const [cancelling, setCancelling] = useState(false)
   const [cancelMessage, setCancelMessage] = useState('')
   const [processingPlan, setProcessingPlan] = useState<string | null>(null)
+  const [recommendation, setRecommendation] = useState<PlanRecommendation | null>(null)
+
+  // P0 #15: AI plan recommendation — deterministic, evidence-based. Only shown
+  // to free/trial users (paid users already chose a plan). Best-effort: stays
+  // null if the RPC isn't deployed (degrades gracefully, §24).
+  useEffect(() => {
+    if (!staff?.business_id) return
+    if (subscription && subscription.plan && subscription.plan !== 'free') return
+    fetchPlanRecommendation(staff.business_id).then(setRecommendation)
+  }, [staff?.business_id, subscription?.plan])
 
   const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
 
@@ -241,6 +253,98 @@ export default function Subscription() {
           )}
         </div>
       </div>
+
+      {/* P0 #15: AI plan recommendation — evidence-based, never a bare "Upgrade now". */}
+      {recommendation?.authorized && recommendation.recommended_plan_name && (
+        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
+          <div className="p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#155BB4]/10 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-[#155BB4]" />
+              </div>
+              <div>
+                <h2 className="font-semibold text-lg">
+                  {recommendation.should_upgrade
+                    ? `Based on how you use Avenize, we recommend ${recommendation.recommended_plan_name}`
+                    : `Your usage fits the ${recommendation.recommended_plan_name} plan`}
+                </h2>
+                <p className="text-sm text-black/60 mt-1">
+                  {recommendation.modules_used_count ?? 0} tools used
+                  {recommendation.modules_requiring_higher_count
+                    ? ` • ${recommendation.modules_requiring_higher_count} need a higher plan`
+                    : ''}
+                  {recommendation.recommended_price && recommendation.should_upgrade
+                    ? ` • ${recommendation.recommended_price}`
+                    : ''}
+                </p>
+              </div>
+            </div>
+
+            {recommendation.evidence && recommendation.evidence.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-2">What you've used</h3>
+                <ul className="space-y-1.5">
+                  {recommendation.evidence.slice(0, 5).map((e, i) => (
+                    <li key={i} className="text-sm text-black/80 flex items-start gap-2">
+                      <Check className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                      <span>{e}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {recommendation.reasons && recommendation.reasons.length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-2">Why this plan fits</h3>
+                <ul className="space-y-1.5">
+                  {recommendation.reasons.map((r, i) => (
+                    <li key={i} className="text-sm text-black/80 flex items-start gap-2">
+                      <Zap className="w-4 h-4 text-[#155BB4] mt-0.5 shrink-0" />
+                      <span>{r}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {recommendation.should_upgrade && recommendation.additional_value_unlocks &&
+              recommendation.additional_value_unlocks.length > 0 && (
+              <div className="mb-4 p-3 bg-[#155BB4]/5 rounded-xl">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-1.5">
+                  What else this unlocks
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {recommendation.additional_value_unlocks.slice(0, 6).map((m) => (
+                    <span key={m} className="px-2 py-0.5 text-xs bg-white border border-black/10 rounded-full text-black/70">
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {recommendation.should_upgrade ? (
+              <button
+                onClick={() => handleUpgrade(recommendation.recommended_plan!)}
+                disabled={processingPlan !== null}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#155BB4] text-white font-medium rounded-xl hover:bg-[#1247A0] transition disabled:opacity-50"
+              >
+                {processingPlan === recommendation.recommended_plan ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <ArrowUpCircle className="w-4 h-4" />
+                )}
+                Get {recommendation.recommended_plan_name}
+              </button>
+            ) : (
+              <p className="text-sm text-black/60">
+                Keep exploring — as you use more tools, we'll recommend the plan that fits how you actually work.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Upgrade Plans */}
       {(!subscription || subscription.plan === 'free') && availablePlans.length > 0 && (

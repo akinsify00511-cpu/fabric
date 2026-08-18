@@ -911,3 +911,43 @@ export async function isApprovalRequired(
     return { requires_approval: true, reason: 'Approval check unavailable — fail-safe' }
   }
 }
+
+// ============================================================================
+// P0 #15 — AI plan recommendation at trial end (deterministic, evidence-based)
+// ============================================================================
+
+export interface PlanRecommendation {
+  authorized: boolean
+  in_trial?: boolean
+  trial_ends_at?: string | null
+  current_plan?: string
+  recommended_plan?: string
+  recommended_plan_name?: string
+  recommended_price?: string
+  should_upgrade?: boolean
+  modules_used_count?: number
+  modules_requiring_higher_count?: number
+  used_modules?: string[]
+  locked_modules?: string[]
+  evidence?: string[]
+  reasons?: string[]
+  additional_value_unlocks?: string[]
+  error?: string
+}
+
+/**
+ * P0 #15: the AI plan recommendation. Deterministic — recommends the lowest
+ * plan tier that covers every module the business actually used, with an
+ * evidence-based rationale citing real usage (§22 — never fabricated). Best-
+ * effort, non-blocking (§24).
+ */
+export async function fetchPlanRecommendation(businessId: string): Promise<PlanRecommendation | null> {
+  try {
+    const { data, error } = await supabase.rpc('recommend_plan', { p_business_id: businessId })
+    if (error) throw error
+    return (data as PlanRecommendation) ?? null
+  } catch (e) {
+    console.error('fetchPlanRecommendation failed (non-blocking):', e)
+    return null
+  }
+}
