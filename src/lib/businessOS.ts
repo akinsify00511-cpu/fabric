@@ -1539,3 +1539,162 @@ export async function recallSimilarProblems(
     return null
   }
 }
+
+// ---------------------------------------------------------------------------
+// Team invites + seat enforcement (migration 20260818330000)
+// ---------------------------------------------------------------------------
+
+export interface InviteResult {
+  token: string | null
+  joinUrl: string | null
+  businessName: string | null
+  seatAvailable: boolean
+}
+
+export async function createInvite(
+  email: string,
+  role: string,
+  businessId?: string,
+): Promise<InviteResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('create_invite', {
+      p_email: email,
+      p_role: role,
+      p_business_id: businessId ?? null,
+    })
+    if (error) throw error
+    if (!data) return null
+    return {
+      token: data.p_token,
+      joinUrl: data.p_join_url,
+      businessName: data.p_business_name,
+      seatAvailable: data.p_seat_available,
+    }
+  } catch (e) {
+    console.error('createInvite failed:', e)
+    return null
+  }
+}
+
+export async function revokeInvite(inviteId: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.rpc('revoke_invite', { p_invite_id: inviteId })
+    if (error) throw error
+    return data === true
+  } catch (e) {
+    console.error('revokeInvite failed:', e)
+    return false
+  }
+}
+
+export interface PendingInvite {
+  id: string
+  email: string
+  role: string
+  token: string
+  expires_at: string | null
+  created_at: string
+}
+
+export async function fetchPendingInvites(businessId: string): Promise<PendingInvite[]> {
+  try {
+    const { data, error } = await supabase
+      .from('invites')
+      .select('id, email, role, token, expires_at, created_at')
+      .eq('business_id', businessId)
+      .eq('used', false)
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return (data as PendingInvite[]) ?? []
+  } catch (e) {
+    console.error('fetchPendingInvites failed (non-blocking):', e)
+    return []
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Board members (migration 20260818330000) — governance roster
+// ---------------------------------------------------------------------------
+
+export type BoardTitle =
+  | 'Chair' | 'Vice Chair' | 'Director' | 'Secretary' | 'Treasurer' | 'Member' | 'Observer'
+
+export interface BoardMember {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  title: BoardTitle
+  bio: string | null
+  term_start: string | null
+  term_end: string | null
+  is_active: boolean
+}
+
+export async function fetchBoardMembers(businessId: string): Promise<BoardMember[]> {
+  try {
+    const { data, error } = await supabase
+      .from('board_members')
+      .select('id, name, email, phone, title, bio, term_start, term_end, is_active')
+      .eq('business_id', businessId)
+      .order('is_active', { ascending: false })
+      .order('name', { ascending: true })
+    if (error) throw error
+    return (data as BoardMember[]) ?? []
+  } catch (e) {
+    console.error('fetchBoardMembers failed (non-blocking):', e)
+    return []
+  }
+}
+
+export async function saveBoardMember(
+  businessId: string,
+  member: Partial<BoardMember> & { name: string; title: BoardTitle },
+): Promise<boolean> {
+  try {
+    if (member.id) {
+      const { error } = await supabase
+        .from('board_members')
+        .update({
+          name: member.name,
+          email: member.email ?? null,
+          phone: member.phone ?? null,
+          title: member.title,
+          bio: member.bio ?? null,
+          term_start: member.term_start ?? null,
+          term_end: member.term_end ?? null,
+          is_active: member.is_active ?? true,
+        })
+        .eq('id', member.id)
+      if (error) throw error
+    } else {
+      const { error } = await supabase.from('board_members').insert({
+        business_id: businessId,
+        name: member.name,
+        email: member.email ?? null,
+        phone: member.phone ?? null,
+        title: member.title,
+        bio: member.bio ?? null,
+        term_start: member.term_start ?? null,
+        term_end: member.term_end ?? null,
+        is_active: member.is_active ?? true,
+      })
+      if (error) throw error
+    }
+    return true
+  } catch (e) {
+    console.error('saveBoardMember failed:', e)
+    return false
+  }
+}
+
+export async function deleteBoardMember(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('board_members').delete().eq('id', id)
+    if (error) throw error
+    return true
+  } catch (e) {
+    console.error('deleteBoardMember failed:', e)
+    return false
+  }
+}

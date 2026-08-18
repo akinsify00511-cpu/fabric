@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Plus, Users, Search, Mail, Phone, Briefcase, UserCog, X, Check } from 'lucide-react'
+import { Plus, Users, Search, Mail, Phone, Briefcase, UserCog, X, Check, Copy, Clock, Trash2, Upload } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { useTeamLimit } from '../lib/useEntitlement'
 import FeatureSuggestions from '../components/FeatureSuggestions'
+import { createInvite, revokeInvite, fetchPendingInvites, type PendingInvite } from '../lib/businessOS'
 
 type FunctionalRole = {
   id: string
@@ -35,12 +36,28 @@ export default function People() {
   const [saving, setSaving] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRole, setInviteRole] = useState('staff')
+  const [sendingInvite, setSendingInvite] = useState(false)
+  const [lastInviteUrl, setLastInviteUrl] = useState<string | null>(null)
+  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([])
+  const [showBulk, setShowBulk] = useState(false)
+  const [bulkEmails, setBulkEmails] = useState('')
+  const [bulkRole, setBulkRole] = useState('staff')
+  const [bulkResults, setBulkResults] = useState<{ email: string; ok: boolean; url?: string }[]>([])
+  const [sendingBulk, setSendingBulk] = useState(false)
   const [editingRoles, setEditingRoles] = useState<string | null>(null)
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
 
   useEffect(() => {
     loadData()
+    loadPendingInvites()
   }, [])
+
+  const loadPendingInvites = async () => {
+    if (!currentStaff?.business_id) return
+    const invites = await fetchPendingInvites(currentStaff.business_id)
+    setPendingInvites(invites)
+  }
 
   const loadData = async () => {
     setLoading(true)
@@ -104,11 +121,81 @@ export default function People() {
   const departments = [...new Set(members.map(m => m.department).filter(Boolean))]
   const isAdmin = currentStaff?.role === 'owner' || currentStaff?.role === 'admin'
 
-  const sendInvite = () => {
+  const sendInvite = async () => {
     if (!inviteEmail) return
-    alert(`Invitation sent to ${inviteEmail}!`)
-    setInviteEmail('')
-    setShowInvite(false)
+    setSendingInvite(true)
+    setLastInviteUrl(null)
+    try {
+      const result = await createInvite(inviteEmail, inviteRole, currentStaff?.business_id)
+      if (!result) {
+        showToast('Could not send invite. Check the email and try again.', 'error')
+        return
+      }
+      if (!result.seatAvailable) {
+        showToast('Seat limit reached for your plan. Upgrade to add more members.', 'error')
+        return
+      }
+      const fullUrl = `${window.location.origin}${result.joinUrl}`
+      setLastInviteUrl(fullUrl)
+      await navigator.clipboard?.writeText(fullUrl).catch(() => {})
+      showToast(`Invite link ready — copied to clipboard. Send it to ${inviteEmail}.`, 'success')
+      await loadPendingInvites()
+      setInviteEmail('')
+      setInviteRole('staff')
+    } catch (err) {
+      const msg = (err as any)?.message || 'Could not send invite.'
+      showToast(msg.includes('pending') ? 'A pending invite already exists for this email.' : msg, 'error')
+    } finally {
+      setSendingInvite(false)
+    }
+  }
+
+  const handleRevokeInvite = async (inviteId: string) => {
+    const ok = await revokeInvite(inviteId)
+    if (ok) {
+      showToast('Invite revoked.', 'success')
+      await loadPendingInvites()
+    } else {
+      showToast('Could not revoke invite.', 'error')
+    }
+  }
+
+  const sendBulkInvites = async () => {
+    const emails = bulkEmails
+      .split(/[\n,;]+/)
+      .map(e => e.trim())
+      .filter(e => e.length > 0 && /\S+@\S+\.\S+/.test(e))
+    if (emails.length === 0) {
+      showToast('Enter at least one valid email (one per line, or comma-separated).', 'error')
+      return
+    }
+    setSendingBulk(true)
+    setBulkResults([])
+    const results: { email: string; ok: boolean; url?: string }[] = []
+    for (const email of emails) {
+      const result = await createInvite(email, bulkRole, currentStaff?.business_id)
+      if (result && result.seatAvailable && result.joinUrl) {
+        results.push({ email, ok: true, url: `${window.location.origin}${result.joinUrl}` })
+      } else {
+        results.push({ email, ok: false })
+      }
+    }
+    setBulkResults(results)
+    const succeeded = results.filter(r => r.ok).length
+    const failed = results.length - succeeded
+    if (succeeded > 0) {
+      showToast(`${succeeded} invite(s) created${failed > 0 ? `, ${failed} failed (seat limit or duplicate)` : ''}.`, succeeded === results.length ? 'success' : 'error')
+    } else {
+      showToast('No invites created — seat limit reached or all emails already have pending invites.', 'error')
+    }
+    await loadPendingInvites()
+    setSendingBulk(false)
+  }
+
+  const copyInviteUrl = async (token: string) => {
+    const url = `${window.location.origin}/join/${token}`
+    await navigator.clipboard?.writeText(url).catch(() => {})
+    showToast('Invite link copied to clipboard.', 'success')
   }
 
   const startEditRoles = (member: TeamMember) => {
@@ -182,9 +269,12 @@ export default function People() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-black">People</h1>
         <div className="flex items-center gap-3">
-          {!teamLimitLoading && !canAddTeamMember && (
-            <span className="text-xs text-[var(--av-warning)] bg-[var(--av-warning-soft)] px-2 py-1 rounded">
-              Team limit reached ({teamCount}/{teamLimit})
+          {!teamLimitLoading && (
+            <span className="text-xs px-2 py-1 rounded" style={{
+              color: canAddTeamMember ? 'var(--av-text-muted, #5F6368)' : 'var(--av-warning, #B45309)',
+              background: canAddTeamMember ? 'var(--av-surface-2, #F1F3F4)' : 'rgba(180,83,9,0.08)',
+            }}>
+              {teamCount}{teamLimit >= 1000000 ? '' : `/${teamLimit}`} seats
             </span>
           )}
           <button
@@ -193,6 +283,14 @@ export default function People() {
           >
             <Plus size={16} />
             Invite Team
+          </button>
+          <button
+            onClick={() => setShowBulk(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium"
+            style={{ borderColor: 'var(--av-border, #E8EAED)', color: 'var(--av-text, #202124)' }}
+          >
+            <Upload size={16} />
+            Bulk Invite
           </button>
         </div>
       </div>
@@ -372,22 +470,133 @@ export default function People() {
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="Enter email address..."
-              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-4"
+              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-3"
             />
+            <select
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value)}
+              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-4"
+            >
+              <option value="staff">Staff</option>
+              <option value="team_lead">Team Lead</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+            {lastInviteUrl && (
+              <div className="mb-4 p-3 rounded-lg" style={{ background: 'var(--av-surface-2, #F1F3F4)' }}>
+                <p className="text-xs mb-1" style={{ color: 'var(--av-text-muted, #5F6368)' }}>
+                  Invite link (share via WhatsApp, email, or SMS):
+                </p>
+                <div className="flex items-center gap-2">
+                  <code className="text-xs flex-1 truncate">{lastInviteUrl}</code>
+                  <button onClick={() => navigator.clipboard?.writeText(lastInviteUrl).catch(() => {})} className="text-[var(--av-primary, #4285F4)]">
+                    <Copy size={14} />
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="flex gap-3">
               <button
-                onClick={() => setShowInvite(false)}
+                onClick={() => { setShowInvite(false); setLastInviteUrl(null) }}
                 className="flex-1 px-4 py-2 rounded-lg border border-black/10 text-sm"
               >
-                Cancel
+                Close
               </button>
               <button
                 onClick={sendInvite}
-                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm"
+                disabled={sendingInvite || !inviteEmail}
+                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
               >
-                Send Invite
+                {sendingInvite ? 'Creating...' : 'Create Invite'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Invite Modal */}
+      {showBulk && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg mx-4 max-h-[85vh] overflow-y-auto">
+            <h2 className="text-lg font-bold mb-1">Bulk Invite Team</h2>
+            <p className="text-xs mb-4" style={{ color: 'var(--av-text-muted, #5F6368)' }}>
+              Paste one email per line (or comma-separated). Each invite creates a join link you can share. Seats are enforced per invite.
+            </p>
+            <select
+              value={bulkRole}
+              onChange={(e) => setBulkRole(e.target.value)}
+              className="w-full rounded-lg border border-black/10 px-4 py-2.5 text-sm mb-3"
+            >
+              <option value="staff">All Staff</option>
+              <option value="team_lead">All Team Lead</option>
+              <option value="manager">All Manager</option>
+              <option value="admin">All Admin</option>
+            </select>
+            <textarea
+              value={bulkEmails}
+              onChange={(e) => setBulkEmails(e.target.value)}
+              placeholder={'ada@company.com\ntunde@company.com\nfatima@company.com'}
+              rows={6}
+              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-3 font-mono"
+            />
+            {bulkResults.length > 0 && (
+              <div className="mb-3 max-h-40 overflow-y-auto space-y-1">
+                {bulkResults.map((r, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs p-2 rounded" style={{ background: 'var(--av-surface-2, #F1F3F4)' }}>
+                    {r.ok ? <Check size={12} style={{ color: 'var(--av-success, #34A853)' }} /> : <X size={12} style={{ color: 'var(--av-danger, #EA4335)' }} />}
+                    <span className="flex-1 truncate">{r.email}</span>
+                    {r.ok && r.url && (
+                      <button onClick={() => navigator.clipboard?.writeText(r.url!).catch(() => {})} className="text-[var(--av-primary, #4285F4)]">
+                        <Copy size={12} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <button onClick={() => { setShowBulk(false); setBulkEmails(''); setBulkResults([]) }} className="flex-1 px-4 py-2 rounded-lg border border-black/10 text-sm">
+                Close
+              </button>
+              <button
+                onClick={sendBulkInvites}
+                disabled={sendingBulk || !bulkEmails.trim()}
+                className="flex-1 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
+              >
+                {sendingBulk ? 'Creating invites...' : `Create Invites`}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pending Invites */}
+      {pendingInvites.length > 0 && (
+        <div className="mt-6 bg-white rounded-xl border border-black/[0.06] p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock size={16} style={{ color: 'var(--av-text-muted, #5F6368)' }} />
+            <h3 className="text-sm font-semibold">Pending Invites ({pendingInvites.length})</h3>
+          </div>
+          <div className="space-y-2">
+            {pendingInvites.map(inv => (
+              <div key={inv.id} className="flex items-center gap-3 py-2 border-b border-black/[0.04] last:border-0">
+                <Mail size={14} style={{ color: 'var(--av-text-muted, #5F6368)' }} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm truncate">{inv.email}</p>
+                  <p className="text-xs" style={{ color: 'var(--av-text-muted, #5F6368)' }}>
+                    {inv.role} {inv.expires_at && `• expires ${new Date(inv.expires_at).toLocaleDateString()}`}
+                  </p>
+                </div>
+                <button onClick={() => copyInviteUrl(inv.token)} className="text-[var(--av-primary, #4285F4)] p-1" title="Copy join link">
+                  <Copy size={14} />
+                </button>
+                {isAdmin && (
+                  <button onClick={() => handleRevokeInvite(inv.id)} className="p-1" style={{ color: 'var(--av-danger, #EA4335)' }} title="Revoke invite">
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
