@@ -60,6 +60,40 @@ function getColor(type: string) {
   return NOTIFICATION_COLORS[type] || 'text-gray-500 bg-gray-50'
 }
 
+// §Z intelligent notification priority. Higher weight = surfaced first.
+// Critical (money/blocking) > warning (time-sensitive) > info > social/celebration.
+const NOTIFICATION_PRIORITY: Record<string, number> = {
+  invoice_overdue: 100,
+  task_due: 90,
+  leave_rejected: 80,
+  payment: 70,
+  reminder: 60,
+  meeting: 55,
+  task_assigned: 50,
+  mention: 45,
+  comment: 40,
+  chat_message: 35,
+  intelligence: 30,
+  system: 25,
+  leave_approved: 20,
+  task_completed: 15,
+  invoice_paid: 15,
+  achievement: 10,
+}
+const PRIORITY_DEFAULT = 30
+
+function prioritise(list: Notification[]): Notification[] {
+  return [...list].sort((a, b) => {
+    // Unread always beats read (regardless of type) — a read critical is less
+    // urgent than an unread info. Within the same read-state, priority wins.
+    if (a.is_read !== b.is_read) return a.is_read ? 1 : -1
+    const pa = NOTIFICATION_PRIORITY[a.type] ?? PRIORITY_DEFAULT
+    const pb = NOTIFICATION_PRIORITY[b.type] ?? PRIORITY_DEFAULT
+    if (pa !== pb) return pb - pa
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
+}
+
 export default function NotificationBell() {
   const { staff } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
@@ -83,7 +117,10 @@ export default function NotificationBell() {
         console.error('Failed to load notifications:', error)
         setNotifications([])
       } else {
-        setNotifications(data as Notification[])
+        // §Z: intelligent priority ordering. Not just recency — a critical
+        // invoice_overdue / task_due should not be buried under newer low-value
+        // achievements. Unread first (within priority), then by created_at.
+        setNotifications(prioritise(data as Notification[]))
       }
     } catch (err) {
       console.error('Failed to load notifications:', err)
@@ -158,7 +195,7 @@ export default function NotificationBell() {
   }, [isOpen])
 
   const markAsRead = useCallback(async (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, is_read: true } : n)))
+    setNotifications((prev) => prioritise(prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))))
     try {
       await supabase
         .from('notifications')
@@ -172,7 +209,7 @@ export default function NotificationBell() {
   const markAllAsRead = useCallback(async () => {
     const unreadIds = notifications.filter((n) => !n.is_read).map((n) => n.id)
     if (unreadIds.length === 0) return
-    setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })))
+    setNotifications((prev) => prioritise(prev.map((n) => ({ ...n, is_read: true }))))
     try {
       await supabase
         .from('notifications')
