@@ -1394,3 +1394,57 @@ tsc clean; vite build 0 warnings; vitest 226/226 (was 206 at session start, +20)
 ### Deploy status
 - Vercel production: all commits deploying via the main-push workflow.
 - STILL needs live DB: migrations 20260818130000-170000 must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until then (digest card stays empty, EBITDA card shows insufficient-data, approval config shows defaults) because every caller is best-effort/non-blocking (24).
+
+## Session 24 (2026-08-18): The Avenize Business Brain — State + Diagnosis + Next Best Action + Value Ledger
+
+Triggered by the top-20 priority directive: turn the many features already built into "one coherent, intelligent, resilient organism" — a Business Intelligence layer where every module is connected by a Brain that reasons across data. Verified-before-build (the audit protocol): the directive is NOT "add more features" — most named capabilities already exist as infrastructure. The gap is the layer that reasons ACROSS modules: What is happening? Why? What should I do? Did it work? How much value did it create?
+
+### Verified FIRST (the infrastructure is substantial — don't rebuild it)
+- **Business Pulse** (business_health_scores, migration 093): the explainable, decomposable composite score. overall_score + dimension_scores JSONB + DQ penalty + open-critical-recommendation flag. Honest NULL if no target-backed data (§21). compute_business_health + current_business_health.
+- **Governed Metrics** (kpi_metrics, 019/086): current_value, previous_value, change_percent (MoM delta), target_value, sample_size, confidence (high/medium/low/insufficient). refresh_business_metrics is the only writer. current_metrics read helper returns TABLE.
+- **Recommendation + Outcome loop** (claims/088/091): claims has the FULL lifecycle (issued→acknowledged→accepted→rejected→acted→outcome_recorded→superseded→expired) with expected_impact + actual_impact JSONB + linked_action_id + rule_id + severity + action_type + owner_id. open_recommendations (TABLE return). recommendation_effectiveness (TABLE: rule_id, issued, accepted, rejected, acted, outcome_recorded, success_count, avg_actual, avg_expected). 8 deterministic rules (091) + 3 behavior rules (20260101000011). The recommendation→action→outcome→value loop ALREADY EXISTS — item H (Value Ledger) is an aggregation VIEW over claims, not net-new.
+- **Context graph** (060): claims, business_relationships, recursive_neighbors, link_entities.
+- **Organizational Memory + Decision Log** (gap-fill migration): institutional learning loop.
+- **Business Events** (058/059/090): the event bus (the nervous system). 10 emitted events + AI-captured + catalogued handlers.
+- **Business Risks** (095): the general risk register (probability × impact = risk_score).
+- **Riverwayse Ops Dashboard** (#17, 20260818210000): 7 platform tables, 11 RPCs, push-based pager (Resend email + Termii SMS) + health-check edge functions, realtime UI. Aggregate-only privacy boundary. Push-not-pull paging. Verified against scope.
+
+### The GENUINE gaps (the three Brain pillars — all built this session)
+1. **Business State Engine (D, #4)** — classify_business_state: 12-state priority-ordered classifier (growing/stable/scaling/stressed/recovering/at_risk/cash_constrained/sales_constrained/capacity_constrained/operationally_constrained/opportunity_rich/insufficient_data) from health scores + metric MoM trends. at_risk (<40) before cash/sales constraints before stressed (40-55) before recovering (56-69 + rising) before growing/scaling (>=70 + strong growth) before opportunity_rich (>=70 + building pipeline) before stable (>=70). The state INFLUENCES what Avenize shows.
+2. **Diagnosis Engine (E, #6) — the differentiator** — diagnose_business: instead of "Revenue is down 8%", reasons "Revenue is down 8% because conversion dropped 11% — ₦X monthly exposure." Each diagnosis = SYMPTOM (significant metric change — FACT) + CAUSE (correlated metric change — INFERENCE) + IMPACT (₦ from real numbers). Causal relationships are DECLARED as rules (diagnosis_rules table — tunable by Avenize operators, the scope's "thresholds are a business decision"), NOT inferred by an LLM. 6 rules seeded (revenue-conversion, revenue-pipeline, cash-overdue, cash-expenses, profit-margin-erosion, ops-task-overload).
+3. **Next Best Action Engine (F, #7)** — next_best_action: instead of overwhelming with a list, surfaces the SINGLE most valuable thing to do now. Scores open recommendations by financial_impact (log scale so ₦10M doesn't drown ₦50k) × urgency (severity) × probability_of_success (from the effectiveness loop, 088) / effort (action_type heuristic) + business-state relevance bonus. Returns the top action with owner + due date + the scoring reasoning.
+4. **Business Value Ledger (H, #9)** — business_value_ledger: aggregates the existing recommendation→action→outcome loop into "Avenize helped recover ₦X / saved ₦X / generated ₦X / identified ₦X." ONLY from REAL recorded outcomes (status=outcome_recorded + actual_impact.amount — §22, never fabricated). When no outcomes: total=0 + honest note. Categorizes by rule prefix (FIN-AR/CF=recovered, SAL/CUST=generated, INV/OPS/DQ=saved). The retention mechanism.
+5. **business_brain(business_id)** — ONE aggregator returning State + Pulse + Diagnoses + Next Best Action + Value Ledger — the intelligence-first dashboard renders in a single round-trip. Membership-guarded (get_current_staff).
+
+### ExecutiveCockpit — the Brain is the intelligence-first surface
+State + Next Best Action + Diagnosis + Value Ledger cards render BEFORE the metrics (the directive's "intelligence-first dashboard" #1,#2). Each card degrades to an honest empty state when the brain migration isn't deployed (§24):
+- BusinessStateCard: the state + confidence + the FACT/INFERENCE reasons.
+- NextBestActionCard: the single action + expected impact + the scoring reasoning + a Take Action button. "Nothing needs your attention" when null.
+- DiagnosisCard: "What we found — and why" with FACT/INFERENCE tags + ₦ exposure.
+- ValueLedgerCard: the 4 value totals (recovered/saved/generated/identified) + acted/outcomes/successful counts.
+
+### Critical SQL bugs caught + fixed during the build (the CI gate would have caught these)
+1. `END LOOP;` should be `END;` closing the inner BEGIN/EXCEPTION block in diagnose_business.
+2. `v_metrics := current_metrics(...)` assigned a TABLE-valued return to a JSONB variable — must use `SELECT COALESCE(jsonb_agg(to_jsonb(t)), '[]'::jsonb) INTO v_metrics FROM current_metrics(...) AS t` (in BOTH classify_business_state and diagnose_business).
+3. `v_recs := open_recommendations(...)` — same TABLE-to-JSONB coercion needed in next_best_action.
+4. `recommendation_effectiveness` returns TABLE columns (rule_id, success_count, outcome_recorded) — NOT a JSONB 'outcomes' array. The NBA probability calc must `SELECT 1.0 * e.success_count / NULLIF(e.outcome_recorded, 0) FROM recommendation_effectiveness(...) e`.
+5. `current_metrics` column is `name`, not `display_name`.
+6. `ClaimTag` component uses `type` prop, not `level`.
+7. Diagnosis headline string construction had mismatched quotes — rewrote the block cleanly.
+
+### Tests (+36, 291 total)
+- businessState.test.ts (12): the classifier priority chain — at_risk beats cash_constrained beats stressed; cash/sales/capacity/operational constraints; recovering vs growing vs scaling vs opportunity_rich vs stable; insufficient_data when no health score.
+- diagnosisEngine.test.ts (8): fire when symptom+cause both move in declared directions; no-fire when cause didn't correlate; no-fire below trigger threshold (noise); no-fire when metric missing; impact NULL when current_value null (§22 no-fabrication); evidence labelling (symptom=FACT, cause=INFERENCE); cash diagnosis; profit-margin erosion (both up).
+- nextBestAction.test.ts (7): single highest-scoring action; null when empty; state relevance bonus; log-scale impact (₦10M vs ₦50k, equal effort); probability (0% success halves score); effort (reminder > PO); critical > info.
+- valueLedger.test.ts (9): total=0 when no outcomes (never fabricated); accepted-but-not-recorded = identified not total; recovered/saved/generated categorization; total sums all; identified = expected across accepted/acted/outcome_recorded; zero-actual-amount not counted.
+
+### Verification
+tsc clean, vite build 0 warnings, vitest 291/291 (was 255, +36), schema-drift 0. Commit becd7e2 pushed to main (rebased cleanly over remote 9abc23f production-hardening merge). No new runtime deps, no external APIs. All deterministic SQL over real tables (claims, kpi_metrics, business_health_scores, business_risks, diagnosis_rules).
+
+### What this completes (directive mapping)
+- #1 (intelligence-first dashboard): ExecutiveCockpit now leads with State+NBA+Diagnosis+ValueLedger before metrics.
+- #4 (Business State Engine): classify_business_state.
+- #6 (Diagnosis Engine): diagnose_business + diagnosis_rules.
+- #7 (Next Best Action): next_best_action.
+- #9 (Value Ledger): business_value_ledger.
+- #8 (the Brain connecting modules): business_brain aggregator — the modules are now connected by a reasoning layer.
