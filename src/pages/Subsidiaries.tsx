@@ -153,16 +153,16 @@ export default function Subsidiaries() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-5">
-              <Field label="Display name" value={draft.display_name} onChange={v => setDraft({ ...draft, display_name: v })} />
-              <Field label="Legal name" value={draft.legal_name} onChange={v => setDraft({ ...draft, legal_name: v })} />
-              <Field label="Industry" value={draft.industry} onChange={v => setDraft({ ...draft, industry: v })} placeholder="e.g. Roofing & Restoration" />
-              <Field label="Business model" value={draft.business_model} onChange={v => setDraft({ ...draft, business_model: v })} placeholder="e.g. B2B project sales" />
-              <Field label="Target customer" value={draft.target_customer} onChange={v => setDraft({ ...draft, target_customer: v })} />
-              <Field label="Currency" value={draft.currency_code} onChange={v => setDraft({ ...draft, currency_code: v.toUpperCase() })} />
-              <Field label="Website" value={draft.website_url} onChange={v => setDraft({ ...draft, website_url: v })} />
-              <Field label="Primary brand color" value={draft.primary_color} onChange={v => setDraft({ ...draft, primary_color: v })} />
-              <Field label="Phone" value={draft.phone} onChange={v => setDraft({ ...draft, phone: v })} />
-              <Field label="Email" value={draft.email} onChange={v => setDraft({ ...draft, email: v })} />
+              <Field label="Display name" value={draft.display_name ?? ''} onChange={v => setDraft({ ...draft, display_name: v })} />
+              <Field label="Legal name" value={draft.legal_name ?? ''} onChange={v => setDraft({ ...draft, legal_name: v })} />
+              <Field label="Industry" value={draft.industry ?? ''} onChange={v => setDraft({ ...draft, industry: v })} placeholder="e.g. Roofing & Restoration" />
+              <Field label="Business model" value={draft.business_model ?? ''} onChange={v => setDraft({ ...draft, business_model: v })} placeholder="e.g. B2B project sales" />
+              <Field label="Target customer" value={draft.target_customer ?? ''} onChange={v => setDraft({ ...draft, target_customer: v })} />
+              <Field label="Currency" value={draft.currency_code ?? ''} onChange={v => setDraft({ ...draft, currency_code: v.toUpperCase() })} />
+              <Field label="Website" value={draft.website_url ?? ''} onChange={v => setDraft({ ...draft, website_url: v })} />
+              <Field label="Primary brand color" value={draft.primary_color ?? ''} onChange={v => setDraft({ ...draft, primary_color: v })} />
+              <Field label="Phone" value={draft.phone ?? ''} onChange={v => setDraft({ ...draft, phone: v })} />
+              <Field label="Email" value={draft.email ?? ''} onChange={v => setDraft({ ...draft, email: v })} />
               <Field label="Revenue target" type="number" value={draft.revenue_target?.toString() ?? ''} onChange={v => setDraft({ ...draft, revenue_target: v ? Number(v) : null })} />
               <Field label="Sales target" type="number" value={draft.sales_target?.toString() ?? ''} onChange={v => setDraft({ ...draft, sales_target: v ? Number(v) : null })} />
               <div className="md:col-span-2"><label className="block text-xs font-medium text-black/60 mb-1.5">Description</label><textarea value={draft.description ?? ''} onChange={e => setDraft({ ...draft, description: e.target.value })} rows={3} className="w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm outline-none focus:border-blue-500" /></div>
