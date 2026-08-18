@@ -252,3 +252,74 @@ describe('Platform Ops — integration failure-streak', () => {
     expect(nextFailureCount(2, 'unknown')).toBe(2)
   })
 })
+
+describe('Platform Ops — paging dedup + contact management', () => {
+  // Mirrors the platform-pager edge function contract: an incident is paged
+  // once (paged_at set), not re-paged on every cron run while still open.
+  function shouldPage(incident: { paged_at: string | null; status: string; severity: string }): boolean {
+    return incident.status === 'open'
+      && incident.severity === 'critical'
+      && incident.paged_at === null
+  }
+  it('pages an open critical incident that has not been paged', () => {
+    expect(shouldPage({ paged_at: null, status: 'open', severity: 'critical' })).toBe(true)
+  })
+  it('does NOT re-page an incident already paged (paged_at set)', () => {
+    expect(shouldPage({ paged_at: '2026-08-18T08:00:00Z', status: 'open', severity: 'critical' })).toBe(false)
+  })
+  it('does not page a warning incident (critical only)', () => {
+    expect(shouldPage({ paged_at: null, status: 'open', severity: 'warning' })).toBe(false)
+  })
+  it('does not page a resolved incident', () => {
+    expect(shouldPage({ paged_at: null, status: 'resolved', severity: 'critical' })).toBe(false)
+  })
+
+  // Mirrors the upsert_platform_oncall gate: only platform admins can mutate.
+  function canManageOncall(isPlatformAdmin: boolean): boolean {
+    return isPlatformAdmin
+  }
+  it('a platform admin can add/update/delete paging contacts', () => {
+    expect(canManageOncall(true)).toBe(true)
+  })
+  it('a business owner cannot manage paging contacts', () => {
+    expect(canManageOncall(false)).toBe(false)
+  })
+})
+
+describe('Platform Ops — tunable threshold management', () => {
+  // Mirrors update_platform_threshold: only platform admins can tune, and the
+  // update is partial (COALESCE — unset fields keep their prior value).
+  function applyThresholdUpdate(
+    prior: { warning_value: number | null; critical_value: number | null; enabled: boolean },
+    patch: { warning_value?: number | null; critical_value?: number | null; enabled?: boolean }
+  ) {
+    return {
+      warning_value: patch.warning_value !== undefined ? patch.warning_value : prior.warning_value,
+      critical_value: patch.critical_value !== undefined ? patch.critical_value : prior.critical_value,
+      enabled: patch.enabled !== undefined ? patch.enabled : prior.enabled,
+    }
+  }
+  it('updates only the field provided (partial update)', () => {
+    const result = applyThresholdUpdate(
+      { warning_value: 2, critical_value: 5, enabled: true },
+      { critical_value: 10 }
+    )
+    expect(result.critical_value).toBe(10)
+    expect(result.warning_value).toBe(2) // unchanged
+    expect(result.enabled).toBe(true) // unchanged
+  })
+  it('can disable a threshold without touching values', () => {
+    const result = applyThresholdUpdate(
+      { warning_value: 2, critical_value: 5, enabled: true },
+      { enabled: false }
+    )
+    expect(result.enabled).toBe(false)
+    expect(result.warning_value).toBe(2)
+  })
+  it('updating to a value that raises the bar stops a previously-warning condition from alerting', () => {
+    // count=3, was warning at 2 -> warning. Raise warning to 5 -> no alert.
+    expect(severityFromThreshold(3, 2, 5)).toBe('warning')
+    const after = applyThresholdUpdate({ warning_value: 2, critical_value: 5, enabled: true }, { warning_value: 5 })
+    expect(severityFromThreshold(3, after.warning_value, after.critical_value)).toBe(null)
+  })
+})

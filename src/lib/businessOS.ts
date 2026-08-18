@@ -641,3 +641,80 @@ export async function investigateBusinessIncident(params: {
   })
   if (error) throw error
 }
+
+export interface PlatformOncallContact {
+  id: string
+  name: string
+  email: string | null
+  phone: string | null
+  channel: string
+  is_active: boolean
+  created_at: string
+}
+
+export async function listPlatformOncall(): Promise<PlatformOncallContact[]> {
+  const { data, error } = await supabase.rpc('list_platform_oncall')
+  if (error) throw error
+  const payload = data as { authorized: boolean; contacts: PlatformOncallContact[] } | null
+  if (!payload?.authorized) return []
+  return payload.contacts ?? []
+}
+
+export async function upsertPlatformOncall(params: {
+  id?: string
+  name: string
+  email?: string
+  phone?: string
+  channel?: string
+  isActive?: boolean
+}): Promise<string | null> {
+  const { data, error } = await supabase.rpc('upsert_platform_oncall', {
+    p_id: params.id ?? null,
+    p_name: params.name,
+    p_email: params.email ?? null,
+    p_phone: params.phone ?? null,
+    p_channel: params.channel ?? 'email',
+    p_is_active: params.isActive ?? true,
+  })
+  if (error) throw error
+  return (data as string) ?? null
+}
+
+export async function deletePlatformOncall(id: string): Promise<void> {
+  const { error } = await supabase.rpc('delete_platform_oncall', { p_id: id })
+  if (error) throw error
+}
+
+export interface PlatformThreshold {
+  key: string
+  display_name: string
+  system: string
+  metric: string
+  warning_value: number | null
+  critical_value: number | null
+  enabled: boolean
+  updated_at: string
+}
+
+export async function listPlatformThresholds(): Promise<PlatformThreshold[]> {
+  const { data, error } = await supabase.rpc('list_platform_thresholds')
+  if (error) throw error
+  const payload = data as { authorized: boolean; thresholds: PlatformThreshold[] } | null
+  if (!payload?.authorized) return []
+  return payload.thresholds ?? []
+}
+
+export async function updatePlatformThreshold(params: {
+  key: string
+  warningValue?: number
+  criticalValue?: number
+  enabled?: boolean
+}): Promise<void> {
+  const { error } = await supabase.rpc('update_platform_threshold', {
+    p_key: params.key,
+    p_warning_value: params.warningValue ?? null,
+    p_critical_value: params.criticalValue ?? null,
+    p_enabled: params.enabled ?? null,
+  })
+  if (error) throw error
+}

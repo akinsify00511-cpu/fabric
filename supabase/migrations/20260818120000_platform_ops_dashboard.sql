@@ -363,6 +363,139 @@ $$;
 GRANT EXECUTE ON FUNCTION public.investigate_business_incident(uuid, uuid, text, text[]) TO authenticated;
 
 -- ----------------------------------------------------------------------------
+-- list_platform_oncall / upsert_platform_oncall — manage paging contacts.
+-- Platform-admin-gated. Service-role could also manage these directly, but a
+-- gated authenticated RPC lets the Riverwayse on-call manage their own roster
+-- from the ops dashboard without a separate admin tool.
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.list_platform_oncall()
+RETURNS JSONB
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NOT is_platform_admin() THEN
+    RETURN jsonb_build_object('authorized', false, 'contacts', '[]'::JSONB);
+  END IF;
+  RETURN jsonb_build_object(
+    'authorized', true,
+    'contacts', COALESCE((
+      SELECT jsonb_agg(jsonb_build_object(
+        'id', id, 'name', name, 'email', email, 'phone', phone,
+        'channel', channel, 'is_active', is_active, 'created_at', created_at
+      ) ORDER BY created_at)
+      FROM platform_oncall_contacts
+    ), '[]'::JSONB)
+  );
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.list_platform_oncall() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.upsert_platform_oncall(
+  p_id uuid DEFAULT NULL,
+  p_name text DEFAULT NULL,
+  p_email text DEFAULT NULL,
+  p_phone text DEFAULT NULL,
+  p_channel text DEFAULT 'email',
+  p_is_active boolean DEFAULT true
+) RETURNS uuid
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_id uuid;
+BEGIN
+  IF NOT is_platform_admin() THEN
+    RAISE EXCEPTION 'NOT_AUTHORIZED' USING ERRCODE = '42501';
+  END IF;
+  IF p_id IS NOT NULL THEN
+    UPDATE platform_oncall_contacts
+      SET name = COALESCE(p_name, name),
+          email = COALESCE(p_email, email),
+          phone = COALESCE(p_phone, phone),
+          channel = COALESCE(p_channel, channel),
+          is_active = COALESCE(p_is_active, is_active)
+      WHERE id = p_id
+      RETURNING id INTO v_id;
+  ELSE
+    INSERT INTO platform_oncall_contacts (name, email, phone, channel, is_active)
+    VALUES (COALESCE(p_name,''), p_email, p_phone, p_channel, p_is_active)
+    RETURNING id INTO v_id;
+  END IF;
+  RETURN v_id;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.upsert_platform_oncall(uuid, text, text, text, text, boolean) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.delete_platform_oncall(p_id uuid)
+RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NOT is_platform_admin() THEN
+    RAISE EXCEPTION 'NOT_AUTHORIZED' USING ERRCODE = '42501';
+  END IF;
+  DELETE FROM platform_oncall_contacts WHERE id = p_id;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.delete_platform_oncall(uuid) TO authenticated;
+
+-- ----------------------------------------------------------------------------
+-- list_platform_thresholds / update_platform_threshold — TUNABLE alert
+-- thresholds. The scope's explicit standard: "every alert threshold is a
+-- business decision Riverwayse should be able to tune — not hardcoded
+-- without an obvious place to adjust it."
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.list_platform_thresholds()
+RETURNS JSONB
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NOT is_platform_admin() THEN
+    RETURN jsonb_build_object('authorized', false, 'thresholds', '[]'::JSONB);
+  END IF;
+  RETURN jsonb_build_object(
+    'authorized', true,
+    'thresholds', COALESCE((
+      SELECT jsonb_agg(jsonb_build_object(
+        'key', key, 'display_name', display_name, 'system', system,
+        'metric', metric, 'warning_value', warning_value,
+        'critical_value', critical_value, 'enabled', enabled, 'updated_at', updated_at
+      ) ORDER BY system, key)
+      FROM platform_alert_thresholds
+    ), '[]'::JSONB)
+  );
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.list_platform_thresholds() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.update_platform_threshold(
+  p_key text,
+  p_warning_value numeric DEFAULT NULL,
+  p_critical_value numeric DEFAULT NULL,
+  p_enabled boolean DEFAULT NULL
+) RETURNS void
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NOT is_platform_admin() THEN
+    RAISE EXCEPTION 'NOT_AUTHORIZED' USING ERRCODE = '42501';
+  END IF;
+  UPDATE platform_alert_thresholds SET
+    warning_value = COALESCE(p_warning_value, warning_value),
+    critical_value = COALESCE(p_critical_value, critical_value),
+    enabled = COALESCE(p_enabled, enabled),
+    updated_at = now()
+    WHERE key = p_key;
+END;
+$$;
+GRANT EXECUTE ON FUNCTION public.update_platform_threshold(text, numeric, numeric, boolean) TO authenticated;
+
+COMMENT ON FUNCTION public.list_platform_oncall() IS 'Riverwayse ops: list paging contacts. is_platform_admin()-gated.';
+COMMENT ON FUNCTION public.upsert_platform_oncall(uuid, text, text, text, text, boolean) IS 'Riverwayse ops: add/update a paging contact. is_platform_admin()-gated.';
+COMMENT ON FUNCTION public.delete_platform_oncall(uuid) IS 'Riverwayse ops: remove a paging contact. is_platform_admin()-gated.';
+COMMENT ON FUNCTION public.list_platform_thresholds() IS 'Riverwayse ops: list TUNABLE alert thresholds. is_platform_admin()-gated.';
+COMMENT ON FUNCTION public.update_platform_threshold(text, numeric, numeric, boolean) IS 'Riverwayse ops: tune what counts as degraded/critical. is_platform_admin()-gated. The scope standard: thresholds are a business decision, not hardcoded.';
+
+-- ----------------------------------------------------------------------------
 -- evaluate_platform_alerts — the threshold→incident automation.
 -- Reads integration streaks + rolling error counts against
 -- platform_alert_thresholds; opens incidents when crossed; auto-resolves

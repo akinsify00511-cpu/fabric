@@ -23,13 +23,15 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import {
   fetchPlatformOps, resolvePlatformError, updatePlatformIncident,
-  type PlatformOps,
+  listPlatformOncall, upsertPlatformOncall, deletePlatformOncall,
+  listPlatformThresholds, updatePlatformThreshold,
+  type PlatformOps, type PlatformOncallContact, type PlatformThreshold,
 } from '../lib/businessOS'
 import { supabase } from '../lib/supabase'
 import { ClaimTag } from '../components/Evidence'
 import {
   Loader2, Lock, Activity, AlertTriangle, CheckCircle2, XCircle,
-  Server, Zap, ShieldAlert, Bell, RefreshCw, ExternalLink,
+  Server, Zap, ShieldAlert, Bell, RefreshCw, ExternalLink, Settings, Trash2, Plus,
 } from 'lucide-react'
 
 const SYSTEM_LABELS: Record<string, string> = {
@@ -74,6 +76,11 @@ export default function PlatformOpsDashboardPage() {
   const [error, setError] = useState<string | null>(null)
   const [filterSeverity, setFilterSeverity] = useState<string>('all')
   const [livePulse, setLivePulse] = useState(false)
+  const [view, setView] = useState<'live' | 'config'>('live')
+  const [contacts, setContacts] = useState<PlatformOncallContact[]>([])
+  const [thresholds, setThresholds] = useState<PlatformThreshold[]>([])
+  const [configLoading, setConfigLoading] = useState(false)
+  const [newContact, setNewContact] = useState({ name: '', email: '', phone: '', channel: 'email' })
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
   const mountedRef = useRef(true)
 
@@ -89,6 +96,21 @@ export default function PlatformOpsDashboardPage() {
       setError(msg)
     } finally {
       if (mountedRef.current) setLoading(false)
+    }
+  }, [])
+
+  const loadConfig = useCallback(async () => {
+    setConfigLoading(true)
+    try {
+      const [c, t] = await Promise.all([
+        listPlatformOncall().catch(() => [] as PlatformOncallContact[]),
+        listPlatformThresholds().catch(() => [] as PlatformThreshold[]),
+      ])
+      if (!mountedRef.current) return
+      setContacts(c)
+      setThresholds(t)
+    } finally {
+      if (mountedRef.current) setConfigLoading(false)
     }
   }, [])
 
@@ -118,6 +140,10 @@ export default function PlatformOpsDashboardPage() {
       channelRef.current = null
     }
   }, [load])
+
+  useEffect(() => {
+    if (view === 'config' && data?.authorized) loadConfig()
+  }, [view, data?.authorized, loadConfig])
 
   const handleResolveError = async (errorId: string) => {
     try {
@@ -205,6 +231,16 @@ export default function PlatformOpsDashboardPage() {
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'inline-flex', background: '#F1F3F4', borderRadius: 9999, padding: 2 }}>
+            <button
+              onClick={() => setView('live')}
+              style={view === 'live' ? tabBtnActive : tabBtn}
+            >Live</button>
+            <button
+              onClick={() => setView('config')}
+              style={view === 'config' ? tabBtnActive : tabBtn}
+            >Config</button>
+          </div>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: livePulse ? '#157342' : '#9AA0A6' }}>
             <span style={{ width: 8, height: 8, borderRadius: 9999, background: livePulse ? '#157342' : '#DADCE0', transition: 'background 200ms' }} />
             {livePulse ? 'Live' : 'Connected'}
@@ -215,6 +251,57 @@ export default function PlatformOpsDashboardPage() {
         </div>
       </div>
 
+      {view === 'config' ? (
+        <ConfigView
+          contacts={contacts}
+          thresholds={thresholds}
+          configLoading={configLoading}
+          newContact={newContact}
+          setNewContact={setNewContact}
+          onAddContact={async () => {
+            try {
+              await upsertPlatformOncall({
+                name: newContact.name,
+                email: newContact.email || undefined,
+                phone: newContact.phone || undefined,
+                channel: newContact.channel,
+              })
+              setNewContact({ name: '', email: '', phone: '', channel: 'email' })
+              await loadConfig()
+            } catch (e: unknown) {
+              setError(e instanceof Error ? e.message : String(e))
+            }
+          }}
+          onToggleContact={async (c) => {
+            try {
+              await upsertPlatformOncall({ id: c.id, name: c.name, isActive: !c.is_active })
+              await loadConfig()
+            } catch (e: unknown) {
+              setError(e instanceof Error ? e.message : String(e))
+            }
+          }}
+          onDeleteContact={async (id) => {
+            try {
+              await deletePlatformOncall(id)
+              await loadConfig()
+            } catch (e: unknown) {
+              setError(e instanceof Error ? e.message : String(e))
+            }
+          }}
+          onUpdateThreshold={async (key, field, value) => {
+            try {
+              await updatePlatformThreshold({
+                key,
+                [field]: value,
+              })
+              await loadConfig()
+            } catch (e: unknown) {
+              setError(e instanceof Error ? e.message : String(e))
+            }
+          }}
+        />
+      ) : (
+        <>
       {/* Privacy boundary banner */}
       <div style={{ background: 'rgba(66,133,244,0.06)', border: '1px solid rgba(66,133,244,0.16)', borderRadius: 12, padding: 12, marginBottom: 20, fontSize: 13, color: '#5F6368' }}>
         <ClaimTag type="FACT" />
@@ -410,6 +497,152 @@ export default function PlatformOpsDashboardPage() {
           </div>
         </div>
       )}
+        </>
+      )}
+    </div>
+  )
+}
+
+function ConfigView(props: {
+  contacts: PlatformOncallContact[]
+  thresholds: PlatformThreshold[]
+  configLoading: boolean
+  newContact: { name: string; email: string; phone: string; channel: string }
+  setNewContact: (c: { name: string; email: string; phone: string; channel: string }) => void
+  onAddContact: () => void
+  onToggleContact: (c: PlatformOncallContact) => void
+  onDeleteContact: (id: string) => void
+  onUpdateThreshold: (key: string, field: 'warningValue' | 'criticalValue' | 'enabled', value: number | boolean) => void
+}) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 20 }}>
+      {/* On-call contacts */}
+      <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <Bell style={{ width: 18, height: 18, color: '#155BB4' }} />
+          On-call paging contacts
+        </h2>
+        <p style={{ fontSize: 12, color: '#9AA0A6', marginBottom: 12 }}>
+          Who gets paged when a critical incident opens. Push (email/SMS), not pull.
+        </p>
+        {props.configLoading ? (
+          <Loader2 style={{ animation: 'spin 1s linear infinite' }} />
+        ) : (
+          <>
+            {props.contacts.length === 0 ? (
+              <p style={{ color: '#9AA0A6', fontSize: 13, padding: '8px 0' }}>No contacts yet. Add one below.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+                {props.contacts.map(c => (
+                  <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F1F3F4' }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: '#202124' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: '#9AA0A6' }}>{c.email || c.phone} · {c.channel}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button onClick={() => props.onToggleContact(c)} style={iconBtn} title={c.is_active ? 'Deactivate' : 'Activate'}>
+                        <span style={{ width: 8, height: 8, borderRadius: 9999, background: c.is_active ? '#157342' : '#DADCE0' }} />
+                      </button>
+                      <button onClick={() => props.onDeleteContact(c.id)} style={iconBtn} title="Remove">
+                        <Trash2 style={{ width: 14, height: 14, color: '#A63A2F' }} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{ border: '1px solid #E8EAED', borderRadius: 8, padding: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input
+                placeholder="Name"
+                value={props.newContact.name}
+                onChange={e => props.setNewContact({ ...props.newContact, name: e.target.value })}
+                style={inputStyle}
+              />
+              <input
+                placeholder="Email"
+                value={props.newContact.email}
+                onChange={e => props.setNewContact({ ...props.newContact, email: e.target.value })}
+                style={inputStyle}
+              />
+              <input
+                placeholder="Phone (for SMS)"
+                value={props.newContact.phone}
+                onChange={e => props.setNewContact({ ...props.newContact, phone: e.target.value })}
+                style={inputStyle}
+              />
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <select
+                  value={props.newContact.channel}
+                  onChange={e => props.setNewContact({ ...props.newContact, channel: e.target.value })}
+                  style={{ ...inputStyle, width: 'auto' }}
+                >
+                  <option value="email">Email</option>
+                  <option value="sms">SMS</option>
+                  <option value="both">Both</option>
+                </select>
+                <button onClick={props.onAddContact} style={primaryBtn}>
+                  <Plus style={{ width: 14, height: 14 }} /> Add
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Tunable thresholds */}
+      <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <Settings style={{ width: 18, height: 18, color: '#155BB4' }} />
+          Alert thresholds
+        </h2>
+        <p style={{ fontSize: 12, color: '#9AA0A6', marginBottom: 12 }}>
+          What counts as degraded or critical. Tunable — a business decision, not hardcoded.
+        </p>
+        {props.configLoading ? (
+          <Loader2 style={{ animation: 'spin 1s linear infinite' }} />
+        ) : props.thresholds.length === 0 ? (
+          <p style={{ color: '#9AA0A6', fontSize: 13 }}>No thresholds configured.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {props.thresholds.map(t => (
+              <div key={t.key} style={{ border: '1px solid #E8EAED', borderRadius: 8, padding: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: '#202124' }}>{t.display_name}</span>
+                  <label style={{ fontSize: 11, color: '#5F6368', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <input
+                      type="checkbox"
+                      checked={t.enabled}
+                      onChange={e => props.onUpdateThreshold(t.key, 'enabled', e.target.checked)}
+                    />
+                    enabled
+                  </label>
+                </div>
+                <div style={{ fontSize: 11, color: '#9AA0A6', marginBottom: 8 }}>{t.system} · {t.metric}</div>
+                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <label style={{ fontSize: 12, color: '#845400', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    warn ≥
+                    <input
+                      type="number"
+                      value={t.warning_value ?? ''}
+                      onChange={e => props.onUpdateThreshold(t.key, 'warningValue', Number(e.target.value))}
+                      style={{ ...inputStyle, width: 60, padding: '2px 6px' }}
+                    />
+                  </label>
+                  <label style={{ fontSize: 12, color: '#A63A2F', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    critical ≥
+                    <input
+                      type="number"
+                      value={t.critical_value ?? ''}
+                      onChange={e => props.onUpdateThreshold(t.key, 'criticalValue', Number(e.target.value))}
+                      style={{ ...inputStyle, width: 60, padding: '2px 6px' }}
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -434,4 +667,50 @@ const iconBtn: React.CSSProperties = {
   cursor: 'pointer',
   padding: 4,
   borderRadius: 6,
+}
+
+const tabBtn: React.CSSProperties = {
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+  padding: '4px 14px',
+  borderRadius: 9999,
+  fontSize: 13,
+  color: '#5F6368',
+}
+
+const tabBtnActive: React.CSSProperties = {
+  border: 'none',
+  background: '#fff',
+  cursor: 'pointer',
+  padding: '4px 14px',
+  borderRadius: 9999,
+  fontSize: 13,
+  fontWeight: 600,
+  color: '#202124',
+  boxShadow: '0 1px 2px rgba(0,0,0,.08)',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '6px 10px',
+  border: '1px solid #DADCE0',
+  borderRadius: 8,
+  fontSize: 13,
+  color: '#202124',
+  background: '#fff',
+}
+
+const primaryBtn: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  padding: '6px 14px',
+  background: '#155BB4',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 8,
+  fontSize: 13,
+  fontWeight: 600,
+  cursor: 'pointer',
 }
