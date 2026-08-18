@@ -1,0 +1,7 @@
+# Production-sensitive areas require repository owner review.
+* @akinsify00511-cpu
+
+# Database, auth and deployment changes are explicitly owned.
+/supabase/ @akinsify00511-cpu
+/.github/ @akinsify00511-cpu
+/src/ @akinsify00511-cpu
