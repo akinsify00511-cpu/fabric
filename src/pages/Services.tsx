@@ -47,7 +47,7 @@ export default function Services() {
         .from('businesses')
         .select('slug')
         .eq('id', staff.business_id)
-        .single()
+        .maybeSingle()
         .then(({ data }) => {
           const slug = data?.slug
           setBookingLink(slug ? `/book/${slug}` : '/book')

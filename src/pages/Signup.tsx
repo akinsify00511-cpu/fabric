@@ -67,6 +67,27 @@ export default function Signup() {
     setLoading(true)
     setError(null)
 
+    // Pre-auth rate limit: throttle signup abuse before hitting Supabase Auth.
+    // Fail open if the RPC isn't deployed (migration 20260818290000 grants anon).
+    try {
+      const { data: rl, error: rlErr } = await supabase
+        .rpc('check_auth_rate_limit', {
+          p_identifier: email.toLowerCase(),
+          p_action: 'signup',
+          p_max_attempts: 5,
+          p_window_seconds: 3600,
+          p_lockout_seconds: 3600,
+        })
+      if (!rlErr && rl && !rl.allowed) {
+        const mins = rl.retry_after ? Math.ceil(rl.retry_after / 60) : 60
+        setError(`Too many signup attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`)
+        setLoading(false)
+        return
+      }
+    } catch {
+      // Fail open.
+    }
+
     // Step 1: Create auth account
     const { data: authData, error: signUpError } = await supabase.auth.signUp({
       email,

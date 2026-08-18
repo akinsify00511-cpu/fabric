@@ -152,9 +152,41 @@ export default function Login() {
     setLoading(true)
     setError(null)
 
+    // Pre-auth rate limit: throttle brute-force before hitting Supabase Auth.
+    // The RPC is granted to anon (migration 20260818290000) so it works pre-session.
+    try {
+      const { data: rl, error: rlErr } = await supabase
+        .rpc('check_auth_rate_limit', {
+          p_identifier: email.toLowerCase(),
+          p_action: 'login',
+          p_max_attempts: 5,
+          p_window_seconds: 300,
+          p_lockout_seconds: 900,
+        })
+      if (rlErr) {
+        // Rate-limit infra not deployed (migration not applied) — fail open so
+        // login still works; Supabase Auth has its own built-in protection.
+        console.warn('Rate limit check unavailable:', rlErr.message)
+      } else if (rl && !rl.allowed) {
+        const mins = rl.retry_after ? Math.ceil(rl.retry_after / 60) : 15
+        setError(`Too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`)
+        setLoading(false)
+        return
+      }
+    } catch {
+      // Fail open — never block login because the rate-limit RPC errored.
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
+      // Log the failed attempt so the rate limiter counts it (best-effort).
+      supabase.rpc('log_security_event', {
+        p_event_type: 'login_failed',
+        p_email: email.toLowerCase(),
+        p_metadata: { reason: error.message },
+        p_success: false,
+      }).then(() => {}, () => {})
       setError(error.message)
       setLoading(false)
       return

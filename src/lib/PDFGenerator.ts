@@ -73,7 +73,7 @@ async function getBranding(businessId?: string): Promise<BrandingData> {
     .from('business_branding')
     .select('custom_name, custom_tagline, logo_url, address, website, email, phone')
     .eq('business_id', businessId)
-    .single()
+    .maybeSingle()
   
   return data || {
     custom_name: null,
