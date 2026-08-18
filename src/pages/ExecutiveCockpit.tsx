@@ -16,12 +16,14 @@ import {
   computeEbitda, type EbitdaResult,
   fetchBusinessBrain, type BusinessBrain, type BusinessState, type DiagnosisResult, type NextBestAction, type ValueLedger,
   recallSimilarProblems, type RecallResult,
+  fetchProfitabilityLeakage, fetchPricingOpportunities, fetchGraphOverview,
+  type ProfitabilityLeakageResult, type PricingOpportunitiesResult, type GraphOverview,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
   CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
-  History, ChevronDown,
+  History, ChevronDown, Network, TrendingDown, Wallet, Tag,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 import { RepresentationEngine, type RepresentableData } from '../components/RepresentationEngine'
@@ -60,6 +62,11 @@ export default function ExecutiveCockpit() {
   // One call renders the intelligence-first surface. Best-effort — stays null
   // (cards show honest empty states) if the brain migration isn't deployed.
   const [brain, setBrain] = useState<BusinessBrain | null>(null)
+  // §G profitability decomposition + §J business graph. Best-effort — the
+  // cards render honest empty states if the migrations aren't deployed yet.
+  const [leakage, setLeakage] = useState<ProfitabilityLeakageResult | null>(null)
+  const [pricing, setPricing] = useState<PricingOpportunitiesResult | null>(null)
+  const [graph, setGraph] = useState<GraphOverview | null>(null)
 
   useEffect(() => {
     if (!bid) return
@@ -92,6 +99,15 @@ export default function ExecutiveCockpit() {
       // in one call. This is the intelligence-first surface (#1,#2,#5,#6,#7,#9).
       fetchBusinessBrain(bid).then(b => { if (active) setBrain(b) })
         .catch(() => { /* brain migration not deployed yet — non-blocking */ })
+      // §G profitability decomposition — leakage detection + pricing opportunities.
+      // Best-effort — the cards render honest empty states if not deployed.
+      fetchProfitabilityLeakage(bid).then(l => { if (active) setLeakage(l) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
+      fetchPricingOpportunities(bid).then(p => { if (active) setPricing(p) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
+      // §J business graph overview — the "one connected system" summary.
+      fetchGraphOverview(bid).then(g => { if (active) setGraph(g) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
       // Pull several real signals in parallel; tolerate missing RPCs/tables.
       const [
         revenue, cash, pipeline, people, exceptions, forecast, capacity, process, risk,
@@ -175,6 +191,9 @@ export default function ExecutiveCockpit() {
 
           <BusinessHealthCard health={health} />
           <EbitdaCard ebitda={ebitda} />
+          <LeakageCard leakage={leakage} />
+          <PricingOpportunitiesCard pricing={pricing} />
+          <GraphOverviewCard graph={graph} />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {metrics[lens].map((m, i) => <MetricCard key={i} {...m} />)}
@@ -1034,6 +1053,190 @@ function ValueLedgerCard({ ledger }: { ledger?: ValueLedger | null }) {
         <span>· {ledger.outcomes_recorded} outcomes recorded</span>
         <span>· {ledger.successful_outcomes} successful</span>
       </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// §G LeakageCard — "where is the business losing money?" Surfaces overdue
+// invoices, declining-margin customers, underpriced won deals, stale
+// receivables. Each finding cites REAL numbers (§22). Best-effort — honest
+// empty state when the migration isn't deployed or no leakage exists.
+// ============================================================================
+function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }) {
+  const [expanded, setExpanded] = useState(false)
+  if (!leakage || !leakage.authorized) return null
+  const hasFindings =
+    leakage.overdue.length > 0 ||
+    leakage.declining_margin.length > 0 ||
+    leakage.negative_margin_deals.length > 0 ||
+    leakage.stale_receivables.length > 0
+  if (!hasFindings) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Wallet size={16} className="text-[var(--av-success)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Leakage detection</span>
+          <ClaimTag type="FACT" />
+        </div>
+        <p className="text-xs text-[var(--av-text-muted)]">{leakage.note ?? 'No leakage detected.'}</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <AlertTriangle size={16} className="text-[var(--av-warning)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Where you might be losing money</span>
+        <ClaimTag type="FACT" />
+        <span className="ml-auto text-xs font-semibold text-[var(--av-danger)]">{naira(leakage.total_exposure)} at risk</span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+        <div className="text-center">
+          <div className="text-lg font-bold text-[var(--av-danger)]">{leakage.overdue.length}</div>
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Overdue</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-bold text-[var(--av-warning)]">{leakage.declining_margin.length}</div>
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Declining margin</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-bold text-[var(--av-warning)]">{leakage.negative_margin_deals.length}</div>
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Underpriced deals</div>
+        </div>
+        <div className="text-center">
+          <div className="text-lg font-bold text-[var(--av-text-secondary)]">{leakage.stale_receivables.length}</div>
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Stale receivables</div>
+        </div>
+      </div>
+      {leakage.overdue.length > 0 && (
+        <div className="mb-2">
+          <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Overdue invoices</p>
+          {leakage.overdue.slice(0, expanded ? undefined : 3).map((o, i) => (
+            <div key={i} className="flex items-center justify-between py-1 text-xs">
+              <span className="text-[var(--av-text)] truncate">{o.client_name} {o.invoice_number && `· ${o.invoice_number}`}</span>
+              <span className="text-[var(--av-danger)] font-medium">{naira(o.total ?? 0)} · {o.days_overdue}d late</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {leakage.declining_margin.length > 0 && (
+        <div className="mb-2">
+          <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Customers with declining margin</p>
+          {leakage.declining_margin.slice(0, expanded ? undefined : 3).map((d, i) => (
+            <div key={i} className="flex items-center justify-between py-1 text-xs">
+              <span className="text-[var(--av-text)] truncate">{d.client_name}</span>
+              <span className="text-[var(--av-danger)] font-medium">{d.margin_pct}% (was {d.prior_margin}%)</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {hasFindings && (
+        <button onClick={() => setExpanded(e => !e)} className="text-xs text-[var(--av-primary)] hover:underline mt-1">
+          {expanded ? 'Show less' : 'Show all findings'}
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ============================================================================
+// §G PricingOpportunitiesCard — "room to discount" (high margin) + "raise
+// price or cut cost" (low margin). Best-effort — honest empty state.
+// ============================================================================
+function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesResult | null }) {
+  if (!pricing || !pricing.authorized) return null
+  if (pricing.high_margin.length === 0 && pricing.low_margin.length === 0) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Tag size={16} className="text-[var(--av-primary)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Pricing opportunities</span>
+          <ClaimTag type="INFERENCE" />
+        </div>
+        <p className="text-xs text-[var(--av-text-muted)]">{pricing.note ?? 'No pricing opportunities detected yet.'}</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Tag size={16} className="text-[var(--av-primary)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Pricing opportunities</span>
+        <ClaimTag type="INFERENCE" />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {pricing.high_margin.length > 0 && (
+          <div>
+            <p className="text-xs font-medium text-[var(--av-success)] mb-1">Room to discount (high margin ≥40%)</p>
+            {pricing.high_margin.map((p, i) => (
+              <div key={i} className="flex items-center justify-between py-1 text-xs">
+                <span className="text-[var(--av-text)] truncate">{p.product}</span>
+                <span className="text-[var(--av-success)] font-medium">{p.margin_pct}% · {naira(p.revenue)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {pricing.low_margin.length > 0 && (
+          <div>
+            <p className="text-xs font-medium text-[var(--av-danger)] mb-1">Raise price or cut cost (low margin ≤15%)</p>
+            {pricing.low_margin.map((p, i) => (
+              <div key={i} className="flex items-center justify-between py-1 text-xs">
+                <span className="text-[var(--av-text)] truncate">{p.product}</span>
+                <span className="text-[var(--av-danger)] font-medium">{p.margin_pct}% · {naira(p.revenue)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// §J GraphOverviewCard — the "one connected system" summary. Shows the
+// business's relationship graph at a glance: nodes, edges, hub entities.
+// Best-effort — honest empty state when no relationships are mapped yet.
+// ============================================================================
+function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
+  if (!graph || !graph.authorized) return null
+  if (graph.total_edges === 0) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Network size={16} className="text-[var(--av-primary)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Your business graph</span>
+        </div>
+        <p className="text-xs text-[var(--av-text-muted)]">{graph.note ?? 'No relationships mapped yet.'}</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Network size={16} className="text-[var(--av-primary)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Your business graph — one connected system</span>
+        <span className="ml-auto text-xs text-[var(--av-text-muted)]">{graph.total_edges} connections</span>
+      </div>
+      <div className="flex flex-wrap gap-2 mb-3">
+        {graph.nodes_by_type.map((n, i) => (
+          <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--av-surface-2)] text-xs text-[var(--av-text-secondary)]">
+            <span className="capitalize">{n.entity_type}</span>
+            <span className="font-medium text-[var(--av-text)]">{n.node_count}</span>
+          </span>
+        ))}
+      </div>
+      {graph.hub_entities.length > 0 && (
+        <div>
+          <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Most connected (most influential)</p>
+          {graph.hub_entities.slice(0, 3).map((h, i) => (
+            <div key={i} className="flex items-center justify-between py-1 text-xs">
+              <span className="text-[var(--av-text)] capitalize">{h.entity_type}</span>
+              <span className="text-[var(--av-primary)] font-medium">{h.connections} connections</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

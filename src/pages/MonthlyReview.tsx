@@ -7,9 +7,11 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
+import { composeBusinessReview, type BusinessReview } from '../lib/businessOS'
 import {
   Calendar, Loader2, Printer, TrendingDown, TrendingUp, Minus,
   HeartPulse, Target, ShieldAlert, Lightbulb, BarChart3, ShieldCheck, HelpCircle,
+  BookOpen, CheckCircle2, AlertTriangle, Sparkles,
 } from 'lucide-react'
 
 interface MPR {
@@ -54,6 +56,7 @@ export default function MPRPage() {
   const { staff } = useAuth()
   const bid = staff?.business_id
   const [review, setReview] = useState<MPR | null>(null)
+  const [narrative, setNarrative] = useState<BusinessReview | null>(null)
   const [loading, setLoading] = useState(true)
   const [monthIdx, setMonthIdx] = useState(0)
   const [expandedRec, setExpandedRec] = useState<string | null>(null)
@@ -70,6 +73,8 @@ export default function MPRPage() {
       })
       if (error) throw error
       setReview(data as MPR)
+      // §AA evolved review — the narrative synthesis (best-effort, non-blocking).
+      composeBusinessReview(bid, m.start, m.end).then(n => setNarrative(n))
     } catch (e) {
       console.error('monthly_review failed (non-blocking):', e)
     } finally {
@@ -129,6 +134,73 @@ export default function MPRPage() {
         <h1 className="text-xl font-bold">Monthly Performance Review — {MONTHS[monthIdx].label}</h1>
         <p className="text-sm text-gray-500">Generated {new Date(review.generated_at).toLocaleString()}</p>
       </div>
+
+      {/* §AA — the evolved narrative review. The directive's 9 questions answered
+          in plain language, synthesized from the same facts below. Best-effort —
+          stays empty if the compose_business_review migration isn't deployed. */}
+      {narrative && narrative.authorized && (
+        <Section title="Business Review — the story" icon={BookOpen} collapsible>
+          <p className="text-xs text-[var(--av-text-muted)] mb-3">
+            What happened this month, in plain language. <ClaimTag type="FACT" /> — every number below is traceable to live business data.
+          </p>
+          <div className="space-y-3 text-sm">
+            {narrative.what_improved.length > 0 && (
+              <div>
+                <p className="font-medium text-[var(--av-success)] flex items-center gap-1.5 mb-1"><CheckCircle2 size={14} /> What improved</p>
+                <ul className="ml-5 list-disc space-y-0.5">
+                  {narrative.what_improved.map((m, i) => (
+                    <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-success)] font-medium">+{m.change_pct.toFixed(1)}%</span></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {narrative.what_deteriorated.length > 0 && (
+              <div>
+                <p className="font-medium text-[var(--av-danger)] flex items-center gap-1.5 mb-1"><AlertTriangle size={14} /> What deteriorated</p>
+                <ul className="ml-5 list-disc space-y-0.5">
+                  {narrative.what_deteriorated.map((m, i) => (
+                    <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-danger)] font-medium">{m.change_pct.toFixed(1)}%</span></li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {narrative.what_we_learned.length > 0 && (
+              <div>
+                <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><BookOpen size={14} /> What we learned</p>
+                <ul className="ml-5 list-disc space-y-0.5">
+                  {narrative.what_we_learned.map((l, i) => (
+                    <li key={i} className="text-[var(--av-text-secondary)]"><strong>{l.topic}:</strong> {l.lesson}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {(() => {
+              const rd = narrative.recommended_vs_done
+              if (rd.recommended === 0) return null
+              return (
+                <div>
+                  <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Sparkles size={14} /> What Avenize recommended vs what you did</p>
+                  <p className="text-[var(--av-text-secondary)]">
+                    {rd.recommended} recommendations · {rd.accepted} accepted · {rd.acted} acted on · {rd.outcomes_recorded} outcomes recorded ({rd.successful_outcomes} successful).
+                    {rd.recommended - rd.acted > 0 && <span className="text-[var(--av-warning)]"> {rd.recommended - rd.acted} still open.</span>}
+                  </p>
+                </div>
+              )
+            })()}
+            {narrative.next_month_priorities.length > 0 && (
+              <div>
+                <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Target size={14} /> What to focus on next month</p>
+                <ul className="ml-5 list-disc space-y-0.5">
+                  {narrative.next_month_priorities.slice(0, 5).map((p, i) => (
+                    <li key={i} className="text-[var(--av-text-secondary)]">{p.statement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {narrative.note && <p className="text-xs text-[var(--av-text-muted)] italic">{narrative.note}</p>}
+          </div>
+        </Section>
+      )}
 
       {/* Summary header */}
       <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
