@@ -1218,3 +1218,45 @@ tsc clean, vite build 0 warnings, vitest 188/188, schema-drift 0. CI green on pu
 ### Deploy status
 - Vercel production: deploying via the main-push workflow.
 - ⚠️ STILL needs live DB: pending migrations must be applied to Supabase (project `kgsgqvatyleetyquffya`). All idempotent. Frontend degrades gracefully until then (ops dashboard shows "couldn't load — migration may not be applied yet" with retry; the platform-admin gate returns `authorized:false` for everyone until `is_platform_admin()` exists). No new external dependencies; no WhatsApp/Meta.
+
+## Session 22 (2026-08-18): Master checklist sequencing -- Sections 1, 4.2, 5.3, 5.5/7.4, 7.1, 7.3
+
+User directive: no external WhatsApp/Meta dependencies (app "easier than WhatsApp"), merge all hanging PRs, implement full sequencing of remaining master checklist items, "continue to fix." Worked through the master readiness checklist sections sequentially. All commits pushed to main; baseline held green after every step (tsc clean, vite build 0 warnings, schema-drift 0).
+
+### Section 1 -- Foundation (commit e0ceba7, migration 20260818130000)
+- Reconciled duplicate tables: recurring_costs -> recurring_expenses (canonical), payroll_items -> payroll_entries. Migrated data, dropped duplicates. Unblocks EBITDA (5.3) + health-score work.
+- Production migration matrix artifact + RLS attack test suite.
+
+### Section 4.2 -- server-derived invoice totals, 0.4 reference pattern (commit 892cbad, migration 20260818140000)
+- create_invoice + record_invoice_payment SECURITY DEFINER RPCs recompute totals server-side. FinanceNigeria.tsx routes through them; calculateTotals() display-only. 9 tests.
+
+### Section 5.1 -- Business Health Score (verified already wired, stale checklist item)
+- compute_business_health (Session 13) + BusinessHealthCard already satisfy the checklist. No change.
+
+### Section 5.5 / 7.4 -- proactive digest + one-tap alert actions (commit 78d9d8b, migration 20260818150000)
+- NO WhatsApp dependency -- delivered via the existing Resend email edge function.
+- compose_business_digest RPC: plain-language lines composed from REAL data; every line cites its source (22 anti-fabrication). Honest "Nothing needs your attention" when clear.
+- send_business_digest RPC: idempotent (20h daily / 6d weekly dedup), opt-in (7.4), audited in business_digest_log.
+- alert_action_map: 5.5 one-tap resolving action per alert rule (overdue invoice -> "Send reminder", low stock -> "Reorder", stale deal -> "Follow up").
+- send-business-digest edge function: cron-invoked; fire-and-forget per business (24).
+- Dashboard "Today's digest" card (owner/admin only). 6 tests.
+
+### Section 5.3 -- EBITDA / operating profitability (commit 84997ca, migration 20260818160000)
+- Unblocked by Section 1. compute_ebitda RPC: Revenue (paid invoices) - COGS (purchase transactions) - opex (recurring_expenses normalized to period + adjustments). Plain-language label + component breakdown + insufficient_data flag (21). Margin NULL when revenue=0 (22).
+- EbitdaCard on ExecutiveCockpit.
+- 7.1 idempotency fix (same migration): check_deal_automations re-declared with the stage-change guard -- fires ONLY when stage actually changed (was double-firing on every update). 6 tests.
+
+### Section 7.3 -- per-business approval threshold config (commit 44bd913, migration 20260818170000)
+- business_approval_config: bypass_all_approvals (sole-proprietor toggle) + auto_approve_below (business-wide floor). RLS: owner/admin write. Auto-created per new business.
+- is_approval_required RPC: centralized decision helper. Precedence: business bypass -> sole proprietor -> category requires_approval=false -> category auto-approve-below -> business floor -> DEFAULT require (fail-safe). 8 tests.
+- RoleSettings.tsx "Approval thresholds" card.
+
+### 7.5 audit trail (verified sound, no change)
+- automation_runs already captures status + error_message + trigger_event + executed_at. audit_row_change triggers (056) cover business-data mutations.
+
+### Verification (every commit + final)
+tsc clean; vite build 0 warnings; vitest 226/226 (was 206 at session start, +20); schema-drift 0. All commits pushed to main: e0ceba7 (S1), 892cbad (S4.2), 78d9d8b (S5.5/7.4), 84997ca (S5.3+7.1), 44bd913 (S7.3). No new runtime dependencies; no external APIs (Resend is the existing email provider; no WhatsApp/Meta dependency anywhere).
+
+### Deploy status
+- Vercel production: all commits deploying via the main-push workflow.
+- STILL needs live DB: migrations 20260818130000-170000 must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until then (digest card stays empty, EBITDA card shows insufficient-data, approval config shows defaults) because every caller is best-effort/non-blocking (24).
