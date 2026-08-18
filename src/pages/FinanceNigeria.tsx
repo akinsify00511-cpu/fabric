@@ -184,47 +184,44 @@ export default function FinanceNigeria() {
     }
 
     try {
-      const { subtotal, vatAmount, whtAmount, total } = calculateTotals(
-        newInvoice.items,
-        newInvoice.vat_rate,
-        newInvoice.apply_wht
-      )
-
-      const invoiceNumber = `INV-${Date.now().toString().slice(-6)}`
+      // §0.4: the server RECOMPUTES every money total from the raw line items.
+      // The client supplies item data + tax config; it never trusts a
+      // browser-summed total (the prior bug — calculateTotals ran in the
+      // browser and the insert trusted those numbers).
       const dueDate = new Date()
       dueDate.setDate(dueDate.getDate() + 30) // 30 days payment terms
 
-      const { data, error } = await supabase
+      const { data: rpcResult, error: rpcError } = await supabase.rpc('create_invoice', {
+        p_client_name: newInvoice.client_name,
+        p_items: newInvoice.items,
+        p_vat_rate: newInvoice.vat_rate,
+        p_apply_wht: newInvoice.apply_wht,
+        p_wht_rate: WHT_RATE_RESIDENT,
+        p_client_email: newInvoice.client_email || null,
+        p_client_address: newInvoice.client_address || null,
+        p_job_reference: newInvoice.job_reference || null,
+        p_invoice_number: null,
+        p_due_date: dueDate.toISOString(),
+        p_is_proforma: newInvoice.is_proforma,
+        p_notes: newInvoice.notes || null,
+        p_currency: null,
+        p_staff_id: staff.id,
+        p_business_id: staff.business_id,
+      })
+
+      if (rpcError) throw rpcError
+      const result = rpcResult as { ok: boolean; error?: string; invoice_id?: string; invoice_number?: string; subtotal?: number; vat_amount?: number; wht_amount?: number; total?: number; balance?: number } | null
+      if (!result?.ok) throw new Error(result?.error || 'Failed to create invoice')
+
+      // Fetch the created invoice so the list shows the server-derived totals.
+      const { data: created, error: fetchErr } = await supabase
         .from('invoices')
-        .insert({
-          invoice_number: invoiceNumber,
-          client_name: newInvoice.client_name,
-          client_email: newInvoice.client_email,
-          client_address: newInvoice.client_address,
-          job_reference: newInvoice.job_reference,
-          items: newInvoice.items,
-          subtotal,
-          vat_rate: newInvoice.vat_rate,
-          vat_amount: vatAmount,
-          wht_rate: newInvoice.apply_wht ? WHT_RATE_RESIDENT : 0,
-          wht_amount: whtAmount,
-          total,
-          amount_paid: 0,
-          balance: total,
-          status: 'draft',
-          issue_date: new Date().toISOString(),
-          due_date: dueDate.toISOString(),
-          is_proforma: newInvoice.is_proforma,
-          notes: newInvoice.notes,
-          staff_id: staff.id,
-          business_id: staff.business_id,
-        })
-        .select()
+        .select('*')
+        .eq('id', result.invoice_id!)
         .single()
+      if (fetchErr) throw fetchErr
 
-      if (error) throw error
-
-      setInvoices(prev => [data as Invoice, ...prev])
+      setInvoices(prev => [created as Invoice, ...prev])
       setShowNewInvoice(false)
       setNewInvoice({
         client_name: '', client_email: '', client_address: '', job_reference: '',
@@ -246,57 +243,34 @@ export default function FinanceNigeria() {
     }
 
     try {
-      // Create payment record
-      const { data: payData, error: payError } = await supabase
-        .from('payments')
-        .insert({
-          invoice_id: selectedInvoice.id,
-          invoice_number: selectedInvoice.invoice_number,
-          amount: newPayment.amount,
-          method: newPayment.method,
-          bank: newPayment.bank,
-          reference: newPayment.reference,
-          date: new Date().toISOString(),
-          notes: newPayment.notes,
-          staff_id: staff.id,
-          business_id: staff.business_id,
-        })
-        .select()
-        .single()
+      // §0.4: the server RECOMPUTES amount_paid + balance from the
+      // authoritative stored total (never trusts a client-supplied balance)
+      // and inserts the payment row atomically. The prior code computed
+      // newBalance in the browser and trusted it.
+      const { data: payResult, error: payError } = await supabase.rpc('record_invoice_payment', {
+        p_invoice_id: selectedInvoice.id,
+        p_amount: newPayment.amount,
+        p_payment_method: newPayment.method,
+        p_reference: newPayment.reference,
+        p_business_id: staff.business_id,
+      })
 
       if (payError) throw payError
+      const result = payResult as { ok: boolean; error?: string; payment_id?: string; amount_paid?: number; balance?: number; status?: string } | null
+      if (!result?.ok) throw new Error(result?.error || 'Failed to record payment')
 
-      // Update invoice
-      const newAmountPaid = selectedInvoice.amount_paid + newPayment.amount
-      const newBalance = selectedInvoice.total - newAmountPaid
-      const newStatus: InvoiceStatus = newBalance <= 0 ? 'paid' : 
-        newAmountPaid > 0 ? 'partially_paid' : selectedInvoice.status
-
-      const { error: invoiceError } = await supabase
-        .from('invoices')
-        .update({
-          amount_paid: newAmountPaid,
-          balance: newBalance,
-          status: newStatus,
-        })
-        .eq('id', selectedInvoice.id)
-
-      if (invoiceError) {
-        // Payment row saved but invoice balance/status update failed --
-        // do NOT show success or the invoice displays a stale balance.
-        throw invoiceError
-      }
-
+      // Optimistic UI update gated on the server-derived result.
       setInvoices(prev => prev.map(inv =>
         inv.id === selectedInvoice.id
-          ? { ...inv, amount_paid: newAmountPaid, balance: newBalance, status: newStatus }
+          ? { ...inv, amount_paid: result.amount_paid!, balance: result.balance!, status: result.status as InvoiceStatus }
           : inv
       ))
-      setPayments(prev => [payData as Payment, ...prev])
-      
+      // Refresh the finance list (the RPC inserted the payment row server-side).
+      loadFinance()
+
       setShowRecordPayment(false)
       setNewPayment({ amount: 0, method: 'bank_transfer', bank: 'access', reference: '', notes: '' })
-      
+
       showToast('Payment recorded!', 'success')
     } catch (err) {
       console.error('Failed to record payment:', err)
