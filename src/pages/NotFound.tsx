@@ -34,7 +34,7 @@ export default function NotFound() {
           </Link>
           <Link
             to="/app"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-black rounded-xl font-medium hover:bg-black/10 transition"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-black/10 text-[var(--av-text)] rounded-xl font-medium hover:bg-black/5 transition"
           >
             <ArrowLeft size={18} />
             Back to App

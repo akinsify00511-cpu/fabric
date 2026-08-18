@@ -166,7 +166,7 @@ export default function Signup() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl shadow-blue-900/5 p-8 text-center space-y-6">
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center">
               <Check className="w-8 h-8 text-green-600" />
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function Signup() {
           <div>
             <h2 className="text-2xl font-bold text-black">{tr('checkEmail', 'Check your email')}</h2>
             <p className="text-sm text-black mt-2">{tr('confirmationSent', 'We sent a confirmation link to')}</p>
-            <p className="font-semibold text-blue-600 mt-1">{email}</p>
+            <p className="font-semibold text-[var(--av-primary)] mt-1">{email}</p>
           </div>
 
           <div className="bg-gradient-to-br from-blue-50 to-[var(--av-primary)]/5 rounded-xl p-5 text-left space-y-3">
@@ -186,7 +186,7 @@ export default function Signup() {
                 tr('stepStartUsing', 'Start using Avenize with your team')
               ].map((stepText, i) => (
                 <li key={i} className="flex items-center gap-3">
-                  <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                  <span className="w-5 h-5 rounded-full bg-[var(--av-primary)] text-white text-xs flex items-center justify-center flex-shrink-0">{i + 1}</span>
                   {stepText}
                 </li>
               ))}
@@ -197,7 +197,7 @@ export default function Signup() {
             <p className="text-xs text-black">{tr('noEmail', 'Didn\'t receive the email? Check your spam folder.')}</p>
             <button 
               onClick={handleResendEmail}
-              className="text-sm text-blue-600 hover:underline font-medium"
+              className="text-sm text-[var(--av-primary)] hover:underline font-medium"
             >
               {tr('resendEmail', 'Resend confirmation email')}
             </button>
@@ -313,7 +313,7 @@ export default function Signup() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-black" />
+              <div className="w-full border-t border-[var(--av-border)]" />
             </div>
             <div className="relative flex justify-center">
               <span className="bg-white px-4 text-sm text-black">{tr('or', 'or')}</span>
@@ -322,7 +322,7 @@ export default function Signup() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">
+              <div className="bg-[var(--av-danger-soft)] border border-[var(--av-danger)]/30 text-[var(--av-danger)] rounded-xl px-4 py-3 text-sm">
                 {error}
               </div>
             )}
@@ -337,7 +337,7 @@ export default function Signup() {
                   placeholder={tr('businessNamePlaceholder', 'Acme Nigeria Ltd')}
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
-                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition"
                 />
               </div>
 
@@ -348,7 +348,7 @@ export default function Signup() {
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition bg-white"
+                  className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition bg-white"
                 >
                   <option value="">{tr('selectIndustry', 'Select an industry')}</option>
                   <option value="construction">{tr('industryConstruction', 'Construction')}</option>
@@ -369,7 +369,7 @@ export default function Signup() {
                   placeholder={tr('fullNamePlaceholder', 'Chinedu Okonkwo')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition"
                 />
               </div>
 
@@ -383,7 +383,7 @@ export default function Signup() {
                   placeholder={tr('emailPlaceholder', 'you@company.com')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-black px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                  className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition"
                 />
               </div>
 
@@ -402,7 +402,7 @@ export default function Signup() {
                       setPassword(e.target.value)
                       if (confirmPassword) validatePassword()
                     }}
-                    className="w-full rounded-xl border border-black px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                    className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition"
                   />
                   <button
                     type="button"
@@ -435,7 +435,7 @@ export default function Signup() {
                       setConfirmPassword(e.target.value)
                       if (password) validatePassword()
                     }}
-                    className={`w-full rounded-xl border ${passwordError ? 'border-red-400 bg-red-50' : 'border-black'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition`}
+                    className={`w-full rounded-xl border ${passwordError ? 'border-[var(--av-danger)] bg-[var(--av-danger-soft)]' : 'border-[var(--av-border)]'} px-4 py-3 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition`}
                   />
                   <button
                     type="button"
@@ -473,16 +473,16 @@ export default function Signup() {
 
             <p className="text-xs text-center text-black">
               By signing up, you agree to our{' '}
-              <a href="/terms" className="text-blue-600 hover:underline">Terms</a>
+              <a href="/terms" className="text-[var(--av-primary)] hover:underline">Terms</a>
               {' '}and{' '}
-              <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+              <a href="/privacy" className="text-[var(--av-primary)] hover:underline">Privacy Policy</a>
             </p>
           </form>
 
           <div className="text-center pt-4 border-t border-white">
             <p className="text-sm text-black">
               Already have an account?{' '}
-              <Link to="/login" className="text-blue-600 font-medium hover:underline">
+              <Link to="/login" className="text-[var(--av-primary)] font-medium hover:underline">
                 Sign in
               </Link>
             </p>
