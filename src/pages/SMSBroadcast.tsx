@@ -268,11 +268,11 @@ export default function SMSBroadcastPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">SMS Broadcast</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">SMS Broadcast</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Send SMS campaigns to your customers and staff
             </p>
           </div>
@@ -280,14 +280,14 @@ export default function SMSBroadcastPage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-6">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6">
         <div className="flex gap-6">
           <button
             onClick={() => setActiveTab('compose')}
             className={`py-3 text-sm font-medium border-b-2 ${
               activeTab === 'compose'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
             }`}
           >
             Compose
@@ -296,8 +296,8 @@ export default function SMSBroadcastPage() {
             onClick={() => setActiveTab('history')}
             className={`py-3 text-sm font-medium border-b-2 ${
               activeTab === 'history'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
             }`}
           >
             History
@@ -306,8 +306,8 @@ export default function SMSBroadcastPage() {
             onClick={() => setActiveTab('contacts')}
             className={`py-3 text-sm font-medium border-b-2 ${
               activeTab === 'contacts'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
             }`}
           >
             Contacts
@@ -321,10 +321,10 @@ export default function SMSBroadcastPage() {
             {/* Compose Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Message */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-gray-900">Message</h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <h3 className="font-medium text-[var(--av-text)]">Message</h3>
+                  <div className="flex items-center gap-2 text-sm text-[var(--av-text-muted)]">
                     <span>{characterCount} characters</span>
                     <span>•</span>
                     <span>{smsCount} SMS ({smsCount * 160} limit)</span>
@@ -333,11 +333,11 @@ export default function SMSBroadcastPage() {
 
                 {/* Templates */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Quick Templates</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">Quick Templates</label>
                   <select
                     value={selectedTemplate}
                     onChange={(e) => applyTemplate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select a template...</option>
                     <optgroup label="Saved Templates">
@@ -358,33 +358,33 @@ export default function SMSBroadcastPage() {
                   onChange={(e) => setMessage(e.target.value)}
                   rows={6}
                   maxLength={500}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   placeholder="Type your message here..."
                 />
 
                 {/* Variables hint */}
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-[var(--av-text-muted)] mt-2">
                   Available variables: {'{name}'}, {'{business}'}, {'{date}'}, {'{time}'}, {'{amount}'}, {'{offer}'}, {'{expiry}'}
                 </p>
               </div>
 
               {/* Recipients */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-medium text-gray-900">
+                  <h3 className="font-medium text-[var(--av-text)]">
                     Recipients ({recipients.length} selected)
                   </h3>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={selectAll}
-                      className="text-sm text-blue-600 hover:text-blue-800"
+                      className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary-hover)]"
                     >
                       Select All
                     </button>
                     {recipients.length > 0 && (
                       <button
                         onClick={clearRecipients}
-                        className="text-sm text-gray-500 hover:text-gray-700"
+                        className="text-sm text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]"
                       >
                         Clear
                       </button>
@@ -395,19 +395,19 @@ export default function SMSBroadcastPage() {
                 {/* Filter */}
                 <div className="flex gap-4 mb-4">
                   <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                     <input
                       type="text"
                       placeholder="Search contacts..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <select
                     value={recipientType}
                     onChange={(e) => setRecipientType(e.target.value as any)}
-                    className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="all">All</option>
                     <option value="clients">Clients</option>
@@ -416,9 +416,9 @@ export default function SMSBroadcastPage() {
                 </div>
 
                 {/* Contact List */}
-                <div className="max-h-64 overflow-y-auto border border-gray-200 rounded-lg">
+                <div className="max-h-64 overflow-y-auto border border-[var(--av-border)] rounded-lg">
                   {filteredContacts.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">
+                    <div className="p-4 text-center text-[var(--av-text-muted)]">
                       No contacts found
                     </div>
                   ) : (
@@ -430,20 +430,20 @@ export default function SMSBroadcastPage() {
                           onClick={() => toggleRecipient(contact)}
                           className={`p-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 ${
                             isSelected ? 'bg-blue-50' : ''
-                          } ${contact !== filteredContacts[filteredContacts.length - 1] ? 'border-b border-gray-100' : ''}`}
+                          } ${contact !== filteredContacts[filteredContacts.length - 1] ? 'border-b border-[var(--av-border)]' : ''}`}
                         >
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => toggleRecipient(contact)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            className="w-4 h-4 text-[var(--av-primary)] border-[var(--av-border-strong)] rounded focus:ring-blue-500"
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{contact.name}</p>
-                            <p className="text-xs text-gray-500">{contact.phone}</p>
+                            <p className="text-sm font-medium text-[var(--av-text)] truncate">{contact.name}</p>
+                            <p className="text-xs text-[var(--av-text-muted)]">{contact.phone}</p>
                           </div>
                           <span className={`px-2 py-0.5 text-xs rounded-full ${
-                            contact.type === 'client' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
+                            contact.type === 'client' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-purple-100 text-purple-700'
                           }`}>
                             {contact.type}
                           </span>
@@ -458,23 +458,23 @@ export default function SMSBroadcastPage() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Summary */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-medium text-gray-900 mb-4">Summary</h3>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
+                <h3 className="font-medium text-[var(--av-text)] mb-4">Summary</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Recipients</span>
+                    <span className="text-sm text-[var(--av-text-muted)]">Recipients</span>
                     <span className="text-sm font-medium">{recipients.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">SMS Count</span>
+                    <span className="text-sm text-[var(--av-text-muted)]">SMS Count</span>
                     <span className="text-sm font-medium">{smsCount}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-gray-500">Total SMS</span>
+                    <span className="text-sm text-[var(--av-text-muted)]">Total SMS</span>
                     <span className="text-sm font-medium">{recipients.length * smsCount}</span>
                   </div>
-                  <div className="pt-3 border-t border-gray-200">
-                    <p className="text-xs text-gray-500">
+                  <div className="pt-3 border-t border-[var(--av-border)]">
+                    <p className="text-xs text-[var(--av-text-muted)]">
                       Note: Each SMS costs approximately ₦4-8 depending on your Termii plan.
                     </p>
                   </div>
@@ -483,7 +483,7 @@ export default function SMSBroadcastPage() {
                 <button
                   onClick={sendSMS}
                   disabled={sending || !message.trim() || recipients.length === 0}
-                  className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full mt-4 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {sending ? (
                     <>
@@ -500,24 +500,24 @@ export default function SMSBroadcastPage() {
               </div>
 
               {/* Recent */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-medium text-gray-900 mb-4">Recent Activity</h3>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
+                <h3 className="font-medium text-[var(--av-text)] mb-4">Recent Activity</h3>
                 <div className="space-y-3">
                   {smsLogs.slice(0, 5).map(log => (
                     <div key={log.id} className="flex items-start gap-3">
                       {log.status === 'sent' || log.status === 'delivered' ? (
-                        <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--av-success)] mt-0.5" />
                       ) : (
-                        <XCircle className="w-4 h-4 text-red-500 mt-0.5" />
+                        <XCircle className="w-4 h-4 text-[var(--av-danger)] mt-0.5" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-gray-900 truncate">{log.recipient}</p>
-                        <p className="text-xs text-gray-500">{formatDate(log.created_at)}</p>
+                        <p className="text-sm text-[var(--av-text)] truncate">{log.recipient}</p>
+                        <p className="text-xs text-[var(--av-text-muted)]">{formatDate(log.created_at)}</p>
                       </div>
                     </div>
                   ))}
                   {smsLogs.length === 0 && (
-                    <p className="text-sm text-gray-500 text-center">No recent activity</p>
+                    <p className="text-sm text-[var(--av-text-muted)] text-center">No recent activity</p>
                   )}
                 </div>
               </div>
@@ -526,41 +526,41 @@ export default function SMSBroadcastPage() {
         )}
 
         {activeTab === 'history' && (
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)]">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Recipient</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Message</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {smsLogs.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan={4} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                         No SMS history found
                       </td>
                     </tr>
                   ) : (
                     smsLogs.map(log => (
                       <tr key={log.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900">{log.recipient}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{log.message}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text)]">{log.recipient}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)] max-w-xs truncate">{log.message}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             log.status === 'sent' || log.status === 'delivered'
-                              ? 'bg-green-100 text-green-700'
+                              ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]'
                               : log.status === 'pending'
                               ? 'bg-amber-100 text-amber-700'
-                              : 'bg-red-100 text-red-700'
+                              : 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                           }`}>
                             {log.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">{formatDate(log.created_at)}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">{formatDate(log.created_at)}</td>
                       </tr>
                     ))
                   )}
@@ -571,23 +571,23 @@ export default function SMSBroadcastPage() {
         )}
 
         {activeTab === 'contacts' && (
-          <div className="bg-white rounded-xl border border-gray-200">
-            <div className="p-4 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)]">
+            <div className="p-4 border-b border-[var(--av-border)]">
               <div className="flex gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                   <input
                     type="text"
                     placeholder="Search contacts..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <select
                   value={recipientType}
                   onChange={(e) => setRecipientType(e.target.value as any)}
-                  className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">All</option>
                   <option value="clients">Clients</option>
@@ -597,30 +597,30 @@ export default function SMSBroadcastPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Phone</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Email</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Type</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {filteredContacts.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan={4} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                         No contacts found
                       </td>
                     </tr>
                   ) : (
                     filteredContacts.map(contact => (
                       <tr key={contact.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900">{contact.name}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{contact.phone}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{contact.email || '-'}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">{contact.name}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">{contact.phone}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">{contact.email || '-'}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 text-xs rounded-full ${
-                            contact.type === 'client' ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700'
+                            contact.type === 'client' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-purple-100 text-purple-700'
                           }`}>
                             {contact.type}
                           </span>
@@ -631,8 +631,8 @@ export default function SMSBroadcastPage() {
                 </tbody>
               </table>
             </div>
-            <div className="p-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
+            <div className="p-4 border-t border-[var(--av-border)]">
+              <p className="text-sm text-[var(--av-text-muted)]">
                 Total: {filteredContacts.length} contacts
               </p>
             </div>

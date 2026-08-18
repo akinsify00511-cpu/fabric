@@ -195,8 +195,8 @@ export default function Events() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Events</h1>
-          <p className="text-sm text-black mt-0.5">Manage and promote your events</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Events</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">Manage and promote your events</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -220,7 +220,7 @@ export default function Events() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
+              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-[var(--av-border)]'
             }`}
           >
             {tab.label}
@@ -230,9 +230,9 @@ export default function Events() {
 
       {/* Calendar View */}
       {activeTab !== 'registrations' && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden">
           {/* Calendar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-black/[0.06]">
+          <div className="flex items-center justify-between p-4 border-b border-[var(--av-border-strong)]/[0.06]">
             <button onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))} className="p-2 hover:bg-black/[0.05] rounded-lg">
               <ChevronLeft size={20} />
             </button>
@@ -245,13 +245,13 @@ export default function Events() {
           {/* Calendar Grid */}
           <div className="grid grid-cols-7">
             {DAYS.map((day) => (
-              <div key={day} className="p-3 text-center text-sm font-medium text-black border-b border-black/[0.06]">
+              <div key={day} className="p-3 text-center text-sm font-medium text-[var(--av-text)] border-b border-[var(--av-border-strong)]/[0.06]">
                 {day}
               </div>
             ))}
             {days.map((day, i) => {
               if (!day) {
-                return <div key={i} className="min-h-24 border-b border-r border-black/[0.06]" />
+                return <div key={i} className="min-h-24 border-b border-r border-[var(--av-border-strong)]/[0.06]" />
               }
               const dayEvents = getEventsForDate(day)
               const isToday = day.toDateString() === new Date().toDateString()
@@ -259,7 +259,7 @@ export default function Events() {
                 <div
                   key={i}
                   onClick={() => setSelectedDate(day)}
-                  className={`min-h-24 p-2 border-b border-r border-black/[0.06] cursor-pointer hover:bg-black/10 ${
+                  className={`min-h-24 p-2 border-b border-r border-[var(--av-border-strong)]/[0.06] cursor-pointer hover:bg-[var(--av-surface-3)] ${
                     isToday ? 'bg-[#4285F4]/5' : ''
                   }`}
                 >
@@ -282,7 +282,7 @@ export default function Events() {
                     </div>
                   ))}
                   {dayEvents.length > 2 && (
-                    <div className="text-xs text-black">+{dayEvents.length - 2} more</div>
+                    <div className="text-xs text-[var(--av-text)]">+{dayEvents.length - 2} more</div>
                   )}
                 </div>
               )
@@ -295,7 +295,7 @@ export default function Events() {
       {activeTab === 'past' && (
         <div className="space-y-4">
           {filteredEvents.map((event) => (
-            <div key={event.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+            <div key={event.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
@@ -303,8 +303,8 @@ export default function Events() {
                   </div>
                   <div>
                     <h3 className="font-medium">{event.title}</h3>
-                    <p className="text-sm text-black mt-1">{event.description}</p>
-                    <div className="flex items-center gap-4 mt-2 text-sm text-black">
+                    <p className="text-sm text-[var(--av-text)] mt-1">{event.description}</p>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-[var(--av-text)]">
                       <span className="flex items-center gap-1">
                         <Clock size={14} />
                         {new Date(event.start_date).toLocaleDateString()}
@@ -328,10 +328,10 @@ export default function Events() {
 
       {/* Registrations Tab */}
       {activeTab === 'registrations' && (
-        <div className="bg-white rounded-2xl border border-black/[0.06]">
-          <div className="p-4 border-b border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06]">
+          <div className="p-4 border-b border-[var(--av-border-strong)]/[0.06]">
             <div className="flex items-center gap-4">
-              <Search className="text-black" size={16} />
+              <Search className="text-[var(--av-text)]" size={16} />
               <input
                 placeholder="Search registrations..."
                 className="flex-1 outline-none"
@@ -346,24 +346,24 @@ export default function Events() {
             ].map((reg, i) => (
               <div key={i} className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                    <User size={18} className="text-black" />
+                  <div className="w-10 h-10 rounded-full bg-[var(--av-surface)] flex items-center justify-center">
+                    <User size={18} className="text-[var(--av-text)]" />
                   </div>
                   <div>
                     <p className="font-medium">{reg.name}</p>
-                    <p className="text-sm text-black">{reg.email}</p>
+                    <p className="text-sm text-[var(--av-text)]">{reg.email}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm">{reg.event}</p>
                   <div className="flex items-center gap-2 justify-end mt-1">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      reg.status === 'attended' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                      reg.status === 'attended' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
                     }`}>
                       {reg.status}
                     </span>
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      reg.rsvp === 'yes' ? 'bg-green-100 text-green-700' : reg.rsvp === 'no' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                      reg.rsvp === 'yes' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : reg.rsvp === 'no' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' : 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
                     }`}>
                       RSVP: {reg.rsvp}
                     </span>
@@ -378,8 +378,8 @@ export default function Events() {
       {/* Create Event Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <h2 className="font-semibold">Create New Event</h2>
             </div>
             <div className="p-6 space-y-4">
@@ -389,7 +389,7 @@ export default function Events() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="Annual Conference 2024"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 />
               </div>
 
@@ -400,7 +400,7 @@ export default function Events() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="What's this event about?"
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] resize-none"
                 />
               </div>
 
@@ -411,7 +411,7 @@ export default function Events() {
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
                 <div>
@@ -420,7 +420,7 @@ export default function Events() {
                     type="time"
                     value={formData.startTime}
                     onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
               </div>
@@ -432,7 +432,7 @@ export default function Events() {
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
                 <div>
@@ -441,7 +441,7 @@ export default function Events() {
                     type="time"
                     value={formData.endTime}
                     onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
               </div>
@@ -460,7 +460,7 @@ export default function Events() {
                         key={opt.value}
                         onClick={() => setFormData({ ...formData, locationType: opt.value as any })}
                         className={`p-3 rounded-xl border flex flex-col items-center gap-1 ${
-                          formData.locationType === opt.value ? 'border-[#4285F4] bg-[#4285F4]/5' : 'border-black/10'
+                          formData.locationType === opt.value ? 'border-[#4285F4] bg-[#4285F4]/5' : 'border-[var(--av-border)]'
                         }`}
                       >
                         <Icon size={18} />
@@ -477,7 +477,7 @@ export default function Events() {
                   value={formData.locationName}
                   onChange={(e) => setFormData({ ...formData, locationName: e.target.value })}
                   placeholder={formData.locationType === 'virtual' ? 'Zoom/Meet link' : 'Venue name'}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 />
               </div>
 
@@ -489,7 +489,7 @@ export default function Events() {
                     value={formData.maxCapacity}
                     onChange={(e) => setFormData({ ...formData, maxCapacity: e.target.value })}
                     placeholder="Unlimited"
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
               </div>
@@ -514,8 +514,8 @@ export default function Events() {
                 <span className="text-sm">Publish immediately</span>
               </label>
             </div>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-2">
-              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06] flex justify-end gap-2">
+              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-[var(--av-border)]">
                 Cancel
               </button>
               <button onClick={handleCreateEvent} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">
@@ -529,31 +529,31 @@ export default function Events() {
       {/* Event Detail Modal */}
       {showEventModal && selectedEvent && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
-            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">{selectedEvent.title}</h2>
               <button onClick={() => setShowEventModal(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">✕</button>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-black/60">{selectedEvent.description}</p>
+              <p className="text-sm text-[var(--av-text)]/60">{selectedEvent.description}</p>
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-black">Date</p>
+                  <p className="text-[var(--av-text)]">Date</p>
                   <p className="font-medium">{new Date(selectedEvent.start_date).toLocaleDateString()}</p>
                 </div>
                 <div>
-                  <p className="text-black">Time</p>
+                  <p className="text-[var(--av-text)]">Time</p>
                   <p className="font-medium">
                     {new Date(selectedEvent.start_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 <div>
-                  <p className="text-black">Location</p>
+                  <p className="text-[var(--av-text)]">Location</p>
                   <p className="font-medium">{selectedEvent.location_name || selectedEvent.location_type}</p>
                 </div>
                 <div>
-                  <p className="text-black">Capacity</p>
+                  <p className="text-[var(--av-text)]">Capacity</p>
                   <p className="font-medium">{selectedEvent.current_registrations}/{selectedEvent.max_capacity || '∞'}</p>
                 </div>
               </div>
@@ -569,7 +569,7 @@ export default function Events() {
                   <a
                     href={selectedEvent.location_url}
                     target="_blank"
-                    className="px-4 py-2 rounded-lg border border-black/10 flex items-center gap-2"
+                    className="px-4 py-2 rounded-lg border border-[var(--av-border)] flex items-center gap-2"
                   >
                     <ExternalLink size={16} />
                     Join

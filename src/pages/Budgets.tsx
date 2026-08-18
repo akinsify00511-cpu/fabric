@@ -262,11 +262,11 @@ export default function Budgets() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-600 bg-green-50'
-      case 'draft': return 'text-yellow-600 bg-yellow-50'
-      case 'closed': return 'text-gray-600 bg-gray-50'
-      case 'overbudget': return 'text-red-600 bg-red-50'
-      default: return 'text-gray-600 bg-gray-50'
+      case 'active': return 'text-[var(--av-success)] bg-green-50'
+      case 'draft': return 'text-[var(--av-warning)] bg-yellow-50'
+      case 'closed': return 'text-[var(--av-text-muted)] bg-gray-50'
+      case 'overbudget': return 'text-[var(--av-danger)] bg-red-50'
+      default: return 'text-[var(--av-text-muted)] bg-gray-50'
     }
   }
 
@@ -276,15 +276,15 @@ export default function Budgets() {
   }
 
   const getUtilizationColor = (percent: number) => {
-    if (percent >= 100) return 'bg-red-500'
-    if (percent >= 80) return 'bg-yellow-500'
-    return 'bg-green-500'
+    if (percent >= 100) return 'bg-[var(--av-danger)]'
+    if (percent >= 80) return 'bg-[var(--av-warning)]'
+    return 'bg-[var(--av-success)]'
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--av-primary)]"></div>
       </div>
     )
   }
@@ -297,12 +297,12 @@ export default function Budgets() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budget Management</h1>
-          <p className="text-gray-500 mt-1">Track and manage departmental budgets</p>
+          <h1 className="text-2xl font-bold text-[var(--av-text)]">Budget Management</h1>
+          <p className="text-[var(--av-text-muted)] mt-1">Track and manage departmental budgets</p>
         </div>
         <button
           onClick={openCreateModal}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg hover:bg-[var(--av-primary-hover)] transition"
         >
           <Plus size={20} />
           Create Budget
@@ -314,7 +314,7 @@ export default function Budgets() {
         <SummaryCard
           title="Total Budget"
           value={budgets.reduce((sum, b) => sum + Number(b.total_amount), 0)}
-          icon={<Wallet className="text-blue-600" />}
+          icon={<Wallet className="text-[var(--av-primary)]" />}
           color="blue"
         />
         <SummaryCard
@@ -326,7 +326,7 @@ export default function Budgets() {
         <SummaryCard
           title="Total Spent"
           value={budgets.reduce((sum, b) => sum + Number(b.spent_amount), 0)}
-          icon={<TrendingUp className="text-green-600" />}
+          icon={<TrendingUp className="text-[var(--av-success)]" />}
           color="green"
           subtitle={`${getUtilizationPercent(
             budgets.reduce((sum, b) => sum + Number(b.spent_amount), 0),
@@ -343,7 +343,7 @@ export default function Budgets() {
           const isExpanded = expandedYears.has(year)
 
           return (
-            <div key={year} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div key={year} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
               {/* Year Header */}
               <button
                 onClick={() => toggleYear(year)}
@@ -351,30 +351,30 @@ export default function Budgets() {
               >
                 <div className="flex items-center gap-3">
                   {isExpanded ? (
-                    <ChevronDown size={20} className="text-gray-400" />
+                    <ChevronDown size={20} className="text-[var(--av-text-disabled)]" />
                   ) : (
-                    <ChevronRight size={20} className="text-gray-400" />
+                    <ChevronRight size={20} className="text-[var(--av-text-disabled)]" />
                   )}
                   <span className="text-lg font-semibold">{year}</span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-[var(--av-text-muted)]">
                     {yearBudgets.length} budget{yearBudgets.length !== 1 ? 's' : ''}
                   </span>
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div className="text-right">
-                    <p className="text-gray-500">Total</p>
+                    <p className="text-[var(--av-text-muted)]">Total</p>
                     <p className="font-semibold">₦{totals.total.toLocaleString()}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-500">Spent</p>
+                    <p className="text-[var(--av-text-muted)]">Spent</p>
                     <p className="font-semibold">₦{totals.spent.toLocaleString()}</p>
                   </div>
                   <div className="w-24">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <div className="flex justify-between text-xs text-[var(--av-text-muted)] mb-1">
                       <span>Utilization</span>
                       <span>{totals.total > 0 ? ((totals.spent / totals.total) * 100).toFixed(0) : 0}%</span>
                     </div>
-                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[var(--av-surface-3)] rounded-full overflow-hidden">
                       <div
                         className={`h-full ${getUtilizationColor(totals.total > 0 ? (totals.spent / totals.total) * 100 : 0)}`}
                         style={{ width: `${totals.total > 0 ? Math.min(100, (totals.spent / totals.total) * 100) : 0}%` }}
@@ -386,17 +386,17 @@ export default function Budgets() {
 
               {/* Year Budgets */}
               {isExpanded && (
-                <div className="border-t border-gray-200">
+                <div className="border-t border-[var(--av-border)]">
                   {yearBudgets.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                      <Target className="mx-auto mb-2 text-gray-300" size={40} />
+                    <div className="p-8 text-center text-[var(--av-text-muted)]">
+                      <Target className="mx-auto mb-2 text-[var(--av-text-disabled)]" size={40} />
                       <p>No budgets for {year}</p>
                       <button
                         onClick={() => {
                           setSelectedYear(year)
                           openCreateModal()
                         }}
-                        className="mt-2 text-blue-600 hover:underline"
+                        className="mt-2 text-[var(--av-primary)] hover:underline"
                       >
                         Create one
                       </button>
@@ -419,7 +419,7 @@ export default function Budgets() {
                                     {budget.status}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                                <div className="flex items-center gap-4 mt-1 text-sm text-[var(--av-text-muted)]">
                                   {budget.department_name && (
                                     <span>{budget.department_name}</span>
                                   )}
@@ -432,21 +432,21 @@ export default function Budgets() {
 
                               <div className="flex items-center gap-6">
                                 <div className="text-right">
-                                  <p className="text-sm text-gray-500">Budget</p>
+                                  <p className="text-sm text-[var(--av-text-muted)]">Budget</p>
                                   <p className="font-semibold">₦{Number(budget.total_amount).toLocaleString()}</p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-sm text-gray-500">Spent</p>
+                                  <p className="text-sm text-[var(--av-text-muted)]">Spent</p>
                                   <p className="font-semibold">₦{Number(budget.spent_amount).toLocaleString()}</p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-sm text-gray-500">Remaining</p>
-                                  <p className={`font-semibold ${Number(budget.total_amount) - Number(budget.spent_amount) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                  <p className="text-sm text-[var(--av-text-muted)]">Remaining</p>
+                                  <p className={`font-semibold ${Number(budget.total_amount) - Number(budget.spent_amount) < 0 ? 'text-[var(--av-danger)]' : 'text-[var(--av-success)]'}`}>
                                     ₦{(Number(budget.total_amount) - Number(budget.spent_amount)).toLocaleString()}
                                   </p>
                                 </div>
                                 <div className="w-20">
-                                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                  <div className="h-2 bg-[var(--av-surface-3)] rounded-full overflow-hidden">
                                     <div
                                       className={`h-full ${getUtilizationColor(utilization)} transition-all`}
                                       style={{ width: `${utilization}%` }}
@@ -457,20 +457,20 @@ export default function Budgets() {
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => toggleBudgetStatus(budget)}
-                                    className={`p-2 rounded-lg ${budget.status === 'active' ? 'text-green-600 hover:bg-green-50' : 'text-gray-400 hover:bg-gray-100'}`}
+                                    className={`p-2 rounded-lg ${budget.status === 'active' ? 'text-[var(--av-success)] hover:bg-green-50' : 'text-[var(--av-text-disabled)] hover:bg-[var(--av-surface-2)]'}`}
                                     title={budget.status === 'active' ? 'Close Budget' : 'Activate Budget'}
                                   >
                                     <CheckCircle2 size={18} />
                                   </button>
                                   <button
                                     onClick={() => openEditModal(budget)}
-                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded-lg"
                                   >
                                     <Edit2 size={18} />
                                   </button>
                                   <button
                                     onClick={() => deleteBudget(budget)}
-                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                                    className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded-lg"
                                   >
                                     <Trash2 size={18} />
                                   </button>
@@ -479,7 +479,7 @@ export default function Budgets() {
                             </div>
 
                             {utilization >= 80 && (
-                              <div className="mt-3 flex items-center gap-2 text-sm text-yellow-600">
+                              <div className="mt-3 flex items-center gap-2 text-sm text-[var(--av-warning)]">
                                 <AlertTriangle size={16} />
                                 <span>
                                   {utilization >= 100 
@@ -503,32 +503,32 @@ export default function Budgets() {
       {/* Create/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-lg mx-4 shadow-xl">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl w-full max-w-lg mx-4 shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-xl font-semibold">
                 {editingBudget ? 'Edit Budget' : 'Create Budget'}
               </h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Budget Name</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Budget Name</label>
                 <input
                   type="text"
                   required
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-[var(--av-primary)]"
                   placeholder="e.g., Marketing Budget 2025"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fiscal Year</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Fiscal Year</label>
                   <select
                     value={form.fiscal_year}
                     onChange={e => setForm({ ...form, fiscal_year: Number(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     {[2024, 2025, 2026, 2027, 2028].map(year => (
                       <option key={year} value={year}>{year}</option>
@@ -536,11 +536,11 @@ export default function Budgets() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Period</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Period</label>
                   <select
                     value={form.period_type}
                     onChange={e => setForm({ ...form, period_type: e.target.value as any })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="yearly">Yearly</option>
                     <option value="quarterly">Quarterly</option>
@@ -550,25 +550,25 @@ export default function Budgets() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Total Budget Amount (₦)</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Total Budget Amount (₦)</label>
                 <input
                   type="number"
                   required
                   min="0"
                   value={form.total_amount}
                   onChange={e => setForm({ ...form, total_amount: Number(e.target.value) })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   placeholder="0.00"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Department (Optional)</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Department (Optional)</label>
                   <select
                     value={form.department_id}
                     onChange={e => setForm({ ...form, department_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">No department</option>
                     {departments.map(d => (
@@ -577,11 +577,11 @@ export default function Budgets() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cost Center (Optional)</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Cost Center (Optional)</label>
                   <select
                     value={form.cost_center_id}
                     onChange={e => setForm({ ...form, cost_center_id: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-[var(--av-border-strong)] rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">No cost center</option>
                     {costCenters.map(cc => (
@@ -595,13 +595,13 @@ export default function Budgets() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                  className="px-4 py-2 text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] rounded-lg transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg hover:bg-[var(--av-primary-hover)] transition"
                 >
                   {editingBudget ? 'Save Changes' : 'Create Budget'}
                 </button>
@@ -629,20 +629,20 @@ function SummaryCard({
   subtitle?: string
 }) {
   const colorClasses = {
-    blue: 'bg-blue-50 border-blue-100',
+    blue: 'bg-blue-50 border-[var(--av-primary-soft)]',
     purple: 'bg-purple-50 border-purple-100',
-    green: 'bg-green-50 border-green-100',
+    green: 'bg-green-50 border-[var(--av-success-soft)]',
   }
 
   return (
     <div className={`p-4 rounded-xl border ${colorClasses[color]}`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500">{title}</p>
+          <p className="text-sm text-[var(--av-text-muted)]">{title}</p>
           <p className="text-2xl font-bold mt-1">₦{value.toLocaleString()}</p>
-          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-sm text-[var(--av-text-muted)] mt-1">{subtitle}</p>}
         </div>
-        <div className="p-3 bg-white rounded-lg shadow-sm">
+        <div className="p-3 bg-[var(--av-surface-elevated)] rounded-lg shadow-sm">
           {icon}
         </div>
       </div>

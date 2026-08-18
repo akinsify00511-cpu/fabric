@@ -152,8 +152,8 @@ export default function MeetingsV2() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Meetings</h1>
-          <p className="text-gray-500 mt-1">Video calls and meeting recordings</p>
+          <h1 className="text-3xl font-bold text-[var(--av-text)]">Meetings</h1>
+          <p className="text-[var(--av-text-muted)] mt-1">Video calls and meeting recordings</p>
         </div>
         
         <button
@@ -171,56 +171,56 @@ export default function MeetingsV2() {
           onClick={() => handleStartMeeting(`avenize-${Date.now().toString(36)}`, displayName, true)}
           className="bg-gradient-to-br from-blue-500 to-[#4285F4] rounded-2xl p-6 text-white text-left hover:opacity-90 transition"
         >
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+          <div className="w-12 h-12 bg-[var(--av-surface)]/20 rounded-xl flex items-center justify-center mb-4">
             <Video size={24} />
           </div>
           <h3 className="font-semibold text-lg mb-1">Start Instant Meeting</h3>
-          <p className="text-blue-100 text-sm">Begin a video call right now</p>
+          <p className="text-[var(--av-primary-soft)] text-sm">Begin a video call right now</p>
         </button>
 
         <button
           onClick={() => setShowStartModal(true)}
-          className="bg-white border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-blue-300 hover:bg-blue-50 transition"
+          className="bg-[var(--av-surface)] border-2 border-[var(--av-border)] rounded-2xl p-6 text-left hover:border-[var(--av-primary-soft)] hover:bg-blue-50 transition"
         >
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-            <Calendar size={24} className="text-blue-600" />
+          <div className="w-12 h-12 bg-[var(--av-primary-soft)] rounded-xl flex items-center justify-center mb-4">
+            <Calendar size={24} className="text-[var(--av-primary)]" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-900 mb-1">Schedule Meeting</h3>
-          <p className="text-gray-500 text-sm">Plan a meeting for later</p>
+          <h3 className="font-semibold text-lg text-[var(--av-text)] mb-1">Schedule Meeting</h3>
+          <p className="text-[var(--av-text-muted)] text-sm">Plan a meeting for later</p>
         </button>
 
         <button
           onClick={() => setShowStartModal(true)}
-          className="bg-white border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-purple-300 hover:bg-purple-50 transition"
+          className="bg-[var(--av-surface)] border-2 border-[var(--av-border)] rounded-2xl p-6 text-left hover:border-purple-300 hover:bg-purple-50 transition"
         >
           <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
             <Link size={24} className="text-purple-600" />
           </div>
-          <h3 className="font-semibold text-lg text-gray-900 mb-1">Join with Link</h3>
-          <p className="text-gray-500 text-sm">Enter a meeting link</p>
+          <h3 className="font-semibold text-lg text-[var(--av-text)] mb-1">Join with Link</h3>
+          <p className="text-[var(--av-text-muted)] text-sm">Enter a meeting link</p>
         </button>
       </div>
 
       {/* Search and Filters */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--av-text-disabled)]" size={20} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search meetings..."
-            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-12 pr-4 py-3 border border-[var(--av-border-strong)] rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         
-        <div className="flex bg-gray-100 rounded-xl p-1">
+        <div className="flex bg-[var(--av-surface-2)] rounded-xl p-1">
           {(['all', 'today', 'upcoming'] as const).map(f => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg font-medium transition capitalize ${
-                filter === f ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                filter === f ? 'bg-[var(--av-surface)] text-[var(--av-text)] shadow-sm' : 'text-[var(--av-text-muted)] hover:text-[var(--av-text)]'
               }`}
             >
               {f}
@@ -230,26 +230,26 @@ export default function MeetingsV2() {
       </div>
 
       {/* Meeting List */}
-      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="font-semibold text-gray-900">Recent Meetings</h2>
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border)] overflow-hidden">
+        <div className="px-6 py-4 border-b border-[var(--av-border)]">
+          <h2 className="font-semibold text-[var(--av-text)]">Recent Meetings</h2>
         </div>
 
         {loading ? (
           <div className="p-8 text-center">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-500">Loading meetings...</p>
+            <div className="w-8 h-8 border-4 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[var(--av-text-muted)]">Loading meetings...</p>
           </div>
         ) : getFilteredMeetings().length === 0 ? (
           <div className="p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Video size={32} className="text-gray-400" />
+            <div className="w-16 h-16 bg-[var(--av-surface-2)] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Video size={32} className="text-[var(--av-text-disabled)]" />
             </div>
-            <h3 className="font-medium text-gray-900 mb-1">No meetings yet</h3>
-            <p className="text-gray-500 text-sm mb-4">Start your first video meeting or schedule one</p>
+            <h3 className="font-medium text-[var(--av-text)] mb-1">No meetings yet</h3>
+            <p className="text-[var(--av-text-muted)] text-sm mb-4">Start your first video meeting or schedule one</p>
             <button
               onClick={() => handleStartMeeting(`avenize-${Date.now().toString(36)}`, displayName, true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg hover:bg-[var(--av-primary-hover)] transition"
             >
               Start Meeting
             </button>
@@ -262,13 +262,13 @@ export default function MeetingsV2() {
                   {/* Status indicator */}
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                     meeting.status === 'in_progress' 
-                      ? 'bg-green-100 text-green-600' 
+                      ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' 
                       : meeting.status === 'completed'
-                      ? 'bg-gray-100 text-gray-600'
-                      : 'bg-blue-100 text-blue-600'
+                      ? 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]'
+                      : 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
                   }`}>
                     {meeting.status === 'in_progress' ? (
-                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                      <div className="w-3 h-3 bg-[var(--av-success)] rounded-full animate-pulse" />
                     ) : (
                       <Video size={20} />
                     )}
@@ -276,8 +276,8 @@ export default function MeetingsV2() {
 
                   {/* Meeting info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 truncate">{meeting.title}</h3>
-                    <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+                    <h3 className="font-medium text-[var(--av-text)] truncate">{meeting.title}</h3>
+                    <div className="flex items-center gap-3 text-sm text-[var(--av-text-muted)] mt-1">
                       <span className="flex items-center gap-1">
                         <Calendar size={14} />
                         {new Date(meeting.date).toLocaleDateString()}
@@ -300,14 +300,14 @@ export default function MeetingsV2() {
                     {meeting.status !== 'completed' && (
                       <button
                         onClick={() => handleStartMeeting(meeting.meeting_link?.split('/').pop() || meeting.id, displayName, meeting.host_id === staff?.id)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                        className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg hover:bg-[var(--av-primary-hover)] transition text-sm font-medium"
                       >
                         {meeting.status === 'in_progress' ? 'Rejoin' : 'Join'}
                       </button>
                     )}
                     <button
                       onClick={() => copyMeetingLink(meeting as unknown as ScheduledMeeting)}
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                      className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] rounded-lg transition"
                       title="Copy link"
                     >
                       <Copy size={18} />
@@ -329,12 +329,12 @@ export default function MeetingsV2() {
           { icon: Users, title: 'Unlimited', desc: 'Up to 100 participants' },
         ].map((feature, i) => (
           <div key={i} className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-blue-600">
+            <div className="w-10 h-10 bg-[var(--av-surface-elevated)] rounded-lg flex items-center justify-center text-[var(--av-primary)]">
               <feature.icon size={20} />
             </div>
             <div>
-              <p className="font-medium text-gray-900">{feature.title}</p>
-              <p className="text-xs text-gray-500">{feature.desc}</p>
+              <p className="font-medium text-[var(--av-text)]">{feature.title}</p>
+              <p className="text-xs text-[var(--av-text-muted)]">{feature.desc}</p>
             </div>
           </div>
         ))}

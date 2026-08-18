@@ -40,17 +40,17 @@ type Heartbeat = {
 }
 
 const STATUS_CONFIG = {
-  up: { label: 'Operational', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-100' },
-  down: { label: 'Down', icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },
-  degraded: { label: 'Degraded', icon: AlertTriangle, color: 'text-yellow-600', bg: 'bg-yellow-100' },
-  unknown: { label: 'Unknown', icon: Clock, color: 'text-black', bg: 'bg-white' },
+  up: { label: 'Operational', icon: CheckCircle2, color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]' },
+  down: { label: 'Down', icon: XCircle, color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]' },
+  degraded: { label: 'Degraded', icon: AlertTriangle, color: 'text-[var(--av-warning)]', bg: 'bg-[var(--av-warning-soft)]' },
+  unknown: { label: 'Unknown', icon: Clock, color: 'text-[var(--av-text)]', bg: 'bg-[var(--av-surface)]' },
 }
 
 const SEVERITY_CONFIG = {
-  critical: { label: 'Critical', color: 'text-red-600', bg: 'bg-red-100' },
+  critical: { label: 'Critical', color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]' },
   high: { label: 'High', color: 'text-orange-600', bg: 'bg-orange-100' },
-  medium: { label: 'Medium', color: 'text-yellow-600', bg: 'bg-yellow-100' },
-  low: { label: 'Low', color: 'text-blue-600', bg: 'bg-blue-100' },
+  medium: { label: 'Medium', color: 'text-[var(--av-warning)]', bg: 'bg-[var(--av-warning-soft)]' },
+  low: { label: 'Low', color: 'text-[var(--av-primary)]', bg: 'bg-[var(--av-primary-soft)]' },
 }
 
 export default function Monitoring() {
@@ -181,13 +181,13 @@ export default function Monitoring() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Monitoring</h1>
-          <p className="text-sm text-black mt-0.5">System health and incident management</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Monitoring</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">System health and incident management</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={loadData}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-black/10 text-sm"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--av-border)] text-sm"
           >
             <RefreshCw size={14} />
             Refresh
@@ -209,16 +209,16 @@ export default function Monitoring() {
       }`}>
         <div className="flex items-center gap-4">
           {overallStatus === 'operational' ? (
-            <CheckCircle2 size={48} className="text-green-600" />
+            <CheckCircle2 size={48} className="text-[var(--av-success)]" />
           ) : overallStatus === 'degraded' ? (
-            <AlertTriangle size={48} className="text-yellow-600" />
+            <AlertTriangle size={48} className="text-[var(--av-warning)]" />
           ) : (
-            <XCircle size={48} className="text-red-600" />
+            <XCircle size={48} className="text-[var(--av-danger)]" />
           )}
           <div>
             <h2 className={`text-xl font-semibold ${
-              overallStatus === 'operational' ? 'text-green-800' :
-              overallStatus === 'degraded' ? 'text-yellow-800' : 'text-red-800'
+              overallStatus === 'operational' ? 'text-[var(--av-success)]' :
+              overallStatus === 'degraded' ? 'text-[var(--av-warning)]' : 'text-[var(--av-danger)]'
             }`}>
               {overallStatus === 'operational' ? 'All Systems Operational' :
                overallStatus === 'degraded' ? 'Partial Degradation' : 'Major Outage'}
@@ -242,7 +242,7 @@ export default function Monitoring() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key as typeof activeTab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
+              activeTab === tab.key ? 'avenize-gradient text-white' : 'border border-[var(--av-border)]'
             }`}
           >
             {tab.label}
@@ -254,7 +254,7 @@ export default function Monitoring() {
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Monitor Status */}
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <h3 className="font-medium mb-4">Service Status</h3>
             <div className="space-y-3">
               {monitors.slice(0, 5).map((monitor) => {
@@ -268,12 +268,12 @@ export default function Monitoring() {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{monitor.name}</p>
-                        <p className="text-xs text-black">{monitor.target_url || monitor.monitor_type}</p>
+                        <p className="text-xs text-[var(--av-text)]">{monitor.target_url || monitor.monitor_type}</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className={`text-sm font-medium ${config.color}`}>{config.label}</p>
-                      <p className="text-xs text-black">{monitor.response_time_ms}ms</p>
+                      <p className="text-xs text-[var(--av-text)]">{monitor.response_time_ms}ms</p>
                     </div>
                   </div>
                 )
@@ -282,7 +282,7 @@ export default function Monitoring() {
           </div>
 
           {/* Recent Incidents */}
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <h3 className="font-medium mb-4">Recent Incidents</h3>
             <div className="space-y-3">
               {incidents.slice(0, 3).map((incident) => {
@@ -299,7 +299,7 @@ export default function Monitoring() {
                           {config.label}
                         </span>
                       </div>
-                      <p className="text-xs text-black mt-1">
+                      <p className="text-xs text-[var(--av-text)] mt-1">
                         {incident.status === 'resolved' 
                           ? `Resolved ${timeSince(incident.resolved_at!)}`
                           : `Started ${timeSince(incident.started_at)}`}
@@ -312,7 +312,7 @@ export default function Monitoring() {
           </div>
 
           {/* Uptime Chart */}
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <h3 className="font-medium mb-4">7-Day Uptime</h3>
             <div className="h-40 flex items-end justify-between gap-1">
               {[99.9, 99.8, 99.95, 99.7, 99.99, 100, 99.98].map((uptime, i) => (
@@ -324,20 +324,20 @@ export default function Monitoring() {
                       background: uptime >= 99.9 ? '#10B981' : uptime >= 99 ? '#F59E0B' : '#EF4444'
                     }}
                   />
-                  <span className="text-xs text-black">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
+                  <span className="text-xs text-[var(--av-text)]">{['M', 'T', 'W', 'T', 'F', 'S', 'S'][i]}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Response Time */}
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <h3 className="font-medium mb-4">Avg Response Time</h3>
             <div className="flex items-center justify-center h-40">
               <div className="text-center">
                 <p className="text-5xl font-bold text-[#4285F4]">127ms</p>
-                <p className="text-sm text-black mt-2">-12% from last week</p>
-                <TrendingDown className="mx-auto mt-2 text-green-600" size={24} />
+                <p className="text-sm text-[var(--av-text)] mt-2">-12% from last week</p>
+                <TrendingDown className="mx-auto mt-2 text-[var(--av-success)]" size={24} />
               </div>
             </div>
           </div>
@@ -351,7 +351,7 @@ export default function Monitoring() {
             const config = STATUS_CONFIG[monitor.status]
             const Icon = config.icon
             return (
-              <div key={monitor.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+              <div key={monitor.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.bg}`}>
@@ -364,21 +364,21 @@ export default function Monitoring() {
                           {config.label}
                         </span>
                       </div>
-                      <p className="text-sm text-black">{monitor.target_url || monitor.monitor_type}</p>
+                      <p className="text-sm text-[var(--av-text)]">{monitor.target_url || monitor.monitor_type}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-6 text-right">
                     <div>
                       <p className="text-sm font-medium">{monitor.response_time_ms}ms</p>
-                      <p className="text-xs text-black">Response</p>
+                      <p className="text-xs text-[var(--av-text)]">Response</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">{monitor.uptime_percent.toFixed(2)}%</p>
-                      <p className="text-xs text-black">Uptime</p>
+                      <p className="text-xs text-[var(--av-text)]">Uptime</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">{timeSince(monitor.last_check_at)}</p>
-                      <p className="text-xs text-black">Last check</p>
+                      <p className="text-xs text-[var(--av-text)]">Last check</p>
                     </div>
                     <button className="p-2 hover:bg-black/[0.05] rounded-lg">
                       <Settings size={16} />
@@ -397,7 +397,7 @@ export default function Monitoring() {
           {incidents.map((incident) => {
             const config = SEVERITY_CONFIG[incident.severity]
             return (
-              <div key={incident.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+              <div key={incident.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${config.bg}`}>
@@ -405,7 +405,7 @@ export default function Monitoring() {
                     </div>
                     <div>
                       <h3 className="font-medium">{incident.title}</h3>
-                      <p className="text-sm text-black">
+                      <p className="text-sm text-[var(--av-text)]">
                         Started {new Date(incident.started_at).toLocaleString()}
                       </p>
                     </div>
@@ -415,9 +415,9 @@ export default function Monitoring() {
                       {config.label}
                     </span>
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      incident.status === 'resolved' ? 'bg-green-100 text-green-700' :
-                      incident.status === 'investigating' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-red-100 text-red-700'
+                      incident.status === 'resolved' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                      incident.status === 'investigating' ? 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' :
+                      'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                     }`}>
                       {incident.status}
                     </span>
@@ -425,7 +425,7 @@ export default function Monitoring() {
                 </div>
                 <div className="flex items-center gap-6 text-sm">
                   <div>
-                    <span className="text-black">Duration:</span>{' '}
+                    <span className="text-[var(--av-text)]">Duration:</span>{' '}
                     <span className="font-medium">
                       {incident.resolved_at
                         ? formatDuration(incident.duration_seconds)
@@ -434,7 +434,7 @@ export default function Monitoring() {
                   </div>
                   {incident.affected_users > 0 && (
                     <div>
-                      <span className="text-black">Affected:</span>{' '}
+                      <span className="text-[var(--av-text)]">Affected:</span>{' '}
                       <span className="font-medium">{incident.affected_users} users</span>
                     </div>
                   )}
@@ -452,21 +452,21 @@ export default function Monitoring() {
       {activeTab === 'heartbeats' && (
         <div className="space-y-4">
           {heartbeats.map((heartbeat) => (
-            <div key={heartbeat.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+            <div key={heartbeat.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    heartbeat.status === 'healthy' ? 'bg-green-100' :
-                    heartbeat.status === 'late' ? 'bg-yellow-100' : 'bg-red-100'
+                    heartbeat.status === 'healthy' ? 'bg-[var(--av-success-soft)]' :
+                    heartbeat.status === 'late' ? 'bg-[var(--av-warning-soft)]' : 'bg-[var(--av-danger-soft)]'
                   }`}>
                     <Activity size={24} className={
-                      heartbeat.status === 'healthy' ? 'text-green-600' :
-                      heartbeat.status === 'late' ? 'text-yellow-600' : 'text-red-600'
+                      heartbeat.status === 'healthy' ? 'text-[var(--av-success)]' :
+                      heartbeat.status === 'late' ? 'text-[var(--av-warning)]' : 'text-[var(--av-danger)]'
                     } />
                   </div>
                   <div>
                     <h3 className="font-medium">{heartbeat.name}</h3>
-                    <p className="text-sm text-black">
+                    <p className="text-sm text-[var(--av-text)]">
                       Every {heartbeat.check_interval_seconds / 60} minutes
                     </p>
                   </div>
@@ -474,13 +474,13 @@ export default function Monitoring() {
                 <div className="flex items-center gap-4 text-right">
                   <div>
                     <p className={`text-sm font-medium ${
-                      heartbeat.status === 'healthy' ? 'text-green-600' :
-                      heartbeat.status === 'late' ? 'text-yellow-600' : 'text-red-600'
+                      heartbeat.status === 'healthy' ? 'text-[var(--av-success)]' :
+                      heartbeat.status === 'late' ? 'text-[var(--av-warning)]' : 'text-[var(--av-danger)]'
                     }`}>
                       {heartbeat.status === 'healthy' ? 'Healthy' :
                        heartbeat.status === 'late' ? 'Late' : 'Missed'}
                     </p>
-                    <p className="text-xs text-black">
+                    <p className="text-xs text-[var(--av-text)]">
                       Last: {timeSince(heartbeat.last_heartbeat_at)}
                     </p>
                   </div>
@@ -497,8 +497,8 @@ export default function Monitoring() {
       {/* Create Monitor Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <h2 className="font-semibold">Add Monitor</h2>
             </div>
             <div className="p-6 space-y-4">
@@ -508,7 +508,7 @@ export default function Monitoring() {
                   value={newMonitor.name}
                   onChange={(e) => setNewMonitor({ ...newMonitor, name: e.target.value })}
                   placeholder="API Server"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 />
               </div>
               <div>
@@ -516,7 +516,7 @@ export default function Monitoring() {
                 <select
                   value={newMonitor.monitor_type}
                   onChange={(e) => setNewMonitor({ ...newMonitor, monitor_type: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 >
                   <option value="http">HTTP(s) - Website/API</option>
                   <option value="tcp">TCP - Server</option>
@@ -531,7 +531,7 @@ export default function Monitoring() {
                   value={newMonitor.target_url}
                   onChange={(e) => setNewMonitor({ ...newMonitor, target_url: e.target.value })}
                   placeholder="https://api.example.com/health"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 />
               </div>
               <div>
@@ -539,7 +539,7 @@ export default function Monitoring() {
                 <select
                   value={newMonitor.check_interval}
                   onChange={(e) => setNewMonitor({ ...newMonitor, check_interval: Number(e.target.value) })}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 >
                   <option value={30}>Every 30 seconds</option>
                   <option value={60}>Every minute</option>
@@ -548,8 +548,8 @@ export default function Monitoring() {
                 </select>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-2">
-              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-black/10">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06] flex justify-end gap-2">
+              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 rounded-lg border border-[var(--av-border)]">
                 Cancel
               </button>
               <button onClick={createMonitor} className="px-4 py-2 rounded-lg avenize-gradient text-white font-medium">

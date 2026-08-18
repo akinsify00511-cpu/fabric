@@ -36,11 +36,11 @@ interface Property {
 }
 
 const STATUS_COLORS = {
-  available: 'bg-green-100 text-green-700',
+  available: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   under_offer: 'bg-amber-100 text-amber-700',
-  sold: 'bg-blue-100 text-blue-700',
+  sold: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
   rented: 'bg-purple-100 text-purple-700',
-  withdrawn: 'bg-gray-100 text-gray-600',
+  withdrawn: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
   pending: 'bg-orange-100 text-orange-700',
 }
 
@@ -287,18 +287,18 @@ export default function PropertiesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Properties</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">Properties</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Manage your real estate listings
             </p>
           </div>
           {canManage && (
             <button
               onClick={() => openModal()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Property
@@ -310,64 +310,64 @@ export default function PropertiesPage() {
       <div className="p-6">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <Building2 className="w-5 h-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-primary-soft)]">
+                <Building2 className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-                <p className="text-sm text-gray-500">Total Properties</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.total}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Total Properties</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-100">
-                <DollarSign className="w-5 h-5 text-green-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-success-soft)]">
+                <DollarSign className="w-5 h-5 text-[var(--av-success)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.forSale}</p>
-                <p className="text-sm text-gray-500">For Sale</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.forSale}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">For Sale</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-purple-100">
                 <Home className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.forRent}</p>
-                <p className="text-sm text-gray-500">For Rent</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.forRent}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">For Rent</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
                 <CheckCircle2 className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.available}</p>
-                <p className="text-sm text-gray-500">Available</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.available}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Available</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 mb-6">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
           <div className="p-4 flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                 <input
                   type="text"
                   placeholder="Search properties..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -375,7 +375,7 @@ export default function PropertiesPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Types</option>
               {PROPERTY_TYPES.map(type => (
@@ -386,7 +386,7 @@ export default function PropertiesPage() {
             <select
               value={listingFilter}
               onChange={(e) => setListingFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Listings</option>
               {LISTING_TYPES.map(type => (
@@ -394,16 +394,16 @@ export default function PropertiesPage() {
               ))}
             </select>
 
-            <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+            <div className="flex border border-[var(--av-border)] rounded-lg overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-2 ${viewMode === 'grid' ? 'bg-blue-50 text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
               >
                 <Grid className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50'}`}
+                className={`px-3 py-2 ${viewMode === 'list' ? 'bg-blue-50 text-[var(--av-primary)]' : 'text-[var(--av-text-muted)] hover:bg-gray-50'}`}
               >
                 <List className="w-4 h-4" />
               </button>
@@ -413,18 +413,18 @@ export default function PropertiesPage() {
 
         {/* Properties Grid/List */}
         {loading ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+            <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
           </div>
         ) : filteredProperties.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <Building2 className="w-12 h-12 text-gray-300 mx-auto" />
-            <p className="text-gray-500 mt-2">No properties found</p>
-            <p className="text-sm text-gray-400 mt-1">Add your first property listing</p>
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+            <Building2 className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
+            <p className="text-[var(--av-text-muted)] mt-2">No properties found</p>
+            <p className="text-sm text-[var(--av-text-disabled)] mt-1">Add your first property listing</p>
             {canManage && (
               <button
                 onClick={() => openModal()}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                className="mt-4 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
               >
                 Add Property
               </button>
@@ -433,9 +433,9 @@ export default function PropertiesPage() {
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProperties.map((property) => (
-              <div key={property.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div key={property.id} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden hover:shadow-md transition-shadow">
                 {/* Image */}
-                <div className="aspect-[4/3] bg-gray-100 relative">
+                <div className="aspect-[4/3] bg-[var(--av-surface-2)] relative">
                   {property.images && property.images.length > 0 ? (
                     <img
                       src={property.images[0]}
@@ -444,13 +444,13 @@ export default function PropertiesPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Building2 className="w-12 h-12 text-gray-300" />
+                      <Building2 className="w-12 h-12 text-[var(--av-text-disabled)]" />
                     </div>
                   )}
                   <div className="absolute top-3 left-3 flex gap-2">
                     <span className={`px-2 py-1 text-xs rounded-full ${
-                      property.listing_type === 'sale' ? 'bg-green-600' :
-                      property.listing_type === 'rent' ? 'bg-purple-600' : 'bg-blue-600'
+                      property.listing_type === 'sale' ? 'bg-[var(--av-success)]' :
+                      property.listing_type === 'rent' ? 'bg-purple-600' : 'bg-[var(--av-primary)]'
                     } text-white`}>
                       {property.listing_type === 'sale' ? 'Sale' :
                        property.listing_type === 'rent' ? 'Rent' : 'Sale/Rent'}
@@ -463,14 +463,14 @@ export default function PropertiesPage() {
 
                 {/* Content */}
                 <div className="p-4">
-                  <h3 className="font-medium text-gray-900 line-clamp-1">{property.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                  <h3 className="font-medium text-[var(--av-text)] line-clamp-1">{property.title}</h3>
+                  <p className="text-sm text-[var(--av-text-muted)] mt-1 flex items-center gap-1">
                     <MapPinIcon className="w-3 h-3" />
                     {property.city}{property.state ? `, ${property.state}` : ''}
                   </p>
 
                   {/* Specs */}
-                  <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 mt-3 text-sm text-[var(--av-text-muted)]">
                     {property.bedrooms && (
                       <span className="flex items-center gap-1">
                         <Bed className="w-4 h-4" /> {property.bedrooms}
@@ -494,21 +494,21 @@ export default function PropertiesPage() {
                   {/* Price */}
                   <div className="mt-3 flex items-baseline gap-2">
                     {property.listing_type !== 'rent' && property.price && (
-                      <span className="text-lg font-bold text-gray-900">{formatCurrency(property.price)}</span>
+                      <span className="text-lg font-bold text-[var(--av-text)]">{formatCurrency(property.price)}</span>
                     )}
                     {property.listing_type !== 'sale' && property.rent_amount && (
-                      <span className="text-lg font-bold text-gray-900">
+                      <span className="text-lg font-bold text-[var(--av-text)]">
                         {formatCurrency(property.rent_amount)}
-                        <span className="text-sm font-normal text-gray-500">/mo</span>
+                        <span className="text-sm font-normal text-[var(--av-text-muted)]">/mo</span>
                       </span>
                     )}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[var(--av-border)]">
                     <button
                       onClick={() => setSelectedProperty(property)}
-                      className="flex-1 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
+                      className="flex-1 px-3 py-2 text-sm text-[var(--av-text-muted)] hover:bg-gray-50 rounded-lg"
                     >
                       View
                     </button>
@@ -516,13 +516,13 @@ export default function PropertiesPage() {
                       <>
                         <button
                           onClick={() => openModal(property)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded-lg"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => deleteProperty(property.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                          className="p-2 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded-lg"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -534,16 +534,16 @@ export default function PropertiesPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Property</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Listing</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Property</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Listing</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Price</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -551,23 +551,23 @@ export default function PropertiesPage() {
                   <tr key={property.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded bg-gray-100 flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-gray-400" />
+                        <div className="w-12 h-12 rounded bg-[var(--av-surface-2)] flex items-center justify-center">
+                          <Building2 className="w-6 h-6 text-[var(--av-text-disabled)]" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{property.title}</p>
-                          <p className="text-xs text-gray-500">{property.city}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{property.title}</p>
+                          <p className="text-xs text-[var(--av-text-muted)]">{property.city}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                       {PROPERTY_TYPES.find(t => t.value === property.property_type)?.label}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 text-xs rounded-full ${
-                        property.listing_type === 'sale' ? 'bg-green-100 text-green-700' :
+                        property.listing_type === 'sale' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
                         property.listing_type === 'rent' ? 'bg-purple-100 text-purple-700' :
-                        'bg-blue-100 text-blue-700'
+                        'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
                       }`}>
                         {LISTING_TYPES.find(t => t.value === property.listing_type)?.label}
                       </span>
@@ -577,7 +577,7 @@ export default function PropertiesPage() {
                         {property.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                    <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">
                       {property.listing_type !== 'rent' && property.price ? formatCurrency(property.price) : ''}
                       {property.listing_type !== 'sale' && property.rent_amount ? formatCurrency(property.rent_amount) + '/mo' : ''}
                     </td>
@@ -585,7 +585,7 @@ export default function PropertiesPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => setSelectedProperty(property)}
-                          className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
@@ -593,13 +593,13 @@ export default function PropertiesPage() {
                           <>
                             <button
                               onClick={() => openModal(property)}
-                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
                             >
                               <Edit2 className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() => deleteProperty(property.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -618,19 +618,19 @@ export default function PropertiesPage() {
       {/* Property Detail Modal */}
       {selectedProperty && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)] flex items-center justify-between">
               <h2 className="text-lg font-semibold">{selectedProperty.title}</h2>
               <button
                 onClick={() => setSelectedProperty(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-[var(--av-surface-2)] rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-6">
               {/* Image */}
-              <div className="aspect-video bg-gray-100 rounded-lg mb-6 flex items-center justify-center">
+              <div className="aspect-video bg-[var(--av-surface-2)] rounded-lg mb-6 flex items-center justify-center">
                 {selectedProperty.images && selectedProperty.images.length > 0 ? (
                   <img
                     src={selectedProperty.images[0]}
@@ -638,7 +638,7 @@ export default function PropertiesPage() {
                     className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
-                  <Building2 className="w-16 h-16 text-gray-300" />
+                  <Building2 className="w-16 h-16 text-[var(--av-text-disabled)]" />
                 )}
               </div>
 
@@ -646,9 +646,9 @@ export default function PropertiesPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-1 text-xs rounded-full ${
-                    selectedProperty.listing_type === 'sale' ? 'bg-green-100 text-green-700' :
+                    selectedProperty.listing_type === 'sale' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
                     selectedProperty.listing_type === 'rent' ? 'bg-purple-100 text-purple-700' :
-                    'bg-blue-100 text-blue-700'
+                    'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
                   }`}>
                     {LISTING_TYPES.find(t => t.value === selectedProperty.listing_type)?.label}
                   </span>
@@ -657,7 +657,7 @@ export default function PropertiesPage() {
                   </span>
                 </div>
 
-                <div className="flex items-start gap-2 text-gray-600">
+                <div className="flex items-start gap-2 text-[var(--av-text-muted)]">
                   <MapPinIcon className="w-5 h-5 mt-0.5" />
                   <span>{selectedProperty.address}, {selectedProperty.city}{selectedProperty.state ? `, ${selectedProperty.state}` : ''}</span>
                 </div>
@@ -665,53 +665,53 @@ export default function PropertiesPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {selectedProperty.bedrooms && (
                     <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <Bed className="w-6 h-6 text-gray-400 mx-auto" />
-                      <p className="text-lg font-bold text-gray-900">{selectedProperty.bedrooms}</p>
-                      <p className="text-xs text-gray-500">Bedrooms</p>
+                      <Bed className="w-6 h-6 text-[var(--av-text-disabled)] mx-auto" />
+                      <p className="text-lg font-bold text-[var(--av-text)]">{selectedProperty.bedrooms}</p>
+                      <p className="text-xs text-[var(--av-text-muted)]">Bedrooms</p>
                     </div>
                   )}
                   {selectedProperty.bathrooms && (
                     <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <Bath className="w-6 h-6 text-gray-400 mx-auto" />
-                      <p className="text-lg font-bold text-gray-900">{selectedProperty.bathrooms}</p>
-                      <p className="text-xs text-gray-500">Bathrooms</p>
+                      <Bath className="w-6 h-6 text-[var(--av-text-disabled)] mx-auto" />
+                      <p className="text-lg font-bold text-[var(--av-text)]">{selectedProperty.bathrooms}</p>
+                      <p className="text-xs text-[var(--av-text-muted)]">Bathrooms</p>
                     </div>
                   )}
                   {selectedProperty.total_area_sqm && (
                     <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <Home className="w-6 h-6 text-gray-400 mx-auto" />
-                      <p className="text-lg font-bold text-gray-900">{selectedProperty.total_area_sqm}m²</p>
-                      <p className="text-xs text-gray-500">Area</p>
+                      <Home className="w-6 h-6 text-[var(--av-text-disabled)] mx-auto" />
+                      <p className="text-lg font-bold text-[var(--av-text)]">{selectedProperty.total_area_sqm}m²</p>
+                      <p className="text-xs text-[var(--av-text-muted)]">Area</p>
                     </div>
                   )}
                   {selectedProperty.furnished && (
                     <div className="bg-gray-50 rounded-lg p-3 text-center">
-                      <CheckCircle2 className="w-6 h-6 text-green-400 mx-auto" />
-                      <p className="text-sm font-medium text-gray-900">Furnished</p>
+                      <CheckCircle2 className="w-6 h-6 text-[var(--av-success)] mx-auto" />
+                      <p className="text-sm font-medium text-[var(--av-text)]">Furnished</p>
                     </div>
                   )}
                 </div>
 
                 {selectedProperty.description && (
                   <div>
-                    <h4 className="text-sm font-medium text-gray-700 mb-1">Description</h4>
-                    <p className="text-sm text-gray-600">{selectedProperty.description}</p>
+                    <h4 className="text-sm font-medium text-[var(--av-text-secondary)] mb-1">Description</h4>
+                    <p className="text-sm text-[var(--av-text-muted)]">{selectedProperty.description}</p>
                   </div>
                 )}
 
-                <div className="border-t border-gray-200 pt-4">
+                <div className="border-t border-[var(--av-border)] pt-4">
                   {selectedProperty.listing_type !== 'rent' && selectedProperty.price && (
                     <div>
-                      <p className="text-xs text-gray-500">Sale Price</p>
-                      <p className="text-2xl font-bold text-gray-900">{formatCurrency(selectedProperty.price)}</p>
+                      <p className="text-xs text-[var(--av-text-muted)]">Sale Price</p>
+                      <p className="text-2xl font-bold text-[var(--av-text)]">{formatCurrency(selectedProperty.price)}</p>
                     </div>
                   )}
                   {selectedProperty.listing_type !== 'sale' && selectedProperty.rent_amount && (
                     <div>
-                      <p className="text-xs text-gray-500">Monthly Rent</p>
-                      <p className="text-2xl font-bold text-gray-900">
+                      <p className="text-xs text-[var(--av-text-muted)]">Monthly Rent</p>
+                      <p className="text-2xl font-bold text-[var(--av-text)]">
                         {formatCurrency(selectedProperty.rent_amount)}
-                        <span className="text-sm font-normal text-gray-500">/month</span>
+                        <span className="text-sm font-normal text-[var(--av-text-muted)]">/month</span>
                       </p>
                     </div>
                   )}
@@ -725,8 +725,8 @@ export default function PropertiesPage() {
       {/* Add/Edit Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-lg font-semibold">
                 {editingProperty ? 'Edit Property' : 'Add Property'}
               </h2>
@@ -734,24 +734,24 @@ export default function PropertiesPage() {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Title *</label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., 3 Bedroom Flat in Lekki"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Property Type *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Property Type *</label>
                   <select
                     required
                     value={formData.property_type}
                     onChange={(e) => setFormData({ ...formData, property_type: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {PROPERTY_TYPES.map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
@@ -760,12 +760,12 @@ export default function PropertiesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Listing Type *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Listing Type *</label>
                   <select
                     required
                     value={formData.listing_type}
                     onChange={(e) => setFormData({ ...formData, listing_type: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     {LISTING_TYPES.map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
@@ -774,111 +774,111 @@ export default function PropertiesPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Address *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Address *</label>
                   <input
                     type="text"
                     required
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Street address"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">City *</label>
                   <input
                     type="text"
                     required
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., Lagos"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">State</label>
                   <input
                     type="text"
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., Lagos State"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bedrooms</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Bedrooms</label>
                   <input
                     type="number"
                     value={formData.bedrooms}
                     onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bathrooms</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Bathrooms</label>
                   <input
                     type="number"
                     value={formData.bathrooms}
                     onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Parking Spaces</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Parking Spaces</label>
                   <input
                     type="number"
                     value={formData.parking_spaces}
                     onChange={(e) => setFormData({ ...formData, parking_spaces: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Area (m²)</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Area (m²)</label>
                   <input
                     type="number"
                     value={formData.total_area_sqm}
                     onChange={(e) => setFormData({ ...formData, total_area_sqm: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 {formData.listing_type !== 'rent' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sale Price (₦)</label>
+                    <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Sale Price (₦)</label>
                     <input
                       type="number"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
 
                 {formData.listing_type !== 'sale' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rent (₦)</label>
+                    <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Monthly Rent (₦)</label>
                     <input
                       type="number"
                       value={formData.rent_amount}
                       onChange={(e) => setFormData({ ...formData, rent_amount: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
 
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Description</label>
                   <textarea
                     rows={3}
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Property description..."
                   />
                 </div>
@@ -889,9 +889,9 @@ export default function PropertiesPage() {
                       type="checkbox"
                       checked={formData.furnished}
                       onChange={(e) => setFormData({ ...formData, furnished: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-[var(--av-primary)] border-[var(--av-border-strong)] rounded focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-700">Furnished</span>
+                    <span className="text-sm text-[var(--av-text-secondary)]">Furnished</span>
                   </label>
                 </div>
               </div>
@@ -900,13 +900,13 @@ export default function PropertiesPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                  className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                 >
                   {editingProperty ? 'Save Changes' : 'Add Property'}
                 </button>

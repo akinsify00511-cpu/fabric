@@ -58,10 +58,10 @@ export default function CashFlow() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-medium text-black mb-6">Cash Flow</h1>
+        <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Cash Flow</h1>
         <div className="animate-pulse space-y-4">
           <div className="grid grid-cols-3 gap-4">
-            {[1, 2, 3].map(i => <div key={i} className="h-24 bg-white rounded-xl"></div>)}
+            {[1, 2, 3].map(i => <div key={i} className="h-24 bg-[var(--av-surface-elevated)] rounded-xl"></div>)}
           </div>
         </div>
       </div>
@@ -70,50 +70,50 @@ export default function CashFlow() {
 
   return (
     <div className="max-w-5xl">
-      <h1 className="text-xl font-medium text-black mb-6">Cash Flow</h1>
+      <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Cash Flow</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl p-5 border border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl p-5 border border-[var(--av-border-strong)]/[0.06]">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-              <TrendingUp size={20} className="text-green-600" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-success-soft)] flex items-center justify-center">
+              <TrendingUp size={20} className="text-[var(--av-success)]" />
             </div>
-            <span className="text-sm text-black">Income</span>
+            <span className="text-sm text-[var(--av-text)]">Income</span>
           </div>
-          <div className="text-2xl font-bold text-green-600">{formatCurrency(totalIncome)}</div>
+          <div className="text-2xl font-bold text-[var(--av-success)]">{formatCurrency(totalIncome)}</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl p-5 border border-[var(--av-border-strong)]/[0.06]">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-              <TrendingDown size={20} className="text-red-600" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-danger-soft)] flex items-center justify-center">
+              <TrendingDown size={20} className="text-[var(--av-danger)]" />
             </div>
-            <span className="text-sm text-black">Expenses</span>
+            <span className="text-sm text-[var(--av-text)]">Expenses</span>
           </div>
-          <div className="text-2xl font-bold text-red-600">{formatCurrency(totalExpenses)}</div>
+          <div className="text-2xl font-bold text-[var(--av-danger)]">{formatCurrency(totalExpenses)}</div>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 border border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl p-5 border border-[var(--av-border-strong)]/[0.06]">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <DollarSign size={20} className="text-blue-600" />
+            <div className="w-10 h-10 rounded-xl bg-[var(--av-primary-soft)] flex items-center justify-center">
+              <DollarSign size={20} className="text-[var(--av-primary)]" />
             </div>
-            <span className="text-sm text-black">Net Flow</span>
+            <span className="text-sm text-[var(--av-text)]">Net Flow</span>
           </div>
-          <div className={`text-2xl font-bold ${netFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`text-2xl font-bold ${netFlow >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
             {netFlow >= 0 ? '+' : ''}{formatCurrency(netFlow)}
           </div>
         </div>
       </div>
 
       {/* Entries List */}
-      <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-        <div className="px-4 py-3 border-b border-black/[0.06]">
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden">
+        <div className="px-4 py-3 border-b border-[var(--av-border-strong)]/[0.06]">
           <h2 className="font-semibold">Recent Transactions</h2>
         </div>
         {entries.length === 0 ? (
-          <div className="p-8 text-center text-black">
+          <div className="p-8 text-center text-[var(--av-text)]">
             No transactions recorded yet
           </div>
         ) : (
@@ -122,9 +122,9 @@ export default function CashFlow() {
               <div key={entry.id} className="px-4 py-3 flex items-center justify-between">
                 <div>
                   <div className="font-medium text-sm">{entry.description}</div>
-                  <div className="text-xs text-black">{entry.category} • {new Date(entry.date).toLocaleDateString()}</div>
+                  <div className="text-xs text-[var(--av-text)]">{entry.category} • {new Date(entry.date).toLocaleDateString()}</div>
                 </div>
-                <div className={`font-semibold ${entry.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                <div className={`font-semibold ${entry.type === 'income' ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>
                   {entry.type === 'income' ? '+' : '-'}{formatCurrency(entry.amount)}
                 </div>
               </div>

@@ -208,17 +208,17 @@ export default function PlatformOpsDashboardPage() {
   if (data && !data.authorized) {
     return (
       <div style={{ maxWidth: 640, margin: '64px auto', padding: 24, textAlign: 'center' }}>
-        <Lock style={{ width: 48, height: 48, color: '#9AA0A6', margin: '0 auto 16px' }} />
-        <h1 style={{ fontSize: 20, fontWeight: 600, color: '#202124', marginBottom: 8 }}>
+        <Lock style={{ width: 48, height: 48, color: 'var(--av-text-disabled)', margin: '0 auto 16px' }} />
+        <h1 style={{ fontSize: 20, fontWeight: 600, color: 'var(--av-text)', marginBottom: 8 }}>
           Restricted — Platform operators only
         </h1>
-        <p style={{ color: '#5F6368', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--av-text-secondary)', lineHeight: 1.6 }}>
           This is the Riverwayse platform operations surface. It is not a business-owner
           feature. Access is granted via the platform-admin email allowlist
           (server-side), not a business role.
         </p>
         {userEmail && (
-          <p style={{ marginTop: 16, fontSize: 13, color: '#9AA0A6' }}>
+          <p style={{ marginTop: 16, fontSize: 13, color: 'var(--av-text-disabled)' }}>
             Signed in as {userEmail}
           </p>
         )}
@@ -229,8 +229,8 @@ export default function PlatformOpsDashboardPage() {
   if (error && !data) {
     return (
       <div style={{ maxWidth: 640, margin: '64px auto', padding: 24 }}>
-        <AlertTriangle style={{ color: '#A63A2F', marginBottom: 12 }} />
-        <p style={{ color: '#5F6368' }}>
+        <AlertTriangle style={{ color: 'var(--av-danger)', marginBottom: 12 }} />
+        <p style={{ color: 'var(--av-text-secondary)' }}>
           Couldn't load platform ops data. The ops migration may not be applied to
           the live database yet. {error}
         </p>
@@ -253,11 +253,11 @@ export default function PlatformOpsDashboardPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <Server style={{ color: '#155BB4' }} />
+          <h1 style={{ fontSize: 24, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Server style={{ color: 'var(--av-primary)' }} />
             Platform Operations
           </h1>
-          <p style={{ color: '#5F6368', marginTop: 4, fontSize: 14 }}>
+          <p style={{ color: 'var(--av-text-secondary)', marginTop: 4, fontSize: 14 }}>
             Is the app itself working, right now, for everyone.
           </p>
         </div>
@@ -334,7 +334,7 @@ export default function PlatformOpsDashboardPage() {
       ) : (
         <>
       {/* Privacy boundary banner */}
-      <div style={{ background: 'rgba(66,133,244,0.06)', border: '1px solid rgba(66,133,244,0.16)', borderRadius: 12, padding: 12, marginBottom: 20, fontSize: 13, color: '#5F6368' }}>
+      <div style={{ background: 'rgba(66,133,244,0.06)', border: '1px solid rgba(66,133,244,0.16)', borderRadius: 12, padding: 12, marginBottom: 20, fontSize: 13, color: 'var(--av-text-secondary)' }}>
         <ClaimTag type="FACT" />
         <span style={{ marginLeft: 8 }}>
           Ops visibility is not data access. This shows error counts, endpoints, and
@@ -350,14 +350,14 @@ export default function PlatformOpsDashboardPage() {
           return (
             <div key={key} style={{ background: '#fff', borderRadius: 12, padding: 16, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <span style={{ fontSize: 13, color: '#5F6368' }}>{label}</span>
+                <span style={{ fontSize: 13, color: 'var(--av-text-secondary)' }}>{label}</span>
                 <StatusDot status={sys.status} />
               </div>
               <div style={{ fontSize: 15, fontWeight: 600, color: statusColor(sys.status), textTransform: 'capitalize' }}>
                 {sys.status}
               </div>
               {typeof sys.error_count_5m === 'number' && sys.error_count_5m > 0 && (
-                <div style={{ fontSize: 12, color: '#9AA0A6', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--av-text-disabled)', marginTop: 2 }}>
                   {sys.error_count_5m} errors / 5m
                 </div>
               )}
@@ -376,7 +376,7 @@ export default function PlatformOpsDashboardPage() {
             { label: 'Unresolved', value: counts.unresolved },
           ].map(c => (
             <div key={c.label} style={{ background: '#fff', borderRadius: 12, padding: '12px 20px', boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)', minWidth: 140 }}>
-              <div style={{ fontSize: 13, color: '#5F6368' }}>{c.label}</div>
+              <div style={{ fontSize: 13, color: 'var(--av-text-secondary)' }}>{c.label}</div>
               <div style={{ fontSize: 22, fontWeight: 600, color: c.value > 0 ? '#A63A2F' : '#202124' }}>{c.value}</div>
             </div>
           ))}
@@ -387,14 +387,14 @@ export default function PlatformOpsDashboardPage() {
         {/* Live error feed */}
         <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Activity style={{ width: 18, height: 18, color: '#155BB4' }} />
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Activity style={{ width: 18, height: 18, color: 'var(--av-primary)' }} />
               Live error feed
             </h2>
             <select
               value={filterSeverity}
               onChange={e => setFilterSeverity(e.target.value)}
-              style={{ fontSize: 13, border: '1px solid #DADCE0', borderRadius: 8, padding: '4px 8px', background: '#fff', color: '#202124' }}
+              style={{ fontSize: 13, border: '1px solid #DADCE0', borderRadius: 8, padding: '4px 8px', background: '#fff', color: 'var(--av-text)' }}
             >
               <option value="all">All severities</option>
               <option value="critical">Critical</option>
@@ -404,7 +404,7 @@ export default function PlatformOpsDashboardPage() {
             </select>
           </div>
           {errors.length === 0 ? (
-            <p style={{ color: '#9AA0A6', padding: '24px 0', textAlign: 'center' }}>
+            <p style={{ color: 'var(--av-text-disabled)', padding: '24px 0', textAlign: 'center' }}>
               No unresolved errors. Everything's quiet right now.
             </p>
           ) : (
@@ -419,16 +419,16 @@ export default function PlatformOpsDashboardPage() {
                           background: e.severity === 'critical' ? 'rgba(166,58,47,0.1)' : e.severity === 'error' ? 'rgba(132,84,0,0.1)' : 'rgba(95,99,104,0.1)',
                           color: e.severity === 'critical' ? '#A63A2F' : e.severity === 'error' ? '#845400' : '#5F6368',
                         }}>{e.severity}</span>
-                        <span style={{ fontSize: 12, color: '#9AA0A6' }}>{e.source}{e.source_detail ? ` · ${e.source_detail}` : ''}</span>
+                        <span style={{ fontSize: 12, color: 'var(--av-text-disabled)' }}>{e.source}{e.source_detail ? ` · ${e.source_detail}` : ''}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: '#202124', wordBreak: 'break-word' }}>{e.message}</div>
-                      <div style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+                      <div style={{ fontSize: 13, color: 'var(--av-text)', wordBreak: 'break-word' }}>{e.message}</div>
+                      <div style={{ fontSize: 11, color: 'var(--av-text-disabled)', marginTop: 4 }}>
                         {new Date(e.captured_at).toLocaleString()}
                         {e.has_business && <span style={{ marginLeft: 8 }}>· tenant-specific</span>}
                       </div>
                     </div>
                     <button onClick={() => handleResolveError(e.id)} style={iconBtn} title="Mark resolved">
-                      <CheckCircle2 style={{ width: 16, height: 16, color: '#157342' }} />
+                      <CheckCircle2 style={{ width: 16, height: 16, color: 'var(--av-success)' }} />
                     </button>
                   </div>
                 </div>
@@ -441,19 +441,19 @@ export default function PlatformOpsDashboardPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Integration health panel */}
           <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <Zap style={{ width: 18, height: 18, color: '#155BB4' }} />
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <Zap style={{ width: 18, height: 18, color: 'var(--av-primary)' }} />
               Integration health
             </h2>
             {integrations.length === 0 ? (
-              <p style={{ color: '#9AA0A6', fontSize: 13 }}>No integration data yet.</p>
+              <p style={{ color: 'var(--av-text-disabled)', fontSize: 13 }}>No integration data yet.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {integrations.map(i => (
                   <div key={i.integration} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F1F3F4' }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: '#202124' }}>{i.display_name}</div>
-                      <div style={{ fontSize: 11, color: '#9AA0A6' }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--av-text)' }}>{i.display_name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--av-text-disabled)' }}>
                         {i.consecutive_failures > 0 ? `${i.consecutive_failures} consecutive failures` : 'No failure streak'}
                         {i.last_error ? ` · ${i.last_error.slice(0, 60)}` : ''}
                       </div>
@@ -470,12 +470,12 @@ export default function PlatformOpsDashboardPage() {
 
           {/* Open incidents */}
           <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <ShieldAlert style={{ width: 18, height: 18, color: '#A63A2F' }} />
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <ShieldAlert style={{ width: 18, height: 18, color: 'var(--av-danger)' }} />
               Open incidents
             </h2>
             {openIncidents.length === 0 ? (
-              <p style={{ color: '#9AA0A6', fontSize: 13 }}>No open incidents.</p>
+              <p style={{ color: 'var(--av-text-disabled)', fontSize: 13 }}>No open incidents.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {openIncidents.map(inc => (
@@ -483,13 +483,13 @@ export default function PlatformOpsDashboardPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: inc.severity === 'critical' ? '#A63A2F' : '#845400' }}>{inc.title}</div>
-                        {inc.summary && <div style={{ fontSize: 12, color: '#5F6368', marginTop: 2 }}>{inc.summary}</div>}
-                        <div style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+                        {inc.summary && <div style={{ fontSize: 12, color: 'var(--av-text-secondary)', marginTop: 2 }}>{inc.summary}</div>}
+                        <div style={{ fontSize: 11, color: 'var(--av-text-disabled)', marginTop: 4 }}>
                           {new Date(inc.opened_at).toLocaleString()} · {inc.affected_business_count} tenant(s) affected
                         </div>
                       </div>
                       <button onClick={() => handleIncidentAction(inc.id, 'resolved')} style={iconBtn} title="Resolve incident">
-                        <CheckCircle2 style={{ width: 16, height: 16, color: '#157342' }} />
+                        <CheckCircle2 style={{ width: 16, height: 16, color: 'var(--av-success)' }} />
                       </button>
                     </div>
                     {/* §N investigate tenant — audit-logged drill-down. The business_id
@@ -511,8 +511,8 @@ export default function PlatformOpsDashboardPage() {
                         title="Investigate tenant (audit-logged)"
                       >
                         {investigating === inc.id
-                          ? <Loader2 style={{ width: 16, height: 16, color: '#4285F4', animation: 'spin 1s linear infinite' }} />
-                          : <Search style={{ width: 16, height: 16, color: '#4285F4' }} />}
+                          ? <Loader2 style={{ width: 16, height: 16, color: 'var(--av-info)', animation: 'spin 1s linear infinite' }} />
+                          : <Search style={{ width: 16, height: 16, color: 'var(--av-info)' }} />}
                       </button>
                     </div>
                   </div>
@@ -528,35 +528,35 @@ export default function PlatformOpsDashboardPage() {
           panel makes that log visible so access is reviewable. */}
       {(investigations !== null || investigateError) && (
         <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)', marginTop: 20, borderLeft: '4px solid #4285F4' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-            <Search style={{ width: 18, height: 18, color: '#4285F4' }} />
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <Search style={{ width: 18, height: 18, color: 'var(--av-info)' }} />
             Tenant investigation audit trail
             <ClaimTag type="FACT" />
             <button onClick={() => { setInvestigations(null); setInvestigateError(null) }} style={{ marginLeft: 'auto', ...iconBtn }} title="Close">
-              <XCircle style={{ width: 16, height: 16, color: '#9AA0A6' }} />
+              <XCircle style={{ width: 16, height: 16, color: 'var(--av-text-disabled)' }} />
             </button>
           </h2>
           {investigateError ? (
-            <p style={{ fontSize: 13, color: '#A63A2F' }}>
+            <p style={{ fontSize: 13, color: 'var(--av-danger)' }}>
               Investigation failed: {investigateError}. If you are not a platform admin, tenant drill-down is denied. Every attempt is logged.
             </p>
           ) : investigations && investigations.length === 0 ? (
-            <p style={{ fontSize: 13, color: '#5F6368' }}>No investigations recorded for this incident yet.</p>
+            <p style={{ fontSize: 13, color: 'var(--av-text-secondary)' }}>No investigations recorded for this incident yet.</p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {investigations!.map(inv => (
                 <div key={inv.id} style={{ border: '1px solid #E8EAED', borderRadius: 8, padding: 10 }}>
-                  <div style={{ fontSize: 12, color: '#202124' }}>
+                  <div style={{ fontSize: 12, color: 'var(--av-text)' }}>
                     <strong>{inv.investigated_by_email ?? 'Unknown'}</strong> investigated tenant <code style={{ fontSize: 11 }}>{inv.business_id.slice(0, 8)}…</code>
                   </div>
-                  <div style={{ fontSize: 12, color: '#5F6368', marginTop: 4 }}>Reason: {inv.reason}</div>
-                  <div style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+                  <div style={{ fontSize: 12, color: 'var(--av-text-secondary)', marginTop: 4 }}>Reason: {inv.reason}</div>
+                  <div style={{ fontSize: 11, color: 'var(--av-text-disabled)', marginTop: 4 }}>
                     {new Date(inv.investigated_at).toLocaleString()}
                     {inv.accessed_tables && inv.accessed_tables.length > 0 && ` · tables: ${inv.accessed_tables.join(', ')}`}
                   </div>
                 </div>
               ))}
-              <p style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+              <p style={{ fontSize: 11, color: 'var(--av-text-disabled)', marginTop: 4 }}>
                 Every tenant drill-down is permanently recorded. This trail is the privacy accountability layer for platform-ops access.
               </p>
             </div>
@@ -567,25 +567,25 @@ export default function PlatformOpsDashboardPage() {
       {/* Recent incidents (with postmortem) */}
       {recentIncidents.length > 0 && (
         <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)', marginTop: 20 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-            <Bell style={{ width: 18, height: 18, color: '#155BB4' }} />
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <Bell style={{ width: 18, height: 18, color: 'var(--av-primary)' }} />
             Incident history
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {recentIncidents.slice(0, 10).map(inc => (
               <div key={inc.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F1F3F4' }}>
                 <div>
-                  <span style={{ fontSize: 13, color: '#202124' }}>{inc.title}</span>
-                  {inc.summary && <span style={{ fontSize: 12, color: '#5F6368', marginLeft: 8 }}>{inc.summary}</span>}
+                  <span style={{ fontSize: 13, color: 'var(--av-text)' }}>{inc.title}</span>
+                  {inc.summary && <span style={{ fontSize: 12, color: 'var(--av-text-secondary)', marginLeft: 8 }}>{inc.summary}</span>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontSize: 11, color: '#9AA0A6' }}>
+                  <span style={{ fontSize: 11, color: 'var(--av-text-disabled)' }}>
                     {new Date(inc.opened_at).toLocaleDateString()}
                     {inc.closed_at ? ` → ${new Date(inc.closed_at).toLocaleDateString()}` : ''}
                   </span>
                   {inc.status === 'resolved'
-                    ? <CheckCircle2 style={{ width: 14, height: 14, color: '#157342' }} />
-                    : <XCircle style={{ width: 14, height: 14, color: '#A63A2F' }} />}
+                    ? <CheckCircle2 style={{ width: 14, height: 14, color: 'var(--av-success)' }} />
+                    : <XCircle style={{ width: 14, height: 14, color: 'var(--av-danger)' }} />}
                 </div>
               </div>
             ))}
@@ -613,11 +613,11 @@ function ConfigView(props: {
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 20 }}>
       {/* On-call contacts */}
       <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-          <Bell style={{ width: 18, height: 18, color: '#155BB4' }} />
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <Bell style={{ width: 18, height: 18, color: 'var(--av-primary)' }} />
           On-call paging contacts
         </h2>
-        <p style={{ fontSize: 12, color: '#9AA0A6', marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: 'var(--av-text-disabled)', marginBottom: 12 }}>
           Who gets paged when a critical incident opens. Push (email/SMS), not pull.
         </p>
         {props.configLoading ? (
@@ -625,21 +625,21 @@ function ConfigView(props: {
         ) : (
           <>
             {props.contacts.length === 0 ? (
-              <p style={{ color: '#9AA0A6', fontSize: 13, padding: '8px 0' }}>No contacts yet. Add one below.</p>
+              <p style={{ color: 'var(--av-text-disabled)', fontSize: 13, padding: '8px 0' }}>No contacts yet. Add one below.</p>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {props.contacts.map(c => (
                   <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F1F3F4' }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: '#202124' }}>{c.name}</div>
-                      <div style={{ fontSize: 11, color: '#9AA0A6' }}>{c.email || c.phone} · {c.channel}</div>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--av-text)' }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: 'var(--av-text-disabled)' }}>{c.email || c.phone} · {c.channel}</div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <button onClick={() => props.onToggleContact(c)} style={iconBtn} title={c.is_active ? 'Deactivate' : 'Activate'}>
                         <span style={{ width: 8, height: 8, borderRadius: 9999, background: c.is_active ? '#157342' : '#DADCE0' }} />
                       </button>
                       <button onClick={() => props.onDeleteContact(c.id)} style={iconBtn} title="Remove">
-                        <Trash2 style={{ width: 14, height: 14, color: '#A63A2F' }} />
+                        <Trash2 style={{ width: 14, height: 14, color: 'var(--av-danger)' }} />
                       </button>
                     </div>
                   </div>
@@ -686,24 +686,24 @@ function ConfigView(props: {
 
       {/* Tunable thresholds */}
       <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)' }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-          <Settings style={{ width: 18, height: 18, color: '#155BB4' }} />
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--av-text)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+          <Settings style={{ width: 18, height: 18, color: 'var(--av-primary)' }} />
           Alert thresholds
         </h2>
-        <p style={{ fontSize: 12, color: '#9AA0A6', marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: 'var(--av-text-disabled)', marginBottom: 12 }}>
           What counts as degraded or critical. Tunable — a business decision, not hardcoded.
         </p>
         {props.configLoading ? (
           <Loader2 style={{ animation: 'spin 1s linear infinite' }} />
         ) : props.thresholds.length === 0 ? (
-          <p style={{ color: '#9AA0A6', fontSize: 13 }}>No thresholds configured.</p>
+          <p style={{ color: 'var(--av-text-disabled)', fontSize: 13 }}>No thresholds configured.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {props.thresholds.map(t => (
               <div key={t.key} style={{ border: '1px solid #E8EAED', borderRadius: 8, padding: 12 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: 13, fontWeight: 500, color: '#202124' }}>{t.display_name}</span>
-                  <label style={{ fontSize: 11, color: '#5F6368', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--av-text)' }}>{t.display_name}</span>
+                  <label style={{ fontSize: 11, color: 'var(--av-text-secondary)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     <input
                       type="checkbox"
                       checked={t.enabled}
@@ -712,9 +712,9 @@ function ConfigView(props: {
                     enabled
                   </label>
                 </div>
-                <div style={{ fontSize: 11, color: '#9AA0A6', marginBottom: 8 }}>{t.system} · {t.metric}</div>
+                <div style={{ fontSize: 11, color: 'var(--av-text-disabled)', marginBottom: 8 }}>{t.system} · {t.metric}</div>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                  <label style={{ fontSize: 12, color: '#845400', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <label style={{ fontSize: 12, color: 'var(--av-warning)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     warn ≥
                     <input
                       type="number"
@@ -723,7 +723,7 @@ function ConfigView(props: {
                       style={{ ...inputStyle, width: 60, padding: '2px 6px' }}
                     />
                   </label>
-                  <label style={{ fontSize: 12, color: '#A63A2F', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <label style={{ fontSize: 12, color: 'var(--av-danger)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                     critical ≥
                     <input
                       type="number"
@@ -746,7 +746,7 @@ const retryBtn: React.CSSProperties = {
   marginTop: 12,
   padding: '8px 16px',
   background: '#155BB4',
-  color: '#fff',
+  color: 'var(--av-surface)',
   border: 'none',
   borderRadius: 8,
   fontSize: 14,
@@ -771,7 +771,7 @@ const tabBtn: React.CSSProperties = {
   padding: '4px 14px',
   borderRadius: 9999,
   fontSize: 13,
-  color: '#5F6368',
+  color: 'var(--av-text-secondary)',
 }
 
 const tabBtnActive: React.CSSProperties = {
@@ -782,7 +782,7 @@ const tabBtnActive: React.CSSProperties = {
   borderRadius: 9999,
   fontSize: 13,
   fontWeight: 600,
-  color: '#202124',
+  color: 'var(--av-text)',
   boxShadow: '0 1px 2px rgba(0,0,0,.08)',
 }
 
@@ -792,7 +792,7 @@ const inputStyle: React.CSSProperties = {
   border: '1px solid #DADCE0',
   borderRadius: 8,
   fontSize: 13,
-  color: '#202124',
+  color: 'var(--av-text)',
   background: '#fff',
 }
 
@@ -802,7 +802,7 @@ const primaryBtn: React.CSSProperties = {
   gap: 6,
   padding: '6px 14px',
   background: '#155BB4',
-  color: '#fff',
+  color: 'var(--av-surface)',
   border: 'none',
   borderRadius: 8,
   fontSize: 13,

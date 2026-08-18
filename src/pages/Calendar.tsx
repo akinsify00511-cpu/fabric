@@ -31,9 +31,9 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 const EVENT_COLORS = {
-  event: { bg: 'bg-blue-100', border: 'border-blue-300', text: 'text-blue-700' },
+  event: { bg: 'bg-[var(--av-primary-soft)]', border: 'border-[var(--av-primary-soft)]', text: 'text-[var(--av-primary)]' },
   meeting: { bg: 'bg-purple-100', border: 'border-purple-300', text: 'text-purple-700' },
-  deadline: { bg: 'bg-red-100', border: 'border-red-300', text: 'text-red-700' },
+  deadline: { bg: 'bg-[var(--av-danger-soft)]', border: 'border-[var(--av-danger)]', text: 'text-[var(--av-danger)]' },
   reminder: { bg: 'bg-amber-100', border: 'border-amber-300', text: 'text-amber-700' },
 }
 
@@ -244,8 +244,8 @@ export default function Calendar() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Calendar</h1>
-          <p className="text-sm text-black mt-0.5">
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Calendar</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">
             {MONTHS[currentDate.getMonth()]} {currentDate.getFullYear()}
           </p>
         </div>
@@ -258,7 +258,7 @@ export default function Calendar() {
           </button>
           <button
             onClick={goToToday}
-            className="px-3 py-1.5 rounded-lg border border-black/10 text-sm hover:bg-black/10"
+            className="px-3 py-1.5 rounded-lg border border-[var(--av-border)] text-sm hover:bg-[var(--av-surface-3)]"
           >
             Today
           </button>
@@ -279,11 +279,11 @@ export default function Calendar() {
       </div>
 
       {/* Calendar Grid */}
-      <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden">
         {/* Day Headers */}
-        <div className="grid grid-cols-7 border-b border-black/[0.06]">
+        <div className="grid grid-cols-7 border-b border-[var(--av-border-strong)]/[0.06]">
           {DAYS.map((day) => (
-            <div key={day} className="px-3 py-2 text-center text-xs font-medium text-black uppercase">
+            <div key={day} className="px-3 py-2 text-center text-xs font-medium text-[var(--av-text)] uppercase">
               {day}
             </div>
           ))}
@@ -293,7 +293,7 @@ export default function Calendar() {
         <div className="grid grid-cols-7">
           {days.map((date, i) => {
             if (!date) {
-              return <div key={`empty-${i}`} className="min-h-[100px] border-b border-r border-black/[0.04]" />
+              return <div key={`empty-${i}`} className="min-h-[100px] border-b border-r border-[var(--av-border-strong)]/[0.04]" />
             }
 
             const dayEvents = getEventsForDate(date)
@@ -304,7 +304,7 @@ export default function Calendar() {
               <div
                 key={date.toISOString()}
                 onClick={() => setSelectedDate(date)}
-                className={`min-h-[100px] border-b border-r border-black/[0.04] p-1 cursor-pointer hover:bg-black/10 transition-colors ${
+                className={`min-h-[100px] border-b border-r border-[var(--av-border-strong)]/[0.04] p-1 cursor-pointer hover:bg-[var(--av-surface-3)] transition-colors ${
                   isSelected ? 'bg-[#8B5CF6]/5' : ''
                 }`}
               >
@@ -313,7 +313,7 @@ export default function Calendar() {
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-sm ${
                       isToday
                         ? 'avenize-gradient text-white'
-                        : 'text-black/60'
+                        : 'text-[var(--av-text)]/60'
                     }`}
                   >
                     {date.getDate()}
@@ -347,7 +347,7 @@ export default function Calendar() {
                     )
                   })}
                   {dayEvents.length > 3 && (
-                    <p className="text-xs text-black pl-1">+{dayEvents.length - 3} more</p>
+                    <p className="text-xs text-[var(--av-text)] pl-1">+{dayEvents.length - 3} more</p>
                   )}
                 </div>
               </div>
@@ -358,7 +358,7 @@ export default function Calendar() {
 
       {/* Selected Date Events */}
       {selectedDate && (
-        <div className="mt-6 bg-white rounded-2xl border border-black/[0.06] p-6">
+        <div className="mt-6 bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-medium">
               {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -372,7 +372,7 @@ export default function Calendar() {
           </div>
 
           {getEventsForDate(selectedDate).length === 0 ? (
-            <p className="text-sm text-black">No events scheduled</p>
+            <p className="text-sm text-[var(--av-text)]">No events scheduled</p>
           ) : (
             <div className="space-y-3">
               {getEventsForDate(selectedDate).map((event) => {
@@ -384,12 +384,12 @@ export default function Calendar() {
                   <button
                     key={event.id}
                     onClick={() => openEditEvent(event)}
-                    className="w-full flex items-start gap-3 p-3 rounded-xl border border-black/[0.06] hover:border-[#8B5CF6] transition-colors text-left"
+                    className="w-full flex items-start gap-3 p-3 rounded-xl border border-[var(--av-border-strong)]/[0.06] hover:border-[#8B5CF6] transition-colors text-left"
                   >
                     <div className={`w-1 h-full min-h-[40px] rounded-full ${color.bg.replace('100', '500')}`} />
                     <div className="flex-1">
                       <p className="font-medium">{event.title}</p>
-                      <p className="text-sm text-black">
+                      <p className="text-sm text-[var(--av-text)]">
                         {!event.all_day && (
                           <span className="flex items-center gap-1">
                             <Clock size={12} />
@@ -420,8 +420,8 @@ export default function Calendar() {
       {/* Event Modal */}
       {showEventModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
-            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl">
+            <div className="px-6 py-4 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">
                 {editingEvent ? 'Edit Event' : 'New Event'}
               </h2>
@@ -440,7 +440,7 @@ export default function Calendar() {
                   value={eventTitle}
                   onChange={(e) => setEventTitle(e.target.value)}
                   placeholder="Event title"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 text-lg font-medium"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] text-lg font-medium"
                 />
               </div>
 
@@ -453,7 +453,7 @@ export default function Calendar() {
                     className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
                       eventType === type
                         ? `${EVENT_COLORS[type].bg} ${EVENT_COLORS[type].text}`
-                        : 'bg-black/[0.04] text-black/60'
+                        : 'bg-black/[0.04] text-[var(--av-text)]/60'
                     }`}
                   >
                     {type}
@@ -464,32 +464,32 @@ export default function Calendar() {
               {/* Date & Time */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-black block mb-1">Date</label>
+                  <label className="text-xs text-[var(--av-text)] block mb-1">Date</label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-black/10"
+                    className="w-full px-4 py-2 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
                 {!allDay && (
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-xs text-black block mb-1">Start</label>
+                      <label className="text-xs text-[var(--av-text)] block mb-1">Start</label>
                       <input
                         type="time"
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="w-full px-4 py-2 rounded-xl border border-black/10"
+                        className="w-full px-4 py-2 rounded-xl border border-[var(--av-border)]"
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-black block mb-1">End</label>
+                      <label className="text-xs text-[var(--av-text)] block mb-1">End</label>
                       <input
                         type="time"
                         value={endTime}
                         onChange={(e) => setEndTime(e.target.value)}
-                        className="w-full px-4 py-2 rounded-xl border border-black/10"
+                        className="w-full px-4 py-2 rounded-xl border border-[var(--av-border)]"
                       />
                     </div>
                   </div>
@@ -508,33 +508,33 @@ export default function Calendar() {
 
               {/* Location */}
               <div>
-                <label className="text-xs text-black block mb-1">Location</label>
+                <label className="text-xs text-[var(--av-text)] block mb-1">Location</label>
                 <input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Add location or video link"
-                  className="w-full px-4 py-2 rounded-xl border border-black/10"
+                  className="w-full px-4 py-2 rounded-xl border border-[var(--av-border)]"
                 />
               </div>
 
               {/* Description */}
               <div>
-                <label className="text-xs text-black block mb-1">Description</label>
+                <label className="text-xs text-[var(--av-text)] block mb-1">Description</label>
                 <textarea
                   value={eventDescription}
                   onChange={(e) => setEventDescription(e.target.value)}
                   placeholder="Add details"
                   rows={3}
-                  className="w-full px-4 py-2 rounded-xl border border-black/10 resize-none"
+                  className="w-full px-4 py-2 rounded-xl border border-[var(--av-border)] resize-none"
                 />
               </div>
             </div>
 
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-between">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06] flex justify-between">
               {editingEvent ? (
                 <button
                   onClick={deleteEvent}
-                  className="px-4 py-2 rounded-lg text-red-500 hover:bg-red-50"
+                  className="px-4 py-2 rounded-lg text-[var(--av-danger)] hover:bg-red-50"
                 >
                   Delete
                 </button>
@@ -544,7 +544,7 @@ export default function Calendar() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowEventModal(false)}
-                  className="px-4 py-2 rounded-lg border border-black/10"
+                  className="px-4 py-2 rounded-lg border border-[var(--av-border)]"
                 >
                   Cancel
                 </button>

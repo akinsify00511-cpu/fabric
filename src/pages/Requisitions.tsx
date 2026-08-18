@@ -38,19 +38,19 @@ type Category = {
 }
 
 const PRIORITY_COLORS = {
-  low: 'bg-white text-black',
-  normal: 'bg-blue-100 text-blue-700',
+  low: 'bg-[var(--av-surface)] text-[var(--av-text)]',
+  normal: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
   high: 'bg-orange-100 text-orange-700',
-  urgent: 'bg-red-100 text-red-700',
+  urgent: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
 }
 
 const STATUS_CONFIG = {
-  draft: { label: 'Draft', icon: FileText, color: 'text-black', bg: 'bg-white' },
-  pending_approval: { label: 'Pending', icon: Clock, color: 'text-yellow-600', bg: 'bg-yellow-100' },
-  approved: { label: 'Approved', icon: CheckCircle2, color: 'text-green-600', bg: 'bg-green-100' },
-  denied: { label: 'Denied', icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },
+  draft: { label: 'Draft', icon: FileText, color: 'text-[var(--av-text)]', bg: 'bg-[var(--av-surface)]' },
+  pending_approval: { label: 'Pending', icon: Clock, color: 'text-[var(--av-warning)]', bg: 'bg-[var(--av-warning-soft)]' },
+  approved: { label: 'Approved', icon: CheckCircle2, color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]' },
+  denied: { label: 'Denied', icon: XCircle, color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]' },
   partially_approved: { label: 'Partial', icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-100' },
-  cancelled: { label: 'Cancelled', icon: XCircle, color: 'text-black', bg: 'bg-white' },
+  cancelled: { label: 'Cancelled', icon: XCircle, color: 'text-[var(--av-text)]', bg: 'bg-[var(--av-surface)]' },
 }
 
 export default function Requisitions() {
@@ -269,8 +269,8 @@ export default function Requisitions() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Requisitions</h1>
-          <p className="text-sm text-black mt-0.5">Request approvals for purchases and expenses</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Requisitions</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">Request approvals for purchases and expenses</p>
         </div>
         <button
           onClick={openNewModal}
@@ -292,7 +292,7 @@ export default function Requisitions() {
             key={tab.key}
             onClick={() => setView(tab.key as typeof view)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
-              view === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
+              view === tab.key ? 'avenize-gradient text-white' : 'border border-[var(--av-border)]'
             }`}
           >
             {tab.label}
@@ -302,12 +302,12 @@ export default function Requisitions() {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--av-text)]" />
         <input
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Search requests..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-black/10 bg-white"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)]"
         />
       </div>
 
@@ -316,13 +316,13 @@ export default function Requisitions() {
         {loading ? (
           <div className="animate-pulse space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 bg-black/10 rounded-xl" />
+              <div key={i} className="h-24 bg-[var(--av-surface-3)] rounded-xl" />
             ))}
           </div>
         ) : filteredReqs.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-8 text-center">
-            <FileText className="w-12 h-12 mx-auto text-black/50 mb-3" />
-            <p className="text-black">No requisitions found</p>
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-8 text-center">
+            <FileText className="w-12 h-12 mx-auto text-[var(--av-text)]/50 mb-3" />
+            <p className="text-[var(--av-text)]">No requisitions found</p>
           </div>
         ) : (
           filteredReqs.map((req) => {
@@ -330,7 +330,7 @@ export default function Requisitions() {
             const StatusIcon = statusConfig.icon
 
             return (
-              <div key={req.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+              <div key={req.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${statusConfig.bg}`}>
@@ -343,9 +343,9 @@ export default function Requisitions() {
                           {req.priority}
                         </span>
                       </div>
-                      <p className="text-sm text-black">{req.requester?.full_name || 'Unknown'}</p>
+                      <p className="text-sm text-[var(--av-text)]">{req.requester?.full_name || 'Unknown'}</p>
                       {req.category && (
-                        <span className="text-xs text-black">{req.category.name}</span>
+                        <span className="text-xs text-[var(--av-text)]">{req.category.name}</span>
                       )}
                     </div>
                   </div>
@@ -355,17 +355,17 @@ export default function Requisitions() {
                         {req.currency} {req.amount.toLocaleString()}
                       </p>
                     )}
-                    <p className="text-xs text-black">
+                    <p className="text-xs text-[var(--av-text)]">
                       {new Date(req.created_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-black/[0.06]">
+                <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[var(--av-border-strong)]/[0.06]">
                   <button
                     onClick={() => openDetailModal(req)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-black/10 text-sm"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--av-border)] text-sm"
                   >
                     <Eye size={14} />
                     View
@@ -374,7 +374,7 @@ export default function Requisitions() {
                   {req.status === 'draft' && (
                     <button
                       onClick={() => handleSubmitForApproval(req)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-sm"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 text-[var(--av-primary)] text-sm"
                     >
                       <Send size={14} />
                       Submit
@@ -395,7 +395,7 @@ export default function Requisitions() {
                     <>
                       <button
                         onClick={() => handleApprove(req)}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-green-600 text-sm"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-green-50 text-[var(--av-success)] text-sm"
                       >
                         <CheckCircle2 size={14} />
                         Approve
@@ -405,14 +405,14 @@ export default function Requisitions() {
                           const reason = prompt('Denial reason:')
                           if (reason) handleDeny(req, reason)
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-sm"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-50 text-[var(--av-danger)] text-sm"
                       >
                         <XCircle size={14} />
                         Deny
                       </button>
                       <button
                         onClick={() => handleSendReminder(req)}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-black/10 text-sm"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[var(--av-border)] text-sm"
                       >
                         <Clock size={14} />
                         Remind
@@ -423,7 +423,7 @@ export default function Requisitions() {
 
                 {/* Denial reason */}
                 {req.status === 'denied' && req.denial_reason && (
-                  <div className="mt-3 p-3 rounded-lg bg-red-50 text-red-700 text-sm">
+                  <div className="mt-3 p-3 rounded-lg bg-red-50 text-[var(--av-danger)] text-sm">
                     <strong>Denial reason:</strong> {req.denial_reason}
                   </div>
                 )}
@@ -436,8 +436,8 @@ export default function Requisitions() {
       {/* New/Edit Modal */}
       {showNewModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <h2 className="font-semibold">{selectedReq ? 'Edit Request' : 'New Requisition'}</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -447,7 +447,7 @@ export default function Requisitions() {
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="e.g., New laptop for design team"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   required
                 />
               </div>
@@ -457,7 +457,7 @@ export default function Requisitions() {
                 <select
                   value={formData.category_id}
                   onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 >
                   <option value="">Select category...</option>
                   {categories.map((cat) => (
@@ -470,14 +470,14 @@ export default function Requisitions() {
                 <div>
                   <label className="text-sm font-medium block mb-1">Amount</label>
                   <div className="relative">
-                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--av-text)]" />
                     <input
                       value={formData.amount}
                       onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                       type="number"
                       step="0.01"
                       placeholder="0.00"
-                      className="w-full pl-9 pr-4 py-3 rounded-xl border border-black/10"
+                      className="w-full pl-9 pr-4 py-3 rounded-xl border border-[var(--av-border)]"
                     />
                   </div>
                 </div>
@@ -486,7 +486,7 @@ export default function Requisitions() {
                   <select
                     value={formData.priority}
                     onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
-                    className="w-full px-4 py-3 rounded-xl border border-black/10"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   >
                     <option value="low">Low</option>
                     <option value="normal">Normal</option>
@@ -499,12 +499,12 @@ export default function Requisitions() {
               <div>
                 <label className="text-sm font-medium block mb-1">Needed By</label>
                 <div className="relative">
-                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+                  <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--av-text)]" />
                   <input
                     value={formData.needed_by}
                     onChange={(e) => setFormData({ ...formData, needed_by: e.target.value })}
                     type="date"
-                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-black/10"
+                    className="w-full pl-9 pr-4 py-3 rounded-xl border border-[var(--av-border)]"
                   />
                 </div>
               </div>
@@ -516,7 +516,7 @@ export default function Requisitions() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Describe what you need and why..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] resize-none"
                 />
               </div>
 
@@ -527,14 +527,14 @@ export default function Requisitions() {
                   onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                   placeholder="Why is this needed? What's the ROI?"
                   rows={2}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 resize-none"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] resize-none"
                 />
               </div>
             </form>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-2">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06] flex justify-end gap-2">
               <button
                 onClick={() => setShowNewModal(false)}
-                className="px-4 py-2 rounded-lg border border-black/10"
+                className="px-4 py-2 rounded-lg border border-[var(--av-border)]"
               >
                 Cancel
               </button>
@@ -553,8 +553,8 @@ export default function Requisitions() {
       {/* Detail Modal */}
       {showDetailModal && selectedReq && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
-            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Requisition Details</h2>
               <button onClick={() => setShowDetailModal(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">
                 ✕
@@ -571,26 +571,26 @@ export default function Requisitions() {
               </div>
 
               {selectedReq.description && (
-                <p className="text-sm text-black/60">{selectedReq.description}</p>
+                <p className="text-sm text-[var(--av-text)]/60">{selectedReq.description}</p>
               )}
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-black">Amount</p>
+                  <p className="text-[var(--av-text)]">Amount</p>
                   <p className="font-medium">
                     {selectedReq.currency} {selectedReq.amount?.toLocaleString() || '—'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-black">Priority</p>
+                  <p className="text-[var(--av-text)]">Priority</p>
                   <p className="font-medium capitalize">{selectedReq.priority}</p>
                 </div>
                 <div>
-                  <p className="text-black">Requested By</p>
+                  <p className="text-[var(--av-text)]">Requested By</p>
                   <p className="font-medium">{selectedReq.requester?.full_name || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-black">Needed By</p>
+                  <p className="text-[var(--av-text)]">Needed By</p>
                   <p className="font-medium">
                     {selectedReq.needed_by ? new Date(selectedReq.needed_by).toLocaleDateString() : '—'}
                   </p>
@@ -599,22 +599,22 @@ export default function Requisitions() {
 
               {selectedReq.reason && (
                 <div className="p-4 rounded-xl bg-black/[0.02]">
-                  <p className="text-sm text-black mb-1">Business Justification</p>
+                  <p className="text-sm text-[var(--av-text)] mb-1">Business Justification</p>
                   <p className="text-sm">{selectedReq.reason}</p>
                 </div>
               )}
 
               {selectedReq.status === 'denied' && selectedReq.denial_reason && (
                 <div className="p-4 rounded-xl bg-red-50">
-                  <p className="text-sm text-red-700 font-medium mb-1">Denial Reason</p>
-                  <p className="text-sm text-red-600">{selectedReq.denial_reason}</p>
+                  <p className="text-sm text-[var(--av-danger)] font-medium mb-1">Denial Reason</p>
+                  <p className="text-sm text-[var(--av-danger)]">{selectedReq.denial_reason}</p>
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 border-t border-black/[0.06]">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06]">
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="w-full px-4 py-2 rounded-lg border border-black/10"
+                className="w-full px-4 py-2 rounded-lg border border-[var(--av-border)]"
               >
                 Close
               </button>

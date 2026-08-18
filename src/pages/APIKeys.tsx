@@ -234,18 +234,18 @@ export default function APIKeysPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">API Keys</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">API Keys</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Manage API keys for external integrations
             </p>
           </div>
           {canManage && (
             <button
               onClick={openModal}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Create API Key
@@ -269,36 +269,36 @@ export default function APIKeysPage() {
         </div>
 
         {/* API Keys List */}
-        <div className="bg-white rounded-xl border border-gray-200">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)]">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Key</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Permissions</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Last Used</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Key</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Permissions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Last Used</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center">
-                      <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                      <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
                     </td>
                   </tr>
                 ) : apiKeys.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center">
-                      <Key className="w-12 h-12 text-gray-300 mx-auto" />
-                      <p className="text-gray-500 mt-2">No API keys created</p>
-                      <p className="text-sm text-gray-400 mt-1">Create an API key to integrate with external systems</p>
+                      <Key className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
+                      <p className="text-[var(--av-text-muted)] mt-2">No API keys created</p>
+                      <p className="text-sm text-[var(--av-text-disabled)] mt-1">Create an API key to integrate with external systems</p>
                       {canManage && (
                         <button
                           onClick={openModal}
-                          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                          className="mt-4 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                         >
                           Create First Key
                         </button>
@@ -310,20 +310,20 @@ export default function APIKeysPage() {
                     <tr key={apiKey.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{apiKey.name}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{apiKey.name}</p>
                           {apiKey.description && (
-                            <p className="text-xs text-gray-500">{apiKey.description}</p>
+                            <p className="text-xs text-[var(--av-text-muted)]">{apiKey.description}</p>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <code className="text-sm bg-gray-100 px-2 py-1 rounded font-mono">
+                          <code className="text-sm bg-[var(--av-surface-2)] px-2 py-1 rounded font-mono">
                             {showKeys[apiKey.id] ? 'avenize_••••••••••••••••' : apiKey.key_prefix + '••••••••'}
                           </code>
                           <button
                             onClick={() => setShowKeys(prev => ({ ...prev, [apiKey.id]: !prev[apiKey.id] }))}
-                            className="p-1 text-gray-400 hover:text-gray-600"
+                            className="p-1 text-[var(--av-text-disabled)] hover:text-[var(--av-text-muted)]"
                           >
                             {showKeys[apiKey.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
@@ -332,18 +332,18 @@ export default function APIKeysPage() {
                       <td className="px-4 py-3">
                         <div className="flex flex-wrap gap-1">
                           {apiKey.permissions.map(perm => (
-                            <span key={perm} className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded">
+                            <span key={perm} className="px-2 py-0.5 bg-[var(--av-primary-soft)] text-[var(--av-primary)] text-xs rounded">
                               {perm}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
+                      <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                         {apiKey.last_used_at ? formatDate(apiKey.last_used_at) : 'Never'}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 text-xs rounded-full ${
-                          apiKey.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                          apiKey.is_active ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' : 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]'
                         }`}>
                           {apiKey.is_active ? 'Active' : 'Inactive'}
                         </span>
@@ -360,7 +360,7 @@ export default function APIKeysPage() {
                             className={`p-1.5 rounded ${
                               apiKey.is_active
                                 ? 'text-amber-600 hover:bg-amber-50'
-                                : 'text-green-600 hover:bg-green-50'
+                                : 'text-[var(--av-success)] hover:bg-green-50'
                             }`}
                             title={apiKey.is_active ? 'Disable' : 'Enable'}
                           >
@@ -369,7 +369,7 @@ export default function APIKeysPage() {
                           {canManage && (
                             <button
                               onClick={() => deleteAPIKey(apiKey.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -386,14 +386,14 @@ export default function APIKeysPage() {
         </div>
 
         {/* Documentation Link */}
-        <div className="mt-6 bg-white rounded-xl border border-gray-200 p-4">
-          <h3 className="text-sm font-medium text-gray-900 mb-2">API Documentation</h3>
-          <p className="text-sm text-gray-500 mb-3">
+        <div className="mt-6 bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-4">
+          <h3 className="text-sm font-medium text-[var(--av-text)] mb-2">API Documentation</h3>
+          <p className="text-sm text-[var(--av-text-muted)] mb-3">
             Learn how to use the Avenize API to build integrations.
           </p>
           <a
             href="#"
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary-hover)] flex items-center gap-1"
           >
             View API Documentation
           </a>
@@ -403,28 +403,28 @@ export default function APIKeysPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-lg font-semibold">Create API Key</h2>
             </div>
 
             {newlyCreatedKey ? (
               <div className="p-6 space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="bg-green-50 border border-[var(--av-success-soft)] rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                    <p className="font-medium text-green-900">API Key Created</p>
+                    <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
+                    <p className="font-medium text-[var(--av-success)]">API Key Created</p>
                   </div>
-                  <p className="text-sm text-green-700 mb-3">
+                  <p className="text-sm text-[var(--av-success)] mb-3">
                     Copy this key now. You won't be able to see it again.
                   </p>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 bg-white border border-green-300 px-3 py-2 rounded font-mono text-sm break-all">
+                    <code className="flex-1 bg-[var(--av-surface)] border border-[var(--av-success-soft)] px-3 py-2 rounded font-mono text-sm break-all">
                       {newlyCreatedKey}
                     </code>
                     <button
                       onClick={() => copyToClipboard(newlyCreatedKey)}
-                      className="p-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      className="p-2 bg-[var(--av-success)] text-white rounded hover:bg-[var(--av-success)]"
                     >
                       <Copy className="w-4 h-4" />
                     </button>
@@ -433,7 +433,7 @@ export default function APIKeysPage() {
                 <div className="flex justify-end">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                    className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                   >
                     Done
                   </button>
@@ -442,29 +442,29 @@ export default function APIKeysPage() {
             ) : (
               <form onSubmit={handleSubmit} className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-3 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., Production API Key"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Description</label>
                   <input
                     type="text"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-3 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Optional description"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Permissions</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">Permissions</label>
                   <div className="space-y-2">
                     {PERMISSION_OPTIONS.map(perm => (
                       <label key={perm.value} className="flex items-start gap-3 cursor-pointer">
@@ -472,11 +472,11 @@ export default function APIKeysPage() {
                           type="checkbox"
                           checked={formData.permissions.includes(perm.value)}
                           onChange={() => togglePermission(perm.value)}
-                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="mt-1 w-4 h-4 text-[var(--av-primary)] border-[var(--av-border-strong)] rounded focus:ring-blue-500"
                         />
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{perm.label}</p>
-                          <p className="text-xs text-gray-500">{perm.description}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{perm.label}</p>
+                          <p className="text-xs text-[var(--av-text-muted)]">{perm.description}</p>
                         </div>
                       </label>
                     ))}
@@ -484,7 +484,7 @@ export default function APIKeysPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Scopes</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">Scopes</label>
                   <div className="grid grid-cols-2 gap-2">
                     {SCOPE_OPTIONS.map(scope => (
                       <label key={scope.value} className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-50">
@@ -492,32 +492,32 @@ export default function APIKeysPage() {
                           type="checkbox"
                           checked={formData.scopes.includes(scope.value)}
                           onChange={() => toggleScope(scope.value)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          className="w-4 h-4 text-[var(--av-primary)] border-[var(--av-border-strong)] rounded focus:ring-blue-500"
                         />
-                        <span className="text-sm text-gray-700">{scope.label}</span>
+                        <span className="text-sm text-[var(--av-text-secondary)]">{scope.label}</span>
                       </label>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Allowed IPs (optional)</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Allowed IPs (optional)</label>
                   <input
                     type="text"
                     value={formData.allowed_ips}
                     onChange={(e) => setFormData({ ...formData, allowed_ips: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-3 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Comma-separated IPs (leave empty for all)"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Expires At (optional)</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Expires At (optional)</label>
                   <input
                     type="datetime-local"
                     value={formData.expires_at}
                     onChange={(e) => setFormData({ ...formData, expires_at: e.target.value })}
-                    className="w-full px-3 py-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-3 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -525,13 +525,13 @@ export default function APIKeysPage() {
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                    className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                    className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                   >
                     Create Key
                   </button>

@@ -56,10 +56,10 @@ interface Staff {
 }
 
 const STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-600',
-  calculated: 'bg-blue-100 text-blue-700',
+  draft: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
+  calculated: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
   approved: 'bg-amber-100 text-amber-700',
-  paid: 'bg-green-100 text-green-700',
+  paid: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
 }
 
 const STATUS_LABELS = {
@@ -287,18 +287,18 @@ export default function PayrollPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Payroll</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">Payroll</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Manage payroll runs and salary payments
             </p>
           </div>
           {canManage && (
             <button
               onClick={() => openModal()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               New Payroll Run
@@ -310,64 +310,64 @@ export default function PayrollPage() {
       <div className="p-6">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <FileText className="w-5 h-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-primary-soft)]">
+                <FileText className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalRuns}</p>
-                <p className="text-sm text-gray-500">Total Runs</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.totalRuns}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Total Runs</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
                 <Clock className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.pendingRuns}</p>
-                <p className="text-sm text-gray-500">Pending</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.pendingRuns}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Pending</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-100">
-                <CheckCircle2 className="w-5 h-5 text-green-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-success-soft)]">
+                <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.paidRuns}</p>
-                <p className="text-sm text-gray-500">Paid</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.paidRuns}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Paid</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-purple-100">
                 <Wallet className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalPaid)}</p>
-                <p className="text-sm text-gray-500">Total Paid</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{formatCurrency(stats.totalPaid)}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Total Paid</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Payroll Runs List */}
-        <div className="bg-white rounded-xl border border-gray-200">
-          <div className="p-4 border-b border-gray-200">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)]">
+          <div className="p-4 border-b border-[var(--av-border)]">
             <div className="flex items-center gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                 <input
                   type="text"
                   placeholder="Search payroll runs..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -375,26 +375,26 @@ export default function PayrollPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Period</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gross</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deductions</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Net</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Period</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Gross</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Deductions</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Net</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {loading ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center">
-                      <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+                      <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
                     </td>
                   </tr>
                 ) : payrollRuns.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={6} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                       No payroll runs found
                     </td>
                   </tr>
@@ -403,12 +403,12 @@ export default function PayrollPage() {
                     <tr key={run.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-gray-400" />
+                          <Calendar className="w-4 h-4 text-[var(--av-text-disabled)]" />
                           <div>
-                            <p className="text-sm font-medium text-gray-900">
+                            <p className="text-sm font-medium text-[var(--av-text)]">
                               {formatDate(run.period_start)} - {formatDate(run.period_end)}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-[var(--av-text-muted)]">
                               {(run as any).payroll_items?.[0]?.count || 0} employees
                             </p>
                           </div>
@@ -419,20 +419,20 @@ export default function PayrollPage() {
                           {STATUS_LABELS[run.status]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                      <td className="px-4 py-3 text-sm text-[var(--av-text)]">
                         {formatCurrency(run.total_gross || 0)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-red-600">
+                      <td className="px-4 py-3 text-sm text-[var(--av-danger)]">
                         -{formatCurrency(run.total_deductions || 0)}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">
                         {formatCurrency(run.total_net || 0)}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => viewRunDetails(run)}
-                            className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                            className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
                             title="View details"
                           >
                             <Eye className="w-4 h-4" />
@@ -440,7 +440,7 @@ export default function PayrollPage() {
                           {run.status === 'draft' && canManage && (
                             <button
                               onClick={() => updateRunStatus(run, 'calculated')}
-                              className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-amber-600 hover:bg-amber-50 rounded"
                               title="Calculate"
                             >
                               <FileText className="w-4 h-4" />
@@ -449,7 +449,7 @@ export default function PayrollPage() {
                           {run.status === 'calculated' && canApprove && (
                             <button
                               onClick={() => updateRunStatus(run, 'approved')}
-                              className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
                               title="Approve"
                             >
                               <CheckCircle2 className="w-4 h-4" />
@@ -458,7 +458,7 @@ export default function PayrollPage() {
                           {run.status === 'approved' && canManage && (
                             <button
                               onClick={() => updateRunStatus(run, 'paid')}
-                              className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-purple-600 hover:bg-purple-50 rounded"
                               title="Mark as Paid"
                             >
                               <Wallet className="w-4 h-4" />
@@ -467,7 +467,7 @@ export default function PayrollPage() {
                           {run.status === 'draft' && canManage && (
                             <button
                               onClick={() => deleteRun(run.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-danger)] hover:bg-red-50 rounded"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -487,42 +487,42 @@ export default function PayrollPage() {
       {/* New Payroll Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-lg font-semibold">New Payroll Run</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Period Start</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Period Start</label>
                 <input
                   type="date"
                   required
                   value={formData.period_start}
                   onChange={(e) => setFormData({ ...formData, period_start: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Period End</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Period End</label>
                 <input
                   type="date"
                   required
                   value={formData.period_end}
                   onChange={(e) => setFormData({ ...formData, period_end: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                  className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                 >
                   Create Run
                 </button>
@@ -535,17 +535,17 @@ export default function PayrollPage() {
       {/* Payroll Detail Modal */}
       {showDetailModal && selectedRun && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)] flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold">Payroll Details</h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[var(--av-text-muted)]">
                   {formatDate(selectedRun.period_start)} - {formatDate(selectedRun.period_end)}
                 </p>
               </div>
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-[var(--av-surface-2)] rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -555,59 +555,59 @@ export default function PayrollPage() {
               {/* Summary */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase">Gross Pay</p>
-                  <p className="text-xl font-bold text-gray-900">{formatCurrency(selectedRun.total_gross || 0)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)] uppercase">Gross Pay</p>
+                  <p className="text-xl font-bold text-[var(--av-text)]">{formatCurrency(selectedRun.total_gross || 0)}</p>
                 </div>
                 <div className="bg-red-50 rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase">Deductions</p>
-                  <p className="text-xl font-bold text-red-600">-{formatCurrency(selectedRun.total_deductions || 0)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)] uppercase">Deductions</p>
+                  <p className="text-xl font-bold text-[var(--av-danger)]">-{formatCurrency(selectedRun.total_deductions || 0)}</p>
                 </div>
                 <div className="bg-green-50 rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase">Net Pay</p>
-                  <p className="text-xl font-bold text-green-600">{formatCurrency(selectedRun.total_net || 0)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)] uppercase">Net Pay</p>
+                  <p className="text-xl font-bold text-[var(--av-success)]">{formatCurrency(selectedRun.total_net || 0)}</p>
                 </div>
               </div>
 
               {/* Items Table */}
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Employee Breakdown</h3>
-              <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <h3 className="text-sm font-medium text-[var(--av-text-secondary)] mb-3">Employee Breakdown</h3>
+              <div className="border border-[var(--av-border)] rounded-lg overflow-hidden">
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Employee</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Basic</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Allowances</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Gross</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Deductions</th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Net</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Employee</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-[var(--av-text-muted)] uppercase">Basic</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-[var(--av-text-muted)] uppercase">Allowances</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-[var(--av-text-muted)] uppercase">Gross</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-[var(--av-text-muted)] uppercase">Deductions</th>
+                      <th className="px-4 py-2 text-right text-xs font-medium text-[var(--av-text-muted)] uppercase">Net</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {selectedItems.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-4 py-4 text-center text-gray-500">
+                        <td colSpan={6} className="px-4 py-4 text-center text-[var(--av-text-muted)]">
                           No employees in this payroll run
                         </td>
                       </tr>
                     ) : (
                       selectedItems.map((item) => (
                         <tr key={item.id}>
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                          <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">
                             {item.staff_name || 'Unknown'}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 text-right">
+                          <td className="px-4 py-3 text-sm text-[var(--av-text-muted)] text-right">
                             {formatCurrency(item.basic_salary)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-600 text-right">
+                          <td className="px-4 py-3 text-sm text-[var(--av-text-muted)] text-right">
                             {formatCurrency(item.allowances + item.overtime + item.bonuses)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-gray-900 text-right font-medium">
+                          <td className="px-4 py-3 text-sm text-[var(--av-text)] text-right font-medium">
                             {formatCurrency(item.gross_salary || 0)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-red-600 text-right">
+                          <td className="px-4 py-3 text-sm text-[var(--av-danger)] text-right">
                             -{formatCurrency(item.total_deductions || 0)}
                           </td>
-                          <td className="px-4 py-3 text-sm text-green-600 text-right font-medium">
+                          <td className="px-4 py-3 text-sm text-[var(--av-success)] text-right font-medium">
                             {formatCurrency(item.net_salary || 0)}
                           </td>
                         </tr>

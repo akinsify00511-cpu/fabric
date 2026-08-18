@@ -213,8 +213,8 @@ export default function Approvals() {
     <div className="pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl font-bold text-black">Approvals</h1>
-          <p className="text-sm text-black">
+          <h1 className="text-xl font-bold text-[var(--av-text)]">Approvals</h1>
+          <p className="text-sm text-[var(--av-text)]">
             {pending.length} pending request{pending.length !== 1 ? 's' : ''}
           </p>
         </div>
@@ -223,7 +223,7 @@ export default function Approvals() {
           <select
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-black text-sm"
+            className="px-4 py-2 rounded-xl border border-[var(--av-border-strong)] text-sm"
           >
             <option value="all">All Types</option>
             <option value="expense">Expenses</option>
@@ -235,7 +235,7 @@ export default function Approvals() {
 
       {/* Pending Requests */}
       <div className="space-y-4 mb-8">
-        <h2 className="text-sm font-semibold text-black uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-[var(--av-text)] uppercase tracking-wide">
           Pending Approval
         </h2>
         
@@ -248,7 +248,7 @@ export default function Approvals() {
               return (
                 <div
                   key={request.id}
-                  className="bg-white rounded-xl hover:shadow-md transition-shadow"
+                  className="bg-[var(--av-surface-elevated)] rounded-xl hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
@@ -258,26 +258,26 @@ export default function Approvals() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <h3 className="font-semibold text-black">{request.entity_name}</h3>
-                          <p className="text-sm text-black mt-0.5">
+                          <h3 className="font-semibold text-[var(--av-text)]">{request.entity_name}</h3>
+                          <p className="text-sm text-[var(--av-text)] mt-0.5">
                             Requested by {request.requester || 'Unknown'}
                           </p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700`}>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium bg-[var(--av-warning-soft)] text-[var(--av-warning)]`}>
                           Level {request.current_level}
                         </span>
                       </div>
                       
                       <div className="flex items-center gap-4 mt-3">
                         {request.amount && (
-                          <span className="text-lg font-bold text-black">
+                          <span className="text-lg font-bold text-[var(--av-text)]">
                             {formatCurrency(request.amount)}
                           </span>
                         )}
-                        <span className="text-sm text-black">
+                        <span className="text-sm text-[var(--av-text)]">
                           {APPROVAL_TYPE_LABELS[request.type]}
                         </span>
-                        <span className="text-sm text-black">
+                        <span className="text-sm text-[var(--av-text)]">
                           {formatDate(request.created_at)}
                         </span>
                       </div>
@@ -294,14 +294,14 @@ export default function Approvals() {
                         <button
                           onClick={() => handleReject(request)}
                           disabled={processing}
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-black text-black rounded-xl font-medium text-sm hover:bg-white disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 border border-[var(--av-border-strong)] text-[var(--av-text)] rounded-xl font-medium text-sm hover:bg-[var(--av-surface)] disabled:opacity-50"
                         >
                           <X size={18} />
                           Reject
                         </button>
                         <button
                           onClick={() => setSelectedRequest(request)}
-                          className="px-4 py-2.5 border border-black text-black rounded-xl text-sm hover:bg-white"
+                          className="px-4 py-2.5 border border-[var(--av-border-strong)] text-[var(--av-text)] rounded-xl text-sm hover:bg-[var(--av-surface)]"
                         >
                           View Details
                         </button>
@@ -317,50 +317,50 @@ export default function Approvals() {
 
       {/* History */}
       <div className="space-y-4">
-        <h2 className="text-sm font-semibold text-black uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-[var(--av-text)] uppercase tracking-wide">
           Recent History
         </h2>
         
         {filteredHistory.length === 0 ? (
-          <div className="bg-white rounded-xl border border-black p-8 text-center">
-            <Clock size={48} className="mx-auto text-black mb-4" />
-            <p className="text-black">No approval history yet</p>
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border-strong)] p-8 text-center">
+            <Clock size={48} className="mx-auto text-[var(--av-text)] mb-4" />
+            <p className="text-[var(--av-text)]">No approval history yet</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-black overflow-hidden">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border-strong)] overflow-hidden">
             <table className="w-full">
-              <thead className="bg-white border-b border-black">
+              <thead className="bg-[var(--av-surface)] border-b border-[var(--av-border-strong)]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Item</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Requested By</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Amount</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-black uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Item</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Requested By</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Amount</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--av-text)] uppercase">Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredHistory.map(request => (
-                  <tr key={request.id} className="hover:bg-white">
+                  <tr key={request.id} className="hover:bg-[var(--av-surface)]">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-black">{request.entity_name}</p>
-                      <p className="text-xs text-black">{APPROVAL_TYPE_LABELS[request.type]}</p>
+                      <p className="font-medium text-[var(--av-text)]">{request.entity_name}</p>
+                      <p className="text-xs text-[var(--av-text)]">{APPROVAL_TYPE_LABELS[request.type]}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm text-black">
+                    <td className="px-4 py-3 text-sm text-[var(--av-text)]">
                       {request.requester || 'Unknown'}
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium text-black">
+                    <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">
                       {request.amount ? formatCurrency(request.amount) : '-'}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         request.status === 'approved' 
                           ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-red-100 text-red-700'
+                          : 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                       }`}>
                         {request.status === 'approved' ? 'Approved' : 'Rejected'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-black">
+                    <td className="px-4 py-3 text-sm text-[var(--av-text)]">
                       {formatDate(request.updated_at)}
                     </td>
                   </tr>
@@ -378,27 +378,27 @@ export default function Approvals() {
           onClick={() => setSelectedRequest(null)}
         >
           <div 
-            className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto"
+            className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            <div className="p-6 border-b border-black">
-              <h2 className="text-xl font-bold text-black">Request Details</h2>
+            <div className="p-6 border-b border-[var(--av-border-strong)]">
+              <h2 className="text-xl font-bold text-[var(--av-text)]">Request Details</h2>
             </div>
             
             <div className="p-6 space-y-6">
               <div>
-                <h3 className="font-semibold text-black mb-1">{selectedRequest.entity_name}</h3>
-                <p className="text-sm text-black">{APPROVAL_TYPE_LABELS[selectedRequest.type]}</p>
+                <h3 className="font-semibold text-[var(--av-text)] mb-1">{selectedRequest.entity_name}</h3>
+                <p className="text-sm text-[var(--av-text)]">{APPROVAL_TYPE_LABELS[selectedRequest.type]}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white rounded-xl p-4">
-                  <p className="text-xs text-black mb-1">Requested By</p>
-                  <p className="font-medium text-black">{selectedRequest.requester}</p>
+                <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4">
+                  <p className="text-xs text-[var(--av-text)] mb-1">Requested By</p>
+                  <p className="font-medium text-[var(--av-text)]">{selectedRequest.requester}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4">
-                  <p className="text-xs text-black mb-1">Date</p>
-                  <p className="font-medium text-black">{formatDate(selectedRequest.created_at)}</p>
+                <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4">
+                  <p className="text-xs text-[var(--av-text)] mb-1">Date</p>
+                  <p className="font-medium text-[var(--av-text)]">{formatDate(selectedRequest.created_at)}</p>
                 </div>
               </div>
 
@@ -410,29 +410,29 @@ export default function Approvals() {
               )}
 
               <div>
-                <label className="block text-sm font-medium text-black mb-2">
+                <label className="block text-sm font-medium text-[var(--av-text)] mb-2">
                   Comment (optional)
                 </label>
                 <textarea
                   value={actionComment}
                   onChange={e => setActionComment(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border-strong)] focus:outline-none focus:ring-2 focus:ring-[#4285F4]"
                   placeholder="Add a note..."
                 />
               </div>
             </div>
 
-            <div className="p-6 border-t border-black flex gap-3">
+            <div className="p-6 border-t border-[var(--av-border-strong)] flex gap-3">
               <button
                 onClick={() => setSelectedRequest(null)}
-                className="flex-1 px-4 py-3 border border-black rounded-xl font-medium text-black hover:bg-white"
+                className="flex-1 px-4 py-3 border border-[var(--av-border-strong)] rounded-xl font-medium text-[var(--av-text)] hover:bg-[var(--av-surface)]"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleReject(selectedRequest)}
-                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700"
+                className="flex-1 px-4 py-3 bg-[var(--av-danger)] text-white rounded-xl font-medium hover:bg-[var(--av-danger)]"
               >
                 Reject
               </button>

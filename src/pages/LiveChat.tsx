@@ -40,8 +40,8 @@ interface ChatMessage {
 }
 
 const STATUS_COLORS = {
-  open: 'bg-green-500',
-  closed: 'bg-gray-400',
+  open: 'bg-[var(--av-success)]',
+  closed: 'bg-[var(--av-text-disabled)]',
   pending: 'bg-amber-500',
 }
 
@@ -298,14 +298,14 @@ export default function LiveChatPage() {
   return (
     <div className="h-[calc(100vh-64px)] flex bg-gray-50">
       {/* Conversations List */}
-      <div className={`${selectedConversation && isMinimized ? 'hidden' : 'w-80'} bg-white border-r border-gray-200 flex flex-col`}>
+      <div className={`${selectedConversation && isMinimized ? 'hidden' : 'w-80'} bg-[var(--av-surface)] border-r border-[var(--av-border)] flex flex-col`}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-[var(--av-border)]">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold text-gray-900">Live Chat</h2>
+            <h2 className="text-lg font-semibold text-[var(--av-text)]">Live Chat</h2>
             <div className="flex items-center gap-2">
               {stats.totalUnread > 0 && (
-                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                <span className="px-2 py-0.5 bg-[var(--av-primary-soft)] text-[var(--av-primary)] text-xs rounded-full">
                   {stats.totalUnread} unread
                 </span>
               )}
@@ -315,38 +315,38 @@ export default function LiveChatPage() {
           {/* Stats */}
           <div className="flex gap-4 mb-3 text-sm">
             <div className="flex items-center gap-1">
-              <Circle className="w-2 h-2 text-green-500 fill-green-500" />
-              <span className="text-gray-600">{stats.open} open</span>
+              <Circle className="w-2 h-2 text-[var(--av-success)] fill-green-500" />
+              <span className="text-[var(--av-text-muted)]">{stats.open} open</span>
             </div>
             <div className="flex items-center gap-1">
               <Circle className="w-2 h-2 text-amber-500 fill-amber-500" />
-              <span className="text-gray-600">{stats.pending} pending</span>
+              <span className="text-[var(--av-text-muted)]">{stats.pending} pending</span>
             </div>
           </div>
 
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
             <input
               type="text"
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         {/* Filter */}
-        <div className="px-4 py-2 border-b border-gray-100 flex gap-2">
+        <div className="px-4 py-2 border-b border-[var(--av-border)] flex gap-2">
           {['open', 'pending', 'closed', 'all'].map(status => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
               className={`px-3 py-1 text-xs rounded-full ${
                 statusFilter === status
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]'
+                  : 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)] hover:bg-[var(--av-surface-3)]'
               }`}
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -358,11 +358,11 @@ export default function LiveChatPage() {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+              <div className="animate-spin w-6 h-6 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
             </div>
           ) : filteredConversations.length === 0 ? (
-            <div className="p-4 text-center text-gray-500">
-              <MessageSquare className="w-12 h-12 text-gray-300 mx-auto" />
+            <div className="p-4 text-center text-[var(--av-text-muted)]">
+              <MessageSquare className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
               <p className="mt-2">No conversations found</p>
             </div>
           ) : (
@@ -370,39 +370,39 @@ export default function LiveChatPage() {
               <div
                 key={conversation.id}
                 onClick={() => setSelectedConversation(conversation)}
-                className={`p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 ${
+                className={`p-4 border-b border-[var(--av-border)] cursor-pointer hover:bg-gray-50 ${
                   selectedConversation?.id === conversation.id ? 'bg-blue-50' : ''
                 }`}
               >
                 <div className="flex items-start gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                    <div className="w-10 h-10 rounded-full bg-[var(--av-primary-soft)] flex items-center justify-center text-[var(--av-primary)] font-medium">
                       {conversation.client_name.charAt(0).toUpperCase()}
                     </div>
-                    <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${STATUS_COLORS[conversation.status]}`} />
+                    <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[var(--av-surface)] ${STATUS_COLORS[conversation.status]}`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className={`text-sm font-medium truncate ${
-                        conversation.unread_count > 0 ? 'text-gray-900' : 'text-gray-700'
+                        conversation.unread_count > 0 ? 'text-[var(--av-text)]' : 'text-[var(--av-text-secondary)]'
                       }`}>
                         {conversation.client_name}
                       </p>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-[var(--av-text-muted)]">
                         {conversation.last_message_at ? formatTime(conversation.last_message_at) : ''}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-[var(--av-text-muted)] truncate">
                       {conversation.last_message || 'No messages yet'}
                     </p>
                     {conversation.assigned_name && (
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-[var(--av-text-disabled)] mt-1">
                         Assigned to {conversation.assigned_name}
                       </p>
                     )}
                   </div>
                   {conversation.unread_count > 0 && (
-                    <span className="w-5 h-5 bg-blue-600 text-white text-xs rounded-full flex items-center justify-center">
+                    <span className="w-5 h-5 bg-[var(--av-primary)] text-white text-xs rounded-full flex items-center justify-center">
                       {conversation.unread_count}
                     </span>
                   )}
@@ -415,22 +415,22 @@ export default function LiveChatPage() {
 
       {/* Chat Panel */}
       {selectedConversation ? (
-        <div className={`flex-1 flex flex-col bg-white ${isMinimized ? 'h-16' : ''}`}>
+        <div className={`flex-1 flex flex-col bg-[var(--av-surface)] ${isMinimized ? 'h-16' : ''}`}>
           {/* Chat Header */}
-          <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+          <div className="px-4 py-3 border-b border-[var(--av-border)] flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="p-1 hover:bg-gray-100 rounded lg:hidden"
+                className="p-1 hover:bg-[var(--av-surface-2)] rounded lg:hidden"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-[var(--av-text-muted)]" />
               </button>
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+              <div className="w-10 h-10 rounded-full bg-[var(--av-primary-soft)] flex items-center justify-center text-[var(--av-primary)] font-medium">
                 {selectedConversation.client_name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{selectedConversation.client_name}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-sm font-medium text-[var(--av-text)]">{selectedConversation.client_name}</p>
+                <p className="text-xs text-[var(--av-text-muted)]">
                   {selectedConversation.client_email || selectedConversation.client_phone || 'Unknown'}
                 </p>
               </div>
@@ -439,7 +439,7 @@ export default function LiveChatPage() {
               {selectedConversation.status === 'open' && canManage && (
                 <button
                   onClick={() => closeConversation(selectedConversation)}
-                  className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className="px-3 py-1.5 text-sm border border-[var(--av-border)] rounded-lg hover:bg-gray-50"
                 >
                   Close
                 </button>
@@ -447,14 +447,14 @@ export default function LiveChatPage() {
               {(!selectedConversation.assigned_to || selectedConversation.assigned_to !== staff?.id) && canManage && (
                 <button
                   onClick={() => assignConversation(selectedConversation)}
-                  className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-3 py-1.5 text-sm bg-[var(--av-primary)] text-white rounded-lg hover:bg-[var(--av-primary-hover)]"
                 >
                   Take Chat
                 </button>
               )}
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="p-1.5 hover:bg-gray-100 rounded"
+                className="p-1.5 hover:bg-[var(--av-surface-2)] rounded"
               >
                 {isMinimized ? <Maximize2 className="w-5 h-5" /> : <Minimize2 className="w-5 h-5" />}
               </button>
@@ -473,17 +473,17 @@ export default function LiveChatPage() {
                     <div className={`max-w-[70%] ${message.sender_type === 'agent' ? 'order-2' : 'order-1'}`}>
                       <div className={`rounded-2xl px-4 py-2 ${
                         message.sender_type === 'agent'
-                          ? 'bg-blue-600 text-white rounded-br-md'
+                          ? 'bg-[var(--av-primary)] text-white rounded-br-md'
                           : message.sender_type === 'system'
-                          ? 'bg-gray-100 text-gray-500 text-center text-xs italic'
-                          : 'bg-gray-100 text-gray-900 rounded-bl-md'
+                          ? 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)] text-center text-xs italic'
+                          : 'bg-[var(--av-surface-2)] text-[var(--av-text)] rounded-bl-md'
                       }`}>
                         {message.sender_type !== 'system' && (
                           <p className="text-xs opacity-75 mb-1">{message.sender_name}</p>
                         )}
                         <p className="text-sm whitespace-pre-wrap">{message.message}</p>
                       </div>
-                      <p className={`text-xs text-gray-400 mt-1 ${
+                      <p className={`text-xs text-[var(--av-text-disabled)] mt-1 ${
                         message.sender_type === 'agent' ? 'text-right' : 'text-left'
                       }`}>
                         {formatMessageTime(message.created_at)}
@@ -501,7 +501,7 @@ export default function LiveChatPage() {
 
               {/* Input */}
               {selectedConversation.status !== 'closed' && (
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-4 border-t border-[var(--av-border)]">
                   <div className="flex items-end gap-3">
                     <div className="flex-1 relative">
                       <textarea
@@ -515,18 +515,18 @@ export default function LiveChatPage() {
                         }}
                         placeholder="Type your message..."
                         rows={1}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-[var(--av-border)] rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <button
                       onClick={sendMessage}
                       disabled={sending || !newMessage.trim()}
-                      className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-3 bg-[var(--av-primary)] text-white rounded-full hover:bg-[var(--av-primary-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send className="w-5 h-5" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-[var(--av-text-muted)] mt-2">
                     Press Enter to send, Shift+Enter for new line
                   </p>
                 </div>
@@ -534,7 +534,7 @@ export default function LiveChatPage() {
 
               {selectedConversation.status === 'closed' && (
                 <div className="p-4 bg-gray-50 text-center">
-                  <p className="text-sm text-gray-500">This conversation has been closed</p>
+                  <p className="text-sm text-[var(--av-text-muted)]">This conversation has been closed</p>
                 </div>
               )}
             </>
@@ -543,8 +543,8 @@ export default function LiveChatPage() {
       ) : (
         <div className="flex-1 flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto" />
-            <p className="mt-4 text-gray-500">Select a conversation to start chatting</p>
+            <MessageSquare className="w-16 h-16 text-[var(--av-text-disabled)] mx-auto" />
+            <p className="mt-4 text-[var(--av-text-muted)]">Select a conversation to start chatting</p>
           </div>
         </div>
       )}

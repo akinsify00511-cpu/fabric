@@ -119,10 +119,10 @@ export default function Merit() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Merit Points</h1>
-          <p className="text-sm text-black mt-0.5">Recognize and reward great work</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Merit Points</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">Recognize and reward great work</p>
         </div>
-        <div className="flex items-center gap-1.5 bg-yellow-50 text-yellow-700 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-1.5 bg-yellow-50 text-[var(--av-warning)] px-3 py-1.5 rounded-full">
           <Star size={14} />
           <span className="text-sm font-medium">
             {leaderboard.reduce((sum, e) => sum + e.total_points, 0)} total awarded
@@ -131,7 +131,7 @@ export default function Merit() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-white rounded-xl p-1 border border-black/[0.06] mb-6 w-fit">
+      <div className="flex gap-1 bg-[var(--av-surface-elevated)] rounded-xl p-1 border border-[var(--av-border-strong)]/[0.06] mb-6 w-fit">
         {[
           { id: 'give', label: 'Give Points', icon: Award },
           { id: 'history', label: 'History', icon: TrendingUp },
@@ -145,7 +145,7 @@ export default function Merit() {
               className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
                 activeTab === tab.id
                   ? 'avenize-gradient text-white'
-                  : 'text-black hover:text-black'
+                  : 'text-[var(--av-text)] hover:text-[var(--av-text)]'
               }`}
             >
               <Icon size={14} />
@@ -158,14 +158,14 @@ export default function Merit() {
       {/* GIVE POINTS TAB */}
       {activeTab === 'give' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
-            <p className="text-sm font-medium text-black mb-4">Recognize a teammate</p>
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4">
+            <p className="text-sm font-medium text-[var(--av-text)] mb-4">Recognize a teammate</p>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3">
                 <select
                   value={recipientId}
                   onChange={(e) => setRecipientId(e.target.value)}
-                  className="flex-1 min-w-40 rounded-lg border border-black/10 px-3 py-2 text-sm"
+                  className="flex-1 min-w-40 rounded-lg border border-[var(--av-border)] px-3 py-2 text-sm"
                 >
                   <option value="">Select teammate...</option>
                   {teamMembers.map((m) => (
@@ -180,7 +180,7 @@ export default function Merit() {
                       className={`w-10 h-10 rounded-lg font-medium text-sm transition ${
                         points === p.toString()
                           ? 'avenize-gradient text-white'
-                          : 'bg-black/[0.04] text-black/60 hover:bg-black/[0.08]'
+                          : 'bg-black/[0.04] text-[var(--av-text)]/60 hover:bg-black/[0.08]'
                       }`}
                     >
                       {p}
@@ -192,7 +192,7 @@ export default function Merit() {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Why are you recognizing them? (optional)"
-                className="w-full h-20 resize-none rounded-lg border border-black/10 px-3 py-2 text-sm"
+                className="w-full h-20 resize-none rounded-lg border border-[var(--av-border)] px-3 py-2 text-sm"
               />
               <button
                 onClick={awardPoints}
@@ -203,7 +203,7 @@ export default function Merit() {
                 Award {points} Merit Points
               </button>
               {!canAward && (
-                <p className="text-xs text-center text-black">
+                <p className="text-xs text-center text-[var(--av-text)]">
                   Only managers and owners can award points
                 </p>
               )}
@@ -211,8 +211,8 @@ export default function Merit() {
           </div>
 
           {/* Recent Awards */}
-          <div className="bg-white rounded-2xl border border-black/[0.06]">
-            <p className="px-4 py-3 text-sm font-medium text-black border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06]">
+            <p className="px-4 py-3 text-sm font-medium text-[var(--av-text)] border-b border-[var(--av-border-strong)]/[0.06]">
               Recent Recognition
             </p>
             <div className="divide-y divide-black/[0.06]">
@@ -222,18 +222,18 @@ export default function Merit() {
                     {e.points}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-black">
+                    <p className="text-sm text-[var(--av-text)]">
                       <span className="font-medium">{e.staff_name}</span>
-                      <span className="text-black"> earned </span>
-                      <span className="font-medium text-yellow-600">{e.points} pts</span>
+                      <span className="text-[var(--av-text)]"> earned </span>
+                      <span className="font-medium text-[var(--av-warning)]">{e.points} pts</span>
                     </p>
-                    {e.reason && <p className="text-xs text-black truncate">{e.reason}</p>}
+                    {e.reason && <p className="text-xs text-[var(--av-text)] truncate">{e.reason}</p>}
                   </div>
-                  <span className="text-xs text-black">{new Date(e.created_at).toLocaleDateString()}</span>
+                  <span className="text-xs text-[var(--av-text)]">{new Date(e.created_at).toLocaleDateString()}</span>
                 </div>
               ))}
               {entries.length === 0 && (
-                <p className="px-4 py-6 text-sm text-black text-center">No recognition yet. Be the first!</p>
+                <p className="px-4 py-6 text-sm text-[var(--av-text)] text-center">No recognition yet. Be the first!</p>
               )}
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function Merit() {
       {/* HISTORY TAB */}
       {activeTab === 'history' && (
         loading ? <ListSkeleton items={5} /> : (
-          <div className="bg-white rounded-2xl border border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06]">
             <div className="divide-y divide-black/[0.06]">
               {entries.map((e) => (
                 <div key={e.id} className="px-4 py-3 flex items-center justify-between">
@@ -252,18 +252,18 @@ export default function Merit() {
                       {e.points}
                     </div>
                     <div>
-                      <p className="text-sm text-black font-medium">{e.staff_name}</p>
-                      <p className="text-xs text-black">{e.reason || 'Merit recognition'}</p>
+                      <p className="text-sm text-[var(--av-text)] font-medium">{e.staff_name}</p>
+                      <p className="text-xs text-[var(--av-text)]">{e.reason || 'Merit recognition'}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-black">by {e.awarded_by_name}</p>
-                    <p className="text-xs text-black">{new Date(e.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-[var(--av-text)]">by {e.awarded_by_name}</p>
+                    <p className="text-xs text-[var(--av-text)]">{new Date(e.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>
               ))}
               {entries.length === 0 && (
-                <p className="px-4 py-6 text-sm text-black text-center">No recognition history yet.</p>
+                <p className="px-4 py-6 text-sm text-[var(--av-text)] text-center">No recognition history yet.</p>
               )}
             </div>
           </div>
@@ -275,27 +275,27 @@ export default function Merit() {
         loading ? <ListSkeleton items={5} /> : (
           <div className="space-y-3">
             {leaderboard.map((entry, index) => (
-              <div key={entry.staff_id} className="bg-white rounded-2xl border border-black/[0.06] p-4 flex items-center gap-4">
+              <div key={entry.staff_id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
                   index === 0 ? 'avenize-gradient text-white' :
-                  index === 1 ? 'bg-white text-black' :
+                  index === 1 ? 'bg-[var(--av-surface)] text-[var(--av-text)]' :
                   index === 2 ? 'bg-amber-100 text-amber-700' :
-                  'bg-black/[0.05] text-black'
+                  'bg-black/[0.05] text-[var(--av-text)]'
                 }`}>
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-black">{entry.staff_name}</p>
-                  <p className="text-xs text-black">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{entry.staff_name}</p>
+                  <p className="text-xs text-[var(--av-text)]">{entry.entry_count} recognition{entry.entry_count !== 1 ? 's' : ''}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-bold text-yellow-600">{entry.total_points}</p>
-                  <p className="text-xs text-black">points</p>
+                  <p className="text-xl font-bold text-[var(--av-warning)]">{entry.total_points}</p>
+                  <p className="text-xs text-[var(--av-text)]">points</p>
                 </div>
               </div>
             ))}
             {leaderboard.length === 0 && (
-              <div className="text-center py-12 text-black">
+              <div className="text-center py-12 text-[var(--av-text)]">
                 <Award size={32} className="mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No points awarded yet</p>
               </div>

@@ -34,11 +34,11 @@ interface Staff {
 }
 
 const STATUS_CONFIG = {
-  new: { label: 'New', color: 'bg-blue-100 text-blue-700', icon: Clock },
+  new: { label: 'New', color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]', icon: Clock },
   contacted: { label: 'Contacted', color: 'bg-amber-100 text-amber-700', icon: Phone },
   qualified: { label: 'Qualified', color: 'bg-purple-100 text-purple-700', icon: CheckCircle2 },
-  converted: { label: 'Converted', color: 'bg-green-100 text-green-700', icon: TrendingUp },
-  lost: { label: 'Lost', color: 'bg-gray-100 text-gray-700', icon: XCircle },
+  converted: { label: 'Converted', color: 'bg-[var(--av-success-soft)] text-[var(--av-success)]', icon: TrendingUp },
+  lost: { label: 'Lost', color: 'bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]', icon: XCircle },
 }
 
 export default function LeadsPage() {
@@ -240,11 +240,11 @@ export default function LeadsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Leads</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">Leads</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Manage and convert your sales leads
             </p>
           </div>
@@ -261,14 +261,14 @@ export default function LeadsPage() {
             { key: 'qualified', label: 'Qualified', icon: CheckCircle2, color: 'purple' },
             { key: 'converted', label: 'Converted', icon: TrendingUp, color: 'green' },
           ].map(({ key, label, icon: Icon, color }) => (
-            <div key={key} className="bg-white rounded-xl p-4 border border-gray-200">
+            <div key={key} className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg bg-${color}-100 flex items-center justify-center`}>
                   <Icon className={`w-5 h-5 text-${color}-600`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{stats[key as keyof typeof stats]}</p>
-                  <p className="text-xs text-gray-500">{label}</p>
+                  <p className="text-2xl font-bold text-[var(--av-text)]">{stats[key as keyof typeof stats]}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">{label}</p>
                 </div>
               </div>
             </div>
@@ -276,18 +276,18 @@ export default function LeadsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 mb-6">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
           <div className="p-4 flex flex-wrap gap-4">
             {/* Search */}
             <div className="flex-1 min-w-[200px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                 <input
                   type="text"
                   placeholder="Search leads..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function LeadsPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Status</option>
               <option value="new">New</option>
@@ -310,7 +310,7 @@ export default function LeadsPage() {
             <select
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Sources</option>
               <option value="website">Website</option>
@@ -328,15 +328,15 @@ export default function LeadsPage() {
         {/* Leads List */}
         <div className="space-y-4">
           {loading ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-              <p className="text-gray-500 mt-2">Loading leads...</p>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
+              <p className="text-[var(--av-text-muted)] mt-2">Loading leads...</p>
             </div>
           ) : filteredLeads.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <Users className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="text-gray-500 mt-2">No leads found</p>
-              <p className="text-sm text-gray-400">Try adjusting your filters</p>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+              <Users className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
+              <p className="text-[var(--av-text-muted)] mt-2">No leads found</p>
+              <p className="text-sm text-[var(--av-text-disabled)]">Try adjusting your filters</p>
             </div>
           ) : (
             filteredLeads.map((lead) => {
@@ -345,25 +345,25 @@ export default function LeadsPage() {
               const StatusIcon = statusConfig.icon
               
               return (
-                <div key={lead.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div key={lead.id} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
                   {/* Lead Row */}
                   <div 
                     className="p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-50"
                     onClick={() => toggleExpanded(lead.id)}
                   >
-                    <button className="text-gray-400">
+                    <button className="text-[var(--av-text-disabled)]">
                       {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                     </button>
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900 truncate">{lead.full_name}</h3>
+                        <h3 className="font-medium text-[var(--av-text)] truncate">{lead.full_name}</h3>
                         <span className={`px-2 py-0.5 text-xs rounded-full ${statusConfig.color}`}>
                           <StatusIcon className="w-3 h-3 inline mr-1" />
                           {statusConfig.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 mt-1 text-sm text-[var(--av-text-muted)]">
                         {lead.company_name && (
                           <span className="flex items-center gap-1">
                             <Building2 className="w-3 h-3" />
@@ -384,10 +384,10 @@ export default function LeadsPage() {
                     </div>
 
                     <div className="text-right text-sm">
-                      <p className="text-gray-500">
+                      <p className="text-[var(--av-text-muted)]">
                         {LEAD_SOURCES[lead.source as keyof typeof LEAD_SOURCES]?.icon} {lead.source}
                       </p>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-[var(--av-text-disabled)] text-xs">
                         {new Date(lead.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -395,33 +395,33 @@ export default function LeadsPage() {
 
                   {/* Expanded Details */}
                   {isExpanded && (
-                    <div className="border-t border-gray-100 p-4 bg-gray-50">
+                    <div className="border-t border-[var(--av-border)] p-4 bg-gray-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {/* Left Column */}
                         <div className="space-y-4">
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">Details</h4>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-2">Details</h4>
                             <div className="space-y-2 text-sm">
                               <div className="flex justify-between">
-                                <span className="text-gray-500">Interested In:</span>
-                                <span className="text-gray-900">
+                                <span className="text-[var(--av-text-muted)]">Interested In:</span>
+                                <span className="text-[var(--av-text)]">
                                   {PRODUCT_INTERESTS[lead.interested_in as keyof typeof PRODUCT_INTERESTS]?.label || lead.interested_in || '-'}
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-gray-500">Source:</span>
-                                <span className="text-gray-900">
+                                <span className="text-[var(--av-text-muted)]">Source:</span>
+                                <span className="text-[var(--av-text)]">
                                   {LEAD_SOURCES[lead.source as keyof typeof LEAD_SOURCES]?.label || lead.source}
                                 </span>
                               </div>
                               <div className="flex justify-between">
-                                <span className="text-gray-500">Created:</span>
-                                <span className="text-gray-900">{new Date(lead.created_at).toLocaleString()}</span>
+                                <span className="text-[var(--av-text-muted)]">Created:</span>
+                                <span className="text-[var(--av-text)]">{new Date(lead.created_at).toLocaleString()}</span>
                               </div>
                               {lead.contacted_at && (
                                 <div className="flex justify-between">
-                                  <span className="text-gray-500">Contacted:</span>
-                                  <span className="text-gray-900">{new Date(lead.contacted_at).toLocaleString()}</span>
+                                  <span className="text-[var(--av-text-muted)]">Contacted:</span>
+                                  <span className="text-[var(--av-text)]">{new Date(lead.contacted_at).toLocaleString()}</span>
                                 </div>
                               )}
                             </div>
@@ -429,8 +429,8 @@ export default function LeadsPage() {
 
                           {lead.message && (
                             <div>
-                              <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">Message</h4>
-                              <p className="text-sm text-gray-700 bg-white p-3 rounded-lg border border-gray-200">
+                              <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-2">Message</h4>
+                              <p className="text-sm text-[var(--av-text-secondary)] bg-[var(--av-surface)] p-3 rounded-lg border border-[var(--av-border)]">
                                 {lead.message}
                               </p>
                             </div>
@@ -440,11 +440,11 @@ export default function LeadsPage() {
                         {/* Right Column - Actions */}
                         <div className="space-y-4">
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">Assign To</h4>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-2">Assign To</h4>
                             <select
                               value={lead.assigned_to || ''}
                               onChange={(e) => assignLead(lead.id, e.target.value || null)}
-                              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <option value="">Unassigned</option>
@@ -455,7 +455,7 @@ export default function LeadsPage() {
                           </div>
 
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">Update Status</h4>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-2">Update Status</h4>
                             <div className="flex flex-wrap gap-2">
                               {(['new', 'contacted', 'qualified', 'converted', 'lost'] as const).map(status => {
                                 const config = STATUS_CONFIG[status]
@@ -471,7 +471,7 @@ export default function LeadsPage() {
                                     className={`px-3 py-1.5 text-xs rounded-lg border ${
                                       isActive 
                                         ? `${config.color} border-transparent` 
-                                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                                        : 'bg-[var(--av-surface)] border-[var(--av-border)] text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)]'
                                     }`}
                                   >
                                     {config.label}
@@ -489,11 +489,11 @@ export default function LeadsPage() {
                                   handleConvert(lead)
                                 }}
                                 disabled={convertingLead === lead.id}
-                                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full px-4 py-2 bg-[var(--av-success)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-success)] disabled:opacity-50 flex items-center justify-center gap-2"
                               >
                                 {convertingLead === lead.id ? (
                                   <>
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="w-4 h-4 border-2 border-[var(--av-surface)] border-t-transparent rounded-full animate-spin"></div>
                                     Converting...
                                   </>
                                 ) : (

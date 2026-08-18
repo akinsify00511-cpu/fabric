@@ -30,7 +30,7 @@ const money = (v: number) =>
 
 function Card({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded-2xl bg-white shadow-[0_1px_3px_rgba(0,0,0,.06),0_8px_24px_rgba(0,0,0,.03)] ${className}`}>
+    <section className={`rounded-2xl bg-[var(--av-surface)] shadow-[0_1px_3px_rgba(0,0,0,.06),0_8px_24px_rgba(0,0,0,.03)] ${className}`}>
       {children}
     </section>
   )
@@ -45,14 +45,14 @@ function ViewPicker({ value, onChange }: { value: View; onChange: (v: View) => v
         <Icon size={15} />{VIEW_LABELS[value]}<ChevronDown size={14} />
       </button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+        <div className="absolute right-0 z-30 mt-2 w-64 rounded-xl border border-slate-200 bg-[var(--av-surface)] p-2 shadow-xl">
           <p className="px-3 py-2 text-xs font-medium uppercase tracking-wide text-slate-400">How do you want to understand this?</p>
           {(Object.keys(VIEW_LABELS) as View[]).map(v => {
             const I = VIEW_ICONS[v]
             return (
               <button key={v} onClick={() => { onChange(v); setOpen(false) }} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm ${value === v ? 'bg-slate-100 font-medium' : 'hover:bg-slate-50'}`}>
                 <I size={16} /><span>{VIEW_LABELS[v]}</span>
-                {v === 'recommended' && <span className="ml-auto text-[10px] text-blue-600">BEST</span>}
+                {v === 'recommended' && <span className="ml-auto text-[10px] text-[var(--av-primary)]">BEST</span>}
               </button>
             )
           })}
@@ -383,7 +383,7 @@ export default function Dashboard() {
           receive via email, surfaced on the Dashboard itself. Owner/admin
           only. Each line is one fact with a one-tap action (§5.5). */}
       {digest?.authorized && digest.lines.length > 0 && (
-        <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+        <div className="rounded-2xl bg-[var(--av-surface)] p-4 shadow-sm ring-1 ring-slate-200">
           <div className="mb-2 flex items-center gap-2">
             <Mail size={15} className="text-[#155BB4]" />
             <h2 className="text-sm font-semibold text-slate-900">Today's digest</h2>
@@ -422,7 +422,7 @@ export default function Dashboard() {
                 <Link
                   key={s.module_key}
                   to={s.explore_route}
-                  className="group rounded-xl bg-white p-3 ring-1 ring-slate-200 hover:ring-[#155BB4]/40 hover:shadow-sm transition"
+                  className="group rounded-xl bg-[var(--av-surface)] p-3 ring-1 ring-slate-200 hover:ring-[#155BB4]/40 hover:shadow-sm transition"
                 >
                   <p className="text-sm font-semibold text-slate-900">{s.value_headline}</p>
                   {estimate && (
@@ -458,7 +458,7 @@ export default function Dashboard() {
       {!isSolo && (
         <div className="flex gap-1 rounded-xl bg-slate-100 p-1 w-fit">
           {(['overview', 'operations', 'focus'] as Mode[]).map(m => (
-            <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-white shadow-sm font-medium text-slate-900' : 'text-slate-500'}`}>
+            <button key={m} onClick={() => setMode(m)} className={`rounded-lg px-4 py-2 text-sm capitalize ${mode === m ? 'bg-[var(--av-surface)] shadow-sm font-medium text-slate-900' : 'text-slate-500'}`}>
               {m === 'focus' ? 'My Focus' : m}
             </button>
           ))}
@@ -549,7 +549,7 @@ export default function Dashboard() {
             <div className="mt-4 space-y-2">
               {attentionItems.slice(0, 5).map(a => (
                 <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-slate-50">
-                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-red-500' : 'bg-amber-500'}`} />
+                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-amber-500'}`} />
                   <span className="min-w-0 flex-1 truncate text-sm">{a.label}</span>
                   <ArrowRight size={15} className="text-slate-400" />
                 </Link>

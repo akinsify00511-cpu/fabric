@@ -29,18 +29,18 @@ import { useAuth } from '../lib/AuthContext'
 import { fetchPlanRecommendation, type PlanRecommendation } from '../lib/businessOS'
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
-  active: { color: 'text-green-600', bg: 'bg-green-100', label: 'Active' },
-  trialing: { color: 'text-blue-600', bg: 'bg-blue-100', label: 'Trial' },
-  cancelled: { color: 'text-red-600', bg: 'bg-red-100', label: 'Cancelled' },
-  expired: { color: 'text-red-600', bg: 'bg-red-100', label: 'Expired' },
+  active: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Active' },
+  trialing: { color: 'text-[var(--av-primary)]', bg: 'bg-[var(--av-primary-soft)]', label: 'Trial' },
+  cancelled: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Cancelled' },
+  expired: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Expired' },
   past_due: { color: 'text-amber-600', bg: 'bg-amber-100', label: 'Past Due' },
-  paused: { color: 'text-gray-600', bg: 'bg-gray-100', label: 'Paused' },
-  successful: { color: 'text-green-600', bg: 'bg-green-100', label: 'Paid' },
+  paused: { color: 'text-[var(--av-text-muted)]', bg: 'bg-[var(--av-surface-2)]', label: 'Paused' },
+  successful: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Paid' },
   pending: { color: 'text-amber-600', bg: 'bg-amber-100', label: 'Pending' },
-  failed: { color: 'text-red-600', bg: 'bg-red-100', label: 'Failed' },
+  failed: { color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]', label: 'Failed' },
   refunded: { color: 'text-purple-600', bg: 'bg-purple-100', label: 'Refunded' },
-  paid: { color: 'text-green-600', bg: 'bg-green-100', label: 'Paid' },
-  void: { color: 'text-gray-600', bg: 'bg-gray-100', label: 'Void' },
+  paid: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Paid' },
+  void: { color: 'text-[var(--av-text-muted)]', bg: 'bg-[var(--av-surface-2)]', label: 'Void' },
 }
 
 export default function Subscription() {
@@ -131,36 +131,36 @@ export default function Subscription() {
             <CreditCard className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-black">Subscription & Billing</h1>
-            <p className="text-sm text-black">Manage your plan and payment history</p>
+            <h1 className="text-2xl font-bold text-[var(--av-text)]">Subscription & Billing</h1>
+            <p className="text-sm text-[var(--av-text)]">Manage your plan and payment history</p>
           </div>
         </div>
         <button
           onClick={refresh}
-          className="p-2 hover:bg-black/10 rounded-lg transition"
+          className="p-2 hover:bg-[var(--av-surface-3)] rounded-lg transition"
           title="Refresh"
         >
-          <RefreshCw className="w-5 h-5 text-black" />
+          <RefreshCw className="w-5 h-5 text-[var(--av-text)]" />
         </button>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-red-600 shrink-0" />
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="mb-6 p-4 bg-red-50 border border-[var(--av-danger-soft)] rounded-xl flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 text-[var(--av-danger)] shrink-0" />
+          <p className="text-sm text-[var(--av-danger)]">{error}</p>
         </div>
       )}
 
       {/* Current Plan Card */}
-      <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
-        <div className="p-6 border-b border-black/[0.06]">
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden mb-6">
+        <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-lg">Current Plan</h2>
             {subscription?.status && (
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  STATUS_CONFIG[subscription.status]?.bg || 'bg-gray-100'
-                } ${STATUS_CONFIG[subscription.status]?.color || 'text-gray-600'}`}
+                  STATUS_CONFIG[subscription.status]?.bg || 'bg-[var(--av-surface-2)]'
+                } ${STATUS_CONFIG[subscription.status]?.color || 'text-[var(--av-text-muted)]'}`}
               >
                 {STATUS_CONFIG[subscription.status]?.label || subscription.status}
               </span>
@@ -171,28 +171,28 @@ export default function Subscription() {
             <div className="space-y-4">
               {/* Plan Info */}
               <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-bold text-black">
+                <span className="text-4xl font-bold text-[var(--av-text)]">
                   {subscription.plan_name || 'Free'}
                 </span>
-                <span className="text-black text-lg">
+                <span className="text-[var(--av-text)] text-lg">
                   {formatCurrency(subscription.amount)}/
                   {subscription.billing_cycle === 'yearly' ? 'year' : 'month'}
                 </span>
               </div>
 
               {/* Key Dates */}
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-black/[0.06]">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--av-border-strong)]/[0.06]">
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-black mt-0.5" />
+                  <Calendar className="w-5 h-5 text-[var(--av-text)] mt-0.5" />
                   <div>
-                    <p className="text-xs text-black mb-1">Start Date</p>
+                    <p className="text-xs text-[var(--av-text)] mb-1">Start Date</p>
                     <p className="font-medium">{formatDate(subscription.start_date)}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-black mt-0.5" />
+                  <Clock className="w-5 h-5 text-[var(--av-text)] mt-0.5" />
                   <div>
-                    <p className="text-xs text-black mb-1">
+                    <p className="text-xs text-[var(--av-text)] mb-1">
                       {subscription.status === 'cancelled' ? 'Cancelled On' : 'Next Billing'}
                     </p>
                     <p className="font-medium">
@@ -205,7 +205,7 @@ export default function Subscription() {
                     {subscription.days_until_expiry !== null &&
                       subscription.days_until_expiry > 0 &&
                       subscription.status !== 'cancelled' && (
-                        <p className="text-xs text-black mt-1">
+                        <p className="text-xs text-[var(--av-text)] mt-1">
                           {subscription.days_until_expiry} days remaining
                         </p>
                       )}
@@ -214,19 +214,19 @@ export default function Subscription() {
               </div>
 
               {/* Seats */}
-              <div className="flex items-center gap-3 pt-4 border-t border-black/[0.06]">
-                <Users className="w-5 h-5 text-black" />
+              <div className="flex items-center gap-3 pt-4 border-t border-[var(--av-border-strong)]/[0.06]">
+                <Users className="w-5 h-5 text-[var(--av-text)]" />
                 <div>
-                  <p className="text-sm text-black">Seats included: {subscription.seats_included}</p>
+                  <p className="text-sm text-[var(--av-text)]">Seats included: {subscription.seats_included}</p>
                 </div>
               </div>
 
               {/* Cancel Button */}
               {isAdmin && subscription.status === 'active' && (
-                <div className="pt-4 border-t border-black/[0.06]">
+                <div className="pt-4 border-t border-[var(--av-border-strong)]/[0.06]">
                   <button
                     onClick={() => setShowCancelModal(true)}
-                    className="text-sm text-red-600 hover:text-red-700"
+                    className="text-sm text-[var(--av-danger)] hover:text-[var(--av-danger)]"
                   >
                     Cancel subscription
                   </button>
@@ -239,7 +239,7 @@ export default function Subscription() {
                 <Star className="w-8 h-8 text-[#4285F4]" />
               </div>
               <h3 className="text-lg font-semibold mb-2">Free Plan</h3>
-              <p className="text-sm text-black mb-4 max-w-sm mx-auto">
+              <p className="text-sm text-[var(--av-text)] mb-4 max-w-sm mx-auto">
                 You're on the free plan with basic features. Upgrade to unlock powerful tools for your business.
               </p>
               <Link
@@ -256,7 +256,7 @@ export default function Subscription() {
 
       {/* P0 #15: AI plan recommendation — evidence-based, never a bare "Upgrade now". */}
       {recommendation?.authorized && recommendation.recommended_plan_name && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden mb-6">
           <div className="p-6">
             <div className="flex items-start gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-[#155BB4]/10 flex items-center justify-center shrink-0">
@@ -268,7 +268,7 @@ export default function Subscription() {
                     ? `Based on how you use Avenize, we recommend ${recommendation.recommended_plan_name}`
                     : `Your usage fits the ${recommendation.recommended_plan_name} plan`}
                 </h2>
-                <p className="text-sm text-black/60 mt-1">
+                <p className="text-sm text-[var(--av-text)]/60 mt-1">
                   {recommendation.modules_used_count ?? 0} tools used
                   {recommendation.modules_requiring_higher_count
                     ? ` • ${recommendation.modules_requiring_higher_count} need a higher plan`
@@ -282,11 +282,11 @@ export default function Subscription() {
 
             {recommendation.evidence && recommendation.evidence.length > 0 && (
               <div className="mb-4">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-2">What you've used</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--av-text)]/50 mb-2">What you've used</h3>
                 <ul className="space-y-1.5">
                   {recommendation.evidence.slice(0, 5).map((e, i) => (
-                    <li key={i} className="text-sm text-black/80 flex items-start gap-2">
-                      <Check className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                    <li key={i} className="text-sm text-[var(--av-text)]/80 flex items-start gap-2">
+                      <Check className="w-4 h-4 text-[var(--av-success)] mt-0.5 shrink-0" />
                       <span>{e}</span>
                     </li>
                   ))}
@@ -296,10 +296,10 @@ export default function Subscription() {
 
             {recommendation.reasons && recommendation.reasons.length > 0 && (
               <div className="mb-4">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-2">Why this plan fits</h3>
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--av-text)]/50 mb-2">Why this plan fits</h3>
                 <ul className="space-y-1.5">
                   {recommendation.reasons.map((r, i) => (
-                    <li key={i} className="text-sm text-black/80 flex items-start gap-2">
+                    <li key={i} className="text-sm text-[var(--av-text)]/80 flex items-start gap-2">
                       <Zap className="w-4 h-4 text-[#155BB4] mt-0.5 shrink-0" />
                       <span>{r}</span>
                     </li>
@@ -311,12 +311,12 @@ export default function Subscription() {
             {recommendation.should_upgrade && recommendation.additional_value_unlocks &&
               recommendation.additional_value_unlocks.length > 0 && (
               <div className="mb-4 p-3 bg-[#155BB4]/5 rounded-xl">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-black/50 mb-1.5">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--av-text)]/50 mb-1.5">
                   What else this unlocks
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
                   {recommendation.additional_value_unlocks.slice(0, 6).map((m) => (
-                    <span key={m} className="px-2 py-0.5 text-xs bg-white border border-black/10 rounded-full text-black/70">
+                    <span key={m} className="px-2 py-0.5 text-xs bg-[var(--av-surface)] border border-[var(--av-border)] rounded-full text-[var(--av-text)]/70">
                       {m}
                     </span>
                   ))}
@@ -338,7 +338,7 @@ export default function Subscription() {
                 Get {recommendation.recommended_plan_name}
               </button>
             ) : (
-              <p className="text-sm text-black/60">
+              <p className="text-sm text-[var(--av-text)]/60">
                 Keep exploring — as you use more tools, we'll recommend the plan that fits how you actually work.
               </p>
             )}
@@ -348,8 +348,8 @@ export default function Subscription() {
 
       {/* Upgrade Plans */}
       {(!subscription || subscription.plan === 'free') && availablePlans.length > 0 && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
-          <div className="p-6 border-b border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden mb-6">
+          <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
             <h2 className="font-semibold text-lg mb-4">Available Plans</h2>
 
             {/* Billing Toggle */}
@@ -357,7 +357,7 @@ export default function Subscription() {
               <button
                 onClick={() => setBillingCycle('monthly')}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-                  billingCycle === 'monthly' ? 'bg-white shadow-sm' : ''
+                  billingCycle === 'monthly' ? 'bg-[var(--av-surface)] shadow-sm' : ''
                 }`}
               >
                 Monthly
@@ -365,10 +365,10 @@ export default function Subscription() {
               <button
                 onClick={() => setBillingCycle('yearly')}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-                  billingCycle === 'yearly' ? 'bg-white shadow-sm' : ''
+                  billingCycle === 'yearly' ? 'bg-[var(--av-surface)] shadow-sm' : ''
                 }`}
               >
-                Yearly <span className="text-green-600 text-xs">Save ~17%</span>
+                Yearly <span className="text-[var(--av-success)] text-xs">Save ~17%</span>
               </button>
             </div>
 
@@ -377,7 +377,7 @@ export default function Subscription() {
               {availablePlans.map((plan) => (
                 <div
                   key={plan.code}
-                  className="border border-black/[0.08] rounded-xl p-4 hover:border-[#4285F4]/20 transition"
+                  className="border border-[var(--av-border-strong)]/[0.08] rounded-xl p-4 hover:border-[#4285F4]/20 transition"
                 >
                   <h3 className="font-semibold text-lg mb-1">{plan.name}</h3>
                   <div className="flex items-baseline gap-1 mb-4">
@@ -386,10 +386,10 @@ export default function Subscription() {
                         billingCycle === 'monthly' ? plan.monthly_price : plan.yearly_monthly_equivalent
                       )}
                     </span>
-                    <span className="text-black">/mo</span>
+                    <span className="text-[var(--av-text)]">/mo</span>
                   </div>
                   {billingCycle === 'yearly' && (
-                    <p className="text-xs text-black mb-3">
+                    <p className="text-xs text-[var(--av-text)] mb-3">
                       Billed as {formatCurrency(plan.yearly_price)}/year (Save {plan.savings_percent}%)
                     </p>
                   )}
@@ -413,11 +413,11 @@ export default function Subscription() {
 
       {/* Payment History */}
       {payments.length > 0 && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
-          <div className="p-6 border-b border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden mb-6">
+          <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-lg">Payment History</h2>
-              <span className="text-sm text-black">{payments.length} transactions</span>
+              <span className="text-sm text-[var(--av-text)]">{payments.length} transactions</span>
             </div>
           </div>
           <div className="divide-y divide-black/[0.06]">
@@ -427,23 +427,23 @@ export default function Subscription() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       payment.status === 'successful'
-                        ? 'bg-green-100'
+                        ? 'bg-[var(--av-success-soft)]'
                         : payment.status === 'pending'
                         ? 'bg-amber-100'
-                        : 'bg-red-100'
+                        : 'bg-[var(--av-danger-soft)]'
                     }`}
                   >
                     {payment.status === 'successful' ? (
-                      <Check className="w-5 h-5 text-green-600" />
+                      <Check className="w-5 h-5 text-[var(--av-success)]" />
                     ) : payment.status === 'pending' ? (
                       <Clock className="w-5 h-5 text-amber-600" />
                     ) : (
-                      <X className="w-5 h-5 text-red-600" />
+                      <X className="w-5 h-5 text-[var(--av-danger)]" />
                     )}
                   </div>
                   <div>
                     <p className="font-medium">{payment.description}</p>
-                    <p className="text-sm text-black">
+                    <p className="text-sm text-[var(--av-text)]">
                       {formatDate(payment.paid_at)}
                     </p>
                   </div>
@@ -454,8 +454,8 @@ export default function Subscription() {
                   </p>
                   <span
                     className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                      STATUS_CONFIG[payment.status]?.bg || 'bg-gray-100'
-                    } ${STATUS_CONFIG[payment.status]?.color || 'text-gray-600'}`}
+                      STATUS_CONFIG[payment.status]?.bg || 'bg-[var(--av-surface-2)]'
+                    } ${STATUS_CONFIG[payment.status]?.color || 'text-[var(--av-text-muted)]'}`}
                   >
                     {STATUS_CONFIG[payment.status]?.label || payment.status}
                   </span>
@@ -464,7 +464,7 @@ export default function Subscription() {
             ))}
           </div>
           {payments.length > 5 && (
-            <div className="p-4 text-center border-t border-black/[0.06]">
+            <div className="p-4 text-center border-t border-[var(--av-border-strong)]/[0.06]">
               <button className="text-sm text-[#4285F4] hover:text-[#4285F4] font-medium">
                 View all {payments.length} payments
               </button>
@@ -475,11 +475,11 @@ export default function Subscription() {
 
       {/* Invoices */}
       {invoices.length > 0 && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden mb-6">
-          <div className="p-6 border-b border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden mb-6">
+          <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-lg">Invoices</h2>
-              <span className="text-sm text-black">{invoices.length} invoices</span>
+              <span className="text-sm text-[var(--av-text)]">{invoices.length} invoices</span>
             </div>
           </div>
           <div className="divide-y divide-black/[0.06]">
@@ -491,7 +491,7 @@ export default function Subscription() {
                   </div>
                   <div>
                     <p className="font-medium">{invoice.invoice_number}</p>
-                    <p className="text-sm text-black">
+                    <p className="text-sm text-[var(--av-text)]">
                       Due: {formatDate(invoice.due_date)}
                     </p>
                   </div>
@@ -503,8 +503,8 @@ export default function Subscription() {
                     </p>
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                        STATUS_CONFIG[invoice.status]?.bg || 'bg-gray-100'
-                      } ${STATUS_CONFIG[invoice.status]?.color || 'text-gray-600'}`}
+                        STATUS_CONFIG[invoice.status]?.bg || 'bg-[var(--av-surface-2)]'
+                      } ${STATUS_CONFIG[invoice.status]?.color || 'text-[var(--av-text-muted)]'}`}
                     >
                       {STATUS_CONFIG[invoice.status]?.label || invoice.status}
                     </span>
@@ -514,10 +514,10 @@ export default function Subscription() {
                       href={invoice.pdf_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 hover:bg-black/10 rounded-lg transition"
+                      className="p-2 hover:bg-[var(--av-surface-3)] rounded-lg transition"
                       title="Download Invoice"
                     >
-                      <Download className="w-5 h-5 text-black" />
+                      <Download className="w-5 h-5 text-[var(--av-text)]" />
                     </a>
                   )}
                 </div>
@@ -528,56 +528,56 @@ export default function Subscription() {
       )}
 
       {/* Manage Payment Methods Link */}
-      <div className="bg-white rounded-2xl border border-black/[0.06] p-4">
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4">
         <Link
           to="/app/payments"
           className="flex items-center justify-between p-2 hover:bg-black/[0.02] rounded-lg transition"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 rounded-lg bg-[var(--av-success-soft)] flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-[var(--av-success)]" />
             </div>
             <div>
               <p className="font-medium">Payment Methods</p>
-              <p className="text-sm text-black">Manage your saved cards and bank accounts</p>
+              <p className="text-sm text-[var(--av-text)]">Manage your saved cards and bank accounts</p>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-black" />
+          <ChevronRight className="w-5 h-5 text-[var(--av-text)]" />
         </Link>
       </div>
 
       {/* Cancel Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl shadow-2xl w-full max-w-md">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <h2 className="text-lg font-bold">Cancel Subscription</h2>
             </div>
             <div className="p-6">
               {cancelMessage ? (
                 <div className="text-center py-4">
-                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-8 h-8 text-green-600" />
+                  <div className="w-16 h-16 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-8 h-8 text-[var(--av-success)]" />
                   </div>
                   <p className="text-lg font-medium">{cancelMessage}</p>
                 </div>
               ) : (
                 <>
-                  <p className="text-black mb-6">
+                  <p className="text-[var(--av-text)] mb-6">
                     Are you sure you want to cancel your subscription? You'll lose access to premium
                     features at the end of your billing period.
                   </p>
                   <div className="flex gap-3">
                     <button
                       onClick={() => setShowCancelModal(false)}
-                      className="flex-1 px-4 py-3 border border-black/10 rounded-xl font-medium hover:bg-black/[0.02] transition"
+                      className="flex-1 px-4 py-3 border border-[var(--av-border)] rounded-xl font-medium hover:bg-black/[0.02] transition"
                     >
                       Keep Subscription
                     </button>
                     <button
                       onClick={handleCancel}
                       disabled={cancelling}
-                      className="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition disabled:opacity-50"
+                      className="flex-1 px-4 py-3 bg-[var(--av-danger)] text-white rounded-xl font-medium hover:bg-[var(--av-danger)] transition disabled:opacity-50"
                     >
                       {cancelling ? 'Cancelling...' : 'Cancel Subscription'}
                     </button>

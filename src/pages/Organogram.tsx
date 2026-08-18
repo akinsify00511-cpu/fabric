@@ -139,8 +139,8 @@ export default function Organogram() {
   const getNodeStyle = (level: number) => {
     const colors = [
       { bg: 'to-[#4285F4] to-[#8B5CF6]', border: 'border-[#4285F4]' },
-      { bg: 'from-blue-500 to-cyan-600', border: 'border-blue-500' },
-      { bg: 'from-green-500 to-emerald-600', border: 'border-green-500' },
+      { bg: 'from-blue-500 to-cyan-600', border: 'border-[var(--av-primary)]' },
+      { bg: 'from-green-500 to-emerald-600', border: 'border-[var(--av-success)]' },
       { bg: 'from-white0 to-black', border: 'border-white0' },
     ]
     return colors[Math.min(level, colors.length - 1)]
@@ -160,7 +160,7 @@ export default function Organogram() {
             {hasChildren && (
               <button
                 onClick={() => toggleNode(node.staff_id)}
-                className="w-6 h-6 rounded-full bg-white border border-black/20 flex items-center justify-center hover:bg-black/[0.05]"
+                className="w-6 h-6 rounded-full bg-[var(--av-surface)] border border-[var(--av-border)] flex items-center justify-center hover:bg-black/[0.05]"
               >
                 {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
@@ -170,7 +170,7 @@ export default function Organogram() {
           {/* Node card */}
           <div
             onClick={() => setSelectedNode(node)}
-            className={`ml-2 mb-3 p-4 rounded-xl bg-white border-2 cursor-pointer hover:shadow-lg transition-all ${
+            className={`ml-2 mb-3 p-4 rounded-xl bg-[var(--av-surface)] border-2 cursor-pointer hover:shadow-lg transition-all ${
               style.border
             } ${selectedNode?.staff_id === node.staff_id ? 'ring-2 ring-[#4285F4]' : ''}`}
           >
@@ -185,9 +185,9 @@ export default function Organogram() {
               <div>
                 <div className="flex items-center gap-2">
                   <p className="font-medium text-sm">{node.full_name}</p>
-                  {node.level === 0 && <Crown size={14} className="text-yellow-500" />}
+                  {node.level === 0 && <Crown size={14} className="text-[var(--av-warning)]" />}
                 </div>
-                <p className="text-xs text-black">{node.position_title}</p>
+                <p className="text-xs text-[var(--av-text)]">{node.position_title}</p>
                 <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-black/[0.05] rounded-full">
                   {node.department}
                 </span>
@@ -195,7 +195,7 @@ export default function Organogram() {
             </div>
 
             {hasChildren && (
-              <div className="mt-2 pt-2 border-t border-black/5 flex items-center justify-between text-xs text-black">
+              <div className="mt-2 pt-2 border-t border-[var(--av-border)] flex items-center justify-between text-xs text-[var(--av-text)]">
                 <span>{children.length} direct reports</span>
                 <div className="flex items-center gap-1">
                   <Mail size={12} />
@@ -208,7 +208,7 @@ export default function Organogram() {
 
         {/* Children */}
         {isExpanded && hasChildren && (
-          <div className="ml-6 border-l-2 border-black/10 pl-4">
+          <div className="ml-6 border-l-2 border-[var(--av-border)] pl-4">
             {children.map((child, idx) => renderNode(child, idx === children.length - 1))}
           </div>
         )}
@@ -220,13 +220,13 @@ export default function Organogram() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Organogram</h1>
-          <p className="text-sm text-black mt-0.5">Organization structure & reporting channels</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Organogram</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">Organization structure & reporting channels</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={loadData}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-black/10 text-sm"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--av-border)] text-sm"
           >
             <RefreshCw size={14} />
             Refresh
@@ -249,7 +249,7 @@ export default function Organogram() {
             key={tab.key}
             onClick={() => setView(tab.key as typeof view)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
-              view === tab.key ? 'avenize-gradient text-white' : 'border border-black/10'
+              view === tab.key ? 'avenize-gradient text-white' : 'border border-[var(--av-border)]'
             }`}
           >
             <tab.icon size={16} />
@@ -264,15 +264,15 @@ export default function Organogram() {
           {/* Search & Controls */}
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1 max-w-md">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--av-text)]" />
               <input
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 placeholder="Search by name, title, or department..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-black/10 bg-white"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)]"
               />
             </div>
-            <div className="flex items-center gap-2 text-sm text-black">
+            <div className="flex items-center gap-2 text-sm text-[var(--av-text)]">
               <span>{orgChart.length} members</span>
             </div>
           </div>
@@ -285,8 +285,8 @@ export default function Organogram() {
               { label: 'Departments', value: [...new Set(orgChart.map((n) => n.department))].length, icon: Building2 },
               { label: 'Avg Reports', value: (orgChart.reduce((sum, n) => sum + n.direct_report_count, 0) / Math.max(orgChart.filter((n) => n.direct_report_count > 0).length, 1)).toFixed(1), icon: Network },
             ].map((stat, i) => (
-              <div key={i} className="bg-white rounded-xl border border-black/[0.06] p-4">
-                <div className="flex items-center gap-2 text-black mb-1">
+              <div key={i} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border-strong)]/[0.06] p-4">
+                <div className="flex items-center gap-2 text-[var(--av-text)] mb-1">
                   <stat.icon size={14} />
                   <span className="text-xs">{stat.label}</span>
                 </div>
@@ -296,18 +296,18 @@ export default function Organogram() {
           </div>
 
           {/* Org Chart */}
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6 overflow-x-auto">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6 overflow-x-auto">
             <div className="min-w-max">
               {loading ? (
                 <div className="animate-pulse space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-20 bg-black/10 rounded-xl" />
+                    <div key={i} className="h-20 bg-[var(--av-surface-3)] rounded-xl" />
                   ))}
                 </div>
               ) : filteredChart.length === 0 ? (
                 <div className="text-center py-12">
-                  <Users className="w-12 h-12 mx-auto text-black/50 mb-3" />
-                  <p className="text-black">No team members found</p>
+                  <Users className="w-12 h-12 mx-auto text-[var(--av-text)]/50 mb-3" />
+                  <p className="text-[var(--av-text)]">No team members found</p>
                 </div>
               ) : (
                 <div className="space-y-1">
@@ -323,7 +323,7 @@ export default function Organogram() {
       {view === 'channels' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-black">Automated reporting and sync channels</p>
+            <p className="text-sm text-[var(--av-text)]">Automated reporting and sync channels</p>
             <button onClick={() => setShowChannelForm(true)} className="flex items-center gap-2 px-4 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
               <Plus size={16} />
               New Channel
@@ -331,7 +331,7 @@ export default function Organogram() {
           </div>
 
           {channels.map((channel) => (
-            <div key={channel.id} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+            <div key={channel.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
@@ -339,13 +339,13 @@ export default function Organogram() {
                   </div>
                   <div>
                     <h3 className="font-medium">{channel.name}</h3>
-                    <p className="text-sm text-black">{channel.description}</p>
+                    <p className="text-sm text-[var(--av-text)]">{channel.description}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full capitalize">
                         {channel.frequency}
                       </span>
                       {channel.auto_generate && (
-                        <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
+                        <span className="text-xs px-2 py-1 bg-[var(--av-success-soft)] text-[var(--av-success)] rounded-full flex items-center gap-1">
                           <RefreshCw size={10} />
                           Auto-generated
                         </span>
@@ -363,9 +363,9 @@ export default function Organogram() {
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-black/[0.06] flex items-center justify-between text-sm">
+              <div className="mt-4 pt-4 border-t border-[var(--av-border-strong)]/[0.06] flex items-center justify-between text-sm">
                 <div className="flex items-center gap-4">
-                  <span className="text-black">Last generated:</span>
+                  <span className="text-[var(--av-text)]">Last generated:</span>
                   <span>Today at 9:00 AM</span>
                 </div>
                 <button className="text-[#4285F4] font-medium">
@@ -376,9 +376,9 @@ export default function Organogram() {
           ))}
 
           {/* Add channel card */}
-          <div className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10">
-            <PlusCircle size={32} className="text-black mb-2" />
-            <p className="text-sm text-black">Create new reporting channel</p>
+          <div className="border-2 border-dashed border-[var(--av-border)] rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-[var(--av-surface-3)]">
+            <PlusCircle size={32} className="text-[var(--av-text)] mb-2" />
+            <p className="text-sm text-[var(--av-text)]">Create new reporting channel</p>
           </div>
         </div>
       )}
@@ -391,14 +391,14 @@ export default function Organogram() {
             const head = members.find((n) => n.level === Math.min(...members.map((m) => m.level)))
 
             return (
-              <div key={dept} className="bg-white rounded-2xl border border-black/[0.06] p-5">
+              <div key={dept} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-[#4285F4]/10 flex items-center justify-center">
                     <Building2 size={20} className="text-[#4285F4]" />
                   </div>
                   <div>
                     <h3 className="font-medium">{dept}</h3>
-                    <p className="text-xs text-black">{members.length} members</p>
+                    <p className="text-xs text-[var(--av-text)]">{members.length} members</p>
                   </div>
                 </div>
 
@@ -410,7 +410,7 @@ export default function Organogram() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{head.full_name}</p>
-                      <p className="text-xs text-black">{head.position_title}</p>
+                      <p className="text-xs text-[var(--av-text)]">{head.position_title}</p>
                     </div>
                   </div>
                 )}
@@ -426,11 +426,11 @@ export default function Organogram() {
                     </div>
                   ))}
                   {members.length > 4 && (
-                    <p className="text-xs text-black">+{members.length - 4} more</p>
+                    <p className="text-xs text-[var(--av-text)]">+{members.length - 4} more</p>
                   )}
                 </div>
 
-                <button onClick={() => { setFilter(dept); setView('org'); }} className="w-full mt-4 py-2 rounded-lg border border-black/10 text-sm">
+                <button onClick={() => { setFilter(dept); setView('org'); }} className="w-full mt-4 py-2 rounded-lg border border-[var(--av-border)] text-sm">
                   View Department
                 </button>
               </div>
@@ -438,9 +438,9 @@ export default function Organogram() {
           })}
 
           {/* Add department card */}
-          <button onClick={() => navigate('/app/operations?tab=departments')} className="border-2 border-dashed border-black/10 rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10 h-fit">
-            <PlusCircle size={32} className="text-black mb-2" />
-            <p className="text-sm text-black">Add Department</p>
+          <button onClick={() => navigate('/app/operations?tab=departments')} className="border-2 border-dashed border-[var(--av-border)] rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer hover:bg-[var(--av-surface-3)] h-fit">
+            <PlusCircle size={32} className="text-[var(--av-text)] mb-2" />
+            <p className="text-sm text-[var(--av-text)]">Add Department</p>
           </button>
         </div>
       )}
@@ -448,8 +448,8 @@ export default function Organogram() {
       {/* Create Channel Modal */}
       {showChannelForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
-            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">New Reporting Channel</h2>
               <button onClick={() => setShowChannelForm(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">✕</button>
             </div>
@@ -460,7 +460,7 @@ export default function Organogram() {
                   value={channelForm.name}
                   onChange={(e) => setChannelForm({ ...channelForm, name: e.target.value })}
                   placeholder="Daily Standup"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   required
                 />
               </div>
@@ -469,7 +469,7 @@ export default function Organogram() {
                 <select
                   value={channelForm.channel_type}
                   onChange={(e) => setChannelForm({ ...channelForm, channel_type: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 >
                   <option value="daily_standup">Daily Standup</option>
                   <option value="weekly_update">Weekly Update</option>
@@ -485,7 +485,7 @@ export default function Organogram() {
                 <select
                   value={channelForm.frequency}
                   onChange={(e) => setChannelForm({ ...channelForm, frequency: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -500,7 +500,7 @@ export default function Organogram() {
                   value={channelForm.description}
                   onChange={(e) => setChannelForm({ ...channelForm, description: e.target.value })}
                   placeholder="What is this channel for?"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)]"
                   rows={2}
                 />
               </div>
@@ -515,8 +515,8 @@ export default function Organogram() {
       {/* Selected Node Detail Modal */}
       {selectedNode && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
-            <div className="p-6 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="font-semibold">Team Member</h2>
               <button onClick={() => setSelectedNode(null)} className="p-2 hover:bg-black/[0.05] rounded-lg">✕</button>
             </div>
@@ -527,22 +527,22 @@ export default function Organogram() {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">{selectedNode.full_name}</h3>
-                  <p className="text-black">{selectedNode.position_title}</p>
+                  <p className="text-[var(--av-text)]">{selectedNode.position_title}</p>
                   <span className="text-xs px-2 py-1 bg-black/[0.05] rounded-full">{selectedNode.department}</span>
                 </div>
               </div>
 
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-3 text-sm">
-                  <Mail size={16} className="text-black" />
+                  <Mail size={16} className="text-[var(--av-text)]" />
                   <span>{selectedNode.email}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <Network size={16} className="text-black" />
+                  <Network size={16} className="text-[var(--av-text)]" />
                   <span>{selectedNode.direct_report_count} direct reports</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
-                  <ArrowUpRight size={16} className="text-black" />
+                  <ArrowUpRight size={16} className="text-[var(--av-text)]" />
                   <span>Reports to: CEO</span>
                 </div>
               </div>
@@ -551,10 +551,10 @@ export default function Organogram() {
                 <button onClick={() => navigate(`/app/staff/${selectedNode.staff_id}`)} className="flex-1 py-2 rounded-lg avenize-gradient text-white text-sm font-medium">
                   View Full Profile
                 </button>
-                <button onClick={() => navigate('/app/chat')} className="px-4 py-2 rounded-lg border border-black/10">
+                <button onClick={() => navigate('/app/chat')} className="px-4 py-2 rounded-lg border border-[var(--av-border)]">
                   <MessageSquare size={16} />
                 </button>
-                <button onClick={() => window.location.href = `mailto:${selectedNode.email}`} className="px-4 py-2 rounded-lg border border-black/10">
+                <button onClick={() => window.location.href = `mailto:${selectedNode.email}`} className="px-4 py-2 rounded-lg border border-[var(--av-border)]">
                   <Mail size={16} />
                 </button>
               </div>

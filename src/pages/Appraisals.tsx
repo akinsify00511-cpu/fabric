@@ -273,7 +273,7 @@ export default function AppraisalsPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-4 h-4 ${star <= rating ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`}
+            className={`w-4 h-4 ${star <= rating ? 'text-amber-400 fill-amber-400' : 'text-[var(--av-text-disabled)]'}`}
           />
         ))}
       </div>
@@ -283,7 +283,7 @@ export default function AppraisalsPage() {
   function RatingInput({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
     return (
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">{label}</label>
         <div className="flex items-center gap-3">
           <input
             type="range"
@@ -303,7 +303,7 @@ export default function AppraisalsPage() {
                 onClick={() => onChange(star)}
                 className="focus:outline-none"
               >
-                <Star className={`w-5 h-5 ${star <= value ? 'text-amber-400 fill-amber-400' : 'text-gray-300'}`} />
+                <Star className={`w-5 h-5 ${star <= value ? 'text-amber-400 fill-amber-400' : 'text-[var(--av-text-disabled)]'}`} />
               </button>
             ))}
           </div>
@@ -315,18 +315,18 @@ export default function AppraisalsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Performance Appraisals</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">Performance Appraisals</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Track and manage employee performance reviews
             </p>
           </div>
           {canManage && (
             <button
               onClick={() => openModal()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               New Review
@@ -338,53 +338,53 @@ export default function AppraisalsPage() {
       <div className="p-6">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <FileText className="w-5 h-5 text-blue-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-primary-soft)]">
+                <FileText className="w-5 h-5 text-[var(--av-primary)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalReviews}</p>
-                <p className="text-sm text-gray-500">Total Reviews</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.totalReviews}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Total Reviews</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
                 <Star className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.avgRating}</p>
-                <p className="text-sm text-gray-500">Avg. Rating</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.avgRating}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">Avg. Rating</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-4 border border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-100">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+              <div className="p-2 rounded-lg bg-[var(--av-success-soft)]">
+                <TrendingUp className="w-5 h-5 text-[var(--av-success)]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{stats.thisQuarter}</p>
-                <p className="text-sm text-gray-500">This Year</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.thisQuarter}</p>
+                <p className="text-sm text-[var(--av-text-muted)]">This Year</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl border border-gray-200 mb-6">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
           <div className="p-4 flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                 <input
                   type="text"
                   placeholder="Search reviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -392,7 +392,7 @@ export default function AppraisalsPage() {
             <select
               value={periodFilter}
               onChange={(e) => setPeriodFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">All Periods</option>
               {uniquePeriods.map(period => (
@@ -405,18 +405,18 @@ export default function AppraisalsPage() {
         {/* Content */}
         <div className="space-y-4">
           {loading ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+              <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
             </div>
           ) : filteredReviews.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <Award className="w-12 h-12 text-gray-300 mx-auto" />
-              <p className="text-gray-500 mt-2">No performance reviews found</p>
-              <p className="text-sm text-gray-400 mt-1">Start tracking employee performance</p>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+              <Award className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
+              <p className="text-[var(--av-text-muted)] mt-2">No performance reviews found</p>
+              <p className="text-sm text-[var(--av-text-disabled)] mt-1">Start tracking employee performance</p>
               {canManage && (
                 <button
                   onClick={() => openModal()}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  className="mt-4 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                 >
                   Create First Review
                 </button>
@@ -424,39 +424,39 @@ export default function AppraisalsPage() {
             </div>
           ) : (
             filteredReviews.map((review) => (
-              <div key={review.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={review.id} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
                 <div
                   className="p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-50"
                   onClick={() => setExpandedReview(expandedReview === review.id ? null : review.id)}
                 >
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                  <div className="w-10 h-10 rounded-full bg-[var(--av-primary-soft)] flex items-center justify-center text-[var(--av-primary)] font-medium">
                     {review.staff_name?.charAt(0) || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-medium text-gray-900">{review.staff_name}</h3>
+                      <h3 className="font-medium text-[var(--av-text)]">{review.staff_name}</h3>
                       {review.rating_overall && (
                         <span className="flex items-center gap-1 text-sm">
                           {renderStars(Math.round(review.rating_overall))}
-                          <span className="text-gray-500">{review.rating_overall.toFixed(1)}</span>
+                          <span className="text-[var(--av-text-muted)]">{review.rating_overall.toFixed(1)}</span>
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 mt-1 text-sm text-[var(--av-text-muted)]">
                       {review.review_period && <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{review.review_period}</span>}
                       {review.reviewer_name && <span>Reviewed by {review.reviewer_name}</span>}
-                      <span className="text-gray-400">{new Date(review.created_at).toLocaleDateString()}</span>
+                      <span className="text-[var(--av-text-disabled)]">{new Date(review.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedReview === review.id ? 'rotate-90' : ''}`} />
+                  <ChevronRight className={`w-5 h-5 text-[var(--av-text-disabled)] transition-transform ${expandedReview === review.id ? 'rotate-90' : ''}`} />
                 </div>
 
                 {expandedReview === review.id && (
-                  <div className="border-t border-gray-100 p-4 bg-gray-50">
+                  <div className="border-t border-[var(--av-border)] p-4 bg-gray-50">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {/* Ratings */}
                       <div>
-                        <h4 className="text-xs font-medium text-gray-500 uppercase mb-3">Ratings</h4>
+                        <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-3">Ratings</h4>
                         <div className="space-y-3">
                           {[
                             { label: 'Overall', value: review.rating_overall },
@@ -466,10 +466,10 @@ export default function AppraisalsPage() {
                             { label: 'Teamwork', value: review.rating_teamwork },
                           ].filter(r => r.value).map(({ label, value }) => (
                             <div key={label} className="flex items-center justify-between">
-                              <span className="text-sm text-gray-600">{label}</span>
+                              <span className="text-sm text-[var(--av-text-muted)]">{label}</span>
                               <div className="flex items-center gap-2">
                                 {renderStars(Math.round(value || 0))}
-                                <span className="text-sm font-medium text-gray-700 w-8">{value?.toFixed(1)}</span>
+                                <span className="text-sm font-medium text-[var(--av-text-secondary)] w-8">{value?.toFixed(1)}</span>
                               </div>
                             </div>
                           ))}
@@ -480,42 +480,42 @@ export default function AppraisalsPage() {
                       <div className="space-y-4">
                         {review.strengths && (
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Strengths</h4>
-                            <p className="text-sm text-gray-700">{review.strengths}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Strengths</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{review.strengths}</p>
                           </div>
                         )}
                         {review.improvements && (
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Areas for Improvement</h4>
-                            <p className="text-sm text-gray-700">{review.improvements}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Areas for Improvement</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{review.improvements}</p>
                           </div>
                         )}
                         {review.goals_achieved && (
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Goals Achieved</h4>
-                            <p className="text-sm text-gray-700">{review.goals_achieved}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Goals Achieved</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{review.goals_achieved}</p>
                           </div>
                         )}
                         {review.goals_next_period && (
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Goals for Next Period</h4>
-                            <p className="text-sm text-gray-700">{review.goals_next_period}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Goals for Next Period</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{review.goals_next_period}</p>
                           </div>
                         )}
                       </div>
                     </div>
 
                     {canManage && (
-                      <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex gap-2 mt-4 pt-4 border-t border-[var(--av-border)]">
                         <button
                           onClick={() => openModal(review)}
-                          className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                          className="flex items-center gap-2 px-3 py-2 bg-[var(--av-surface)] border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                         >
                           <Edit2 className="w-4 h-4" /> Edit
                         </button>
                         <button
                           onClick={() => deleteReview(review.id)}
-                          className="flex items-center gap-2 px-3 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm hover:bg-red-100"
+                          className="flex items-center gap-2 px-3 py-2 bg-red-50 text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
                         >
                           <Trash2 className="w-4 h-4" /> Delete
                         </button>
@@ -532,8 +532,8 @@ export default function AppraisalsPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-lg font-semibold">
                 {editingReview ? 'Edit Performance Review' : 'New Performance Review'}
               </h2>
@@ -541,12 +541,12 @@ export default function AppraisalsPage() {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Employee *</label>
                   <select
                     required
                     value={formData.staff_id}
                     onChange={(e) => setFormData({ ...formData, staff_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select employee</option>
                     {allStaff.map(s => (
@@ -555,23 +555,23 @@ export default function AppraisalsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Review Period</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Review Period</label>
                   <input
                     type="text"
                     value={formData.review_period}
                     onChange={(e) => setFormData({ ...formData, review_period: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="e.g., Q1 2024"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Reviewer</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Reviewer</label>
                 <select
                   value={formData.reviewer_id}
                   onChange={(e) => setFormData({ ...formData, reviewer_id: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select reviewer</option>
                   {allStaff.map(s => (
@@ -580,8 +580,8 @@ export default function AppraisalsPage() {
                 </select>
               </div>
 
-              <div className="border-t border-gray-200 pt-4">
-                <h4 className="text-sm font-medium text-gray-900 mb-4">Performance Ratings</h4>
+              <div className="border-t border-[var(--av-border)] pt-4">
+                <h4 className="text-sm font-medium text-[var(--av-text)] mb-4">Performance Ratings</h4>
                 <div className="space-y-4">
                   <RatingInput
                     label="Overall Performance"
@@ -611,44 +611,44 @@ export default function AppraisalsPage() {
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 pt-4 space-y-4">
+              <div className="border-t border-[var(--av-border)] pt-4 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Strengths</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Strengths</label>
                   <textarea
                     rows={2}
                     value={formData.strengths}
                     onChange={(e) => setFormData({ ...formData, strengths: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Key strengths and accomplishments..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Areas for Improvement</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Areas for Improvement</label>
                   <textarea
                     rows={2}
                     value={formData.improvements}
                     onChange={(e) => setFormData({ ...formData, improvements: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Areas where the employee can improve..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Goals Achieved</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Goals Achieved</label>
                   <textarea
                     rows={2}
                     value={formData.goals_achieved}
                     onChange={(e) => setFormData({ ...formData, goals_achieved: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Goals accomplished during this period..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Goals for Next Period</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Goals for Next Period</label>
                   <textarea
                     rows={2}
                     value={formData.goals_next_period}
                     onChange={(e) => setFormData({ ...formData, goals_next_period: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Goals for the upcoming period..."
                   />
                 </div>
@@ -658,13 +658,13 @@ export default function AppraisalsPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                  className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                 >
                   {editingReview ? 'Save Changes' : 'Create Review'}
                 </button>

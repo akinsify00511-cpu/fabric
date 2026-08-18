@@ -220,8 +220,8 @@ Each code can only be used once!`
   if (loading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-black/10 rounded w-48" />
-        <div className="h-64 bg-black/10 rounded" />
+        <div className="h-8 bg-[var(--av-surface-3)] rounded w-48" />
+        <div className="h-64 bg-[var(--av-surface-3)] rounded" />
       </div>
     )
   }
@@ -230,18 +230,18 @@ Each code can only be used once!`
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-medium text-black">Security</h1>
-          <p className="text-sm text-black mt-0.5">Protect your account and monitor activity</p>
+          <h1 className="text-xl font-medium text-[var(--av-text)]">Security</h1>
+          <p className="text-sm text-[var(--av-text)] mt-0.5">Protect your account and monitor activity</p>
         </div>
       </div>
 
-      <div className="flex gap-1 bg-white rounded-xl p-1 border border-black/[0.06] mb-6 w-fit">
+      <div className="flex gap-1 bg-[var(--av-surface-elevated)] rounded-xl p-1 border border-[var(--av-border-strong)]/[0.06] mb-6 w-fit">
         <button
           onClick={() => setActiveTab('security')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'security'
               ? 'avenize-gradient text-white'
-              : 'text-black hover:text-black'
+              : 'text-[var(--av-text)] hover:text-[var(--av-text)]'
           }`}
         >
           Security
@@ -251,7 +251,7 @@ Each code can only be used once!`
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             activeTab === 'audit'
               ? 'avenize-gradient text-white'
-              : 'text-black hover:text-black'
+              : 'text-[var(--av-text)] hover:text-[var(--av-text)]'
           }`}
         >
           Audit Log
@@ -260,32 +260,32 @@ Each code can only be used once!`
 
       {activeTab === 'security' && (
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <div className="flex items-center gap-3">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  mfa?.enabled ? 'bg-green-100' : 'bg-yellow-100'
+                  mfa?.enabled ? 'bg-[var(--av-success-soft)]' : 'bg-[var(--av-warning-soft)]'
                 }`}>
                   {mfa?.enabled ? (
-                    <Shield className="w-6 h-6 text-green-600" />
+                    <Shield className="w-6 h-6 text-[var(--av-success)]" />
                   ) : (
-                    <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                    <AlertTriangle className="w-6 h-6 text-[var(--av-warning)]" />
                   )}
                 </div>
                 <div className="flex-1">
                   <h2 className="text-lg font-medium">Two-Factor Authentication</h2>
-                  <p className="text-sm text-black">
+                  <p className="text-sm text-[var(--av-text)]">
                     {mfa?.enabled
                       ? 'Your account is protected with 2FA'
                       : 'Add an extra layer of security to your account'}
                   </p>
                 </div>
                 {mfa?.enabled ? (
-                  <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
+                  <span className="px-3 py-1 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)] text-sm font-medium">
                     Enabled
                   </span>
                 ) : (
-                  <span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-sm font-medium">
+                  <span className="px-3 py-1 rounded-full bg-[var(--av-warning-soft)] text-[var(--av-warning)] text-sm font-medium">
                     Not Enabled
                   </span>
                 )}
@@ -297,21 +297,21 @@ Each code can only be used once!`
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 rounded-xl bg-green-50">
                     <div className="flex items-center gap-3">
-                      <Smartphone className="w-5 h-5 text-green-600" />
+                      <Smartphone className="w-5 h-5 text-[var(--av-success)]" />
                       <div>
                         <p className="text-sm font-medium">Authenticator App</p>
-                        <p className="text-xs text-black">Enabled on {new Date(mfa.totp_confirmed_at!).toLocaleDateString()}</p>
+                        <p className="text-xs text-[var(--av-text)]">Enabled on {new Date(mfa.totp_confirmed_at!).toLocaleDateString()}</p>
                       </div>
                     </div>
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
                   </div>
 
                   <div className="flex items-center justify-between p-4 rounded-xl bg-black/[0.02]">
                     <div className="flex items-center gap-3">
-                      <Key className="w-5 h-5 text-black" />
+                      <Key className="w-5 h-5 text-[var(--av-text)]" />
                       <div>
                         <p className="text-sm font-medium">Backup Codes</p>
-                        <p className="text-xs text-black">
+                        <p className="text-xs text-[var(--av-text)]">
                           {mfa.backup_codes_remaining} of {mfa.backup_codes_total} remaining
                         </p>
                       </div>
@@ -323,7 +323,7 @@ Each code can only be used once!`
 
                   <button
                     onClick={disable2FA}
-                    className="w-full px-4 py-3 rounded-xl border border-red-200 text-red-600 text-sm font-medium hover:bg-red-50"
+                    className="w-full px-4 py-3 rounded-xl border border-[var(--av-danger-soft)] text-[var(--av-danger)] text-sm font-medium hover:bg-red-50"
                   >
                     Disable 2FA
                   </button>
@@ -352,14 +352,14 @@ Each code can only be used once!`
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
                           <Smartphone className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Authenticator App</h3>
-                          <p className="text-xs text-black">
+                          <p className="text-xs text-[var(--av-text)]">
                             Use Google Authenticator, Authy, or any TOTP app
                           </p>
                         </div>
                         <div className="flex-1 p-4 rounded-xl bg-black/[0.02]">
                           <Key className="w-6 h-6 text-[#8B5CF6] mb-2" />
                           <h3 className="text-sm font-medium mb-1">Backup Codes</h3>
-                          <p className="text-xs text-black">
+                          <p className="text-xs text-[var(--av-text)]">
                             10 one-time use codes for emergency access
                           </p>
                         </div>
@@ -381,23 +381,23 @@ Each code can only be used once!`
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <h2 className="text-sm font-medium mb-4">Password</h2>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm">Last changed</p>
-                <p className="text-xs text-black">Never</p>
+                <p className="text-xs text-[var(--av-text)]">Never</p>
               </div>
-              <button className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10">
+              <button className="px-4 py-2 rounded-lg border border-[var(--av-border)] text-sm hover:bg-[var(--av-surface-3)]">
                 Change Password
               </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-black/[0.06] p-6">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-medium">Active Sessions</h2>
-              <button className="text-xs text-red-500 hover:underline">
+              <button className="text-xs text-[var(--av-danger)] hover:underline">
                 Sign out all devices
               </button>
             </div>
@@ -408,9 +408,9 @@ Each code can only be used once!`
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">Current Device</p>
-                  <p className="text-xs text-black">Active now</p>
+                  <p className="text-xs text-[var(--av-text)]">Active now</p>
                 </div>
-                <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">Active</span>
+                <span className="text-xs px-2 py-1 rounded-full bg-[var(--av-success-soft)] text-[var(--av-success)]">Active</span>
               </div>
             </div>
           </div>
@@ -418,14 +418,14 @@ Each code can only be used once!`
       )}
 
       {activeTab === 'audit' && (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-          <div className="p-4 border-b border-black/[0.06]">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] overflow-hidden">
+          <div className="p-4 border-b border-[var(--av-border-strong)]/[0.06]">
             <h2 className="text-sm font-medium">Activity Log</h2>
-            <p className="text-xs text-black">Recent actions on your account</p>
+            <p className="text-xs text-[var(--av-text)]">Recent actions on your account</p>
           </div>
           <div className="divide-y divide-black/[0.04]">
             {auditLogs.length === 0 ? (
-              <div className="p-8 text-center text-black">
+              <div className="p-8 text-center text-[var(--av-text)]">
                 <Shield className="w-8 h-8 mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No activity recorded yet</p>
               </div>
@@ -433,26 +433,26 @@ Each code can only be used once!`
               auditLogs.map((log) => (
                 <div key={log.id} className="p-4 flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                    log.action === 'delete' ? 'bg-red-100' :
-                    log.action === 'login' ? 'bg-green-100' :
-                    'bg-blue-100'
+                    log.action === 'delete' ? 'bg-[var(--av-danger-soft)]' :
+                    log.action === 'login' ? 'bg-[var(--av-success-soft)]' :
+                    'bg-[var(--av-primary-soft)]'
                   }`}>
                     {log.action === 'login' ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      <CheckCircle2 className="w-4 h-4 text-[var(--av-success)]" />
                     ) : log.action === 'delete' ? (
-                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <Trash2 className="w-4 h-4 text-[var(--av-danger)]" />
                     ) : (
-                      <Clock className="w-4 h-4 text-blue-600" />
+                      <Clock className="w-4 h-4 text-[var(--av-primary)]" />
                     )}
                   </div>
                   <div className="flex-1">
                     <p className="text-sm">
                       <span className="font-medium">{getActionLabel(log.action)}</span>
                       {' '}
-                      <span className="text-black/60">{log.resource_type}</span>
+                      <span className="text-[var(--av-text)]/60">{log.resource_type}</span>
                       {log.resource_name && `: ${log.resource_name}`}
                     </p>
-                    <p className="text-xs text-black">
+                    <p className="text-xs text-[var(--av-text)]">
                       {new Date(log.created_at).toLocaleString()}
                       {log.ip_address && ` • ${log.ip_address}`}
                     </p>
@@ -466,10 +466,10 @@ Each code can only be used once!`
 
       {showSetup2FA && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
-            <div className="p-6 border-b border-black/[0.06]">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-md shadow-xl">
+            <div className="p-6 border-b border-[var(--av-border-strong)]/[0.06]">
               <h2 className="text-lg font-semibold">Set Up 2FA</h2>
-              <p className="text-sm text-black">
+              <p className="text-sm text-[var(--av-text)]">
                 {setupStep === 'verify' && 'Enter the 6-digit code from your authenticator app'}
                 {setupStep === 'backup' && 'Save your backup codes'}
               </p>
@@ -478,9 +478,9 @@ Each code can only be used once!`
             <div className="p-6">
               {setupStep === 'verify' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-white">
+                  <div className="p-4 rounded-xl bg-[var(--av-surface)]">
                     <p className="text-sm font-medium mb-2">Manual entry code:</p>
-                    <code className="text-xs font-mono break-all bg-white px-3 py-2 rounded block">
+                    <code className="text-xs font-mono break-all bg-[var(--av-surface)] px-3 py-2 rounded block">
                       {totpSecret.match(/.{1,4}/g)?.join(' ') || totpSecret}
                     </code>
                   </div>
@@ -492,11 +492,11 @@ Each code can only be used once!`
                       value={verifyCode}
                       onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       placeholder="000000"
-                      className="w-full px-4 py-3 rounded-xl border border-black/10 text-center text-2xl tracking-widest"
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] text-center text-2xl tracking-widest"
                       maxLength={6}
                       autoFocus
                     />
-                    <p className="text-xs text-black mt-2 text-center">
+                    <p className="text-xs text-[var(--av-text)] mt-2 text-center">
                       Enter the 6-digit code from your authenticator app
                     </p>
                   </div>
@@ -512,22 +512,22 @@ Each code can only be used once!`
 
               {setupStep === 'backup' && (
                 <div className="space-y-4">
-                  <div className="p-4 rounded-xl bg-green-50 border border-green-200">
+                  <div className="p-4 rounded-xl bg-green-50 border border-[var(--av-success-soft)]">
                     <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle2 className="w-5 h-5 text-green-600" />
-                      <p className="text-sm font-medium text-green-800">2FA Enabled!</p>
+                      <CheckCircle2 className="w-5 h-5 text-[var(--av-success)]" />
+                      <p className="text-sm font-medium text-[var(--av-success)]">2FA Enabled!</p>
                     </div>
-                    <p className="text-xs text-green-700">
+                    <p className="text-xs text-[var(--av-success)]">
                       Your account is now more secure.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-yellow-50 border border-yellow-200">
+                  <div className="p-4 rounded-xl bg-yellow-50 border border-[var(--av-warning-soft)]">
                     <div className="flex items-start gap-2">
-                      <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                      <AlertTriangle className="w-5 h-5 text-[var(--av-warning)] shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-yellow-800">Save these codes!</p>
-                        <p className="text-xs text-yellow-700 mt-1">
+                        <p className="text-sm font-medium text-[var(--av-warning)]">Save these codes!</p>
+                        <p className="text-xs text-[var(--av-warning)] mt-1">
                           Store them securely. Each code can only be used once.
                         </p>
                       </div>
@@ -555,13 +555,13 @@ Each code can only be used once!`
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-black/[0.06]">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06]">
               <button
                 onClick={() => {
                   setShowSetup2FA(false)
                   setVerifyCode('')
                 }}
-                className="w-full text-center text-sm text-black hover:text-black"
+                className="w-full text-center text-sm text-[var(--av-text)] hover:text-[var(--av-text)]"
               >
                 Cancel
               </button>

@@ -43,18 +43,18 @@ type StaffMember = {
 }
 
 const STATUS_CONFIG = {
-  open: { label: 'Open', color: 'bg-blue-100 text-blue-700', icon: Inbox },
-  in_progress: { label: 'In Progress', color: 'bg-yellow-100 text-yellow-700', icon: RefreshCw },
+  open: { label: 'Open', color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]', icon: Inbox },
+  in_progress: { label: 'In Progress', color: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]', icon: RefreshCw },
   waiting: { label: 'Waiting', color: 'bg-orange-100 text-orange-700', icon: Clock },
-  resolved: { label: 'Resolved', color: 'bg-green-100 text-green-700', icon: CheckCircle2 },
-  closed: { label: 'Closed', color: 'bg-white text-black', icon: CheckCircle2 },
+  resolved: { label: 'Resolved', color: 'bg-[var(--av-success-soft)] text-[var(--av-success)]', icon: CheckCircle2 },
+  closed: { label: 'Closed', color: 'bg-[var(--av-surface)] text-[var(--av-text)]', icon: CheckCircle2 },
 }
 
 const PRIORITY_CONFIG = {
-  low: { label: 'Low', color: 'text-black' },
-  medium: { label: 'Medium', color: 'text-blue-500' },
+  low: { label: 'Low', color: 'text-[var(--av-text)]' },
+  medium: { label: 'Medium', color: 'text-[var(--av-primary)]' },
   high: { label: 'High', color: 'text-orange-500' },
-  urgent: { label: 'Urgent', color: 'text-red-500' },
+  urgent: { label: 'Urgent', color: 'text-[var(--av-danger)]' },
 }
 
 export default function Tickets() {
@@ -208,11 +208,11 @@ export default function Tickets() {
     <EntitlementGate feature="support_tickets" modal={true}>
     <div className="flex h-[calc(100vh-140px)] md:h-[calc(100vh-80px)]">
       {/* Ticket List */}
-      <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} w-full md:w-80 bg-white border-r border-black/[0.06] flex-col`}>
+      <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} w-full md:w-80 bg-[var(--av-surface)] border-r border-[var(--av-border-strong)]/[0.06] flex-col`}>
         {/* Header */}
-        <div className="p-4 border-b border-black/[0.06]">
+        <div className="p-4 border-b border-[var(--av-border-strong)]/[0.06]">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-black">Tickets</h2>
+            <h2 className="text-sm font-semibold text-[var(--av-text)]">Tickets</h2>
             <button
               onClick={() => setShowNewTicket(true)}
               className="p-2 rounded-lg avenize-gradient text-white"
@@ -221,12 +221,12 @@ export default function Tickets() {
             </button>
           </div>
           <div className="relative mb-3">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-black" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--av-text)]" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tickets..."
-              className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-black/10"
+              className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-[var(--av-border)]"
             />
           </div>
           {/* Status Filters */}
@@ -243,7 +243,7 @@ export default function Tickets() {
                 className={`px-2 py-1 rounded text-xs font-medium transition ${
                   statusFilter === f.id
                     ? 'avenize-gradient text-white'
-                    : 'bg-black/[0.04] text-black/60'
+                    : 'bg-black/[0.04] text-[var(--av-text)]/60'
                 }`}
               >
                 {f.label} {f.count}
@@ -257,11 +257,11 @@ export default function Tickets() {
           {loading ? (
             <div className="p-4 space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-20 bg-black/10 rounded-xl animate-pulse" />
+                <div key={i} className="h-20 bg-[var(--av-surface-3)] rounded-xl animate-pulse" />
               ))}
             </div>
           ) : filteredTickets.length === 0 ? (
-            <div className="p-8 text-center text-black">
+            <div className="p-8 text-center text-[var(--av-text)]">
               <Ticket size={32} className="mx-auto mb-2 opacity-30" />
               <p className="text-sm">No tickets found</p>
             </div>
@@ -272,10 +272,10 @@ export default function Tickets() {
                 <button
                   key={ticket.id}
                   onClick={() => loadTicketDetails(ticket)}
-                  className={`w-full p-4 text-left border-b border-black/[0.04] transition ${
+                  className={`w-full p-4 text-left border-b border-[var(--av-border-strong)]/[0.04] transition ${
                     selectedTicket?.id === ticket.id
                       ? 'bg-[#8B5CF6]/5'
-                      : 'hover:bg-black/10'
+                      : 'hover:bg-[var(--av-surface-3)]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
@@ -283,11 +283,11 @@ export default function Tickets() {
                       {STATUS_CONFIG[ticket.status].label}
                     </span>
                     {ticket.priority === 'urgent' && (
-                      <AlertTriangle size={14} className="text-red-500" />
+                      <AlertTriangle size={14} className="text-[var(--av-danger)]" />
                     )}
                   </div>
-                  <p className="text-sm font-medium text-black line-clamp-1">{ticket.subject}</p>
-                  <p className="text-xs text-black mt-1">
+                  <p className="text-sm font-medium text-[var(--av-text)] line-clamp-1">{ticket.subject}</p>
+                  <p className="text-xs text-[var(--av-text)] mt-1">
                     {ticket.customer_name ?? 'Unknown'} · {new Date(ticket.created_at).toLocaleDateString()}
                   </p>
                 </button>
@@ -301,7 +301,7 @@ export default function Tickets() {
       {selectedTicket ? (
         <div className="flex-1 flex flex-col min-w-0 bg-[#F8F9FA]">
           {/* Header */}
-          <div className="px-4 py-3 bg-white border-b border-black/[0.06] flex items-center gap-3">
+          <div className="px-4 py-3 bg-[var(--av-surface)] border-b border-[var(--av-border-strong)]/[0.06] flex items-center gap-3">
             <button
               onClick={() => setSelectedTicket(null)}
               className="md:hidden p-2 hover:bg-black/[0.05] rounded-lg"
@@ -309,8 +309,8 @@ export default function Tickets() {
               <ArrowLeft size={20} />
             </button>
             <div className="flex-1 min-w-0">
-              <h2 className="font-medium text-black truncate">{selectedTicket.subject}</h2>
-              <p className="text-xs text-black">
+              <h2 className="font-medium text-[var(--av-text)] truncate">{selectedTicket.subject}</h2>
+              <p className="text-xs text-[var(--av-text)]">
                 #{selectedTicket.id.slice(0, 8)} · {selectedTicket.customer_name ?? 'Unknown customer'}
               </p>
             </div>
@@ -318,7 +318,7 @@ export default function Tickets() {
               <select
                 value={selectedTicket.status}
                 onChange={(e) => updateStatus(selectedTicket.id, e.target.value as TicketType['status'])}
-                className="text-xs rounded-lg border border-black/10 px-2 py-1.5"
+                className="text-xs rounded-lg border border-[var(--av-border)] px-2 py-1.5"
               >
                 {Object.entries(STATUS_CONFIG).map(([key, val]) => (
                   <option key={key} value={key}>{val.label}</option>
@@ -330,14 +330,14 @@ export default function Tickets() {
           {/* Replies */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {/* Original Ticket */}
-            <div className="bg-white rounded-2xl p-4 border border-black/[0.06]">
+            <div className="bg-[var(--av-surface-elevated)] rounded-2xl p-4 border border-[var(--av-border-strong)]/[0.06]">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center text-sm font-medium">
+                <div className="w-8 h-8 rounded-full bg-[var(--av-surface-3)] flex items-center justify-center text-sm font-medium">
                   {selectedTicket.customer_name?.charAt(0) ?? '?'}
                 </div>
                 <div>
                   <p className="text-sm font-medium">{selectedTicket.customer_name ?? 'Customer'}</p>
-                  <p className="text-xs text-black">{new Date(selectedTicket.created_at).toLocaleString()}</p>
+                  <p className="text-xs text-[var(--av-text)]">{new Date(selectedTicket.created_at).toLocaleString()}</p>
                 </div>
                 <div className="ml-auto flex items-center gap-2">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${PRIORITY_CONFIG[selectedTicket.priority].color} bg-current/10`}>
@@ -345,7 +345,7 @@ export default function Tickets() {
                   </span>
                 </div>
               </div>
-              <p className="text-sm text-black whitespace-pre-wrap">{selectedTicket.description}</p>
+              <p className="text-sm text-[var(--av-text)] whitespace-pre-wrap">{selectedTicket.description}</p>
             </div>
 
             {/* Replies */}
@@ -354,13 +354,13 @@ export default function Tickets() {
                 key={reply.id}
                 className={`rounded-2xl p-4 border ${
                   reply.is_internal
-                    ? 'bg-yellow-50 border-yellow-200'
-                    : 'bg-white border-black/[0.06]'
+                    ? 'bg-yellow-50 border-[var(--av-warning-soft)]'
+                    : 'bg-[var(--av-surface)] border-[var(--av-border-strong)]/[0.06]'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    reply.sender_type === 'staff' ? 'avenize-gradient text-white' : 'bg-black/10'
+                    reply.sender_type === 'staff' ? 'avenize-gradient text-white' : 'bg-[var(--av-surface-3)]'
                   }`}>
                     {reply.sender_name?.charAt(0) ?? '?'}
                   </div>
@@ -368,25 +368,25 @@ export default function Tickets() {
                     <p className="text-sm font-medium">
                       {reply.sender_name}
                       {reply.is_internal && (
-                        <span className="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">Internal</span>
+                        <span className="ml-2 text-xs bg-[var(--av-warning-soft)] text-[var(--av-warning)] px-1.5 py-0.5 rounded">Internal</span>
                       )}
                     </p>
-                    <p className="text-xs text-black">{new Date(reply.created_at).toLocaleString()}</p>
+                    <p className="text-xs text-[var(--av-text)]">{new Date(reply.created_at).toLocaleString()}</p>
                   </div>
                 </div>
-                <p className="text-sm text-black whitespace-pre-wrap">{reply.content}</p>
+                <p className="text-sm text-[var(--av-text)] whitespace-pre-wrap">{reply.content}</p>
               </div>
             ))}
           </div>
 
           {/* Reply Composer */}
-          <div className="p-4 bg-white border-t border-black/[0.06]">
+          <div className="p-4 bg-[var(--av-surface)] border-t border-[var(--av-border-strong)]/[0.06]">
             <div className="flex items-center gap-2 mb-2">
               <textarea
                 value={newReply}
                 onChange={(e) => setNewReply(e.target.value)}
                 placeholder="Type your reply..."
-                className="flex-1 resize-none rounded-xl border border-black/10 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+                className="flex-1 resize-none rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 rows={2}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && e.ctrlKey) sendReply()
@@ -395,7 +395,7 @@ export default function Tickets() {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <label className="flex items-center gap-1.5 text-xs text-black cursor-pointer">
+                <label className="flex items-center gap-1.5 text-xs text-[var(--av-text)] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={isInternal}
@@ -421,9 +421,9 @@ export default function Tickets() {
         /* Empty State */
         <div className="hidden md:flex flex-1 items-center justify-center bg-[#F8F9FA]">
           <div className="text-center">
-            <Ticket size={64} className="mx-auto mb-4 text-black/40" />
-            <h2 className="text-lg font-medium text-black">Select a ticket</h2>
-            <p className="text-sm text-black mt-1">Choose a ticket from the list to view details</p>
+            <Ticket size={64} className="mx-auto mb-4 text-[var(--av-text)]/40" />
+            <h2 className="text-lg font-medium text-[var(--av-text)]">Select a ticket</h2>
+            <p className="text-sm text-[var(--av-text)] mt-1">Choose a ticket from the list to view details</p>
           </div>
         </div>
       )}
@@ -431,8 +431,8 @@ export default function Tickets() {
       {/* New Ticket Modal */}
       {showNewTicket && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl">
-            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-2xl w-full max-w-lg shadow-xl">
+            <div className="px-6 py-4 border-b border-[var(--av-border-strong)]/[0.06] flex items-center justify-between">
               <h2 className="text-lg font-semibold">New Ticket</h2>
               <button onClick={() => setShowNewTicket(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">
                 <X size={20} />
@@ -445,7 +445,7 @@ export default function Tickets() {
                   value={newSubject}
                   onChange={(e) => setNewSubject(e.target.value)}
                   placeholder="Brief description of the issue"
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                 />
               </div>
               <div>
@@ -454,7 +454,7 @@ export default function Tickets() {
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="Detailed description..."
-                  className="w-full px-4 py-3 rounded-xl border border-black/10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
+                  className="w-full px-4 py-3 rounded-xl border border-[var(--av-border)] focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/30"
                   rows={4}
                 />
               </div>
@@ -464,7 +464,7 @@ export default function Tickets() {
                   <select
                     value={newPriority}
                     onChange={(e) => setNewPriority(e.target.value as TicketType['priority'])}
-                    className="w-full px-3 py-2 rounded-lg border border-black/10"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--av-border)]"
                   >
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
@@ -477,7 +477,7 @@ export default function Tickets() {
                   <select
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-black/10"
+                    className="w-full px-3 py-2 rounded-lg border border-[var(--av-border)]"
                   >
                     <option value="">Select...</option>
                     <option value="bug">Bug</option>
@@ -489,10 +489,10 @@ export default function Tickets() {
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-[var(--av-border-strong)]/[0.06] flex justify-end gap-3">
               <button
                 onClick={() => setShowNewTicket(false)}
-                className="px-4 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
+                className="px-4 py-2 rounded-lg border border-[var(--av-border)] text-sm hover:bg-[var(--av-surface-3)]"
               >
                 Cancel
               </button>

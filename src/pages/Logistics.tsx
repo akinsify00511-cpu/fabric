@@ -37,61 +37,61 @@ export default function Logistics() {
     <div className="pb-20">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-black">Delivery & Logistics</h1>
-          <p className="text-sm text-black">Track orders and deliveries</p>
+          <h1 className="text-xl font-semibold text-[var(--av-text)]">Delivery & Logistics</h1>
+          <p className="text-sm text-[var(--av-text)]">Track orders and deliveries</p>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 text-center">
           <div className="text-2xl font-bold text-amber-600">{pendingCount}</div>
-          <div className="text-sm text-black">Pending</div>
+          <div className="text-sm text-[var(--av-text)]">Pending</div>
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
-          <div className="text-2xl font-bold text-blue-600">{inTransitCount}</div>
-          <div className="text-sm text-black">In Transit</div>
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 text-center">
+          <div className="text-2xl font-bold text-[var(--av-primary)]">{inTransitCount}</div>
+          <div className="text-sm text-[var(--av-text)]">In Transit</div>
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-4 text-center">
-          <div className="text-2xl font-bold text-green-600">{deliveredCount}</div>
-          <div className="text-sm text-black">Delivered</div>
+        <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4 text-center">
+          <div className="text-2xl font-bold text-[var(--av-success)]">{deliveredCount}</div>
+          <div className="text-sm text-[var(--av-text)]">Delivered</div>
         </div>
       </div>
 
       {/* Deliveries List */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="animate-spin text-[var(--av-text)]" /></div>
       ) : deliveries.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-2xl border border-black/[0.06]">
-          <Truck size={48} className="mx-auto text-black/50 mb-3" />
-          <p className="text-black">No deliveries yet</p>
-          <p className="text-sm text-black mt-1">Track orders and delivery status</p>
+        <div className="text-center py-12 bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06]">
+          <Truck size={48} className="mx-auto text-[var(--av-text)]/50 mb-3" />
+          <p className="text-[var(--av-text)]">No deliveries yet</p>
+          <p className="text-sm text-[var(--av-text)] mt-1">Track orders and delivery status</p>
         </div>
       ) : (
         <div className="space-y-3">
           {deliveries.map((delivery) => (
-            <div key={delivery.id} className="bg-white rounded-2xl border border-black/[0.06] p-4">
+            <div key={delivery.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    delivery.status === 'delivered' ? 'bg-green-500/10' :
-                    delivery.status === 'in_transit' ? 'bg-blue-500/10' :
+                    delivery.status === 'delivered' ? 'bg-[var(--av-success)]/10' :
+                    delivery.status === 'in_transit' ? 'bg-[var(--av-primary-soft)]/10' :
                     'bg-amber-500/10'
                   }`}>
                     <Truck size={20} className={
-                      delivery.status === 'delivered' ? 'text-green-500' :
-                      delivery.status === 'in_transit' ? 'text-blue-500' :
+                      delivery.status === 'delivered' ? 'text-[var(--av-success)]' :
+                      delivery.status === 'in_transit' ? 'text-[var(--av-primary)]' :
                       'text-amber-500'
                     } />
                   </div>
                   <div>
                     <h3 className="font-medium">{delivery.order_reference || 'Delivery'}</h3>
-                    <p className="text-sm text-black">{delivery.client_name}</p>
+                    <p className="text-sm text-[var(--av-text)]">{delivery.client_name}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1 rounded-full ${
-                  delivery.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                  delivery.status === 'in_transit' ? 'bg-blue-100 text-blue-700' :
+                  delivery.status === 'delivered' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                  delivery.status === 'in_transit' ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' :
                   delivery.status === 'assigned' ? 'bg-purple-100 text-purple-700' :
                   'bg-amber-100 text-amber-700'
                 }`}>
@@ -99,25 +99,25 @@ export default function Logistics() {
                 </span>
               </div>
               
-              <div className="flex items-start gap-2 text-sm text-black/60 mb-3">
+              <div className="flex items-start gap-2 text-sm text-[var(--av-text)]/60 mb-3">
                 <MapPin size={16} className="mt-0.5" />
                 <span>{delivery.client_address}</span>
               </div>
               
               {delivery.client_phone && (
-                <div className="flex items-center gap-2 text-sm text-black/60 mb-3">
+                <div className="flex items-center gap-2 text-sm text-[var(--av-text)]/60 mb-3">
                   <Phone size={16} />
                   <span>{delivery.client_phone}</span>
                 </div>
               )}
               
-              <div className="flex items-center justify-between pt-3 border-t border-black/5">
-                <div className="flex items-center gap-2 text-xs text-black">
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--av-border)]">
+                <div className="flex items-center gap-2 text-xs text-[var(--av-text)]">
                   <Clock size={14} />
                   <span>{delivery.scheduled_date ? new Date(delivery.scheduled_date).toLocaleDateString() : 'No date'}</span>
                 </div>
                 {delivery.delivery_type && (
-                  <span className="text-xs bg-black/10 px-2 py-1 rounded capitalize">{delivery.delivery_type}</span>
+                  <span className="text-xs bg-[var(--av-surface-3)] px-2 py-1 rounded capitalize">{delivery.delivery_type}</span>
                 )}
               </div>
             </div>

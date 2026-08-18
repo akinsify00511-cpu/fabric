@@ -62,20 +62,20 @@ interface Contact {
 }
 
 const STATUS_COLORS = {
-  queued: 'bg-gray-100 text-gray-600',
-  sent: 'bg-blue-100 text-blue-700',
-  delivered: 'bg-green-100 text-green-700',
+  queued: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
+  sent: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+  delivered: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
   read: 'bg-purple-100 text-purple-700',
-  failed: 'bg-red-100 text-red-700',
+  failed: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
   unsubscribed: 'bg-orange-100 text-orange-700',
 }
 
 const TEMPLATE_STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-600',
+  draft: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
   pending: 'bg-amber-100 text-amber-700',
-  approved: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-700',
-  disabled: 'bg-gray-100 text-gray-400',
+  approved: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+  rejected: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
+  disabled: 'bg-[var(--av-surface-2)] text-[var(--av-text-disabled)]',
 }
 
 const QUICK_TEMPLATES = [
@@ -403,14 +403,14 @@ export default function WhatsAppIntegrationPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">WhatsApp Integration</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">WhatsApp Integration</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Send messages via Meta WhatsApp Business API
               {settings.is_configured ? (
-                <span className="ml-2 inline-flex items-center text-green-600">
+                <span className="ml-2 inline-flex items-center text-[var(--av-success)]">
                   <CheckCircle2 className="w-4 h-4 mr-1" />
                   Connected
                 </span>
@@ -425,7 +425,7 @@ export default function WhatsAppIntegrationPage() {
           {canManage && (
             <button
               onClick={() => setShowCompose(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-success)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-success)] flex items-center gap-2"
             >
               <Send className="w-4 h-4" />
               Send Message
@@ -435,7 +435,7 @@ export default function WhatsAppIntegrationPage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-6">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6">
         <div className="flex gap-6">
           {['messages', 'templates', 'settings'].map(tab => (
             <button
@@ -443,8 +443,8 @@ export default function WhatsAppIntegrationPage() {
               onClick={() => setActiveTab(tab as any)}
               className={`py-3 text-sm font-medium border-b-2 capitalize ${
                 activeTab === tab
-                  ? 'border-green-600 text-green-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-[var(--av-success)] text-[var(--av-success)]'
+                  : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
               }`}
             >
               {tab}
@@ -458,41 +458,41 @@ export default function WhatsAppIntegrationPage() {
           <>
             {/* Stats */}
             <div className="grid grid-cols-4 gap-4 mb-6">
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Total Messages</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Total Messages</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.total}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Sent</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.sent}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Sent</p>
+                <p className="text-2xl font-bold text-[var(--av-primary)]">{stats.sent}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Delivered</p>
-                <p className="text-2xl font-bold text-green-600">{stats.delivered}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Delivered</p>
+                <p className="text-2xl font-bold text-[var(--av-success)]">{stats.delivered}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Failed</p>
-                <p className="text-2xl font-bold text-red-600">{stats.failed}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Failed</p>
+                <p className="text-2xl font-bold text-[var(--av-danger)]">{stats.failed}</p>
               </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl border border-gray-200 mb-6">
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
               <div className="p-4 flex gap-4">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                   <input
                     type="text"
                     placeholder="Search messages..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="all">All Status</option>
                   <option value="queued">Queued</option>
@@ -505,26 +505,26 @@ export default function WhatsAppIntegrationPage() {
             </div>
 
             {/* Messages Table */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Message</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Recipient</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Message</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan={4} className="px-4 py-8 text-center">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-gray-400" />
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--av-text-disabled)]" />
                       </td>
                     </tr>
                   ) : filteredMessages.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan={4} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                         No messages found
                       </td>
                     </tr>
@@ -533,16 +533,16 @@ export default function WhatsAppIntegrationPage() {
                       <tr key={msg.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-sm font-medium">
+                            <div className="w-8 h-8 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center text-[var(--av-success)] text-sm font-medium">
                               {msg.recipient_name?.charAt(0).toUpperCase() || '?'}
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-gray-900">{msg.recipient_name || 'Unknown'}</p>
-                              <p className="text-xs text-gray-500">{msg.recipient}</p>
+                              <p className="text-sm font-medium text-[var(--av-text)]">{msg.recipient_name || 'Unknown'}</p>
+                              <p className="text-xs text-[var(--av-text-muted)]">{msg.recipient}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)] max-w-xs truncate">
                           {msg.content?.body || msg.template_name || 'No content'}
                         </td>
                         <td className="px-4 py-3">
@@ -550,7 +550,7 @@ export default function WhatsAppIntegrationPage() {
                             {msg.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                           {formatDate(msg.created_at)}
                         </td>
                       </tr>
@@ -566,25 +566,25 @@ export default function WhatsAppIntegrationPage() {
           <>
             {/* Quick Templates */}
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Templates</h3>
+              <h3 className="text-sm font-medium text-[var(--av-text-secondary)] mb-3">Quick Templates</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {QUICK_TEMPLATES.map(template => (
                   <div
                     key={template.name}
-                    className="bg-white rounded-xl border border-gray-200 p-4 cursor-pointer hover:border-green-500 transition-colors"
+                    className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-4 cursor-pointer hover:border-[var(--av-success)] transition-colors"
                     onClick={() => {
                       applyTemplate(template.name)
                       setShowCompose(true)
                     }}
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 text-sm">{template.display_name}</h4>
-                      <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">{template.category}</span>
+                      <h4 className="font-medium text-[var(--av-text)] text-sm">{template.display_name}</h4>
+                      <span className="px-2 py-0.5 bg-[var(--av-surface-2)] text-[var(--av-text-muted)] text-xs rounded-full">{template.category}</span>
                     </div>
-                    <p className="text-xs text-gray-500 line-clamp-3">{template.content.body}</p>
+                    <p className="text-xs text-[var(--av-text-muted)] line-clamp-3">{template.content.body}</p>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {template.variables?.map(v => (
-                        <span key={v} className="px-1.5 py-0.5 bg-green-50 text-green-700 text-xs rounded">
+                        <span key={v} className="px-1.5 py-0.5 bg-green-50 text-[var(--av-success)] text-xs rounded">
                           {`{${v}}`}
                         </span>
                       ))}
@@ -595,33 +595,33 @@ export default function WhatsAppIntegrationPage() {
             </div>
 
             {/* Saved Templates */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="font-medium text-gray-900">Saved Templates</h3>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
+              <div className="p-4 border-b border-[var(--av-border)]">
+                <h3 className="font-medium text-[var(--av-text)]">Saved Templates</h3>
               </div>
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Category</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {templates.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan={4} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                         No saved templates. Use quick templates to get started.
                       </td>
                     </tr>
                   ) : (
                     templates.map(template => (
                       <tr key={template.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                        <td className="px-4 py-3 text-sm font-medium text-[var(--av-text)]">
                           {template.display_name || template.name}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 capitalize">{template.category}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)] capitalize">{template.category}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 text-xs rounded-full ${TEMPLATE_STATUS_COLORS[template.status]}`}>
                             {template.status}
@@ -634,7 +634,7 @@ export default function WhatsAppIntegrationPage() {
                                 applyTemplate(template.name)
                                 setShowCompose(true)
                               }}
-                              className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
                             >
                               <Send className="w-4 h-4" />
                             </button>
@@ -651,46 +651,46 @@ export default function WhatsAppIntegrationPage() {
 
         {activeTab === 'settings' && (
           <div className="max-w-2xl">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-medium text-gray-900 mb-4">WhatsApp Business API Configuration</h3>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
+              <h3 className="font-medium text-[var(--av-text)] mb-4">WhatsApp Business API Configuration</h3>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number ID</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Phone Number ID</label>
                   <input
                     type="text"
                     value={settings.phone_number_id}
                     onChange={(e) => setSettings({ ...settings, phone_number_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Your WhatsApp Business Phone Number ID"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Account ID</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Business Account ID</label>
                   <input
                     type="text"
                     value={settings.business_account_id}
                     onChange={(e) => setSettings({ ...settings, business_account_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Your Meta Business Account ID"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Access Token</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Access Token</label>
                   <div className="relative">
                     <input
                       type={showToken ? 'text' : 'password'}
                       value={settings.access_token}
                       onChange={(e) => setSettings({ ...settings, access_token: e.target.value })}
-                      className="w-full px-3 py-2 pr-10 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2 pr-10 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Your Meta Temporary Access Token"
                     />
                     <button
                       type="button"
                       onClick={() => setShowToken(!showToken)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--av-text-disabled)] hover:text-[var(--av-text-muted)]"
                     >
                       {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -698,39 +698,39 @@ export default function WhatsAppIntegrationPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">App ID</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">App ID</label>
                   <input
                     type="text"
                     value={settings.app_id}
                     onChange={(e) => setSettings({ ...settings, app_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Your Meta App ID"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">App Secret</label>
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">App Secret</label>
                   <input
                     type="password"
                     value={settings.app_secret}
                     onChange={(e) => setSettings({ ...settings, app_secret: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="Your Meta App Secret"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-gray-200">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Webhook Configuration</h4>
-                  <p className="text-xs text-gray-500 mb-3">
-                    Set your WhatsApp webhook URL to: <code className="bg-gray-100 px-1 rounded">https://your-project.supabase.co/functions/v1/whatsapp-webhook</code>
+                <div className="pt-4 border-t border-[var(--av-border)]">
+                  <h4 className="text-sm font-medium text-[var(--av-text-secondary)] mb-2">Webhook Configuration</h4>
+                  <p className="text-xs text-[var(--av-text-muted)] mb-3">
+                    Set your WhatsApp webhook URL to: <code className="bg-[var(--av-surface-2)] px-1 rounded">https://your-project.supabase.co/functions/v1/whatsapp-webhook</code>
                   </p>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Webhook Verify Token</label>
+                    <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Webhook Verify Token</label>
                     <input
                       type="text"
                       value={settings.webhook_verify_token}
                       onChange={(e) => setSettings({ ...settings, webhook_verify_token: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                       placeholder="Random token for webhook verification"
                     />
                   </div>
@@ -740,7 +740,7 @@ export default function WhatsAppIntegrationPage() {
                   <button
                     onClick={saveSettings}
                     disabled={savingSettings}
-                    className="w-full px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full px-4 py-2 bg-[var(--av-success)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-success)] disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {savingSettings ? (
                       <>
@@ -758,9 +758,9 @@ export default function WhatsAppIntegrationPage() {
               </div>
             </div>
 
-            <div className="mt-6 bg-blue-50 rounded-xl border border-blue-200 p-4">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">Setup Instructions</h4>
-              <ol className="text-sm text-blue-700 space-y-2 list-decimal list-inside">
+            <div className="mt-6 bg-blue-50 rounded-xl border border-[var(--av-primary-soft)] p-4">
+              <h4 className="text-sm font-medium text-[var(--av-primary-active)] mb-2">Setup Instructions</h4>
+              <ol className="text-sm text-[var(--av-primary)] space-y-2 list-decimal list-inside">
                 <li>Create a Meta Business account at business.meta.com</li>
                 <li>Create a WhatsApp Business app in Meta Developer Console</li>
                 <li>Add the WhatsApp Business product to your app</li>
@@ -777,12 +777,12 @@ export default function WhatsAppIntegrationPage() {
       {/* Compose Modal */}
       {showCompose && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)] flex items-center justify-between">
               <h2 className="text-lg font-semibold">Send WhatsApp Message</h2>
               <button
                 onClick={() => setShowCompose(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-[var(--av-surface-2)] rounded-lg"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -790,13 +790,13 @@ export default function WhatsAppIntegrationPage() {
             <div className="p-6 space-y-4">
               {/* Quick Templates */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Use Template</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">Use Template</label>
                 <select
                   value={selectedTemplate}
                   onChange={(e) => {
                     applyTemplate(e.target.value)
                   }}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 >
                   <option value="">Select a template...</option>
                   {QUICK_TEMPLATES.map(t => (
@@ -807,10 +807,10 @@ export default function WhatsAppIntegrationPage() {
 
               {/* Recipients */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">
                   Recipients ({selectedContacts.length} selected)
                 </label>
-                <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg">
+                <div className="max-h-40 overflow-y-auto border border-[var(--av-border)] rounded-lg">
                   {contacts.map(contact => (
                     <label
                       key={contact.id}
@@ -826,11 +826,11 @@ export default function WhatsAppIntegrationPage() {
                               : [...prev, contact]
                           )
                         }}
-                        className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        className="w-4 h-4 text-[var(--av-success)] border-[var(--av-border-strong)] rounded focus:ring-green-500"
                       />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{contact.full_name}</p>
-                        <p className="text-xs text-gray-500">{contact.phone}</p>
+                        <p className="text-sm font-medium text-[var(--av-text)]">{contact.full_name}</p>
+                        <p className="text-xs text-[var(--av-text-muted)]">{contact.phone}</p>
                       </div>
                     </label>
                   ))}
@@ -839,15 +839,15 @@ export default function WhatsAppIntegrationPage() {
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-2">Message</label>
                 <textarea
                   value={messageContent}
                   onChange={(e) => setMessageContent(e.target.value)}
                   rows={6}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
                   placeholder="Type your message here..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-[var(--av-text-muted)] mt-1">
                   Variables: {'{customer_name}'} will be replaced with recipient name
                 </p>
               </div>
@@ -856,14 +856,14 @@ export default function WhatsAppIntegrationPage() {
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={() => setShowCompose(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                  className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={sendMessage}
                   disabled={sending || selectedContacts.length === 0 || !messageContent}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+                  className="px-4 py-2 bg-[var(--av-success)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-success)] disabled:opacity-50 flex items-center gap-2"
                 >
                   {sending ? (
                     <>

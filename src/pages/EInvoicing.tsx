@@ -44,10 +44,10 @@ interface EInvoiceSettings {
 }
 
 const STATUS_COLORS = {
-  pending: 'bg-gray-100 text-gray-600',
-  submitted: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-700',
+  pending: 'bg-[var(--av-surface-2)] text-[var(--av-text-muted)]',
+  submitted: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',
+  accepted: 'bg-[var(--av-success-soft)] text-[var(--av-success)]',
+  rejected: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
 }
 
 export default function EInvoicingPage() {
@@ -258,14 +258,14 @@ export default function EInvoicingPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">e-Invoicing</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">e-Invoicing</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               NRS/FIRS Invoice Compliance
               {settings.is_configured ? (
-                <span className="ml-2 inline-flex items-center text-green-600">
+                <span className="ml-2 inline-flex items-center text-[var(--av-success)]">
                   <Shield className="w-4 h-4 mr-1" />
                   Configured
                 </span>
@@ -280,7 +280,7 @@ export default function EInvoicingPage() {
           {canManage && (
             <button
               onClick={() => setActiveTab('settings')}
-              className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
+              className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center gap-2"
             >
               <Shield className="w-4 h-4" />
               Configure
@@ -290,7 +290,7 @@ export default function EInvoicingPage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white border-b border-gray-200 px-6">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6">
         <div className="flex gap-6">
           {['invoices', 'settings'].map(tab => (
             <button
@@ -298,8 +298,8 @@ export default function EInvoicingPage() {
               onClick={() => setActiveTab(tab as any)}
               className={`py-3 text-sm font-medium border-b-2 capitalize ${
                 activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                  : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
               }`}
             >
               {tab}
@@ -313,35 +313,35 @@ export default function EInvoicingPage() {
           <>
             {/* Stats */}
             <div className="grid grid-cols-5 gap-4 mb-6">
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Total Invoices</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Total Invoices</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{stats.total}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Pending</p>
-                <p className="text-2xl font-bold text-gray-600">{stats.pending}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Pending</p>
+                <p className="text-2xl font-bold text-[var(--av-text-muted)]">{stats.pending}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Submitted</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.submitted}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Submitted</p>
+                <p className="text-2xl font-bold text-[var(--av-primary)]">{stats.submitted}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Accepted</p>
-                <p className="text-2xl font-bold text-green-600">{stats.accepted}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Accepted</p>
+                <p className="text-2xl font-bold text-[var(--av-success)]">{stats.accepted}</p>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <p className="text-sm text-gray-500">Total Value</p>
-                <p className="text-2xl font-bold text-gray-900">{formatCurrency(stats.totalAmount)}</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
+                <p className="text-sm text-[var(--av-text-muted)]">Total Value</p>
+                <p className="text-2xl font-bold text-[var(--av-text)]">{formatCurrency(stats.totalAmount)}</p>
               </div>
             </div>
 
             {/* Info Banner */}
-            <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 mb-6">
+            <div className="bg-blue-50 rounded-xl border border-[var(--av-primary-soft)] p-4 mb-6">
               <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                <AlertCircle className="w-5 h-5 text-[var(--av-primary)] mt-0.5" />
                 <div>
-                  <h4 className="text-sm font-medium text-blue-900">About NRS e-Invoicing</h4>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <h4 className="text-sm font-medium text-[var(--av-primary-active)]">About NRS e-Invoicing</h4>
+                  <p className="text-sm text-[var(--av-primary)] mt-1">
                     All invoices above ₦100,000 must be reported to the NRS (Nigeria Revenue Service) 
                     via FIRS. Generate an ITCMN (Invoice Tracking Confirmation Number) for each invoice 
                     to ensure tax compliance.
@@ -351,66 +351,66 @@ export default function EInvoicingPage() {
             </div>
 
             {/* Invoices Table */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Invoice</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ITCMN</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Invoice</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Client</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Amount</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">ITCMN</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {loading ? (
                     <tr>
                       <td colSpan={6} className="px-4 py-8 text-center">
-                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-gray-400" />
+                        <Loader2 className="w-6 h-6 animate-spin mx-auto text-[var(--av-text-disabled)]" />
                       </td>
                     </tr>
                   ) : invoices.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                        <Receipt className="w-12 h-12 text-gray-300 mx-auto" />
+                      <td colSpan={6} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
+                        <Receipt className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
                         <p className="mt-2">No e-invoices found</p>
-                        <p className="text-sm text-gray-400">E-invoices are created when you submit invoices to NRS</p>
+                        <p className="text-sm text-[var(--av-text-disabled)]">E-invoices are created when you submit invoices to NRS</p>
                       </td>
                     </tr>
                   ) : (
                     invoices.map(invoice => (
                       <tr key={invoice.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900">{invoice.invoice_id}</p>
-                          <p className="text-xs text-gray-500">{formatDate(invoice.created_at)}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{invoice.invoice_id}</p>
+                          <p className="text-xs text-[var(--av-text-muted)]">{formatDate(invoice.created_at)}</p>
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900">{invoice.client_name}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{invoice.client_name}</p>
                           {invoice.client_tin && (
-                            <p className="text-xs text-gray-500">TIN: {invoice.client_tin}</p>
+                            <p className="text-xs text-[var(--av-text-muted)]">TIN: {invoice.client_tin}</p>
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <p className="text-sm font-medium text-gray-900">{formatCurrency(invoice.total_amount)}</p>
-                          <p className="text-xs text-gray-500">Tax: {formatCurrency(invoice.tax_amount)}</p>
+                          <p className="text-sm font-medium text-[var(--av-text)]">{formatCurrency(invoice.total_amount)}</p>
+                          <p className="text-xs text-[var(--av-text-muted)]">Tax: {formatCurrency(invoice.tax_amount)}</p>
                         </td>
                         <td className="px-4 py-3">
                           {invoice.itcmn ? (
                             <div className="flex items-center gap-2">
-                              <code className="text-xs bg-gray-100 px-2 py-1 rounded">{invoice.itcmn}</code>
+                              <code className="text-xs bg-[var(--av-surface-2)] px-2 py-1 rounded">{invoice.itcmn}</code>
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(invoice.itcmn!)
                                   showToast('Copied!', 'success')
                                 }}
-                                className="p-1 text-gray-400 hover:text-gray-600"
+                                className="p-1 text-[var(--av-text-disabled)] hover:text-[var(--av-text-muted)]"
                               >
                                 <Copy className="w-3 h-3" />
                               </button>
                             </div>
                           ) : (
-                            <span className="text-sm text-gray-400">Not generated</span>
+                            <span className="text-sm text-[var(--av-text-disabled)]">Not generated</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
@@ -418,14 +418,14 @@ export default function EInvoicingPage() {
                             {invoice.itcmn_status}
                           </span>
                           {invoice.icr_number && (
-                            <p className="text-xs text-gray-500 mt-1">ICR: {invoice.icr_number}</p>
+                            <p className="text-xs text-[var(--av-text-muted)] mt-1">ICR: {invoice.icr_number}</p>
                           )}
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setShowDetails(invoice)}
-                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
+                              className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-primary)] hover:bg-blue-50 rounded"
                               title="View Details"
                             >
                               <Eye className="w-4 h-4" />
@@ -434,7 +434,7 @@ export default function EInvoicingPage() {
                               <button
                                 onClick={() => submitToNRS(invoice)}
                                 disabled={submitting === invoice.id}
-                                className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 flex items-center gap-1"
+                                className="px-3 py-1.5 text-xs bg-[var(--av-primary)] text-white rounded hover:bg-[var(--av-primary-hover)] disabled:opacity-50 flex items-center gap-1"
                               >
                                 {submitting === invoice.id ? (
                                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -448,7 +448,7 @@ export default function EInvoicingPage() {
                               <button
                                 onClick={() => verifyITCMN(invoice)}
                                 disabled={submitting === invoice.id + '-verify'}
-                                className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-1"
+                                className="px-3 py-1.5 text-xs bg-[var(--av-success)] text-white rounded hover:bg-[var(--av-success)] disabled:opacity-50 flex items-center gap-1"
                               >
                                 {submitting === invoice.id + '-verify' ? (
                                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -461,7 +461,7 @@ export default function EInvoicingPage() {
                             {invoice.itcmn && (
                               <button
                                 onClick={() => downloadEInvoice(invoice)}
-                                className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded"
+                                className="p-1.5 text-[var(--av-text-disabled)] hover:text-[var(--av-success)] hover:bg-green-50 rounded"
                                 title="Download E-Invoice"
                               >
                                 <Download className="w-4 h-4" />
@@ -480,8 +480,8 @@ export default function EInvoicingPage() {
 
         {activeTab === 'settings' && (
           <div className="max-w-2xl">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-medium text-gray-900 mb-4">NRS/FIRS Configuration</h3>
+            <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-6">
+              <h3 className="font-medium text-[var(--av-text)] mb-4">NRS/FIRS Configuration</h3>
               
               <div className="bg-amber-50 rounded-lg border border-amber-200 p-4 mb-6">
                 <div className="flex items-start gap-3">
@@ -498,57 +498,57 @@ export default function EInvoicingPage() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">
                     Business Tax Identification Number (TIN)
                   </label>
                   <input
                     type="text"
                     value={settings.business_tin}
                     onChange={(e) => setSettings({ ...settings, business_tin: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Your Business TIN"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">
                     Business Address
                   </label>
                   <textarea
                     value={settings.business_address}
                     onChange={(e) => setSettings({ ...settings, business_address: e.target.value })}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                     placeholder="Your registered business address"
                   />
                 </div>
 
-                <div className="border-t border-gray-200 pt-4 mt-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">NRS API Configuration</h4>
+                <div className="border-t border-[var(--av-border)] pt-4 mt-4">
+                  <h4 className="text-sm font-medium text-[var(--av-text)] mb-3">NRS API Configuration</h4>
                   
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">
                         NRS API URL
                       </label>
                       <input
                         type="url"
                         value={settings.nrs_api_url}
                         onChange={(e) => setSettings({ ...settings, nrs_api_url: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="https://nrs-api.nigeria.gov.pk"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">
                         NRS API Key
                       </label>
                       <input
                         type="password"
                         value={settings.nrs_api_key}
                         onChange={(e) => setSettings({ ...settings, nrs_api_key: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         placeholder="Your NRS API key"
                       />
                     </div>
@@ -559,7 +559,7 @@ export default function EInvoicingPage() {
                   <button
                     onClick={saveSettings}
                     disabled={savingSettings}
-                    className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {savingSettings ? (
                       <>
@@ -577,9 +577,9 @@ export default function EInvoicingPage() {
               </div>
             </div>
 
-            <div className="mt-6 bg-gray-50 rounded-xl border border-gray-200 p-4">
-              <h4 className="text-sm font-medium text-gray-900 mb-2">How it works</h4>
-              <ol className="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+            <div className="mt-6 bg-gray-50 rounded-xl border border-[var(--av-border)] p-4">
+              <h4 className="text-sm font-medium text-[var(--av-text)] mb-2">How it works</h4>
+              <ol className="text-sm text-[var(--av-text-muted)] space-y-2 list-decimal list-inside">
                 <li>Create an invoice as usual in the Finance section</li>
                 <li>The invoice will appear here with "Pending" status</li>
                 <li>Click "Submit" to generate ITCMN and send to NRS</li>
@@ -594,12 +594,12 @@ export default function EInvoicingPage() {
       {/* Details Modal */}
       {showDetails && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-lg w-full">
-            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-lg w-full">
+            <div className="p-6 border-b border-[var(--av-border)] flex items-center justify-between">
               <h2 className="text-lg font-semibold">E-Invoice Details</h2>
               <button
                 onClick={() => setShowDetails(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                className="p-2 hover:bg-[var(--av-surface-2)] rounded-lg"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -607,57 +607,57 @@ export default function EInvoicingPage() {
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">Invoice ID</p>
-                  <p className="text-sm font-medium text-gray-900">{showDetails.invoice_id}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Invoice ID</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{showDetails.invoice_id}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Date</p>
-                  <p className="text-sm font-medium text-gray-900">{formatDate(showDetails.created_at)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Date</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{formatDate(showDetails.created_at)}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">Client</p>
-                  <p className="text-sm font-medium text-gray-900">{showDetails.client_name}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Client</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{showDetails.client_name}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Client TIN</p>
-                  <p className="text-sm font-medium text-gray-900">{showDetails.client_tin || '-'}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Client TIN</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{showDetails.client_tin || '-'}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500">Amount</p>
-                  <p className="text-sm font-medium text-gray-900">{formatCurrency(showDetails.amount)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Amount</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{formatCurrency(showDetails.amount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Tax</p>
-                  <p className="text-sm font-medium text-gray-900">{formatCurrency(showDetails.tax_amount)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Tax</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{formatCurrency(showDetails.tax_amount)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Total</p>
-                  <p className="text-sm font-bold text-gray-900">{formatCurrency(showDetails.total_amount)}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">Total</p>
+                  <p className="text-sm font-bold text-[var(--av-text)]">{formatCurrency(showDetails.total_amount)}</p>
                 </div>
               </div>
 
-              <div className="border-t border-gray-200 pt-4">
-                <p className="text-xs text-gray-500">ITCMN</p>
-                <p className="text-lg font-mono font-bold text-gray-900">
+              <div className="border-t border-[var(--av-border)] pt-4">
+                <p className="text-xs text-[var(--av-text-muted)]">ITCMN</p>
+                <p className="text-lg font-mono font-bold text-[var(--av-text)]">
                   {showDetails.itcmn || 'Not generated'}
                 </p>
               </div>
 
               {showDetails.icr_number && (
                 <div>
-                  <p className="text-xs text-gray-500">ICR Number</p>
-                  <p className="text-sm font-medium text-gray-900">{showDetails.icr_number}</p>
+                  <p className="text-xs text-[var(--av-text-muted)]">ICR Number</p>
+                  <p className="text-sm font-medium text-[var(--av-text)]">{showDetails.icr_number}</p>
                 </div>
               )}
 
               <div>
-                <p className="text-xs text-gray-500">Status</p>
+                <p className="text-xs text-[var(--av-text-muted)]">Status</p>
                 <span className={`inline-block px-2 py-1 text-xs rounded-full ${STATUS_COLORS[showDetails.itcmn_status]}`}>
                   {showDetails.itcmn_status}
                 </span>

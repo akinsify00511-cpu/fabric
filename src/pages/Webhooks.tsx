@@ -290,18 +290,18 @@ export default function WebhooksPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-[var(--av-surface)] border-b border-[var(--av-border)] px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Webhooks</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
+            <h1 className="text-xl font-semibold text-[var(--av-text)]">Webhooks</h1>
+            <p className="text-sm text-[var(--av-text-muted)] mt-0.5">
               Send real-time events to external systems
             </p>
           </div>
           {canManage && (
             <button
               onClick={() => openModal()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2"
+              className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--av-primary-hover)] flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Webhook
@@ -312,23 +312,23 @@ export default function WebhooksPage() {
 
       <div className="p-6">
         {/* Info Banner */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+        <div className="bg-blue-50 border border-[var(--av-primary-soft)] rounded-xl p-4 mb-6">
           <div className="flex gap-3">
-            <Zap className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <Zap className="w-5 h-5 text-[var(--av-primary)] flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-blue-900">Webhook Endpoint</p>
-              <p className="text-sm text-blue-700 mt-1">
-                Your webhook URL: <code className="bg-blue-100 px-1 py-0.5 rounded">{getWebhookUrl()}</code>
+              <p className="text-sm font-medium text-[var(--av-primary-active)]">Webhook Endpoint</p>
+              <p className="text-sm text-[var(--av-primary)] mt-1">
+                Your webhook URL: <code className="bg-[var(--av-primary-soft)] px-1 py-0.5 rounded">{getWebhookUrl()}</code>
                 <button
                   onClick={() => copyWebhookUrl(getWebhookUrl())}
-                  className="ml-2 text-blue-600 hover:text-blue-800"
+                  className="ml-2 text-[var(--av-primary)] hover:text-[var(--av-primary-hover)]"
                 >
                   <Copy className="w-3 h-3 inline" />
                 </button>
               </p>
-              <p className="text-xs text-blue-600 mt-2">
-                Include <code className="bg-blue-100 px-1 py-0.5 rounded">business_id</code> and
-                <code className="bg-blue-100 px-1 py-0.5 rounded ml-1">secret</code> in the request body.
+              <p className="text-xs text-[var(--av-primary)] mt-2">
+                Include <code className="bg-[var(--av-primary-soft)] px-1 py-0.5 rounded">business_id</code> and
+                <code className="bg-[var(--av-primary-soft)] px-1 py-0.5 rounded ml-1">secret</code> in the request body.
                 The secret must match an active webhook for your business.
               </p>
             </div>
@@ -336,15 +336,15 @@ export default function WebhooksPage() {
         </div>
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl border border-gray-200 mb-6">
-          <div className="border-b border-gray-200">
+        <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
+          <div className="border-b border-[var(--av-border)]">
             <div className="flex">
               <button
                 onClick={() => setActiveTab('endpoints')}
                 className={`px-6 py-3 text-sm font-medium border-b-2 ${
                   activeTab === 'endpoints'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                    : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
                 }`}
               >
                 Endpoints ({webhooks.length})
@@ -353,8 +353,8 @@ export default function WebhooksPage() {
                 onClick={() => setActiveTab('deliveries')}
                 className={`px-6 py-3 text-sm font-medium border-b-2 ${
                   activeTab === 'deliveries'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-[var(--av-primary)] text-[var(--av-primary)]'
+                    : 'border-transparent text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
                 }`}
               >
                 Deliveries
@@ -365,13 +365,13 @@ export default function WebhooksPage() {
           {activeTab === 'endpoints' && (
             <div className="p-4">
               <div className="relative max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--av-text-disabled)]" />
                 <input
                   type="text"
                   placeholder="Search webhooks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
@@ -382,18 +382,18 @@ export default function WebhooksPage() {
         {activeTab === 'endpoints' ? (
           <div className="space-y-4">
             {loading ? (
-              <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+                <div className="animate-spin w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full mx-auto"></div>
               </div>
             ) : filteredWebhooks.length === 0 ? (
-              <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-                <Webhook className="w-12 h-12 text-gray-300 mx-auto" />
-                <p className="text-gray-500 mt-2">No webhooks configured</p>
-                <p className="text-sm text-gray-400 mt-1">Add a webhook to send events to external systems</p>
+              <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] p-8 text-center">
+                <Webhook className="w-12 h-12 text-[var(--av-text-disabled)] mx-auto" />
+                <p className="text-[var(--av-text-muted)] mt-2">No webhooks configured</p>
+                <p className="text-sm text-[var(--av-text-disabled)] mt-1">Add a webhook to send events to external systems</p>
                 {canManage && (
                   <button
                     onClick={() => openModal()}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                    className="mt-4 px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                   >
                     Add First Webhook
                   </button>
@@ -401,59 +401,59 @@ export default function WebhooksPage() {
               </div>
             ) : (
               filteredWebhooks.map((webhook) => (
-                <div key={webhook.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div key={webhook.id} className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
                   <div
                     className="p-4 flex items-center gap-4 cursor-pointer hover:bg-gray-50"
                     onClick={() => setExpandedWebhook(expandedWebhook === webhook.id ? null : webhook.id)}
                   >
-                    <div className={`p-2 rounded-lg ${webhook.is_active ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <Webhook className={`w-5 h-5 ${webhook.is_active ? 'text-green-600' : 'text-gray-400'}`} />
+                    <div className={`p-2 rounded-lg ${webhook.is_active ? 'bg-[var(--av-success-soft)]' : 'bg-[var(--av-surface-2)]'}`}>
+                      <Webhook className={`w-5 h-5 ${webhook.is_active ? 'text-[var(--av-success)]' : 'text-[var(--av-text-disabled)]'}`} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">{webhook.name}</h3>
+                        <h3 className="font-medium text-[var(--av-text)]">{webhook.name}</h3>
                         <span className={`px-2 py-0.5 text-xs rounded-full ${
-                          webhook.status === 'active' ? 'bg-green-100 text-green-700' :
+                          webhook.status === 'active' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
                           webhook.status === 'paused' ? 'bg-amber-100 text-amber-700' :
-                          'bg-red-100 text-red-700'
+                          'bg-[var(--av-danger-soft)] text-[var(--av-danger)]'
                         }`}>
                           {webhook.status}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 mt-1 text-sm text-[var(--av-text-muted)]">
                         <span className="truncate max-w-xs">{webhook.url}</span>
                         <span>{webhook.events.length} events</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       {webhook.last_triggered_at && (
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-[var(--av-text-disabled)]">
                           Last triggered: {new Date(webhook.last_triggered_at).toLocaleDateString()}
                         </span>
                       )}
                       {canManage && (
                         <button
                           onClick={(e) => { e.stopPropagation(); toggleWebhook(webhook) }}
-                          className={`p-2 rounded-lg ${webhook.is_active ? 'text-amber-600 hover:bg-amber-50' : 'text-green-600 hover:bg-green-50'}`}
+                          className={`p-2 rounded-lg ${webhook.is_active ? 'text-amber-600 hover:bg-amber-50' : 'text-[var(--av-success)] hover:bg-green-50'}`}
                           title={webhook.is_active ? 'Pause' : 'Enable'}
                         >
                           {webhook.is_active ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                         </button>
                       )}
-                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${expandedWebhook === webhook.id ? 'rotate-90' : ''}`} />
+                      <ChevronRight className={`w-5 h-5 text-[var(--av-text-disabled)] transition-transform ${expandedWebhook === webhook.id ? 'rotate-90' : ''}`} />
                     </div>
                   </div>
 
                   {expandedWebhook === webhook.id && (
-                    <div className="border-t border-gray-100 p-4 bg-gray-50">
+                    <div className="border-t border-[var(--av-border)] p-4 bg-gray-50">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <h4 className="text-xs font-medium text-gray-500 uppercase mb-2">Subscribed Events</h4>
+                          <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-2">Subscribed Events</h4>
                           <div className="flex flex-wrap gap-1">
                             {webhook.events.map(event => {
                               const eventInfo = AVAILABLE_EVENTS.find(e => e.id === event)
                               return (
-                                <span key={event} className="px-2 py-1 bg-white border border-gray-200 rounded text-xs">
+                                <span key={event} className="px-2 py-1 bg-[var(--av-surface)] border border-[var(--av-border)] rounded text-xs">
                                   {eventInfo?.label || event}
                                 </span>
                               )
@@ -462,31 +462,31 @@ export default function WebhooksPage() {
 
                           {webhook.last_error && (
                             <div className="mt-4">
-                              <h4 className="text-xs font-medium text-red-500 uppercase mb-1">Last Error</h4>
-                              <p className="text-sm text-red-600 bg-red-50 p-2 rounded">{webhook.last_error}</p>
+                              <h4 className="text-xs font-medium text-[var(--av-danger)] uppercase mb-1">Last Error</h4>
+                              <p className="text-sm text-[var(--av-danger)] bg-red-50 p-2 rounded">{webhook.last_error}</p>
                             </div>
                           )}
                         </div>
                         <div className="flex flex-col gap-2">
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Authentication</h4>
-                            <p className="text-sm text-gray-700">{webhook.auth_type}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Authentication</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{webhook.auth_type}</p>
                           </div>
                           <div>
-                            <h4 className="text-xs font-medium text-gray-500 uppercase mb-1">Retry Count</h4>
-                            <p className="text-sm text-gray-700">{webhook.retry_count}</p>
+                            <h4 className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">Retry Count</h4>
+                            <p className="text-sm text-[var(--av-text-secondary)]">{webhook.retry_count}</p>
                           </div>
                           {canManage && (
                             <div className="flex gap-2 pt-2">
                               <button
                                 onClick={() => openModal(webhook)}
-                                className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                                className="flex items-center gap-2 px-3 py-2 bg-[var(--av-surface)] border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                               >
                                 <Settings className="w-4 h-4" /> Edit
                               </button>
                               <button
                                 onClick={() => deleteWebhook(webhook.id)}
-                                className="flex items-center gap-2 px-3 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm hover:bg-red-100"
+                                className="flex items-center gap-2 px-3 py-2 bg-red-50 text-[var(--av-danger)] border border-[var(--av-danger-soft)] rounded-lg text-sm hover:bg-[var(--av-danger-soft)]"
                               >
                                 <Trash2 className="w-4 h-4" /> Delete
                               </button>
@@ -501,46 +501,46 @@ export default function WebhooksPage() {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="bg-gray-50 border-b border-[var(--av-border)]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Response</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Event</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Response</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[var(--av-text-muted)] uppercase">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {deliveries.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
+                      <td colSpan={5} className="px-4 py-8 text-center text-[var(--av-text-muted)]">
                         No deliveries yet
                       </td>
                     </tr>
                   ) : (
                     deliveries.map((delivery) => (
                       <tr key={delivery.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-sm text-gray-900">{delivery.event_type}</td>
+                        <td className="px-4 py-3 text-sm text-[var(--av-text)]">{delivery.event_type}</td>
                         <td className="px-4 py-3">
                           <span className={`px-2 py-1 text-xs rounded-full ${
-                            delivery.status === 'success' ? 'bg-green-100 text-green-700' :
-                            delivery.status === 'failed' ? 'bg-red-100 text-red-700' :
+                            delivery.status === 'success' ? 'bg-[var(--av-success-soft)] text-[var(--av-success)]' :
+                            delivery.status === 'failed' ? 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' :
                             delivery.status === 'retrying' ? 'bg-amber-100 text-amber-700' :
-                            'bg-gray-100 text-gray-700'
+                            'bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]'
                           }`}>
                             {delivery.status}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                           {delivery.response_status || '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                           {delivery.response_time ? `${delivery.response_time}ms` : '-'}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-[var(--av-text-muted)]">
                           {new Date(delivery.created_at).toLocaleString()}
                         </td>
                       </tr>
@@ -556,42 +556,42 @@ export default function WebhooksPage() {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="bg-[var(--av-surface-elevated)] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-[var(--av-border)]">
               <h2 className="text-lg font-semibold">
                 {editingWebhook ? 'Edit Webhook' : 'Add Webhook'}
               </h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="e.g., Slack Notifications"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">URL *</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">URL *</label>
                 <input
                   type="url"
                   required
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://example.com/webhook"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Events *</label>
-                <p className="text-xs text-gray-500 mb-2">Select the events to send to this webhook</p>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Events *</label>
+                <p className="text-xs text-[var(--av-text-muted)] mb-2">Select the events to send to this webhook</p>
                 <div className="space-y-3">
                   {EVENT_CATEGORIES.map(category => (
                     <div key={category}>
-                      <p className="text-xs font-medium text-gray-500 uppercase mb-1">{category}</p>
+                      <p className="text-xs font-medium text-[var(--av-text-muted)] uppercase mb-1">{category}</p>
                       <div className="flex flex-wrap gap-2">
                         {AVAILABLE_EVENTS.filter(e => e.category === category).map(event => (
                           <button
@@ -600,8 +600,8 @@ export default function WebhooksPage() {
                             onClick={() => toggleEvent(event.id)}
                             className={`px-2 py-1 text-xs rounded border ${
                               formData.events.includes(event.id)
-                                ? 'bg-blue-100 border-blue-300 text-blue-700'
-                                : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                                ? 'bg-[var(--av-primary-soft)] border-[var(--av-primary-soft)] text-[var(--av-primary)]'
+                                : 'bg-[var(--av-surface)] border-[var(--av-border)] text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)]'
                             }`}
                           >
                             {event.label}
@@ -613,11 +613,11 @@ export default function WebhooksPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Authentication</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Authentication</label>
                 <select
                   value={formData.auth_type}
                   onChange={(e) => setFormData({ ...formData, auth_type: e.target.value as any })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="none">None</option>
                   <option value="basic">Basic Auth</option>
@@ -629,17 +629,17 @@ export default function WebhooksPage() {
               {formData.auth_type !== 'none' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Header Name</label>
+                    <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Header Name</label>
                     <input
                       type="text"
                       value={formData.auth_header}
                       onChange={(e) => setFormData({ ...formData, auth_header: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="e.g., Authorization"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">
                       {formData.auth_type === 'basic' ? 'Password' : 'Token/Key'}
                     </label>
                     <div className="relative">
@@ -647,13 +647,13 @@ export default function WebhooksPage() {
                         type={showSecrets[editingWebhook?.id || 'new'] ? 'text' : 'password'}
                         value={formData.auth_value}
                         onChange={(e) => setFormData({ ...formData, auth_value: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                        className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
                         placeholder={editingWebhook ? '(unchanged)' : 'Enter secret'}
                       />
                       <button
                         type="button"
                         onClick={() => setShowSecrets(prev => ({ ...prev, [editingWebhook?.id || 'new']: !prev[editingWebhook?.id || 'new'] }))}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--av-text-disabled)] hover:text-[var(--av-text-muted)]"
                       >
                         {showSecrets[editingWebhook?.id || 'new'] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
@@ -662,7 +662,7 @@ export default function WebhooksPage() {
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, auth_value: generateSecret() })}
-                        className="mt-2 text-xs text-blue-600 hover:text-blue-800"
+                        className="mt-2 text-xs text-[var(--av-primary)] hover:text-[var(--av-primary-hover)]"
                       >
                         Generate random secret
                       </button>
@@ -671,27 +671,27 @@ export default function WebhooksPage() {
                 </>
               )}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Retry Count</label>
+                <label className="block text-sm font-medium text-[var(--av-text-secondary)] mb-1">Retry Count</label>
                 <input
                   type="number"
                   min={0}
                   max={10}
                   value={formData.retry_count}
                   onChange={(e) => setFormData({ ...formData, retry_count: parseInt(e.target.value) || 0 })}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-[var(--av-border)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50"
+                  className="px-4 py-2 border border-[var(--av-border)] rounded-lg text-sm hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+                  className="px-4 py-2 bg-[var(--av-primary)] text-white rounded-lg text-sm hover:bg-[var(--av-primary-hover)]"
                 >
                   {editingWebhook ? 'Save Changes' : 'Create Webhook'}
                 </button>

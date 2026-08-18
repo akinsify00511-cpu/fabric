@@ -57,10 +57,10 @@ export default function Reports() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-medium text-black mb-6">Reports</h1>
+        <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Reports</h1>
         <div className="animate-pulse space-y-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-16 bg-white rounded-xl"></div>
+            <div key={i} className="h-16 bg-[var(--av-surface-elevated)] rounded-xl"></div>
           ))}
         </div>
       </div>
@@ -77,19 +77,19 @@ export default function Reports() {
 
   return (
     <div>
-      <h1 className="text-xl font-medium text-black mb-6">Reports</h1>
-      <div className="bg-white rounded-2xl border border-black/[0.06] divide-y divide-black/[0.06]">
+      <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Reports</h1>
+      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] divide-y divide-black/[0.06]">
         {rows.map((r) => (
           <div key={r.label} className="px-4 py-3 flex items-center justify-between text-sm">
             <div className="flex items-center gap-3">
               <span className="text-lg">{r.icon}</span>
-              <span className="text-black/60">{r.label}</span>
+              <span className="text-[var(--av-text)]/60">{r.label}</span>
             </div>
-            <span className="text-black font-medium">{r.value}</span>
+            <span className="text-[var(--av-text)] font-medium">{r.value}</span>
           </div>
         ))}
       </div>
-      <p className="text-xs text-black mt-4">
+      <p className="text-xs text-[var(--av-text)] mt-4">
         Deterministic, non-AI view — the natural-language reporting layer comes in a later build phase.
       </p>
 
