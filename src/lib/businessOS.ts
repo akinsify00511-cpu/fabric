@@ -329,3 +329,182 @@ export async function detectPayrollDue(windowDays = 7): Promise<number> {
   if (error) return 0
   return (data as number) ?? 0
 }
+
+// ---------- Said-vs-Used Reality Gap (20260101000008 / #12) ----------
+// "What you said you need (onboarding) vs what you actually use (telemetry)."
+// Deterministic comparison of user_workspace_selections vs usage_events.
+// Best-effort + non-blocking (§24): stays empty when the RPC/migration is not
+// deployed to the live DB — the page degrades gracefully.
+
+export interface SaidVsUsedRow {
+  module_key: string
+  selected: boolean
+  actually_used: boolean
+  distinct_staff_used: number
+  event_count: number
+  last_seen: string | null
+  gap_label: 'selected_unused' | 'used_unselected' | 'adopted' | 'trying' | 'untouched' | string
+}
+
+export async function fetchSaidVsUsed(businessId: string): Promise<SaidVsUsedRow[]> {
+  const { data, error } = await supabase.rpc('said_vs_used', { p_business_id: businessId })
+  if (error) throw error
+  return (data || []) as SaidVsUsedRow[]
+}
+
+// ---------- Owner-Only Business Intelligence (20260101000010 / #18) ----------
+// The #18 private intelligence layer: owner/admin-gated analytics ordinary
+// users cannot access. The RPC verifies role IN ('owner','admin') AND business
+// membership via get_current_staff (defense-in-depth — client role check is
+// UX only). Returns one structured JSONB payload (feature activation, quick-
+// turnoff, ignored automations, workflow funnel, onboarding completion).
+// #21 boundary: reads ONLY usage_events + automations — NEVER privileged/
+// walled content (legal, disciplinary, board finance, litigation).
+// Best-effort + non-blocking (§24): returns null when the RPC/migration is not
+// deployed, or when the caller is not owner/admin — the page degrades gracefully.
+
+export interface OwnerFeatureActivation {
+  module_key: string
+  first_active_at: string | null
+  distinct_active_days: number
+  last_active_at: string | null
+  reuse_label: 'reused' | 'returning' | 'activated' | 'view_only' | string
+}
+export interface OwnerQuickTurnoff {
+  tool_key: string
+  selected_at: string
+  deselected_at: string
+  days_until_turnoff: number
+}
+export interface OwnerIgnoredAutomation {
+  id: string
+  name: string
+  trigger_type: string
+  created_at: string
+  last_run_at: string | null
+  run_count: number
+  enabled: boolean
+}
+export interface OwnerWorkflowFunnel {
+  workflow: string
+  started: number
+  completed: number
+  abandoned: number
+  completion_rate: number | null
+}
+export interface OwnerOnboardingCompletion {
+  completed_at: string
+  steps_reached: number
+  duration_seconds: number
+}
+export interface OwnerIntelligence {
+  authorized: boolean
+  feature_activation: OwnerFeatureActivation[]
+  quick_turnoff: OwnerQuickTurnoff[]
+  ignored_automations: OwnerIgnoredAutomation[]
+  workflow_funnel: OwnerWorkflowFunnel[]
+  onboarding_completion: OwnerOnboardingCompletion | null
+  data_scope?: string
+}
+
+export async function fetchOwnerIntelligence(businessId: string): Promise<OwnerIntelligence | null> {
+  const { data, error } = await supabase.rpc('owner_intelligence', { p_business_id: businessId })
+  if (error) throw error
+  return (data as OwnerIntelligence) ?? null
+}
+
+// ---------- Sector Intelligence + Behavior Recommendations (20260101000011 / #16/#17) ----------
+// #16: sector benchmark — the business vs its sector's ANONYMIZED aggregate
+// (count/avg only, never individual businesses). First-party data only; no
+// fabricated external benchmarks (§22). Owner-gated + membership-guarded.
+// #17: behavior-driven recommendation issuer — runs USAGE-001/002 + SECTOR-001
+// alongside the financial/operational rules. Best-effort + non-blocking (§24).
+
+export interface SectorModuleRow {
+  module_key: string
+  i_selected: boolean
+  i_used: boolean
+  sector_businesses_selected: number
+  sector_adoption_pct: number | null
+}
+export interface SectorBenchmark {
+  authorized: boolean
+  industry: string
+  sector_sample_size: number
+  modules: SectorModuleRow[]
+}
+
+export async function fetchSectorBenchmark(businessId: string): Promise<SectorBenchmark | null> {
+  const { data, error } = await supabase.rpc('sector_benchmark', { p_business_id: businessId })
+  if (error) throw error
+  return (data as SectorBenchmark) ?? null
+}
+
+export async function runBehaviorRecommendationRules(businessId: string): Promise<{ rule_id: string; issued_count: number }[] | null> {
+  const { data, error } = await supabase.rpc('run_behavior_recommendation_rules', { p_business_id: businessId })
+  if (error) throw error
+  return (data as { rule_id: string; issued_count: number }[]) ?? null
+}
+
+// ---------- Builder / Board Dashboard (20260101000012 / #19/#34) ----------
+// The PLATFORM-OPERATOR surface (distinct from per-business owner intelligence
+// #18). Aggregate cross-business patterns: module adoption/abandonment
+// platform-wide, onboarding conversion, sector×module adoption. Gated by a
+// platform_admins email allowlist (NOT a business role) — verified server-side.
+// #21: aggregate only, never business PII or walled content. Best-effort §24.
+
+export interface BuilderOnboardingConversion {
+  total_authenticated: number
+  total_completed: number
+  total_abandoned: number
+  conversion_rate: number | null
+  median_steps_reached: number | null
+  avg_duration_seconds: number | null
+}
+export interface BuilderCrossBusinessAdoption {
+  module_key: string
+  businesses_touching: number
+  total_events: number
+}
+export interface BuilderSectorModuleUsage {
+  industry: string
+  module_key: string
+  businesses_selecting: number
+  businesses_using: number
+  adoption_rate: number | null
+}
+export interface BuilderDashboard {
+  authorized: boolean
+  onboarding_conversion: BuilderOnboardingConversion | null
+  cross_business_adoption: BuilderCrossBusinessAdoption[]
+  sector_module_usage: BuilderSectorModuleUsage[]
+  data_scope?: string
+}
+
+export async function fetchBuilderDashboard(): Promise<BuilderDashboard | null> {
+  const { data, error } = await supabase.rpc('builder_dashboard')
+  if (error) throw error
+  return (data as BuilderDashboard) ?? null
+}
+
+// ---------- Automation Health (20260101000013 / #20) ----------
+// Success/failure rates, never-run automations, recent runs. Owner-gated +
+// membership-guarded. Powers the #20 "automation health" requirement.
+// Best-effort + non-blocking (§24).
+
+export interface AutomationHealth {
+  authorized: boolean
+  total_automations: number
+  enabled_automations: number
+  total_runs: number
+  successful_runs: number
+  failed_runs: number
+  never_run: { id: string; name: string; trigger_type: string; action_type: string; enabled: boolean; created_at: string }[]
+  recent_runs: { id: string; automation_name: string; trigger_type: string; status: string; error_message: string | null; executed_at: string }[]
+}
+
+export async function fetchAutomationHealth(businessId: string): Promise<AutomationHealth | null> {
+  const { data, error } = await supabase.rpc('automation_health', { p_business_id: businessId })
+  if (error) throw error
+  return (data as AutomationHealth) ?? null
+}

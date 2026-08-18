@@ -23,6 +23,7 @@ interface APIKey {
   last_used_at?: string
   use_count: number
   is_active: boolean
+  needs_rotation?: boolean
   created_at: string
 }
 
@@ -103,6 +104,15 @@ export default function APIKeysPage() {
     return `avenize_${key}`
   }
 
+  // SHA-256 hash (hex) via the Web Crypto API. Used to hash the API key before
+  // storage — the raw key is never persisted. verify_api_key re-hashes server-
+  // side (pgcrypto digest) to match.
+  async function sha256Hex(text: string): Promise<string> {
+    const data = new TextEncoder().encode(text)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+    return Array.from(new Uint8Array(hashBuffer), b => b.toString(16).padStart(2, '0')).join('')
+  }
+
   function openModal() {
     setFormData({
       name: '',
@@ -142,8 +152,10 @@ export default function APIKeysPage() {
       const rawKey = generateAPIKey()
       const keyPrefix = rawKey.substring(0, 12)
 
-      // Hash the key for storage (in production, use a proper hashing algorithm)
-      const keyHash = rawKey // In production, this would be hashed
+      // Hash the key with SHA-256 (Web Crypto API) before storage. The raw key
+      // is shown to the user ONCE (below); only the hash is stored. The
+      // verify_api_key RPC re-hashes the presented key server-side to match.
+      const keyHash = await sha256Hex(rawKey)
 
       const { error } = await supabase
         .from('api_keys')
@@ -335,6 +347,11 @@ export default function APIKeysPage() {
                         }`}>
                           {apiKey.is_active ? 'Active' : 'Inactive'}
                         </span>
+                        {apiKey.needs_rotation && (
+                          <span className="ml-1 px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700" title="This key was stored insecurely (plaintext) before the hashing fix. Regenerate it.">
+                            Rotate
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">

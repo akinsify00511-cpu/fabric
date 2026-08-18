@@ -101,6 +101,8 @@ const DataQuality = lazy(() => import('./pages/DataQuality'))
 const OKR = lazy(() => import('./pages/OKR'))
 const RiskRegister = lazy(() => import('./pages/RiskRegister'))
 const TrustRecovery = lazy(() => import('./pages/TrustRecovery'))
+const OwnerIntelligence = lazy(() => import('./pages/OwnerIntelligence'))
+const BuilderDashboard = lazy(() => import('./pages/BuilderDashboard'))
 const MonthlyReview = lazy(() => import('./pages/MonthlyReview'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingsV2 = lazy(() => import('./pages/MeetingsV2'))
@@ -374,6 +376,10 @@ function AppRoutes() {
         <Route path="/book" element={<PublicAppointments />} />
         <Route path="/book/:slug" element={<PublicAppointments />} />
         <Route path="/sign/:token" element={<SignDocument />} />
+        {/* Builder/board dashboard — platform-operator surface (#19/#34).
+            Gated by the builder_dashboard RPC (platform_admins allowlist), NOT
+            a business role. Requires a session to call the RPC. */}
+        <Route path="/builder" element={<RequireAuth><BuilderDashboard /></RequireAuth>} />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
@@ -469,6 +475,7 @@ function AppRoutes() {
         <Route path="okrs" element={mg('hr', <OKR />)} />
         <Route path="risks" element={mg('self_audit', <RiskRegister />)} />
         <Route path="trust" element={mg('self_audit', <TrustRecovery />)} />
+        <Route path="owner-intelligence" element={mg('self_audit', <OwnerIntelligence />)} />
         <Route path="review" element={mg('self_audit', <MonthlyReview />)} />
         <Route path="more" element={<More />} />
         <Route path="social" element={mg('crm', <Social />)} />

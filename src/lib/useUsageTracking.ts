@@ -44,6 +44,33 @@ const ROUTE_MODULE: Record<string, string> = {
 
 let sessionId: string | null = null
 
+/**
+ * Emit a structured usage event (#14 self-instrumentation). Use for the
+ * richer PRD metrics: onboarding step/completion, workflow start/complete,
+ * tool select/deselect, feature activation. The route-change 'view' hook
+ * below handles passive views; this is for explicit milestones.
+ *
+ * Fire-and-forget: never await, never throw on failure. Telemetry must not
+ * break UX or block the action that triggered it.
+ */
+export function logUsageEvent(params: {
+  businessId: string
+  staffId?: string
+  moduleKey: string
+  action: string
+  context?: Record<string, any>
+}) {
+  if (!sessionId) sessionId = crypto.randomUUID()
+  supabase.from('usage_events').insert({
+    business_id: params.businessId,
+    staff_id: params.staffId ?? null,
+    module_key: params.moduleKey,
+    action: params.action,
+    context: params.context ?? {},
+    session_id: sessionId,
+  }).then(undefined, () => { /* swallow — telemetry must never break UX */ })
+}
+
 export function useUsageTracking() {
   const { staff } = useAuth()
   const location = useLocation()

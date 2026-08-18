@@ -22,6 +22,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
+import { logUsageEvent } from './useUsageTracking'
 
 const STORAGE_KEY = (userId: string) => `avenize_workspace_selection_${userId}`
 
@@ -149,12 +150,25 @@ export function useWorkspaceSelection(): WorkspaceSelectionState {
   const toggleTool = useCallback(
     async (tool: string) => {
       setSelectedToolsState((prev) => {
-        const next = prev.includes(tool) ? prev.filter((t) => t !== tool) : [...prev, tool]
+        const wasSelected = prev.includes(tool)
+        const next = wasSelected ? prev.filter((t) => t !== tool) : [...prev, tool]
         persist(next, true) // any manual toggle marks curation as complete
+        // #14 self-instrumentation: log select/deselect (fire-and-forget). The
+        // quick_turnoff RPC pairs tool_select→tool_deselect within 7d to surface
+        // "modules switched off quickly" (PRD #14 item 1).
+        if (staff?.business_id) {
+          logUsageEvent({
+            businessId: staff.business_id,
+            staffId: staff.id,
+            moduleKey: 'workspace',
+            action: wasSelected ? 'tool_deselect' : 'tool_select',
+            context: { tool },
+          })
+        }
         return next
       })
     },
-    [persist],
+    [persist, staff?.business_id, staff?.id],
   )
 
   const setSelectedTools = useCallback(

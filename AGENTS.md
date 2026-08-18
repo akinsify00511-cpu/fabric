@@ -1031,3 +1031,148 @@ Audited #10 (mobile+desktop same design system). Found a **three-way primary-col
 
 ### Verification (P1.10)
 tsc clean, vite build 0 warnings, vitest 94/94. Mobile `theme/index.ts` adds no type errors (the pre-existing RN missing-module errors are deps-not-installed-in-dev-container baseline; CI installs them). Files: `src/styles/avenize-brand.css` (primary + gradient tokens), `src/index.css` (gradient/sales/glow), `mobile/src/theme/index.ts` (primary). No migration/RPC/dependency changes.
+
+### P1.12 -- Market intelligence / reality-gap: "said vs used" (buildable slice CLOSED)
+Audited #12 against its 8-item checklist. The external-market-data variance (items 1-external, 4, 5, 6, 7) requires sourced benchmark data — `market_benchmarks` + `market_intelligence` RPC (063) exist but are empty; fabricating external numbers would violate §22 (anti-hallucination). Flagged as the "eventually" part the directive itself names. The buildable, honest slice — item 3 ("what businesses say they need vs what they actually use") + item 1-internal ("which sectors use what") — was closed using EXISTING tables:
+
+**Migration `20260101000008_said_vs_used_reality_gap.sql`:**
+- `said_vs_used(p_business_id)` (per-business, authenticated): compares `user_workspace_selections.selected_tools` (what they said they need at onboarding) against `usage_events` touches (what they actually use, 30d window matching `usage_module_adoption`). Labels: `selected_unused` (selected but never touched — the headline waste gap), `used_unselected` (used but never selected — a hidden need), `adopted` (3+ distinct staff), `trying` (1-2), `untouched`. Follows the exact precedent of `usage_module_adoption` (SECURITY DEFINER + business_id filter + granted to authenticated).
+- `sector_module_usage()` (builder-only, service role): aggregates across all businesses by `businesses.industry` — for each (industry, module_key): businesses_selecting, businesses_using, adoption_rate. Serves item 1 (sectors using what) + item 2 (over/under-performing by sector). REVOKED from anon/authenticated (cross-business aggregate — builder-facing, matches `usage_cross_business_adoption` precedent). `adoption_rate` is NULL (not 0%) when a sector selected nothing — honest.
+
+**Client + UI:** `fetchSaidVsUsed()` wrapper in businessOS.ts (best-effort, non-blocking per §24 — stays empty if migration not deployed). RealityGap.tsx gained an "Auto-detected: said vs used" section surfacing the two gap types (selected_unused as warn, used_unselected as info) with event/staff counts + INFERENCE tag — turning the previously-manual-only page into one that surfaces AUTOMATIC gaps from real telemetry.
+
+**Test:** `tests/frontend/lib/saidVsUsed.test.ts` (6 tests) locks the gap-label classification contract (selected_unused priority, adopted threshold, untouched never fabricated).
+
+### What remains for #12 (the "eventually" external-data part — blocked on data sourcing, not code)
+- External market benchmarks (item 1-external): need real, sourced benchmark data loaded into `market_benchmarks` (the RPC + table exist; the data doesn't). Per §22, not fabricated.
+- Emerging sector behavior (item 4), product-market gaps (item 5), new-feature opportunities (item 6), industry-specific positioning (item 7): all require the external benchmark data + longitudinal usage history to compute meaningfully. The deterministic plumbing (sector_module_usage) is now in place; it produces real numbers once businesses have usage history.
+
+### Verification (P1.12)
+tsc clean, vite build 0 warnings, vitest 100/100 (was 94, +6 new). Schema drift 0. Files: `supabase/migrations/20260101000008_said_vs_used_reality_gap.sql`, `src/lib/businessOS.ts` (wrapper + type), `src/pages/RealityGap.tsx` (auto-detected section), `tests/frontend/lib/saidVsUsed.test.ts`. No new dependencies, no external APIs — all deterministic SQL over real tables.
+
+### P1.14 -- Platform self-instrumentation (the PRD #14 metric capture — CLOSED)
+The `usage_events` infra (Session 9) only logged `action='view'` on route change. The PRD #14 metrics need richer events: onboarding abandonment, setup/feature abandonment, ignored automations, feature activation/reuse, workflow completion/abandonment, modules switched off quickly. Closed the capture + derivation gap.
+
+**Migration `20260101000009_self_instrumentation.sql`:**
+- ADDITIVE `context JSONB` column on `usage_events` (existing 'view' rows stay valid; no breaking change) + action index.
+- 5 per-business RPCs (authenticated): `onboarding_funnel` (completed_at + steps_reached + duration from the onboarding_complete event), `workflow_funnel` (started/completed/abandoned/completion_rate per workflow), `feature_activation` (first-active, distinct active days, reuse_label: reused/returning/activated/view_only), `ignored_automations` (derives from automations + automation_runs — created-but-never-triggered), `quick_turnoff` (tool_select→tool_deselect within 7d = "modules switched off quickly").
+- 1 builder-only RPC: `onboarding_conversion` (cross-business — total_authenticated / total_completed / total_abandoned / conversion_rate / median_steps / avg_duration). **ABANDONMENT IS A FACT, not an inference** — derived from `auth.users` LEFT JOIN `staff` (authenticated user with no staff record = abandoned), stronger than tab-close guessing (§22). REVOKED from anon/authenticated (cross-tenant auth data — service role only).
+
+**Why abandonment as auth-gap, not event-gap:** `usage_events.business_id` is NOT NULL FK→businesses; during onboarding the business doesn't exist until `create_business_and_owner` succeeds, so step events mid-flow can't be logged against a business_id. The honest, schema-correct approach: emit ONE `onboarding_complete` event (with steps_reached + duration context) AFTER success; derive abandonment from the auth.users→staff gap server-side. This captures completion timing/steps (FACT from the event) + abandonment (FACT from the gap) without the tab-close inference problem.
+
+**Client instrumentation (fire-and-forget, never blocks UX):**
+- `logUsageEvent()` helper in `useUsageTracking.ts` — structured events with context.
+- **Onboarding.tsx**: emits `onboarding_complete` (context: steps_reached, duration_seconds, industry) at the success path (after RPC, before redirect). Tracks start time via `useRef`.
+- **useWorkspaceSelection.ts `toggleTool`**: emits `tool_select`/`tool_deselect` (context: tool) — the single source of truth, fires for both onboarding + settings-page toggles. Pairs with `quick_turnoff`.
+- **Quotes.tsx**: emits `workflow_start` at createQuote, `workflow_complete` at sendQuote (milestone:sent) + convertToInvoice (milestone:converted) — the quote workflow lifecycle (draft→sent→converted).
+
+**Test:** `tests/frontend/lib/selfInstrumentation.test.ts` (7 tests) locks the reuse_label contract (reused/returning/activated/view_only) + the onboarding-abandonment-is-a-FACT contract (hasStaff→completed, !hasStaff→abandoned).
+
+### Verification (P1.14)
+tsc clean, vite build 0 warnings, vitest 107/107 (was 100, +7 new). Schema drift 0. Files: `supabase/migrations/20260101000009_self_instrumentation.sql`, `src/lib/useUsageTracking.ts` (logUsageEvent helper), `src/pages/Onboarding.tsx` (complete event), `src/lib/useWorkspaceSelection.ts` (toggle events), `src/pages/Quotes.tsx` (workflow events), `tests/frontend/lib/selfInstrumentation.test.ts`. No new deps, no external APIs.
+
+### #18 — Owner-only business intelligence (the private intelligence layer — CLOSED)
+Checklist #18 requires a private intelligence layer ordinary users cannot access (business/sector/role/feature/module analytics). #21 requires privileged/walled content (legal, disciplinary, board finance, litigation) to stay OUT of the general intelligence layer by default.
+
+**CRITICAL security fix found while building #18:** the 5 per-business RPCs from #14 (`feature_activation`, `quick_turnoff`, `workflow_funnel`, `ignored_automations`, `onboarding_funnel`) were SECURITY DEFINER + granted to authenticated but took a `p_business_id` param WITHOUT verifying the caller belongs to that business. SECURITY DEFINER bypasses RLS, so any authenticated user could pass another business's UUID and read its analytics — a cross-tenant leak I introduced in #14. `onboarding_funnel(p_business_id DEFAULT NULL)` was worse: NULL meant "all businesses" (a builder query exposed to any customer). **Migration `20260101000010` re-declares all 5 with an ownership guard** (`EXISTS (SELECT 1 FROM get_current_staff() cs WHERE cs.business_id = p_business_id)`); `onboarding_funnel` NULL now resolves to the caller's own business via `COALESCE`. Empty result if not a member (safe — no error, no leak). The CI migration-apply gate did NOT catch this (it tests SQL validity, not authorization) — found by the #18 audit forcing me to think about the authorization layer properly. Lesson: SECURITY DEFINER functions that take a business_id param MUST gate on membership; RLS does not protect them.
+
+**The owner_intelligence aggregator (checklist #18):**
+- `owner_intelligence(p_business_id)` JSONB RPC in migration `20260101000010`. PL/pgSQL (not sql) so it can branch on the gate. Verifies the caller's role is `owner`/`admin` AND a member of the business via `get_current_staff()` (the real boundary — defense-in-depth + checklist #18 "Owner/admin permission"). Returns empty JSONB payload if not owner/admin (safe, no leak). Returns feature activation + reuse, quick-turnoff, ignored automations, workflow funnel, and onboarding completion in ONE structured call (not 5 round-trips). `data_scope: 'operational_and_usage_only'` field declares the #21 boundary structurally.
+- **#21 boundary (verified + documented):** the aggregator reads ONLY `usage_events` + `automations` + `automation_runs` — operational/usage data. It NEVER references `legal_cases`, `legal_contracts`, `legal_obligations`, disciplinary records, `payroll_records`/`salary_history`, board finance, or litigation. Excluded BY CONSTRUCTION (the function body never touches those tables), not by a runtime toggle. The page surfaces this boundary as a visible banner.
+
+**Three-layer defense-in-depth (checklist #28 "No client-side security decisions"):**
+1. **Client UX gate** — `Shell.itemVisible` `ownerOnly` flag + `OwnerIntelligence.useIsOwnerAdmin()` hide the nav item + page from non-owners/admins. UX ONLY.
+2. **RPC server gate** — `owner_intelligence` verifies role + membership via `get_current_staff()`. THIS is the security control (SECURITY DEFINER bypasses RLS). A tampered client / direct URL / staff member gets an empty payload.
+3. **RLS** — `usage_events` is business-scoped (Session 9).
+
+**Builder-only cross-business analytics (NOT exposed to customers):** `onboarding_conversion`, `sector_module_usage`, `usage_cross_business_adoption` stay REVOKED from authenticated (service-role only). These serve the Avenize builder/board dashboard (checklist #19/#34), not any customer — a customer never sees another business's data. The customer-facing layer is `owner_intelligence` (own business only).
+
+**Client layer:**
+- `fetchOwnerIntelligence()` wrapper in businessOS.ts (best-effort §24 — returns null when RPC not deployed).
+- **OwnerIntelligence.tsx** page (`/app/owner-intelligence`, `self_audit` gate): onboarding completion, feature adoption + reuse (reused/returning/activated/view_only), modules switched off quickly, ignored automations, workflow completion with abandoned counts. Every section has an evidence tag (FACT for completion/activation, INFERENCE for abandonment/quick-turnoff) + honest empty states. The #21 boundary banner is visible. Non-owners get a "restricted" screen, not the analytics.
+- **Shell.tsx:** `ownerOnly` NavItem flag + gate (Crown icon, in SECONDARY_LINKS). `ROUTE_MODULE` maps `/app/owner-intelligence` → `self_audit`.
+
+**Test:** `tests/frontend/lib/ownerIntelligence.test.ts` (14 tests) locks: the client UX gate (owner/admin yes, manager/team_lead/staff no), the RPC server gate (owner/admin + member = authorized; non-member owner = DENIED — the cross-tenant protection; undefined role = denied), and the #21 boundary allowlist (operational/usage data only; payroll/legal/disciplinary/litigation excluded by construction).
+
+### Verification (#18)
+tsc clean, vite build 0 warnings, vitest 121/121 (was 107, +14 new). Schema drift 0. Files: `supabase/migrations/20260101000010_owner_intelligence.sql`, `src/lib/businessOS.ts` (types + wrapper), `src/pages/OwnerIntelligence.tsx` (new), `src/App.tsx` (route), `src/components/Shell.tsx` (ownerOnly flag + gate + ROUTE_MODULE + nav link), `tests/frontend/lib/ownerIntelligence.test.ts`. No new deps, no external APIs.
+
+### #16/#17 — Sector intelligence + behavior-driven recommendations (CLOSED)
+Checklist #16 (market intelligence / reality-gap) + #17 (behavior-driven recommendations).
+
+**Honest scope split (§22 anti-fabrication):**
+- BUILDABLE now: the INTERNAL sector benchmark — a business's own module-adoption vs its sector's ANONYMIZED aggregate (count/avg only, never individual businesses). First-party data only.
+- BLOCKED on sourced data (not fabricated): #16 items 4-7 (emerging sector behavior, product-market gaps, new-feature opportunities, industry positioning) need real external market data — a Tavily/sector-report integration. Fabricating these would violate §22. Documented as blocked, same as #12.
+
+**`sector_benchmark(p_business_id)` JSONB RPC (migration 20260101000011):**
+- Owner-gated + membership-guarded (`get_current_staff`): non-members get `{authorized: false, modules: []}` (safe, no leak).
+- Returns the business's own modules (i_selected/i_used) vs the sector's anonymized aggregate (sector_businesses_selected count + sector_adoption_pct + sector_sample_size). NEVER individual business identities or raw rows.
+- §21 small-data guard surfaced in the UI: sample < 5 flagged "treat with caution"; the SECTOR-001 recommendation rule suppresses sectors < 5 entirely.
+- First-party data only (`user_workspace_selections` + `usage_events` + `businesses`). No external API.
+
+**Behavior-driven recommendation rules (#17) — `run_behavior_recommendation_rules(p_business_id)`:**
+- A SEPARATE function (NOT a re-declaration of `run_recommendation_rules` — that would drop the 8 original rules from 091). The cron fan-out calls BOTH.
+- **USAGE-001** (info): modules selected-but-unused in 30 days. Guard: `selection_completed = true`.
+- **USAGE-002** (warning): workflow abandonment > 50%. Guard: ≥ 3 starts.
+- **SECTOR-001** (info): sector-popular module not enabled. Guards: sector sample ≥ 5 AND adoption ≥ 50%.
+- Each: specific, small-data-guarded (§21), idempotent (`has_open_recommendation`), best-effort (EXCEPTION → 0). Wired into the cron: `run_all_recommendation_rules` (092) re-declared to call both per business.
+
+**Client layer:** `fetchSectorBenchmark()` + `runBehaviorRecommendationRules()` wrappers (best-effort §24). OwnerIntelligence.tsx "Sector Benchmark" section (anonymized, sample-size labels, small-sample warning). Recommendations surface in the existing Executive Cockpit `RecommendationsCard` (no new UI — rules write to `claims`, the existing feed reads them).
+
+**Test:** `tests/frontend/lib/sectorIntelligence.test.ts` (8 tests) locks: the privacy allowlist, all three small-data guards, and the §22 boundary.
+
+### Verification (#16/#17)
+tsc clean, vite build 0 warnings, vitest 129/129 (+8), schema drift 0. Files: `supabase/migrations/20260101000011_sector_intelligence_behavior_rules.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx`, `tests/frontend/lib/sectorIntelligence.test.ts`. No new deps, no external APIs.
+
+### #19/#34 — Builder / board dashboard (platform-operator surface — CLOSED)
+Checklist #19 (sector/module analytics + market reality-gap) + #34 (board dashboard). This is the **platform-operator** surface — distinct from the per-business owner intelligence (#18). The Avenize builder uses it for sprint/product decisions ("which of the 61 modules actually get touched" — empirically, independent of entitlements).
+
+**The platform-admin distinction (critical, NOT a business role):** there was NO existing platform-builder concept (`staff.role` is owner|admin|manager|team_lead|staff — all business roles). A business owner is NOT a platform admin. Migration `20260101000012` adds a `platform_admins` email allowlist table (RLS denies ALL client access — service role only manages it). `is_platform_admin()` checks `auth.uid()`'s email against the allowlist. `builder_dashboard()` is gated by this — a business owner gets `{authorized: false}` (empty, safe, no leak). The builder is a real Avenize operator (their auth email is added to the allowlist by the service role), not a business user.
+
+**`builder_dashboard()` JSONB RPC (migration 20260101000012):** SECURITY DEFINER so it can call the 3 service-role-only cross-business RPCs (`sector_module_usage`, `onboarding_conversion`, `usage_cross_business_adoption`) — which stay REVOKED from authenticated. This RPC is the ONLY authenticated-callable aggregator. Returns one JSONB payload: onboarding conversion (total_authenticated/completed/abandoned, conversion_rate, median_steps, avg_duration), cross-business module adoption (module_key, businesses_touching count, total_events count), sector×module adoption (industry, module_key, selecting/using counts, adoption_rate).
+
+**#21 boundary (aggregate only, verified + documented):** the payload contains ONLY counts/rates/averages — NEVER business names, owner emails, customer names, invoice amounts, legal/disciplinary/payroll data. The RPC reads only `usage_events` + `user_workspace_selections` + `businesses.industry`. The page surfaces this as a visible banner. The underlying cross-business RPCs stay service-role-only; direct client calls are denied.
+
+**Defense-in-depth:** (1) client route behind `RequireAuth` (needs a session), (2) `builder_dashboard` RPC verifies `is_platform_admin()` via `auth.uid()` (the real boundary), (3) `platform_admins` RLS denies client writes (only service role can grant platform access — prevents a business user self-elevating).
+
+**Route:** `/builder` (top-level, NOT under `/app` — it's not a business surface). The RPC gate is the authority; a business user typing `/builder` gets the "unauthorized" screen, not the analytics.
+
+**Client layer:** `fetchBuilderDashboard()` wrapper (best-effort §24). BuilderDashboard.tsx page: onboarding conversion stats, platform-wide module adoption bars, sector×module table (selecting vs using vs adoption%, low-adoption flagged amber), and an honest "what this cannot tell you" section (external market variance blocked-on-sourced-data, §22).
+
+**Test:** `tests/frontend/lib/builderDashboard.test.ts` (11 tests) locks: the platform-admin gate (allowlist yes/no; business owner/admin/undefined-role all = NOT a platform admin), the aggregate-only privacy boundary (no business-identifying fields; walled content excluded), and the §22 boundary.
+
+### Verification (#19/#34)
+tsc clean, vite build 0 warnings, vitest 140/140 (+11), schema drift 0. Files: `supabase/migrations/20260101000012_builder_dashboard.sql`, `src/lib/businessOS.ts`, `src/pages/BuilderDashboard.tsx`, `src/App.tsx` (route), `tests/frontend/lib/builderDashboard.test.ts`. No new deps, no external APIs.
+
+### #20 — Automation health + scheduled-automation executor (CLOSED)
+Checklist #20 (cross-module intelligence: automation health + deterministic fallback). Two findings + two fixes.
+
+**Finding 1 — the "automations not ready" claim was STALE.** `module_status.automations = false` said "not wired to a real execution engine — demo only." But migration `007` ALREADY has a real execution engine: `execute_automation_action` actually inserts tasks/notifications/cashflow entries/merit/chat messages, wired as live Postgres `AFTER UPDATE` triggers for 4 data-trigger types (`deal_stage_changed`/`deal_won`/`deal_lost`, invoice, task, staff). The execution engine was real; the readiness flag was wrong. Migration `20260101000013` updates the stale `module_status.automations.note` to reflect reality.
+
+**Finding 2 — two real gaps.** (a) No `automation_health` RPC — owners/builders couldn't see success/failure rates, never-run automations, or recent runs (the #20 "automation health" requirement). (b) No scheduled/time-based automations — only data-trigger automations fired. A "every Monday, create a weekly review task" automation had no executor.
+
+**Fix (migration `20260101000013`):**
+- **`automation_health(p_business_id)` RPC:** owner-gated + membership-guarded via `get_current_staff`. Returns total/enabled automations, total/successful/failed runs, never-run list, recent runs (limit 20). #21: reads only `automation_runs` + `automations` (operational data, no business PII).
+- **`run_due_automations()` scheduled executor:** finds enabled automations with `trigger_type = 'scheduled'` whose cron window is due (idempotent — tracks `last_run_at` in `trigger_config` JSONB, 55-minute floor guards against double-firing within the hourly window). Best-effort per automation (EXCEPTION → log + skip, never aborts the batch). Calls the existing `execute_automation_action`.
+- **pg_cron job:** `avenize-scheduled-automations` hourly (`0 * * * *`). Guarded so a DB without pg_cron no-ops (§24). Unschedule-first so re-running updates, not dupes.
+- **`scheduled` trigger type** added to the Automations page UI (with a cron field; the hourly cadence is the platform default).
+- **`automation_health` surfaced** on the OwnerIntelligence page (success rate bar, recent runs list, never-run flag) — best-effort, non-blocking.
+
+**Test:** `tests/frontend/lib/automationHealth.test.ts` (10 tests) locks: the owner gate, the aggregate-only #21 contract, the scheduled-trigger idempotency (never-run runs; within-window doesn't re-run; after-window re-runs), and the best-effort batch contract (one failure never aborts the batch; all-failing returns; empty is a no-op).
+
+### Verification (#20)
+tsc clean, vite build 0 warnings, vitest 150/150 (+10), schema drift 0. Files: `supabase/migrations/20260101000013_automation_health_and_scheduled.sql`, `src/lib/businessOS.ts`, `src/pages/OwnerIntelligence.tsx` (health section), `src/pages/Automations.tsx` (scheduled trigger), `tests/frontend/lib/automationHealth.test.ts`. No new deps, no external APIs.
+
+### #extensibility — API key gateway + plaintext-storage fix (CLOSED)
+Checklist Phase-4 extensibility: `module_status.api` was `false` ("key issuance/gating not enforced server-side"). Two defects found + closed.
+
+**Defect 1 — API keys stored PLAINTEXT (security).** `APIKeys.tsx` did `keyHash = rawKey` with a "in production, this would be hashed" comment. The `key_hash` column was named as if hashed but held the raw key. **Fix:** the page now hashes the key with SHA-256 (Web Crypto `crypto.subtle.digest`) before insert; the raw key is shown once. Migration `20260101000014` adds a `needs_rotation` column + backfills any `key_hash` starting with `avenize_` (the plaintext signature) to `needs_rotation=true`. The APIKeys UI surfaces a "Rotate" badge on flagged keys so the owner regenerates them hashed. Legacy plaintext keys are denied by `verify_api_key` until rotated.
+
+**Defect 2 — no gateway (keys unusable).** Created keys had nothing to validate them. **Fix:** migration `20260101000014` adds `verify_api_key(p_raw_key, p_ip)` — SECURITY DEFINER, granted to anon. Hashes the presented key server-side (`pgcrypto digest('sha256')`), matches `key_hash`, enforces `is_active` / not-expired / IP-allowlist / `needs_rotation=false`. Returns `business_id` + `scopes` on success, NULL on any failure (no oracle — all deny-paths return the same generic error). New edge function `supabase/functions/api-gateway/index.ts` is the public read-only API: validates the `Bearer avenize_<key>` header via `verify_api_key`, checks the `data:read` scope, then proxies a GET to the business's data through an explicit resource allowlist (contacts/deals/invoices/products/tasks). Business-scoped: every query is `.eq('business_id', verified.business_id)` — a key for business A can never read business B. Read-only: only GET; no write/insert/update/delete through the gateway.
+
+**Defense-in-depth:** (1) client hashes before storage, (2) `verify_api_key` re-hashes server-side (never compares raw keys), (3) explicit `business_id` filter is the primary boundary, (4) RLS is the backstop, (5) read-only methods enforced, (6) explicit resource allowlist (no wildcard).
+
+**Test:** `tests/frontend/lib/apiKeyGateway.test.ts` (14 tests) locks: the hash-not-plaintext storage rule (rejects the pre-fix defect + prefix-leak), the read-only contract (GET/OPTIONS only, explicit allowlist, `data:read` required), the business-scoping boundary (key business_id drives the query, not user-supplied), and all `verify_api_key` deny-paths (inactive/rotation/expired/IP) + the no-oracle generic-error contract.
+
+### Verification (#extensibility)
+tsc clean, vite build 0 warnings, vitest 164/164 (+14), schema drift 0. Files: `supabase/migrations/20260101000014_api_key_gateway.sql`, `supabase/functions/api-gateway/index.ts`, `src/pages/APIKeys.tsx` (sha256 hash + rotate badge), `tests/frontend/lib/apiKeyGateway.test.ts`. No new deps (Web Crypto + pgcrypto are built-in).
