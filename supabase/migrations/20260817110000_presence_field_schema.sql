@@ -1,4 +1,13 @@
-create extension if not exists postgis schema extensions;
+-- PostGIS provides geography types and the ST_Distance geofencing used by
+-- business_locations/field_visits and the clock_in/out RPCs. On Supabase it
+-- is always available; the bare-postgres CI migration-test job lacks it, so
+-- create best-effort (matches the 051 pg_cron/pg_net guard pattern).
+DO $$ BEGIN
+  CREATE SCHEMA IF NOT EXISTS extensions;
+  CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA extensions;
+EXCEPTION WHEN OTHERS THEN
+  RAISE NOTICE 'postgis not available, skipping (geofence columns/RPCs will fail until applied on a Postgres with PostGIS)';
+END $$;
 
 create table if not exists public.attendance_policies (
   business_id uuid primary key references public.businesses(id) on delete cascade,

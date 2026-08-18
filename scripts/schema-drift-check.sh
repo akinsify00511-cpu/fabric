@@ -103,7 +103,7 @@ grep -rhoE "\.rpc\('[a-z_]+'" "$SRC_DIR" \
   | sort -u > /tmp/frontend_rpcs.txt
 
 grep -rhoiE "CREATE (OR REPLACE )?FUNCTION (public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
-  | sed -E 's/CREATE (OR REPLACE )?FUNCTION (public\.)?//' \
+  | sed -E 's/[Cc][Rr][Ee][Aa][Tt][Ee] ([Oo][Rr] [Rr][Ee][Pp][Ll][Aa][Cc][Ee] )?[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] (public\.)?//' \
   | tr 'A-Z' 'a-z' \
   | sort -u > /tmp/migration_rpcs.txt
 
