@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { useToast } from '../components/Toast'
 import { EmptyApprovals } from '../components/EmptyStates'
 import { 
   CheckCircle, XCircle, Clock, AlertTriangle, ChevronRight,
@@ -12,6 +13,7 @@ import { APPROVAL_TYPE_LABELS, APPROVAL_STATUS_COLORS } from '../lib/approvalWor
 
 export default function Approvals() {
   const { staff } = useAuth()
+  const { showToast } = useToast()
   const [pending, setPending] = useState<ApprovalRequest[]>([])
   const [history, setHistory] = useState<ApprovalRequest[]>([])
   const [loading, setLoading] = useState(true)
@@ -77,7 +79,7 @@ export default function Approvals() {
       if (enforceError) throw enforceError
       if (verdict && !verdict.allowed) {
         const reasons = (verdict.blocked_reasons || []).join('; ')
-        alert(`Approval blocked: ${reasons}`)
+        showToast(`Approval blocked: ${reasons}`, 'error')
         setProcessing(false)
         return
       }
@@ -119,9 +121,9 @@ export default function Approvals() {
       console.error('Failed to approve:', error)
       const msg = error instanceof Error ? error.message : String(error)
       if (msg.includes('Approval blocked')) {
-        alert(msg)
+        showToast(msg, 'error')
       } else {
-        alert('Failed to approve. Please try again.')
+        showToast('Failed to approve. Please try again.', 'error')
       }
     }
     setProcessing(false)
@@ -151,7 +153,7 @@ export default function Approvals() {
       })
       if (auditError) {
         console.error('approval_actions audit insert failed:', auditError)
-        alert('Request rejected, but the audit trail could not be saved. Please contact an admin.')
+        showToast('Request rejected, but the audit trail could not be saved. Please contact an admin.', 'error')
       }
 
       await loadApprovals()
@@ -159,7 +161,7 @@ export default function Approvals() {
       setActionComment('')
     } catch (error) {
       console.error('Failed to reject:', error)
-      alert('Failed to reject. Please try again.')
+      showToast('Failed to reject. Please try again.', 'error')
     }
     setProcessing(false)
   }

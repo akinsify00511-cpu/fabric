@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useToast } from '../components/Toast'
 
 interface Department {
   id: string
@@ -38,6 +39,7 @@ interface Position {
 
 export default function OrganizationPage() {
   const { staff } = useAuth()
+  const { showToast } = useToast()
   const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
   const [departments, setDepartments] = useState<Department[]>([])
   const [teams, setTeams] = useState<Team[]>([])
@@ -136,7 +138,7 @@ export default function OrganizationPage() {
       setEditingItem(null)
       loadData()
     } catch (e) {
-      alert('Failed to save department: ' + (e instanceof Error ? e.message : String(e)))
+      showToast('Failed to save department: ' + (e instanceof Error ? e.message : String(e)), 'error')
     }
   }
 
@@ -158,7 +160,7 @@ export default function OrganizationPage() {
       setEditingItem(null)
       loadData()
     } catch (e) {
-      alert('Failed to save team: ' + (e instanceof Error ? e.message : String(e)))
+      showToast('Failed to save team: ' + (e instanceof Error ? e.message : String(e)), 'error')
     }
   }
 
@@ -171,7 +173,7 @@ export default function OrganizationPage() {
       if (error) throw error
       loadData()
     } catch (e) {
-      alert('Failed to delete: ' + (e instanceof Error ? e.message : String(e)))
+      showToast('Failed to delete: ' + (e instanceof Error ? e.message : String(e)), 'error')
     }
   }
 

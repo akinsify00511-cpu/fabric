@@ -446,6 +446,7 @@ function LeaveRequestModal({
   onClose: () => void
   onSuccess: () => void
 }) {
+  const { showToast } = useToast()
   const { staff } = useAuth()
   const [form, setForm] = useState({
     leave_type_id: leaveTypes[0]?.id || '',
@@ -479,7 +480,7 @@ function LeaveRequestModal({
         reason: form.reason,
         status: 'pending',
       })
-      if (error) { alert('Failed to save: ' + error.message); return }
+      if (error) { showToast('Failed to save: ' + error.message, 'error'); return }
 
       // Update pending balance
       if (selectedBalance) {
@@ -491,7 +492,7 @@ function LeaveRequestModal({
         }, {
           onConflict: 'staff_id,leave_type_id,year',
         })
-        if (error) { alert('Failed to save: ' + error.message); return }
+        if (error) { showToast('Failed to save: ' + error.message, 'error'); return }
       }
 
       onSuccess()
