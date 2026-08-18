@@ -465,6 +465,14 @@ export default function Shell() {
               {pulseEvents.length}
             </a>
           )}
+          {/* Ask Avenize — the primary intelligence entry point */}
+          <button
+            onClick={() => navigate('/app/capture')}
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium text-white transition hover:shadow-md"
+            style={{ background: 'var(--av-gradient)' }}
+          >
+            <Sparkles size={14} /> Ask Avenize
+          </button>
           <NotificationBell />
         </div>
       </header>
@@ -482,8 +490,9 @@ export default function Shell() {
         </div>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <button onClick={() => navigate('/app/capture')} className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--av-primary)] text-white">
-            <Sparkles size={15} strokeWidth={2} />
+          <button onClick={() => navigate('/app/capture')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white">
+            <Sparkles size={14} strokeWidth={2} />
+            <span className="text-xs font-medium">Ask</span>
           </button>
         </div>
       </header>

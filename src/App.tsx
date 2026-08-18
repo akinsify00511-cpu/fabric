@@ -80,6 +80,7 @@ const Organogram = lazy(() => import('./pages/Organogram'))
 const Landing = lazy(() => import('./pages/Landing'))
 const LandingEnhanced = lazy(() => import('./pages/LandingEnhanced'))
 const CompanyHome = lazy(() => import('./pages/CompanyHome'))
+const BusinessHome = lazy(() => import('./pages/BusinessHome'))
 const AICapture = lazy(() => import('./pages/AICapture'))
 const ObserverView = lazy(() => import('./pages/ObserverView'))
 const Simulation = lazy(() => import('./pages/Simulation'))
@@ -405,7 +406,9 @@ function AppRoutes() {
             </RequireAuth>
           }
         >
-        <Route index element={<CompanyHome />} />
+        <Route index element={<BusinessHome />} />
+        {/* Culture hub preserved — no longer the primary home, but reachable */}
+        <Route path="community" element={<CompanyHome />} />
         <Route path="crm" element={mg('crm', <CRM />)} />
         <Route path="leads" element={mg('crm', <Leads />)} />
         <Route path="projects" element={mg('projects', <ProjectsNigeria />)} />
