@@ -80,38 +80,29 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/ci_shim.sql
-      - name: Apply every migration and report baseline failures
+      - name: Apply every migration and fail on any migration error
         env:
           PGPASSWORD: postgres
-        continue-on-error: true
         run: |
-          applied=0; failed=0; failed_list=""
+          applied=0
           for migration in $(ls supabase/migrations/*.sql | sort); do
             echo "::group::Applying $(basename \"$migration\")"
-            if psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f "$migration" 2>&1; then
-              applied=$((applied+1))
-            else
-              echo "::warning::Migration FAILED: $(basename \"$migration\")"
-              failed=$((failed+1))
-              failed_list="$failed_list $(basename \"$migration\")"
-            fi
+            psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f "$migration"
+            applied=$((applied+1))
             echo "::endgroup::"
           done
-          echo "Applied: $applied, Failed: $failed"
-          echo "Failed migrations:$failed_list"
-          echo "::notice::Historical migration failures are tracked separately; newly authored migrations must be made clean before release."
+          echo "Applied: $applied, Failed: 0"
       - name: Assert schema is queryable
         env:
           PGPASSWORD: postgres
         run: |
           psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -c "SELECT count(*) AS businesses FROM businesses; SELECT count(*) AS staff FROM staff; SELECT count(*) AS migrations FROM supabase_migrations.schema_migrations;"
       - name: RLS attack suite (cross-tenant isolation)
-        continue-on-error: true
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap;" 2>/dev/null || true
-          psql -h localhost -U postgres -d test_avenize -f tests/database/04_rls_attack_suite.sql 2>&1 | tail -20 || echo "::notice::RLS attack suite did not run cleanly (schema incomplete in CI — runs fully on live Supabase)"
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/04_rls_attack_suite.sql
 
   build:
     name: Build
