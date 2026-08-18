@@ -1,10 +1,14 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: read
 
 jobs:
   deploy-preview:
@@ -33,12 +37,6 @@ jobs:
           VITE_GIT_SHA: ${{ github.sha }}
 
       - name: Deploy to Vercel Preview
-        # Mirrors the production step (which succeeds on main) but without
-        # --prod so Vercel creates a preview deployment. We install the
-        # latest vercel CLI (not a pinned 25.1.0 via the unmaintained
-        # amondnet action) because the pinned CLI rejected `--yes` and could
-        # not retrieve project settings. VERCEL_ORG_ID/VERCEL_PROJECT_ID env
-        # vars link the project without a committed .vercel directory.
         run: |
           npm i -g vercel
           vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
@@ -49,9 +47,15 @@ jobs:
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout the exact CI-approved commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -69,7 +73,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_GIT_SHA: ${{ github.sha }}
+          VITE_GIT_SHA: ${{ github.event.workflow_run.head_sha }}
 
       - name: Deploy to Vercel
         run: |
