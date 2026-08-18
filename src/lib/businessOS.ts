@@ -600,6 +600,213 @@ export async function clearActiveRole(staffId: string): Promise<boolean> {
 }
 
 // ============================================================================
+// §G Profitability Intelligence — "Where is the business making/losing money?"
+// Decomposes the aggregate EBITDA into per-segment profitability + leakage.
+// Composes on the same invoices/transactions/invoice_items EBITDA reads.
+// ============================================================================
+
+export interface ProfitabilitySegment {
+  segment_name: string
+  revenue: number
+  cost: number
+  profit: number
+  margin_pct: number | null
+  invoice_count?: number
+  units_sold?: number
+}
+export interface ProfitabilityBySegmentResult {
+  authorized: boolean
+  segment: string
+  total_revenue: number
+  total_cogs: number
+  cost_allocation: string
+  segments: ProfitabilitySegment[]
+  error?: string
+}
+export async function fetchProfitabilityBySegment(
+  businessId: string,
+  segment: 'customer' | 'product' | 'salesperson' | 'channel' = 'customer'
+): Promise<ProfitabilityBySegmentResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('profitability_by_segment', {
+      p_business_id: businessId, p_segment: segment,
+    })
+    if (error) throw error
+    return (data as ProfitabilityBySegmentResult) ?? null
+  } catch (e) {
+    console.error('fetchProfitabilityBySegment failed (non-blocking):', e)
+    return null
+  }
+}
+
+export interface LeakageFinding {
+  client_name: string
+  invoice_number?: string
+  total?: number
+  days_overdue?: number
+  margin_pct?: number
+  prior_margin?: number
+  margin_change?: number
+  deal_value?: number
+  invoiced_total?: number
+  days_outstanding?: number
+}
+export interface ProfitabilityLeakageResult {
+  authorized: boolean
+  overdue: LeakageFinding[]
+  declining_margin: LeakageFinding[]
+  negative_margin_deals: LeakageFinding[]
+  stale_receivables: LeakageFinding[]
+  total_exposure: number
+  note?: string
+  error?: string
+}
+export async function fetchProfitabilityLeakage(businessId: string): Promise<ProfitabilityLeakageResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('profitability_leakage', { p_business_id: businessId })
+    if (error) throw error
+    return (data as ProfitabilityLeakageResult) ?? null
+  } catch (e) {
+    console.error('fetchProfitabilityLeakage failed (non-blocking):', e)
+    return null
+  }
+}
+
+export interface PricingOpportunity {
+  product: string
+  revenue: number
+  margin_pct: number | null
+}
+export interface PricingOpportunitiesResult {
+  authorized: boolean
+  high_margin: PricingOpportunity[]
+  low_margin: PricingOpportunity[]
+  note?: string
+  error?: string
+}
+export async function fetchPricingOpportunities(businessId: string): Promise<PricingOpportunitiesResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('pricing_opportunities', { p_business_id: businessId })
+    if (error) throw error
+    return (data as PricingOpportunitiesResult) ?? null
+  } catch (e) {
+    console.error('fetchPricingOpportunities failed (non-blocking):', e)
+    return null
+  }
+}
+
+// ============================================================================
+// §J Business Graph — impact propagation. Composes on entity_relationships +
+// recursive_neighbors (060/087). "If this deal closes, what else changes?"
+// ============================================================================
+
+export interface GraphNodeCount { entity_type: string; node_count: number }
+export interface GraphEdgeCount { relationship: string; edge_count: number }
+export interface GraphHubEntity { entity_type: string; entity_id: string; connections: number }
+export interface GraphOverview {
+  authorized: boolean
+  total_edges: number
+  nodes_by_type: GraphNodeCount[]
+  edges_by_relationship: GraphEdgeCount[]
+  hub_entities: GraphHubEntity[]
+  note?: string
+  error?: string
+}
+export async function fetchGraphOverview(businessId: string): Promise<GraphOverview | null> {
+  try {
+    const { data, error } = await supabase.rpc('graph_overview', { p_business_id: businessId })
+    if (error) throw error
+    return (data as GraphOverview) ?? null
+  } catch (e) {
+    console.error('fetchGraphOverview failed (non-blocking):', e)
+    return null
+  }
+}
+
+export interface ImpactEntity {
+  entity_type: string
+  entity_id: string
+  depth: number
+  path: string[]
+  propagated_delta: number | null
+  evidence_tag: 'FACT' | 'INFERENCE' | 'UNKNOWN'
+  impact_description: string
+}
+export interface PropagateImpactResult {
+  authorized: boolean
+  scenario_label: string
+  scenario_delta: number
+  start_entity: { type: string; id: string }
+  impacted_entities: ImpactEntity[]
+  note?: string
+  error?: string
+}
+export async function propagateImpact(
+  businessId: string,
+  startType: string,
+  startId: string,
+  scenarioDelta: number,
+  scenarioLabel: string
+): Promise<PropagateImpactResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('propagate_impact', {
+      p_business_id: businessId, p_start_type: startType, p_start_id: startId,
+      p_scenario_delta: scenarioDelta, p_scenario_label: scenarioLabel,
+    })
+    if (error) throw error
+    return (data as PropagateImpactResult) ?? null
+  } catch (e) {
+    console.error('propagateImpact failed (non-blocking):', e)
+    return null
+  }
+}
+
+// ============================================================================
+// §AA Evolved Business Review — the narrative synthesis. Composes on
+// monthly_review (097) + claims lifecycle (088) + organizational_memory (064).
+// ============================================================================
+
+export interface MetricMover { metric: string; change_pct: number }
+export interface LearnedItem { topic: string; lesson: string }
+export interface NextPriority { rule_id: string; statement: string; severity: string }
+export interface BusinessReview {
+  authorized: boolean
+  period_start: string
+  period_end: string
+  what_happened?: any
+  what_improved: MetricMover[]
+  what_deteriorated: MetricMover[]
+  what_we_learned: LearnedItem[]
+  recommended_vs_done: {
+    recommended: number; accepted: number; acted: number
+    outcomes_recorded: number; successful_outcomes: number
+  }
+  next_month_priorities: NextPriority[]
+  health_snapshot?: any
+  evidence_note?: string
+  note?: string
+  error?: string
+}
+export async function composeBusinessReview(
+  businessId: string,
+  periodStart?: string,
+  periodEnd?: string
+): Promise<BusinessReview | null> {
+  try {
+    const { data, error } = await supabase.rpc('compose_business_review', {
+      p_business_id: businessId,
+      p_period_start: periodStart ?? null,
+      p_period_end: periodEnd ?? null,
+    })
+    if (error) throw error
+    return (data as BusinessReview) ?? null
+  } catch (e) {
+    console.error('composeBusinessReview failed (non-blocking):', e)
+    return null
+  }
+}
+
+// ============================================================================
 // Riverwayse Platform Operations Dashboard
 // Separate system from Owner Intelligence. Answers "is the platform working
 // right now, for everyone" — NOT "is this business healthy". Sits behind the
