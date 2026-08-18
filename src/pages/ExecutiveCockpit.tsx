@@ -4,26 +4,28 @@
 // personal Dashboard: this is the whole-business mirror for leaders.
 // Every metric is tagged fact/inference/estimate (§20 evidence model).
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
-  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, markRecommendationActed, type Recommendation,
+  fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, markRecommendationActed, recordRecommendationOutcome, fetchAlertActions, type Recommendation, type AlertAction,
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
   computeEbitda, type EbitdaResult,
   fetchBusinessBrain, type BusinessBrain, type BusinessState, type DiagnosisResult, type NextBestAction, type ValueLedger,
   recallSimilarProblems, type RecallResult,
   fetchProfitabilityLeakage, fetchPricingOpportunities, fetchGraphOverview,
+  fetchProfitabilityBySegment, propagateImpact,
   type ProfitabilityLeakageResult, type PricingOpportunitiesResult, type GraphOverview,
+  type ProfitabilityBySegmentResult, type ProfitabilitySegment, type PropagateImpactResult,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
   CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
-  History, ChevronDown, Network, TrendingDown, Wallet, Tag,
+  History, ChevronDown, Network, TrendingDown, Wallet, Tag, BarChart3, CheckCircle2,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 import { RepresentationEngine, type RepresentableData } from '../components/RepresentationEngine'
@@ -67,6 +69,12 @@ export default function ExecutiveCockpit() {
   const [leakage, setLeakage] = useState<ProfitabilityLeakageResult | null>(null)
   const [pricing, setPricing] = useState<PricingOpportunitiesResult | null>(null)
   const [graph, setGraph] = useState<GraphOverview | null>(null)
+  const [segments, setSegments] = useState<ProfitabilityBySegmentResult | null>(null)
+  const [segLens, setSegLens] = useState<'customer' | 'product' | 'salesperson' | 'channel'>('customer')
+  // §J impact simulator — "what happens if revenue changes by ₦X?"
+  const [impact, setImpact] = useState<PropagateImpactResult | null>(null)
+  const [impactDelta, setImpactDelta] = useState('100000')
+  const [impactRunning, setImpactRunning] = useState(false)
 
   useEffect(() => {
     if (!bid) return
@@ -105,6 +113,9 @@ export default function ExecutiveCockpit() {
         .catch(() => { /* migration not deployed yet — non-blocking */ })
       fetchPricingOpportunities(bid).then(p => { if (active) setPricing(p) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
+      // §G per-segment profitability drill-down (customer/product/salesperson/channel).
+      fetchProfitabilityBySegment(bid, 'customer').then(s => { if (active) setSegments(s) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
       // §J business graph overview — the "one connected system" summary.
       fetchGraphOverview(bid).then(g => { if (active) setGraph(g) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
@@ -141,6 +152,29 @@ export default function ExecutiveCockpit() {
   }, [bid])
 
   const metrics = useMemo(() => deriveMetrics(data), [data])
+
+  // §G segment lens switcher — re-fetches the per-segment breakdown on lens change.
+  const switchSegment = useCallback(async (lens: 'customer' | 'product' | 'salesperson' | 'channel') => {
+    if (!bid) return
+    setSegLens(lens)
+    setSegments(null)
+    const r = await fetchProfitabilityBySegment(bid, lens)
+    setSegments(r)
+  }, [bid])
+
+  // §J impact simulator — runs the "what happens if?" scenario. The hub entity
+  // from the graph overview is the starting point (if available).
+  const runImpact = useCallback(async () => {
+    if (!bid || !graph?.hub_entities?.[0]) return
+    const delta = parseFloat(impactDelta)
+    if (isNaN(delta)) return
+    setImpactRunning(true)
+    setImpact(null)
+    const hub = graph.hub_entities[0]
+    const r = await propagateImpact(bid, hub.entity_type, hub.entity_id, delta, 'Revenue change scenario')
+    setImpact(r)
+    setImpactRunning(false)
+  }, [bid, graph, impactDelta])
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -194,6 +228,19 @@ export default function ExecutiveCockpit() {
           <LeakageCard leakage={leakage} />
           <PricingOpportunitiesCard pricing={pricing} />
           <GraphOverviewCard graph={graph} />
+          <ProfitabilitySegmentCard
+            segments={segments}
+            lens={segLens}
+            onSwitch={switchSegment}
+          />
+          <ImpactSimulatorCard
+            graph={graph}
+            impact={impact}
+            delta={impactDelta}
+            onDeltaChange={setImpactDelta}
+            onRun={runImpact}
+            running={impactRunning}
+          />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {metrics[lens].map((m, i) => <MetricCard key={i} {...m} />)}
@@ -204,6 +251,7 @@ export default function ExecutiveCockpit() {
           <RecommendationsCard
             recommendations={recommendations}
             busy={recBusy}
+            businessId={bid ?? undefined}
             onDecide={async (id, decision) => {
               setRecBusy(id)
               try {
@@ -243,6 +291,21 @@ export default function ExecutiveCockpit() {
                   prev.map(rec => rec.id === r.id ? { ...rec, status: 'acted' as any, action_type: 'create_task', linked_action_id: task.id } : rec)
                 )
               } catch { /* non-blocking — task table may not exist yet */ }
+              setRecBusy(null)
+            }}
+            onRecordOutcome={async (r) => {
+              // §16 outcome loop — record what actually happened so the
+              // effectiveness card + recommendation engine can learn. The owner
+              // describes the real result in plain language (never fabricated).
+              const note = window.prompt('What actually happened? (e.g. "Customer paid the overdue invoice", "No change")')
+              if (!note?.trim()) return
+              setRecBusy(r.id)
+              try {
+                await recordRecommendationOutcome(r.id, { note: note.trim(), recorded_at: new Date().toISOString() })
+                setRecommendations(prev =>
+                  prev.map(rec => rec.id === r.id ? { ...rec, status: 'completed' as any } : rec)
+                )
+              } catch { /* non-blocking */ }
               setRecBusy(null)
             }}
           />
@@ -562,14 +625,27 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
 }
 
 function RecommendationsCard({
-  recommendations, busy, onDecide, onAct,
+  recommendations, busy, onDecide, onAct, onRecordOutcome, businessId,
 }: {
   recommendations: Recommendation[]
   busy: string | null
   onDecide: (id: string, decision: 'acknowledge' | 'accepted' | 'rejected') => void
   onAct: (r: Recommendation) => void
+  onRecordOutcome: (r: Recommendation) => void
+  businessId?: string
 }) {
   const [expanded, setExpanded] = useState<string | null>(null)
+  // §5.5 one-tap alert actions — the resolving action per recommendation rule.
+  // Best-effort: stays empty if the alert_action_map migration isn't deployed.
+  const [alertActions, setAlertActions] = useState<AlertAction[]>([])
+  useEffect(() => {
+    if (!businessId) return
+    let active = true
+    fetchAlertActions(businessId).then(a => { if (active) setAlertActions(a) })
+      .catch(() => { /* migration not deployed — non-blocking */ })
+    return () => { active = false }
+  }, [businessId])
+  const actionFor = (ruleId?: string | null) => alertActions.find(a => a.rule_id === ruleId)
   const sevColor = (s: string) =>
     s === 'critical' ? 'var(--av-danger)' : s === 'warning' ? 'var(--av-warning)' : 'var(--av-info)'
   return (
@@ -641,10 +717,29 @@ function RecommendationsCard({
                       <ListTodo size={11} /> Act → Create task
                     </button>
                   )}
+                  {r.status === 'accepted' && actionFor(r.rule_id) && (
+                    <Link
+                      to={actionFor(r.rule_id)!.route}
+                      className="text-[10px] font-medium px-2 py-1 rounded-lg bg-[var(--av-primary-soft)] text-[var(--av-primary)] hover:bg-[var(--av-primary)] hover:text-white flex items-center gap-1"
+                      title={`One-tap: ${actionFor(r.rule_id)!.label}`}
+                    >
+                      <ArrowRight size={11} /> {actionFor(r.rule_id)!.label}
+                    </Link>
+                  )}
                   {r.status === 'acted' && (
-                    <span className="text-[10px] text-[var(--av-success)] flex items-center gap-0.5">
-                      <Check size={10} /> Task created
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] text-[var(--av-success)] flex items-center gap-0.5">
+                        <Check size={10} /> Task created
+                      </span>
+                      <button
+                        onClick={() => onRecordOutcome(r)}
+                        disabled={busy === r.id}
+                        className="text-[10px] font-medium px-2 py-1 rounded-lg bg-[var(--av-surface-3)] text-[var(--av-text-secondary)] hover:bg-[var(--av-border)] disabled:opacity-50 flex items-center gap-1"
+                        title="Record what actually happened (§16 outcome loop)"
+                      >
+                        <CheckCircle2 size={11} /> Record outcome
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1235,6 +1330,163 @@ function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
               <span className="text-[var(--av-primary)] font-medium">{h.connections} connections</span>
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================================
+// §G ProfitabilitySegmentCard — the per-segment drill-down. "Where is the
+// business making money?" Toggles customer / product / salesperson / channel.
+// Cost is revenue-proportionally allocated — surfaced honestly (§22).
+// ============================================================================
+const SEGMENT_LENSES: { key: 'customer' | 'product' | 'salesperson' | 'channel'; label: string }[] = [
+  { key: 'customer', label: 'Customer' },
+  { key: 'product', label: 'Product' },
+  { key: 'salesperson', label: 'Salesperson' },
+  { key: 'channel', label: 'Channel' },
+]
+function ProfitabilitySegmentCard({
+  segments, lens, onSwitch,
+}: {
+  segments: ProfitabilityBySegmentResult | null
+  lens: 'customer' | 'product' | 'salesperson' | 'channel'
+  onSwitch: (l: 'customer' | 'product' | 'salesperson' | 'channel') => void
+}) {
+  if (!segments || !segments.authorized) return null
+  const rows = segments.segments ?? []
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <BarChart3 size={16} className="text-[var(--av-primary)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Profitability by segment</span>
+          <ClaimTag type="FACT" />
+        </div>
+        <p className="text-xs text-[var(--av-text-muted)]">No {lens} revenue in this period yet. As you bill customers, this surfaces where you make money.</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <BarChart3 size={16} className="text-[var(--av-primary)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Where you make money — by {lens}</span>
+        <ClaimTag type="FACT" />
+      </div>
+      <div className="flex gap-1 mb-3 flex-wrap">
+        {SEGMENT_LENSES.map(l => (
+          <button
+            key={l.key}
+            onClick={() => onSwitch(l.key)}
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${lens === l.key
+              ? 'bg-[var(--av-primary)] text-white'
+              : 'bg-[var(--av-surface-2)] text-[var(--av-text-secondary)] hover:bg-[var(--av-border)]'}`}
+          >
+            {l.label}
+          </button>
+        ))}
+      </div>
+      <div className="text-[10px] text-[var(--av-text-muted)] mb-2">
+        Revenue: {naira(segments.total_revenue)} · COGS: {naira(segments.total_cogs)} · cost allocation: {segments.cost_allocation} (estimate)
+      </div>
+      <div className="space-y-1">
+        {rows.slice(0, 10).map((r, i) => (
+          <div key={i} className="flex items-center justify-between py-1 text-xs border-b border-[var(--av-border)] last:border-0">
+            <span className="text-[var(--av-text)] truncate flex-1 mr-2">{r.segment_name}</span>
+            <span className="text-[var(--av-text-secondary)] w-20 text-right">{naira(r.revenue)}</span>
+            <span className="text-[var(--av-text-muted)] w-16 text-right">{naira(r.cost)}</span>
+            <span className={`w-20 text-right font-medium ${r.profit >= 0 ? 'text-[var(--av-success)]' : 'text-[var(--av-danger)]'}`}>{naira(r.profit)}</span>
+            <span className="w-14 text-right text-[var(--av-text-muted)]">{r.margin_pct != null ? `${r.margin_pct}%` : '—'}</span>
+          </div>
+        ))}
+      </div>
+      {rows.length > 10 && <p className="text-[10px] text-[var(--av-text-muted)] mt-2">Showing top 10 of {rows.length} by profit.</p>}
+    </div>
+  )
+}
+
+// ============================================================================
+// §J ImpactSimulatorCard — "what happens if...?" The deterministic precursor
+// to the §S Digital Twin. Picks the most-connected hub entity as the start,
+// applies a hypothetical revenue delta, and shows the downstream propagated
+// effect with FACT/INFERENCE/UNKNOWN tags (§20). Best-effort — honest empty
+// state when no graph edges exist or the migration isn't deployed.
+// ============================================================================
+function ImpactSimulatorCard({
+  graph, impact, delta, onDeltaChange, onRun, running,
+}: {
+  graph: GraphOverview | null
+  impact: PropagateImpactResult | null
+  delta: string
+  onDeltaChange: (v: string) => void
+  onRun: () => void
+  running: boolean
+}) {
+  const hub = graph?.hub_entities?.[0]
+  if (!graph || !graph.authorized || graph.total_edges === 0 || !hub) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles size={16} className="text-[var(--av-primary)]" />
+          <span className="text-sm font-medium text-[var(--av-text)]">Scenario simulator — "what if?"</span>
+        </div>
+        <p className="text-xs text-[var(--av-text-muted)]">Map relationships first (as deals close and invoices are paid) before simulating scenarios. This becomes the Digital Twin once your graph has connections.</p>
+      </div>
+    )
+  }
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Sparkles size={16} className="text-[var(--av-primary)]" />
+        <span className="text-sm font-medium text-[var(--av-text)]">Scenario simulator — "what happens if?"</span>
+        <ClaimTag type="INFERENCE" />
+      </div>
+      <p className="text-xs text-[var(--av-text-muted)] mb-3">
+        Start: your most-connected {hub.entity_type}. The simulator estimates downstream revenue/cash effects along the relationship graph. Indirect effects shrink with depth.
+      </p>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs text-[var(--av-text-secondary)]">If revenue changes by</span>
+        <input
+          type="number"
+          value={delta}
+          onChange={e => onDeltaChange(e.target.value)}
+          className="w-28 px-2 py-1 rounded-lg border border-[var(--av-border)] text-sm outline-none focus:border-[var(--av-primary)]"
+          placeholder="100000"
+        />
+        <button
+          onClick={onRun}
+          disabled={running}
+          className="px-3 py-1 rounded-lg bg-[var(--av-primary)] text-white text-xs font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50"
+        >
+          {running ? 'Simulating…' : 'Simulate impact'}
+        </button>
+      </div>
+      {impact && impact.authorized && (
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">
+            Downstream impact ({impact.impacted_entities.length} entities)
+          </p>
+          {impact.impacted_entities.length === 0 ? (
+            <p className="text-xs text-[var(--av-text-muted)] italic">{impact.note ?? 'No downstream entities mapped.'}</p>
+          ) : (
+            impact.impacted_entities.slice(0, 8).map((e, i) => (
+              <div key={i} className="flex items-center justify-between py-1 text-xs border-b border-[var(--av-border)] last:border-0">
+                <span className="text-[var(--av-text)] capitalize flex-1 truncate">{e.impact_description}</span>
+                <span className="w-24 text-right font-medium" style={{
+                  color: e.propagated_delta == null ? 'var(--av-text-muted)' :
+                         e.propagated_delta >= 0 ? 'var(--av-success)' : 'var(--av-danger)'
+                }}>
+                  {e.propagated_delta != null ? naira(e.propagated_delta) : '—'}
+                </span>
+                <span className="w-20 text-right text-[var(--av-text-muted)]">{e.evidence_tag}</span>
+              </div>
+            ))
+          )}
+          <p className="text-[10px] text-[var(--av-text-muted)] mt-1">
+            FACT = measured downstream value · INFERENCE = estimated · UNKNOWN = no economic mapping yet.
+          </p>
         </div>
       )}
     </div>

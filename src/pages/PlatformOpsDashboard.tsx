@@ -23,15 +23,18 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import {
   fetchPlatformOps, resolvePlatformError, updatePlatformIncident,
+  investigateBusinessIncident, listIncidentInvestigations,
   listPlatformOncall, upsertPlatformOncall, deletePlatformOncall,
   listPlatformThresholds, updatePlatformThreshold,
   type PlatformOps, type PlatformOncallContact, type PlatformThreshold,
+  type IncidentInvestigation,
 } from '../lib/businessOS'
 import { supabase } from '../lib/supabase'
 import { ClaimTag } from '../components/Evidence'
 import {
   Loader2, Lock, Activity, AlertTriangle, CheckCircle2, XCircle,
   Server, Zap, ShieldAlert, Bell, RefreshCw, ExternalLink, Settings, Trash2, Plus,
+  Search,
 } from 'lucide-react'
 
 const SYSTEM_LABELS: Record<string, string> = {
@@ -78,6 +81,11 @@ export default function PlatformOpsDashboardPage() {
   const [livePulse, setLivePulse] = useState(false)
   const [view, setView] = useState<'live' | 'config'>('live')
   const [contacts, setContacts] = useState<PlatformOncallContact[]>([])
+  // §N incident investigation — drilling into a tenant's data is an explicit,
+  // AUDIT-LOGGED action. The RPC gate is the authority; this surfaces it.
+  const [investigating, setInvestigating] = useState<string | null>(null) // incidentId being investigated
+  const [investigations, setInvestigations] = useState<IncidentInvestigation[] | null>(null) // audit trail for the open investigation panel
+  const [investigateError, setInvestigateError] = useState<string | null>(null)
   const [thresholds, setThresholds] = useState<PlatformThreshold[]>([])
   const [configLoading, setConfigLoading] = useState(false)
   const [newContact, setNewContact] = useState({ name: '', email: '', phone: '', channel: 'email' })
@@ -162,6 +170,29 @@ export default function PlatformOpsDashboardPage() {
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e)
       setError(msg)
+    }
+  }
+
+  // §N investigate tenant — the explicit, audit-logged drill-down. Required for
+  // any platform-admin who needs to look at a specific tenant's data during an
+  // incident. Privacy boundary: the RPC logs WHO looked at WHAT and WHY.
+  // Returns void (writes the audit record); we then read the audit trail.
+  const handleInvestigate = async (incidentId: string, businessId: string) => {
+    const reason = window.prompt('Investigate tenant data — this action is AUDIT-LOGGED. Reason for investigation? (required)')
+    if (!reason?.trim()) return
+    setInvestigating(incidentId)
+    setInvestigateError(null)
+    setInvestigations(null)
+    try {
+      await investigateBusinessIncident({ incidentId, businessId, reason: reason.trim() })
+      // Read the audit trail for this incident to surface who looked at what.
+      const trail = await listIncidentInvestigations(incidentId)
+      setInvestigations(trail)
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e)
+      setInvestigateError(msg)
+    } finally {
+      setInvestigating(null)
     }
   }
 
@@ -461,6 +492,29 @@ export default function PlatformOpsDashboardPage() {
                         <CheckCircle2 style={{ width: 16, height: 16, color: '#157342' }} />
                       </button>
                     </div>
+                    {/* §N investigate tenant — audit-logged drill-down. The business_id
+                        input lets the on-call engineer scope the investigation to one tenant. */}
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8, alignItems: 'center' }}>
+                      <input
+                        id={`biz-${inc.id}`}
+                        placeholder="Tenant business_id to investigate…"
+                        style={{ flex: 1, fontSize: 12, padding: '4px 8px', border: '1px solid #DADCE0', borderRadius: 6, outline: 'none' }}
+                      />
+                      <button
+                        onClick={() => {
+                          const el = document.getElementById(`biz-${inc.id}`) as HTMLInputElement
+                          const bid = el?.value?.trim()
+                          if (bid) handleInvestigate(inc.id, bid)
+                        }}
+                        disabled={investigating === inc.id}
+                        style={{ ...iconBtn, opacity: investigating === inc.id ? 0.5 : 1 }}
+                        title="Investigate tenant (audit-logged)"
+                      >
+                        {investigating === inc.id
+                          ? <Loader2 style={{ width: 16, height: 16, color: '#4285F4', animation: 'spin 1s linear infinite' }} />
+                          : <Search style={{ width: 16, height: 16, color: '#4285F4' }} />}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -468,6 +522,47 @@ export default function PlatformOpsDashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* §N investigation audit trail — surfaces who looked at which tenant, when,
+          and why. Drilling into a tenant's data is an explicit logged action; this
+          panel makes that log visible so access is reviewable. */}
+      {(investigations !== null || investigateError) && (
+        <div style={{ background: '#fff', borderRadius: 12, padding: 20, boxShadow: '0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06)', marginTop: 20, borderLeft: '4px solid #4285F4' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#202124', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <Search style={{ width: 18, height: 18, color: '#4285F4' }} />
+            Tenant investigation audit trail
+            <ClaimTag type="FACT" />
+            <button onClick={() => { setInvestigations(null); setInvestigateError(null) }} style={{ marginLeft: 'auto', ...iconBtn }} title="Close">
+              <XCircle style={{ width: 16, height: 16, color: '#9AA0A6' }} />
+            </button>
+          </h2>
+          {investigateError ? (
+            <p style={{ fontSize: 13, color: '#A63A2F' }}>
+              Investigation failed: {investigateError}. If you are not a platform admin, tenant drill-down is denied. Every attempt is logged.
+            </p>
+          ) : investigations && investigations.length === 0 ? (
+            <p style={{ fontSize: 13, color: '#5F6368' }}>No investigations recorded for this incident yet.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {investigations!.map(inv => (
+                <div key={inv.id} style={{ border: '1px solid #E8EAED', borderRadius: 8, padding: 10 }}>
+                  <div style={{ fontSize: 12, color: '#202124' }}>
+                    <strong>{inv.investigated_by_email ?? 'Unknown'}</strong> investigated tenant <code style={{ fontSize: 11 }}>{inv.business_id.slice(0, 8)}…</code>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#5F6368', marginTop: 4 }}>Reason: {inv.reason}</div>
+                  <div style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+                    {new Date(inv.investigated_at).toLocaleString()}
+                    {inv.accessed_tables && inv.accessed_tables.length > 0 && ` · tables: ${inv.accessed_tables.join(', ')}`}
+                  </div>
+                </div>
+              ))}
+              <p style={{ fontSize: 11, color: '#9AA0A6', marginTop: 4 }}>
+                Every tenant drill-down is permanently recorded. This trail is the privacy accountability layer for platform-ops access.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Recent incidents (with postmortem) */}
       {recentIncidents.length > 0 && (

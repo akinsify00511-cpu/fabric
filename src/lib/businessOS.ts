@@ -939,6 +939,34 @@ export async function investigateBusinessIncident(params: {
   if (error) throw error
 }
 
+/** §N: read the audit trail of who investigated which tenant for which incident.
+ * Surfaces the logged drill-downs so the platform team can review access. */
+export interface IncidentInvestigation {
+  id: string
+  incident_id: string
+  business_id: string
+  investigated_by_email: string | null
+  reason: string
+  accessed_tables: string[] | null
+  investigated_at: string
+}
+
+export async function listIncidentInvestigations(incidentId: string): Promise<IncidentInvestigation[]> {
+  try {
+    const { data, error } = await supabase
+      .from('platform_incident_investigations')
+      .select('id, incident_id, business_id, investigated_by_email, reason, accessed_tables, investigated_at')
+      .eq('incident_id', incidentId)
+      .order('investigated_at', { ascending: false })
+      .limit(20)
+    if (error) throw error
+    return (data as IncidentInvestigation[] | null) ?? []
+  } catch (e) {
+    console.error('listIncidentInvestigations failed (non-blocking):', e)
+    return []
+  }
+}
+
 export interface PlatformOncallContact {
   id: string
   name: string
