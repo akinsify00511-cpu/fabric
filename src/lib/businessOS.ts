@@ -804,3 +804,47 @@ export async function fetchAlertActions(businessId: string): Promise<AlertAction
     return []
   }
 }
+
+// ============================================================================
+// §5.3 — EBITDA / operating profitability (server-derived, §0.4)
+// ============================================================================
+
+export interface EbitdaResult {
+  authorized: boolean
+  period_start?: string
+  period_end?: string
+  revenue: number
+  cogs: number
+  recurring_expenses: number
+  other_expenses: number
+  total_expenses: number
+  ebitda: number
+  margin_pct: number | null
+  label: string
+  components?: {
+    revenue: { amount: number; source: string; count: number }
+    cogs: { amount: number; source: string; count: number }
+    recurring: { amount: number; source: string; count: number }
+  }
+  insufficient_data?: boolean
+}
+
+/** §5.3: compute EBITDA server-side (revenue − COGS − opex). Best-effort, non-blocking (§24). */
+export async function computeEbitda(
+  businessId: string,
+  periodStart?: string,
+  periodEnd?: string,
+): Promise<EbitdaResult | null> {
+  try {
+    const { data, error } = await supabase.rpc('compute_ebitda', {
+      p_business_id: businessId,
+      p_period_start: periodStart ?? null,
+      p_period_end: periodEnd ?? null,
+    })
+    if (error) throw error
+    return data as EbitdaResult | null
+  } catch (e) {
+    console.error('computeEbitda failed (non-blocking):', e)
+    return null
+  }
+}

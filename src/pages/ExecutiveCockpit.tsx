@@ -13,6 +13,7 @@ import {
   fetchCurrentMetrics, refreshBusinessMetrics, type GovernedMetric,
   fetchOpenRecommendations, decideRecommendation, acknowledgeRecommendation, fetchRecommendationEffectiveness, markRecommendationActed, type Recommendation,
   computeBusinessHealth, fetchBusinessHealth, type BusinessHealth, type HealthDimension,
+  computeEbitda, type EbitdaResult,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
@@ -51,6 +52,7 @@ export default function ExecutiveCockpit() {
   const [recBusy, setRecBusy] = useState<string | null>(null)
   const [health, setHealth] = useState<BusinessHealth | null>(null)
   const [effectiveness, setEffectiveness] = useState<any[]>([])
+  const [ebitda, setEbitda] = useState<EbitdaResult | null>(null)
 
   useEffect(() => {
     if (!bid) return
@@ -71,6 +73,9 @@ export default function ExecutiveCockpit() {
       // Open recommendations (the "what needs my attention?" feed, §17).
       // Best-effort: stays empty if the recommendation migration isn't deployed.
       fetchOpenRecommendations(bid).then(r => { if (active) setRecommendations(r) })
+        .catch(() => { /* migration not deployed yet — non-blocking */ })
+      // §5.3 EBITDA — server-derived operating profitability. Best-effort.
+      computeEbitda(bid).then(e => { if (active) setEbitda(e) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
       // §16 recommendation effectiveness — "did the action work?" learning loop.
       // Best-effort: stays empty if the migration isn't deployed.
@@ -149,6 +154,7 @@ export default function ExecutiveCockpit() {
           </p>
 
           <BusinessHealthCard health={health} />
+          <EbitdaCard ebitda={ebitda} />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {metrics[lens].map((m, i) => <MetricCard key={i} {...m} />)}
@@ -357,6 +363,72 @@ function GovernedMetricsCard({ metrics }: { metrics: GovernedMetric[] }) {
           />
         ))}
       </div>
+    </div>
+  )
+}
+
+function EbitdaCard({ ebitda }: { ebitda: EbitdaResult | null }) {
+  // §5.3: operating profitability. §0.2: the label is the conclusion, the
+  // numbers are one tap away. §21: every component is explainable + sourced.
+  // §0.4: all values server-derived (the RPC recomputes from real tables).
+  const fmt = (n: number | null | undefined) =>
+    n == null ? '—' : '₦' + Math.round(n).toLocaleString()
+  if (!ebitda || !ebitda.authorized || ebitda.insufficient_data) {
+    return (
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6 flex items-center gap-3">
+        <Banknote size={20} className="text-[var(--av-text-muted)]" />
+        <div>
+          <p className="text-sm font-semibold text-[var(--av-text)]">Operating profitability — not enough data yet</p>
+          <p className="text-xs text-[var(--av-text-muted)]">
+            Record paid invoices and your recurring expenses, and your EBITDA will appear here. <ClaimTag type="FACT" />
+          </p>
+        </div>
+      </div>
+    )
+  }
+  const tone = ebitda.ebitda > 0 ? 'var(--av-success)' : ebitda.ebitda === 0 ? 'var(--av-warning)' : 'var(--av-danger)'
+  return (
+    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-6">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-[var(--av-text)] flex items-center gap-1.5">
+          <Banknote size={16} style={{ color: tone }} /> Operating profitability (EBITDA)
+        </h3>
+        <span className="text-[10px] text-[var(--av-text-muted)]">
+          {ebitda.period_start} → {ebitda.period_end}
+        </span>
+      </div>
+      <div className="flex items-center gap-6 mb-4">
+        <div className="flex items-center gap-3">
+          <div className="text-3xl font-bold" style={{ color: tone }}>{fmt(ebitda.ebitda)}</div>
+          <div>
+            <div className="text-xs font-medium" style={{ color: tone }}>{ebitda.label}</div>
+            {ebitda.margin_pct != null && (
+              <div className="text-[10px] text-[var(--av-text-muted)]">{ebitda.margin_pct}% margin</div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+        <div className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Revenue</div>
+          <div className="text-sm font-semibold text-[var(--av-success)]">{fmt(ebitda.revenue)}</div>
+        </div>
+        <div className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">COGS</div>
+          <div className="text-sm font-semibold text-[var(--av-danger)]">−{fmt(ebitda.cogs)}</div>
+        </div>
+        <div className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Recurring opex</div>
+          <div className="text-sm font-semibold text-[var(--av-danger)]">−{fmt(ebitda.recurring_expenses)}</div>
+        </div>
+        <div className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
+          <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Other</div>
+          <div className="text-sm font-semibold text-[var(--av-danger)]">−{fmt(ebitda.other_expenses)}</div>
+        </div>
+      </div>
+      <p className="mt-2 text-[10px] text-[var(--av-text-muted)]">
+        Revenue from paid invoices · COGS from purchase transactions · opex from recurring_expenses. <ClaimTag type="FACT" /> Server-derived per §0.4.
+      </p>
     </div>
   )
 }
