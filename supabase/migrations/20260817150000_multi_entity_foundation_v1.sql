@@ -130,7 +130,7 @@ USING (
     FROM public.staff s
     JOIN public.businesses b ON b.id = s.business_id
     WHERE s.user_id = auth.uid()
-      AND s.is_active = true
+      AND s.active = true
       AND b.organization_id = organizations.id
   )
 );
@@ -166,7 +166,7 @@ AS $function$
   FROM public.staff s
   JOIN public.businesses b ON b.id = s.business_id
   WHERE s.user_id = auth.uid()
-    AND s.is_active = true
+    AND s.active = true
 
   UNION
 

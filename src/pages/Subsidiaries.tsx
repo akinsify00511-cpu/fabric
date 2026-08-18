@@ -3,6 +3,7 @@ import { Building2, Plus, Save, Users, Target, BriefcaseBusiness, ChevronRight, 
 import { supabase } from '../lib/supabase'
 import { useBusiness } from '../lib/BusinessContext'
 import { useAuth } from '../lib/AuthContext'
+import { useToast } from '../components/Toast'
 
 interface Subsidiary {
   business_id: string
@@ -35,6 +36,7 @@ const EMPTY: Partial<Subsidiary> = {
 export default function Subsidiaries() {
   const { staff } = useAuth()
   const { accessibleBusinesses, activeBusinessId, setActiveBusiness, refresh } = useBusiness()
+  const { showToast } = useToast()
   const canManage = staff?.role === 'owner' || staff?.role === 'admin'
   const [profiles, setProfiles] = useState<Subsidiary[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(activeBusinessId)
@@ -58,7 +60,12 @@ export default function Subsidiaries() {
       .select('*')
       .in('business_id', visibleIds)
       .order('display_name')
-    if (!error) setProfiles((data ?? []) as Subsidiary[])
+    if (error) {
+      console.error('Failed to load subsidiary profiles:', error)
+      showToast('Could not load subsidiary profiles.', 'error')
+    } else {
+      setProfiles((data ?? []) as Subsidiary[])
+    }
     setLoading(false)
   }
 
@@ -90,7 +97,8 @@ export default function Subsidiaries() {
     }
     const { error } = await supabase.from('subsidiary_profiles').update(payload).eq('business_id', draft.business_id)
     setSaving(false)
-    if (error) { alert(`Could not save subsidiary profile: ${error.message}`); return }
+    if (error) { showToast(`Could not save subsidiary profile: ${error.message}`, 'error'); return }
+    showToast('Subsidiary profile saved.', 'success')
     await loadProfiles()
   }
 
@@ -104,7 +112,8 @@ export default function Subsidiaries() {
       p_description: createDescription.trim() || null,
     })
     setCreating(false)
-    if (error) { alert(`Could not create subsidiary: ${error.message}`); return }
+    if (error) { showToast(`Could not create subsidiary: ${error.message}`, 'error'); return }
+    showToast('Subsidiary created.', 'success')
     setShowCreate(false)
     setCreateName(''); setCreateIndustry(''); setCreateModel(''); setCreateDescription('')
     await refresh()

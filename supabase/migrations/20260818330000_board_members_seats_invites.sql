@@ -15,17 +15,24 @@
 -- =============================================================================
 -- 1. Widen invites.role CHECK to match staff.role (024).
 --    admin + team_lead are valid staff roles now; invites must allow them.
+--    Drop the existing constraint by name (Postgres auto-names it
+--    invites_role_check; the prior DO-block pattern match failed because
+--    Postgres normalizes `role IN (...)` to `role = ANY (ARRAY[...])`
+--    internally, so the ILIKE '%role IN%' never matched).
 -- =============================================================================
+ALTER TABLE public.invites DROP CONSTRAINT IF EXISTS invites_role_check;
 DO $$
 DECLARE
   v_constraint_name TEXT;
 BEGIN
+  -- Belt-and-braces: drop any OTHER check constraint on invites.role that
+  -- might exist under a non-standard name (e.g. a prior migration renamed it).
   SELECT conname INTO v_constraint_name
   FROM pg_constraint
   WHERE conrelid = 'public.invites'::regclass
     AND contype = 'c'
-    AND pg_get_constraintdef(oid) ILIKE '%role IN%';
-  IF v_constraint_name IS NOT NULL THEN
+    AND pg_get_constraintdef(oid) ILIKE '%role%';
+  IF v_constraint_name IS NOT NULL AND v_constraint_name != 'invites_role_check' THEN
     EXECUTE format('ALTER TABLE public.invites DROP CONSTRAINT IF EXISTS %I', v_constraint_name);
   END IF;
 END $$;
@@ -119,10 +126,12 @@ CREATE INDEX IF NOT EXISTS idx_board_members_active ON public.board_members(busi
 ALTER TABLE public.board_members ENABLE ROW LEVEL SECURITY;
 
 -- Only members of the business can see its board; only owner/admin can write.
+DROP POLICY IF EXISTS board_members_business_read ON public.board_members;
 CREATE POLICY board_members_business_read ON public.board_members
   FOR SELECT TO authenticated
   USING (business_id IN (SELECT business_id FROM public.get_current_staff()));
 
+DROP POLICY IF EXISTS board_members_owner_admin_insert ON public.board_members;
 CREATE POLICY board_members_owner_admin_insert ON public.board_members
   FOR INSERT TO authenticated
   WITH CHECK (
@@ -130,6 +139,7 @@ CREATE POLICY board_members_owner_admin_insert ON public.board_members
     AND (SELECT role FROM public.get_current_staff()) IN ('owner', 'admin')
   );
 
+DROP POLICY IF EXISTS board_members_owner_admin_update ON public.board_members;
 CREATE POLICY board_members_owner_admin_update ON public.board_members
   FOR UPDATE TO authenticated
   USING (
@@ -137,6 +147,7 @@ CREATE POLICY board_members_owner_admin_update ON public.board_members
     AND (SELECT role FROM public.get_current_staff()) IN ('owner', 'admin')
   );
 
+DROP POLICY IF EXISTS board_members_owner_admin_delete ON public.board_members;
 CREATE POLICY board_members_owner_admin_delete ON public.board_members
   FOR DELETE TO authenticated
   USING (
@@ -160,7 +171,13 @@ CREATE TRIGGER trg_board_members_updated_at
 --    Returns the invite token + the join URL so the UI can show a copyable
 --    link (the "easier than WhatsApp" path — owner sends the link via any
 --    channel) AND optionally trigger an email.
+--
+--    DROP the prior 2-arg overload (001/002) — it was the UNSAFE version
+--    with no seat enforcement. Keeping it would leave two create_invite
+--    signatures, making COMMENT/GRANT ambiguous + letting callers bypass
+--    the seat check by using the old 2-arg form.
 -- =============================================================================
+DROP FUNCTION IF EXISTS public.create_invite(TEXT, TEXT);
 CREATE OR REPLACE FUNCTION public.create_invite(
   p_email TEXT,
   p_role TEXT DEFAULT 'staff',
@@ -237,7 +254,7 @@ $_function_$;
 REVOKE EXECUTE ON FUNCTION public.create_invite(TEXT, TEXT, UUID, INT) FROM anon, public;
 GRANT EXECUTE ON FUNCTION public.create_invite(TEXT, TEXT, UUID, INT) TO authenticated;
 
-COMMENT ON FUNCTION public.create_invite IS
+COMMENT ON FUNCTION public.create_invite(TEXT, TEXT, UUID, INT) IS
   'Create a staff invite. SECURITY DEFINER. Enforces can_add_team_member (seat limit) server-side. Returns {token, join_url, business_name, seat_available}. Owner/admin/manager only.';
 
 -- =============================================================================
@@ -276,7 +293,13 @@ GRANT EXECUTE ON FUNCTION public.revoke_invite(UUID) TO authenticated;
 --    can_add_team_member — a client calling the RPC directly bypassed the
 --    seat limit entirely. Re-declare with the check BEFORE the INSERT. All
 --    other logic (email match, already-member, token validity) preserved.
+--
+--    DROP stale overloads from 001/002 first so there's exactly ONE
+--    accept_invite signature (TEXT, TEXT) — robust even if 20260101000002
+--    (which does the same drops) failed to apply on a given DB.
 -- =============================================================================
+DROP FUNCTION IF EXISTS public.accept_invite(TEXT, TEXT, UUID, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.accept_invite(TEXT, TEXT, UUID);
 CREATE OR REPLACE FUNCTION public.accept_invite(
   p_token TEXT,
   p_staff_name TEXT DEFAULT NULL
@@ -332,5 +355,5 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 -- braces for any older drift).
 GRANT EXECUTE ON FUNCTION public.accept_invite(TEXT, TEXT) TO authenticated;
 
-COMMENT ON FUNCTION public.accept_invite IS
+COMMENT ON FUNCTION public.accept_invite(TEXT, TEXT) IS
   'Accept a staff invite by token. SECURITY DEFINER. Enforces can_add_team_member (seat limit) server-side before creating the staff row. Email must match the invited address.';

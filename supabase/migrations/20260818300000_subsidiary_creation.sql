@@ -20,6 +20,11 @@
 -- SECURITY DEFINER is required to insert into businesses (RLS would otherwise
 -- deny cross-tenant inserts).
 
+-- Drop any prior create_subsidiary overload so COMMENT/GRANT are unambiguous
+-- (idempotent re-application safety — 20260818320000 supersedes this with a
+-- 6-arg version; dropping stale overloads here keeps exactly one signature).
+DROP FUNCTION IF EXISTS public.create_subsidiary(TEXT, TEXT, UUID, TEXT, TEXT, TEXT);
+DROP FUNCTION IF EXISTS public.create_subsidiary(TEXT, TEXT, TEXT, TEXT);
 CREATE OR REPLACE FUNCTION public.create_subsidiary(
   p_name TEXT,
   p_entity_type TEXT DEFAULT 'subsidiary',
@@ -109,5 +114,5 @@ $function$;
 REVOKE EXECUTE ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT) FROM anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT) TO authenticated;
 
-COMMENT ON FUNCTION public.create_subsidiary IS
+COMMENT ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT) IS
   'Create a subsidiary/branch/business_unit under the caller''s organization. Gated to group_owner/group_admin or the parent business owner. SECURITY DEFINER to insert into businesses.';

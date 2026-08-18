@@ -158,5 +158,5 @@ DROP FUNCTION IF EXISTS public.create_subsidiary(TEXT, TEXT, TEXT, TEXT);
 REVOKE EXECUTE ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT, TEXT, TEXT) FROM anon, public;
 GRANT EXECUTE ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT, TEXT, TEXT) TO authenticated;
 
-COMMENT ON FUNCTION public.create_subsidiary IS
+COMMENT ON FUNCTION public.create_subsidiary(TEXT, TEXT, UUID, TEXT, TEXT, TEXT) IS
   'Create a subsidiary/branch/business_unit under the caller''s organization. Gated to group_owner/group_admin or the parent business owner. SECURITY DEFINER. Seeds subsidiary_profiles + CRM config + default pipeline. Returns the new business_id.';
