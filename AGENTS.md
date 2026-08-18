@@ -116,6 +116,43 @@ DLQ section hidden when 0 dead-lettered, switcher hidden when single-role,
 Brain degraded slots flagged) because every caller is best-effort/non-blocking
 (§24).
 
+### §G/§J/§AA — three more composition-first ready-pillars — commit c1d13b4
+Continued with the next three named pillars. Each audited existing infra first
+and builds on the established spine — no parallel systems.
+
+- **§G Profitability Intelligence** ("Where is the business making/losing
+  money?"): EBITDA (20260818160000) is the AGGREGATE; this DECOMPOSES it.
+  `profitability_by_segment` (revenue + cost + margin per customer / product /
+  salesperson / channel — cost is revenue-proportionally allocated, surfaced
+  honestly as `cost_allocation: 'revenue_proportional'` since invoices lack a
+  product FK, §22). `profitability_leakage` (DETECTION: overdue invoices,
+  declining-margin customers, underpriced won deals, stale receivables — each
+  cites REAL numbers). `pricing_opportunities` (high-margin >=40% / low-margin
+  <=15%). Owner-gated + membership-guarded. +18 tests.
+- **§J Business Graph impact propagation** ("if this closes, what else
+  changes?"): `entity_relationships` (060) + `recursive_neighbors` (060/087)
+  + `link_entities` already exist (the graph edges + traversal). The genuine
+  gap was no downstream NUMERIC estimate. `graph_overview` (node/edge/hub
+  counts). `propagate_impact` (walks the graph + estimates the propagated
+  revenue/cash effect per edge — FACT for invoice/payment/deal, INFERENCE for
+  customer/staff, UNKNOWN for unmapped; delta halves per depth hop). The
+  deterministic precursor to §S Digital Twin. +9 tests.
+- **§AA Evolved Business Review** (the narrative synthesis): `monthly_review`
+  (097) gives the FACTS; `compose_business_review` synthesizes them into the 9
+  narrative answers the directive asks for (what happened/improved/
+  deteriorated/learned/recommended/done/worked/next). Composes on monthly_review
+  + claims lifecycle (088) + organizational_memory (064). Every number from
+  real data (§22). +11 tests.
+
+Verified: tsc clean, vite build 0 warnings, vitest 368/368 (+38), schema-drift 0.
+
+### Still pending (blocked on live DB)
+Apply migrations 20260818260000 (§G), 20260818270000 (§J), 20260818280000 (§AA)
+to live Supabase. All idempotent. Frontend degrades gracefully until then
+(profitability segments empty, graph overview shows "no relationships mapped",
+review shows "not enough data this period") because every caller is
+best-effort/non-blocking (§24).
+
 ## Session 23 (2026-08-18): Trial-experience engine — P0 #1, #13, #14, #15, #16 (deterministic, zero LLM)
 
 Triggered by the master checklist P0 trial-experience items. Per §22 (anti-
