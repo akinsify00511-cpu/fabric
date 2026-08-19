@@ -183,13 +183,86 @@ Format the summary in clear sections with bullet points.`
     // Estimate duration (if not available from audio metadata)
     const duration_seconds = Math.round(transcript.length / 5) // Rough estimate
 
-    // Update meeting with transcript and summary
+    // Extract structured decisions + actions (Phase C — section 7/9/12).
+    // Best-effort: if this fails, the transcript + summary are still saved.
+    let decisions: any[] = []
+    let actions: any[] = []
+    try {
+      const extractionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openaiApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        signal: AbortSignal.timeout(30000),
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: `Extract structured decisions and action items from the meeting transcript.
+Return ONLY a JSON object with this exact shape (no markdown, no prose):
+{
+  "decisions": [{"text": "the decision", "rationale": "why", "timestamp_ms": null}],
+  "actions": [{"text": "the action", "assignee_id": null, "due_date": null, "priority": "medium", "timestamp_ms": null}]
+}
+- "decisions" = explicit decisions the group agreed on (not discussion topics).
+- "actions" = tasks someone needs to do (with owner if named).
+- "priority" = "low" | "medium" | "high" | "urgent".
+- If you cannot identify the field, use null. Do not fabricate.
+- Return an empty array if there are no decisions or no actions.`
+            },
+            { role: 'user', content: transcript }
+          ],
+          max_tokens: 800,
+          temperature: 0.2,
+          response_format: { type: 'json_object' },
+        }),
+      })
+
+      if (extractionResponse.ok) {
+        const extractionData = await extractionResponse.json()
+        const extracted = extractionData.choices?.[0]?.message?.content
+        if (extracted) {
+          const parsed = JSON.parse(extracted)
+          decisions = Array.isArray(parsed.decisions) ? parsed.decisions : []
+          actions = Array.isArray(parsed.actions) ? parsed.actions : []
+        }
+      }
+    } catch (extractionError) {
+      console.error('Decision/action extraction failed:', extractionError)
+      // non-fatal — transcript + summary are the primary output
+    }
+
+    // Save the transcript via the Phase C RPC (relational: transcript +
+    // segments table) instead of the lossy meetings.transcript TEXT column.
+    await supabase.rpc('save_transcript', {
+      p_meeting_id: meeting_id,
+      p_full_text: transcript,
+      p_language: language || 'en',
+      p_duration_seconds: duration_seconds,
+      p_segments: null,
+      p_summary: summary,
+      p_key_points: null,
+    })
+
+    // Save the extracted decisions + actions (best-effort)
+    if (decisions.length > 0 || actions.length > 0) {
+      await supabase.rpc('save_meeting_decisions', {
+        p_meeting_id: meeting_id,
+        p_decisions: decisions,
+        p_actions: actions,
+      })
+    }
+
+    // Backwards-compat: also write transcript + summary to meetings table
     await supabase
       .from('meetings')
       .update({
         transcript,
         summary,
         status: 'summarized',
+        transcript_status: 'completed',
       })
       .eq('id', meeting_id)
 

@@ -2124,3 +2124,158 @@ export async function incrementCaptureView(captureId: string): Promise<void> {
     // fire-and-forget — view count is non-critical
   }
 }
+
+// ============================================================================
+// MEETING TRANSCRIPT + SUMMARY + DECISIONS + ACTIONS (Phase C — §6,7,9,12)
+// Relational transcript storage + structured decisions/actions.
+// Actions link to REAL tasks (004) — NOT a parallel task system.
+// ============================================================================
+
+export interface TranscriptSegment {
+  id: string
+  segment_index: number
+  start_time_ms: number
+  end_time_ms: number
+  text: string
+  speaker: string | null
+  confidence: number | null
+}
+
+export interface MeetingDecision {
+  id: string
+  meeting_id: string
+  decision_text: string
+  rationale: string | null
+  decided_by: string | null
+  timestamp_ms: number | null
+  status: 'proposed' | 'decided' | 'reversed' | 'superseded'
+  created_at: string
+}
+
+export interface MeetingAction {
+  id: string
+  meeting_id: string
+  decision_id: string | null
+  task_id: string | null
+  action_text: string
+  assignee_id: string | null
+  due_date: string | null
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  status: 'open' | 'in_progress' | 'completed' | 'cancelled' | 'deferred'
+  timestamp_ms: number | null
+  created_at: string
+}
+
+export interface MeetingIntelligence {
+  meeting: {
+    id: string
+    title: string
+    status: string
+    transcript_status: string
+  }
+  transcripts: Array<{
+    id: string
+    full_text: string
+    language: string
+    duration_seconds: number | null
+    word_count: number | null
+    created_at: string
+  }>
+  segments: TranscriptSegment[]
+  summaries: Array<{
+    id: string
+    summary: string
+    key_points: string[] | null
+  }>
+  decisions: MeetingDecision[]
+  actions: MeetingAction[]
+}
+
+export async function fetchMeetingIntelligence(
+  meetingId: string
+): Promise<MeetingIntelligence | null> {
+  try {
+    const { data, error } = await supabase.rpc('get_meeting_intelligence', {
+      p_meeting_id: meetingId,
+    })
+    if (error) {
+      console.warn('[meetings] fetch intelligence failed:', error.message)
+      return null
+    }
+    return data as MeetingIntelligence | null
+  } catch (e) {
+    console.warn('[meetings] fetch intelligence error:', e)
+    return null
+  }
+}
+
+export async function createActionTask(
+  actionId: string,
+  title: string,
+  opts?: { assigneeId?: string; dueDate?: string; priority?: string }
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('create_action_task', {
+      p_action_id: actionId,
+      p_title: title,
+      p_assignee_id: opts?.assigneeId ?? null,
+      p_due_date: opts?.dueDate ?? null,
+      p_priority: opts?.priority ?? 'medium',
+    })
+    if (error) {
+      console.warn('[meetings] create_action_task failed:', error.message)
+      return null
+    }
+    return data as string | null
+  } catch (e) {
+    console.warn('[meetings] create_action_task error:', e)
+    return null
+  }
+}
+
+export async function updateActionStatus(
+  actionId: string,
+  status: MeetingAction['status']
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('meeting_actions')
+      .update({ status })
+      .eq('id', actionId)
+    if (error) {
+      console.warn('[meetings] update action status failed:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[meetings] update action status error:', e)
+    return false
+  }
+}
+
+export async function searchTranscripts(
+  query: string,
+  limit = 20
+): Promise<Array<{
+  segment_id: string
+  text: string
+  start_time_ms: number
+  meeting_id: string
+  meeting_title: string
+  transcript_id: string
+}>> {
+  try {
+    const { data, error } = await supabase.rpc('search_transcripts', {
+      p_query: query,
+      p_limit: limit,
+    })
+    if (error) {
+      console.warn('[meetings] search transcripts failed:', error.message)
+      return []
+    }
+    return (data as any[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] search transcripts error:', e)
+    return []
+  }
+}

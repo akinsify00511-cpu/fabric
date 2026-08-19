@@ -239,7 +239,7 @@ export default function CRM() {
         <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.conversionRate}%</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Conversion</div></div>
       </div>
 
-      <CRMIntelligenceSurface businessId={bid} />
+      <CRMIntelligenceSurface />
 
       <div className="flex gap-1 mb-6 bg-black/10 p-1 rounded-xl w-fit">
         {[{ key: 'deals', label: 'Deals' }, { key: 'contacts', label: 'Contacts' }, { key: 'pipeline', label: 'Pipeline' }].map(tab => (
