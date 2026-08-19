@@ -756,9 +756,14 @@ BEGIN
         'message', left(message, 300),
         'has_business', business_id IS NOT NULL,
         'resolved_at', resolved_at
-      ) ORDER BY captured_at DESC LIMIT 50)
-      FROM platform_error_events
-      WHERE resolved_at IS NULL
+      ) ORDER BY captured_at DESC)
+      FROM (
+        SELECT id, captured_at, source, source_detail, severity, message, business_id, resolved_at
+        FROM platform_error_events
+        WHERE resolved_at IS NULL
+        ORDER BY captured_at DESC
+        LIMIT 50
+      ) recent_error_rows
     ), '[]'::jsonb),
 
     'open_incidents', COALESCE((
@@ -787,8 +792,13 @@ BEGIN
         'status', status,
         'title', title,
         'summary', summary
-      ) ORDER BY opened_at DESC LIMIT 20)
-      FROM platform_incidents
+      ) ORDER BY opened_at DESC)
+      FROM (
+        SELECT id, opened_at, closed_at, severity, status, title, summary
+        FROM platform_incidents
+        ORDER BY opened_at DESC
+        LIMIT 20
+      ) recent_incident_rows
     ), '[]'::jsonb),
 
     'error_counts', jsonb_build_object(
