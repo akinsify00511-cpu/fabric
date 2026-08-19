@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { logUsageEvent } from '../lib/useUsageTracking'
+import { recordDiscoveryReferral } from '../lib/businessOS'
+import { getStoredAttribution, clearStoredAttribution } from '../lib/attribution'
 import { TOOLS, type ToolKey } from '../lib/useToolAccess'
 import {
   Building2, Users, Wrench, TrendingUp, ArrowRight, Check, Loader2, Palette
@@ -286,6 +288,22 @@ export default function Onboarding() {
             industry,
           },
         })
+
+        // B14 attribution: if this signup arrived with UTM/referrer provenance
+        // (captured on the public surface), record it linked to the new
+        // business so Discovery Intelligence can close discovery → revenue.
+        const attribution = getStoredAttribution()
+        if (attribution) {
+          recordDiscoveryReferral(data, {
+            source: attribution.source,
+            medium: attribution.medium,
+            campaign: attribution.campaign,
+            referrer: attribution.referrer,
+            landingPath: attribution.landingPath,
+            entityType: 'business',
+            entityId: data,
+          }).finally(() => clearStoredAttribution())
+        }
       }
 
     } catch (err: any) {

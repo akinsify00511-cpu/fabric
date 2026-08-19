@@ -16,7 +16,7 @@ export type ModuleKey =
   | 'inventory' | 'knowledge' | 'approvals' | 'calendar' | 'legal'
   | 'procurement' | 'intelligence' | 'market' | 'memory' | 'reality_gap'
   | 'self_audit' | 'cockpit' | 'wall' | 'automations' | 'sso' | 'api'
-  | 'multi_company' | 'security'
+  | 'multi_company' | 'security' | 'discovery'
 
 interface ModuleAccess {
   can_access: boolean

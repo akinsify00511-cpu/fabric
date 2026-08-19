@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import PasswordStrength from '../components/PasswordStrength'
 import { Check, Sparkles, Users, Zap, Shield, Brain, MessageSquare, Network } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
+import { captureAttribution } from '../lib/attribution'
 
 const FEATURES = [
   { icon: Brain, textKey: 'signupFeatureBrain', text: 'One system — CRM, finance, HR, projects, all connected' },
@@ -14,6 +15,8 @@ const FEATURES = [
 
 export default function Signup() {
   const navigate = useNavigate()
+  // B14 attribution: last-chance capture of discovery provenance before signup.
+  useEffect(() => { captureAttribution() }, [])
   const { translations } = useLocale()
   const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
   const [step, setStep] = useState<'form' | 'success'>('form')

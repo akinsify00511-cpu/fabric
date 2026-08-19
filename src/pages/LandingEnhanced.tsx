@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { captureAttribution } from '../lib/attribution'
 import {
   ArrowRight, Check, Menu, X, Users, BarChart3, Briefcase, UserCheck,
   Clock, ListTodo, Calendar, MessageSquare, Shield, ChevronDown, Globe,
@@ -328,5 +329,8 @@ function Footer() {
 }
 
 export default function LandingEnhanced() {
+  // B14 attribution: capture UTM/referrer provenance on the public surface so
+  // a later signup can be connected back to its discovery source.
+  captureAttribution()
   return <div className="min-h-screen bg-white"><Navbar /><main><HeroSection /><StoriesSection /><ExperienceSection /><OrganizationSection /><RepresentationSection /><CapabilitiesSection /><PricingSection /><FAQSection /><FinalCTA /></main><Footer /><SarahChat /></div>
 }

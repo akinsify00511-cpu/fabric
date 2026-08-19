@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { captureAttribution } from '../lib/attribution'
 import { Check, ArrowRight, ChevronDown, Shield, Clock, Lock } from 'lucide-react'
 
 const BRAND = {
@@ -170,6 +171,9 @@ function FAQSection() {
 export default function Pricing() {
   const [tiers, setTiers] = useState<PricingTier[]>(FALLBACK_TIERS)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
+
+  // B14 attribution: capture discovery provenance on the pricing surface.
+  useEffect(() => { captureAttribution() }, [])
 
   // P0 #14: load the authoritative pricing tiers from the pricing_tiers table
   // (single source of truth). Falls back to FALLBACK_TIERS if the RPC isn't

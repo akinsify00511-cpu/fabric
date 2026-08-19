@@ -2550,3 +2550,178 @@ export async function receiptSignedUrl(storagePath: string): Promise<string | nu
   }
 }
 
+
+// ---------- Discovery Intelligence (20260819090000 / Phase B) ----------
+// SEO/AEO/GEO/AIO as one product layer. Every wrapper is best-effort and
+// non-blocking (§24): returns null/empty when the migration isn't deployed.
+
+export interface DiscoveryOverview {
+  authorized: boolean
+  targets?: number
+  observations_30d?: number
+  present_30d?: number
+  cited_30d?: number
+  presence_rate?: number | null
+  citation_rate?: number | null
+  brand_checks?: number
+  brand_mismatches?: number
+  open_mismatches?: number
+  opportunities?: Record<string, number>
+  referrals?: number
+  referrals_30d?: number
+  engines?: { engine: string; checks: number; present: number; cited: number }[]
+  trend?: { week: string; checks: number; present: number; cited: number }[]
+}
+
+export interface DiscoveryLeaderboardRow {
+  target_id: string
+  query: string
+  cluster: string
+  kind: 'seo' | 'aeo' | 'geo'
+  checks: number
+  avenize_present: number
+  avenize_cited: number
+  top_competitors: { name: string; cited: number }[]
+  last_observed_at: string | null
+}
+
+export interface DiscoveryBrandTruthRow {
+  truth_id: string
+  aspect: string
+  expected_statement: string
+  latest_ai_statement: string | null
+  latest_engine: string | null
+  latest_mismatch: boolean | null
+  latest_severity: string | null
+  open_checks: number
+}
+
+export interface DiscoveryRoi {
+  authorized: boolean
+  referrals?: number
+  linked?: number
+  by_source?: { source: string; visits: number; linked: number }[]
+  deal_revenue?: number
+  subscription_revenue?: number
+  attributed_revenue?: number
+  note?: string | null
+}
+
+export interface ContentOpportunity {
+  id: string
+  business_id: string
+  title: string
+  cluster: string
+  rationale: string | null
+  search_intent: string | null
+  target_audience: string | null
+  supporting_topics: string[]
+  internal_links: string[]
+  evidence_required: string | null
+  conversion_goal: string | null
+  priority_score: number
+  status: 'suggested' | 'approved' | 'in_progress' | 'published' | 'rejected'
+  originality_confirmed: boolean
+  evidence_confirmed: boolean
+  human_reviewed: boolean
+  published_url: string | null
+  created_at: string
+}
+
+export interface DiscoveryTarget {
+  id: string
+  business_id: string
+  query: string
+  cluster: string
+  kind: 'seo' | 'aeo' | 'geo'
+  priority: number
+  active: boolean
+}
+
+export async function seedDiscoveryDefaults(businessId: string) {
+  try {
+    const { data, error } = await supabase.rpc('seed_discovery_defaults', { p_business_id: businessId })
+    if (error) throw error
+    return data as { authorized: boolean; truths: number; targets: number }
+  } catch (e) {
+    console.warn('[discovery] seed failed (migration may not be deployed):', e)
+    return null
+  }
+}
+
+export async function fetchDiscoveryOverview(businessId: string): Promise<DiscoveryOverview | null> {
+  try {
+    const { data, error } = await supabase.rpc('discovery_overview', { p_business_id: businessId })
+    if (error) throw error
+    return (data as DiscoveryOverview) ?? null
+  } catch (e) {
+    console.warn('[discovery] overview failed:', e)
+    return null
+  }
+}
+
+export async function fetchDiscoveryLeaderboard(businessId: string): Promise<DiscoveryLeaderboardRow[]> {
+  try {
+    const { data, error } = await supabase.rpc('discovery_query_leaderboard', { p_business_id: businessId })
+    if (error) throw error
+    return (data || []) as DiscoveryLeaderboardRow[]
+  } catch (e) {
+    console.warn('[discovery] leaderboard failed:', e)
+    return []
+  }
+}
+
+export async function fetchDiscoveryBrandTruths(businessId: string): Promise<DiscoveryBrandTruthRow[]> {
+  try {
+    const { data, error } = await supabase.rpc('discovery_brand_truth_report', { p_business_id: businessId })
+    if (error) throw error
+    return (data || []) as DiscoveryBrandTruthRow[]
+  } catch (e) {
+    console.warn('[discovery] brand truths failed:', e)
+    return []
+  }
+}
+
+export async function fetchDiscoveryRoi(businessId: string): Promise<DiscoveryRoi | null> {
+  try {
+    const { data, error } = await supabase.rpc('discovery_roi', { p_business_id: businessId })
+    if (error) throw error
+    return (data as DiscoveryRoi) ?? null
+  } catch (e) {
+    console.warn('[discovery] roi failed:', e)
+    return null
+  }
+}
+
+export async function recordDiscoveryReferral(
+  businessId: string,
+  attribution: {
+    source?: string | null
+    medium?: string | null
+    campaign?: string | null
+    contentUrl?: string | null
+    referrer?: string | null
+    landingPath?: string | null
+    entityType?: string | null
+    entityId?: string | null
+  },
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('record_discovery_referral', {
+      p_business_id: businessId,
+      p_source: attribution.source ?? null,
+      p_medium: attribution.medium ?? null,
+      p_campaign: attribution.campaign ?? null,
+      p_content_url: attribution.contentUrl ?? null,
+      p_referrer: attribution.referrer ?? null,
+      p_landing_path: attribution.landingPath ?? null,
+      p_entity_type: attribution.entityType ?? null,
+      p_entity_id: attribution.entityId ?? null,
+    })
+    if (error) throw error
+    return (data as string) ?? null
+  } catch (e) {
+    console.warn('[discovery] referral record failed:', e)
+    return null
+  }
+}
