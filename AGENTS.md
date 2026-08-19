@@ -1,3 +1,93 @@
+## Session 34 (2026-08-19): Two formal product layers — Design Intelligence + Discovery Intelligence
+
+User directive: combine the Design Intelligence system and the Discovery
+Intelligence system (SEO/GEO/AEO/AIO) as two FORMAL PRODUCT LAYERS built into
+the architecture — never plugins. 4 commits (28c237e..5d92e96), all local
+on main (NOT pushed — awaiting user confirmation per repo policy).
+
+### Phase A — Design Constitution + enforcement (28c237e)
+- `AVENIZE-DESIGN-CONSTITUTION.md`: the governing document — A1 foundations
+  (identity/typography/spacing/grid/tokens/elevation/radius/icons/charts/
+  motion/responsive/a11y/theming), A2 anti-AI-slop rules, A3 canonical
+  component inventory (one component = one implementation), A4 role/function
+  experience (points to functionHome.ts — UX emphasis only, RLS stays the
+  boundary), A5 Living Business visual language, A6 quality gate. External
+  design resources are process inputs, never the authority.
+- `scripts/check_design_constitution.py` + `design_constitution_baseline.json`:
+  CI drift gate. Tracks hardcoded-hex + anti-slop-class (purple gradients,
+  animate-bounce) violations per file; FAILS on growth or new violating files;
+  the baseline (127 files / 1214 hex / 119 slop) only burns down.
+  `--write-baseline` regenerates after deliberate reviewed changes.
+- Wired as `design-constitution` job in ci.yml (build needs it) + a job in
+  schema-drift.yml.
+
+### Phase B foundation — technical SEO + the public/private boundary (59db5b2)
+- `public/robots.txt`: B3 boundary — public surface allowed; /app, /sign,
+  /join, /onboarding, operator surfaces disallowed; explicit AI-crawler groups
+  (GPTBot/ClaudeBot/PerplexityBot/Google-Extended) same boundary.
+- `public/sitemap.xml`: public routes only. Generated real og-image.png
+  (1200x630) + logo.png (512) — both were referenced but 404'd.
+- **§22/B5 structured-data truth fixes in index.html**: removed fabricated
+  aggregateRating (4.8/1247 — a Google policy violation), fake "12 hours/week"
+  + "SOC 2 Type II" FAQ claims, and USD $29/$49 schema pricing that
+  contradicted the real Naira tiers (now NGN 0–380,000). theme-color → #155BB4.
+- Renumbered 20260819020000_receipt_ocr → 20260819025000 (collision with
+  audit_logs_column_reconciliation; both unapplied to live DB, safe rename).
+
+### Phase B intelligence — the Discovery layer (59a02cc + 5d92e96 doc)
+- Migration `20260819090000_discovery_intelligence.sql` (idempotent, verified
+  on postgres:15): discovery_targets / discovery_observations /
+  discovery_brand_truths / discovery_brand_checks / content_opportunities /
+  discovery_content / discovery_referrals — business-scoped RLS
+  (get_current_staff). **B11 quality gate trigger**: an opportunity cannot
+  reach 'published' without originality + evidence + human review. 6
+  membership-guarded SECURITY DEFINER RPCs: seed_discovery_defaults,
+  discovery_overview (B13), discovery_query_leaderboard (B9),
+  discovery_brand_truth_report (B8), discovery_roi (B14),
+  record_discovery_referral. module_plan_tiers/module_status seeds for the
+  new 'discovery' module (tier 2, ready).
+- `src/lib/discoveryIntel.ts`: pure deterministic logic — presence/citation
+  rates (null when no data, §22), competitor citation counts, B9 content-gap
+  rule, **B8 category-aware brand-truth severity** (category phrase after
+  "is a/an/the" compared separately — name overlap never masks a category
+  error; disjoint+brand-absent=critical, disjoint=high), B10 opportunity
+  priority, B14 attribution rollup + UTM/referrer parsing (AI engines →
+  ai-citation). 21 tests.
+- `src/lib/attribution.ts`: UTM/referrer capture on Landing/Pricing/Signup;
+  Onboarding records the referral linked to the new business (B14 first hop:
+  discovery → visit → signup → business → subscription revenue).
+- `DiscoveryIntelligence.tsx` at /app/discovery (Reach group): B13 overview +
+  trend + per-engine, B8 Brand Truth Monitor, B9 leaderboard + gap detection,
+  B10/B11 opportunities with quality gate, B14 Discovery → Revenue.
+  Executives + marketing function only (UX gate; RLS+RPCs are the boundary).
+  Gamified honest empty states; pure --av-* tokens (zero hex — passes the new
+  design gate).
+- `DISCOVERY_INTELLIGENCE_ARCHITECTURE.md`: the formal layer definition (B1
+  architecture, B3 boundary, data model, severity ladder, sprint status map).
+
+### Verification
+tsc clean; vite build 0 warnings; vitest 611/611 (+21); schema-drift 0;
+design-constitution gate PASS (negative-tested: catches new files + growth);
+migration applies clean + idempotent on postgres:15 with the full functional
+smoke matrix (seed idempotency, RLS tenant isolation as the authenticated
+role, overview/leaderboard/brand-truth/ROI correctness, quality-gate trigger,
+outsider guards all deny).
+
+### Smoke-test gotchas learned
+- The ci_shim GUC is `request.jwt.claims` (JSON: {"sub": uuid}), NOT
+  `request.jwt.claim.sub`.
+- psql autocommits: set_config(..., true) is transaction-local and vanishes
+  before the next statement — use false (session) in ad-hoc .sql files, or
+  wrap in BEGIN/COMMIT like 04_rls_attack_suite.sql.
+- The postgres superuser BYPASSES RLS — cross-tenant checks must SET ROLE
+  authenticated (after GRANTing table privileges; the 998 blanket grant
+  covers it in the full chain).
+
+### Deploy status
+NOT pushed (awaiting user confirmation). Live DB still needs migration
+20260819090000 (+ the pending set). Frontend degrades gracefully until then
+(discovery page seeds/shows honest empty states).
+
 ## Session 32 (2026-08-19): Avenize-first architecture — internal Receipt OCR, internal WebAuthn/Passkeys, Generative Copilot
 
 User directive: "no external SaaS dependency" does NOT mean no libraries or
