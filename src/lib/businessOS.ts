@@ -2429,3 +2429,127 @@ export async function fetchMeetingAnalytics(
     return null
   }
 }
+
+// =============================================================================
+// Internal Receipt OCR (20260819020000) — upload -> OCR -> extract -> confirm
+// =============================================================================
+
+export interface ReceiptDocument {
+  id: string
+  business_id: string
+  uploaded_by: string | null
+  storage_path: string
+  original_filename: string | null
+  status: 'uploaded' | 'processing' | 'extracted' | 'confirmed' | 'rejected'
+  raw_text?: string | null
+  vendor: string | null
+  receipt_number: string | null
+  receipt_date: string | null
+  currency: string
+  subtotal: number | null
+  tax: number | null
+  discount: number | null
+  total: number | null
+  payment_method: string | null
+  category: string | null
+  expense_account: string | null
+  line_items: Array<{ description: string; amount: number; quantity?: number }>
+  field_confidence: Record<string, string>
+  overall_confidence: number | null
+  linked_transaction_id: string | null
+  confirmed_at: string | null
+  created_at: string
+}
+
+export async function createReceiptUploadPath(
+  filename: string,
+): Promise<{ receiptId: string; storagePath: string } | null> {
+  try {
+    const { data, error } = await supabase.rpc('create_receipt_upload_path', {
+      p_filename: filename,
+    })
+    if (error) throw error
+    const row = Array.isArray(data) ? data[0] : data
+    if (!row) return null
+    return { receiptId: row.p_receipt_id, storagePath: row.p_storage_path }
+  } catch (e) {
+    console.error('[receipts] create upload path failed:', e)
+    return null
+  }
+}
+
+export async function finalizeReceiptExtraction(
+  receiptId: string,
+  rawText: string,
+  fields: Record<string, unknown>,
+): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.rpc('finalize_receipt_extraction', {
+      p_receipt_id: receiptId,
+      p_raw_text: rawText,
+      p_fields: fields,
+    })
+    if (error) throw error
+    return data === true
+  } catch (e) {
+    console.error('[receipts] finalize extraction failed:', e)
+    return false
+  }
+}
+
+export async function confirmReceipt(receiptId: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('confirm_receipt', {
+      p_receipt_id: receiptId,
+    })
+    if (error) throw error
+    return data as string | null
+  } catch (e) {
+    console.error('[receipts] confirm failed:', e)
+    return null
+  }
+}
+
+export async function rejectReceipt(receiptId: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.rpc('reject_receipt', {
+      p_receipt_id: receiptId,
+    })
+    if (error) throw error
+    return data === true
+  } catch (e) {
+    console.error('[receipts] reject failed:', e)
+    return false
+  }
+}
+
+export async function fetchReceipts(): Promise<ReceiptDocument[]> {
+  try {
+    const { data, error } = await supabase
+      .from('receipt_documents')
+      .select(
+        'id, business_id, uploaded_by, storage_path, original_filename, status, vendor, receipt_number, receipt_date, currency, subtotal, tax, discount, total, payment_method, category, expense_account, line_items, field_confidence, overall_confidence, linked_transaction_id, confirmed_at, created_at',
+      )
+      .order('created_at', { ascending: false })
+      .limit(100)
+    if (error) throw error
+    return (data || []) as ReceiptDocument[]
+  } catch (e) {
+    console.warn('[receipts] fetch failed (migration may not be deployed):', e)
+    return []
+  }
+}
+
+export async function receiptSignedUrl(storagePath: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.storage
+      .from('receipts')
+      .createSignedUrl(storagePath, 300)
+    if (error) throw error
+    return data?.signedUrl ?? null
+  } catch (e) {
+    console.warn('[receipts] signed url failed:', e)
+    return null
+  }
+}
+
