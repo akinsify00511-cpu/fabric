@@ -2942,3 +2942,50 @@ OPENAI_API_KEY set (same key as transcribe-audio). Until then: buttons open
 the modals but create_capture_attachment errors → honest "Upload setup
 failed" state in the tray with retry; voice transcribe failure offers the
 live-speech fallback or attach-and-type. No crashes (§24 best-effort).
+
+
+## Session 35 (2026-08-19): Design + Discovery Intelligence — parallel-session collision resolution
+
+User directive: build the Fabric/Avenize Design Intelligence system and the
+Discovery Intelligence system (SEO/GEO/AEO/AIO) as formal product layers.
+
+### CRITICAL LESSON — parallel session collision (§0.5 in the wild)
+The user sent the same checklist to another agent session which pushed 4
+commits (28c237e..aa59151, "Session 34") WHILE this session was building the
+same layers. My commit was rejected on push (non-fast-forward). Resolution
+protocol followed: abort rebase, reset to origin/main, audit what the remote
+session already built, DROP my duplicates, keep only additive work.
+
+Remote session 34 shipped (authoritative, do NOT rebuild):
+- AVENIZE-DESIGN-CONSTITUTION.md (dashed filename — note the name)
+- scripts/check_design_constitution.py + scripts/design_constitution_baseline.json
+  (baseline-ratchet CI gate: 127 files / 1214 hex / 119 slop allowed to
+  remain, NEW violations blocked, burn-down welcomed) — wired into
+  schema-drift.yml
+- robots.txt (explicit Allow rules + AI-crawler blocks), sitemap.xml
+  (/, /pricing, /signup, /book), og-image.png, truthful JSON-LD (fabricated
+  AggregateRating/SOC2/USD-pricing already removed by them)
+- Discovery Intelligence: migration 20260819090000_discovery_intelligence.sql
+  (603 lines), src/lib/discoveryIntel.ts, src/pages/DiscoveryIntelligence.tsx
+  (749 lines) at /app/discovery (module-gated, in-shell), src/lib/attribution.ts
+
+### This session's additive contribution (commit 3ce7f41)
+- src/components/RouteMeta.tsx: runtime public/private robots boundary for
+  JS-rendering crawlers (the SPA serves one index.html with static
+  index,follow — Googlebot renders JS and would see it on /app/*). Public
+  set mirrors robots.txt. Wired in App.tsx inside ErrorBoundary.
+- public/llms.txt: AIO/GEO entity-truth file.
+- Approvals.tsx: migrated off legacy EmptyStates (plural) to canonical
+  gamified EmptyState.
+- tests/frontend/lib/routeMeta.test.ts: 6 boundary-contract tests.
+
+### Verified
+tsc 0, vite build 0 warnings, vitest 617/617, design-constitution gate PASS,
+schema-drift 0, full migration chain 170/170 clean on postgres:15, RLS attack
+suite SUITE_EXIT=0. CI green (CI + Schema Drift + Vercel deploy 32314659275).
+Pushed: 3ce7f41.
+
+### Deploy status
+STILL needs live DB: migration 20260819090000 (discovery) + prior pending
+migrations must be applied to Supabase (project kgsgqvatyleetyquffya). All
+idempotent. Frontend degrades gracefully until then (§24).
