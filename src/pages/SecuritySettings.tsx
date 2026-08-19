@@ -7,10 +7,13 @@ import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
 import BetaTesterGate from '../components/BetaTesterGate'
 import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
 import {
-  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Sparkles
+  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Sparkles, Fingerprint
 } from 'lucide-react'
 import { TOTP, Secret } from 'otpauth'
 import { hashBackupCode } from '../lib/mfa'
+import {
+  registerPasskey, fetchMyPasskeys, revokePasskey, passkeysSupported, type PasskeyCredential,
+} from '../lib/passkeys'
 
 type MFAStatus = {
   enabled: boolean
@@ -61,6 +64,8 @@ export default function SecuritySettings() {
   const [verifyCode, setVerifyCode] = useState('')
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'security' | 'audit'>('security')
+  const [passkeys, setPasskeys] = useState<PasskeyCredential[]>([])
+  const [passkeyBusy, setPasskeyBusy] = useState(false)
 
   // Feature flag gating - 2FA is behind a flag, defaulted off
   const twoFactorEnabled = useFeatureFlag(FEATURE_FLAG_KEYS.TWO_FACTOR_AUTH)
@@ -101,6 +106,39 @@ export default function SecuritySettings() {
   useEffect(() => {
     loadSecurity()
   }, [user])
+
+  useEffect(() => {
+    if (user && passkeysSupported) {
+      fetchMyPasskeys().then(setPasskeys)
+    }
+  }, [user])
+
+  const handleRegisterPasskey = async () => {
+    if (passkeyBusy) return
+    setPasskeyBusy(true)
+    try {
+      const ok = await registerPasskey()
+      if (ok) {
+        showToast('Passkey added — you can now sign in with this device.', 'success')
+        setPasskeys(await fetchMyPasskeys())
+      } else {
+        showToast('Could not add the passkey.', 'error')
+      }
+    } catch (e) {
+      const msg = (e as Error)?.message || ''
+      if (!/cancel|abort|notallowed/i.test(msg)) {
+        showToast(msg || 'Could not add the passkey.', 'error')
+      }
+    } finally {
+      setPasskeyBusy(false)
+    }
+  }
+
+  const handleRevokePasskey = async (credentialId: string) => {
+    const ok = await revokePasskey(credentialId)
+    showToast(ok ? 'Passkey removed.' : 'Could not remove the passkey.', ok ? 'success' : 'error')
+    if (ok) setPasskeys(await fetchMyPasskeys())
+  }
 
   const setup2FA = async () => {
     if (!user) return
@@ -393,6 +431,57 @@ Each code can only be used once!`
               </button>
             </div>
           </div>
+
+          {/* Passkeys — internal WebAuthn (no external auth provider) */}
+          {passkeysSupported && (
+            <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-sm font-medium flex items-center gap-2">
+                  <Fingerprint size={16} className="text-[var(--av-primary)]" /> Passkeys
+                </h2>
+                <button
+                  onClick={handleRegisterPasskey}
+                  disabled={passkeyBusy}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-[var(--av-primary)] text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {passkeyBusy ? 'Adding…' : 'Add passkey'}
+                </button>
+              </div>
+              <p className="text-xs text-[var(--av-text-muted)] mb-4">
+                Sign in with fingerprint, face, or device PIN — no password needed. Verification happens on Avenize's own servers.
+              </p>
+              {passkeys.length === 0 ? (
+                <p className="text-xs text-[var(--av-text-muted)] bg-black/[0.02] rounded-xl p-3">
+                  No passkeys yet. Add one to enable one-tap sign-in on this device.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {passkeys.map((pk) => (
+                    <div key={pk.id} className="flex items-center gap-3 p-3 rounded-xl bg-black/[0.02]">
+                      <Fingerprint size={16} className="text-[var(--av-primary)] shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {pk.device_name || 'Passkey'}
+                          {pk.backed_up && <span className="text-[10px] text-[var(--av-text-muted)]"> (synced)</span>}
+                        </p>
+                        <p className="text-xs text-[var(--av-text-muted)]">
+                          Added {new Date(pk.created_at).toLocaleDateString()}
+                          {pk.last_used_at && ` · used ${new Date(pk.last_used_at).toLocaleDateString()}`}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleRevokePasskey(pk.credential_id)}
+                        title="Remove passkey"
+                        className="p-1.5 rounded-lg text-[var(--av-danger)] hover:bg-[var(--av-danger-soft,#FDECEA)]"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6">
             <div className="flex items-center justify-between mb-4">

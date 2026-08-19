@@ -23,6 +23,7 @@
   "homepage": "https://avenize.com",
   "dependencies": {
     "@sentry/react": "^10.69.0",
+    "@simplewebauthn/browser": "^13.3.0",
     "@supabase/supabase-js": "^2.111.0",
     "gsap": "^3.15.0",
     "jspdf": "^4.2.1",

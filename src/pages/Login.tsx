@@ -8,6 +8,7 @@ import {
   verifyBackupCode, consumeBackupCode, setMfaVerified,
   type UserMfaRow,
 } from '../lib/mfa'
+import { loginWithPasskey, passkeysSupported } from '../lib/passkeys'
 
 // GOOGLE STANDARD BRAND COLORS
 const BRAND = {
@@ -146,6 +147,25 @@ export default function Login() {
     navigate(resolveDestination(!!staff?.business_id), { replace: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctxSession, staffChecked, staff, mfaChallenge])
+
+  const handlePasskeyLogin = async () => {
+    setError(null)
+    setLoading(true)
+    try {
+      const ok = await loginWithPasskey(email || undefined)
+      if (!ok) {
+        setError('Passkey sign-in failed. Use your password instead.')
+      }
+      // On success the new session triggers the AuthContext redirect effect.
+    } catch (e) {
+      const msg = (e as Error)?.message || ''
+      if (!/cancel|abort|notallowed/i.test(msg)) {
+        setError(msg || 'Passkey sign-in failed. Use your password instead.')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -435,6 +455,22 @@ export default function Login() {
         >
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
+
+        {passkeysSupported && !mfaChallenge && (
+          <button
+            type="button"
+            onClick={handlePasskeyLogin}
+            disabled={loading}
+            className="w-full rounded-lg py-2 text-sm font-medium transition mt-2 flex items-center justify-center gap-2"
+            style={{
+              backgroundColor: 'transparent',
+              border: `1px solid ${BRAND.border}`,
+              color: BRAND.textSecondary,
+            }}
+          >
+            Sign in with a passkey
+          </button>
+        )}
 
         <p className="text-xs text-center mt-4" style={{ color: BRAND.textSecondary }}>
           New here?{' '}
