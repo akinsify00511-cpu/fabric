@@ -1,3 +1,94 @@
+## Session 31 (2026-08-19): Verified-audit triage — account member kinds (the one genuine P0 gap)
+
+User pasted a 25-item "page exists vs production capability" audit classifying
+features. Per the audit protocol (verify reality before trusting a checklist),
+every P0 claim was verified against the CURRENT main branch. Result: 4 of the
+5 P0 items were STALE (already built + wired); 1 was a genuine gap; the
+highest-value item (live Supabase sync) stays blocked on DB credentials.
+
+### Verified STALE audit claims (already built — do NOT rebuild)
+- **Autonomous trial feature discovery:** audit says missing. REALITY: built
+  Session 23 — `feature_discovery` RPC (migration 20260818190000,
+  SECURITY DEFINER, granted to authenticated), `module_value_propositions`
+  table, `fetchFeatureDiscovery` wrapper, Dashboard "Worth exploring" card
+  wired (owner/admin). STALE.
+- **AI plan recommendation at trial end:** built Session 23 —
+  `recommend_plan` RPC (migration 20260818180000), Subscription.tsx
+  "Recommended for you" card wired via `fetchPlanRecommendation`. STALE.
+- **Role-specific home experiences:** audit says partial (owner/manager/staff
+  only). REALITY: Function × Seniority homes built Session 29 —
+  `src/lib/functionHome.ts` (7 functions: marketing/sales/finance/hr/
+  operations/projects/general), `deriveFunction`/`deriveSeniority`/
+  `getFunctionHome`, wired into BusinessHome.tsx with 7 REAL-table cards.
+  STALE.
+- **UI consolidation:** /app index = BusinessHome (Session 27);
+  CompanyHome at /app/community; Dashboard at /app/home; Cockpit at
+  /app/cockpit. Consolidation largely done Sessions 27-30; remaining overlap
+  is a product decision, not an implementation gap. MOSTLY DONE.
+- **AICapture:** confirmed real (parse-intent edge fn + emit_business_event +
+  destination propagation) — not frontend-only. Audit itself agreed.
+
+### GENUINE gap closed this session — account-type architecture (commit 762a5c0)
+Membership was `staff` rows only; `staff.role` (5 seniority roles) cannot
+express WHAT KIND of account (internal employee vs external consultant/
+vendor/expert/partner). `functional_roles` (027) = tool access, not identity;
+`vendors` (045) = supplier record, not member identity; `persona_type` (069)
+= persona intelligence. No member_kind anywhere. CLOSED:
+- **Migration 20260819000000_account_member_kinds.sql** (idempotent, verified
+  on postgres:15 Docker, ON_ERROR_STOP=1, applied twice):
+  - `staff.member_kind TEXT NOT NULL DEFAULT 'staff'` + CHECK (owner/staff/
+    consultant/vendor/expert/partner) + backfill (role='owner' → 'owner') +
+    (business_id, member_kind) index.
+  - `invites.member_kind` + CHECK. `create_invite` re-declared with
+    p_member_kind (validates invitable kinds; 'owner' NEVER invitable —
+    ownership is created, not emailed). DROP of prior 4-arg overload first
+    (avoids the overload-ambiguity drift pattern).
+  - `accept_invite` re-declared: carries member_kind into the staff row.
+    **Pre-existing defect found + fixed by the apply-test:** the 110 version
+    inserted staff WITHOUT email while staff.email is NOT NULL → invite
+    acceptance always failed. Now uses v_invite.email.
+  - `create_business_and_owner` re-declared: founder gets member_kind='owner'.
+  - `set_member_kind(p_staff_id, p_member_kind)` RPC: owner/admin, same
+    business. Last-owner guard (can't demote the last owner-kind member).
+    Verified guard matrix: non-owner reclass OK; demote owner OK when another
+    owner exists; last-owner block.
+- **Client:** `MemberKind` type + `MEMBER_KIND_CONFIG` (labels/colors) +
+  `memberKindLabel` in AuthContext; `createInvite(email, role, businessId?,
+  memberKind)` + `setMemberKind` wrappers in businessOS. People.tsx: kind
+  filter chips (All + 6), kind badge per member, admin inline reclassify
+  select, invite modal kind selector ("who this person is to your business").
+- **SECURITY invariant (locked in tests):** member_kind is IDENTITY/UX
+  composition only — `staff.role` + RLS stay the authoritative boundary
+  (same principle as Session 20 selection = UX and Session 25 active_role).
+  Kind never grants or revokes permissions.
+
+### Verified GENUINE remaining gaps (for future sessions)
+- Document versioning/co-editing: no document_versions table.
+- Multi-language: LocaleContext exists but only 4/60 pages use it.
+- WebAuthn/passkey: zero scaffolding.
+- Data retention/deletion workflows: no user-facing export/deletion.
+- Live Supabase sync (STILL the #1 blocker): migrations must be applied to
+  project kgsgqvatyleetyquffya. Cannot be done from the codebase.
+
+### Verification
+tsc clean (after `npm install` — the container had no node_modules; npx was
+fetching the wrong 'tsc' package from the registry, causing a hang. LESSON:
+if npx tsc hangs without error output, check node_modules first); vite build
+clean; vitest 516/516 (+12 memberKinds); schema-drift 0. Migration applies
+clean + idempotent; invite round-trip + guard matrix + negative validation
+tested against postgres:15 with jwt-claim stub (ci_shim pattern).
+
+### Container environment notes (this dev container)
+- node_modules is NOT preinstalled; run `npm install` before tsc/vitest.
+- Docker needs daemon start: `sudo dockerd > /tmp/dockerd.log 2>&1 &` then use
+  `sudo docker`.
+
+### Deploy status
+Committed locally (762a5c0, 5 files, +536/-10). NOT pushed — awaiting user
+confirmation (repo policy). Live DB still needs migrations applied (same
+deploy-gate as all prior sessions); frontend degrades gracefully until then.
+
+
 
 ## Session 26 (2026-08-18): Meeting, Communication & Meeting Intelligence — Phases B-E (bounded subsystem)
 
