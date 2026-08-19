@@ -1,4 +1,180 @@
 
+## Session 26 (2026-08-18): Meeting, Communication & Meeting Intelligence — Phases B-E (bounded subsystem)
+
+User directive: build "Avenize Meeting, Communication & Meeting Intelligence"
+— audit existing architecture, reuse canonical systems, build as bounded
+subsystem, verify before committing. Break into phases, build backend first,
+frontend second, connect them, test before commit and deploy.
+
+Per the protocol (§2 composition-first, §14 reuse canonical systems, §24
+best-effort/non-blocking, §22 anti-fabrication, §32 never expose public URL,
+§15 outcome loop): the Meeting subsystem was built as 4 phases (B-E) on top
+of the Phase A lifecycle (Session 24). Each phase: backend → frontend →
+connect → test (tsc + build + vitest + schema-drift + postgres:15 migration
+idempotency) → commit → push to main. 4 commits (f22a243..6e68722), all
+pushed to main. tsc clean, vite build 0 warnings, vitest 447→504 (+57 new),
+schema-drift 0, every migration applies clean + idempotent.
+
+### Phase B — Recording + Capture (commit f22a243, migration 20260818500000)
+The recording layer + Loom-style async captures. Reuses meeting_media (Phase
+A) + the meeting-recordings bucket — NOT a parallel media system.
+- **CRITICAL security fix (§32):** Meetings.tsx used `getPublicUrl()` on the
+  PRIVATE meeting-recordings bucket → returned 404 + exposed the path. The
+  new flow: `create_recording_upload_path` RPC (creates a pending media row +
+  returns a private storage path) → upload → `finalize_recording` RPC (marks
+  available + stores duration/size). Playback: `generate_recording_signed_url`
+  RPC verifies business membership (the authorization gate), then the client
+  calls `storage.createSignedUrl` (short-lived, revocable). NEVER getPublicUrl.
+- **meeting_captures table:** Loom-style async recordings (screen/camera/
+  screen_with_camera/audio_only) — not tied to a live meeting. RLS business-
+  scoped via get_current_staff.
+- 7 SECURITY DEFINER RPCs (all membership-guarded): create_recording_upload
+  _path, create_capture (emits business_event), finalize_recording, generate
+  _recording_signed_url (AUTH GATE — verifies membership before returning
+  path), list_recordings, increment_capture_view, expire_recordings (§14
+  retention enforcement).
+- **MeetingCapture.tsx** page (/app/meeting-capture): MediaRecorder screen/
+  camera/audio capture, upload via signed path, playback modal with signed
+  URL, view count, delete (soft). Capture-type selector. Loom-style async.
+- Meetings.tsx `saveRecording` replaced: getPublicUrl → signed-URL flow.
+- Shell.tsx: Capture nav item in Communicate group.
+- 14 tests (meetingRecordingCapture): signed-URL boundary (never getPublicUrl,
+  cross-business denial), capture lifecycle, capture types, retention,
+  idempotency.
+
+### Phase C — Transcript + Summary + Decisions + Actions (commit f9d2bf1, migration 20260818600000)
+The intelligence layer — recordings become structured, searchable, actionable.
+- 5 relational tables: meeting_transcripts (full_text + word_count + duration
+  + confidence), transcript_segments (timestamped + FULL-TEXT SEARCH via GIN
+  index), meeting_summaries (GPT-4 summary + key_points), meeting_decisions
+  (text + rationale + 4-status lifecycle: proposed/decided/reversed/
+  superseded — reversed stays VISIBLE for audit trail, links to claims for
+  the §15 outcome loop), meeting_actions (text + assignee + due_date + 5-status
+  lifecycle, links to REAL tasks table 004 via task_id — NOT a parallel task
+  system). meetings table extended: transcript_status, transcript, summary.
+- 5 SECURITY DEFINER RPCs: save_transcript (edge fn calls this instead of the
+  lossy meetings.transcript TEXT column), save_meeting_decisions (stores
+  extracted decisions + actions from GPT-4), create_action_task (creates a
+  REAL task + links it to the meeting action + marks action in_progress),
+  get_meeting_intelligence (ONE call returns transcript + segments + summary
+  + decisions + actions), search_transcripts (full-text search across all
+  meeting transcripts).
+- **transcribe-audio edge fn extended:** GPT-4 now extracts STRUCTURED
+  decisions + actions (best-effort, non-fatal — transcript + summary are the
+  primary output). Writes via save_transcript + save_meeting_decisions RPCs
+  (relational) + backwards-compat meetings table write. The extraction prompt
+  enforces §22: "If you cannot identify the field, use null. Do not fabricate."
+- **MeetingIntelligenceView.tsx** page (/app/meetings/:meetingId/intelligence):
+  summary panel, decisions panel (with status), actions panel (priority +
+  due date + status + action→task creation modal), expandable transcript,
+  transcript full-text search.
+- 16 tests (meetingTranscriptDecisions): transcript model, decision lifecycle
+  (4 statuses, reversed=visible audit trail), action→task linking (NOT a
+  parallel task system), 5-status action lifecycle, 4-priority levels, meeting
+  intelligence aggregation, cross-tenant denial, action→task linking.
+- Also fixed pre-existing CRM.tsx prop mismatch (CRMIntelligenceSurface takes
+  `compact`, not `businessId` — was a latent TS error).
+
+### Phase D — Post-Meeting Report + Notifications (commit f11f731, migration 20260818700000)
+The shareable report + attendee notifications. Composes Phase C intelligence
+into a printable document.
+- **meeting_reports table:** an IMMUTABLE snapshot of the meeting intelligence
+  (summary + key_points + decisions + actions + attendees) at generation
+  time. Multiple reports per meeting kept for history (audit trail §18). RLS
+  business-scoped.
+- **generate_meeting_report RPC:** composes the report from Phase C tables +
+  stores the snapshot + notifies attendees (best-effort). §25 anti-spam:
+  notifications fire ONLY on explicit generation, not every transcript
+  refresh. Only attendees + the meeting creator are notified. Notification
+  rows reference the meeting + report (deep-link for bell).
+- **get_meeting_reports RPC:** lists reports for a meeting (newest-first).
+- **MeetingReportView.tsx** page (/app/meetings/:meetingId/report): printable
+  report (header with meeting date/time/location/attendees, summary, key
+  points, decisions, actions with priority colors). Generate+Notify button +
+  Print button. Multiple reports selectable (history). .no-print on chrome
+  elements so the printed document is clean.
+- **index.css:** print styles (@media print — .no-print hidden, white bg).
+- 13 tests (meetingReport): report snapshot model (immutable, composes all
+  elements), attendee notification boundary (anti-spam, only attendees,
+  deep-link), multiple reports audit trail, cross-tenant denial, printable.
+
+### Phase E — Analytics + Productivity Intelligence (commit 6e68722, migration 20260818800000)
+The cross-meeting productivity view. Read-only analytics over existing data
+(no new tables — pure interpretation).
+- **meeting_analytics RPC:** composes productivity metrics across ALL meetings
+  for a business. Returns: totals (meetings, hours, decisions, actions,
+  transcript adoption), action completion % (NULL when no actions — honest,
+  not 0%), wasted-meetings detection (meetings with no decisions AND no
+  actions — the time-waste signal), per-staff meeting load (created +
+  attended, ordered by total), per-status breakdown.
+- §21 small-data guard: <5 meetings in period produces a "treat with caution"
+  note (never a fabricated confidence).
+- **MeetingAnalyticsView.tsx** page (/app/meeting-analytics): period toggle
+  (7/30/90d), 5 stat cards (meetings/hours/decisions/actions/completion),
+  waste detection panel (meetings without outcomes), per-staff load bars,
+  per-status chips. Honest empty + small-data states.
+- 14 tests (meetingAnalytics): totals model, completion % (NULL when no
+  actions), waste detection, per-staff load ordering, §21 small-data guard,
+  cross-tenant denial, period selection.
+
+### The complete Meeting subsystem (how the phases compose)
+- **Phase A (Session 24):** the lifecycle — create_meeting, start_meeting,
+  join_meeting (token-gated), leave_meeting, end_meeting, + meeting_participants
+  + meeting_participant_events (evidence).
+- **Phase B:** recording + capture — the meeting or an async capture is
+  recorded, uploaded via signed URL, finalized.
+- **Phase C:** the recording is transcribed (Whisper), summarized + decisions/
+  actions extracted (GPT-4o-mini), stored relationally. Transcript is full-text
+  searchable.
+- **Phase D:** a composed post-meeting report (snapshot) is generated on
+  demand, attendees notified, report is printable + shareable.
+- **Phase E:** cross-meeting analytics surface the productivity signals
+  (waste, completion, per-staff load) across all meetings.
+The phases compose into a single coherent Meeting Intelligence subsystem —
+no parallel task system (actions link to REAL tasks), no parallel
+recommendation system (decisions link to claims), no parallel notification
+system (reuses notifications table), no parallel media system (reuses
+meeting_media + the bucket).
+
+### Architecture principles held (§2, §14, §22, §24, §32)
+- **Composition-first (§2):** every phase reuses the established spine.
+  meeting_media (Phase A) for media. tasks (004) for actions. claims (060)
+  for decisions. notifications (036) for attendee alerts. emit_business_event
+  (058/059) for telemetry. get_current_staff() for RLS. NO parallel systems.
+- **Best-effort/non-blocking (§24):** every client wrapper degrades gracefully
+  if the migration isn't deployed (returns null/empty, no crash). The
+  transcribe-audio edge fn's decision/action extraction is non-fatal.
+- **Anti-fabrication (§22):** the GPT-4 extraction prompt explicitly says "If
+  you cannot identify the field, use null. Do not fabricate." action_
+  completion_pct is NULL when no actions (not 0%). The §21 small-data guard
+  surfaces insufficient-data honestly.
+- **Security (§32):** NEVER getPublicUrl on the private bucket. Signed URLs
+  only, gated by membership verification. All RPCs are SECURITY DEFINER +
+  membership-guarded. RLS on every table.
+- **Outcome loop (§15):** actions link to REAL tasks (§14). Decisions link to
+  claims (the recommendation lifecycle). A meeting outcome becomes a tracked
+  task + a claim with expected/actual impact.
+
+### Verification (every commit + final)
+tsc clean; vite build 0 warnings; vitest 447→504 (+57: meetingRecordingCapture
+14, meetingTranscriptDecisions 16, meetingReport 13, meetingAnalytics 14);
+schema-drift 0. Every migration applies clean + idempotent against postgres:15
+(verified via local Docker pg-test container — the CI bare-postgres migration-
+test job equivalent).
+
+### Deploy status
+- Vercel production: all commits deploying via the main-push workflow.
+- ⚠️ STILL needs live DB: migrations 20260818500000–20260818800000 (Phases B-E)
+  must be applied to Supabase (project kgsgqvatyleetyquffya). All idempotent.
+  Frontend degrades gracefully until then (capture page shows empty list,
+  intelligence view shows "transcript not available", report page shows "no
+  reports yet", analytics shows "not available yet") because every caller is
+  best-effort/non-blocking (§24).
+- The transcribe-audio edge fn extension requires OPENAI_API_KEY to be set in
+  Supabase Edge Function secrets (the existing key, if configured). Without
+  it, transcription fails gracefully (the meeting is still saved, just
+  without transcript/summary/decisions/actions).
+
 ## Session 25 (2026-08-18): Ready-pillars — Memory Recall (§I), Resilience (§N), Multi-role switching (§K)
 
 Directive: build the genuine gaps from the 600-item master checklist using
