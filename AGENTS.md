@@ -34,7 +34,7 @@ express WHAT KIND of account (internal employee vs external consultant/
 vendor/expert/partner). `functional_roles` (027) = tool access, not identity;
 `vendors` (045) = supplier record, not member identity; `persona_type` (069)
 = persona intelligence. No member_kind anywhere. CLOSED:
-- **Migration 20260819000000_account_member_kinds.sql** (idempotent, verified
+- **Migration 20260819010000_account_member_kinds.sql** (idempotent, verified
   on postgres:15 Docker, ON_ERROR_STOP=1, applied twice):
   - `staff.member_kind TEXT NOT NULL DEFAULT 'staff'` + CHECK (owner/staff/
     consultant/vendor/expert/partner) + backfill (role='owner' → 'owner') +
