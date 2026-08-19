@@ -133,6 +133,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
       { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
       { to: '/app/meeting-capture', label: 'Capture', icon: Video, toolKey: 'meetings' },
+      { to: '/app/meeting-analytics', label: 'Meeting Analytics', icon: BarChart3, toolKey: 'meetings' },
       { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
       { to: '/app/wall', label: 'Company Wall', icon: Sparkles, toolKey: 'dashboard' },
     ],

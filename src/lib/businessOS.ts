@@ -2364,3 +2364,52 @@ export async function fetchMeetingReports(
     return []
   }
 }
+
+// ============================================================================
+// MEETING ANALYTICS (Phase E — §6,9,12 productivity intelligence)
+// ============================================================================
+
+export interface MeetingAnalytics {
+  period_days: number
+  totals: {
+    total_meetings: number
+    total_hours: number
+    meetings_with_transcripts: number
+    total_decisions: number
+    total_actions: number
+  }
+  action_completion_pct: number | null
+  wasted_meetings: Array<{
+    meeting_id: string
+    title: string
+    date: string
+    duration_hours: number | null
+  }>
+  wasted_meetings_count: number
+  per_staff: Array<{
+    staff_id: string
+    staff_name: string
+    meetings_created: number
+    meetings_attended: number
+  }>
+  per_status: Array<{ status: string; count: number }>
+  small_data_note: string | null
+}
+
+export async function fetchMeetingAnalytics(
+  periodDays = 30
+): Promise<MeetingAnalytics | null> {
+  try {
+    const { data, error } = await supabase.rpc('meeting_analytics', {
+      p_period_days: periodDays,
+    })
+    if (error) {
+      console.warn('[meetings] fetch analytics failed:', error.message)
+      return null
+    }
+    return data as MeetingAnalytics | null
+  } catch (e) {
+    console.warn('[meetings] fetch analytics error:', e)
+    return null
+  }
+}
