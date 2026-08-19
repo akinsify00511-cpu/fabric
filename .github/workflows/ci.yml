@@ -88,7 +88,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install postgresql-client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+        run: |
+          # GitHub runners occasionally hang on apt-get update (archive
+          # throttling). Cap each attempt and retry so the job can't stall.
+          for attempt in 1 2 3; do
+            sudo timeout 120 apt-get update -y --option Acquire::Retries=3 --option Acquire::http::Timeout=20 && break
+            echo "apt-get update attempt $attempt timed out; retrying"
+          done
+          sudo apt-get install -y --no-install-recommends postgresql-client
       - name: Apply Supabase compatibility shim
         env:
           PGPASSWORD: postgres
