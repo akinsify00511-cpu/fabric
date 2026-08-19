@@ -4,7 +4,7 @@
 // evidence/confidence/proposed destinations, and on confirm raise a
 // business event that downstream modules react to.
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { parseIntent } from '../lib/intentParser'
@@ -27,6 +27,74 @@ interface Intent {
   needs_confirmation: boolean
 }
 
+interface CaptureAttachment {
+  id: string
+  name: string
+  path: string
+  size: number
+  type: string
+  isImage: boolean
+}
+
+interface BrowserSpeechRecognition {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start: () => void
+  stop: () => void
+  abort: () => void
+  onresult: ((event: SpeechRecognitionResultEvent) => void) | null
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null
+  onend: (() => void) | null
+}
+
+interface SpeechRecognitionResultEvent extends Event {
+  resultIndex: number
+  results: SpeechRecognitionResultList
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: new () => BrowserSpeechRecognition
+    webkitSpeechRecognition?: new () => BrowserSpeechRecognition
+  }
+}
+
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024
+const ATTACHMENT_BUCKET = 'capture-attachments'
+const DOCUMENT_ACCEPT = [
+  'application/pdf',
+  'text/plain',
+  'text/csv',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+].join(',')
+
+function makeAttachmentId() {
+  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`
+}
+
+function safeFileName(name: string) {
+  const cleaned = name.trim().replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/-+/g, '-')
+  return cleaned || 'attachment'
+}
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
 export default function AICapture() {
   const { staff } = useAuth()
   const { showToast } = useToast()
@@ -36,6 +104,158 @@ export default function AICapture() {
   const [parsing, setParsing] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [done, setDone] = useState(false)
+  const [attachments, setAttachments] = useState<CaptureAttachment[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const [speechSupported, setSpeechSupported] = useState(false)
+
+  const attachmentInputRef = useRef<HTMLInputElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null)
+  const voiceBaseRef = useRef('')
+  const finalVoiceRef = useRef('')
+
+  useEffect(() => {
+    const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition
+    setSpeechSupported(Boolean(SpeechRecognitionCtor))
+
+    if (!SpeechRecognitionCtor) return
+
+    const recognition = new SpeechRecognitionCtor()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = navigator.language || 'en-NG'
+
+    recognition.onresult = (event) => {
+      let transcript = ''
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        const result = event.results[i]
+        transcript += result[0]?.transcript || ''
+      }
+
+      if (!transcript) return
+
+      let finalTranscript = ''
+      let interimTranscript = ''
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        const result = event.results[i]
+        if (result.isFinal) finalTranscript += result[0]?.transcript || ''
+        else interimTranscript += result[0]?.transcript || ''
+      }
+
+      if (finalTranscript) finalVoiceRef.current += `${finalVoiceRef.current ? ' ' : ''}${finalTranscript.trim()}`
+      const liveTranscript = `${finalVoiceRef.current}${interimTranscript ? ` ${interimTranscript.trim()}` : ''}`.trim()
+      setInput(`${voiceBaseRef.current}${liveTranscript ? `${voiceBaseRef.current ? ' ' : ''}${liveTranscript}` : ''}`.trim())
+    }
+
+    recognition.onerror = (event) => {
+      if (event.error !== 'aborted' && event.error !== 'no-speech') {
+        showToast(`Voice input stopped: ${event.error.replace(/-/g, ' ')}`, 'error')
+      }
+      setIsListening(false)
+    }
+
+    recognition.onend = () => {
+      setIsListening(false)
+    }
+
+    recognitionRef.current = recognition
+
+    return () => {
+      recognition.abort()
+      recognitionRef.current = null
+    }
+  }, [showToast])
+
+  function toggleVoice() {
+    if (!speechSupported || !recognitionRef.current) {
+      showToast('Voice input is not supported in this browser', 'error')
+      return
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop()
+      setIsListening(false)
+      return
+    }
+
+    voiceBaseRef.current = input.trim()
+    finalVoiceRef.current = ''
+    try {
+      recognitionRef.current.start()
+      setIsListening(true)
+    } catch (error) {
+      console.error(error)
+      showToast('Could not start voice input', 'error')
+      setIsListening(false)
+    }
+  }
+
+  async function uploadAttachment(file: File, isImage: boolean) {
+    if (!staff?.business_id) {
+      showToast('Your business session is not ready yet', 'error')
+      return
+    }
+
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      showToast(`${file.name} is larger than the 10 MB limit`, 'error')
+      return
+    }
+
+    if (!isImage && !DOCUMENT_ACCEPT.split(',').includes(file.type)) {
+      showToast('That file type is not supported. Use PDF, Office, CSV or text files.', 'error')
+      return
+    }
+
+    const id = makeAttachmentId()
+    const path = `${staff.business_id}/captures/${id}-${safeFileName(file.name)}`
+    setUploading(true)
+
+    try {
+      const { error } = await supabase.storage
+        .from(ATTACHMENT_BUCKET)
+        .upload(path, file, {
+          cacheControl: '3600',
+          contentType: file.type || 'application/octet-stream',
+          upsert: false,
+        })
+
+      if (error) throw error
+
+      setAttachments(prev => [...prev, {
+        id,
+        name: file.name,
+        path,
+        size: file.size,
+        type: file.type || 'application/octet-stream',
+        isImage,
+      }])
+    } catch (error) {
+      console.error(error)
+      showToast(`Could not upload ${file.name}`, 'error')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  function handleAttachmentChange(event: React.ChangeEvent<HTMLInputElement>, isImage: boolean) {
+    const files = Array.from(event.target.files || [])
+    event.target.value = ''
+    if (!files.length) return
+    void Promise.all(files.map(file => uploadAttachment(file, isImage)))
+  }
+
+  function removeAttachment(id: string) {
+    const attachment = attachments.find(item => item.id === id)
+    if (!attachment) return
+
+    // Best-effort cleanup. The capture has not been committed yet, so an
+    // orphaned upload must never block the user from continuing.
+    void supabase.storage.from(ATTACHMENT_BUCKET).remove([attachment.path]).catch(error => {
+      console.warn('Capture attachment cleanup failed', error)
+    })
+    setAttachments(prev => prev.filter(item => item.id !== id))
+  }
 
   async function handleParse() {
     if (!input.trim()) return
@@ -57,7 +277,7 @@ export default function AICapture() {
   }
 
   async function handleConfirm() {
-    if (!intent || !staff?.business_id) return
+    if (!intent || !staff?.business_id || uploading) return
     setConfirming(true)
     try {
       // Raise the canonical business event. Downstream handlers in the
@@ -67,6 +287,13 @@ export default function AICapture() {
       for (const e of intent.entities) payload[e.field] = e.value
       payload._raw = input.trim()
       payload._destinations = intent.destinations
+      payload._attachments = attachments.map(attachment => ({
+        id: attachment.id,
+        name: attachment.name,
+        path: attachment.path,
+        size: attachment.size,
+        type: attachment.type,
+      }))
 
       await emitBusinessEvent({
         business_id: staff.business_id,
@@ -84,8 +311,6 @@ export default function AICapture() {
         confidence: intent.confidence,
       })
       setDone(true)
-      // Be specific about what was acted on so the user knows the capture
-      // actually wrote records, not just raised an event.
       const actedOn = intent.destinations
         .map(d => d.action.replace(/_/g, ' '))
         .slice(0, 3)
@@ -100,7 +325,10 @@ export default function AICapture() {
   }
 
   function reset() {
-    setInput(''); setIntent(null); setDone(false)
+    if (isListening) recognitionRef.current?.stop()
+    setInput(''); setIntent(null); setDone(false); setGuardrail(null); setAttachments([])
+    voiceBaseRef.current = ''
+    finalVoiceRef.current = ''
   }
 
   return (
@@ -139,15 +367,94 @@ export default function AICapture() {
           placeholder="e.g. We closed the ABC deal for ₦45m, John handled it, 40% upfront…"
           className="w-full rounded-2xl border border-[var(--av-border)] bg-white p-4 pr-28 text-[var(--av-text)] placeholder:text-[var(--av-text-tertiary)] focus:border-[var(--av-primary)] focus:outline-none resize-none"
         />
+
+        <input
+          ref={attachmentInputRef}
+          type="file"
+          accept={DOCUMENT_ACCEPT}
+          multiple
+          className="hidden"
+          onChange={event => handleAttachmentChange(event, false)}
+        />
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          multiple
+          className="hidden"
+          onChange={event => handleAttachmentChange(event, true)}
+        />
+
         <div className="absolute right-3 bottom-3 flex items-center gap-1">
-          <button title="Voice" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><Mic size={18} /></button>
-          <button title="Attach file" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><Paperclip size={18} /></button>
-          <button title="Image" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><ImageIcon size={18} /></button>
+          <button
+            type="button"
+            title={speechSupported ? (isListening ? 'Stop voice input' : 'Voice input') : 'Voice input is not supported in this browser'}
+            aria-label={speechSupported ? (isListening ? 'Stop voice input' : 'Start voice input') : 'Voice input is not supported in this browser'}
+            onClick={toggleVoice}
+            disabled={!speechSupported}
+            className={`p-2 rounded-lg transition ${isListening ? 'bg-[var(--av-danger)]/10 text-[var(--av-danger)]' : 'hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]'} disabled:opacity-40 disabled:cursor-not-allowed`}
+          >
+            {isListening ? <span className="relative flex h-[18px] w-[18px] items-center justify-center"><span className="absolute h-3 w-3 rounded-full bg-[var(--av-danger)] animate-ping opacity-40" /><span className="h-2.5 w-2.5 rounded-full bg-[var(--av-danger)]" /></span> : <Mic size={18} />}
+          </button>
+          <button
+            type="button"
+            title="Attach file"
+            aria-label="Attach file"
+            onClick={() => attachmentInputRef.current?.click()}
+            disabled={uploading}
+            className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)] disabled:opacity-40"
+          >
+            <Paperclip size={18} />
+          </button>
+          <button
+            type="button"
+            title="Add image"
+            aria-label="Add image"
+            onClick={() => imageInputRef.current?.click()}
+            disabled={uploading}
+            className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)] disabled:opacity-40"
+          >
+            <ImageIcon size={18} />
+          </button>
         </div>
       </div>
 
+      {attachments.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Capture attachments">
+          {attachments.map(attachment => (
+            <div key={attachment.id} className="flex items-center gap-2 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface-2)] px-2.5 py-2 max-w-full">
+              {attachment.isImage ? (
+                <AttachmentPreview path={attachment.path} name={attachment.name} />
+              ) : (
+                <Paperclip size={15} className="text-[var(--av-primary)] shrink-0" />
+              )}
+              <div className="min-w-0">
+                <div className="text-xs font-medium text-[var(--av-text)] truncate max-w-[190px]">{attachment.name}</div>
+                <div className="text-[11px] text-[var(--av-text-tertiary)]">{formatBytes(attachment.size)} · {attachment.isImage ? 'image' : 'file'}</div>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeAttachment(attachment.id)}
+                title={`Remove ${attachment.name}`}
+                aria-label={`Remove ${attachment.name}`}
+                className="p-1 rounded-md hover:bg-white text-[var(--av-text-secondary)]"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {uploading && (
+        <div className="mt-2 text-xs text-[var(--av-text-secondary)] flex items-center gap-2">
+          <Loader2 size={13} className="animate-spin" /> Uploading attachment…
+        </div>
+      )}
+
       <div className="flex justify-end mt-3">
-        <button onClick={handleParse} disabled={!input.trim() || parsing}
+        <button onClick={handleParse} disabled={!input.trim() || parsing || uploading}
           className="flex items-center gap-2 px-5 py-2.5 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 transition">
           {parsing ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
           Interpret this
@@ -225,7 +532,7 @@ export default function AICapture() {
               <button onClick={reset} className="flex items-center gap-2 px-4 py-2 rounded-xl text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] transition">
                 <X size={16} /> Discard
               </button>
-              <button onClick={handleConfirm} disabled={confirming}
+              <button onClick={handleConfirm} disabled={confirming || uploading}
                 className="flex items-center gap-2 px-5 py-2 bg-[var(--av-primary)] text-white rounded-xl font-medium hover:bg-[var(--av-primary-hover)] disabled:opacity-50 transition">
                 {confirming ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                 Confirm & commit
@@ -264,6 +571,24 @@ export default function AICapture() {
       )}
     </div>
   )
+}
+
+function AttachmentPreview({ path, name }: { path: string; name: string }) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+    void supabase.storage.from(ATTACHMENT_BUCKET).createSignedUrl(path, 60 * 60).then(({ data, error }) => {
+      if (active && !error && data?.signedUrl) setPreviewUrl(data.signedUrl)
+    })
+    return () => { active = false }
+  }, [path])
+
+  if (!previewUrl) {
+    return <span className="w-10 h-10 rounded-lg bg-[var(--av-primary-soft)] flex items-center justify-center shrink-0"><ImageIcon size={16} className="text-[var(--av-primary)]" /></span>
+  }
+
+  return <img src={previewUrl} alt={name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
 }
 
 function ConfidencePill({ value }: { value: number }) {
