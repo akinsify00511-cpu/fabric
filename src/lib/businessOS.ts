@@ -1555,11 +1555,13 @@ export async function createInvite(
   email: string,
   role: string,
   businessId?: string,
+  memberKind: string = 'staff',
 ): Promise<InviteResult | null> {
   try {
     const { data, error } = await supabase.rpc('create_invite', {
       p_email: email,
       p_role: role,
+      p_member_kind: memberKind,
       p_business_id: businessId ?? null,
     })
     if (error) throw error
@@ -1573,6 +1575,20 @@ export async function createInvite(
   } catch (e) {
     console.error('createInvite failed:', e)
     return null
+  }
+}
+
+export async function setMemberKind(staffId: string, memberKind: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.rpc('set_member_kind', {
+      p_staff_id: staffId,
+      p_member_kind: memberKind,
+    })
+    if (error) throw error
+    return data === true
+  } catch (e) {
+    console.error('setMemberKind failed:', e)
+    return false
   }
 }
 

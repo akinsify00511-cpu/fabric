@@ -19,6 +19,7 @@ export type Staff = {
   email?: string
   phone?: string
   role: UserRole
+  member_kind?: MemberKind
   active_role?: UserRole | null
   job_title: string | null
   department?: string
@@ -59,6 +60,26 @@ export const ROLE_CONFIG: Record<UserRole, { label: string; color: string }> = {
   manager: { label: 'Manager', color: 'blue' },
   team_lead: { label: 'Team Lead', color: 'emerald' },
   staff: { label: 'Staff', color: 'blue' },
+}
+
+// First-class account identity. UX classification only — role + RLS stay the
+// authorization boundary; kind never grants or revokes permissions.
+export type MemberKind = 'owner' | 'staff' | 'consultant' | 'vendor' | 'expert' | 'partner'
+
+export const MEMBER_KIND_CONFIG: Record<MemberKind, { label: string; classes: string }> = {
+  owner: { label: 'Owner', classes: 'bg-amber-50 text-amber-700' },
+  staff: { label: 'Staff', classes: 'bg-sky-50 text-sky-700' },
+  consultant: { label: 'Consultant', classes: 'bg-violet-50 text-violet-700' },
+  vendor: { label: 'Vendor', classes: 'bg-teal-50 text-teal-700' },
+  expert: { label: 'Expert', classes: 'bg-indigo-50 text-indigo-700' },
+  partner: { label: 'Partner', classes: 'bg-emerald-50 text-emerald-700' },
+}
+
+export const INVITABLE_KINDS: MemberKind[] = ['staff', 'consultant', 'vendor', 'expert', 'partner']
+
+export function memberKindLabel(kind: MemberKind | string | null | undefined): string {
+  const cfg = MEMBER_KIND_CONFIG[(kind || 'staff') as MemberKind]
+  return cfg?.label ?? 'Staff'
 }
 
 type AuthContextValue = {

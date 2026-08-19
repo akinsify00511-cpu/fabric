@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Plus, Users, Search, Mail, Phone, Briefcase, UserCog, X, Check, Copy, Clock, Trash2, Upload } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../lib/AuthContext'
+import { useAuth, MEMBER_KIND_CONFIG, memberKindLabel, type MemberKind } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { useTeamLimit } from '../lib/useEntitlement'
 import FeatureSuggestions from '../components/FeatureSuggestions'
-import { createInvite, revokeInvite, fetchPendingInvites, type PendingInvite } from '../lib/businessOS'
+import { createInvite, revokeInvite, fetchPendingInvites, setMemberKind, type PendingInvite } from '../lib/businessOS'
+
+const INVITABLE_KINDS: MemberKind[] = ['staff', 'consultant', 'vendor', 'expert', 'partner']
 
 type FunctionalRole = {
   id: string
@@ -19,6 +21,7 @@ type TeamMember = {
   email: string
   phone?: string
   role: string
+  member_kind?: string
   department?: string
   avatar_url?: string
   joined_at: string
@@ -37,6 +40,8 @@ export default function People() {
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('staff')
+  const [inviteKind, setInviteKind] = useState<MemberKind>('staff')
+  const [kindFilter, setKindFilter] = useState<'all' | MemberKind>('all')
   const [sendingInvite, setSendingInvite] = useState(false)
   const [lastInviteUrl, setLastInviteUrl] = useState<string | null>(null)
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([])
@@ -112,11 +117,14 @@ export default function People() {
     setLoading(false)
   }
 
-  const filteredMembers = members.filter(m =>
-    m.name.toLowerCase().includes(search.toLowerCase()) ||
-    m.email.toLowerCase().includes(search.toLowerCase()) ||
-    (m.department && m.department.toLowerCase().includes(search.toLowerCase()))
-  )
+  const filteredMembers = members.filter(m => {
+    if (kindFilter !== 'all' && (m.member_kind || 'staff') !== kindFilter) return false
+    return (
+      m.name.toLowerCase().includes(search.toLowerCase()) ||
+      m.email.toLowerCase().includes(search.toLowerCase()) ||
+      (m.department && m.department.toLowerCase().includes(search.toLowerCase()))
+    )
+  })
 
   const departments = [...new Set(members.map(m => m.department).filter(Boolean))]
   const isAdmin = currentStaff?.role === 'owner' || currentStaff?.role === 'admin'
@@ -126,7 +134,7 @@ export default function People() {
     setSendingInvite(true)
     setLastInviteUrl(null)
     try {
-      const result = await createInvite(inviteEmail, inviteRole, currentStaff?.business_id)
+      const result = await createInvite(inviteEmail, inviteRole, currentStaff?.business_id, inviteKind)
       if (!result) {
         showToast('Could not send invite. Check the email and try again.', 'error')
         return
@@ -142,6 +150,7 @@ export default function People() {
       await loadPendingInvites()
       setInviteEmail('')
       setInviteRole('staff')
+      setInviteKind('staff')
     } catch (err) {
       const msg = (err as any)?.message || 'Could not send invite.'
       showToast(msg.includes('pending') ? 'A pending invite already exists for this email.' : msg, 'error')
@@ -325,6 +334,23 @@ export default function People() {
         </div>
       </div>
 
+      {/* Member-kind filter: narrows the roster by account identity. UX only — access stays role+RLS. */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {(['all', 'owner', 'staff', 'consultant', 'vendor', 'expert', 'partner'] as const).map((k) => (
+          <button
+            key={k}
+            onClick={() => setKindFilter(k)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+              kindFilter === k
+                ? 'bg-[var(--av-primary)] text-white'
+                : 'bg-white text-black/70 border border-black/10'
+            }`}
+          >
+            {k === 'all' ? 'All members' : memberKindLabel(k)}
+          </button>
+        ))}
+      </div>
+
       {/* Team List */}
       <div className="bg-white rounded-xl border border-black/[0.06] overflow-hidden">
         <table className="w-full">
@@ -352,7 +378,36 @@ export default function People() {
                   <span className="text-sm text-black/60">{member.email}</span>
                 </td>
                 <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className="text-xs px-2 py-1 rounded-full bg-black/[0.05] capitalize">{member.role || 'staff'}</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs px-2 py-1 rounded-full bg-black/[0.05] capitalize">{member.role || 'staff'}</span>
+                    {isAdmin ? (
+                      <select
+                        value={member.member_kind || 'staff'}
+                        onChange={async (e) => {
+                          const ok = await setMemberKind(member.id, e.target.value)
+                          if (ok) {
+                            setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, member_kind: e.target.value } : m)))
+                            showToast(`${member.name} reclassified as ${memberKindLabel(e.target.value)}.`, 'success')
+                          } else {
+                            showToast('Could not change member kind.', 'error')
+                          }
+                        }}
+                        className={`text-xs px-2 py-1 rounded-full capitalize border-0 cursor-pointer ${MEMBER_KIND_CONFIG[(member.member_kind || 'staff') as MemberKind]?.classes || ''}`}
+                        title="Member kind (account identity)"
+                      >
+                        <option value="owner">Owner</option>
+                        <option value="staff">Staff</option>
+                        <option value="consultant">Consultant</option>
+                        <option value="vendor">Vendor</option>
+                        <option value="expert">Expert</option>
+                        <option value="partner">Partner</option>
+                      </select>
+                    ) : (
+                      <span className={`text-xs px-2 py-1 rounded-full capitalize ${MEMBER_KIND_CONFIG[(member.member_kind || 'staff') as MemberKind]?.classes || 'bg-black/[0.05]'}`}>
+                        {memberKindLabel(member.member_kind || 'staff')}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-3">
                   {editingRoles === member.id ? (
@@ -475,12 +530,24 @@ export default function People() {
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-4"
+              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-3"
             >
               <option value="staff">Staff</option>
               <option value="team_lead">Team Lead</option>
               <option value="manager">Manager</option>
               <option value="admin">Admin</option>
+            </select>
+            <label className="block text-xs mb-1" style={{ color: 'var(--av-text-muted, #5F6368)' }}>
+              Member kind — who this person is to your business
+            </label>
+            <select
+              value={inviteKind}
+              onChange={(e) => setInviteKind(e.target.value as MemberKind)}
+              className="w-full rounded-lg border border-black/10 px-4 py-3 text-sm mb-4"
+            >
+              {INVITABLE_KINDS.map((k) => (
+                <option key={k} value={k}>{memberKindLabel(k)}</option>
+              ))}
             </select>
             {lastInviteUrl && (
               <div className="mb-4 p-3 rounded-lg" style={{ background: 'var(--av-surface-2, #F1F3F4)' }}>
