@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.module_value_propositions (
 ALTER TABLE public.module_value_propositions ENABLE ROW LEVEL SECURITY;
 -- All authenticated staff can read the value-proposition catalog (it's
 -- product copy, not business data). Only the service role writes it.
+DROP POLICY IF EXISTS module_value_propositions_read ON public.module_value_propositions;
 CREATE POLICY module_value_propositions_read ON public.module_value_propositions
   FOR SELECT TO authenticated USING (true);
 
@@ -214,7 +215,7 @@ BEGIN
               AND (elem->>'value_estimate')::NUMERIC > 0 THEN 0 ELSE 1 END,
     CASE WHEN (elem->>'value_estimate') IS NOT NULL
               AND (elem->>'value_estimate')::NUMERIC > 0
-         THEN (elem->>'value_estimate')::NUMERIC DESC END NULLS LAST
+         THEN (elem->>'value_estimate')::NUMERIC END DESC NULLS LAST
   ) INTO v_result
   FROM unnest(v_result) AS elem;
 

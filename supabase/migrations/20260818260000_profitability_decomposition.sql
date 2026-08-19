@@ -89,7 +89,7 @@ BEGIN
       AND created_at >= v_start AND created_at <= v_end;
 
   IF p_segment = 'customer' THEN
-    SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t)."profit" DESC NULLS LAST), '[]'::jsonb) INTO v_segments
+    v_segments := (SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t)."profit" DESC NULLS LAST), '[]'::jsonb)
     FROM (
       SELECT
         i.client_name AS segment_name,
@@ -113,10 +113,10 @@ BEGIN
         AND i.created_at >= v_start AND i.created_at <= v_end
         AND i.client_name IS NOT NULL
       GROUP BY i.client_name
-    ) t;
+    ) t);
 
   ELSIF p_segment = 'product' THEN
-    SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t."profit" DESC NULLS LAST), '[]'::jsonb) INTO v_segments
+    v_segments := (SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t)."profit" DESC NULLS LAST), '[]'::jsonb)
     FROM (
       SELECT
         ii.description AS segment_name,
@@ -140,10 +140,10 @@ BEGIN
         AND i.status IN ('paid','sent')
         AND i.created_at >= v_start AND i.created_at <= v_end
       GROUP BY ii.description
-    ) t;
+    ) t);
 
   ELSIF p_segment = 'salesperson' THEN
-    SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t."profit" DESC NULLS LAST), '[]'::jsonb) INTO v_segments
+    v_segments := (SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t)."profit" DESC NULLS LAST), '[]'::jsonb)
     FROM (
       SELECT
         COALESCE(s.full_name, 'Unassigned') AS segment_name,
@@ -168,11 +168,11 @@ BEGIN
         AND i.status IN ('paid','sent')
         AND i.created_at >= v_start AND i.created_at <= v_end
       GROUP BY s.full_name
-    ) t;
+    ) t);
 
   ELSIF p_segment = 'channel' THEN
     -- Channel = won-deal-sourced vs direct-invoice (deal_id present vs not).
-    SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t."profit" DESC NULLS LAST), '[]'::jsonb) INTO v_segments
+    v_segments := (SELECT COALESCE(jsonb_agg(row_to_json(t) ORDER BY (t)."profit" DESC NULLS LAST), '[]'::jsonb)
     FROM (
       SELECT
         CASE WHEN i.deal_id IS NOT NULL THEN 'Sales pipeline' ELSE 'Direct' END AS segment_name,
@@ -195,7 +195,7 @@ BEGIN
         AND i.status IN ('paid','sent')
         AND i.created_at >= v_start AND i.created_at <= v_end
       GROUP BY CASE WHEN i.deal_id IS NOT NULL THEN 'Sales pipeline' ELSE 'Direct' END
-    ) t;
+    ) t);
   ELSE
     RETURN jsonb_build_object('authorized', true, 'error', 'unknown segment: ' || p_segment);
   END IF;
@@ -242,6 +242,10 @@ DECLARE
   v_negative_margin JSONB;
   v_stale JSONB;
   v_total_exposure NUMERIC(15,2) := 0;
+  v_cur_rev NUMERIC(15,2) := 0;
+  v_cur_cogs NUMERIC(15,2) := 0;
+  v_prev_rev NUMERIC(15,2) := 0;
+  v_prev_cogs NUMERIC(15,2) := 0;
 BEGIN
   SELECT * INTO v_staff FROM get_current_staff();
   v_authorized := FOUND AND v_staff.business_id = p_business_id AND v_staff.role IN ('owner','admin');
@@ -267,6 +271,21 @@ BEGIN
   -- DECLINING_MARGIN: customers whose this-month margin < last-month margin.
   -- Compare two consecutive months. Honest: NULL margin when no prior month.
   BEGIN
+    -- Period totals hoisted into variables (revenue-proportional cost
+    -- allocation) — keeps the comparison query clean and parseable.
+    SELECT COALESCE(SUM(total), 0) INTO v_cur_rev FROM invoices
+      WHERE business_id = p_business_id AND status IN ('paid','sent')
+        AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE);
+    SELECT COALESCE(SUM(ABS(total)), 0) INTO v_cur_cogs FROM transactions
+      WHERE business_id = p_business_id AND type = 'purchase'
+        AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE);
+    SELECT COALESCE(SUM(total), 0) INTO v_prev_rev FROM invoices
+      WHERE business_id = p_business_id AND status IN ('paid','sent')
+        AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE - INTERVAL '1 month');
+    SELECT COALESCE(SUM(ABS(total)), 0) INTO v_prev_cogs FROM transactions
+      WHERE business_id = p_business_id AND type = 'purchase'
+        AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE - INTERVAL '1 month');
+
     SELECT COALESCE(jsonb_agg(row_to_json(t)), '[]'::jsonb) INTO v_declining
     FROM (
       SELECT
@@ -277,10 +296,7 @@ BEGIN
         cur.revenue AS current_revenue
       FROM (
         SELECT client_name,
-          ROUND(((SUM(total) - (SUM(total)::NUMERIC /
-            NULLIF((SELECT SUM(total) FROM invoices WHERE business_id = p_business_id AND status IN ('paid','sent') AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE)), 0)) *
-            (SELECT COALESCE(SUM(ABS(total)),0) FROM transactions WHERE business_id = p_business_id AND type='purchase' AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE))
-          )) / NULLIF(SUM(total),0)) * 100, 1) AS margin_pct,
+          ROUND(((SUM(total) - (SUM(total)::NUMERIC / NULLIF(v_cur_rev, 0)) * v_cur_cogs) / NULLIF(SUM(total), 0)) * 100, 1) AS margin_pct,
           SUM(total) AS revenue
         FROM invoices
         WHERE business_id = p_business_id AND status IN ('paid','sent')
@@ -289,10 +305,7 @@ BEGIN
       ) cur
       JOIN (
         SELECT client_name,
-          ROUND(((SUM(total) - (SUM(total)::NUMERIC /
-            NULLIF((SELECT SUM(total) FROM invoices WHERE business_id = p_business_id AND status IN ('paid','sent') AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE - INTERVAL '1 month')), 0)) *
-            (SELECT COALESCE(SUM(ABS(total)),0) FROM transactions WHERE business_id = p_business_id AND type='purchase' AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE - INTERVAL '1 month'))
-          )) / NULLIF(SUM(total),0)) * 100, 1) AS margin_pct
+          ROUND(((SUM(total) - (SUM(total)::NUMERIC / NULLIF(v_prev_rev, 0)) * v_prev_cogs) / NULLIF(SUM(total), 0)) * 100, 1) AS margin_pct
         FROM invoices
         WHERE business_id = p_business_id AND status IN ('paid','sent')
           AND date_trunc('month', created_at) = date_trunc('month', CURRENT_DATE - INTERVAL '1 month')

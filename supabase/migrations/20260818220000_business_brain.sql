@@ -259,6 +259,7 @@ CREATE TABLE IF NOT EXISTS public.diagnosis_rules (
 );
 ALTER TABLE public.diagnosis_rules ENABLE ROW LEVEL SECURITY;
 -- Read-only to authenticated (Riverwayse tunes these server-side); nobody writes from the client.
+DROP POLICY IF EXISTS diagnosis_rules_read ON public.diagnosis_rules;
 CREATE POLICY diagnosis_rules_read ON public.diagnosis_rules FOR SELECT TO authenticated USING (true);
 
 -- Seed the causal-chain rules (deterministic, documented, tunable).
@@ -560,6 +561,7 @@ DECLARE
   v_item JSONB;
   v_amt NUMERIC;
   v_kind TEXT;
+  v_rule TEXT;
 BEGIN
   -- Aggregate claims with status='outcome_recorded' (088) that have an
   -- actual_impact amount. Best-effort — empty if the loop isn't deployed.

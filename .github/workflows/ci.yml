@@ -114,7 +114,9 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
+          # The attack suite is plain SQL (no pgTAP dependency — pgtap is not
+          # available in the postgres:15 service image). Assertions raise
+          # EXCEPTION on failure, so ON_ERROR_STOP fails the job on any leak.
           psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/04_rls_attack_suite.sql
 
   build:

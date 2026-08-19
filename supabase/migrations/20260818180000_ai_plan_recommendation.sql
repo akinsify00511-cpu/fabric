@@ -30,7 +30,6 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp
 AS $$
 DECLARE
   v_membership RECORD;
-  v_activations RECORD[];
   v_activation  RECORD;
   v_min_tier    INT := 0;
   v_needed_tier INT;

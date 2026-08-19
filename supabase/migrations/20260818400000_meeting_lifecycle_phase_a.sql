@@ -17,6 +17,39 @@
 \set ON_ERROR_STOP on
 
 -- ============================================================================
+-- 0. MEETINGS TABLE (create-if-missing)
+-- ============================================================================
+-- The canonical meetings table lives in 998_create_all_missing_tables.sql,
+-- but lexically 998 applies AFTER the 2026... migrations, so on a fresh
+-- database this table does not exist yet when this file runs. Create it
+-- here (identical definition to 998) so the additive extensions below have
+-- a target. 998's own CREATE TABLE IF NOT EXISTS then no-ops.
+
+CREATE TABLE IF NOT EXISTS public.meetings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+  staff_id UUID NOT NULL REFERENCES staff(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT,
+  date DATE NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME,
+  location TEXT,
+  meeting_link TEXT,
+  attendees JSONB DEFAULT '[]',
+  agenda TEXT,
+  notes TEXT,
+  recording_url TEXT,
+  status TEXT DEFAULT 'scheduled',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_meetings_staff ON public.meetings(staff_id);
+CREATE INDEX IF NOT EXISTS idx_meetings_business ON public.meetings(business_id);
+CREATE INDEX IF NOT EXISTS idx_meetings_date ON public.meetings(date);
+
+-- ============================================================================
 -- 1. EXTEND meetings TABLE (additive — no breaking changes)
 -- ============================================================================
 -- The existing table (998) has: staff_id, title, date, start_time, end_time,

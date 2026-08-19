@@ -204,7 +204,7 @@ BEGIN
   END IF;
   IF p_amount IS NULL OR p_amount <= 0 THEN
     RETURN jsonb_build_object('ok', false, 'error', 'INVALID_AMOUNT');
-  END IF
+  END IF;
 
   -- Server-derived: recompute from the authoritative stored total + paid.
   v_new_paid := COALESCE(v_invoice.amount_paid, 0) + p_amount;
