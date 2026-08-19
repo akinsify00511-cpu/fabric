@@ -192,6 +192,45 @@ deploy-gate as all prior sessions); frontend degrades gracefully until then.
 
 
 
+## Session 33b (2026-08-19): Red-team authorization closure audit — 3 P0 privilege-escalation vectors found + fixed
+
+Executed the narrowed authorization audit. Phase 0 local truth established; live-DB confirmations remain blocked on user-provided Supabase service-role credentials (duly disclosed).
+
+### P0 findings (each verified adversarially before fix)
+
+1. **Employee self-promotion to owner** — `staff_self_update` UPDATE policy
+   (user_id = auth.uid()) allowed an ordinary staff member to set `role='owner'`
+   on their own row. **FIXED** (20260819060000): `enforce_staff_role_immutability()`
+   trigger — role/member_kind mutations require the CALLER's own staff role
+   to be owner/admin in the same business. Employee → ERROR; owner/admin → OK.
+
+2. **Brain-poisoning via claims table** — `claims_managing` policy gave every
+   business member INSERT/UPDATE/DELETE on the intelligence ledger (claims).
+   An employee inserted INFERENCE status='accepted' confidence=1.0. **FIXED**
+   (20260819070000): claims write policies dropped; writing goes only through
+   the members-only SECURITY DEFINER RPCs (zz closure).
+
+3. **Organization-move via businesses update** — `businesses_own_update`
+   allowed any member to re-assign `organization_id/parent_business_id/
+   entity_type` (move the whole business into a foreign organization).
+   **FIXED** (20260819080000): `enforce_business_structural_immutability()`
+   trigger — structural fields require owner/admin.
+
+### Closed (verified, no fix needed)
+- Cross-tenant SELECT sweep over ALL business_id-bearing tables: tenant-A
+  member get zero rows against tenant-B business_id (no LEAK rows).
+- deals + invoices cross-tenant: 0 rows.
+- business_entitlements UPDATE qualifier is owner/admin-only (verified).
+- AI prompt-injection hardening from Session 33 (ask-avenize <question>).
+- Secrets sweep: no hardcoded secrets in src/ or supabase/functions/ or .env.example.
+
+### Acceptance numbers
+Tables audited: 433/433. RLS policies: 844. Functions: 522 (SECURITY DEFINER inventory
+in zz + Session scripts). Edge functions: 23 (+README). Blocked on live DB: migration
+history & production environment checks.
+
+### Verification
+168/168 migrations apply clean; idempotent; tsc clean; vitest 590/590; drift 0.
 ## Session 33 (2026-08-19): Red-team audit closure — RPC tenant guards + AI hardening
 
 Red-team closure of the Session-32 red-flag list. Claims were verified
