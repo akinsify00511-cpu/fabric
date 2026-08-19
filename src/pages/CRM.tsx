@@ -7,6 +7,7 @@ import { useToast } from '../components/Toast'
 import { canCreate, canDelete, canEdit } from '../lib/permissions'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import { Avatar } from '../components/ImageComponents'
+import CRMIntelligenceSurface from '../components/CRMIntelligenceSurface'
 
 type Deal = {
   id: string
@@ -59,7 +60,6 @@ export default function CRM() {
   const canEditDeal = canEdit(role, 'deals')
   const canCreateContact = canCreate(role, 'clients')
   const canDeleteContact = canDelete(role, 'clients')
-  // Sales individuals (staff/team_lead) default to "My deals" view; managers+ see all.
   const isSalesIndividual = role === 'staff' || role === 'team_lead'
   const [mineOnly, setMineOnly] = useState(isSalesIndividual)
 
@@ -74,27 +74,20 @@ export default function CRM() {
   const [newDealForm, setNewDealForm] = useState({ title: '', contact_name: '', contact_email: '', contact_phone: '', value: '', stage: 'active' as Deal['stage'], notes: '' })
   const [newContactForm, setNewContactForm] = useState({ full_name: '', email: '', phone: '', company: '' })
 
-  // Use the active subsidiary (switchable via SubsidiarySwitcher) — falls
-  // back to the staff's own business_id when not switched (single-business
-  // users see no change). This makes CRM per-subsidiary.
   const bid = activeBusinessId ?? staff?.business_id ?? null
 
   useEffect(() => {
-    if (bid) {
-      loadData()
-    }
+    if (bid) loadData()
   }, [bid])
 
   const loadData = async () => {
     if (!bid) return
-
     setLoading(true)
     try {
       const [dealsResult, contactsResult] = await Promise.all([
         supabase.from('deals').select('*').eq('business_id', bid).order('created_at', { ascending: false }),
         supabase.from('contacts').select('*').eq('business_id', bid).order('created_at', { ascending: false })
       ])
-
       if (dealsResult.data) setDeals(dealsResult.data)
       if (contactsResult.data) setContacts(contactsResult.data)
     } catch (error) {
@@ -110,9 +103,7 @@ export default function CRM() {
       showToast('Please fill required fields', 'error')
       return
     }
-
     const stageInfo = STAGES.find(s => s.key === newDealForm.stage)
-    
     try {
       const { data, error } = await supabase.from('deals').insert({
         business_id: bid,
@@ -125,9 +116,7 @@ export default function CRM() {
         probability: stageInfo?.probability || 50,
         notes: newDealForm.notes || null,
       }).select().single()
-
       if (error) throw error
-
       setDeals(prev => [data, ...prev])
       setNewDealForm({ title: '', contact_name: '', contact_email: '', contact_phone: '', value: '', stage: 'active', notes: '' })
       setShowAddDeal(false)
@@ -149,9 +138,7 @@ export default function CRM() {
         value: deal.value,
         notes: deal.notes,
       }).eq('id', deal.id)
-
       if (error) throw error
-
       setDeals(prev => prev.map(d => d.id === deal.id ? deal : d))
       setEditingDeal(null)
       showToast('Deal updated!', 'success')
@@ -163,11 +150,9 @@ export default function CRM() {
 
   const deleteDeal = async (id: string) => {
     if (!confirm('Delete this deal?')) return
-
     try {
       const { error } = await supabase.from('deals').delete().eq('id', id)
       if (error) throw error
-
       setDeals(prev => prev.filter(d => d.id !== id))
       setEditingDeal(null)
       showToast('Deal deleted', 'info')
@@ -182,7 +167,6 @@ export default function CRM() {
       showToast('Please fill required fields', 'error')
       return
     }
-
     try {
       const { data, error } = await supabase.from('contacts').insert({
         business_id: bid,
@@ -191,9 +175,7 @@ export default function CRM() {
         phone: newContactForm.phone || null,
         company: newContactForm.company || null,
       }).select().single()
-
       if (error) throw error
-
       setContacts(prev => [data, ...prev])
       setNewContactForm({ full_name: '', email: '', phone: '', company: '' })
       setShowAddContact(false)
@@ -205,10 +187,7 @@ export default function CRM() {
   }
 
   const filteredDeals = deals.filter(d =>
-    (d.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    d.contact_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
-    // "My deals" (sales individuals) filters to deals assigned to the current
-    // user — the assignee_id is set on deal create/edit. Managers+ see all.
+    (d.title?.toLowerCase().includes(searchQuery.toLowerCase()) || d.contact_name?.toLowerCase().includes(searchQuery.toLowerCase())) &&
     (!mineOnly || d.assignee_id === staff?.id || d.owner_id === staff?.id)
   )
 
@@ -228,9 +207,7 @@ export default function CRM() {
     totalValue: deals.reduce((sum, d) => sum + (d.value || 0), 0),
     hotDeals: deals.filter(d => d.stage === 'hot').length,
     wonDeals: deals.filter(d => d.stage === 'won').length,
-    conversionRate: deals.filter(d => d.stage !== 'lost').length > 0 
-      ? Math.round((deals.filter(d => d.stage === 'won').length / deals.filter(d => d.stage !== 'lost').length) * 100) 
-      : 0
+    conversionRate: deals.filter(d => d.stage !== 'lost').length > 0 ? Math.round((deals.filter(d => d.stage === 'won').length / deals.filter(d => d.stage !== 'lost').length) * 100) : 0
   }
 
   if (loading) {
@@ -238,9 +215,7 @@ export default function CRM() {
       <div className="max-w-7xl mx-auto">
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-white rounded w-32"></div>
-          <div className="grid grid-cols-5 gap-3">
-            {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-white rounded-xl"></div>)}
-          </div>
+          <div className="grid grid-cols-5 gap-3">{[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-white rounded-xl"></div>)}</div>
         </div>
       </div>
     )
@@ -249,285 +224,50 @@ export default function CRM() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-black">CRM</h1>
-          <p className="text-sm text-black">{deals.length} deals - {contacts.length} contacts</p>
-        </div>
+        <div><h1 className="text-2xl font-bold text-black">CRM</h1><p className="text-sm text-black">{deals.length} deals - {contacts.length} contacts</p></div>
         <div className="flex gap-2">
-          {canCreateDeal && (
-            <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium">
-              <Plus size={18} /> Add Deal
-            </button>
-          )}
-          {canCreateContact && (
-            <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10">
-              <Users size={18} /> Add Contact
-            </button>
-          )}
+          {canCreateDeal && <button onClick={() => setShowAddDeal(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--av-text)] text-white text-sm font-medium"><Plus size={18} /> Add Deal</button>}
+          {canCreateContact && <button onClick={() => setShowAddContact(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-black/10 text-sm font-medium hover:bg-black/10"><Users size={18} /> Add Contact</button>}
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.totalDeals}</div>
-          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Total Deals</div>
-        </div>
-        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>₦{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div>
-          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Pipeline Value</div>
-        </div>
-        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(234, 67, 53, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          <div className="text-2xl font-bold mb-1" style={{ color: '#EA4335' }}>{stats.hotDeals}</div>
-          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Hot Deals</div>
-        </div>
-        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(52, 168, 83, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          <div className="text-2xl font-bold mb-1" style={{ color: '#34A853' }}>{stats.wonDeals}</div>
-          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Won</div>
-        </div>
-        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          <div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.conversionRate}%</div>
-          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Conversion</div>
-        </div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.totalDeals}</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Total Deals</div></div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>₦{stats.totalValue >= 1000000 ? (stats.totalValue / 1000000).toFixed(1) + 'M' : stats.totalValue.toLocaleString()}</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Pipeline Value</div></div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(234, 67, 53, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: '#EA4335' }}>{stats.hotDeals}</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Hot Deals</div></div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'rgba(52, 168, 83, 0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: '#34A853' }}>{stats.wonDeals}</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Won</div></div>
+        <div className="rounded-2xl p-5 transition-all hover:-translate-y-0.5" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="text-2xl font-bold mb-1" style={{ color: 'var(--av-text)' }}>{stats.conversionRate}%</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>Conversion</div></div>
       </div>
+
+      <CRMIntelligenceSurface businessId={bid} />
 
       <div className="flex gap-1 mb-6 bg-black/10 p-1 rounded-xl w-fit">
         {[{ key: 'deals', label: 'Deals' }, { key: 'contacts', label: 'Contacts' }, { key: 'pipeline', label: 'Pipeline' }].map(tab => (
-          <button key={tab.key} onClick={() => setViewMode(tab.key as ViewMode)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-black' : 'text-black hover:text-black/70'}`}>
-            {tab.label}
-          </button>
+          <button key={tab.key} onClick={() => setViewMode(tab.key as ViewMode)} className={`px-4 py-2 rounded-lg text-sm font-medium transition ${viewMode === tab.key ? 'bg-white shadow-sm text-black' : 'text-black hover:text-black/70'}`}>{tab.label}</button>
         ))}
       </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={18} />
         <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder={`Search ${viewMode}...`} className="w-full pl-11 pr-4 py-3 rounded-xl border border-black/10 bg-white text-sm" />
-        {isSalesIndividual && viewMode === 'deals' && (
-          <button
-            onClick={() => setMineOnly(m => !m)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium px-3 py-1.5 rounded-lg transition"
-            style={mineOnly
-              ? { background: 'var(--av-primary)', color: 'white' }
-              : { background: 'var(--av-surface-2)', color: 'var(--av-text-secondary)' }}
-          >
-            {mineOnly ? 'My deals' : 'All deals'}
-          </button>
-        )}
+        {isSalesIndividual && viewMode === 'deals' && <button onClick={() => setMineOnly(m => !m)} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium px-3 py-1.5 rounded-lg transition" style={mineOnly ? { background: 'var(--av-primary)', color: 'white' } : { background: 'var(--av-surface-2)', color: 'var(--av-text-secondary)' }}>{mineOnly ? 'My deals' : 'All deals'}</button>}
       </div>
 
-      {viewMode === 'deals' && (
-        <div className="space-y-3">
-          {filteredDeals.length === 0 ? (
-            <div className="rounded-2xl p-12 text-center" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-              <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}>
-                <Users size={28} style={{ color: 'var(--av-primary)' }} />
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}>
-                <Sparkles size={12} /> Your first deal
-              </div>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No deals yet</h3>
-              <p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p>
-              <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Every sale starts here — your pipeline grows as you add opportunities.</p>
-              {canCreateDeal ? (
-              <button onClick={() => setShowAddDeal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Deal</button>
-            ) : null}
-            </div>
-          ) : (
-            filteredDeals.map(deal => {
-              const stage = STAGES.find(s => s.key === deal.stage)
-              return (
-                <div 
-                  key={deal.id} 
-                  className="rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer" 
-                  style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
-                  onClick={() => setEditingDeal(deal)}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <Avatar name={deal.contact_name} size={44} style="adventurer" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold truncate" style={{ color: 'var(--av-text)' }}>{deal.title}</h3>
-                          <span className={`px-2 py-0.5 rounded text-xs font-medium ${stage?.color} ${stage?.textColor}`}>{stage?.label}</span>
-                        </div>
-                        <p className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</p>
-                        {deal.notes && <p className="text-sm mt-1 line-clamp-1" style={{ color: 'var(--av-text-muted)' }}>{deal.notes}</p>}
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="font-bold text-lg" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div>
-                      <div className="text-xs text-black">{deal.probability || 50}% likely</div>
-                    </div>
-                  </div>
-                </div>
-              )
-            })
-          )}
-        </div>
-      )}
+      {viewMode === 'deals' && <div className="space-y-3">
+        {filteredDeals.length === 0 ? <div className="rounded-2xl p-12 text-center" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}><div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}><Users size={28} style={{ color: 'var(--av-primary)' }} /></div><div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}><Sparkles size={12} /> Your first deal</div><h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No deals yet</h3><p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Create your first deal to start tracking</p><p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Every sale starts here — your pipeline grows as you add opportunities.</p>{canCreateDeal ? <button onClick={() => setShowAddDeal(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Deal</button> : null}</div> : filteredDeals.map(deal => { const stage = STAGES.find(s => s.key === deal.stage); return <div key={deal.id} className="rounded-2xl p-5 transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }} onClick={() => setEditingDeal(deal)}><div className="flex items-start justify-between gap-4"><div className="flex items-center gap-4 flex-1 min-w-0"><Avatar name={deal.contact_name} size={44} style="adventurer" /><div className="flex-1 min-w-0"><div className="flex items-center gap-2 mb-1"><h3 className="font-semibold truncate" style={{ color: 'var(--av-text)' }}>{deal.title}</h3><span className={`px-2 py-0.5 rounded text-xs font-medium ${stage?.color} ${stage?.textColor}`}>{stage?.label}</span></div><p className="text-sm" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</p>{deal.notes && <p className="text-sm mt-1 line-clamp-1" style={{ color: 'var(--av-text-muted)' }}>{deal.notes}</p>}</div></div><div className="text-right shrink-0"><div className="font-bold text-lg" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div><div className="text-xs text-black">{deal.probability || 50}% likely</div></div></div></div> })}
+      </div>}
 
-      {viewMode === 'contacts' && (
-        <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>
-          {filteredContacts.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}>
-                <Users size={28} style={{ color: 'var(--av-primary)' }} />
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}>
-                <Sparkles size={12} /> Your first contact
-              </div>
-              <h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No contacts yet</h3>
-              <p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Add your first contact to get started</p>
-              <p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Contacts are the people behind every deal, invoice, and conversation.</p>
-              <button onClick={() => setShowAddContact(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Contact</button>
-            </div>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b" style={{ borderColor: 'var(--av-border)' }}>
-                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Contact</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Company</th>
-                  <th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Phone</th>
-                  <th className="text-right px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Added</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredContacts.map(contact => (
-                  <tr key={contact.id} className="border-b transition-colors hover:bg-[var(--av-surface)] cursor-pointer" style={{ borderColor: 'var(--av-border)' }}>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar name={contact.full_name} size={40} style="adventurer" />
-                        <div>
-                          <div className="font-medium text-sm" style={{ color: 'var(--av-text)' }}>{contact.full_name}</div>
-                          <div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>{contact.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.company || '-'}</td>
-                    <td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.phone || '-'}</td>
-                    <td className="px-6 py-4 text-right text-sm" style={{ color: 'var(--av-text-muted)' }}>{new Date(contact.created_at).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
+      {viewMode === 'contacts' && <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}>{filteredContacts.length === 0 ? <div className="p-12 text-center"><div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: 'var(--av-primary-soft)' }}><Users size={28} style={{ color: 'var(--av-primary)' }} /></div><div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium mb-3" style={{ backgroundColor: 'var(--av-success-soft)', color: 'var(--av-success)' }}><Sparkles size={12} /> Your first contact</div><h3 className="font-semibold mb-2" style={{ color: 'var(--av-text)' }}>No contacts yet</h3><p className="text-sm mb-1" style={{ color: 'var(--av-text-secondary)' }}>Add your first contact to get started</p><p className="text-sm mb-4 max-w-sm mx-auto" style={{ color: 'var(--av-text-muted)' }}>Contacts are the people behind every deal, invoice, and conversation.</p><button onClick={() => setShowAddContact(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: 'var(--av-primary)' }}><Plus size={16} /> Add Contact</button></div> : <table className="w-full"><thead><tr className="border-b" style={{ borderColor: 'var(--av-border)' }}><th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Contact</th><th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Company</th><th className="text-left px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Phone</th><th className="text-right px-6 py-4 text-sm font-medium" style={{ color: 'var(--av-text-secondary)' }}>Added</th></tr></thead><tbody>{filteredContacts.map(contact => <tr key={contact.id} className="border-b transition-colors hover:bg-[var(--av-surface)] cursor-pointer" style={{ borderColor: 'var(--av-border)' }}><td className="px-6 py-4"><div className="flex items-center gap-3"><Avatar name={contact.full_name} size={40} style="adventurer" /><div><div className="font-medium text-sm" style={{ color: 'var(--av-text)' }}>{contact.full_name}</div><div className="text-xs" style={{ color: 'var(--av-text-secondary)' }}>{contact.email}</div></div></div></td><td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.company || '-'}</td><td className="px-6 py-4 text-sm" style={{ color: 'var(--av-text-secondary)' }}>{contact.phone || '-'}</td><td className="px-6 py-4 text-right text-sm" style={{ color: 'var(--av-text-muted)' }}>{new Date(contact.created_at).toLocaleDateString()}</td></tr>)}</tbody></table>}</div>}
 
-      {viewMode === 'pipeline' && (
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STAGES.filter(s => s.key !== 'lost').map(stage => (
-            <div key={stage.key} className="min-w-[280px] flex-1">
-              <div className={`px-4 py-3 rounded-xl ${stage.color} ${stage.textColor} font-semibold text-sm mb-4 flex items-center justify-between`}>
-                <span>{stage.label}</span>
-                <span className="opacity-80">₦{(dealsByStage[stage.key] || []).reduce((sum, d) => sum + (d.value || 0), 0).toLocaleString()}</span>
-              </div>
-              <div className="space-y-3">
-                {(dealsByStage[stage.key] || []).map(deal => (
-                  <div 
-                    key={deal.id} 
-                    className="rounded-xl p-4 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md" 
-                    style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }}
-                    onClick={() => setEditingDeal(deal)}
-                  >
-                    <Avatar name={deal.contact_name} size={32} style="bottts" className="mb-2" />
-                    <div className="font-medium text-sm mb-1" style={{ color: 'var(--av-text)' }}>{deal.title}</div>
-                    <div className="text-xs mb-2" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</div>
-                    <div className="text-sm font-bold" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div>
-                  </div>
-                ))}
-                {(dealsByStage[stage.key] || []).length === 0 && (
-                  <div className="text-center py-8 text-sm rounded-xl border-2 border-dashed" style={{ borderColor: 'var(--av-border)', color: 'var(--av-text-muted)' }}>
-                    No deals
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      {viewMode === 'pipeline' && <div className="flex gap-4 overflow-x-auto pb-4">{STAGES.filter(s => s.key !== 'lost').map(stage => <div key={stage.key} className="min-w-[280px] flex-1"><div className={`px-4 py-3 rounded-xl ${stage.color} ${stage.textColor} font-semibold text-sm mb-4 flex items-center justify-between`}><span>{stage.label}</span><span className="opacity-80">₦{(dealsByStage[stage.key] || []).reduce((sum, d) => sum + (d.value || 0), 0).toLocaleString()}</span></div><div className="space-y-3">{(dealsByStage[stage.key] || []).map(deal => <div key={deal.id} className="rounded-xl p-4 cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-md" style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04)' }} onClick={() => setEditingDeal(deal)}><Avatar name={deal.contact_name} size={32} style="bottts" className="mb-2" /><div className="font-medium text-sm mb-1" style={{ color: 'var(--av-text)' }}>{deal.title}</div><div className="text-xs mb-2" style={{ color: 'var(--av-text-secondary)' }}>{deal.contact_name}</div><div className="text-sm font-bold" style={{ color: 'var(--av-text)' }}>₦{(deal.value || 0).toLocaleString()}</div></div>)}{(dealsByStage[stage.key] || []).length === 0 && <div className="text-center py-8 text-sm rounded-xl border-2 border-dashed" style={{ borderColor: 'var(--av-border)', color: 'var(--av-text-muted)' }}>No deals</div>}</div></div>)}</div>}
 
-      {showAddDeal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="p-4 border-b border-black/10 flex items-center justify-between">
-              <h3 className="font-bold text-lg">Add New Deal</h3>
-              <button onClick={() => setShowAddDeal(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div><label className="block text-sm font-medium mb-1">Deal Title *</label><input value={newDealForm.title} onChange={e => setNewDealForm(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g. Enterprise License" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm font-medium mb-1">Contact Name *</label><input value={newDealForm.contact_name} onChange={e => setNewDealForm(prev => ({ ...prev, contact_name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-                <div><label className="block text-sm font-medium mb-1">Email</label><input value={newDealForm.contact_email} onChange={e => setNewDealForm(prev => ({ ...prev, contact_email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm font-medium mb-1">Phone</label><input value={newDealForm.contact_phone} onChange={e => setNewDealForm(prev => ({ ...prev, contact_phone: e.target.value }))} placeholder="08012345678" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-                <div><label className="block text-sm font-medium mb-1">Value (₦)</label><input type="number" value={newDealForm.value} onChange={e => setNewDealForm(prev => ({ ...prev, value: e.target.value }))} placeholder="100000" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              </div>
-              <div><label className="block text-sm font-medium mb-1">Stage</label><select value={newDealForm.stage} onChange={e => setNewDealForm(prev => ({ ...prev, stage: e.target.value as Deal['stage'] }))} className="w-full px-4 py-2.5 rounded-xl border border-black/10">{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
-              <div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={newDealForm.notes} onChange={e => setNewDealForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Add any notes..." className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-            </div>
-            <div className="p-4 border-t border-black/10 flex gap-3">
-              <button onClick={() => setShowAddDeal(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button>
-              <button onClick={addDeal} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Deal</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showAddDeal && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddDeal(false)}><div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="p-4 border-b border-black/10 flex items-center justify-between"><h3 className="font-bold text-lg">Add New Deal</h3><button onClick={() => setShowAddDeal(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button></div><div className="p-4 space-y-4"><div><label className="block text-sm font-medium mb-1">Deal Title *</label><input value={newDealForm.title} onChange={e => setNewDealForm(prev => ({ ...prev, title: e.target.value }))} placeholder="e.g. Enterprise License" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium mb-1">Contact Name *</label><input value={newDealForm.contact_name} onChange={e => setNewDealForm(prev => ({ ...prev, contact_name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Email</label><input value={newDealForm.contact_email} onChange={e => setNewDealForm(prev => ({ ...prev, contact_email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium mb-1">Phone</label><input value={newDealForm.contact_phone} onChange={e => setNewDealForm(prev => ({ ...prev, contact_phone: e.target.value }))} placeholder="08012345678" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Value (₦)</label><input type="number" value={newDealForm.value} onChange={e => setNewDealForm(prev => ({ ...prev, value: e.target.value }))} placeholder="100000" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div><label className="block text-sm font-medium mb-1">Stage</label><select value={newDealForm.stage} onChange={e => setNewDealForm(prev => ({ ...prev, stage: e.target.value as Deal['stage'] }))} className="w-full px-4 py-2.5 rounded-xl border border-black/10">{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div><div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={newDealForm.notes} onChange={e => setNewDealForm(prev => ({ ...prev, notes: e.target.value }))} rows={3} placeholder="Add any notes..." className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div className="p-4 border-t border-black/10 flex gap-3"><button onClick={() => setShowAddDeal(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button><button onClick={addDeal} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Deal</button></div></div></div>}
 
-      {showAddContact && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}>
-            <div className="p-4 border-b border-black/10 flex items-center justify-between">
-              <h3 className="font-bold text-lg">Add New Contact</h3>
-              <button onClick={() => setShowAddContact(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div><label className="block text-sm font-medium mb-1">Full Name *</label><input value={newContactForm.full_name} onChange={e => setNewContactForm(prev => ({ ...prev, full_name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              <div><label className="block text-sm font-medium mb-1">Email *</label><input type="email" value={newContactForm.email} onChange={e => setNewContactForm(prev => ({ ...prev, email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              <div><label className="block text-sm font-medium mb-1">Phone</label><input value={newContactForm.phone} onChange={e => setNewContactForm(prev => ({ ...prev, phone: e.target.value }))} placeholder="08012345678" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              <div><label className="block text-sm font-medium mb-1">Company</label><input value={newContactForm.company} onChange={e => setNewContactForm(prev => ({ ...prev, company: e.target.value }))} placeholder="Company Name" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-            </div>
-            <div className="p-4 border-t border-black/10 flex gap-3">
-              <button onClick={() => setShowAddContact(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button>
-              <button onClick={addContact} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Contact</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showAddContact && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowAddContact(false)}><div className="bg-white rounded-2xl w-full max-w-lg" onClick={e => e.stopPropagation()}><div className="p-4 border-b border-black/10 flex items-center justify-between"><h3 className="font-bold text-lg">Add New Contact</h3><button onClick={() => setShowAddContact(false)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button></div><div className="p-4 space-y-4"><div><label className="block text-sm font-medium mb-1">Full Name *</label><input value={newContactForm.full_name} onChange={e => setNewContactForm(prev => ({ ...prev, full_name: e.target.value }))} placeholder="John Doe" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Email *</label><input type="email" value={newContactForm.email} onChange={e => setNewContactForm(prev => ({ ...prev, email: e.target.value }))} placeholder="john@example.com" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Phone</label><input value={newContactForm.phone} onChange={e => setNewContactForm(prev => ({ ...prev, phone: e.target.value }))} placeholder="08012345678" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Company</label><input value={newContactForm.company} onChange={e => setNewContactForm(prev => ({ ...prev, company: e.target.value }))} placeholder="Company Name" className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div className="p-4 border-t border-black/10 flex gap-3"><button onClick={() => setShowAddContact(false)} className="flex-1 px-4 py-3 rounded-xl border border-black/10 font-medium">Cancel</button><button onClick={addContact} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Create Contact</button></div></div></div>}
 
-      {editingDeal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="p-4 border-b border-black/10 flex items-center justify-between">
-              <h3 className="font-bold text-lg">Edit Deal</h3>
-              <button onClick={() => setEditingDeal(null)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div><label className="block text-sm font-medium mb-1">Deal Title</label><input value={editingDeal.title} onChange={e => setEditingDeal(prev => prev ? { ...prev, title: e.target.value } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><label className="block text-sm font-medium mb-1">Contact Name</label><input value={editingDeal.contact_name} onChange={e => setEditingDeal(prev => prev ? { ...prev, contact_name: e.target.value } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-                <div><label className="block text-sm font-medium mb-1">Value (₦)</label><input type="number" value={editingDeal.value} onChange={e => setEditingDeal(prev => prev ? { ...prev, value: parseInt(e.target.value) || 0 } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-              </div>
-              <div><label className="block text-sm font-medium mb-1">Stage</label><select value={editingDeal.stage} onChange={e => setEditingDeal(prev => prev ? { ...prev, stage: e.target.value as Deal['stage'], probability: STAGES.find(s => s.key === e.target.value)?.probability || 50 } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10">{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div>
-              <div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={editingDeal.notes || ''} onChange={e => setEditingDeal(prev => prev ? { ...prev, notes: e.target.value } : null)} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div>
-            </div>
-            <div className="p-4 border-t border-black/10 flex gap-3">
-              {canDeleteDeal && (
-              <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-[var(--av-danger)] font-medium">Delete</button>
-            )}
-              <button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Save Changes</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {editingDeal && <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setEditingDeal(null)}><div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="p-4 border-b border-black/10 flex items-center justify-between"><h3 className="font-bold text-lg">Edit Deal</h3><button onClick={() => setEditingDeal(null)} className="p-2 hover:bg-black/10 rounded-lg"><X size={20} /></button></div><div className="p-4 space-y-4"><div><label className="block text-sm font-medium mb-1">Deal Title</label><input value={editingDeal.title} onChange={e => setEditingDeal(prev => prev ? { ...prev, title: e.target.value } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div className="grid grid-cols-2 gap-3"><div><label className="block text-sm font-medium mb-1">Contact Name</label><input value={editingDeal.contact_name} onChange={e => setEditingDeal(prev => prev ? { ...prev, contact_name: e.target.value } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div><div><label className="block text-sm font-medium mb-1">Value (₦)</label><input type="number" value={editingDeal.value} onChange={e => setEditingDeal(prev => prev ? { ...prev, value: parseInt(e.target.value) || 0 } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div><label className="block text-sm font-medium mb-1">Stage</label><select value={editingDeal.stage} onChange={e => setEditingDeal(prev => prev ? { ...prev, stage: e.target.value as Deal['stage'], probability: STAGES.find(s => s.key === e.target.value)?.probability || 50 } : null)} className="w-full px-4 py-2.5 rounded-xl border border-black/10">{STAGES.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}</select></div><div><label className="block text-sm font-medium mb-1">Notes</label><textarea value={editingDeal.notes || ''} onChange={e => setEditingDeal(prev => prev ? { ...prev, notes: e.target.value } : null)} rows={3} className="w-full px-4 py-2.5 rounded-xl border border-black/10" /></div></div><div className="p-4 border-t border-black/10 flex gap-3">{canDeleteDeal && <button onClick={() => deleteDeal(editingDeal.id)} className="px-4 py-3 rounded-xl border border-red-500 text-[var(--av-danger)] font-medium">Delete</button>}<button onClick={() => updateDeal(editingDeal)} className="flex-1 px-4 py-3 rounded-xl bg-[var(--av-text)] text-white font-medium">Save Changes</button></div></div></div>}
 
-      <FeatureSuggestions suggestions={[
-        { label: 'Tasks', path: '/app/tasks', description: 'Create tasks from deals' },
-        { label: 'Finance', path: '/app/finance', description: 'Create invoices' },
-        { label: 'Reports', path: '/app/reports', description: 'Sales analytics' },
-      ]} />
+      <FeatureSuggestions suggestions={[{ label: 'Tasks', path: '/app/tasks', description: 'Create tasks from deals' }, { label: 'Finance', path: '/app/finance', description: 'Create invoices' }, { label: 'Reports', path: '/app/reports', description: 'Sales analytics' }]} />
     </div>
   )
 }
