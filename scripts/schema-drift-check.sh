@@ -16,7 +16,6 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 MIGRATIONS_DIR="$ROOT_DIR/supabase/migrations"
 SRC_DIR="$ROOT_DIR/src"
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -26,48 +25,56 @@ echo "=== Avenize Schema Drift Check ==="
 echo ""
 
 # ---------------------------------------------------------------------------
-# 1. TABLE DRIFT: every .from('table') in src/ must have a CREATE TABLE or
-#    CREATE VIEW in migrations, OR be a storage bucket (storage.from).
+# 1. TABLE / STORAGE DRIFT
 # ---------------------------------------------------------------------------
 
-# Extract all table references from frontend .from('table') calls
-# Exclude storage.from('bucket') — those are storage buckets, not tables
-grep -rhoE "\.from\('[a-z_]+'\)" "$SRC_DIR" \
-  | sed "s/\.from('//;s/')//" \
+# Identifiers use the PostgreSQL-safe characters relevant to this repository:
+# letters, digits, underscore and hyphen. Storage bucket names commonly use
+# hyphens even though table/RPC identifiers generally do not.
+grep -rhoE "\.from\(['\"][a-zA-Z0-9_-]+['\"]\)" "$SRC_DIR" \
+  | sed -E "s/\.from\(['\"]//;s/['\"]\)$//" \
   | sort -u > /tmp/frontend_tables.txt
 
-# Extract all CREATE TABLE names from migrations
-grep -rhoiE "CREATE TABLE (IF NOT EXISTS )?(public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
+# storage.from() targets are buckets, not tables.
+grep -rhoE "storage\.from\(['\"][a-zA-Z0-9_-]+['\"]\)" "$SRC_DIR" \
+  | sed -E "s/storage\.from\(['\"]//;s/['\"]\)$//" \
+  | sort -u > /tmp/frontend_buckets.txt
+
+# Remove storage bucket references from the table list.
+comm -23 /tmp/frontend_tables.txt /tmp/frontend_buckets.txt > /tmp/frontend_tables_only.txt
+mv /tmp/frontend_tables_only.txt /tmp/frontend_tables.txt
+
+# Extract CREATE TABLE / VIEW identifiers.
+grep -rhoiE "CREATE TABLE (IF NOT EXISTS )?(public\.)?[a-zA-Z0-9_-]+" "$MIGRATIONS_DIR"/*.sql \
   | sed -E 's/CREATE TABLE (IF NOT EXISTS )?(public\.)?//' \
   | tr 'A-Z' 'a-z' \
   | sort -u > /tmp/migration_tables.txt
 
-# Extract all CREATE VIEW names from migrations (views are valid table targets)
-grep -rhoiE "CREATE (OR REPLACE )?VIEW (public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
+grep -rhoiE "CREATE (OR REPLACE )?VIEW (public\.)?[a-zA-Z0-9_-]+" "$MIGRATIONS_DIR"/*.sql \
   | sed -E 's/CREATE (OR REPLACE )?VIEW (public\.)?//' \
   | tr 'A-Z' 'a-z' \
   | sort -u > /tmp/migration_views.txt
 
-# Extract all storage bucket names from migrations (storage.from('bucket'))
-grep -rhoiE "insert into storage\.buckets.*\('([a-z_]+)'" "$MIGRATIONS_DIR"/*.sql \
-  | grep -oE "'[a-z_]+'" \
+# Extract bucket ids from common Storage migration forms, including hyphenated
+# names. Do not assume bucket names follow PostgreSQL identifier rules.
+grep -rhoiE "insert into storage\.buckets[^;]*" "$MIGRATIONS_DIR"/*.sql \
+  | grep -oE "'[-a-zA-Z0-9_]+'" \
   | tr -d "'" \
+  | tr 'A-Z' 'a-z' \
   | sort -u > /tmp/migration_buckets.txt
 
-# Also catch VALUES ('bucket_name', ... patterns for storage buckets
-grep -rhoiE "VALUES \('([a-z_]+)'" "$MIGRATIONS_DIR"/*.sql \
-  | grep -oE "'[a-z_]+'" \
+# Also catch VALUES ('bucket_name', ...), used by older migrations.
+grep -rhoiE "VALUES[[:space:]]*\('[a-zA-Z0-9_-]+'" "$MIGRATIONS_DIR"/*.sql \
+  | grep -oE "'[a-zA-Z0-9_-]+'" \
   | tr -d "'" \
+  | tr 'A-Z' 'a-z' \
   | sort -u >> /tmp/migration_buckets.txt
 sort -u -o /tmp/migration_buckets.txt /tmp/migration_buckets.txt
 
-# Combine all valid schema targets
 cat /tmp/migration_tables.txt /tmp/migration_views.txt /tmp/migration_buckets.txt \
   | sort -u > /tmp/all_schema_targets.txt
 
-# Find frontend tables with NO schema backing
 TABLE_DRIFT=$(comm -23 /tmp/frontend_tables.txt /tmp/all_schema_targets.txt)
-
 TABLE_COUNT=$(wc -l < /tmp/frontend_tables.txt)
 SCHEMA_COUNT=$(wc -l < /tmp/all_schema_targets.txt)
 DRIFT_COUNT=$(echo -n "$TABLE_DRIFT" | grep -c . || true)
@@ -94,21 +101,19 @@ fi
 echo ""
 
 # ---------------------------------------------------------------------------
-# 2. RPC DRIFT: every .rpc('function') in src/ must have a CREATE FUNCTION
-#    in migrations.
+# 2. RPC DRIFT
 # ---------------------------------------------------------------------------
 
-grep -rhoE "\.rpc\('[a-z_]+'" "$SRC_DIR" \
-  | sed "s/\.rpc('//;s/'//" \
+grep -rhoE "\.rpc\(['\"][a-zA-Z0-9_-]+['\"]" "$SRC_DIR" \
+  | sed -E "s/\.rpc\(['\"]//;s/['\"]$//" \
   | sort -u > /tmp/frontend_rpcs.txt
 
-grep -rhoiE "CREATE (OR REPLACE )?FUNCTION (public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
+grep -rhoiE "CREATE (OR REPLACE )?FUNCTION (public\.)?[a-zA-Z0-9_-]+" "$MIGRATIONS_DIR"/*.sql \
   | sed -E 's/[Cc][Rr][Ee][Aa][Tt][Ee] ([Oo][Rr] [Rr][Ee][Pp][Ll][Aa][Cc][Ee] )?[Ff][Uu][Nn][Cc][Tt][Ii][Oo][Nn] (public\.)?//' \
   | tr 'A-Z' 'a-z' \
   | sort -u > /tmp/migration_rpcs.txt
 
 RPC_DRIFT=$(comm -23 /tmp/frontend_rpcs.txt /tmp/migration_rpcs.txt)
-
 RPC_COUNT=$(wc -l < /tmp/frontend_rpcs.txt)
 MIGRATION_RPC_COUNT=$(wc -l < /tmp/migration_rpcs.txt)
 RPC_DRIFT_COUNT=$(echo -n "$RPC_DRIFT" | grep -c . || true)
@@ -134,13 +139,9 @@ fi
 
 echo ""
 
-# ---------------------------------------------------------------------------
-# Exit code
-# ---------------------------------------------------------------------------
 if [ "$HAS_DRIFT" -eq 1 ]; then
   exit 1
 elif [ "$HAS_RPC_DRIFT" -eq 1 ]; then
-  # RPC drift is a warning, not a hard failure (Supabase built-ins)
   echo -e "${YELLOW}RPC drift is advisory only (some are Supabase built-ins).${NC}"
   exit 0
 else
