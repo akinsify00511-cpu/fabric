@@ -2279,3 +2279,88 @@ export async function searchTranscripts(
     return []
   }
 }
+
+// ============================================================================
+// MEETING REPORT + NOTIFICATIONS (Phase D — §6,7,11,12,25)
+// Composed post-meeting report (snapshot) + attendee notifications.
+// ============================================================================
+
+export interface MeetingReport {
+  id: string
+  meeting_id: string
+  report_data: {
+    meeting: {
+      id: string
+      title: string
+      date: string
+      start_time: string
+      end_time?: string
+      location?: string
+      meeting_link?: string
+    }
+    summary: string
+    key_points: string[]
+    decisions: Array<{
+      id: string
+      text: string
+      rationale: string | null
+      status: string
+      timestamp_ms: number | null
+    }>
+    actions: Array<{
+      id: string
+      text: string
+      assignee_id: string | null
+      due_date: string | null
+      priority: string
+      status: string
+      task_id: string | null
+    }>
+    attendees: unknown[]
+    generated_at: string
+    generated_by: string
+  }
+  sent_to: string[]
+  sent_at: string | null
+  created_at: string
+}
+
+export async function generateMeetingReport(
+  meetingId: string,
+  sendNotifications = true
+): Promise<{ reportId: string; reportData: MeetingReport['report_data']; notified: number } | null> {
+  try {
+    const { data, error } = await supabase.rpc('generate_meeting_report', {
+      p_meeting_id: meetingId,
+      p_send_notifications: sendNotifications,
+    })
+    if (error) {
+      console.warn('[meetings] generate report failed:', error.message)
+      return null
+    }
+    const row = data as { report_id: string; report_data: MeetingReport['report_data']; notified: number } | null
+    if (!row) return null
+    return { reportId: row.report_id, reportData: row.report_data, notified: row.notified }
+  } catch (e) {
+    console.warn('[meetings] generate report error:', e)
+    return null
+  }
+}
+
+export async function fetchMeetingReports(
+  meetingId: string
+): Promise<MeetingReport[]> {
+  try {
+    const { data, error } = await supabase.rpc('get_meeting_reports', {
+      p_meeting_id: meetingId,
+    })
+    if (error) {
+      console.warn('[meetings] fetch reports failed:', error.message)
+      return []
+    }
+    return (data as MeetingReport[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] fetch reports error:', e)
+    return []
+  }
+}

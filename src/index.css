@@ -571,3 +571,10 @@ select:invalid { color: var(--av-text-muted); }
   0%, 100% { opacity: 0.7; }
   50% { opacity: 0.4; }
 }
+
+/* Print styles — for printable reports (MeetingReportView, MonthlyReview) */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  .min-h-screen { min-height: auto !important; }
+}
