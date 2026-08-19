@@ -4,14 +4,24 @@
 // evidence/confidence/proposed destinations, and on confirm raise a
 // business event that downstream modules react to.
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { parseIntent } from '../lib/intentParser'
 import { useToast } from '../components/Toast'
 import { emitBusinessEvent } from '../lib/businessOS'
 import {
-  Sparkles, Send, Check, X, AlertTriangle, ArrowRight,
+  acceptAttrForKind,
+  captureModeFor,
+  linkCaptureToEvent,
+  processCaptureAttachment,
+} from '../lib/captureAttachments'
+import { useAttachmentUploads } from '../components/capture/useAttachmentUploads'
+import AttachmentTray from '../components/capture/AttachmentTray'
+import VoiceCapture from '../components/capture/VoiceCapture'
+import ImageCapture from '../components/capture/ImageCapture'
+import {
+  Sparkles, Check, X, AlertTriangle, ArrowRight,
   Database, Shield, Loader2, Mic, Paperclip, Image as ImageIcon
 } from 'lucide-react'
 
@@ -36,6 +46,47 @@ export default function AICapture() {
   const [parsing, setParsing] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [done, setDone] = useState(false)
+  // Multimodal: Clip / Mic / Image
+  const uploads = useAttachmentUploads()
+  const [voiceOpen, setVoiceOpen] = useState(false)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [ocrRunning, setOcrRunning] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
+
+  function handleFilePick(kind: 'file' | 'image', file: File) {
+    if (kind === 'image') {
+      // Images go through preview → compress → confirm first
+      const check = validateImageQuick(file)
+      if (check) { showToast(check, 'error'); return }
+      setImageFile(file)
+      return
+    }
+    const added = uploads.add('file', file, file.name)
+    if (!added.ok) showToast(added.reason, 'error')
+  }
+
+  function validateImageQuick(file: File): string | null {
+    if (!file.type.startsWith('image/')) return 'That is not an image.'
+    return null
+  }
+
+  async function handleRunOcr(localId: string) {
+    const item = uploads.items.find(it => it.localId === localId)
+    if (!item?.attachmentId) return
+    setOcrRunning(localId)
+    const result = await processCaptureAttachment(item.attachmentId, 'ocr')
+    setOcrRunning(null)
+    if (result.error || !result.ocr) {
+      showToast(result.error ?? 'Could not read the image', 'error')
+      return
+    }
+    uploads.patchItem(localId, { ocr: result.ocr })
+  }
+
+  function appendToInput(text: string) {
+    setInput(prev => (prev.trim() ? `${prev.trim()} ${text}` : text))
+  }
 
   async function handleParse() {
     if (!input.trim()) return
@@ -47,7 +98,7 @@ export default function AICapture() {
       if (error) throw error
       setIntent(data.intent)
       if (data.guardrail) setGuardrail(data.guardrail)
-    } catch (e) {
+    } catch {
       // Fallback: local parse so the feature works even if the edge fn
       // isn't deployed yet. Mirrors the edge fn's deterministic parser.
       setIntent(localParse(input.trim()))
@@ -58,6 +109,10 @@ export default function AICapture() {
 
   async function handleConfirm() {
     if (!intent || !staff?.business_id) return
+    if (uploads.hasActiveUploads) {
+      showToast('Wait for the uploads to finish, or remove them.', 'error')
+      return
+    }
     setConfirming(true)
     try {
       // Raise the canonical business event. Downstream handlers in the
@@ -68,7 +123,12 @@ export default function AICapture() {
       payload._raw = input.trim()
       payload._destinations = intent.destinations
 
-      await emitBusinessEvent({
+      const ready = uploads.readyAttachments
+      const readyIds = ready.map(a => a.attachmentId!).filter(Boolean)
+      const hasVoiceTranscript = ready.some(a => a.kind === 'audio' && a.transcript)
+      payload._attachment_ids = readyIds
+
+      const eventId = await emitBusinessEvent({
         business_id: staff.business_id,
         event_type: intent.event_type,
         entity_type: intent.event_type === 'DealWon' ? 'deal'
@@ -80,9 +140,16 @@ export default function AICapture() {
         related_entities: intent.destinations.map(d => ({ type: d.entity_type, action: d.action })),
         source: 'ai_gateway',
         actor_id: staff.id,
-        capture_mode: 'natural_language',
+        capture_mode: captureModeFor(ready.map(a => a.kind), hasVoiceTranscript),
         confidence: intent.confidence,
       })
+
+      // Link the evidence to the event (capture ↔ attachment relationship).
+      if (eventId) {
+        for (const a of ready) {
+          if (a.attachmentId) void linkCaptureToEvent(a.attachmentId, eventId)
+        }
+      }
       setDone(true)
       // Be specific about what was acted on so the user knows the capture
       // actually wrote records, not just raised an event.
@@ -140,11 +207,24 @@ export default function AICapture() {
           className="w-full rounded-2xl border border-[var(--av-border)] bg-white p-4 pr-28 text-[var(--av-text)] placeholder:text-[var(--av-text-tertiary)] focus:border-[var(--av-primary)] focus:outline-none resize-none"
         />
         <div className="absolute right-3 bottom-3 flex items-center gap-1">
-          <button title="Voice" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><Mic size={18} /></button>
-          <button title="Attach file" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><Paperclip size={18} /></button>
-          <button title="Image" className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-secondary)]"><ImageIcon size={18} /></button>
+          <button onClick={() => setVoiceOpen(true)} title="Voice" className="p-2 rounded-lg hover:bg-[var(--av-primary-soft)] hover:text-[var(--av-primary)] text-[var(--av-text-secondary)] transition"><Mic size={18} /></button>
+          <button onClick={() => fileInputRef.current?.click()} title="Attach file" className="p-2 rounded-lg hover:bg-[var(--av-primary-soft)] hover:text-[var(--av-primary)] text-[var(--av-text-secondary)] transition"><Paperclip size={18} /></button>
+          <button onClick={() => imageInputRef.current?.click()} title="Image" className="p-2 rounded-lg hover:bg-[var(--av-primary-soft)] hover:text-[var(--av-primary)] text-[var(--av-text-secondary)] transition"><ImageIcon size={18} /></button>
         </div>
+        <input ref={fileInputRef} type="file" accept={acceptAttrForKind('file')} className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleFilePick('file', f); e.target.value = '' }} />
+        <input ref={imageInputRef} type="file" accept={acceptAttrForKind('image')} capture="environment" className="hidden"
+          onChange={e => { const f = e.target.files?.[0]; if (f) handleFilePick('image', f); e.target.value = '' }} />
       </div>
+
+      <AttachmentTray
+        items={uploads.items}
+        onRetry={uploads.retry}
+        onRemove={uploads.remove}
+        onRunOcr={handleRunOcr}
+        onUseOcr={appendToInput}
+        ocrRunning={ocrRunning}
+      />
 
       <div className="flex justify-end mt-3">
         <button onClick={handleParse} disabled={!input.trim() || parsing}
@@ -261,6 +341,49 @@ export default function AICapture() {
             Capture something else
           </button>
         </div>
+      )}
+
+      {/* Voice capture modal */}
+      {voiceOpen && (
+        <VoiceCapture
+          onClose={() => setVoiceOpen(false)}
+          onComplete={result => {
+            setVoiceOpen(false)
+            appendToInput(result.transcript)
+            if (result.attachment) {
+              uploads.registerReady({
+                kind: 'audio',
+                fileName: result.attachment.fileName,
+                mimeType: result.attachment.mimeType,
+                sizeBytes: result.attachment.sizeBytes,
+                attachmentId: result.attachment.attachmentId,
+                transcript: result.attachment.transcript,
+                durationSeconds: result.attachment.durationSeconds,
+              })
+            }
+          }}
+        />
+      )}
+
+      {/* Image preview → compress → confirm modal */}
+      {imageFile && (
+        <ImageCapture
+          file={imageFile}
+          onClose={() => setImageFile(null)}
+          onComplete={r => {
+            setImageFile(null)
+            const previewUrl = URL.createObjectURL(r.blob)
+            const added = uploads.add('image', r.blob, r.fileName, {
+              width: r.width,
+              height: r.height,
+              previewUrl,
+            })
+            if (!added.ok) {
+              URL.revokeObjectURL(previewUrl)
+              showToast(added.reason, 'error')
+            }
+          }}
+        />
       )}
     </div>
   )

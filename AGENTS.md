@@ -2669,3 +2669,100 @@ Each phase leaves the app stable; Phase A is stable (green baseline).
   until then (meeting lifecycle RPCs return errors -> wrappers return null ->
   UI shows existing meetings only, no lifecycle actions) because every caller
   is best-effort/non-blocking.
+
+
+## Session 33 (2026-08-19): Quick Capture Multimodal — Clip/Mic/Image (checklist item 3)
+
+First item of the "NOT STARTED" master checklist, per the user's recommended
+build order. The AICapture surface had Mic/Paperclip/Image buttons with NO
+handlers — multimodal capture did not exist. 1 commit, pushed to main.
+
+### Critical latent bug found by local smoke testing
+`business_events` (058) has the `business_events_updated_at` trigger
+(update_updated_at → NEW.updated_at := NOW()) but NO updated_at column. Every
+UPDATE on business_events — including process_business_event's
+`SET processed = FALSE`, which runs inside EVERY emit_business_event —
+raised "record new has no field updated_at": the ENTIRE event bus was broken
+on any fresh DB (invisible on live because 058+ isn't deployed there yet).
+The CI migration job never caught it because it smoke-tests SELECT counts,
+never CALLS emit_business_event. Fixed additively (ALTER TABLE ADD COLUMN IF
+NOT EXISTS updated_at) inside the capture migration. LESSON: smoke-test the
+RPC a feature depends on, not just the migration's own objects.
+
+### What shipped (migration 20260819050000 + capture-process edge fn)
+- **capture_attachments table** — attachment metadata (kind file/image/audio,
+  mime, size, dimensions/duration), the capture↔attachment relationship
+  (event_id → business_events), optional direct entity link
+  (entity_type/entity_id), transcript (mic) + OCR result (image), status
+  lifecycle (pending → available | failed). RLS business-scoped.
+- **capture-attachments bucket (PRIVATE)** — storage RLS keys off the path
+  convention `captures/{business_id}/{attachment_id}/{file}` using a TEXT
+  segment comparison (NO uuid cast — a malformed path fails the check instead
+  of erroring the query, unlike the meetings bucket pattern).
+- **9 RPCs** (SECURITY DEFINER + membership-guarded): create_capture_attachment
+  (server-side kind/mime/size caps — image ≤15MB image/*, audio ≤50MB
+  audio/*+video/webm, file ≤25MB document allowlist; returns private path),
+  finalize, generate_capture_attachment_url (the §32 auth gate — never
+  getPublicUrl), link_capture_to_event (verifies BOTH rows belong to the
+  caller's business), link_capture_to_entity, save_capture_transcript,
+  save_capture_ocr, list_capture_attachments, delete_capture_attachment.
+- **capture-process edge fn** — action=transcribe (Whisper) / action=ocr
+  (GPT-4o-mini vision). JWT-verified + explicit staff-membership check before
+  service-role use. OCR prompt: "If you cannot identify the field, use null.
+  Do not fabricate." (§22). Requires OPENAI_API_KEY (same as transcribe-audio).
+
+### Frontend (AICapture.tsx — the 3 dead buttons are now functional)
+- **src/lib/captureAttachments.ts** — pure testable helpers
+  (validateCaptureFile, isMimeAllowed, shouldCompressImage, compressImage
+  canvas-resize to ≤1920px JPEG q0.85, describeOcrAsText, captureModeFor,
+  formatBytes, acceptAttrForKind) + supabase wrappers + uploadCaptureFile
+  (XHR with progress events + cancel — supabase-js exposes no progress).
+- **src/components/capture/useAttachmentUploads.ts** — upload state machine
+  (validate → create row+path → XHR upload w/ progress → finalize → ready;
+  failed keeps the blob for single-click retry; remove cancels in-flight +
+  deletes the row best-effort; registerReady for the voice flow).
+- **AttachmentTray.tsx** — per-attachment chips: icon/preview, name, size,
+  progress bar, retry-on-failure, remove; image OCR card ("What I read from
+  the image" + "Use these details in the capture").
+- **VoiceCapture.tsx** — the mic production flow: permission handling
+  (NotAllowed/NotFound/NotReadable each get a specific message), listening
+  state (pulsing dot + timer), stop/cancel, upload → Whisper → EDITABLE
+  transcript (the edit is the transcript of record, persisted via
+  save_capture_transcript). Browser fallback: MediaRecorder unavailable OR
+  Whisper fails → Web Speech API live transcription; neither → type
+  manually. Cancel discards the uploaded row (no orphans).
+- **ImageCapture.tsx** — preview → validate → compress/resize (client canvas,
+  skips <300KB + gifs) → confirm; shows "12.4MB → 890KB" before attaching.
+- **AICapture integration** — Clip/Image/Mic buttons functional. On confirm:
+  capture_mode becomes voice/image/file (not always natural_language),
+  payload._attachment_ids records evidence, emit_business_event's returned
+  UUID → link_capture_to_event for each ready attachment. Confirm blocked
+  while uploads in-flight (no false-partial-commit, §76).
+
+### Tests (24 new, tests/frontend/lib/quickCaptureMultimodal.test.ts)
+Validation caps, mime allowlists (incl. MediaRecorder video/webm),
+compress-decision (skip small/gif), capture_mode precedence
+(voice>image>file>natural_language), OCR sentence builder never fabricates
+(nulls omitted, bare "Receipt." floor), formatBytes, §32 path boundary.
+
+### Gotcha discovered: vitest relative-path rule
+`tests/frontend/lib/*.test.ts` value-imports need `../../../src/...` (three
+levels). `import type` with `../../src/...` only LOOKS right because type
+imports are erased before resolution. Several existing test files have the
+"wrong" type-only path — harmless until someone value-imports from them.
+
+### Verification
+tsc clean; vite build 0 warnings; vitest 528/528 (+24); schema-drift 0.
+Migration applies clean + idempotent against postgres:15 (Docker) AND passed
+a 10-assertion functional smoke test (validation caps, finalize, signed-URL
+gate pending→NULL, link-to-event same-business check, transcript save,
+delete-returns-path).
+
+### Deploy status
+Vercel production: deploying via main-push workflow.
+STILL needs live DB: migration 20260819050000 must be applied to Supabase
+(project kgsgqvatyleetyquffya) + capture-process edge fn deployed +
+OPENAI_API_KEY set (same key as transcribe-audio). Until then: buttons open
+the modals but create_capture_attachment errors → honest "Upload setup
+failed" state in the tray with retry; voice transcribe failure offers the
+live-speech fallback or attach-and-type. No crashes (§24 best-effort).
