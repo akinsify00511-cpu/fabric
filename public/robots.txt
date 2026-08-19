@@ -1,0 +1,69 @@
+# Avenize — robots.txt
+# Discovery Intelligence layer, Phase B3: the public/private search boundary.
+#
+# PUBLIC (indexable, AI-crawlable): the marketing/content surface —
+# landing, pricing, public booking, public lead-capture.
+# PRIVATE (never crawled/indexed): the application, onboarding, signing
+# flows, invites, operator surfaces, and anything under /app.
+# Customer business data (CRM, finance, meetings, Business Brain context)
+# lives behind auth AND is excluded here as defense-in-depth.
+
+User-agent: *
+Allow: /$
+Allow: /pricing
+Allow: /book
+Allow: /leads
+Allow: /lead
+Allow: /login
+Allow: /signup
+
+# Private application + flows — never index, never AI-crawl.
+Disallow: /app
+Disallow: /onboarding
+Disallow: /join
+Disallow: /sign
+Disallow: /upgrade
+Disallow: /owner-insights
+Disallow: /field-location
+Disallow: /builder
+Disallow: /platform-ops
+Disallow: /forgot-password
+Disallow: /update-password
+Disallow: /auth/
+Disallow: /api/
+
+# Explicit AI crawlers: welcome on the public surface (GEO — we WANT Avenize
+# cited correctly), bound by the same private boundary.
+User-agent: GPTBot
+Allow: /$
+Allow: /pricing
+Disallow: /app
+Disallow: /sign
+Disallow: /join
+Disallow: /onboarding
+
+User-agent: ClaudeBot
+Allow: /$
+Allow: /pricing
+Disallow: /app
+Disallow: /sign
+Disallow: /join
+Disallow: /onboarding
+
+User-agent: PerplexityBot
+Allow: /$
+Allow: /pricing
+Disallow: /app
+Disallow: /sign
+Disallow: /join
+Disallow: /onboarding
+
+User-agent: Google-Extended
+Allow: /$
+Allow: /pricing
+Disallow: /app
+Disallow: /sign
+Disallow: /join
+Disallow: /onboarding
+
+Sitemap: https://avenize.com/sitemap.xml

@@ -72,7 +72,7 @@
           "name": "How does Avenize save time?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "By eliminating app-switching and data duplication. Teams work from one source of truth, with automated workflows saving an average of 12 hours per week per employee."
+            "text": "By eliminating app-switching and data duplication. Teams work from one source of truth — CRM, projects, finance, HR and operations all share the same data, with workflow automation built in."
           }
         },
         {
@@ -80,7 +80,7 @@
           "name": "Is my data secure?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Enterprise-grade security with SOC 2 Type II certification, GDPR compliance, 256-bit encryption, SSO, and 2FA."
+            "text": "Every business's data is isolated with row-level security on every table, encrypted in transit and at rest, with optional two-factor authentication and single sign-on."
           }
         },
         {
@@ -88,7 +88,7 @@
           "name": "How much does Avenize cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Start free with Core plan. Professional is $29/user/month. Enterprise is $49/user/month with dedicated support."
+            "text": "Start free. Paid plans start at ₦15,000/month (Starter) up to ₦380,000/month (Scale) with multi-subsidiary support and dedicated support."
           }
         }
       ]
@@ -133,15 +133,8 @@
       "offers": {
         "@type": "AggregateOffer",
         "lowPrice": "0",
-        "highPrice": "49",
-        "priceCurrency": "USD"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "1247",
-        "bestRating": "5",
-        "worstRating": "1"
+        "highPrice": "380000",
+        "priceCurrency": "NGN"
       }
     }
     </script>
@@ -177,25 +170,28 @@
     }
     </script>
     
-    <!-- Product Schema for Pricing -->
+    <!-- Product Schema for Pricing — aligned with the real pricing page
+         (₦15,000–₦380,000/mo). Never contradict the visible page (B5). -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Product",
-      "name": "Avenize Professional",
-      "description": "Professional plan with advanced features for growing teams",
+      "name": "Avenize",
+      "description": "The Business Operating System — plans from free to multi-subsidiary scale",
       "brand": {"@type": "Brand", "name": "Avenize"},
       "offers": {
-        "@type": "Offer",
-        "price": "29",
-        "priceCurrency": "USD",
+        "@type": "AggregateOffer",
+        "lowPrice": "0",
+        "highPrice": "380000",
+        "priceCurrency": "NGN",
+        "offerCount": "6",
         "availability": "https://schema.org/InStock"
       }
     }
     </script>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#4285F4" />
+    <meta name="theme-color" content="#155BB4" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Avenize" />
