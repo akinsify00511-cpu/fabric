@@ -42,8 +42,9 @@ def extract_frontend_references():
     rpcs = {}
     buckets = {}
 
-    from_pattern = re.compile(r"\.from\(['\"]([a-z_]+)['\"]\)")
-    rpc_pattern = re.compile(r"\.rpc\(['\"]([a-z_]+)['\"]\)")
+    # Supabase identifiers can contain letters, digits, underscores and hyphens.
+    from_pattern = re.compile(r"\.from\(['\"]([a-z0-9_-]+)['\"]\)")
+    rpc_pattern = re.compile(r"\.rpc\(['\"]([a-z0-9_-]+)['\"]\)")
 
     for root, _, files in os.walk(SRC_DIR):
         for f in files:
@@ -76,13 +77,14 @@ def load_migration_definitions():
     rpcs = set()
     buckets = set()
 
+    identifier = r"[a-zA-Z0-9_-]+"
     table_patterns = [
-        re.compile(r"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(?:public\.)?([a-z_]+)", re.IGNORECASE),
-        re.compile(r"CREATE\s+(?:OR REPLACE\s+)?VIEW\s+(?:public\.)?([a-z_]+)", re.IGNORECASE),
+        re.compile(rf"CREATE TABLE\s+(?:IF NOT EXISTS\s+)?(?:public\.)?({identifier})", re.IGNORECASE),
+        re.compile(rf"CREATE\s+(?:OR REPLACE\s+)?VIEW\s+(?:public\.)?({identifier})", re.IGNORECASE),
     ]
-    rpc_pattern = re.compile(r"CREATE\s+(?:OR REPLACE\s+)?FUNCTION\s+(?:public\.)?([a-z_]+)\s*\(", re.IGNORECASE)
+    rpc_pattern = re.compile(rf"CREATE\s+(?:OR REPLACE\s+)?FUNCTION\s+(?:public\.)?({identifier})\s*\(", re.IGNORECASE)
     bucket_pattern = re.compile(
-        r"INSERT\s+INTO\s+storage\.buckets\s*\([^)]*\)\s*VALUES?\s*\([^)]*['\"]([a-z_]+)['\"]",
+        rf"INSERT\s+INTO\s+storage\.buckets\s*\([^)]*\)\s*VALUES?\s*\([^)]*['\"]({identifier})['\"]",
         re.IGNORECASE | re.DOTALL,
     )
 
