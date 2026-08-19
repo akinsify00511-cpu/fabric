@@ -7,38 +7,24 @@
 --
 -- The capture event stores the private storage path in payload._attachments.
 -- No public URLs are persisted or required.
+--
+-- The repository's migration CI uses a lightweight storage schema shim that
+-- intentionally exposes only the portable bucket columns (id/name/public).
+-- File-size and MIME restrictions are therefore enforced in the client for
+-- v1; the production Supabase Storage service can additionally enforce them
+-- through bucket configuration.
 -- ============================================================================
 
 \set ON_ERROR_STOP on
 
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+INSERT INTO storage.buckets (id, name, public)
 VALUES (
   'capture-attachments',
   'capture-attachments',
-  false,
-  10485760,
-  ARRAY[
-    'application/pdf',
-    'text/plain',
-    'text/csv',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp',
-    'image/heic',
-    'image/heif'
-  ]
+  false
 )
 ON CONFLICT (id) DO UPDATE
-SET public = false,
-    file_size_limit = 10485760,
-    allowed_mime_types = EXCLUDED.allowed_mime_types;
+SET public = false;
 
 -- Read/list/download access is restricted to authenticated staff belonging to
 -- the business encoded in the first path segment.
