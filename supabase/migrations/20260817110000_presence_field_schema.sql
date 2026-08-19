@@ -31,17 +31,17 @@ create table if not exists public.business_locations (
   radius_meters numeric not null default 150 check (radius_meters between 10 and 5000),
   is_primary boolean not null default false,
   is_active boolean not null default true,
-  location extensions.geography(POINT,4326),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 create index if not exists business_locations_business_idx on public.business_locations(business_id);
-create index if not exists business_locations_geo_idx on public.business_locations using gist(location);
 
 create or replace function public.sync_business_location_point() returns trigger
 language plpgsql security invoker set search_path=''
 as $$ begin
-  new.location := extensions.st_setsrid(extensions.st_makepoint(new.longitude::double precision,new.latitude::double precision),4326)::extensions.geography;
+  if exists (select 1 from pg_extension where extname = 'postgis') then
+    new.location := extensions.st_setsrid(extensions.st_makepoint(new.longitude::double precision,new.latitude::double precision),4326)::extensions.geography;
+  end if;
   return new;
 end; $$;
 drop trigger if exists business_locations_sync_point on public.business_locations;
@@ -97,7 +97,7 @@ create table if not exists public.field_visits (
   assigned_staff_id uuid not null references public.staff(id) on delete restrict,
   customer_name text not null, customer_phone text, customer_address text,
   latitude numeric(10,7), longitude numeric(10,7), radius_meters numeric not null default 150 check (radius_meters between 10 and 5000),
-  customer_location extensions.geography(POINT,4326), scheduled_at timestamptz,
+  scheduled_at timestamptz,
   status text not null default 'assigned' check (status in ('assigned','accepted','en_route','arrived','verified','in_progress','completed','cancelled','rescheduled','customer_unavailable','unverified')),
   arrived_at timestamptz, completed_at timestamptz,
   arrival_lat numeric(10,7), arrival_lng numeric(10,7), arrival_accuracy_meters numeric, arrival_distance_meters numeric,
@@ -109,16 +109,35 @@ create table if not exists public.field_visits (
 );
 create index if not exists field_visits_business_idx on public.field_visits(business_id,scheduled_at desc);
 create index if not exists field_visits_staff_idx on public.field_visits(assigned_staff_id,scheduled_at desc);
-create index if not exists field_visits_geo_idx on public.field_visits using gist(customer_location);
 create or replace function public.sync_field_visit_point() returns trigger
 language plpgsql security invoker set search_path=''
 as $$ begin
-  if new.latitude is not null and new.longitude is not null then new.customer_location := extensions.st_setsrid(extensions.st_makepoint(new.longitude::double precision,new.latitude::double precision),4326)::extensions.geography;
-  else new.customer_location := null; end if;
+  if exists (select 1 from pg_extension where extname = 'postgis') then
+    if new.latitude is not null and new.longitude is not null then new.customer_location := extensions.st_setsrid(extensions.st_makepoint(new.longitude::double precision,new.latitude::double precision),4326)::extensions.geography;
+    else new.customer_location := null; end if;
+  end if;
   return new;
 end; $$;
 drop trigger if exists field_visits_sync_point on public.field_visits;
 create trigger field_visits_sync_point before insert or update of latitude,longitude on public.field_visits for each row execute function public.sync_field_visit_point();
+
+-- Geo columns: geography + gist indexes only when PostGIS is available
+-- (Supabase). On bare postgres (CI) they degrade to TEXT columns so the
+-- schema still applies cleanly; geofencing stays disabled there until the
+-- migration runs on a Postgres with PostGIS (matches the guard above).
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'postgis') THEN
+    EXECUTE 'alter table public.business_locations add column if not exists location extensions.geography(POINT,4326)';
+    EXECUTE 'create index if not exists business_locations_geo_idx on public.business_locations using gist(location)';
+    EXECUTE 'alter table public.field_visits add column if not exists customer_location extensions.geography(POINT,4326)';
+    EXECUTE 'create index if not exists field_visits_geo_idx on public.field_visits using gist(customer_location)';
+  ELSE
+    EXECUTE 'alter table public.business_locations add column if not exists location text';
+    EXECUTE 'alter table public.field_visits add column if not exists customer_location text';
+    RAISE NOTICE 'postgis unavailable: location/customer_location created as TEXT (geofencing disabled until PostGIS is installed)';
+  END IF;
+END $$;
 
 create table if not exists public.field_visit_events (
   id uuid primary key default gen_random_uuid(), business_id uuid not null references public.businesses(id) on delete cascade,

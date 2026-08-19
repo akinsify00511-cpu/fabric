@@ -36,16 +36,17 @@ grep -rhoE "\.from\('[a-z_]+'\)" "$SRC_DIR" \
   | sed "s/\.from('//;s/')//" \
   | sort -u > /tmp/frontend_tables.txt
 
-# Extract all CREATE TABLE names from migrations
+# Extract all CREATE TABLE names from migrations (normalize case BEFORE the
+# sed strip: lowercase `create table` migrations must be handled too)
 grep -rhoiE "CREATE TABLE (IF NOT EXISTS )?(public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
-  | sed -E 's/CREATE TABLE (IF NOT EXISTS )?(public\.)?//' \
   | tr 'A-Z' 'a-z' \
+  | sed -E 's/create table (if not exists )?(public\.)?//' \
   | sort -u > /tmp/migration_tables.txt
 
 # Extract all CREATE VIEW names from migrations (views are valid table targets)
 grep -rhoiE "CREATE (OR REPLACE )?VIEW (public\.)?[a-z_]+" "$MIGRATIONS_DIR"/*.sql \
-  | sed -E 's/CREATE (OR REPLACE )?VIEW (public\.)?//' \
   | tr 'A-Z' 'a-z' \
+  | sed -E 's/create (or replace )?view (public\.)?//' \
   | sort -u > /tmp/migration_views.txt
 
 # Extract all storage bucket names from migrations (storage.from('bucket'))
