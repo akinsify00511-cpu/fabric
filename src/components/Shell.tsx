@@ -11,7 +11,7 @@ import {
   ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
   ShieldAlert,
   Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
-  Scale, ShoppingCart, BookOpen, Globe, Stethoscope, GitCompare,
+  Scale, ShoppingCart, BookOpen, Globe, Stethoscope, GitCompare, Video,
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useBranding } from '../lib/BrandingContext'
@@ -132,6 +132,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageCircle, toolKey: 'settings' },
       { to: '/app/sms', label: 'SMS Broadcast', icon: MessageSquareText, toolKey: 'settings' },
       { to: '/app/meetings', label: 'Meetings', icon: Headphones, toolKey: 'meetings' },
+      { to: '/app/meeting-capture', label: 'Capture', icon: Video, toolKey: 'meetings' },
       { to: '/app/announcements', label: 'Announcements', icon: Megaphone, toolKey: 'dashboard' },
       { to: '/app/wall', label: 'Company Wall', icon: Sparkles, toolKey: 'dashboard' },
     ],

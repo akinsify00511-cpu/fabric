@@ -439,27 +439,34 @@ export default function Meetings() {
     }
 
     try {
-      const fileName = `meetings/${selectedMeeting.id}/${Date.now()}.webm`
+      // Phase B fix: signed-URL upload path + finalize_recording RPC.
+      // The old path used getPublicUrl() on a PRIVATE bucket (returned 404)
+      // — a section-32 security gap. Now: create upload path via RPC (which
+      // also creates a pending meeting_media row), upload, then finalize.
+      const { data: uploadPath, error: pathError } = await supabase.rpc(
+        'create_recording_upload_path',
+        { p_meeting_id: selectedMeeting.id, p_capture_id: null, p_media_type: 'recording' }
+      )
+      if (pathError || !uploadPath) {
+        showToast('Could not create recording upload path', 'error')
+        return
+      }
+
       const { error: uploadError } = await supabase.storage
         .from('meeting-recordings')
-        .upload(fileName, blob)
+        .upload(uploadPath as string, blob)
 
       if (uploadError) throw uploadError
 
-      const { data: urlData } = supabase.storage
-        .from('meeting-recordings')
-        .getPublicUrl(fileName)
+      const durationSec = recordingTime > 0 ? recordingTime : Math.round(blob.size / 16000)
+      await supabase.rpc('finalize_recording', {
+        p_storage_path: uploadPath as string,
+        p_duration_seconds: durationSec,
+        p_size_bytes: blob.size,
+        p_meeting_id: selectedMeeting.id,
+        p_capture_id: null,
+      })
 
-      await supabase
-        .from('meetings')
-        .update({ recording_url: urlData.publicUrl })
-        .eq('id', selectedMeeting.id)
-
-      setMeetings(prev => prev.map(m => 
-        m.id === selectedMeeting.id ? { ...m, recording_url: urlData.publicUrl } : m
-      ))
-      setSelectedMeeting(prev => prev ? { ...prev, recording_url: urlData.publicUrl } : null)
-      
       showToast('Recording saved!', 'success')
     } catch (err) {
       console.error('Failed to save recording:', err)
