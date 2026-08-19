@@ -191,6 +191,53 @@ deploy-gate as all prior sessions); frontend degrades gracefully until then.
 
 
 
+
+## Session 33 (2026-08-19): Red-team audit closure — RPC tenant guards + AI hardening
+
+Red-team closure of the Session-32 red-flag list. Claims were verified
+adversarially on real postgres:15 + fixture data before fixing.
+
+### RPC tenant guards (the P1 critical): zz_rpc_tenant_guards_closure.sql
+- Inventory (scripts/security_inventory.py): 417 functions scanned; 77
+  SECURITY DEFINER functions with a business_id param and NO membership
+  guard — callable cross-tenant because migration 998 blanket-GRANTed
+  EXECUTE to authenticated/PUBLIC.
+- GENERATOR (scripts/gen_rpc_tenant_guards.py) re-declares each with the
+  canonical membership guard (get_current_staff membership check; members
+  only). plpgsql functions: guard inserted after BEGIN. sql-language
+  functions: wrapped in plpgsql with the guard (RETURN QUERY for setof,
+  RETURN for solos). Guard yields empty result for non-members.
+- REVOKE-only classes (~23 fns): Brain-poisoning vectors (emit_business_event
+  + process_business_event + handler_*, execute_automation_action), cron
+  fan-outs (detect_*_all, run_due_automations, evaluate_platform_alerts,
+  reprocess_failed_automations, scan_all_business_data_quality,
+  compute_all_business_health, run_all_recommendation_rules,
+  refresh_all_business_metrics), admin helpers (grant_business_plan,
+  seed_ai_roles, _ensure_test_auth_user), single-business detectors
+  (detect_customer_inactive/_contracts_expiring/_payroll_due).
+  REVOKED FROM PUBLIC + anon + authenticated; service_role keeps EXECUTE
+  (edge fns + triggers + pg_cron keep working).
+- Idempotent (DO $$ EXCEPTION WHEN undefined_function per statement).
+- File is alpabetical-last (zz_) so nothing after it re-grants.
+
+### Closure tests (postgres:15, fixtured member vs nonmember)
+- member: compute_business_health returns value; nonmember: NULL.
+- emit_business_event from authed user: permission denied.
+- Full chain: 164/164 apply clean + idempotent.
+- RLS fixture: member read/write OK; nonmember can't see row.
+
+### AI security hardening (ask-avenize edge fn)
+- Question interpolated inside <question>...</question> and marked as
+  untrusted user data + refusal rule for role-change/injection attempts.
+  Reduces prompt-injection surface (user question never overwrites the
+  anti-fabrication rules).
+- Verified context isolation: the edge fn assembles data with the caller's
+  own JWT (user-scoped client) — never a service-role aggregate.
+- Daily cap + server-derived businessId retained.
+
+### Verification
+tsc clean; vite build 0 warnings; vitest 566/566; schema drift 0; 164/164
+migrations apply clean + idempotent on postgres:15. smoke test pre-commit.
 ## Session 26 (2026-08-18): Meeting, Communication & Meeting Intelligence — Phases B-E (bounded subsystem)
 
 User directive: build "Avenize Meeting, Communication & Meeting Intelligence"
