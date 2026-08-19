@@ -1,3 +1,104 @@
+## Session 32 (2026-08-19): Avenize-first architecture — internal Receipt OCR, internal WebAuthn/Passkeys, Generative Copilot
+
+User directive: "no external SaaS dependency" does NOT mean no libraries or
+platform primitives. Do NOT block features on external providers — build
+capabilities inside Avenize using the existing stack (Supabase/Postgres,
+browser APIs, client-side libraries). Three tracks shipped, each verified +
+committed separately.
+
+### Track 1 — Internal Receipt OCR (commit 0483f6f, migration 20260819020000)
+- tesseract.js runs IN THE BROWSER (client-side library, no OCR SaaS);
+  extraction is deterministic rule-based parsing; nothing becomes a financial
+  record until a human confirms.
+- `receipt_documents` (original + raw text + structured fields + per-field
+  confidence), private `receipts` bucket with business-scoped storage RLS
+  ({business_id}/ path convention, signed URLs only — same pattern as
+  meeting-recordings), 4 membership-guarded RPCs: create_receipt_upload_path,
+  finalize_receipt_extraction, confirm_receipt (writes canonical
+  cashflow_entries 004 expense + links, IDEMPOTENT — repeat confirm returns
+  the same entry), reject_receipt.
+- `src/lib/receiptParser.ts`: vendor, receipt number, date (4 formats),
+  currency, subtotal/tax/discount/total with reconciliation cross-check,
+  payment method, line items (price = LAST amount on the line), category
+  guess, per-field confidence + weighted overall. Anti-fabrication (§22):
+  NULL when unsupported, never invented; garbage input yields null vendor.
+- Receipts.tsx (/app/receipts): drag-drop upload → in-browser OCR → editable
+  review panel with confidence chips + low-confidence warning → Confirm
+  (records expense) / Discard. Nav in Money group.
+- Verified on postgres:15: full RPC round-trip + idempotency + guards.
+  22 parser tests (3 real receipt formats + garbage anti-fabrication).
+
+### Track 2 — Internal WebAuthn/Passkeys (commit e5981b7→2decfa5, migration 20260819030000)
+- Browser WebAuthn API → `webauthn` edge fn (server-side cryptographic
+  verification via @simplewebauthn/server@13 in our own Supabase Edge
+  runtime) → Postgres credential registry. No Auth0/Clerk/Okta.
+- `webauthn_credentials` (public key + counter ONLY — asymmetric by design,
+  nothing secret stored; own-rows RLS; soft-revoke preserves audit),
+  `webauthn_challenges` (single-use, 5-min TTL, client-DENIED — service role
+  only), `webauthn_audit_log` (every ceremony), revoke_my_passkey RPC.
+- Edge fn: registration requires an EXISTING session (passkeys attach to
+  accounts, never create them); authentication = discoverable credentials
+  (usernameless passwordless login); verified assertion mints a one-time
+  magiclink token the client exchanges via verifyOtp; counter-monotonicity
+  clone detection; rate limiting via check_auth_rate_limit (999).
+- Client: src/lib/passkeys.ts; SecuritySettings Passkeys card (register/
+  list/revoke); Login "Sign in with a passkey" (browser-support gated).
+- Verified on postgres:15: revoke own=yes / twice=false / cross-user=false /
+  audit row written. 13 contract tests (challenge single-use + TTL, counter
+  monotonicity, public-material-only, session-only-after-verified-assertion).
+
+### Track 3 — Generative Copilot (commit 48b72ba→76116be, migration 20260819040000)
+- Ask Avenize is no longer deferred on an LLM provider: the deterministic
+  intelligence layer IS the copilot core; an LLM is an optional fallback
+  that never answers blind.
+- `ask-avenize` edge fn: JWT + membership verified; daily per-business cap
+  (100 user msgs, cost governance); assembles REAL context via the caller's
+  JWT (current_business_health, current_metrics, open_recommendations,
+  business_brain state+NBA, overdue count); answers (1) deterministic router
+  when the intent maps to governed data, (2) optional LLM (OPENAI_API_KEY or
+  ANTHROPIC_API_KEY) with a strict anti-fabrication prompt over the context,
+  (3) honest deterministic fallback. Both sides logged.
+- `src/lib/copilotRouter.ts` is the canonical, unit-tested router (the edge
+  fn mirrors it — Deno can't import src/; keep in sync). Contract (§22):
+  answers quote ONLY assembled-context values; missing data → honest no-data
+  answer + the action that creates it.
+- `copilot_messages` (business-scoped RLS; edge-fn-only writes) +
+  copilot_daily_usage RPC (membership-guarded — the #18 lesson applied).
+- AskAvenize.tsx (/app/ask): chat UI, provider badge ("Answered from your
+  live data" vs "AI reasoning over your data"), suggestions, history. Shell
+  Ask Avenize buttons now land here; Quick Capture still → /app/capture.
+- 15 router tests incl. the full anti-fabrication contract. Verified on
+  postgres:15: governance RPC member=2 / non-member=0.
+
+### Session notes
+- **Full-chain migration apply is now 163/163 GREEN** on bare postgres:15 +
+  ci_shim — the remote commit c1a4e24 ("fix(ci): repair all broken
+  migrations") healed the entire historical failure set (was 58/112). All
+  three Session-32 migrations are part of that green chain.
+- **Migration-number collision found post-rebase:** the remote CI-fix commit
+  took 20260819010000 for audit_logs_column_reconciliation while Session 31's
+  member-kinds used the same number. Renumbered member-kinds to
+  20260819015000. When the remote moves mid-session, ALWAYS re-check number
+  collisions after rebasing, not just before pushing.
+- Test-import gotcha: tests in tests/frontend/lib/ import src via THREE
+  levels (`../../../src/lib/...`), not two.
+
+### Verification (every commit + final)
+tsc clean; vite build 0 warnings; vitest 516 → 538 (+22) → 551 (+13) →
+566/566 (+15); schema-drift 0; all 3 migrations apply clean + idempotent
+against postgres:15; full-chain apply 163/163.
+
+### Deploy status
+- ⚠️ STILL needs live DB: migrations 20260819020000–20260819040000 (+ the
+  renumbered 20260819015000) must be applied to Supabase (project
+  kgsgqvatyleetyquffya). All idempotent. Frontend degrades gracefully until
+  then (receipts list empty, passkey section hidden/fails closed, copilot
+  falls back to honest answers) because every caller is best-effort.
+- The webauthn edge fn needs WEBAUTHN_RP_ID + WEBAUTHN_ORIGINS set in
+  Supabase Edge secrets for production domains (defaults cover localhost +
+  avenize.app). The copilot works WITHOUT any LLM key; OPENAI_API_KEY (or
+  ANTHROPIC_API_KEY) only widens the question space it can answer.
+
 ## Session 31 (2026-08-19): Verified-audit triage — account member kinds (the one genuine P0 gap)
 
 User pasted a 25-item "page exists vs production capability" audit classifying
@@ -34,7 +135,7 @@ express WHAT KIND of account (internal employee vs external consultant/
 vendor/expert/partner). `functional_roles` (027) = tool access, not identity;
 `vendors` (045) = supplier record, not member identity; `persona_type` (069)
 = persona intelligence. No member_kind anywhere. CLOSED:
-- **Migration 20260819010000_account_member_kinds.sql** (idempotent, verified
+- **Migration 20260819015000_account_member_kinds.sql** (idempotent, verified
   on postgres:15 Docker, ON_ERROR_STOP=1, applied twice):
   - `staff.member_kind TEXT NOT NULL DEFAULT 'staff'` + CHECK (owner/staff/
     consultant/vendor/expert/partner) + backfill (role='owner' → 'owner') +
