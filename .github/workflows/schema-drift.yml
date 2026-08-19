@@ -6,12 +6,16 @@ on:
       - 'src/**'
       - 'supabase/migrations/**'
       - 'scripts/schema-drift-check.sh'
+      - 'scripts/check_design_constitution.py'
+      - 'scripts/design_constitution_baseline.json'
   push:
     branches: [main]
     paths:
       - 'src/**'
       - 'supabase/migrations/**'
       - 'scripts/schema-drift-check.sh'
+      - 'scripts/check_design_constitution.py'
+      - 'scripts/design_constitution_baseline.json'
 
 jobs:
   schema-drift:
@@ -21,6 +25,17 @@ jobs:
 
       - name: Run schema drift check
         run: bash scripts/schema-drift-check.sh
+
+  # Phase A6: the Avenize Design Constitution gate. Fails when hardcoded-hex
+  # or anti-slop-class drift grows beyond the recorded baseline (new screens
+  # must use --av-* tokens; the baseline only burns down).
+  design-constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run design constitution gate
+        run: python3 scripts/check_design_constitution.py
 
   migration-test:
     runs-on: ubuntu-latest

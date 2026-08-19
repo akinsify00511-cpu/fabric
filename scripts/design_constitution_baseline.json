@@ -1,0 +1,510 @@
+{
+  "src/components/CommandPalette.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/components/CookieConsent.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/components/EntitlementGate.tsx": {
+    "hex": 2,
+    "slop": 0
+  },
+  "src/components/ImageComponents.tsx": {
+    "hex": 8,
+    "slop": 2
+  },
+  "src/components/MeetingComponents.tsx": {
+    "hex": 10,
+    "slop": 0
+  },
+  "src/components/NotificationBell.tsx": {
+    "hex": 0,
+    "slop": 1
+  },
+  "src/components/Notifications.tsx": {
+    "hex": 8,
+    "slop": 2
+  },
+  "src/components/PersonalizationHub.tsx": {
+    "hex": 7,
+    "slop": 1
+  },
+  "src/components/QCDashboard.tsx": {
+    "hex": 7,
+    "slop": 0
+  },
+  "src/components/SarahChat.tsx": {
+    "hex": 27,
+    "slop": 0
+  },
+  "src/components/Shell.tsx": {
+    "hex": 2,
+    "slop": 0
+  },
+  "src/components/Skeleton.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/components/StartMeetingModal.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/components/Toast.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/components/ToolOnboardingPopup.tsx": {
+    "hex": 9,
+    "slop": 0
+  },
+  "src/components/TrialBanner.tsx": {
+    "hex": 4,
+    "slop": 0
+  },
+  "src/components/VideoRoom.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/lib/BrandingContext.tsx": {
+    "hex": 10,
+    "slop": 0
+  },
+  "src/lib/charts.tsx": {
+    "hex": 30,
+    "slop": 0
+  },
+  "src/lib/useSubscription.tsx": {
+    "hex": 4,
+    "slop": 0
+  },
+  "src/pages/APISettings.tsx": {
+    "hex": 0,
+    "slop": 5
+  },
+  "src/pages/Accounting.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/AdminAnalytics.tsx": {
+    "hex": 16,
+    "slop": 3
+  },
+  "src/pages/Approvals.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/pages/AssetManagement.tsx": {
+    "hex": 0,
+    "slop": 1
+  },
+  "src/pages/AuditLog.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/AuthCallback.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/pages/Automations.tsx": {
+    "hex": 10,
+    "slop": 0
+  },
+  "src/pages/BoardMembers.tsx": {
+    "hex": 35,
+    "slop": 0
+  },
+  "src/pages/BrandingSettings.tsx": {
+    "hex": 17,
+    "slop": 0
+  },
+  "src/pages/Budgets.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/BusinessInfrastructure.tsx": {
+    "hex": 15,
+    "slop": 3
+  },
+  "src/pages/CRM.tsx": {
+    "hex": 2,
+    "slop": 1
+  },
+  "src/pages/Calendar.tsx": {
+    "hex": 3,
+    "slop": 3
+  },
+  "src/pages/Campaigns.tsx": {
+    "hex": 4,
+    "slop": 0
+  },
+  "src/pages/Chat.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/CommentsAndTimeline.tsx": {
+    "hex": 11,
+    "slop": 1
+  },
+  "src/pages/CompanyHome.tsx": {
+    "hex": 2,
+    "slop": 0
+  },
+  "src/pages/Contact.tsx": {
+    "hex": 19,
+    "slop": 0
+  },
+  "src/pages/CookiePolicy.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/pages/CurrencyExchange.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/pages/CustomerPortal.tsx": {
+    "hex": 0,
+    "slop": 8
+  },
+  "src/pages/Dashboard.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/pages/DataExport.tsx": {
+    "hex": 7,
+    "slop": 0
+  },
+  "src/pages/Departments.tsx": {
+    "hex": 1,
+    "slop": 0
+  },
+  "src/pages/DocumentsHub.tsx": {
+    "hex": 18,
+    "slop": 0
+  },
+  "src/pages/ElectronicSignatures.tsx": {
+    "hex": 11,
+    "slop": 0
+  },
+  "src/pages/Equipment.tsx": {
+    "hex": 2,
+    "slop": 0
+  },
+  "src/pages/Events.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/pages/ExpenseClaims.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/FinanceCenter.tsx": {
+    "hex": 10,
+    "slop": 1
+  },
+  "src/pages/FinanceNigeria.tsx": {
+    "hex": 7,
+    "slop": 0
+  },
+  "src/pages/ForgotPassword.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/HumanResources.tsx": {
+    "hex": 15,
+    "slop": 4
+  },
+  "src/pages/Integrations.tsx": {
+    "hex": 18,
+    "slop": 1
+  },
+  "src/pages/InventoryNigeria.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/Join.tsx": {
+    "hex": 20,
+    "slop": 0
+  },
+  "src/pages/Knowledge.tsx": {
+    "hex": 1,
+    "slop": 0
+  },
+  "src/pages/LabQC.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/pages/Landing.tsx": {
+    "hex": 17,
+    "slop": 2
+  },
+  "src/pages/LandingEnhanced.tsx": {
+    "hex": 22,
+    "slop": 0
+  },
+  "src/pages/LeadCapture.tsx": {
+    "hex": 22,
+    "slop": 0
+  },
+  "src/pages/Leads.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/LeaseManagement.tsx": {
+    "hex": 15,
+    "slop": 0
+  },
+  "src/pages/LeaveManagement.tsx": {
+    "hex": 11,
+    "slop": 0
+  },
+  "src/pages/Login.tsx": {
+    "hex": 9,
+    "slop": 0
+  },
+  "src/pages/Logistics.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/MaintenanceRequests.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/pages/MeetingAnalyticsView.tsx": {
+    "hex": 13,
+    "slop": 0
+  },
+  "src/pages/MeetingCapture.tsx": {
+    "hex": 12,
+    "slop": 0
+  },
+  "src/pages/MeetingIntelligenceView.tsx": {
+    "hex": 13,
+    "slop": 0
+  },
+  "src/pages/MeetingReportView.tsx": {
+    "hex": 12,
+    "slop": 0
+  },
+  "src/pages/Meetings.tsx": {
+    "hex": 28,
+    "slop": 0
+  },
+  "src/pages/MeetingsV2.tsx": {
+    "hex": 2,
+    "slop": 3
+  },
+  "src/pages/Monitoring.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/pages/More.tsx": {
+    "hex": 2,
+    "slop": 2
+  },
+  "src/pages/NotFound.tsx": {
+    "hex": 11,
+    "slop": 0
+  },
+  "src/pages/Notifications.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/pages/NotificationsCenter.tsx": {
+    "hex": 6,
+    "slop": 1
+  },
+  "src/pages/Onboarding.tsx": {
+    "hex": 86,
+    "slop": 0
+  },
+  "src/pages/Operations.tsx": {
+    "hex": 18,
+    "slop": 6
+  },
+  "src/pages/Organization.tsx": {
+    "hex": 13,
+    "slop": 0
+  },
+  "src/pages/Organogram.tsx": {
+    "hex": 13,
+    "slop": 0
+  },
+  "src/pages/OwnerInsights.tsx": {
+    "hex": 11,
+    "slop": 2
+  },
+  "src/pages/OwnerIntelligence.tsx": {
+    "hex": 0,
+    "slop": 1
+  },
+  "src/pages/PaymentSettings.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/pages/Payments.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/pages/Payroll.tsx": {
+    "hex": 0,
+    "slop": 3
+  },
+  "src/pages/People.tsx": {
+    "hex": 24,
+    "slop": 1
+  },
+  "src/pages/PlatformOpsDashboard.tsx": {
+    "hex": 44,
+    "slop": 0
+  },
+  "src/pages/Premium.tsx": {
+    "hex": 0,
+    "slop": 4
+  },
+  "src/pages/Pricing.tsx": {
+    "hex": 5,
+    "slop": 0
+  },
+  "src/pages/Privacy.tsx": {
+    "hex": 6,
+    "slop": 3
+  },
+  "src/pages/Profile.tsx": {
+    "hex": 7,
+    "slop": 0
+  },
+  "src/pages/ProjectSettings.tsx": {
+    "hex": 12,
+    "slop": 1
+  },
+  "src/pages/ProjectsNigeria.tsx": {
+    "hex": 15,
+    "slop": 3
+  },
+  "src/pages/Properties.tsx": {
+    "hex": 0,
+    "slop": 9
+  },
+  "src/pages/PropertyOwners.tsx": {
+    "hex": 3,
+    "slop": 0
+  },
+  "src/pages/PropertySales.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/PurchaseOrders.tsx": {
+    "hex": 8,
+    "slop": 0
+  },
+  "src/pages/Quotes.tsx": {
+    "hex": 14,
+    "slop": 4
+  },
+  "src/pages/Recruitment.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/ResourceBooking.tsx": {
+    "hex": 10,
+    "slop": 0
+  },
+  "src/pages/RoleSettings.tsx": {
+    "hex": 8,
+    "slop": 1
+  },
+  "src/pages/SMS.tsx": {
+    "hex": 11,
+    "slop": 2
+  },
+  "src/pages/SMSBroadcast.tsx": {
+    "hex": 0,
+    "slop": 4
+  },
+  "src/pages/SSOSettings.tsx": {
+    "hex": 11,
+    "slop": 1
+  },
+  "src/pages/SalesPerformance.tsx": {
+    "hex": 6,
+    "slop": 2
+  },
+  "src/pages/SearchPage.tsx": {
+    "hex": 0,
+    "slop": 3
+  },
+  "src/pages/SecuritySettings.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/Services.tsx": {
+    "hex": 9,
+    "slop": 0
+  },
+  "src/pages/Settings.tsx": {
+    "hex": 2,
+    "slop": 1
+  },
+  "src/pages/SignDocument.tsx": {
+    "hex": 81,
+    "slop": 0
+  },
+  "src/pages/Signup.tsx": {
+    "hex": 0,
+    "slop": 1
+  },
+  "src/pages/Social.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/StaffProfile.tsx": {
+    "hex": 21,
+    "slop": 2
+  },
+  "src/pages/Subscription.tsx": {
+    "hex": 20,
+    "slop": 2
+  },
+  "src/pages/Subsidiaries.tsx": {
+    "hex": 2,
+    "slop": 0
+  },
+  "src/pages/Tasks.tsx": {
+    "hex": 7,
+    "slop": 0
+  },
+  "src/pages/Terms.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/Tickets.tsx": {
+    "hex": 6,
+    "slop": 0
+  },
+  "src/pages/TimeTracking.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/UpdatePassword.tsx": {
+    "hex": 4,
+    "slop": 0
+  },
+  "src/pages/Vendors.tsx": {
+    "hex": 1,
+    "slop": 0
+  },
+  "src/pages/WhatsAppIntegration.tsx": {
+    "hex": 0,
+    "slop": 2
+  },
+  "src/pages/WorkflowBuilder.tsx": {
+    "hex": 10,
+    "slop": 2
+  },
+  "src/pages/WorkspaceSettings.tsx": {
+    "hex": 15,
+    "slop": 0
+  }
+}
