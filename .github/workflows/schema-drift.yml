@@ -26,7 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15
+        # Presence/geofence migrations require PostGIS. The previous bare
+        # postgres:15 service caused deterministic migration failures before
+        # application code could be verified.
+        image: postgis/postgis:15-3.5
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -42,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install psql extras (pgcrypto, etc.)
+      - name: Install psql extras
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq postgresql-client
