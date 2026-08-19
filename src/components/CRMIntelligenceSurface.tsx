@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AlertTriangle, ArrowRight, Brain, CalendarClock, CheckCircle2, ChevronRight, Clock3, Flame, Phone, ShieldAlert, Sparkles } from 'lucide-react'
+import { AlertTriangle, Brain, CalendarClock, CheckCircle2, ChevronRight, Clock3, Flame, Phone, ShieldAlert, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useBusiness } from '../lib/BusinessContext'
 
@@ -10,6 +10,7 @@ type CallItem = {
   stage?: string | null
   value?: number | null
   days_since_activity?: number | null
+  last_activity_at?: string | null
   cold_flag?: boolean | null
   cold_reason?: string | null
   next_action_date?: string | null
