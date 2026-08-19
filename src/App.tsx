@@ -83,6 +83,7 @@ const LandingEnhanced = lazy(() => import('./pages/LandingEnhanced'))
 const CompanyHome = lazy(() => import('./pages/CompanyHome'))
 const BusinessHome = lazy(() => import('./pages/BusinessHome'))
 const AICapture = lazy(() => import('./pages/AICapture'))
+const AskAvenize = lazy(() => import('./pages/AskAvenize'))
 const ObserverView = lazy(() => import('./pages/ObserverView'))
 const Simulation = lazy(() => import('./pages/Simulation'))
 const IntelligenceHub = lazy(() => import('./pages/IntelligenceHub'))
@@ -467,6 +468,7 @@ function AppRoutes() {
         <Route path="infrastructure" element={mg('inventory', <BusinessInfrastructure />)} />
         <Route path="home" element={<Dashboard />} />
         <Route path="capture" element={<AICapture />} />
+        <Route path="ask" element={<AskAvenize />} />
         <Route path="observer" element={<ObserverView />} />
         <Route path="activity" element={<ObserverView />} />
         <Route path="simulation" element={mg('intelligence', <Simulation />)} />

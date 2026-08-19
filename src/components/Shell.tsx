@@ -479,7 +479,7 @@ export default function Shell() {
           <SubsidiarySwitcher />
           {/* Ask Avenize — the primary intelligence entry point */}
           <button
-            onClick={() => navigate('/app/capture')}
+            onClick={() => navigate('/app/ask')}
             className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium text-white transition hover:shadow-md"
             style={{ background: 'var(--av-gradient)' }}
           >
@@ -504,7 +504,7 @@ export default function Shell() {
         <div className="flex items-center gap-2">
           <SubsidiarySwitcher />
           <NotificationBell />
-          <button onClick={() => navigate('/app/capture')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white">
+          <button onClick={() => navigate('/app/ask')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white">
             <Sparkles size={14} strokeWidth={2} />
             <span className="text-xs font-medium">Ask</span>
           </button>
