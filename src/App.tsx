@@ -7,6 +7,7 @@ import { GamificationProvider } from './lib/GamificationContext'
 import { BrandingProvider } from './lib/BrandingContext'
 import { LocaleProvider } from './lib/LocaleContext'
 import Shell from './components/Shell'
+import { RouteMeta } from './components/RouteMeta'
 import BetaFeedbackButton from './components/BetaFeedbackButton'
 import QCDashboard from './components/QCDashboard'
 import PersonalizationHub from './components/PersonalizationHub'
@@ -367,6 +368,7 @@ function AppRoutes() {
 
   return (
     <ErrorBoundary>
+      <RouteMeta />
       <Suspense fallback={<PageLoader />}>
         <Routes>
         <Route path="/" element={<LandingEnhanced />} />

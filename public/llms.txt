@@ -1,0 +1,46 @@
+# Avenize
+
+> Avenize is an AI-powered business operating system — one connected platform
+> for CRM, sales, finance, people/HR, operations, meetings, and business
+> intelligence. It replaces a stack of disconnected tools (CRM + project
+> management + accounting + HR + spreadsheets) with a single system where
+> every module shares one data model, one security boundary, and one
+> intelligence layer (the Business Brain).
+
+## What Avenize is
+
+- A multi-tenant business operating system for small and mid-sized companies,
+  including groups with parent companies and subsidiaries.
+- Module areas: CRM & sales pipeline, invoicing & payments, expenses &
+  budgets, payroll, projects & tasks, inventory & procurement, HR (leave,
+  attendance, appraisals), meetings with recording & transcription, company
+  communication, and executive intelligence.
+- The Business Brain: an intelligence layer that classifies business state,
+  diagnoses metric changes, recommends the next best action, and tracks the
+  value outcomes of accepted recommendations.
+- Multi-subsidiary: organizations can contain a parent company and
+  subsidiaries with per-subsidiary workspaces and consolidated visibility.
+- Security model: row-level security per business, role-based access,
+  multi-factor authentication, audit trails, and approval workflows.
+
+## What Avenize is NOT
+
+- Not an accounting-only app, not only a CRM, and not a chat tool.
+- Not a social-media management suite — marketing capabilities connect to
+  official platform APIs directly, without a third-party scheduler.
+
+## Key pages
+
+- Home: https://avenize.com/
+- Pricing: https://avenize.com/pricing
+- Create account: https://avenize.com/signup
+
+## Pricing
+
+- Free tier plus paid tiers billed in Nigerian Naira (NGN); founding pricing
+  applies during the founding period. See https://avenize.com/pricing for the
+  current tiers.
+
+## Contact
+
+- hello@avenize.com

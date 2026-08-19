@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
-import { EmptyApprovals } from '../components/EmptyStates'
+import EmptyState from '../components/EmptyState'
 import { 
   CheckCircle, XCircle, Clock, AlertTriangle, ChevronRight,
   User, DollarSign, Calendar, ShoppingCart, FileText,
@@ -242,7 +242,15 @@ export default function Approvals() {
         </h2>
         
         {filteredPending.length === 0 ? (
-          <EmptyApprovals />
+          <EmptyState
+            icon={CheckCircle}
+            title="No pending approvals"
+            description="You're all caught up. New requests will appear here."
+            gamified
+            milestone="A clear queue"
+            hint="Approvals arrive here when expenses, leave, and purchases need your decision."
+            tip="Set up approval chains in Settings so requests route to the right person automatically."
+          />
         ) : (
           <div className="space-y-3">
             {filteredPending.map(request => {
