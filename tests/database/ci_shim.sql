@@ -3,46 +3,32 @@
 -- Supabase; it exists so CI can assert migration files are syntactically valid
 -- and apply without error — catching drift before it ships.
 
--- pgcrypto: provides gen_random_uuid() used by every table PK.
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- PostGIS: Supabase installs PostGIS in the `extensions` schema and the
--- presence/field migrations explicitly reference extensions.geography and
--- extensions.ST_* functions. The PostGIS CI image pre-installs the extension
--- in the default schema, so move the extension itself into the Supabase-like
--- schema before migrations run.
+-- PostGIS is preloaded by postgis/postgis. PostgreSQL/PostGIS does not support
+-- ALTER EXTENSION ... SET SCHEMA for PostGIS, so do not attempt to move it.
+-- Supabase migrations reference extensions.geography / extensions.ST_*; expose
+-- the extension in the Supabase-compatible schema when it is not already
+-- present there. If the image preloads it elsewhere, leave it untouched.
 CREATE SCHEMA IF NOT EXISTS extensions;
 DO $$
-DECLARE
-  v_schema text;
 BEGIN
-  SELECT n.nspname INTO v_schema
-  FROM pg_extension e
-  JOIN pg_namespace n ON n.oid = e.extnamespace
-  WHERE e.extname = 'postgis';
-
-  IF v_schema IS NULL THEN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_extension WHERE extname = 'postgis'
+  ) THEN
     CREATE EXTENSION postgis WITH SCHEMA extensions;
-  ELSIF v_schema <> 'extensions' THEN
-    EXECUTE 'ALTER EXTENSION postgis SET SCHEMA extensions';
   END IF;
-EXCEPTION WHEN OTHERS THEN
-  RAISE EXCEPTION 'CI PostGIS setup failed: %', SQLERRM;
+EXCEPTION WHEN duplicate_object THEN
+  NULL;
 END $$;
 
--- ltree: used by 023_organogram (reporting_structure hierarchy type).
 CREATE EXTENSION IF NOT EXISTS ltree;
 
--- supabase_realtime publication: migrations ALTER this to add tables for
--- realtime subscriptions. Create it here so ALTER PUBLICATION succeeds.
 DO $$ BEGIN
   CREATE PUBLICATION supabase_realtime;
 EXCEPTION WHEN duplicate_object THEN NULL;
 END $$;
 
--- ------------------------------------------------------------------
--- Supabase roles (bare PostgreSQL lacks them; migrations GRANT to these)
--- ------------------------------------------------------------------
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
     CREATE ROLE anon NOLOGIN;
@@ -55,9 +41,6 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- ------------------------------------------------------------------
--- auth schema stub
--- ------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS auth;
 
 CREATE OR REPLACE FUNCTION auth.uid() RETURNS UUID
@@ -76,8 +59,6 @@ $$;
 CREATE OR REPLACE FUNCTION auth.role() RETURNS TEXT
 LANGUAGE sql STABLE AS $$ SELECT 'authenticated'; $$;
 
--- update_updated_at_column() — defined in 025/026/027 but referenced by
--- 023 (which sorts before 025). Provide it here so 023's triggers apply.
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
@@ -94,9 +75,6 @@ CREATE TABLE IF NOT EXISTS auth.users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ------------------------------------------------------------------
--- storage schema stub (for storage.buckets + storage.objects policies)
--- ------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS storage;
 CREATE TABLE IF NOT EXISTS storage.buckets (
   id TEXT PRIMARY KEY,
@@ -116,9 +94,6 @@ CREATE TABLE IF NOT EXISTS storage.objects (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ------------------------------------------------------------------
--- supabase_migrations stub (108's db_schema_version reads it)
--- ------------------------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS supabase_migrations;
 CREATE TABLE IF NOT EXISTS supabase_migrations.schema_migrations (
   version TEXT PRIMARY KEY,
