@@ -84,6 +84,10 @@ export default function Tasks() {
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
 
+  // Any authenticated staff member may create their own task; management-only
+  // assignment actions elsewhere use canManage. RLS is the real boundary —
+  // this gate was over-restrictive and left staff users with no way to start.
+  const canCreate = !!staff
   const canManage =
     !!staff &&
     (staff.role === 'owner' ||
@@ -245,13 +249,13 @@ export default function Tasks() {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-black">Tasks</h1>
-        {canManage && (
+        {canCreate && (
           <button
             onClick={() => setShowForm((v) => !v)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm hover:opacity-90"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm hover:opacity-90"
           >
             <Plus size={16} />
-            {showForm ? 'Cancel' : 'Assign Task'}
+            {showForm ? 'Cancel' : canManage ? 'Assign Task' : 'New Task'}
           </button>
         )}
       </div>
@@ -268,7 +272,7 @@ export default function Tasks() {
             onClick={() => setFilter(stat.key as any)}
             className={`bg-white rounded-xl p-3 border text-center transition ${
               filter === stat.key
-                ? 'border-[var(--av-primary, #4285F4)] ring-2 ring-[var(--av-primary, #4285F4)]/20'
+                ? 'border-[var(--av-primary)] ring-2 ring-[var(--av-primary)]/20'
                 : 'border-black/[0.06]'
             }`}
           >
@@ -287,7 +291,7 @@ export default function Tasks() {
         </div>
       )}
 
-      {showForm && canManage && (
+      {showForm && canCreate && (
         <div className="bg-white rounded-xl p-4 border border-black/[0.06] mb-6 space-y-3">
           <input
             value={newTitle}
@@ -361,7 +365,7 @@ export default function Tasks() {
             <button
               onClick={addTask}
               disabled={!newTitle.trim()}
-              className="px-4 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50 hover:opacity-90"
+              className="px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm disabled:opacity-50 hover:opacity-90"
             >
               Create & Assign
             </button>
@@ -371,9 +375,28 @@ export default function Tasks() {
 
       <div className="bg-white rounded-xl border border-black/[0.06] overflow-hidden">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-black">
-            <Circle size={32} className="mx-auto mb-2 opacity-50" />
-            <p>No tasks yet</p>
+          <div className="p-10 text-center text-black">
+            <Circle size={36} className="mx-auto mb-3 text-[var(--av-primary)]/60" />
+            {filter === 'all' && tasks.length === 0 ? (
+              <>
+                <p className="font-medium mb-1">Set your first task</p>
+                <p className="text-sm text-[var(--av-text-muted)] mb-4 max-w-xs mx-auto">
+                  Work starts here. Create the first thing you need to do — assign it,
+                  set a due date, and track it from To Do to Done.
+                </p>
+                {canCreate && (
+                  <button
+                    onClick={() => setShowForm(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm hover:opacity-90"
+                  >
+                    <Plus size={16} />
+                    Create your first task
+                  </button>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-[var(--av-text-muted)]">No {filter !== 'all' ? filter.replace('_', ' ') : ''} tasks match this filter.</p>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-black/[0.06]">
@@ -664,7 +687,7 @@ function TaskDetail({
                 onClick={() => setTab(t.k)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-sm border-b-2 transition ${
                   tab === t.k
-                    ? 'border-[var(--av-primary, #4285F4)] text-black'
+                    ? 'border-[var(--av-primary)] text-black'
                     : 'border-transparent text-black/50'
                 }`}
               >
@@ -705,7 +728,7 @@ function TaskDetail({
                 <button
                   onClick={addComment}
                   disabled={!newComment.trim()}
-                  className="px-3 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
+                  className="px-3 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm disabled:opacity-50"
                 >
                   Send
                 </button>
@@ -734,7 +757,7 @@ function TaskDetail({
                 <button
                   onClick={logTime}
                   disabled={!logHours}
-                  className="px-3 py-2 rounded-lg bg-[var(--av-primary, #4285F4)] text-white text-sm disabled:opacity-50"
+                  className="px-3 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm disabled:opacity-50"
                 >
                   Log
                 </button>

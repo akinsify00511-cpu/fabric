@@ -267,7 +267,7 @@ export function useCommandPalette(items: CommandItem[]) {
   const shortcuts: KeyboardShortcut[] = [
     {
       key: 'k',
-      meta: true,
+      mod: true,
       description: 'Open command palette',
       action: () => setIsOpen((prev) => !prev),
     },

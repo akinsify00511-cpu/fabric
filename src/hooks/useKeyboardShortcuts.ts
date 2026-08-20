@@ -4,11 +4,28 @@ export interface KeyboardShortcut {
   key: string
   ctrl?: boolean
   meta?: boolean
+  /** Treats Ctrl (Windows/Linux) and Cmd (macOS) as the same "mod" modifier,
+   * matching either. This is the intended binding for UI-textbook shortcuts
+   * like Cmd/Ctrl+K. */
+  mod?: boolean
   shift?: boolean
   alt?: boolean
   description?: string
   action: () => void
   preventDefault?: boolean
+}
+
+export type ShortcutEventLike = Pick<KeyboardEvent, 'key' | 'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey'>
+
+export function matchesShortcut(event: ShortcutEventLike, shortcut: KeyboardShortcut): boolean {
+  const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase()
+  const modifierMatch = shortcut.mod
+    ? event.ctrlKey || event.metaKey
+    : (shortcut.ctrl ? event.ctrlKey : !event.ctrlKey) &&
+      (shortcut.meta ? event.metaKey : !event.metaKey)
+  const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey
+  const altMatch = shortcut.alt ? event.altKey : !event.altKey
+  return keyMatch && modifierMatch && shiftMatch && altMatch
 }
 
 export interface UseKeyboardShortcutsOptions {
@@ -36,13 +53,7 @@ export function useKeyboardShortcuts(
       }
 
       for (const shortcut of shortcutsRef.current) {
-        const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase()
-        const ctrlMatch = shortcut.ctrl ? event.ctrlKey : !event.ctrlKey
-        const metaMatch = shortcut.meta ? event.metaKey : !event.metaKey
-        const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey
-        const altMatch = shortcut.alt ? event.altKey : !event.altKey
-
-        if (keyMatch && ctrlMatch && metaMatch && shiftMatch && altMatch) {
+        if (matchesShortcut(event, shortcut)) {
           if (shortcut.preventDefault !== false) {
             event.preventDefault()
           }
