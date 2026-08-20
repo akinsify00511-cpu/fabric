@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from '../lib/schemaAvailability'
 import FreshnessBadge from '../components/FreshnessBadge'
 import { useRecentEvents } from '../components/FreshnessBadge'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
@@ -37,13 +38,34 @@ export default function ObserverView() {
     if (!bid) return
     let active = true
     ;(async () => {
+      // Circuit breaker: a permanently-missing object (migration not yet
+      // applied) is probed once per session, then skipped — the page keeps
+      // rendering its empty state without a 404 wall in the console.
+      const snapKey = 'rpc:observer_snapshot'
+      const idxKey = 'rpc:intelligence_indexes'
+      const excKey = 'table:attention_exceptions'
       try {
         const [s, ix, e] = await Promise.all([
-          supabase.rpc('observer_snapshot', { p_business_id: bid }),
-          supabase.rpc('intelligence_indexes', { p_business_id: bid }),
-          supabase.from('attention_exceptions').select('*')
-            .eq('business_id', bid).eq('resolved', false)
-            .order('detected_at', { ascending: false }).limit(20),
+          isSchemaAvailable(snapKey)
+            ? supabase.rpc('observer_snapshot', { p_business_id: bid }).then((r) => {
+                if (isPermanentSchemaError(r.error)) markSchemaUnavailable(snapKey)
+                return r
+              })
+            : Promise.resolve({ data: null, error: null }),
+          isSchemaAvailable(idxKey)
+            ? supabase.rpc('intelligence_indexes', { p_business_id: bid }).then((r) => {
+                if (isPermanentSchemaError(r.error)) markSchemaUnavailable(idxKey)
+                return r
+              })
+            : Promise.resolve({ data: null, error: null }),
+          isSchemaAvailable(excKey)
+            ? supabase.from('attention_exceptions').select('*')
+                .eq('business_id', bid).eq('resolved', false)
+                .order('detected_at', { ascending: false }).limit(20).then((r) => {
+                  if (isPermanentSchemaError(r.error)) markSchemaUnavailable(excKey)
+                  return r
+                })
+            : Promise.resolve({ data: null, error: null }),
         ])
         if (active) {
           setSnap(s.data)
