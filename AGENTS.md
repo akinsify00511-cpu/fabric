@@ -1,3 +1,77 @@
+## Session 36 (2026-08-20): Canonical auth lifecycle repair — commit 795c359 (local, NOT pushed)
+
+User audit (verified live Supabase auth logs): Supabase Auth is HEALTHY
+(200s on /user, OAuth 302s, token refreshes). The failures were all
+post-authentication: membership resolution + a broken onboarding RPC
+contract. Fixed as one canonical protocol; AuthContext is now the ONLY
+membership authority (Login authenticates, Onboarding creates the business,
+neither decides membership).
+
+### Verified root causes (each reproduced on postgres:15, full chain)
+1. `create_business_and_owner` was broken on ANY fully-migrated DB, in THREE
+   compounding ways: never set `businesses.organization_id` (NOT NULL since
+   20260817150000); never inserted `staff.email` (NOT NULL since 001); and the
+   `on_business_created` trigger (`create_default_channel`, 005) inserted a
+   `channel_members` row with NULL staff_id because the owner staff row is
+   created after the business row. Onboarding could NEVER have succeeded on a
+   migrated DB. CI never caught it — the migration job smoke-tests SELECT
+   counts, never CALLS the RPC. LESSON: smoke-test the RPCs a feature depends
+   on, not just that migrations apply.
+2. `zz_rpc_tenant_guards_closure` re-declared `log_security_event` with a
+   business-membership guard; the login page calls it PRE-AUTH with NULL
+   business_id → every security event silently dropped. Pre-auth RPCs must not
+   be membership-guarded.
+3. 999's `check_auth_rate_limit` counted every CHECK as an attempt — 5
+   successful logins in 5 min would lock a user out. Redesigned: read-only
+   `check_auth_rate_limit` + `record_auth_failure` (only counter writer) +
+   `reset_auth_rate_limit` (cleared on success).
+4. PostgREST returns TABLE RPCs as ARRAYS; Login read `rl.allowed` off the
+   array → `!undefined` = true → the moment the RPC deployed, EVERY login would
+   show "Too many failed attempts". Centralized normalization in
+   src/lib/authSecurity.ts (`normalizeRateLimitRows`).
+5. The grant migration (20260818290000) ran BEFORE 999 created the functions —
+   its grants never landed; the RPCs were callable only via the 998 blanket.
+
+### What shipped
+- `supabase/migrations/zzz_auth_protocol_repair.sql` (named zzz_ so it applies
+  AFTER 998/999/zz_* and its definitions win): fixed create_business_and_owner
+  (org + business + group_owner membership + staff.email + #general join +
+  42501 anon guard + PUBLIC/anon REVOKE + search_path), guarded
+  create_default_channel, pre-auth-aware log_security_event, the 3-function
+  rate-limit protocol, self-contained tables + explicit anon/authenticated
+  grants. Idempotent; 171/171 chain clean on postgres:15; full functional
+  smoke matrix passes (happy path, anon refusal, repeat-onboarding guard,
+  lockout/reset cycle, pre-auth vs member-guarded events).
+- AuthContext: `MembershipState` = loading | anonymous | member |
+  onboarding_required | deactivated | error + pure `deriveMembership` export.
+  `applySession` resets membership in the SAME batch as a session change when
+  the user id changes (kills the transient onboarding flash for returning
+  users). fetchStaff is an awaitable retry loop returning Staff|null; hard
+  errors → membership 'error' (retry-in-place, never logout). refreshStaff()
+  returns Promise<Staff|null>.
+- RequireAuth/OnboardingGate route purely off membership; dead RequireSession
+  removed; error + deactivated screens added. Login defers ALL routing to
+  membership (duplicate staff lookups deleted; MFA completion now routes).
+  Signup redirects already-authenticated visitors (member→/app,
+  onboarding_required→/onboarding). Onboarding/Join/AuthCallback use
+  createBusinessAndOwner (src/lib/onboarding.ts: 4-arg canonical + 3-arg drift
+  fallback + array/object/scalar normalization + already-member recovery) then
+  await refreshStaff() + navigate — all window.location.href auth transitions
+  removed. AuthCallback no longer exchanges ?code= itself (the Supabase client's
+  detectSessionInUrl does it during init; the manual second exchange caused
+  spurious errors).
+
+### Verification
+tsc clean; vite build 0 warnings; vitest 635/635 (+18 authProtocol);
+schema-drift 0; design-constitution PASS; migration chain 171/171 clean +
+idempotent; auth smoke matrix green.
+
+### Deploy status
+NOT pushed (awaiting user confirmation per repo policy). Live DB needs
+zzz_auth_protocol_repair.sql (+ the pending set) applied — until then the
+frontend fails open exactly as before (rate-limit unavailable → proceed;
+business-creation RPC missing → honest "not configured" message).
+
 ## Session 34 (2026-08-19): Two formal product layers — Design Intelligence + Discovery Intelligence
 
 User directive: combine the Design Intelligence system and the Discovery
