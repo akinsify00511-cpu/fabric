@@ -1,3 +1,21 @@
+## Session 38b (2026-08-20): Schema-drift circuit breaker — console wall silenced client-side
+
+User: "Continue to fix". DB apply still credentials-blocked, so shipped the
+client-side mitigation for the console noise: `src/lib/schemaAvailability.ts`
+classifies permanent drift errors (PGRST202/205, 42703, 42P01, 42883, 42501 +
+message patterns), marks the object unavailable in module state for the
+session, and subsequent callers skip the round trip (honest null/zero-state
+path preserved). Reload re-probes — a just-applied migration is picked up
+immediately. Guard signatures use PromiseLike (supabase builders are
+thenables — caught by tsc). Wired into businessOS RPC wrappers (business_brain,
+current_metrics, open_recommendations, business_value_ledger,
+profitability_leakage), BusinessHome loaders (email_campaigns,
+attendance_records, staff:active-filter — keyed per-filter since the missing
+thing is a column, leave_requests), and useWorkspaceSelection
+(user_workspace_selections, by far the biggest 404 repeater). ExecutiveCockpit
+null-safe for the now-nullable wrapper returns. +6 tests (641/641), tsc 0,
+build 0 warnings, drift 0. Commit a8289c2 (local, NOT pushed).
+
 ## Session 38 (2026-08-20): Re-probe (UNCHANGED) + chain gap found & fixed (zzzz_live_schema_reconcile)
 
 User pasted the same production console errors again. Re-probed the live
