@@ -2,13 +2,13 @@
 // AUTH CALLBACK PAGE
 // Handles email confirmation for signup and invite acceptance
 // ============================================
-// The Supabase client (detectSessionInUrl, default) exchanges the ?code= in
-// the URL during initialization — AuthContext's initial getSession() resolves
-// only after that exchange, so this page NEVER exchanges codes itself (a
-// second exchange would fail and previously surfaced a spurious error
-// screen). Routing decisions come from AuthContext's canonical membership
-// state; this page only performs the one-time side effects (business creation
-// from a pending signup, invite acceptance) and then defers to the guards.
+// Supabase's browser client handles the auth redirect/session exchange. This
+// page owns only post-confirmation routing and one-time onboarding side effects.
+//
+// IMPORTANT: email confirmation can happen on a different browser/device from
+// signup. Never make the confirmation flow depend exclusively on localStorage.
+// Signup metadata is persisted in auth.users and is therefore the durable
+// fallback for the business setup payload.
 // ============================================
 
 import { useEffect, useRef, useState } from 'react'
@@ -27,7 +27,6 @@ export default function AuthCallback() {
   const [searchParams] = useSearchParams()
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string>('')
-  // Run the routing/side-effect pass exactly once per resolved membership.
   const handledRef = useRef(false)
 
   useEffect(() => {
@@ -40,17 +39,16 @@ export default function AuthCallback() {
 
   const routeAfterCallback = async () => {
     const errorParam = searchParams.get('error')
-    const type = searchParams.get('type') // 'signup' | 'invite' | 'recovery'
-    const token = searchParams.get('token') // invite token if coming from invite
+    const errorDescription = searchParams.get('error_description')
+    const type = searchParams.get('type')
+    const token = searchParams.get('token')
     const hadCode = !!searchParams.get('code')
 
     if (errorParam) {
-      setError(errorParam)
+      setError(errorDescription || errorParam)
       return
     }
 
-    // Password recovery lands here with a session (auto-exchanged); without
-    // one, the link is expired or already consumed.
     if (type === 'recovery') {
       if (session) navigate('/update-password', { replace: true })
       else setError('This password reset link has expired or was already used. Please request a new one.')
@@ -58,10 +56,8 @@ export default function AuthCallback() {
     }
 
     if (membership === 'anonymous') {
-      // A code was present but produced no session: the confirmation/invite
-      // link is expired or already consumed.
       if (hadCode) {
-        setError('This sign-in link has expired or was already used. Please request a new one.')
+        setError('This confirmation link has expired or was already used. Please request a new confirmation email.')
       } else {
         navigate('/login', { replace: true })
       }
@@ -73,8 +69,6 @@ export default function AuthCallback() {
       return
     }
 
-    // MFA gate: if the user has TOTP enabled and hasn't cleared it this
-    // session, defer to the login page's challenge UI.
     if (session) {
       const mfa = await getUserMfa(session)
       if (mfaRequired(mfa) && !isMfaVerified(session.user.id)) {
@@ -83,109 +77,83 @@ export default function AuthCallback() {
       }
     }
 
-    // Existing members go straight to the app.
     if (membership === 'member' || membership === 'deactivated') {
       setMessage('Welcome back! Redirecting to your workspace…')
       navigate('/app', { replace: true })
       return
     }
 
-    // onboarding_required: complete the pending setup, if any.
     const user = session?.user
     if (!user) {
       navigate('/login', { replace: true })
       return
     }
 
-    const oauthMetadata = user.user_metadata
+    const metadata = user.user_metadata || {}
 
-    // OAuth user (Google/GitHub) with profile metadata — onboarding collects
-    // the business details.
-    if (oauthMetadata?.full_name || oauthMetadata?.name) {
+    // OAuth users go through the normal onboarding wizard.
+    if (metadata?.provider === 'google' || metadata?.provider === 'github' || metadata?.avatar_url) {
       localStorage.setItem('avenize_oauth_pending', JSON.stringify({
-        fullName: oauthMetadata.full_name || oauthMetadata.name,
-        email: oauthMetadata.email,
-        avatarUrl: oauthMetadata.avatar_url,
-        provider: oauthMetadata.provider,
+        fullName: metadata.full_name || metadata.name || '',
+        email: user.email || metadata.email || '',
+        avatarUrl: metadata.avatar_url,
+        provider: metadata.provider,
       }))
       navigate('/onboarding', { replace: true })
       return
     }
 
-    // Email/password signup with email confirmation: the business details were
-    // stashed at signup; create the business now.
-    const pendingBusiness = localStorage.getItem('avenize_pending_business')
-    if (pendingBusiness) {
+    // Email/password signup: use local storage when available, but fall back to
+    // auth metadata so confirmation works on a different browser/device.
+    let pendingBusiness: { businessName?: string; industry?: string | null; fullName?: string; email?: string } | null = null
+    const storedPending = localStorage.getItem('avenize_pending_business')
+    if (storedPending) {
       try {
-        const { businessName, industry, fullName, email } = JSON.parse(pendingBusiness)
-        setMessage(`Setting up ${businessName}…`)
-
-        const result = await createBusinessAndOwner({
-          businessName,
-          industry: industry || null,
-          staffName: fullName,
-        })
-
-        if (!result.ok) {
-          if (result.reason === 'already_member') {
-            // Re-clicking an old confirmation link after onboarding completed.
-            localStorage.removeItem('avenize_pending_business')
-            await refreshStaff()
-            navigate('/app', { replace: true })
-            return
-          }
-          if (result.reason === 'unavailable') {
-            // RPC not deployed on this environment — onboarding wizard is the
-            // recovery surface.
-            localStorage.removeItem('avenize_pending_business')
-            navigate('/onboarding', { replace: true })
-            return
-          }
-          setError(result.message || 'Failed to set up your business. Please contact support.')
-          return
-        }
-
+        pendingBusiness = JSON.parse(storedPending)
+      } catch {
         localStorage.removeItem('avenize_pending_business')
-        sendWelcomeEmail(email, fullName, businessName, session!.access_token)
-
-        setMessage('Business created! Redirecting…')
-        await refreshStaff()
-        navigate('/app', { replace: true })
-        return
-      } catch (err) {
-        console.error('Error parsing pending business:', err)
-        localStorage.removeItem('avenize_pending_business')
-        navigate('/onboarding', { replace: true })
-        return
       }
     }
 
-    // Pending invite acceptance.
-    if (token) {
-      const pendingInvite = localStorage.getItem('avenize_pending_invite')
-      if (pendingInvite) {
-        setMessage('Joining your team…')
+    const businessName = pendingBusiness?.businessName || metadata.business_name
+    const industry = pendingBusiness?.industry ?? metadata.industry ?? null
+    const fullName = pendingBusiness?.fullName || metadata.full_name || metadata.name || ''
+    const email = pendingBusiness?.email || user.email || metadata.email || ''
 
-        const { error: inviteError } = await supabase.rpc('accept_invite', {
-          p_token: token,
-          p_staff_name: user.user_metadata?.full_name || null,
-        })
+    if (businessName) {
+      setMessage(`Setting up ${businessName}…`)
 
-        if (inviteError) {
-          console.error('Failed to accept invite:', inviteError)
-          setError(inviteError.message)
+      const result = await createBusinessAndOwner({
+        businessName,
+        industry,
+        staffName: fullName,
+      })
+
+      if (!result.ok) {
+        if (result.reason === 'already_member') {
+          localStorage.removeItem('avenize_pending_business')
+          await refreshStaff()
+          navigate('/app', { replace: true })
           return
         }
-
-        localStorage.removeItem('avenize_pending_invite')
-        setMessage('Joined! Redirecting…')
-        await refreshStaff()
-        navigate('/app', { replace: true })
+        if (result.reason === 'unavailable') {
+          navigate('/onboarding', { replace: true })
+          return
+        }
+        setError(result.message || 'Your email was confirmed, but we could not finish setting up your business. Please try again.')
         return
       }
+
+      localStorage.removeItem('avenize_pending_business')
+      void sendWelcomeEmail(email, fullName, businessName, session.access_token)
+      setMessage('Email confirmed! Your workspace is ready. Redirecting…')
+      await refreshStaff()
+      navigate('/app', { replace: true })
+      return
     }
 
-    // New user with no pending data — onboarding collects the details.
+    // Legacy accounts created before signup metadata existed still get a clean
+    // onboarding path instead of a broken confirmation screen.
     navigate('/onboarding', { replace: true })
   }
 
@@ -194,29 +162,12 @@ export default function AuthCallback() {
       <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA] px-4">
         <div className="w-full max-w-md bg-white rounded-2xl border border-black/[0.06] p-8 text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-[var(--av-danger-soft)] flex items-center justify-center mx-auto">
-            <svg className="w-8 h-8 text-[var(--av-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <svg className="w-8 h-8 text-[var(--av-danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold">Something went wrong</h2>
-            <p className="text-sm text-black/60 mt-2">{error}</p>
-          </div>
+          <div><h2 className="text-xl font-semibold">Something went wrong</h2><p className="text-sm text-black/60 mt-2">{error}</p></div>
           <div className="flex items-center justify-center gap-3">
-            {membership !== 'anonymous' && (
-              <button
-                onClick={() => { handledRef.current = false; setError(null); void refreshStaff() }}
-                className="px-6 py-3 rounded-xl border border-black/10 text-sm font-medium"
-              >
-                Try again
-              </button>
-            )}
-            <a
-              href="/login"
-              className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
-            >
-              Back to Sign In
-            </a>
+            {membership !== 'anonymous' && <button onClick={() => { handledRef.current = false; setError(null); void refreshStaff() }} className="px-6 py-3 rounded-xl border border-black/10 text-sm font-medium">Try again</button>}
+            <a href="/login" className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium">Back to Sign In</a>
           </div>
         </div>
       </div>
@@ -224,36 +175,24 @@ export default function AuthCallback() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
-      <div className="text-center">
-        <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
-          <span className="text-white font-bold text-2xl">A</span>
-        </div>
-        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-sm text-black mt-4">{message || 'Completing sign in…'}</p>
-      </div>
-    </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]"><div className="text-center">
+      <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4"><span className="text-white font-bold text-2xl">A</span></div>
+      <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
+      <p className="text-sm text-black mt-4">{message || 'Completing sign in…'}</p>
+    </div></div>
   )
 }
 
-// Send welcome email via Edge Function
 async function sendWelcomeEmail(email: string, fullName: string, businessName: string | undefined, accessToken: string) {
+  if (!email) return
   try {
     const response = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${accessToken}`,
-      },
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` },
       body: JSON.stringify({ email, fullName, businessName }),
     })
-
-    if (!response.ok) {
-      console.error('Failed to send welcome email:', response.statusText)
-    }
+    if (!response.ok) console.error('Failed to send welcome email:', response.statusText)
   } catch (err) {
-    // Non-blocking - don't show error to user
     console.error('Error sending welcome email:', err)
   }
 }
