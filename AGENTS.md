@@ -50,6 +50,67 @@ Committed locally, NOT pushed (repo policy). Still blocked on user running
 scripts/apply_migrations_live.sh with SUPABASE_DB_URL (or providing the DB
 connection string so the agent can run it), then verify_live_db.sh, then the
 orphaned-membership reconciliation for user 361710ac-… / business f2d580d1-….
+## Session 39 (2026-08-20): Demand Capture — Lead → Request → Quote → Order (commit a1e9b19, local, NOT pushed)
+
+User directive: build the lead-to-revenue workflow as a CORE system (not a
+button), audit the data model FIRST, remove WhatsApp from product literature.
+Architecture rule followed: NOT three disconnected modules — one chain where
+every downstream record keeps its upstream links.
+
+### Audit results (verified against migrations, before building)
+- leads (041 + 075 business_id/RLS), contacts (001 + 075 lead_id backlink),
+  quotes (048 draft/sent/accepted/rejected/converted), products (001) exist.
+- NO customer sales-order entity (only delivery_orders logistics 034 +
+  purchase_orders supplier 045); NO request entity. Created both cleanly.
+- quotes needed: client_name/client_email/quote_number are NOT NULL (048) —
+  the create_quote RPC backfills them from the lead (found by smoke test).
+- notifications needs category enum (036) + type text (040); the demand_notify
+  trigger supplies both, wrapped best-effort (EXCEPTION → NULL) so a
+  notification failure never breaks a demand write.
+- Trigger gotcha: CASE expressions resolve NEW.<field> for ALL branches — use
+  IF/ELSIF in triggers spanning multiple tables (caught by smoke test).
+- New tables need explicit GRANT SELECT/INSERT/UPDATE/DELETE TO authenticated
+  on bare pg15 (Supabase has default privileges, bare postgres doesn't) +
+  GRANT USAGE on the identity sequences — otherwise PostgREST reads 401.
+
+### What shipped
+- `supabase/migrations/zzzaaa_demand_capture.sql` (applies after zzz_auth):
+  lead_requests (6 types: product/service/inspection/consultation/callback/
+  custom; lifecycle new→reviewing→qualified→quoted→accepted→fulfilled with
+  rejected/abandoned that can be REVIVED — no lost demand), sales_orders
+  (confirmed→in_fulfilment→fulfilled→completed/cancelled), demand_activity
+  (append-only trail), quotes extended (lead/request/contact backlinks,
+  access_token, expires_at, viewed+expired statuses).
+- 4 member-guarded SECURITY DEFINER RPCs: create_lead_request (auto-advances
+  lead new→contacted), create_quote (item-sum totals, auto request→quoted),
+  create_sales_order (REQUIRES accepted quote; backfills the whole chain;
+  converted quotes can't double-order; request→accepted + quote→converted),
+  transition_demand (validated per-entity lifecycles + timestamps).
+- Public portal RPCs: get_quote_by_token (view, auto sent→viewed),
+  respond_to_quote (accept/reject, once only) — granted to anon.
+- demand_notify triggers → existing notification bell (assignee, else owners).
+- Revenue intelligence: demand_funnel (pairwise conversion %), demand_revenue
+  (total/AOV/lost+expired value/revenue-per-lead/revenue-by-source),
+  demand_pipeline (open values + avg sales days).
+- Frontend: src/lib/demand.ts; DemandActionCentre on the lead page (the
+  "action centre" — request/quote/order forms + visible chain + transitions +
+  activity); funnel strip on Leads; /app/requests + /app/orders pages (crm
+  gate); public /quote/:token portal (accept/decline, no login).
+- WhatsApp sweep: Pricing CTA, Signup headline + feature line, invoice
+  empty-state tips → native demand-capture language. Landing/index already
+  clean. WhatsApp remains ONLY as optional channel (integration page, invite
+  sharing) per the directive.
+
+### Verified
+172/172 migrations clean + idempotent on postgres:15. Functional matrix:
+lead→request→quote→portal-accept(anon)→order→fulfilled→completed; cross-
+tenant denial; rejected/converted quotes can't order (no duplicates); activity
+chain complete; funnel/revenue/pipeline correct. tsc clean, build 0 warnings,
+vitest 644/644 (+9), drift 0, design-constitution PASS.
+
+### Deploy status
+Local commit ec1f79c, NOT pushed (awaiting user confirmation). Live DB needs
+zzzaaa_demand_capture.sql via scripts/apply_migrations_live.sh.
 
 ## Session 37 (2026-08-20): Live-DB drift confirmed by direct probe + apply runbook
 
