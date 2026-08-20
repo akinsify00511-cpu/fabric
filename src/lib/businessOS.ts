@@ -4,6 +4,22 @@
 
 import { supabase } from './supabase'
 import type { UserRole } from './AuthContext'
+import { isPermanentSchemaError, isSchemaAvailable, markSchemaUnavailable, type SchemaErrorLike } from './schemaAvailability'
+
+/** Guard an RPC call against known-unavailable objects (schema-drift circuit breaker). Returns null when unavailable; rethrows real errors. */
+async function rpcGuarded<T>(name: string, call: () => PromiseLike<{ data: T | null; error: SchemaErrorLike | null }>): Promise<T | null> {
+  const key = `rpc:${name}`
+  if (!isSchemaAvailable(key)) return null
+  const { data, error } = await call()
+  if (error) {
+    if (isPermanentSchemaError(error)) {
+      markSchemaUnavailable(key)
+      return null
+    }
+    throw error
+  }
+  return data ?? null
+}
 
 // ---------- Business Event Bus (058) ----------
 
@@ -118,10 +134,10 @@ export interface GovernedMetric {
   last_calculated_at: string | null
 }
 
-export async function fetchCurrentMetrics(businessId: string) {
-  const { data, error } = await supabase.rpc('current_metrics', { p_business_id: businessId })
-  if (error) throw error
-  return (data || []) as GovernedMetric[]
+export async function fetchCurrentMetrics(businessId: string): Promise<GovernedMetric[] | null> {
+  const data = await rpcGuarded<GovernedMetric[]>('current_metrics', () =>
+    supabase.rpc('current_metrics', { p_business_id: businessId }))
+  return data ?? null
 }
 
 // Trigger a refresh on load (best-effort). Never blocks the UI: failures are
@@ -179,12 +195,10 @@ export interface Recommendation {
   subject_id: string | null
 }
 
-export async function fetchOpenRecommendations(businessId: string, limit = 50) {
-  const { data, error } = await supabase.rpc('open_recommendations', {
-    p_business_id: businessId, p_limit: limit,
-  })
-  if (error) throw error
-  return (data || []) as Recommendation[]
+export async function fetchOpenRecommendations(businessId: string, limit = 50): Promise<Recommendation[] | null> {
+  const data = await rpcGuarded<Recommendation[]>('open_recommendations', () =>
+    supabase.rpc('open_recommendations', { p_business_id: businessId, p_limit: limit }))
+  return data ?? null
 }
 
 export async function decideRecommendation(claimId: string, accepted: boolean, byStaffId: string) {
@@ -660,9 +674,9 @@ export interface ProfitabilityLeakageResult {
 }
 export async function fetchProfitabilityLeakage(businessId: string): Promise<ProfitabilityLeakageResult | null> {
   try {
-    const { data, error } = await supabase.rpc('profitability_leakage', { p_business_id: businessId })
-    if (error) throw error
-    return (data as ProfitabilityLeakageResult) ?? null
+    const data = await rpcGuarded<ProfitabilityLeakageResult | null>('profitability_leakage', () =>
+      supabase.rpc('profitability_leakage', { p_business_id: businessId }))
+    return data ?? null
   } catch (e) {
     console.error('fetchProfitabilityLeakage failed (non-blocking):', e)
     return null
@@ -1479,9 +1493,9 @@ export async function fetchNextBestAction(businessId: string): Promise<NextBestA
 /** The Business Value Ledger. "Avenize helped recover ₦X." Aggregates real outcomes. Deterministic, best-effort. */
 export async function fetchValueLedger(businessId: string): Promise<ValueLedger | null> {
   try {
-    const { data, error } = await supabase.rpc('business_value_ledger', { p_business_id: businessId })
-    if (error) throw error
-    return (data as ValueLedger) ?? null
+    const data = await rpcGuarded<ValueLedger | null>('business_value_ledger', () =>
+      supabase.rpc('business_value_ledger', { p_business_id: businessId }))
+    return data ?? null
   } catch (e) {
     console.error('fetchValueLedger failed (non-blocking):', e)
     return null
@@ -1491,9 +1505,9 @@ export async function fetchValueLedger(businessId: string): Promise<ValueLedger 
 /** The Avenize Business Brain. ONE call returns State + Pulse + Diagnoses + Next Best Action + Value Ledger. */
 export async function fetchBusinessBrain(businessId: string): Promise<BusinessBrain | null> {
   try {
-    const { data, error } = await supabase.rpc('business_brain', { p_business_id: businessId })
-    if (error) throw error
-    return (data as BusinessBrain) ?? null
+    const data = await rpcGuarded<BusinessBrain | null>('business_brain', () =>
+      supabase.rpc('business_brain', { p_business_id: businessId }))
+    return data ?? null
   } catch (e) {
     console.error('fetchBusinessBrain failed (non-blocking):', e)
     return null

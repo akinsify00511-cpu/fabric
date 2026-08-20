@@ -23,8 +23,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 import { logUsageEvent } from './useUsageTracking'
+import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from './schemaAvailability'
 
 const STORAGE_KEY = (userId: string) => `avenize_workspace_selection_${userId}`
+const TABLE = 'user_workspace_selections'
 
 export interface WorkspaceSelectionState {
   /** The tools the user has chosen to keep visible (empty = show all authorized). */
@@ -88,6 +90,15 @@ export function useWorkspaceSelection(): WorkspaceSelectionState {
         setSelectedToolsState(cached.selectedTools)
         setSelectionCompleted(cached.selectionCompleted)
       }
+      if (!isSchemaAvailable(TABLE)) {
+        // Table known missing this session (drift) — no round trip, no curation.
+        if (!cached) {
+          setSelectedToolsState([])
+          setSelectionCompleted(false)
+        }
+        setLoading(false)
+        return
+      }
       try {
         const { data, error } = await supabase
           .from('user_workspace_selections')
@@ -95,6 +106,7 @@ export function useWorkspaceSelection(): WorkspaceSelectionState {
           .eq('user_id', userId)
           .maybeSingle()
         if (cancelled) return
+        if (error && isPermanentSchemaError(error)) markSchemaUnavailable(TABLE)
         if (error) {
           // Table missing / drift: treat as "no curation" — keep cache (if any)
           // but never block. If no cache, show-all default applies.
@@ -133,13 +145,15 @@ export function useWorkspaceSelection(): WorkspaceSelectionState {
     async (tools: string[], completed: boolean) => {
       if (!userId) return
       writeCache(userId, tools, completed)
+      if (!isSchemaAvailable(TABLE)) return
       try {
-        await supabase
+        const { error } = await supabase
           .from('user_workspace_selections')
           .upsert(
             { user_id: userId, business_id: staff?.business_id, selected_tools: tools, selection_completed: completed },
             { onConflict: 'user_id' },
           )
+        if (error && isPermanentSchemaError(error)) markSchemaUnavailable(TABLE)
       } catch {
         /* DB may be unavailable (drift) — cache already updated, non-blocking */
       }

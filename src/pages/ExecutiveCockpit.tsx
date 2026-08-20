@@ -85,7 +85,7 @@ export default function ExecutiveCockpit() {
       // non-blocking), then read the governed rows AND compute+read health.
       // If the migration isn't deployed yet, both stay empty silently.
       refreshBusinessMetrics(bid).finally(() => {
-        fetchCurrentMetrics(bid).then(m => { if (active) setGoverned(m) })
+        fetchCurrentMetrics(bid).then(m => { if (active) setGoverned(m ?? []) })
           .catch(() => { /* migration not deployed yet — non-blocking */ })
         computeBusinessHealth(bid).finally(() => {
           fetchBusinessHealth(bid).then(h => { if (active) setHealth(h) })
@@ -94,7 +94,7 @@ export default function ExecutiveCockpit() {
       })
       // Open recommendations (the "what needs my attention?" feed, §17).
       // Best-effort: stays empty if the recommendation migration isn't deployed.
-      fetchOpenRecommendations(bid).then(r => { if (active) setRecommendations(r) })
+      fetchOpenRecommendations(bid).then(r => { if (active) setRecommendations(r ?? []) })
         .catch(() => { /* migration not deployed yet — non-blocking */ })
       // §5.3 EBITDA — server-derived operating profitability. Best-effort.
       computeEbitda(bid).then(e => { if (active) setEbitda(e) })

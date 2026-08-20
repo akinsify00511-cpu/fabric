@@ -38,6 +38,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useExperienceContext } from '../lib/useExperienceContext'
 import { getRoleHomeConfig, roleLabel, type CardKind } from '../lib/roleHomeConfig'
+import { tableGuard } from '../lib/schemaAvailability'
 import {
   deriveFunction, deriveSeniority, getFunctionHome, functionLabel, seniorityLabel,
 } from '../lib/functionHome'
@@ -391,9 +392,10 @@ const weekAhead = () => new Date(Date.now() + 7 * 86400000).toISOString().slice(
 
 /** email_campaigns (009): active/sent counts + total recipients + top reach. */
 async function loadCampaignData(bid: string): Promise<CampaignData> {
-  const { data } = await supabase.from('email_campaigns')
-    .select('id, name, status, contact_count')
-    .eq('business_id', bid)
+  const { data } = await tableGuard('email_campaigns', () =>
+    supabase.from('email_campaigns')
+      .select('id, name, status, contact_count')
+      .eq('business_id', bid))
   const rows = (data ?? []) as Array<{ id: string; name: string; status: string; contact_count: number }>
   const active = rows.filter(c => c.status === 'scheduled' || c.status === 'sending' || c.status === 'draft').length
   const sent = rows.filter(c => c.status === 'sent').length
@@ -445,8 +447,10 @@ async function loadReceivables(bid: string): Promise<ReceivablesData> {
 async function loadAttendance(bid: string): Promise<AttendanceData> {
   const today = todayISO()
   const [attRes, staffRes] = await Promise.all([
-    supabase.from('attendance_records').select('id, status, staff_id').eq('business_id', bid).eq('date', today),
-    supabase.from('staff').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('active', true),
+    tableGuard('attendance_records', () =>
+      supabase.from('attendance_records').select('id, status, staff_id').eq('business_id', bid).eq('date', today)),
+    tableGuard('staff:active-filter', () =>
+      supabase.from('staff').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('active', true)),
   ])
   const rows = (attRes.data ?? []) as Array<{ id: string; status: string; staff_id: string }>
   return {
@@ -462,8 +466,10 @@ async function loadAttendance(bid: string): Promise<AttendanceData> {
 async function loadLeave(bid: string): Promise<LeaveBalanceData> {
   const weekEnd = weekAhead()
   const [pendRes, upRes] = await Promise.all([
-    supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'pending'),
-    supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'approved').gte('start_date', todayISO()).lte('start_date', weekEnd),
+    tableGuard('leave_requests', () =>
+      supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'pending')),
+    tableGuard('leave_requests', () =>
+      supabase.from('leave_requests').select('id', { count: 'exact', head: true }).eq('business_id', bid).eq('status', 'approved').gte('start_date', todayISO()).lte('start_date', weekEnd)),
   ])
   return { pending: pendRes.count ?? 0, upcoming: upRes.count ?? 0 }
 }
