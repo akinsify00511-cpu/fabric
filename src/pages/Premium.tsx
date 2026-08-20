@@ -46,7 +46,7 @@ export default function Premium() {
   }
 
   if (success) return (
-    <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[var(--av-surface-2)] flex items-center justify-center p-6">
       <div className="w-full max-w-lg bg-white rounded-2xl border border-black/5 p-8 text-center shadow-sm">
         <CheckCircle2 size={56} className="mx-auto text-[var(--av-success)] mb-5" />
         <h1 className="text-2xl font-bold text-black mb-2">Payment received</h1>
@@ -57,7 +57,7 @@ export default function Premium() {
   )
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] p-6">
+    <div className="min-h-screen bg-[var(--av-surface-2)] p-6">
       <div className="max-w-5xl mx-auto">
         <Link to="/pricing" className="inline-flex items-center gap-2 text-sm text-black/60 hover:text-black mb-8"><ArrowLeft size={16} /> Back to plans</Link>
         <div className="grid lg:grid-cols-[1fr_420px] gap-6">

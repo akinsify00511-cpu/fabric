@@ -41,7 +41,7 @@ export default function MeetingCapture(){
   peersRef.current[remote.user_id]=pc
   localStreamRef.current?.getTracks().forEach(track=>pc.addTrack(track,localStreamRef.current!))
   pc.ontrack=e=>{const stream=e.streams[0];if(stream)setRemoteStreams(v=>({...v,[remote.user_id]:stream}))}
-  pc.onicecandidate=e=>{if(e.candidate)void sendSignal({to:remote.user_id,from:staff!.user_id,kind:'candidate',candidate:e.candidate.toJSON()})}
+  pc.onicecandidate=e=>{if(e.candidate&&staff?.user_id)void sendSignal({to:remote.user_id,from:staff.user_id,kind:'candidate',candidate:e.candidate.toJSON()})}
   pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))closePeer(remote.user_id)}
   return pc
  },[closePeer,sendSignal,staff?.user_id])
@@ -59,18 +59,19 @@ export default function MeetingCapture(){
 
  useEffect(()=>{
   if(!meetingId||!staff?.user_id||!meeting)return
+  const myId=staff.user_id
   let mounted=true
-  const ch=supabase.channel(`meeting:${meetingId}`,{config:{private:true,presence:{enabled:true,key:staff.user_id}}})
+  const ch=supabase.channel(`meeting:${meetingId}`,{config:{private:true,presence:{enabled:true,key:myId}}})
   channelRef.current=ch
   ch.on('broadcast',{event:'signal'},({payload}:{payload:Signal})=>void handleSignal(payload))
    .on('presence',{event:'sync'},()=>{
     const state=ch.presenceState();const list:Participant[]=[]
-    Object.values(state).forEach((entries:any)=>entries.forEach((e:any)=>{if(e.user_id!==staff.user_id&&!list.some(p=>p.user_id===e.user_id))list.push(e)}))
+    Object.values(state).forEach((entries:any)=>entries.forEach((e:any)=>{if(e.user_id!==myId&&!list.some(p=>p.user_id===e.user_id))list.push(e)}))
     setParticipants(list)
-    list.filter(p=>staff.user_id<p.user_id).forEach(p=>void negotiate(p))
+    list.filter(p=>myId<p.user_id).forEach(p=>void negotiate(p))
    })
-   .on('presence',{event:'join',key:staff.user_id},()=>{})
-   .on('presence',{event:'leave',key:staff.user_id},({key}:{key:string})=>closePeer(key))
+   .on('presence',{event:'join'},()=>{})
+   .on('presence',{event:'leave'},({key}:{key:string})=>closePeer(key))
   ch.subscribe(async status=>{if(status==='SUBSCRIBED'){await ch.track({user_id:staff.user_id,name:staff.full_name||staff.name||staff.email||'Participant',staff_id:staff.id});await supabase.from('meetings').update({status:'in_progress'}).eq('id',meetingId)}})
   return()=>{mounted=false;Object.keys(peersRef.current).forEach(closePeer);void ch.untrack();void supabase.removeChannel(ch);channelRef.current=null;screenStreamRef.current?.getTracks().forEach(t=>t.stop());if(localStreamRef.current)localStreamRef.current.getTracks().forEach(t=>t.stop());if(recordTimerRef.current)clearInterval(recordTimerRef.current);if(recognitionRef.current)recognitionRef.current.stop();if(!mounted)return}
  },[closePeer,handleSignal,meeting,meetingId,negotiate,staff?.email,staff?.full_name,staff?.id,staff?.name,staff?.user_id])

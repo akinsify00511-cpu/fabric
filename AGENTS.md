@@ -1,3 +1,38 @@
+## Session 40 (2026-08-20): PR #24 verification + auth_rate_limits RLS closure + MeetingCapture tsc fixes
+
+User pasted the previous session's log (PR #24 squash-merged: paid checkout,
+native Meetings, CRM Leads CSV controls) and said "continue". Verified the
+claims against origin/main (HEAD 9402101):
+- /app/capture is a pure <Navigate to="/app/meetings" replace/> redirect.
+- Meetings detail "Join in Avenize" → /app/meeting-capture?meeting=<id>;
+  legacy meeting_link can't take users outside.
+- captureAttachments.ts uses the schemaAvailability circuit breaker.
+
+### auth_rate_limits RLS advisor finding — CLOSED (migration zzzb_security_tables_lockdown.sql)
+zzz_auth_protocol_repair already ENABLE RLS on auth_rate_limits +
+security_audit_log with NO permissive policies, and 998 blanket-grants
+SELECT/INSERT/UPDATE/DELETE ON ALL TABLES to authenticated — so the table is
+fully exposed whenever RLS is off (live advisor flag). Fix migration asserts
+RLS idempotently + REVOKEs the blanket table grants; the four rate-limit
+RPCs (check/record/reset/log) remain granted to anon+authenticated and work
+as the postgres owner (bypass RLS). Verified on postgres:15 (Docker):
+reproduce RLS-disabled + blanket-grant state → apply twice (idempotent) →
+relrowsecurity=t → SET ROLE authenticated direct SELECT = permission denied
+→ check_auth_rate_limit returns. Lessons: (1) docker exec needs -i or stdin
+is detached and psql -f silently runs nothing; (2) assert denial with raw
+output — grep for "does not exist" misses "permission denied".
+
+### Also fixed this session
+- MeetingCapture.tsx (the native room PR #24 routes to) had 4 pre-existing
+  tsc errors: staff.user_id narrowing + supabase presence filter misuse
+  ({event:'join',key:...} hits the 'system' overload). Fixed with const
+  myId=staff.user_id narrowing + key-less join/leave filters.
+- Premium.tsx design-constitution drift growth (hex 0->2) → bg tokens. Gate
+  now PASS (125 files vs baseline 127).
+
+Verified: tsc clean, vite build 0 warnings, vitest 650/650, schema-drift 0,
+design-constitution PASS. Commit local, NOT pushed (repo policy).
+
 ## Session 38b (2026-08-20): Schema-drift circuit breaker — console wall silenced client-side
 
 User: "Continue to fix". DB apply still credentials-blocked, so shipped the
