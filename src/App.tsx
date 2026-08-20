@@ -128,6 +128,9 @@ const SignDocument = lazy(() => import('./pages/SignDocument'))
 const DocumentsHub = lazy(() => import('./pages/DocumentsHub'))
 const FieldLocation = lazy(() => import('./pages/FieldLocation'))
 const LeadCapture = lazy(() => import('./pages/LeadCapture'))
+const Requests = lazy(() => import('./pages/Requests'))
+const SalesOrders = lazy(() => import('./pages/SalesOrders'))
+const QuotePortal = lazy(() => import('./pages/QuotePortal'))
 const Leads = lazy(() => import('./pages/Leads'))
 const Recruitment = lazy(() => import('./pages/Recruitment'))
 const People = lazy(() => import('./pages/People'))
@@ -388,6 +391,8 @@ function AppRoutes() {
         <Route path="/book" element={<PublicAppointments />} />
         <Route path="/book/:slug" element={<PublicAppointments />} />
         <Route path="/sign/:token" element={<SignDocument />} />
+        {/* Public customer quote portal — the access token IS the authorization */}
+        <Route path="/quote/:token" element={<QuotePortal />} />
         {/* Builder/board dashboard — platform-operator surface (#19/#34).
             Gated by the builder_dashboard RPC (platform_admins allowlist), NOT
             a business role. Requires a session to call the RPC. */}
@@ -421,6 +426,8 @@ function AppRoutes() {
         <Route path="community" element={<CompanyHome />} />
         <Route path="crm" element={mg('crm', <CRM />)} />
         <Route path="leads" element={mg('crm', <Leads />)} />
+        <Route path="requests" element={mg('crm', <Requests />)} />
+        <Route path="orders" element={mg('crm', <SalesOrders />)} />
         <Route path="projects" element={mg('projects', <ProjectsNigeria />)} />
         <Route path="finance" element={mg('finance', <FinanceCenter />)} />
         <Route path="quotes" element={mg('crm', <Quotes />)} />

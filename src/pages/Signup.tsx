@@ -11,7 +11,7 @@ import { checkAuthRateLimit, recordAuthFailure, resetAuthRateLimit, rateLimitMes
 
 const FEATURES = [
   { icon: Brain, textKey: 'signupFeatureBrain', text: 'One system — CRM, finance, HR, projects, all connected' },
-  { icon: MessageSquare, textKey: 'signupFeatureSimple', text: 'Simple like WhatsApp — your team sees only what they need' },
+  { icon: MessageSquare, textKey: 'signupFeatureSimple', text: 'Simple by design — your team sees only what they need to act on' },
   { icon: Network, textKey: 'signupFeatureOrg', text: 'Your organization defines itself — we adapt to your structure' },
   { icon: Shield, textKey: 'signupFeatureSecurity', text: 'Explainable permissions and audited actions' },
 ]
@@ -201,7 +201,7 @@ export default function Signup() {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
         <div className="relative z-10 flex items-center gap-3"><div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center"><span className="text-white font-bold text-2xl">A</span></div><span className="text-2xl font-bold text-white">Avenize</span></div>
         <div className="relative z-10 space-y-8">
-          <div className="space-y-4"><h1 className="text-4xl font-bold text-white leading-tight">{tr('signupHeadline', 'More capable than an ERP. Easier than WhatsApp.')}</h1><p className="text-xl text-white/80">{tr('signupSubheadline', 'Your business runs as one connected system. Your people see only what they need to act on.')}</p></div>
+          <div className="space-y-4"><h1 className="text-4xl font-bold text-white leading-tight">{tr('signupHeadline', 'More capable than an ERP. Capture, convert and fulfil demand in one system.')}</h1><p className="text-xl text-white/80">{tr('signupSubheadline', 'Your business runs as one connected system. Your people see only what they need to act on.')}</p></div>
           <div className="space-y-4">{FEATURES.map((feature, i) => (<div key={i} className="flex items-center gap-4 text-white/90"><div className="w-10 h-10 rounded-lg bg-white backdrop-blur flex items-center justify-center flex-shrink-0"><feature.icon size={20} /></div><span className="text-lg">{tr(feature.textKey, feature.text)}</span></div>))}</div>
           <div className="pt-8 border-t border-white/10"><p className="text-white/60 text-sm mb-3">{tr('signupTrustedBy', 'Trusted by 2,500+ Nigerian businesses')}</p><div className="flex -space-x-3">{['bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-pink-400', 'bg-purple-400'].map((color, i) => <div key={i} className={`w-10 h-10 rounded-full ${color} border-2 border-white/20`} />)}<div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white/20 flex items-center justify-center"><span className="text-white text-xs font-medium">+2k</span></div></div></div>
         </div>

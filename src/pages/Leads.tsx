@@ -6,6 +6,8 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { convertLeadToContact, getLeadStats, LEAD_SOURCES, PRODUCT_INTERESTS } from '../lib/crm'
 import { useToast } from '../components/Toast'
+import DemandActionCentre from '../components/DemandActionCentre'
+import { fetchDemandFunnel, type DemandFunnel } from '../lib/demand'
 import { 
   Search, Filter, UserPlus, Phone, Mail, Building2, 
   ChevronDown, ChevronRight, CheckCircle2, XCircle, 
@@ -53,6 +55,7 @@ export default function LeadsPage() {
   const [sourceFilter, setSourceFilter] = useState<string>('all')
   const [expandedLeads, setExpandedLeads] = useState<Set<string>>(new Set())
   const [convertingLead, setConvertingLead] = useState<string | null>(null)
+  const [funnel, setFunnel] = useState<DemandFunnel | null>(null)
   
   // Stats
   const [stats, setStats] = useState({
@@ -70,6 +73,9 @@ export default function LeadsPage() {
       fetchLeads()
       fetchStaff()
       fetchStats()
+      fetchDemandFunnel(staff.business_id).then((f) => {
+        if (f && f.authorized !== false) setFunnel(f)
+      })
     }
   }, [staff?.business_id])
 
@@ -274,6 +280,20 @@ export default function LeadsPage() {
             </div>
           ))}
         </div>
+
+        {/* Demand funnel strip (Lead → Request → Quote → Order) */}
+        {funnel && (funnel.leads > 0 || funnel.requests > 0) && (
+          <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface-elevated)] px-4 py-3">
+            <span className="text-xs font-semibold uppercase text-[var(--av-text-muted)]">Funnel</span>
+            <FunnelStep label="Leads" value={funnel.leads} />
+            <FunnelArrow pct={funnel.request_from_lead_pct} />
+            <FunnelStep label="Requests" value={funnel.requests} />
+            <FunnelArrow pct={funnel.quote_from_request_pct} />
+            <FunnelStep label="Quotes" value={funnel.quotes} />
+            <FunnelArrow pct={funnel.order_from_quote_pct} />
+            <FunnelStep label="Orders" value={funnel.orders} />
+          </div>
+        )}
 
         {/* Filters */}
         <div className="bg-[var(--av-surface-elevated)] rounded-xl border border-[var(--av-border)] mb-6">
@@ -507,6 +527,15 @@ export default function LeadsPage() {
                           )}
                         </div>
                       </div>
+
+                      {/* Demand → Revenue action centre (the request/quote/order funnel) */}
+                      <div className="mt-4" onClick={(e) => e.stopPropagation()}>
+                        <DemandActionCentre
+                          leadId={lead.id}
+                          leadName={lead.full_name}
+                          onToast={(msg, type) => showToast(msg, type)}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -516,5 +545,23 @@ export default function LeadsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function FunnelStep({ label, value }: { label: string; value: number }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className="text-base font-bold text-[var(--av-text)]">{value}</span>
+      <span className="text-xs text-[var(--av-text-muted)]">{label}</span>
+    </span>
+  )
+}
+
+function FunnelArrow({ pct }: { pct: number | null }) {
+  return (
+    <span className="flex items-center gap-1 text-xs text-[var(--av-text-disabled)]">
+      <ChevronRight className="w-3.5 h-3.5" />
+      {pct == null ? '—' : `${pct}%`}
+    </span>
   )
 }

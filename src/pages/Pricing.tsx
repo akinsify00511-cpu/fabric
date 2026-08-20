@@ -303,7 +303,7 @@ export default function Pricing() {
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4 text-white">Your business, one system.</h2>
           <p className="text-lg mb-8" style={{ color: 'rgba(255,255,255,0.7)' }}>
-            Define your organization. Avenize adapts. Your people get WhatsApp-simple.
+            Capture, qualify, convert and fulfil customer demand — from first request to paid order, in one system.
           </p>
           <Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg transition hover:shadow-xl" style={{ backgroundColor: BRAND.primary, color: 'white' }}>
             Start your free trial <ArrowRight size={20} />

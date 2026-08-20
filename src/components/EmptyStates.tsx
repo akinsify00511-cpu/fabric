@@ -88,7 +88,7 @@ export function EmptyInvoices() {
       tips={[
         'Invoices are automatically tracked for overdue payments',
         'Set up recurring invoices for regular clients',
-        'Send invoices directly via email or WhatsApp',
+        'Send quotes and invoices by email — customers can accept online',
       ]}
     />
   )
