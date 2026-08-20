@@ -1,3 +1,32 @@
+## Session 41 (2026-08-20): Cmd/Ctrl+K fix + task-creation unlocked + gamified empty states
+
+User reports: "the search or jump to Ctrl+K is not working" and "no way to
+create a task / no structure to start". Two real client-side gaps (not
+deploy drift).
+
+### Cmd/Ctrl+K — fixed (`4b17caf`, pushed)
+Root cause: `useCommandPalette` registered `{key:'k', meta:true}` —
+mod-only-on-mac. Ctrl+K on Windows/Linux never matched. Added a `mod`
+modifier (matches Ctrl OR Meta) + pure `matchesShortcut` helper to
+`useKeyboardShortcuts`, and the palette now uses `mod:true`. The Shell
+"Search or jump to…" button dispatches a synthetic event that the palette
+listener now matches, so the click path also works. Tests:
+`tests/frontend/lib/keyboardShortcuts.test.ts` (5) — Ctrl+K, Cmd+K, bare-K
+denial, strict meta fallback, shift/alt. Lesson: never bind navigation
+shortcuts to meta-only.
+
+### Task creation — fixed (`4b17caf`, pushed)
+`Tasks.tsx` gated ALL creation behind `canManage`
+(owner/admin/manager/team_lead) — a staff member had no "Assign Task"
+button at all, and empty state said a bare "No tasks yet". Added
+`canCreate?!staff` and moved the button + form to it; management-only
+actions retain canManage. Gamified empty state ("Set your first task" +
+guidance + CTA) only for the true-empty view; filter empties are plain.
+Also stripped hardcoded `#4285F4` fallbacks from the file.
+
+Verified: tsc clean, build 0 warnings, vitest 655/655, schema-drift 0,
+design-constitution PASS. CI SUCCESS; Vercel Deploy Production ✓ 1m34s.
+
 ## Session 40 (2026-08-20): PR #24 verification + auth_rate_limits RLS closure + MeetingCapture tsc fixes
 
 User pasted the previous session's log (PR #24 squash-merged: paid checkout,
