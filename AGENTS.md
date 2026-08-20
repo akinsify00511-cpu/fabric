@@ -1,3 +1,40 @@
+## Session 37 (2026-08-20): Live-DB drift confirmed by direct probe + apply runbook
+
+User pasted the production browser console: wall of 404/400/406/PGRST202.
+Probed the live project (kgsgqvatyleetyquffya) directly with the publishable
+key (extracted from the deployed bundle — the bundle IS the new auth build,
+`onboarding_required` present, so frontend is current):
+
+**Probed live state (definitive):** staff has `is_active` NOT `active`
+(legacy hand-built schema — repo 002 ADD COLUMNs `active` additively, safe);
+staff.member_kind missing; businesses.slug missing; leave_requests.start_date
+missing; email_campaigns / user_workspace_selections / usage_events tables
+MISSING; claims + kpi_metrics EXIST; ~15 RPCs MISSING incl.
+create_business_and_owner (so live onboarding is broken until applied),
+check_auth_rate_limit, log_security_event, business_brain, can_access_module,
+current_metrics. get_current_staff exists (anon denied, correct). The live DB
+was hand-managed — never tracked via supabase_migrations.
+
+**The 406:** quality-control.ts used `.single()` for staff attribution →
+PGRST116 for staffless users. Fixed → .maybeSingle() (commit 73cc42d).
+
+**Shipped (commit 73cc42d, pushed to main):**
+- scripts/apply_migrations_live.sh — psql loop over all migrations in
+  filename order, two-pass, per-file report to
+  supabase/migration_apply_report.txt. Needs SUPABASE_DB_URL (Dashboard →
+  Settings → Database → connection string).
+- scripts/verify_live_db.sh — re-probes the exact objects the frontend needs
+  with SUPABASE_ANON_KEY. Baseline today: all FAIL (expected pre-apply).
+- LIVE_DB_APPLY_RUNBOOK.md — probed findings table, apply steps, pg_cron
+  note, and an orphaned-membership reconciliation snippet (user
+  361710ac-… references business f2d580d1-… but has NO staff row → after
+  applying, insert the owner staff row manually or onboarding would create a
+  duplicate business).
+
+**BLOCKED on user:** run apply script with DB password; then verify; then
+reconcile orphaned accounts; then deploy the newer edge functions
+(capture-process, webauthn, api-gateway) which have never been deployed.
+
 ## Session 36 (2026-08-20): Canonical auth lifecycle repair — commit 795c359 (local, NOT pushed)
 
 User audit (verified live Supabase auth logs): Supabase Auth is HEALTHY
