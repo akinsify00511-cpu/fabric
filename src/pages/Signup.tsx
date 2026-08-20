@@ -5,6 +5,9 @@ import PasswordStrength from '../components/PasswordStrength'
 import { Check, Sparkles, Users, Zap, Shield, Brain, MessageSquare, Network } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 import { captureAttribution } from '../lib/attribution'
+import { useAuth } from '../lib/AuthContext'
+import { createBusinessAndOwner } from '../lib/onboarding'
+import { checkAuthRateLimit, recordAuthFailure, resetAuthRateLimit, rateLimitMessage } from '../lib/authSecurity'
 
 const FEATURES = [
   { icon: Brain, textKey: 'signupFeatureBrain', text: 'One system — CRM, finance, HR, projects, all connected' },
@@ -15,6 +18,7 @@ const FEATURES = [
 
 export default function Signup() {
   const navigate = useNavigate()
+  const { session, membership, refreshStaff } = useAuth()
   // B14 attribution: last-chance capture of discovery provenance before signup.
   useEffect(() => { captureAttribution() }, [])
   const { translations } = useLocale()
@@ -31,6 +35,22 @@ export default function Signup() {
   const [industry, setIndustry] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // An already-authenticated visitor never sees the signup form: members go to
+  // the app, authenticated non-members resume onboarding. Gated on the idle
+  // form state so this never fires mid-submission or over an error, and so the
+  // post-signup session (created by signUp below) doesn't interrupt the
+  // business-creation flow.
+  useEffect(() => {
+    if (loading || step !== 'form' || error) return
+    if (!session) return
+    if (membership === 'member' || membership === 'deactivated') {
+      navigate('/app', { replace: true })
+    } else if (membership === 'onboarding_required') {
+      navigate('/onboarding', { replace: true })
+    }
+    // 'loading'/'anonymous'/'error': stay on the form.
+  }, [membership, session, loading, step, error, navigate])
 
   const validatePassword = () => {
     if (password.length < 8) {
@@ -71,24 +91,14 @@ export default function Signup() {
     setError(null)
 
     // Pre-auth rate limit: throttle signup abuse before hitting Supabase Auth.
-    // Fail open if the RPC isn't deployed (migration 20260818290000 grants anon).
-    try {
-      const { data: rl, error: rlErr } = await supabase
-        .rpc('check_auth_rate_limit', {
-          p_identifier: email.toLowerCase(),
-          p_action: 'signup',
-          p_max_attempts: 5,
-          p_window_seconds: 3600,
-          p_lockout_seconds: 3600,
-        })
-      if (!rlErr && rl && !rl.allowed) {
-        const mins = rl.retry_after ? Math.ceil(rl.retry_after / 60) : 60
-        setError(`Too many signup attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`)
-        setLoading(false)
-        return
-      }
-    } catch {
-      // Fail open.
+    // Read-only check (never counts this attempt); fails open if undeployed.
+    const identifier = email.toLowerCase()
+    const limits = { maxAttempts: 5, windowSeconds: 3600, lockoutSeconds: 3600 }
+    const verdict = await checkAuthRateLimit(identifier, 'signup', limits)
+    if (!verdict.allowed) {
+      setError(rateLimitMessage(verdict, 'signup'))
+      setLoading(false)
+      return
     }
 
     // Step 1: Create auth account
@@ -106,7 +116,9 @@ export default function Signup() {
     })
 
     if (signUpError) {
-      setError(signUpError.message)
+      // A failed signup counts against the limiter; a success clears it.
+      const after = await recordAuthFailure(identifier, 'signup', limits)
+      setError(after.allowed ? signUpError.message : rateLimitMessage(after, 'signup'))
       setLoading(false)
       return
     }
@@ -126,29 +138,50 @@ export default function Signup() {
     }
 
     // If we have a session (email confirmation disabled), create business immediately
+    void resetAuthRateLimit(identifier, 'signup')
     await createBusiness()
   }
 
   const createBusiness = async () => {
-    // Step 2: Create business and owner (SECURITY DEFINER function)
-    const { data: bizData, error: rpcError } = await supabase.rpc('create_business_and_owner', {
-      p_business_name: businessName,
-      p_industry: industry || null,
-      p_staff_name: fullName,
+    // Step 2: Create business and owner (SECURITY DEFINER function, canonical
+    // contract owned by src/lib/onboarding.ts).
+    const result = await createBusinessAndOwner({
+      businessName,
+      industry: industry || null,
+      staffName: fullName,
     })
 
-    if (rpcError) {
-      console.error('Business creation error:', rpcError)
-      setError('Failed to create business. Please contact support.')
+    if (!result.ok) {
+      if (result.reason === 'already_member') {
+        // Recoverable: the account already has a business — refresh the
+        // authoritative membership and enter the app.
+        await refreshStaff()
+        navigate('/app', { replace: true })
+        return
+      }
+      setError(
+        result.reason === 'unavailable'
+          ? 'The business creation service is not yet configured on this deployment. Please contact support.'
+          : result.message || 'Failed to create business. Please contact support.',
+      )
       setLoading(false)
       return
     }
 
     // Clear stored data
     localStorage.removeItem('avenize_pending_business')
-    
-    // Success - redirect to dashboard
-    navigate('/app')
+
+    // Wait for AuthContext to confirm the new membership, then enter the app.
+    // This replaces a hard navigation: RequireAuth would otherwise see a stale
+    // membership and bounce the brand-new user back to onboarding.
+    const resolved = await refreshStaff()
+    if (resolved?.business_id) {
+      navigate('/app', { replace: true })
+      return
+    }
+    // The business exists but the membership read hasn't caught up — send the
+    // user to /app anyway; RequireAuth shows its own resolver while it settles.
+    navigate('/app', { replace: true })
   }
 
   const handleResendEmail = async () => {

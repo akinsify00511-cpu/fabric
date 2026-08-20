@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 
 type InviteInfo = {
   business_id: string
@@ -14,6 +15,8 @@ type InviteInfo = {
 
 export default function Join() {
   const { inviteId } = useParams()
+  const navigate = useNavigate()
+  const { refreshStaff } = useAuth()
   const [info, setInfo] = useState<InviteInfo | null>(null)
   const [loadingInfo, setLoadingInfo] = useState(true)
   const [fullName, setFullName] = useState('')
@@ -110,8 +113,10 @@ export default function Join() {
       return
     }
 
-    // Redirect to dashboard
-    window.location.href = '/app'
+    // Refresh the canonical membership so RequireAuth sees the new staff row,
+    // then enter the app via the router (no full-page reload).
+    await refreshStaff()
+    navigate('/app', { replace: true })
   }
 
   if (loadingInfo) {

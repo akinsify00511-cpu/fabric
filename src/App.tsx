@@ -235,108 +235,107 @@ function MfaGate({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-// Session-only gate for the onboarding route. Lighter than RequireAuth
-// (which also checks the staff record and redirects to /onboarding, which
-// would loop). Ensures the auth client has restored a session before the
-// onboarding page can fire any authed RPC -- the create_business_and_owner
-// RPC is granted only to `authenticated` and runs as `anon` (-> 404 / NULL
-// auth.uid) if the request leaves before getSession() resolves.
-function RequireSession({ children }: { children: React.ReactNode }) {
-  const { session, loading } = useAuth()
-  if (loading) {
+// Shared auth screens for the route guards. Kept deliberately small and
+// token-free (they render before the app shell exists).
+function AuthLoadingScreen({ stuck, onRetry }: { stuck: boolean; onRetry: () => void }) {
+  if (stuck) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-8 h-8 border-2 border-black border-t-blue-600 rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4 text-center px-4">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)] flex items-center justify-center">
+            <span className="text-white font-bold text-xl">A</span>
+          </div>
+          <p className="text-[var(--av-text)] font-medium">Taking a moment to load your workspace…</p>
+          <p className="text-sm text-[var(--av-text-muted)]">This usually finishes in a second. If it doesn't, check your connection and retry.</p>
+          <button
+            onClick={onRetry}
+            className="px-5 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm hover:bg-[var(--av-primary-hover)]"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     )
   }
-  if (!session) {
-    return <Navigate to="/login" replace />
-  }
-  return <>{children}</>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex flex-col items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)] flex items-center justify-center">
+          <span className="text-white font-bold text-xl">A</span>
+        </div>
+        <div className="w-8 h-8 border-2 border-[var(--av-border)] border-t-[var(--av-primary)] rounded-full animate-spin" />
+      </div>
+    </div>
+  )
 }
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { session, loading, staff, staffChecked, refreshStaff } = useAuth()
+  const { membership, refreshStaff, signOut } = useAuth()
   const [stuck, setStuck] = useState(false)
   const location = useLocation()
 
-  // Safety net: if the staff fetch hasn't resolved after several seconds
-  // (DB unreachable / all retries exhausted on a hard error), stop spinning
-  // and offer a retry instead of hanging on the loader forever.
+  // Safety net: membership should resolve or error out; if a request hangs
+  // forever (network stall), stop spinning and offer a retry.
   useEffect(() => {
-    if (loading || !staffChecked) {
+    if (membership === 'loading') {
       setStuck(false)
       const t = setTimeout(() => setStuck(true), 6000)
       return () => clearTimeout(t)
     }
     setStuck(false)
-  }, [loading, staffChecked])
+  }, [membership])
 
-  // While any auth check is pending, show loading (or a retry prompt if stuck)
-  if (loading || !staffChecked) {
-    if (stuck) {
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="flex flex-col items-center gap-4 text-center px-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-xl">A</span>
-            </div>
-            <p className="text-black font-medium">Taking a moment to load your workspace…</p>
-            <p className="text-sm text-black/50">This usually finishes in a second. If it doesn't, check your connection and retry.</p>
-            <button
-              onClick={() => { setStuck(false); refreshStaff() }}
-              className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      )
-    }
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center">
-            <span className="text-white font-bold text-xl">A</span>
-          </div>
-          <div className="w-8 h-8 border-2 border-black border-t-blue-600 rounded-full animate-spin" />
-        </div>
-      </div>
-    )
+  if (membership === 'loading') {
+    return <AuthLoadingScreen stuck={stuck} onRetry={() => { setStuck(false); void refreshStaff() }} />
   }
 
   // No session - redirect to login. Preserve the page the user was trying to
   // reach (only for in-app routes) so re-login returns them there instead of
   // always dropping them on the dashboard.
-  if (!session) {
+  if (membership === 'anonymous') {
     const inApp = location.pathname.startsWith('/app/')
     const dest = inApp ? `/login?redirect=${encodeURIComponent(location.pathname + location.search)}` : '/login'
     return <Navigate to={dest} replace />
   }
 
-  // User has a session - check staff record
-  if (!staff) {
-    // No staff record at all - this is a genuinely new authenticated user
-    // who has not created/joined a business. Send to onboarding.
+  // The membership lookup itself failed (DB/RLS/network). This is NOT a
+  // sign-out and NOT a new user — the session stays intact and the user can
+  // retry in place.
+  if (membership === 'error') {
+    return <AuthLoadingScreen stuck onRetry={() => void refreshStaff()} />
+  }
+
+  // The member record exists but was deactivated by the business.
+  if (membership === 'deactivated') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4 text-center px-4 max-w-sm">
+          <div className="w-12 h-12 rounded-xl bg-[var(--av-primary)] flex items-center justify-center">
+            <span className="text-white font-bold text-xl">A</span>
+          </div>
+          <p className="text-[var(--av-text)] font-medium">Your access to this workspace was deactivated</p>
+          <p className="text-sm text-[var(--av-text-muted)]">Contact your business owner or admin if you think this is a mistake.</p>
+          <button
+            onClick={() => void signOut()}
+            className="px-5 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm hover:bg-[var(--av-primary-hover)]"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // A genuinely new authenticated user with no staff record — onboarding.
+  // (business_id presence is the authoritative membership signal; we
+  // deliberately do NOT gate on the legacy onboarding_completed flag, which is
+  // stale on live databases and previously caused an /app <-> /onboarding
+  // redirect loop.)
+  if (membership === 'onboarding_required') {
     return <Navigate to="/onboarding" replace />
   }
 
-  // A staff row with a business_id is the authoritative "this user belongs
-  // to an organization" signal. We deliberately do NOT gate on the
-  // onboarding_completed flag here: that flag is a legacy column whose value
-  // is stale on live databases that have not had migration 110 applied
-  // (owners created before the backfill carry onboarding_completed = FALSE).
-  // Gating on it sent already-onboarded users back to /onboarding, where
-  // create_business_and_owner raised "User already belongs to a business",
-  // refreshStaff re-read the still-stale FALSE, and RequireAuth bounced them
-  // straight back — an infinite /app <-> /onboarding loop. business_id is the
-  // real membership record; treat its presence as "onboarded".
-  if (!staff.business_id) {
-    return <Navigate to="/onboarding" replace />
-  }
-
-  // User is fully authenticated and belongs to an organization - verify
+  // member: fully authenticated and belongs to an organization - verify
   // MFA then show app
   return (
     <MfaGate>

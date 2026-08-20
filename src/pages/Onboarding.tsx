@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { createBusinessAndOwner } from '../lib/onboarding'
 import { logUsageEvent } from '../lib/useUsageTracking'
 import { recordDiscoveryReferral } from '../lib/businessOS'
 import { getStoredAttribution, clearStoredAttribution } from '../lib/attribution'
@@ -101,7 +102,7 @@ const INDUSTRIES = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { session, staff, refreshStaff, signOut } = useAuth()
+  const { session, refreshStaff, signOut } = useAuth()
   const [step, setStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -109,44 +110,10 @@ export default function Onboarding() {
   // Onboarding-start timestamp for the #14 completion telemetry (duration).
   const startedAtRef = useRef<number>(Date.now())
 
-  // A confirmed business membership is the canonical onboarded state. If a
-  // user reaches /onboarding after a refresh, direct URL entry, or a transient
-  // route race, never expose the onboarding wizard again. We deliberately do
-  // NOT check onboarding_completed here: that flag is stale on live DBs that
-  // have not had migration 110 applied, which caused already-onboarded owners
-  // to be trapped in a /app <-> /onboarding loop.
-  useEffect(() => {
-    if (staff?.business_id) {
-      navigate('/app', { replace: true })
-    }
-  }, [staff, navigate])
-
-  // Check if already onboarded - redirect to app
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      // No session - stay on onboarding
-      if (!session?.user.id) {
-        return
-      }
-
-      // Check database for staff record (authoritative — localStorage can be spoofed)
-      try {
-        const { data: staffData } = await supabase
-          .from('staff')
-          .select('business_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-
-        if (staffData?.business_id) {
-          navigate('/app', { replace: true })
-        }
-      } catch (err) {
-        console.warn('Error checking onboarding status:', err)
-        // Stay on onboarding page if error
-      }
-    }
-    checkOnboarding()
-  }, [session, navigate])
+  // Routing is owned by OnboardingGate (which reads AuthContext's canonical
+  // membership state): this component only renders for `onboarding_required`.
+  // No local staff lookups — a transient or errored read must never decide
+  // whether an already-onboarded user sees the wizard.
 
   // Form data
   const [businessName, setBusinessName] = useState('')
@@ -212,40 +179,38 @@ export default function Onboarding() {
     setError(null)
 
     try {
-      // Try RPC first (bypasses RLS due to SECURITY DEFINER)
-      const { data, error: rpcError } = await supabase.rpc('create_business_and_owner', {
-        p_business_name: businessName,
-        p_industry: industry,
-        p_staff_name: fullName,
-        p_job_title: jobTitle.trim() || undefined,
+      // The SECURITY DEFINER RPC is the single authoritative onboarding path
+      // (migration 074 blocks direct business/staff inserts). The canonical
+      // contract — signature, drift fallback, result shape — is owned by
+      // src/lib/onboarding.ts.
+      const result = await createBusinessAndOwner({
+        businessName,
+        industry,
+        staffName: fullName,
+        jobTitle: jobTitle.trim() || null,
       })
 
-      if (rpcError) {
+      if (!result.ok) {
         // The user may already have a business (e.g. a prior partial
-        // onboarding, or a transient staff fetch sent an already-onboarded
-        // user back here). The RPC raises 'User already belongs to a
-        // business' in that case -- correct recovery is to refresh the
-        // authoritative staff record and go to the app, NOT to attempt
-        // direct inserts (RLS denies those by design post-074) and show a
-        // misleading "Failed to create business".
-        if (/already belongs to a business/i.test(rpcError.message)) {
+        // onboarding). The RPC raises 'User already belongs to a business' in
+        // that case — correct recovery is to refresh the authoritative staff
+        // record and go to the app, NOT to attempt direct inserts (RLS denies
+        // those by design post-074) and show a misleading error.
+        if (result.reason === 'already_member') {
           await refreshStaff()
           navigate('/app', { replace: true })
           return
         }
-        // The SECURITY DEFINER RPC is the single authoritative onboarding
-        // path (migration 074 blocks direct business/staff inserts), so
-        // there is no valid manual fallback -- surface the real error.
-        console.error('create_business_and_owner RPC failed:', rpcError)
-        if (/could not find the function|PGRST202/i.test(rpcError.message)) {
+        if (result.reason === 'unavailable') {
           setError('Your account is set up, but the business creation service is not yet configured on this deployment. Please contact support.')
         } else {
-          setError(rpcError.message || 'Setup failed. Please try again.')
+          setError(result.message || 'Setup failed. Please try again.')
         }
         return
       }
 
-      // RPC succeeded
+      const businessId = result.businessId
+
       if (selectedColor) {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)
         localStorage.setItem('avenize_theme_text', selectedColor.previewText)
@@ -260,7 +225,7 @@ export default function Onboarding() {
             .upsert(
               {
                 user_id: session.user.id,
-                business_id: data,
+                business_id: businessId,
                 selected_tools: selectedTools,
                 selection_completed: true,
               },
@@ -270,42 +235,45 @@ export default function Onboarding() {
           /* non-blocking — selection is advisory, not a hard requirement */
         }
       }
-      window.location.href = '/app'
 
       // #14 self-instrumentation: log onboarding completion (fire-and-forget).
       // steps_reached + duration_seconds feed the funnel/conversion RPCs. The
       // abandonment metric (auth.users with no staff) is derived server-side,
       // so this event only needs to capture the SUCCESS path's steps + duration.
-      if (data) {
-        logUsageEvent({
-          businessId: data,
-          staffId: undefined,
-          moduleKey: 'onboarding',
-          action: 'onboarding_complete',
-          context: {
-            steps_reached: step,
-            duration_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
-            industry,
-          },
-        })
+      logUsageEvent({
+        businessId,
+        staffId: undefined,
+        moduleKey: 'onboarding',
+        action: 'onboarding_complete',
+        context: {
+          steps_reached: step,
+          duration_seconds: Math.round((Date.now() - startedAtRef.current) / 1000),
+          industry,
+        },
+      })
 
-        // B14 attribution: if this signup arrived with UTM/referrer provenance
-        // (captured on the public surface), record it linked to the new
-        // business so Discovery Intelligence can close discovery → revenue.
-        const attribution = getStoredAttribution()
-        if (attribution) {
-          recordDiscoveryReferral(data, {
-            source: attribution.source,
-            medium: attribution.medium,
-            campaign: attribution.campaign,
-            referrer: attribution.referrer,
-            landingPath: attribution.landingPath,
-            entityType: 'business',
-            entityId: data,
-          }).finally(() => clearStoredAttribution())
-        }
+      // B14 attribution: if this signup arrived with UTM/referrer provenance
+      // (captured on the public surface), record it linked to the new
+      // business so Discovery Intelligence can close discovery → revenue.
+      const attribution = getStoredAttribution()
+      if (attribution) {
+        recordDiscoveryReferral(businessId, {
+          source: attribution.source,
+          medium: attribution.medium,
+          campaign: attribution.campaign,
+          referrer: attribution.referrer,
+          landingPath: attribution.landingPath,
+          entityType: 'business',
+          entityId: businessId,
+        }).finally(() => clearStoredAttribution())
       }
 
+      // Wait for AuthContext to resolve the new membership, then enter the
+      // app via the router (no full-page reload). Without the refresh,
+      // RequireAuth would see the stale 'onboarding_required' state and bounce
+      // the brand-new owner straight back here.
+      await refreshStaff()
+      navigate('/app', { replace: true })
     } catch (err: any) {
       console.error('Setup error:', err)
       setError(err.message || 'Setup failed. Please try again.')

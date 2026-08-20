@@ -2,210 +2,191 @@
 // AUTH CALLBACK PAGE
 // Handles email confirmation for signup and invite acceptance
 // ============================================
+// The Supabase client (detectSessionInUrl, default) exchanges the ?code= in
+// the URL during initialization — AuthContext's initial getSession() resolves
+// only after that exchange, so this page NEVER exchanges codes itself (a
+// second exchange would fail and previously surfaced a spurious error
+// screen). Routing decisions come from AuthContext's canonical membership
+// state; this page only performs the one-time side effects (business creation
+// from a pending signup, invite acceptance) and then defers to the guards.
+// ============================================
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { createBusinessAndOwner } from '../lib/onboarding'
+import { getUserMfa, mfaRequired, isMfaVerified } from '../lib/mfa'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export default function AuthCallback() {
   const navigate = useNavigate()
-  const { refreshStaff } = useAuth()
+  const { session, membership, refreshStaff } = useAuth()
   const [searchParams] = useSearchParams()
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState<string>('')
+  // Run the routing/side-effect pass exactly once per resolved membership.
+  const handledRef = useRef(false)
 
   useEffect(() => {
-    const handleCallback = async () => {
-      // Get the code from the URL
-      const code = searchParams.get('code')
-      const errorParam = searchParams.get('error')
-      const type = searchParams.get('type') // 'signup' or 'invite'
-      const token = searchParams.get('token') // invite token if coming from invite
-      
-      if (errorParam) {
-        setError(errorParam)
-        setLoading(false)
-        return
-      }
+    if (handledRef.current) return
+    if (membership === 'loading') return
+    handledRef.current = true
+    void routeAfterCallback()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [membership])
 
-      if (code) {
-        // Exchange the code for a session
-        const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
-        
-        if (sessionError) {
-          console.error('Session exchange error:', sessionError)
-          setError(sessionError.message)
-          setLoading(false)
-          return
-        }
-        
-        // Get the current session
-        const { data: { session } } = await supabase.auth.getSession()
-        
-        if (!session) {
-          navigate('/login', { replace: true })
-          return
-        }
+  const routeAfterCallback = async () => {
+    const errorParam = searchParams.get('error')
+    const type = searchParams.get('type') // 'signup' | 'invite' | 'recovery'
+    const token = searchParams.get('token') // invite token if coming from invite
+    const hadCode = !!searchParams.get('code')
 
-        // Handle password recovery separately
-        if (type === 'recovery') {
-          navigate('/update-password', { replace: true })
-          return
-        }
-
-        // MFA gate: if the OAuth user has TOTP enabled, defer to the login
-        // page's challenge UI rather than dropping them straight into the app.
-        const { data: mfaRow } = await supabase
-          .from('user_mfa')
-          .select('enabled, method, totp_confirmed_at')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-        const mfaRequired = !!(mfaRow && mfaRow.enabled && mfaRow.method === 'totp' && mfaRow.totp_confirmed_at)
-
-        // Check if user already has a business
-        const { data: staffData } = await supabase
-          .from('staff')
-          .select('business_id')
-          .eq('user_id', session.user.id)
-          .maybeSingle()
-
-        if (staffData?.business_id) {
-          if (mfaRequired) {
-            // Defer to the login challenge (?mfa=1 triggers it).
-            navigate('/login?mfa=1', { replace: true })
-            return
-          }
-          // Already has a business, go to dashboard
-          setMessage('Welcome back! Redirecting to your dashboard...')
-          setTimeout(() => navigate('/app', { replace: true }), 1500)
-        } else {
-          // New OAuth user - check if they have metadata from OAuth provider
-          const oauthMetadata = session.user.user_metadata
-          
-          if (oauthMetadata?.full_name || oauthMetadata?.name) {
-            // OAuth user - store their info and send to onboarding
-            localStorage.setItem('avenize_oauth_pending', JSON.stringify({
-              fullName: oauthMetadata.full_name || oauthMetadata.name,
-              email: oauthMetadata.email,
-              avatarUrl: oauthMetadata.avatar_url,
-              provider: oauthMetadata.provider,
-            }))
-            navigate('/onboarding', { replace: true })
-          } else {
-            // Check for pending business signup (email/password signup)
-            const pendingBusiness = localStorage.getItem('avenize_pending_business')
-          
-            if (pendingBusiness) {
-              try {
-                const { businessName, industry, fullName, email } = JSON.parse(pendingBusiness)
-                
-                setMessage(`Setting up ${businessName}...`)
-                
-                // Create the business
-                const { error: bizError } = await supabase.rpc('create_business_and_owner', {
-                  p_business_name: businessName,
-                  p_industry: industry || null,
-                  p_staff_name: fullName,
-                })
-                
-                if (bizError) {
-                  // The user may already have a business (e.g. re-clicking an
-                  // old confirmation link after onboarding completed). The RPC
-                  // raises 'User already belongs to a business' in that case --
-                  // correct recovery is to refresh the authoritative staff
-                  // record and go to the app, not show a misleading error.
-                  if (/already belongs to a business/i.test(bizError.message)) {
-                    localStorage.removeItem('avenize_pending_business')
-                    await refreshStaff()
-                    navigate('/app', { replace: true })
-                    return
-                  }
-                  // If the RPC itself doesn't exist (migration not applied),
-                  // guide the user to onboarding which has a manual path.
-                  if (/could not find the function|PGRST202/i.test(bizError.message)) {
-                    localStorage.removeItem('avenize_pending_business')
-                    navigate('/onboarding', { replace: true })
-                    return
-                  }
-                  console.error('Failed to create business:', bizError)
-                  setError(bizError.message || 'Failed to set up your business. Please contact support.')
-                  setLoading(false)
-                  return
-                }
-                
-                localStorage.removeItem('avenize_pending_business')
-                
-                // Send welcome email (non-blocking)
-                sendWelcomeEmail(email, fullName, businessName, session.access_token)
-                
-                setMessage('Business created! Redirecting...')
-                setTimeout(() => navigate('/app', { replace: true }), 1500)
-              } catch (err) {
-                console.error('Error parsing pending business:', err)
-                navigate('/onboarding', { replace: true })
-              }
-            } 
-            // Check for pending invite
-            else if (token) {
-              const pendingInvite = localStorage.getItem('avenize_pending_invite')
-              
-              if (pendingInvite) {
-                setMessage('Joining your team...')
-                
-                const { error: inviteError } = await supabase.rpc('accept_invite', {
-                  p_token: token,
-                  p_staff_name: session.user.user_metadata?.full_name || null,
-                })
-                
-                if (inviteError) {
-                  console.error('Failed to accept invite:', inviteError)
-                  setError(inviteError.message)
-                  setLoading(false)
-                  return
-                }
-                
-                localStorage.removeItem('avenize_pending_invite')
-                setMessage('Joined! Redirecting...')
-                setTimeout(() => navigate('/app', { replace: true }), 1500)
-              } else {
-                // No pending invite, go to onboarding
-                navigate('/onboarding', { replace: true })
-              }
-            }
-            else {
-              // New user with no pending data, go to onboarding
-              navigate('/onboarding', { replace: true })
-            }
-          }
-        }
-      } else {
-        // No code, redirect to login
-        navigate('/login', { replace: true })
-      }
-      
-      setLoading(false)
+    if (errorParam) {
+      setError(errorParam)
+      return
     }
 
-    handleCallback()
-  }, [searchParams, navigate, refreshStaff])
+    // Password recovery lands here with a session (auto-exchanged); without
+    // one, the link is expired or already consumed.
+    if (type === 'recovery') {
+      if (session) navigate('/update-password', { replace: true })
+      else setError('This password reset link has expired or was already used. Please request a new one.')
+      return
+    }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">A</span>
-          </div>
-          <div className="w-8 h-8 border-2 border-[var(--av-primary, var(--av-primary))] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-black mt-4">{message || 'Completing sign in...'}</p>
-        </div>
-      </div>
-    )
+    if (membership === 'anonymous') {
+      // A code was present but produced no session: the confirmation/invite
+      // link is expired or already consumed.
+      if (hadCode) {
+        setError('This sign-in link has expired or was already used. Please request a new one.')
+      } else {
+        navigate('/login', { replace: true })
+      }
+      return
+    }
+
+    if (membership === 'error') {
+      setError('We could not load your account. Check your connection and try again.')
+      return
+    }
+
+    // MFA gate: if the user has TOTP enabled and hasn't cleared it this
+    // session, defer to the login page's challenge UI.
+    if (session) {
+      const mfa = await getUserMfa(session)
+      if (mfaRequired(mfa) && !isMfaVerified(session.user.id)) {
+        navigate('/login?mfa=1', { replace: true })
+        return
+      }
+    }
+
+    // Existing members go straight to the app.
+    if (membership === 'member' || membership === 'deactivated') {
+      setMessage('Welcome back! Redirecting to your workspace…')
+      navigate('/app', { replace: true })
+      return
+    }
+
+    // onboarding_required: complete the pending setup, if any.
+    const user = session?.user
+    if (!user) {
+      navigate('/login', { replace: true })
+      return
+    }
+
+    const oauthMetadata = user.user_metadata
+
+    // OAuth user (Google/GitHub) with profile metadata — onboarding collects
+    // the business details.
+    if (oauthMetadata?.full_name || oauthMetadata?.name) {
+      localStorage.setItem('avenize_oauth_pending', JSON.stringify({
+        fullName: oauthMetadata.full_name || oauthMetadata.name,
+        email: oauthMetadata.email,
+        avatarUrl: oauthMetadata.avatar_url,
+        provider: oauthMetadata.provider,
+      }))
+      navigate('/onboarding', { replace: true })
+      return
+    }
+
+    // Email/password signup with email confirmation: the business details were
+    // stashed at signup; create the business now.
+    const pendingBusiness = localStorage.getItem('avenize_pending_business')
+    if (pendingBusiness) {
+      try {
+        const { businessName, industry, fullName, email } = JSON.parse(pendingBusiness)
+        setMessage(`Setting up ${businessName}…`)
+
+        const result = await createBusinessAndOwner({
+          businessName,
+          industry: industry || null,
+          staffName: fullName,
+        })
+
+        if (!result.ok) {
+          if (result.reason === 'already_member') {
+            // Re-clicking an old confirmation link after onboarding completed.
+            localStorage.removeItem('avenize_pending_business')
+            await refreshStaff()
+            navigate('/app', { replace: true })
+            return
+          }
+          if (result.reason === 'unavailable') {
+            // RPC not deployed on this environment — onboarding wizard is the
+            // recovery surface.
+            localStorage.removeItem('avenize_pending_business')
+            navigate('/onboarding', { replace: true })
+            return
+          }
+          setError(result.message || 'Failed to set up your business. Please contact support.')
+          return
+        }
+
+        localStorage.removeItem('avenize_pending_business')
+        sendWelcomeEmail(email, fullName, businessName, session!.access_token)
+
+        setMessage('Business created! Redirecting…')
+        await refreshStaff()
+        navigate('/app', { replace: true })
+        return
+      } catch (err) {
+        console.error('Error parsing pending business:', err)
+        localStorage.removeItem('avenize_pending_business')
+        navigate('/onboarding', { replace: true })
+        return
+      }
+    }
+
+    // Pending invite acceptance.
+    if (token) {
+      const pendingInvite = localStorage.getItem('avenize_pending_invite')
+      if (pendingInvite) {
+        setMessage('Joining your team…')
+
+        const { error: inviteError } = await supabase.rpc('accept_invite', {
+          p_token: token,
+          p_staff_name: user.user_metadata?.full_name || null,
+        })
+
+        if (inviteError) {
+          console.error('Failed to accept invite:', inviteError)
+          setError(inviteError.message)
+          return
+        }
+
+        localStorage.removeItem('avenize_pending_invite')
+        setMessage('Joined! Redirecting…')
+        await refreshStaff()
+        navigate('/app', { replace: true })
+        return
+      }
+    }
+
+    // New user with no pending data — onboarding collects the details.
+    navigate('/onboarding', { replace: true })
   }
 
   if (error) {
@@ -221,28 +202,35 @@ export default function AuthCallback() {
             <h2 className="text-xl font-semibold">Something went wrong</h2>
             <p className="text-sm text-black/60 mt-2">{error}</p>
           </div>
-          <a 
-            href="/login" 
-            className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
-          >
-            Back to Sign In
-          </a>
+          <div className="flex items-center justify-center gap-3">
+            {membership !== 'anonymous' && (
+              <button
+                onClick={() => { handledRef.current = false; setError(null); void refreshStaff() }}
+                className="px-6 py-3 rounded-xl border border-black/10 text-sm font-medium"
+              >
+                Try again
+              </button>
+            )}
+            <a
+              href="/login"
+              className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium"
+            >
+              Back to Sign In
+            </a>
+          </div>
         </div>
       </div>
     )
   }
 
-  // Success state while redirecting
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F8F9FA]">
       <div className="text-center">
-        <div className="w-16 h-16 rounded-full bg-[var(--av-success-soft)] flex items-center justify-center mx-auto">
-          <svg className="w-8 h-8 text-[var(--av-success)] animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
+        <div className="w-16 h-16 rounded-2xl avenize-gradient flex items-center justify-center mx-auto mb-4">
+          <span className="text-white font-bold text-2xl">A</span>
         </div>
-        <h2 className="text-xl font-semibold mt-6">Success!</h2>
-        <p className="text-sm text-black mt-2">{message || 'Redirecting...'}</p>
+        <div className="w-8 h-8 border-2 border-[var(--av-primary)] border-t-transparent rounded-full animate-spin mx-auto" />
+        <p className="text-sm text-black mt-4">{message || 'Completing sign in…'}</p>
       </div>
     </div>
   )
@@ -260,7 +248,7 @@ async function sendWelcomeEmail(email: string, fullName: string, businessName: s
       },
       body: JSON.stringify({ email, fullName, businessName }),
     })
-    
+
     if (!response.ok) {
       console.error('Failed to send welcome email:', response.statusText)
     }

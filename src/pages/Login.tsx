@@ -9,6 +9,11 @@ import {
   type UserMfaRow,
 } from '../lib/mfa'
 import { loginWithPasskey, passkeysSupported } from '../lib/passkeys'
+import {
+  checkAuthRateLimit, recordAuthFailure, resetAuthRateLimit,
+  logSecurityEvent, rateLimitMessage,
+} from '../lib/authSecurity'
+import type { MembershipState } from '../lib/AuthContext'
 
 // GOOGLE STANDARD BRAND COLORS
 const BRAND = {
@@ -31,7 +36,7 @@ const BRAND = {
 
 export default function Login() {
   const navigate = useNavigate()
-  const { session: ctxSession, staff, staffChecked } = useAuth()
+  const { session: ctxSession, membership } = useAuth()
   const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -45,18 +50,6 @@ export default function Login() {
   const [mfaCode, setMfaCode] = useState('')
   const [mfaVerifying, setMfaVerifying] = useState(false)
   const [useBackupCode, setUseBackupCode] = useState(false)
-
-  // Complete login after the MFA challenge (or when none is required).
-  const finishLogin = async (userId: string) => {
-    const { data: staffData } = await supabase
-      .from('staff')
-      .select('business_id')
-      .eq('user_id', userId)
-      .maybeSingle()
-
-    setLoading(false)
-    navigate(resolveDestination(!!staffData?.business_id), { replace: true })
-  }
 
   // Verify the TOTP code (or a backup code) and, on success, mark MFA cleared
   // and proceed to the app.
@@ -84,7 +77,10 @@ export default function Login() {
         }
       }
       setMfaVerified(mfaChallenge.user_id)
-      await finishLogin(mfaChallenge.user_id)
+      // MFA cleared — the redirect effect below routes once AuthContext's
+      // membership state resolves. Never do a staff lookup here.
+      setMfaChallenge(null)
+      setMfaVerifying(false)
     } catch (err) {
       console.error('MFA verify error:', err)
       setError('Verification failed. Please try again.')
@@ -92,61 +88,51 @@ export default function Login() {
     }
   }
 
-  // Resolve where to go after a successful login. Honours ?redirect= (set by
+  // Resolve where to go once authenticated. Honours ?redirect= (set by
   // RequireAuth when bouncing an expired session) so a user returns to the
-  // page they were on instead of always landing on the dashboard. Falls back
-  // to /app for onboarded users and /onboarding for new users.
-  const resolveDestination = (hasBusiness: boolean): string => {
+  // page they were on instead of always landing on the dashboard. The
+  // /app-vs-/onboarding decision comes from AuthContext's canonical
+  // membership state — Login never runs its own staff/business lookup.
+  const resolveDestination = (state: MembershipState): string => {
     const redirect = searchParams.get('redirect')
     if (redirect && redirect.startsWith('/app/') && !redirect.includes('//')) {
       return redirect
     }
-    return hasBusiness ? '/app' : '/onboarding'
+    return state === 'onboarding_required' ? '/onboarding' : '/app'
   }
 
-  // If we arrive with an existing session (OAuth callback redirect, or a page
-  // refresh while the session cookie is still valid), honour the MFA gate.
-  // This effect does NOT do its own staff lookup: AuthContext's fetchStaff
-  // already does the authoritative, retry-protected read (4 empty-read
-  // retries to absorb the auth-token/RLS readiness race). Doing a separate
-  // single .maybeSingle() here previously raced that protection and sent an
-  // already-onboarded user to /onboarding on a transient empty read. We read
-  // the MFA row ourselves (Login-specific challenge UI) but defer the
-  // business/onboarding decision to AuthContext's `staff`/`staffChecked`.
+  // If we arrive with an existing session (OAuth callback redirect, page
+  // refresh, or ?mfa=1 from the in-app gate), honour the MFA challenge. The
+  // challenge UI lives here, so we read the user_mfa row ourselves — but the
+  // membership/onboarding decision stays with AuthContext.
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) return
 
-      // MFA challenge is Login-specific: the challenge UI lives here, so we
-      // read the user_mfa row ourselves. RequireAuth's MfaGate handles the
-      // in-app MFA enforcement separately.
       const mfa = await getUserMfa(session)
       if (mfaRequired(mfa)) {
-        // MFA enabled — show challenge, do NOT navigate yet.
         setMfaChallenge(mfa)
         setLoading(false)
         return
       }
-
-      // No MFA required. Defer the /app vs /onboarding decision to
-      // AuthContext's staff state (retry-protected). The redirect effect
-      // below fires once staffChecked resolves.
+      // No MFA required. The redirect effect below routes once the canonical
+      // membership state resolves.
     }
     checkSession()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, searchParams.get('mfa')])
 
-  // Redirect an already-authenticated (non-MFA) user away from the login
-  // page, using AuthContext's authoritative staff state. Fires when the
-  // session is present, MFA is not pending, and the staff lookup has settled
-  // (staffChecked) — so it never acts on a transient empty read.
+  // Redirect an authenticated, MFA-cleared user away from the login page.
+  // Waits for the canonical membership state: 'loading' is a wait, and the
+  // /app-vs-/onboarding decision never fires on a transient or errored read.
   useEffect(() => {
     if (mfaChallenge) return // MFA challenge in progress; stay on Login.
-    if (!ctxSession || !staffChecked) return
-    navigate(resolveDestination(!!staff?.business_id), { replace: true })
+    if (!ctxSession) return
+    if (membership === 'loading' || membership === 'anonymous') return
+    navigate(resolveDestination(membership), { replace: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ctxSession, staffChecked, staff, mfaChallenge])
+  }, [ctxSession, membership, mfaChallenge])
 
   const handlePasskeyLogin = async () => {
     setError(null)
@@ -172,47 +158,33 @@ export default function Login() {
     setLoading(true)
     setError(null)
 
-    // Pre-auth rate limit: throttle brute-force before hitting Supabase Auth.
-    // The RPC is granted to anon (migration 20260818290000) so it works pre-session.
-    try {
-      const { data: rl, error: rlErr } = await supabase
-        .rpc('check_auth_rate_limit', {
-          p_identifier: email.toLowerCase(),
-          p_action: 'login',
-          p_max_attempts: 5,
-          p_window_seconds: 300,
-          p_lockout_seconds: 900,
-        })
-      if (rlErr) {
-        // Rate-limit infra not deployed (migration not applied) — fail open so
-        // login still works; Supabase Auth has its own built-in protection.
-        console.warn('Rate limit check unavailable:', rlErr.message)
-      } else if (rl && !rl.allowed) {
-        const mins = rl.retry_after ? Math.ceil(rl.retry_after / 60) : 15
-        setError(`Too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`)
-        setLoading(false)
-        return
-      }
-    } catch {
-      // Fail open — never block login because the rate-limit RPC errored.
+    const identifier = email.toLowerCase()
+    const limits = { maxAttempts: 5, windowSeconds: 300, lockoutSeconds: 900 }
+
+    // Read-only gate (never counts this attempt). Fails open when the
+    // rate-limit RPC isn't deployed — Supabase Auth has its own throttle.
+    const verdict = await checkAuthRateLimit(identifier, 'login', limits)
+    if (!verdict.allowed) {
+      setError(rateLimitMessage(verdict, 'login'))
+      setLoading(false)
+      return
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
-      // Log the failed attempt so the rate limiter counts it (best-effort).
-      supabase.rpc('log_security_event', {
-        p_event_type: 'login_failed',
-        p_email: email.toLowerCase(),
-        p_metadata: { reason: error.message },
-        p_success: false,
-      }).then(() => {}, () => {})
-      setError(error.message)
+      // Failed attempts — and ONLY failed attempts — move the counter.
+      const after = await recordAuthFailure(identifier, 'login', limits)
+      logSecurityEvent('login_failed', identifier, false, { reason: error.message })
+      setError(after.allowed ? error.message : rateLimitMessage(after, 'login'))
       setLoading(false)
       return
     }
 
     if (data.session) {
+      // Successful auth clears any accumulated failures.
+      void resetAuthRateLimit(identifier, 'login')
+
       // Password verified. Now check whether a second factor is required.
       const mfa = await getUserMfa(data.session)
       if (mfaRequired(mfa)) {
@@ -220,7 +192,11 @@ export default function Login() {
         setLoading(false)
         return
       }
-      await finishLogin(data.session.user.id)
+      // Session established. AuthContext resolves membership; the redirect
+      // effect above navigates once it settles.
+      setLoading(false)
+    } else {
+      setLoading(false)
     }
   }
 

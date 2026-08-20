@@ -82,13 +82,50 @@ export function memberKindLabel(kind: MemberKind | string | null | undefined): s
   return cfg?.label ?? 'Staff'
 }
 
+// ============================================
+// CANONICAL MEMBERSHIP STATE MACHINE
+// ============================================
+// AuthContext is the ONLY component that resolves "who is this user and do
+// they belong to a business". Login authenticates, Onboarding creates the
+// business — neither decides membership. `staff === null` is never overloaded:
+// an empty read is ambiguous (new user vs transient failure), an error is a
+// failure, and a deactivated member is distinct from both.
+export type MembershipState =
+  | 'loading'              // session or membership not resolved yet
+  | 'anonymous'            // definitively no session
+  | 'member'               // staff row with a business
+  | 'onboarding_required'  // authenticated, genuinely no membership
+  | 'deactivated'          // staff row exists but the member was deactivated
+  | 'error'                // membership lookup failed (DB/RLS/network)
+
+export function deriveMembership(args: {
+  authLoading: boolean
+  sessionPresent: boolean
+  staffChecked: boolean
+  staffError: boolean
+  staff: Pick<Staff, 'business_id' | 'active'> | null
+}): MembershipState {
+  if (args.authLoading) return 'loading'
+  if (!args.sessionPresent) return 'anonymous'
+  // staffChecked is only trustworthy for the CURRENT identity — the auth event
+  // handler resets it synchronously when the user id changes, so a stale
+  // "checked" flag from a previous/no session can never produce a false
+  // 'onboarding_required'.
+  if (!args.staffChecked) return 'loading'
+  if (args.staffError) return 'error'
+  if (!args.staff || !args.staff.business_id) return 'onboarding_required'
+  if (args.staff.active === false) return 'deactivated'
+  return 'member'
+}
+
 type AuthContextValue = {
   session: Session | null
   staff: Staff | null
   loading: boolean
   staffChecked: boolean
+  membership: MembershipState
   signOut: () => Promise<void>
-  refreshStaff: () => Promise<void>
+  refreshStaff: () => Promise<Staff | null>
   canManageStaff: boolean
   canApproveRequests: boolean
   canViewReports: boolean
@@ -102,12 +139,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<Staff | null>(null)
   const [loading, setLoading] = useState(true)
   const [staffChecked, setStaffChecked] = useState(false)
+  const [staffError, setStaffError] = useState(false)
   // Monotonic request id prevents stale staff requests/retries from writing
   // into state after a user switch or sign-out.
   const fetchIdRef = useRef(0)
   // Auth generation prevents an older getSession() result from resurrecting
   // a session after a SIGNED_OUT event has already been processed.
   const authGenerationRef = useRef(0)
+  // The user id the current session state belongs to. Used to detect identity
+  // changes so membership state can be invalidated in the SAME batch as the
+  // session update — a returning user must never flash 'onboarding_required'
+  // while their staff row is being fetched.
+  const sessionUserIdRef = useRef<string | null>(null)
+
+  // Apply a session change atomically. When the identity changes, the previous
+  // membership resolution is meaningless — reset it here (batched with the
+  // session update) rather than in a later effect, so no render ever sees
+  // "new session + stale staffChecked=true + staff=null".
+  const applySession = useCallback((newSession: Session | null) => {
+    const nextId = newSession?.user?.id ?? null
+    if (nextId !== sessionUserIdRef.current) {
+      sessionUserIdRef.current = nextId
+      setStaff(null)
+      setStaffError(false)
+      // A resolved membership requires a fresh check for the new identity.
+      setStaffChecked(!nextId)
+    }
+    setSession(newSession)
+    setLoading(false)
+  }, [])
 
   useEffect(() => {
     let mounted = true
@@ -115,13 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted || generationAtStart !== authGenerationRef.current) return
-      setSession(data.session)
-      setLoading(false)
+      applySession(data.session)
     }).catch((error) => {
       if (!mounted || generationAtStart !== authGenerationRef.current) return
       console.warn('Failed to restore auth session:', error)
-      setSession(null)
-      setLoading(false)
+      applySession(null)
     })
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
@@ -133,91 +191,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (event === 'SIGNED_OUT') {
         authGenerationRef.current += 1
         fetchIdRef.current += 1
+        sessionUserIdRef.current = null
         setSession(null)
         setStaff(null)
+        setStaffError(false)
         setStaffChecked(true)
         setLoading(false)
         return
       }
 
-      setSession(newSession)
-      setLoading(false)
+      // INITIAL_SESSION, SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED all funnel
+      // through the same atomic session application.
+      applySession(newSession)
     })
 
     return () => {
       mounted = false
       listener.subscription.unsubscribe()
     }
-  }, [])
+  }, [applySession])
 
+  // Resolve membership for the current identity. Awaitable so onboarding can
+  // wait for the definitive answer before routing. Retries absorb the
+  // auth-token/RLS readiness race during session restoration; after retries an
+  // ERROR is surfaced (membership = 'error', recoverable via refreshStaff)
+  // while genuinely-empty reads resolve to 'onboarding_required'.
   const fetchStaff = useCallback(
-    async (userId: string, attempt = 1, myId = fetchIdRef.current) => {
-      if (!userId) {
-        setStaff(null)
-        setStaffChecked(true)
-        return
-      }
-      if (attempt === 1) setStaffChecked(false)
-      try {
-        const { data, error } = await supabase
-          .from('staff')
-          .select('*')
-          .eq('user_id', userId)
-          .maybeSingle()
-
-        if (myId !== fetchIdRef.current) return
-        if (data) {
-          // A confirmed staff row is the authoritative membership record.
-          // Its onboarding_completed value is consumed by RequireAuth; do not
-          // infer onboarding state from localStorage or transient UI state.
-          setStaff({ ...data, user: session?.user } as Staff)
-          setStaffChecked(true)
-          return
+    async (userId: string, myId: number): Promise<Staff | null> => {
+      let lastError: unknown = null
+      const delays = [0, 200, 500, 1200]
+      for (let attempt = 0; attempt < delays.length; attempt++) {
+        if (delays[attempt] > 0) {
+          await new Promise<void>((resolve) => setTimeout(resolve, delays[attempt]))
         }
+        if (myId !== fetchIdRef.current) return null
+        try {
+          const { data, error } = await supabase
+            .from('staff')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle()
 
-        if (error) {
-          if (attempt < 4 && myId === fetchIdRef.current) {
-            const delay = [200, 500, 1200][attempt - 1] || 1500
-            setTimeout(() => {
-              if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
-            }, delay)
-            return
+          if (myId !== fetchIdRef.current) return null
+          if (data) {
+            // A confirmed staff row is the authoritative membership record.
+            const resolved = { ...data, user: session?.user } as Staff
+            setStaff(resolved)
+            setStaffError(false)
+            setStaffChecked(true)
+            return resolved
           }
-          console.warn('Failed to fetch staff after retries:', error)
-          setStaffChecked(false)
-          return
+          if (error) {
+            lastError = error
+            continue
+          }
+          // Empty read: ambiguous (new user vs transient) — retry.
+        } catch (err) {
+          lastError = err
         }
-
-        // An empty result is NOT immediately treated as "not onboarded".
-        // During session restoration the auth token, RLS context, and database
-        // request can become ready on slightly different ticks. Previously we
-        // accepted one empty result and redirected a valid onboarded user to
-        // /onboarding. Require four consecutive empty reads before declaring
-        // that this authenticated user truly has no staff record.
-        if (attempt < 4 && myId === fetchIdRef.current) {
-          const delay = [200, 500, 1200][attempt - 1] || 1500
-          setTimeout(() => {
-            if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
-          }, delay)
-          return
-        }
-
-        setStaff(null)
-        setStaffChecked(true)
-      } catch (err) {
-        if (myId !== fetchIdRef.current) return
-        console.warn('Failed to fetch staff (throw):', err)
-        if (attempt < 4 && myId === fetchIdRef.current) {
-          const delay = [200, 500, 1200][attempt - 1] || 1500
-          setTimeout(() => {
-            if (myId === fetchIdRef.current) fetchStaff(userId, attempt + 1, myId)
-          }, delay)
-          return
-        }
-        setStaffChecked(false)
-        return
       }
+
+      if (myId !== fetchIdRef.current) return null
+      if (lastError) {
+        console.warn('Failed to fetch staff after retries:', lastError)
+        setStaffError(true)
+        setStaffChecked(true)
+        return null
+      }
+      setStaff(null)
       setStaffChecked(true)
+      return null
     },
     [session?.user],
   )
@@ -226,9 +269,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (userId) {
       const id = ++fetchIdRef.current
-      fetchStaff(userId, 1, id)
+      setStaffChecked(false)
+      setStaffError(false)
+      void fetchStaff(userId, id)
     } else {
       setStaff(null)
+      setStaffError(false)
       setStaffChecked(true)
     }
   }, [fetchStaff, userId])
@@ -252,8 +298,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // for an already-revoked session.
     authGenerationRef.current += 1
     fetchIdRef.current += 1
+    sessionUserIdRef.current = null
     setSession(null)
     setStaff(null)
+    setStaffError(false)
     setStaffChecked(true)
     setLoading(false)
 
@@ -277,11 +325,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const refreshStaff = useCallback(() => {
-    if (!session?.user?.id) return Promise.resolve()
+  // Awaitable: resolves once the membership answer is definitive (or all
+  // retries are exhausted), so callers like onboarding can wait for the
+  // authoritative staff row before routing to /app.
+  const refreshStaff = useCallback((): Promise<Staff | null> => {
+    if (!session?.user?.id) return Promise.resolve(null)
     const id = ++fetchIdRef.current
-    return fetchStaff(session.user.id, 1, id)
+    setStaffChecked(false)
+    setStaffError(false)
+    return fetchStaff(session.user.id, id)
   }, [fetchStaff, session?.user?.id])
+
+  const membership = deriveMembership({
+    authLoading: loading,
+    sessionPresent: !!session,
+    staffChecked,
+    staffError,
+    staff,
+  })
 
   const userRole = staff?.role || 'staff'
   const canManageStaff = hasPermission(userRole, 'manage_staff') || userRole === 'owner'
@@ -295,6 +356,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       staff,
       loading,
       staffChecked,
+      membership,
       signOut,
       refreshStaff,
       canManageStaff,
