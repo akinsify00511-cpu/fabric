@@ -47,8 +47,8 @@ create table if not exists public.meeting_captures (
   id uuid primary key default gen_random_uuid(),
   meeting_id uuid not null references public.meetings(id) on delete cascade,
   business_id uuid not null,
-  staff_id uuid not null,
-  capture_type text not null check (capture_type in ('text','voice','image','file','recording')),
+  staff_id uuid,
+  capture_type text not null,
   title text,
   body text,
   storage_path text,
@@ -57,6 +57,26 @@ create table if not exists public.meeting_captures (
   duration_seconds integer,
   created_at timestamptz not null default now()
 );
+-- Tolerate the Phase B (20260818500000) shape that CREATE TABLE IF NOT EXISTS
+-- skips over: creator_id-based with the 4-value capture_type CHECK. Additive
+-- columns unify both shapes; legacy rows are backfilled so the membership
+-- policies below see them.
+alter table public.meeting_captures add column if not exists staff_id uuid;
+alter table public.meeting_captures add column if not exists body text;
+alter table public.meeting_captures add column if not exists mime_type text;
+alter table public.meeting_captures add column if not exists size_bytes bigint;
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='meeting_captures' and column_name='creator_id') then
+    execute 'update public.meeting_captures set staff_id = creator_id where staff_id is null and creator_id is not null';
+  end if;
+end $$;
+do $$
+begin
+  alter table public.meeting_captures drop constraint if exists meeting_captures_capture_type_check;
+  alter table public.meeting_captures add constraint meeting_captures_capture_type_check
+    check (capture_type in ('screen','camera','screen_with_camera','audio_only','text','voice','image','file','recording'));
+end $$;
 create index if not exists meeting_captures_meeting_idx on public.meeting_captures(meeting_id,created_at desc);
 create index if not exists meeting_captures_business_idx on public.meeting_captures(business_id,created_at desc);
 alter table public.meeting_captures enable row level security;
@@ -78,7 +98,13 @@ drop policy if exists meeting_capture_objects_delete on storage.objects;
 create policy meeting_capture_objects_delete on storage.objects for delete to authenticated using (bucket_id='meeting-captures' and name ~ '^[0-9a-fA-F-]{36}/' and exists(select 1 from public.meetings m where m.id=split_part(name,'/',1)::uuid and exists(select 1 from public.get_current_staff() s where s.business_id=m.business_id)));
 
 -- Realtime signaling/presence is restricted to authenticated members of the meeting's business.
-drop policy if exists native_meeting_realtime_select on realtime.messages;
-create policy native_meeting_realtime_select on realtime.messages for select to authenticated using (realtime.messages.extension in ('broadcast','presence') and realtime.topic() ~ '^meeting:[0-9a-fA-F-]{36}$' and exists(select 1 from public.meetings m where m.id=split_part(realtime.topic(),':',2)::uuid and exists(select 1 from public.get_current_staff() s where s.business_id=m.business_id)));
-drop policy if exists native_meeting_realtime_insert on realtime.messages;
-create policy native_meeting_realtime_insert on realtime.messages for insert to authenticated with check (realtime.messages.extension in ('broadcast','presence') and realtime.topic() ~ '^meeting:[0-9a-fA-F-]{36}$' and exists(select 1 from public.meetings m where m.id=split_part(realtime.topic(),':',2)::uuid and exists(select 1 from public.get_current_staff() s where s.business_id=m.business_id)));
+-- Guarded because the realtime schema only exists on Supabase (skipped in the bare-postgres CI shim).
+do $_$
+begin
+  if exists (select 1 from pg_namespace n join pg_class c on c.relnamespace=n.oid where n.nspname='realtime' and c.relname='messages') then
+    execute $$drop policy if exists native_meeting_realtime_select on realtime.messages$$;
+    execute $$create policy native_meeting_realtime_select on realtime.messages for select to authenticated using (realtime.messages.extension in ('broadcast','presence') and realtime.topic() ~ '^meeting:[0-9a-fA-F-]{36}$' and exists(select 1 from public.meetings m where m.id=split_part(realtime.topic(),':',2)::uuid and exists(select 1 from public.get_current_staff() s where s.business_id=m.business_id)))$$;
+    execute $$drop policy if exists native_meeting_realtime_insert on realtime.messages$$;
+    execute $$create policy native_meeting_realtime_insert on realtime.messages for insert to authenticated with check (realtime.messages.extension in ('broadcast','presence') and realtime.topic() ~ '^meeting:[0-9a-fA-F-]{36}$' and exists(select 1 from public.meetings m where m.id=split_part(realtime.topic(),':',2)::uuid and exists(select 1 from public.get_current_staff() s where s.business_id=m.business_id)))$$;
+  end if;
+end $_$;

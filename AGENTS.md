@@ -30,6 +30,21 @@ output — grep for "does not exist" misses "permission denied".
 - Premium.tsx design-constitution drift growth (hex 0->2) → bg tokens. Gate
   now PASS (125 files vs baseline 127).
 
+### CI failures resolved
+The merged HEAD (9402101) had red CI: design-constitution (Premium hex) +
+migration-test FAIL on 20260820210000_native_meetings → Vercel deploys being
+SKIPPED (production never picked up PR #24). Migration fix: Phase B created
+meeting_captures with creator_id + 4-value CHECK while PR #24 needed
+staff_id + text/voice/image/file/file/recording shapes — CREATE TABLE IF NOT
+EXISTS skipped → policies referencing staff_id aborted the file →
+bucket/realtime policies never created (was the real upload-attachment
+failer for capture-in-meeting). Fixed in place: additive
+ALTER TABLE ADD COLUMN IF NOT EXISTS (staff_id/body/mime_type/size_bytes) +
+column-existence-guarded creator_id backfill + DO-block DROP/re-add of the
+widened CHECK + `$_$`-delimited (nested dollar-quote hardening) realtime
+schema existence guard. Verified both scenarios (Phase B shape / fresh) and
+idempotency on postgres:15.
+
 Verified: tsc clean, vite build 0 warnings, vitest 650/650, schema-drift 0,
 design-constitution PASS. Commit local, NOT pushed (repo policy).
 
