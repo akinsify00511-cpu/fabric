@@ -6,6 +6,17 @@
 // reads back via generate_capture_attachment_url + createSignedUrl.
 
 import { supabase } from './supabase'
+import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from './schemaAvailability'
+
+/** True while the capture-attachment RPC surface (migration 20260819050000)
+ *  is present server-side. First permanent drift error flips it false and
+ *  every wrapper skips the round trip afterwards (schema-drift breaker). */
+function available(name: string): boolean {
+  return isSchemaAvailable(`rpc:${name}`)
+}
+function markPermanent(name: string, error: unknown): void {
+  if (isPermanentSchemaError(error as { code?: string; message?: string })) markSchemaUnavailable(`rpc:${name}`)
+}
 
 export type CaptureAttachmentKind = 'file' | 'image' | 'audio'
 
@@ -170,13 +181,14 @@ export async function createCaptureAttachment(
   sizeBytes: number
 ): Promise<{ attachmentId: string; storagePath: string } | { error: string }> {
   try {
+    if (!available('create_capture_attachment')) return { error: 'Attachment service not available yet' }
     const { data, error } = await supabase.rpc('create_capture_attachment', {
       p_kind: kind,
       p_file_name: fileName,
       p_mime_type: mimeType,
       p_size_bytes: sizeBytes,
     })
-    if (error) return { error: error.message }
+    if (error) { markPermanent('create_capture_attachment', error); return { error: error.message } }
     if (data?.error) return { error: data.error }
     if (!data?.attachment_id || !data?.storage_path) return { error: 'Upload setup failed' }
     return { attachmentId: data.attachment_id, storagePath: data.storage_path }
@@ -190,6 +202,7 @@ export async function finalizeCaptureAttachment(
   meta: { sizeBytes?: number; width?: number; height?: number; durationSeconds?: number } = {}
 ): Promise<boolean> {
   try {
+    if (!available('finalize_capture_attachment')) return false
     const { data, error } = await supabase.rpc('finalize_capture_attachment', {
       p_attachment_id: attachmentId,
       p_size_bytes: meta.sizeBytes ?? null,
@@ -197,7 +210,7 @@ export async function finalizeCaptureAttachment(
       p_height: meta.height ?? null,
       p_duration_seconds: meta.durationSeconds ?? null,
     })
-    if (error) return false
+    if (error) { markPermanent('finalize_capture_attachment', error); return false }
     return data === true
   } catch {
     return false
@@ -208,10 +221,12 @@ export async function finalizeCaptureAttachment(
 // then the client creates a short-lived signed URL. Never getPublicUrl.
 export async function getCaptureAttachmentSignedUrl(attachmentId: string): Promise<string | null> {
   try {
+    if (!available('generate_capture_attachment_url')) return null
     const { data: path, error } = await supabase.rpc('generate_capture_attachment_url', {
       p_attachment_id: attachmentId,
     })
-    if (error || !path) return null
+    if (error) { markPermanent('generate_capture_attachment_url', error); return null }
+    if (!path) return null
     const { data, error: signError } = await supabase.storage
       .from(BUCKET)
       .createSignedUrl(path, 3600)
@@ -224,11 +239,12 @@ export async function getCaptureAttachmentSignedUrl(attachmentId: string): Promi
 
 export async function linkCaptureToEvent(attachmentId: string, eventId: string): Promise<boolean> {
   try {
+    if (!available('link_capture_to_event')) return false
     const { data, error } = await supabase.rpc('link_capture_to_event', {
       p_attachment_id: attachmentId,
       p_event_id: eventId,
     })
-    if (error) return false
+    if (error) { markPermanent('link_capture_to_event', error); return false }
     return data === true
   } catch {
     return false
@@ -237,11 +253,12 @@ export async function linkCaptureToEvent(attachmentId: string, eventId: string):
 
 export async function saveCaptureTranscript(attachmentId: string, transcript: string): Promise<boolean> {
   try {
+    if (!available('save_capture_transcript')) return false
     const { data, error } = await supabase.rpc('save_capture_transcript', {
       p_attachment_id: attachmentId,
       p_transcript: transcript,
     })
-    if (error) return false
+    if (error) { markPermanent('save_capture_transcript', error); return false }
     return data === true
   } catch {
     return false
@@ -250,10 +267,12 @@ export async function saveCaptureTranscript(attachmentId: string, transcript: st
 
 export async function deleteCaptureAttachment(attachmentId: string): Promise<void> {
   try {
+    if (!available('delete_capture_attachment')) return
     const { data: path, error } = await supabase.rpc('delete_capture_attachment', {
       p_attachment_id: attachmentId,
     })
-    if (!error && path) {
+    if (error) { markPermanent('delete_capture_attachment', error); return }
+    if (path) {
       await supabase.storage.from(BUCKET).remove([path])
     }
   } catch {
@@ -263,10 +282,11 @@ export async function deleteCaptureAttachment(attachmentId: string): Promise<voi
 
 export async function listEventAttachments(eventId: string): Promise<CaptureAttachment[]> {
   try {
+    if (!available('list_capture_attachments')) return []
     const { data, error } = await supabase.rpc('list_capture_attachments', {
       p_event_id: eventId,
     })
-    if (error) return []
+    if (error) { markPermanent('list_capture_attachments', error); return [] }
     return (data || []) as CaptureAttachment[]
   } catch {
     return []
