@@ -26,7 +26,8 @@ test.describe('Authentication', () => {
     
     await expect(page.locator('input[id="full_name"]')).toBeVisible()
     await expect(page.locator('input[type="email"]')).toBeVisible()
-    await expect(page.locator('input[type="password"]')).toBeVisible()
+    // Two password fields (password + confirm) — assert on the first.
+    await expect(page.locator('input[type="password"]').first()).toBeVisible()
   })
 
   test('redirects to login when unauthenticated', async ({ page }) => {
@@ -212,22 +213,21 @@ test.describe('PWA', () => {
   test('manifest is valid and icons exist', async ({ page }) => {
     const response = await page.goto('/manifest.json')
     expect(response?.status()).toBe(200)
-    
-    const manifest = await page.evaluate(() => {
-      return fetch('/manifest.json').then(r => r.json())
-    })
-    
+
+    // Fetch via Node (request context) — a relative fetch() inside page.evaluate
+    // has no origin after navigating to a non-HTML document.
+    const manifest = await page.request.get('/manifest.json').then(r => r.json())
+
     expect(manifest.name).toBeTruthy()
-    expect(manifest.icons).toHaveLengthGreaterThan(0)
+    expect(manifest.icons.length).toBeGreaterThan(0)
   })
 
   test('all PWA icons return 200', async ({ page }) => {
-    const manifest = await page.evaluate(() => {
-      return fetch('/manifest.json').then(r => r.json())
-    })
-    
+    const manifest = await page.request.get('/manifest.json').then(r => r.json())
+
     for (const icon of manifest.icons) {
-      const response = await page.goto(icon.src)
+      const src: string = icon.src.startsWith('http') ? icon.src : `http://localhost:5173${icon.src}`
+      const response = await page.goto(src)
       expect(response?.status()).toBe(200, `Icon ${icon.src} returned ${response?.status()}`)
     }
   })

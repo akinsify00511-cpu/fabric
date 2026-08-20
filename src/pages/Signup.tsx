@@ -401,6 +401,9 @@ export default function Signup() {
                   {tr('fullName', 'Full Name')} <span className="text-[var(--av-danger)]">*</span>
                 </label>
                 <input
+                  id="full_name"
+                  name="full_name"
+                  autoComplete="name"
                   required
                   placeholder={tr('fullNamePlaceholder', 'Chinedu Okonkwo')}
                   value={fullName}
