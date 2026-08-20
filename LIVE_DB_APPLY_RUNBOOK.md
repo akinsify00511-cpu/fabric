@@ -6,7 +6,7 @@ repo migration chain applied through `supabase db push`. The deployed frontend
 The browser console shows this as 404 / 400 / 406 / PGRST202 noise. Supabase
 Auth itself is healthy — every failure below is schema drift.
 
-## Probed live state (2026-08-20, via publishable key)
+## Probed live state (2026-08-20, via publishable key — re-probed same day: UNCHANGED, chain still not applied)
 
 | Object | Live state | Consequence |
 |---|---|---|
@@ -15,13 +15,24 @@ Auth itself is healthy — every failure below is schema drift.
 | `staff.email`, `staff.job_title` | present | — |
 | `businesses.organization_id` | present | — |
 | `businesses.slug` | **missing** | public booking link lookup breaks |
-| `leave_requests.start_date` | **missing** | leave dashboards → 400 |
+| `leave_requests` | exists (hand-built) but **anon 42501 + 400 on `business_id`/`status`/`start_date` filters** — shape diverged from the chain | leave dashboards → 400 |
 | `claims`, `kpi_metrics` | present | — |
-| `email_campaigns`, `user_workspace_selections`, `usage_events` | **missing tables** | marketing page, workspace selection, telemetry → 404 |
+| `email_campaigns`, `user_workspace_selections`, `usage_events` | **missing tables** (PGRST205) | marketing page, workspace selection, telemetry → 404 |
 | `create_business_and_owner` | **missing** | **new users cannot onboard** |
 | `check_auth_rate_limit`, `log_security_event` | **missing** | rate limiting + security events dead (frontend fails open) |
-| `business_brain`, `current_metrics`, `open_recommendations`, `business_value_ledger`, `profitability_leakage` | **missing** | entire intelligence layer → PGRST202 |
+| `business_brain`, `current_metrics`, `open_recommendations`, `business_value_ledger`, `profitability_leakage`, `can_access_module` | **missing** (PGRST202) | entire intelligence layer → 404 |
 | `get_current_staff` | exists, anon denied (correct) | — |
+
+**Chain gap found + fixed (2026-08-20):** `leave_requests` is only ever
+`CREATE TABLE IF NOT EXISTS` (002/032/039) — a no-op against the hand-built
+live table, so the chain alone would NOT have fixed the 400s. Migration
+`zzzz_live_schema_reconcile.sql` (sorts last, idempotent, tested on
+postgres:15 against both a simulated divergent live shape and the fresh
+chain) additively adds the missing `leave_requests` columns, backfills
+`business_id` from the staff row, normalizes the status CHECK (NOT VALID so
+legacy rows don't block it), grants the table to `authenticated`, backfills
+`staff.active` from legacy `is_active` (deactivated users stay deactivated),
+and backfills `businesses.slug` from the name.
 
 ## Step 1 — apply the chain (needs DB credentials; cannot be done from CI)
 

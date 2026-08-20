@@ -1,3 +1,38 @@
+## Session 38 (2026-08-20): Re-probe (UNCHANGED) + chain gap found & fixed (zzzz_live_schema_reconcile)
+
+User pasted the same production console errors again. Re-probed the live
+project with the publishable key: state is IDENTICAL to the Session 37
+baseline — the migration chain has still not been applied (all the same
+PGRST202/PGRST205/42703 results). The blocker remains credentials-only.
+
+**Real chain gap found while verifying coverage:** `leave_requests` is only
+ever `CREATE TABLE IF NOT EXISTS` (002/032/039) — a no-op against the
+hand-built live table, so applying the chain alone would NOT have fixed the
+leave_requests 400s. Fixed with `supabase/migrations/zzzz_live_schema_reconcile.sql`
+(sorts after zzz_*, idempotent): additive leave_requests columns
+(business_id/staff_id/start_date/end_date/status/...), business_id backfill
+from the staff row, legacy status CHECK dropped + canonical superset re-added
+NOT VALID (legacy rows don't block it), guarded GRANT to authenticated,
+staff.active backfilled from legacy is_active (deactivated users stay
+deactivated), businesses.slug backfilled from name. LESSON: when the live DB
+was hand-built, verify every divergent object has an ALTER TABLE ADD COLUMN
+path — CREATE TABLE IF NOT EXISTS silently preserves the wrong shape.
+
+**Tested on postgres:15 (Docker):** (A) simulated divergent live shape
+(is_active staff, slug-less businesses, narrow legacy status CHECK) — all
+assertions pass, app write path (pending→approved→cancelled) works, legacy
+'new' row doesn't block the NOT VALID constraint; (B) fresh chain
+(ci_shim+001+002+043+zzzz) applies clean with ON_ERROR_STOP=1; both
+idempotent on second apply. Guarded the GRANT with a pg_roles check after
+catching `role "authenticated" does not exist` on bare postgres (the apply
+script's ON_ERROR_STOP=1 would have aborted the file).
+
+Runbook (LIVE_DB_APPLY_RUNBOOK.md) updated with the re-probe + the zzzz fix.
+Committed locally, NOT pushed (repo policy). Still blocked on user running
+scripts/apply_migrations_live.sh with SUPABASE_DB_URL (or providing the DB
+connection string so the agent can run it), then verify_live_db.sh, then the
+orphaned-membership reconciliation for user 361710ac-… / business f2d580d1-….
+
 ## Session 37 (2026-08-20): Live-DB drift confirmed by direct probe + apply runbook
 
 User pasted the production browser console: wall of 404/400/406/PGRST202.
