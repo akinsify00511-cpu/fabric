@@ -1,402 +1,104 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { useToast } from '../components/Toast'
 import { supabase } from '../lib/supabase'
-import {
-  Video, VideoOff, Mic, MicOff, Square, Play, Trash2,
-  Loader2, Monitor, Camera, MonitorPlay, Clock, X,
-} from 'lucide-react'
-import {
-  createCapture, uploadRecording, finalizeRecording,
-  getRecordingSignedUrl, fetchCaptures, incrementCaptureView,
-  type MeetingCapture,
-} from '../lib/businessOS'
+import { useToast } from '../components/Toast'
+import { ArrowLeft, Camera, CameraOff, Mic, MicOff, MonitorUp, PhoneOff, Paperclip, Send, Square, MessageSquare, Users, Loader2 } from 'lucide-react'
 
-const BRAND = {
-  primary: '#155BB4',
-  primaryHover: '#1247A0',
-  primarySoft: 'rgba(21, 91, 180, 0.08)',
-  surface: '#FFFFFF',
-  surface2: '#F8F9FA',
-  text: '#202124',
-  textSecondary: '#5F6368',
-  textMuted: '#9AA0A6',
-  border: '#E8EAED',
-  success: '#157342',
-  danger: '#EA4335',
-  warning: '#B45309',
-}
+type Participant = { user_id:string; name:string; staff_id?:string }
+type Capture = { id:string; capture_type:string; title:string|null; body:string|null; storage_path:string|null; mime_type:string|null; size_bytes:number|null; created_at:string }
 
-type CaptureType = 'screen' | 'camera' | 'screen_with_camera' | 'audio_only'
+type Signal = { to:string; from:string; kind:'offer'|'answer'|'candidate'; description?:RTCSessionDescriptionInit; candidate?:RTCIceCandidateInit }
 
-export default function MeetingCapture() {
-  const { staff } = useAuth()
-  const { showToast } = useToast()
+const formatDuration=(seconds:number)=>{const m=Math.floor(seconds/60);const s=seconds%60;return `${m}:${s.toString().padStart(2,'0')}`}
 
-  const [isRecording, setIsRecording] = useState(false)
-  const [isUploading, setIsUploading] = useState(false)
-  const [recordingTime, setRecordingTime] = useState(0)
-  const [captureType, setCaptureType] = useState<CaptureType>('screen')
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [captures, setCaptures] = useState<MeetingCapture[]>([])
-  const [loading, setLoading] = useState(true)
-  const [playingUrl, setPlayingUrl] = useState<string | null>(null)
-  const [playingTitle, setPlayingTitle] = useState('')
+export default function MeetingCapture(){
+ const [params]=useSearchParams(); const meetingId=params.get('meeting'); const {staff,session}=useAuth(); const {showToast}=useToast()
+ const [meeting,setMeeting]=useState<any|null>(null); const [captures,setCaptures]=useState<Capture[]>([]); const [participants,setParticipants]=useState<Participant[]>([]); const [loading,setLoading]=useState(true)
+ const [micOn,setMicOn]=useState(true); const [cameraOn,setCameraOn]=useState(true); const [sharing,setSharing]=useState(false); const [recording,setRecording]=useState(false); const [recordingSeconds,setRecordingSeconds]=useState(0)
+ const [note,setNote]=useState(''); const [voiceText,setVoiceText]=useState(''); const [voiceListening,setVoiceListening]=useState(false); const [remoteStreams,setRemoteStreams]=useState<Record<string,MediaStream>>({})
+ const localVideoRef=useRef<HTMLVideoElement|null>(null); const localStreamRef=useRef<MediaStream|null>(null); const screenStreamRef=useRef<MediaStream|null>(null); const channelRef=useRef<any>(null); const peersRef=useRef<Record<string,RTCPeerConnection>>({}); const candidateQueueRef=useRef<Record<string,RTCIceCandidateInit[]>>({}); const remoteVideoRefs=useRef<Record<string,HTMLVideoElement|null>>({}); const recorderRef=useRef<MediaRecorder|null>(null); const recordChunks=useRef<Blob[]>([]); const recognitionRef=useRef<any>(null); const recordTimerRef=useRef<ReturnType<typeof setInterval>|null>(null)
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const chunksRef = useRef<Blob[]>([])
-  const streamRef = useRef<MediaStream | null>(null)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+ const load=useCallback(async()=>{
+  if(!meetingId||!staff?.business_id){setLoading(false);return}
+  const [{data:m,error:me},{data:c,error:ce}]=await Promise.all([
+   supabase.from('meetings').select('*').eq('id',meetingId).eq('business_id',staff.business_id).single(),
+   supabase.from('meeting_captures').select('*').eq('meeting_id',meetingId).eq('business_id',staff.business_id).order('created_at',{ascending:false})
+  ])
+  if(me){showToast('Meeting could not be loaded','error');setLoading(false);return}
+  if(ce)console.error(ce)
+  setMeeting(m);setCaptures(c||[]);setLoading(false)
+ },[meetingId,staff?.business_id,showToast])
+ useEffect(()=>{void load()},[load])
 
-  const loadCaptures = useCallback(async () => {
-    setLoading(true)
-    const list = await fetchCaptures()
-    setCaptures(list)
-    setLoading(false)
-  }, [])
+ const sendSignal=useCallback(async(payload:Signal)=>{const ch=channelRef.current;if(ch)await ch.send({type:'broadcast',event:'signal',payload})},[])
 
-  useEffect(() => { loadCaptures() }, [loadCaptures])
+ const closePeer=useCallback((userId:string)=>{peersRef.current[userId]?.close();delete peersRef.current[userId];setRemoteStreams(v=>{const n={...v};delete n[userId];return n})},[])
 
-  const cleanupStream = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop())
-      streamRef.current = null
-    }
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-  }, [])
+ const makePeer=useCallback((remote:Participant)=>{
+  if(peersRef.current[remote.user_id])return peersRef.current[remote.user_id]
+  const pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]})
+  peersRef.current[remote.user_id]=pc
+  localStreamRef.current?.getTracks().forEach(track=>pc.addTrack(track,localStreamRef.current!))
+  pc.ontrack=e=>{const stream=e.streams[0];if(stream)setRemoteStreams(v=>({...v,[remote.user_id]:stream}))}
+  pc.onicecandidate=e=>{if(e.candidate)void sendSignal({to:remote.user_id,from:staff!.user_id,kind:'candidate',candidate:e.candidate.toJSON()})}
+  pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))closePeer(remote.user_id)}
+  return pc
+ },[closePeer,sendSignal,staff?.user_id])
 
-  useEffect(() => () => cleanupStream(), [cleanupStream])
+ const negotiate=useCallback(async(remote:Participant)=>{const pc=makePeer(remote);if(!pc||!staff?.user_id)return;const offer=await pc.createOffer();await pc.setLocalDescription(offer);await sendSignal({to:remote.user_id,from:staff.user_id,kind:'offer',description:pc.localDescription||offer})},[makePeer,sendSignal,staff?.user_id])
 
-  const formatTime = (seconds: number) => {
-    const hrs = Math.floor(seconds / 3600)
-    const mins = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
-    if (hrs > 0) return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-    return `${mins}:${secs.toString().padStart(2, '0')}`
-  }
+ const handleSignal=useCallback(async(sig:Signal)=>{
+  if(!staff?.user_id||sig.to!==staff.user_id)return
+  const remote=participants.find(p=>p.user_id===sig.from)||{user_id:sig.from,name:'Participant'}
+  const pc=makePeer(remote)
+  if(sig.kind==='offer'&&sig.description){await pc.setRemoteDescription(sig.description);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await sendSignal({to:sig.from,from:staff.user_id,kind:'answer',description:pc.localDescription||answer});const queued=candidateQueueRef.current[sig.from]||[];for(const c of queued)await pc.addIceCandidate(c);delete candidateQueueRef.current[sig.from]}
+  if(sig.kind==='answer'&&sig.description&&pc.signalingState==='have-local-offer')await pc.setRemoteDescription(sig.description)
+  if(sig.kind==='candidate'&&sig.candidate){if(pc.remoteDescription)await pc.addIceCandidate(sig.candidate);else(candidateQueueRef.current[sig.from]??=[]).push(sig.candidate)}
+ },[makePeer,participants,sendSignal,staff?.user_id])
 
-  const formatSize = (bytes: number | null) => {
-    if (!bytes) return '—'
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
+ useEffect(()=>{
+  if(!meetingId||!staff?.user_id||!meeting)return
+  let mounted=true
+  const ch=supabase.channel(`meeting:${meetingId}`,{config:{private:true,presence:{enabled:true,key:staff.user_id}}})
+  channelRef.current=ch
+  ch.on('broadcast',{event:'signal'},({payload}:{payload:Signal})=>void handleSignal(payload))
+   .on('presence',{event:'sync'},()=>{
+    const state=ch.presenceState();const list:Participant[]=[]
+    Object.values(state).forEach((entries:any)=>entries.forEach((e:any)=>{if(e.user_id!==staff.user_id&&!list.some(p=>p.user_id===e.user_id))list.push(e)}))
+    setParticipants(list)
+    list.filter(p=>staff.user_id<p.user_id).forEach(p=>void negotiate(p))
+   })
+   .on('presence',{event:'join',key:staff.user_id},()=>{})
+   .on('presence',{event:'leave',key:staff.user_id},({key}:{key:string})=>closePeer(key))
+  ch.subscribe(async status=>{if(status==='SUBSCRIBED'){await ch.track({user_id:staff.user_id,name:staff.full_name||staff.name||staff.email||'Participant',staff_id:staff.id});await supabase.from('meetings').update({status:'in_progress'}).eq('id',meetingId)}})
+  return()=>{mounted=false;Object.keys(peersRef.current).forEach(closePeer);void ch.untrack();void supabase.removeChannel(ch);channelRef.current=null;screenStreamRef.current?.getTracks().forEach(t=>t.stop());if(localStreamRef.current)localStreamRef.current.getTracks().forEach(t=>t.stop());if(recordTimerRef.current)clearInterval(recordTimerRef.current);if(recognitionRef.current)recognitionRef.current.stop();if(!mounted)return}
+ },[closePeer,handleSignal,meeting,meetingId,negotiate,staff?.email,staff?.full_name,staff?.id,staff?.name,staff?.user_id])
 
-  const startRecording = async () => {
-    if (!title.trim()) {
-      showToast('Enter a title first', 'error')
-      return
-    }
+ useEffect(()=>{Object.entries(remoteStreams).forEach(([id,stream])=>{const el=remoteVideoRefs.current[id];if(el&&el.srcObject!==stream)el.srcObject=stream})},[remoteStreams])
 
-    try {
-      let stream: MediaStream
-      if (captureType === 'audio_only') {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      } else if (captureType === 'camera') {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      } else {
-        // screen or screen_with_camera
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        })
-        stream = screenStream
-        if (captureType === 'screen_with_camera') {
-          const camStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          camStream.getTracks().forEach(t => stream.addTrack(t))
-        }
-      }
-      streamRef.current = stream
+ const startMedia=async()=>{try{const stream=await navigator.mediaDevices.getUserMedia({audio:true,video:true});localStreamRef.current=stream;if(localVideoRef.current)localVideoRef.current.srcObject=stream;setMicOn(true);setCameraOn(true);Object.values(peersRef.current).forEach(pc=>stream.getTracks().forEach(track=>{const sender=pc.getSenders().find(s=>s.track?.kind===track.kind);if(sender)sender.replaceTrack(track)}));}catch(e){console.error(e);showToast('Camera and microphone permission is required for an Avenize meeting','error')}}
+ useEffect(()=>{if(meeting)void startMedia();return()=>{localStreamRef.current?.getTracks().forEach(t=>t.stop())}},[meeting])
 
-      const mimeType = captureType === 'audio_only' ? 'audio/webm' : 'video/webm'
-      const recorder = new MediaRecorder(stream, { mimeType })
-      mediaRecorderRef.current = recorder
-      chunksRef.current = []
+ const toggleMic=()=>{const next=!micOn;localStreamRef.current?.getAudioTracks().forEach(t=>t.enabled=next);setMicOn(next)}
+ const toggleCamera=()=>{const next=!cameraOn;localStreamRef.current?.getVideoTracks().forEach(t=>t.enabled=next);setCameraOn(next)}
+ const toggleScreen=async()=>{if(sharing){screenStreamRef.current?.getTracks().forEach(t=>t.stop());screenStreamRef.current=null;setSharing(false);const cam=localStreamRef.current?.getVideoTracks()[0];Object.values(peersRef.current).forEach(pc=>{const s=pc.getSenders().find(x=>x.track?.kind==='video');if(s&&cam)void s.replaceTrack(cam)});return}try{const screen=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});screenStreamRef.current=screen;const track=screen.getVideoTracks()[0];Object.values(peersRef.current).forEach(pc=>{const s=pc.getSenders().find(x=>x.track?.kind==='video');if(s)void s.replaceTrack(track)});if(localVideoRef.current)localVideoRef.current.srcObject=screen;track.onended=()=>void toggleScreen();setSharing(true)}catch(e){console.error(e)}}
 
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data)
-      }
+ const saveCapture=async(type:'text'|'voice',body:string)=>{if(!body.trim()||!meeting||!staff?.business_id||!staff.id)return;const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:type,title:type==='voice'?'Voice capture':'Meeting note',body:body.trim()}).select().single();if(error){showToast('Could not save capture','error');return}setCaptures(v=>[data,...v]);showToast('Capture saved to this meeting','success')}
 
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: mimeType })
-        handleUpload(blob)
-        cleanupStream()
-      }
+ const startVoice=()=>{const W=window as any;const SR=W.SpeechRecognition||W.webkitSpeechRecognition;if(!SR){showToast('Voice capture is not supported by this browser','error');return}const r=new SR();r.continuous=true;r.interimResults=true;r.lang=navigator.language||'en-NG';r.onresult=(e:any)=>{let text='';for(let i=e.resultIndex;i<e.results.length;i++)text+=e.results[i][0].transcript;setVoiceText(text)};r.onerror=()=>setVoiceListening(false);r.onend=()=>setVoiceListening(false);recognitionRef.current=r;r.start();setVoiceListening(true)}
+ const stopVoice=()=>{recognitionRef.current?.stop();setVoiceListening(false);if(voiceText.trim()){void saveCapture('voice',voiceText);setVoiceText('')}}
 
-      recorder.start()
-      setIsRecording(true)
-      setRecordingTime(0)
-      timerRef.current = setInterval(() => setRecordingTime(t => t + 1), 1000)
-    } catch (err) {
-      console.error('Failed to start capture:', err)
-      showToast('Could not access camera/microphone. Check browser permissions.', 'error')
-    }
-  }
+ const addAttachment=async(file:File)=>{if(!meeting||!staff?.business_id)return;if(file.size>10*1024*1024){showToast('Attachment must be 10 MB or smaller','error');return}const path=`${meeting.id}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const {error:up}=await supabase.storage.from('meeting-captures').upload(path,file,{contentType:file.type||'application/octet-stream'});if(up){showToast('Attachment upload failed','error');return}const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:file.type.startsWith('image/')?'image':'file',title:file.name,storage_path:path,mime_type:file.type,size_bytes:file.size}).select().single();if(error){showToast('Could not save attachment','error');return}setCaptures(v=>[data,...v]);showToast('Attachment captured in meeting','success')}
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
-      mediaRecorderRef.current.stop()
-    }
-    setIsRecording(false)
-  }
+ const startRecording=()=>{if(!localStreamRef.current){showToast('Camera/microphone is not ready','error');return}const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';const r=new MediaRecorder(localStreamRef.current,{mimeType:mime});recordChunks.current=[];r.ondataavailable=e=>{if(e.data.size)recordChunks.current.push(e.data)};r.onstop=async()=>{if(!meeting||!staff?.business_id||!staff.id)return;const blob=new Blob(recordChunks.current,{type:mime});const path=`${meeting.id}/${crypto.randomUUID()}-meeting-recording.webm`;const {error:up}=await supabase.storage.from('meeting-captures').upload(path,blob,{contentType:mime});if(up){showToast('Recording upload failed','error');return}const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:'recording',title:'Meeting recording',storage_path:path,mime_type:mime,size_bytes:blob.size,duration_seconds:recordingSeconds}).select().single();if(!error)setCaptures(v=>[data,...v]);showToast(error?'Recording saved locally but capture record failed':'Meeting recording captured','success')};r.start(1000);recorderRef.current=r;setRecording(true);setRecordingSeconds(0);recordTimerRef.current=setInterval(()=>setRecordingSeconds(v=>v+1),1000)}
+ const stopRecording=()=>{recorderRef.current?.stop();setRecording(false);if(recordTimerRef.current)clearInterval(recordTimerRef.current)}
+ const endMeeting=async()=>{if(meetingId){await supabase.from('meetings').update({status:'completed'}).eq('id',meetingId)};window.location.assign('/app/meetings')}
 
-  const handleUpload = async (blob: Blob) => {
-    setIsUploading(true)
-    try {
-      const result = await createCapture(title, captureType, {
-        description: description.trim() || undefined,
-      })
-      if (!result) {
-        showToast('Could not create capture record', 'error')
-        return
-      }
-      const uploaded = await uploadRecording(result.uploadPath, blob)
-      if (!uploaded) {
-        showToast('Upload failed', 'error')
-        return
-      }
-      const finalized = await finalizeRecording(result.uploadPath, {
-        durationSeconds: recordingTime,
-        sizeBytes: blob.size,
-        captureId: result.captureId,
-      })
-      if (!finalized) {
-        showToast('Recording saved but finalization pending', 'info')
-      } else {
-        showToast('Capture saved!', 'success')
-      }
-      setTitle('')
-      setDescription('')
-      setRecordingTime(0)
-      await loadCaptures()
-    } catch (err) {
-      console.error('Upload failed:', err)
-      showToast('Upload failed', 'error')
-    } finally {
-      setIsUploading(false)
-    }
-  }
+ if(loading)return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]"/></div>
+ if(!meeting)return <div className="min-h-screen flex items-center justify-center p-6"><div className="text-center"><h1 className="text-xl font-semibold">Meeting not found</h1><Link to="/app/meetings" className="text-[var(--av-primary)] mt-3 inline-block">Back to Meetings</Link></div></div>
 
-  const playCapture = async (capture: MeetingCapture) => {
-    if (!capture.storage_path) return
-    const url = await getRecordingSignedUrl(capture.storage_path)
-    if (!url) {
-      showToast('Could not access recording (authorization failed)', 'error')
-      return
-    }
-    setPlayingUrl(url)
-    setPlayingTitle(capture.title)
-    incrementCaptureView(capture.id)
-  }
-
-  const deleteCapture = async (id: string) => {
-    if (!confirm('Delete this capture? This cannot be undone.')) return
-    try {
-      const { error } = await supabase
-        .from('meeting_captures')
-        .update({ deleted_at: new Date().toISOString(), processing_status: 'expired' })
-        .eq('id', id)
-      if (error) throw error
-      showToast('Capture deleted', 'success')
-      await loadCaptures()
-    } catch (err) {
-      showToast('Failed to delete', 'error')
-    }
-  }
-
-  const captureTypes: { value: CaptureType; label: string; icon: typeof Monitor }[] = [
-    { value: 'screen', label: 'Screen', icon: Monitor },
-    { value: 'camera', label: 'Camera', icon: Camera },
-    { value: 'screen_with_camera', label: 'Screen + Cam', icon: MonitorPlay },
-    { value: 'audio_only', label: 'Audio', icon: Mic },
-  ]
-
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F8F9FA' }}>
-      <div className="max-w-6xl mx-auto p-4 md:p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold" style={{ color: BRAND.text }}>
-            Capture
-          </h1>
-          <p className="text-sm mt-1" style={{ color: BRAND.textSecondary }}>
-            Record screen or camera to share with your team — Loom-style async video.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recording Panel */}
-          <div className="lg:col-span-1">
-            <div className="rounded-2xl p-6" style={{ backgroundColor: BRAND.surface, boxShadow: '0 1px 2px rgba(0,0,0,.06)' }}>
-              <h2 className="text-lg font-semibold mb-4" style={{ color: BRAND.text }}>
-                New Capture
-              </h2>
-
-              <input
-                type="text"
-                placeholder="Title (required)"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                disabled={isRecording || isUploading}
-                className="w-full px-3 py-2.5 rounded-lg text-sm mb-3"
-                style={{ border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.surface2, color: BRAND.text }}
-              />
-
-              <textarea
-                placeholder="Description (optional)"
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-                disabled={isRecording || isUploading}
-                rows={2}
-                className="w-full px-3 py-2.5 rounded-lg text-sm mb-4 resize-none"
-                style={{ border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.surface2, color: BRAND.text }}
-              />
-
-              <div className="mb-4">
-                <label className="text-xs font-medium mb-2 block" style={{ color: BRAND.textSecondary }}>
-                  Capture type
-                </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {captureTypes.map(ct => (
-                    <button
-                      key={ct.value}
-                      onClick={() => setCaptureType(ct.value)}
-                      disabled={isRecording || isUploading}
-                      className="flex flex-col items-center gap-1 py-2.5 rounded-lg text-xs transition"
-                      style={{
-                        backgroundColor: captureType === ct.value ? BRAND.primarySoft : BRAND.surface2,
-                        border: `1px solid ${captureType === ct.value ? BRAND.primary : BRAND.border}`,
-                        color: captureType === ct.value ? BRAND.primary : BRAND.textSecondary,
-                      }}
-                    >
-                      <ct.icon size={18} />
-                      <span>{ct.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                {!isRecording ? (
-                  <button
-                    onClick={startRecording}
-                    disabled={isUploading || !title.trim()}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium text-white transition"
-                    style={{ backgroundColor: !title.trim() ? BRAND.textMuted : BRAND.primary }}
-                  >
-                    {isUploading ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />}
-                    {isUploading ? 'Uploading...' : 'Start Recording'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={stopRecording}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-medium text-white transition"
-                    style={{ backgroundColor: BRAND.danger }}
-                  >
-                    <Square size={16} />
-                    Stop ({formatTime(recordingTime)})
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Captures List */}
-          <div className="lg:col-span-2">
-            <div className="rounded-2xl p-6" style={{ backgroundColor: BRAND.surface, boxShadow: '0 1px 2px rgba(0,0,0,.06)' }}>
-              <h2 className="text-lg font-semibold mb-4" style={{ color: BRAND.text }}>
-                Your Captures
-              </h2>
-
-              {loading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="animate-spin" size={24} style={{ color: BRAND.textMuted }} />
-                </div>
-              ) : captures.length === 0 ? (
-                <div className="text-center py-12">
-                  <Video size={48} className="mx-auto mb-3" style={{ color: BRAND.textMuted }} />
-                  <p className="text-sm" style={{ color: BRAND.textSecondary }}>
-                    No captures yet. Record your first one to get started.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {captures.map(capture => (
-                    <div
-                      key={capture.id}
-                      className="flex items-center gap-4 p-4 rounded-lg"
-                      style={{ backgroundColor: BRAND.surface2, border: `1px solid ${BRAND.border}` }}
-                    >
-                      <button
-                        onClick={() => playCapture(capture)}
-                        className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition"
-                        style={{ backgroundColor: BRAND.primarySoft }}
-                      >
-                        <Play size={20} style={{ color: BRAND.primary }} />
-                      </button>
-
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium truncate" style={{ color: BRAND.text }}>
-                          {capture.title}
-                        </h3>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-xs flex items-center gap-1" style={{ color: BRAND.textMuted }}>
-                            <Clock size={12} />
-                            {capture.duration_seconds ? formatTime(capture.duration_seconds) : '—'}
-                          </span>
-                          <span className="text-xs" style={{ color: BRAND.textMuted }}>
-                            {formatSize(capture.size_bytes)}
-                          </span>
-                          <span className="text-xs" style={{ color: BRAND.textMuted }}>
-                            {capture.view_count} views
-                          </span>
-                          {capture.processing_status !== 'available' && (
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'rgba(180,83,9,0.1)', color: BRAND.warning }}>
-                              {capture.processing_status}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => deleteCapture(capture.id)}
-                        className="p-2 rounded-lg transition flex-shrink-0"
-                        style={{ color: BRAND.textMuted }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Playback Modal */}
-      {playingUrl && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
-          onClick={() => { setPlayingUrl(null); setPlayingTitle('') }}
-        >
-          <div className="max-w-4xl w-full" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-medium">{playingTitle}</h3>
-              <button
-                onClick={() => { setPlayingUrl(null); setPlayingTitle('') }}
-                className="p-2 rounded-lg text-white hover:bg-white/10"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <video src={playingUrl} controls autoPlay className="w-full rounded-lg" />
-          </div>
-        </div>
-      )}
-    </div>
-  )
+ return <div className="min-h-screen bg-[#111827] text-white flex flex-col"><header className="h-16 px-4 md:px-6 flex items-center justify-between border-b border-white/10"><div><p className="text-xs text-white/50">Avenize Meeting</p><h1 className="font-semibold truncate max-w-[45vw]">{meeting.title}</h1></div><div className="flex items-center gap-3"><span className="hidden md:inline text-xs text-white/60">{participants.length+1} participant{participants.length===0?'':'s'}</span>{recording&&<span className="text-xs text-red-300">● REC {formatDuration(recordingSeconds)}</span>}<button onClick={endMeeting} className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-sm font-medium"><PhoneOff size={16}/> End</button></div></header>
+ <main className="flex-1 grid lg:grid-cols-[1fr_360px] min-h-0"><section className="p-3 md:p-5 flex flex-col min-h-0"><div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3 min-h-[420px]"> <div className="relative rounded-2xl overflow-hidden bg-black col-span-2"><video ref={localVideoRef} autoPlay muted playsInline className="w-full h-full object-cover"/><div className="absolute bottom-3 left-3 rounded-lg bg-black/50 px-2 py-1 text-xs">You</div></div>{Object.entries(remoteStreams).map(([id,stream])=><div key={id} className="relative rounded-2xl overflow-hidden bg-black"><video ref={el=>{remoteVideoRefs.current[id]=el;if(el)el.srcObject=stream}} autoPlay playsInline className="w-full h-full object-cover"/><div className="absolute bottom-3 left-3 rounded-lg bg-black/50 px-2 py-1 text-xs">{participants.find(p=>p.user_id===id)?.name||'Participant'}</div></div>)}{participants.length===0&&<div className="rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-white/45">Waiting for participants to join…</div>}</div><div className="mt-4 flex items-center justify-center gap-2 flex-wrap"><button onClick={toggleMic} className={`p-3 rounded-full ${micOn?'bg-white/10':'bg-red-600'}`}>{micOn?<Mic size={20}/>:<MicOff size={20}/>}</button><button onClick={toggleCamera} className={`p-3 rounded-full ${cameraOn?'bg-white/10':'bg-red-600'}`}>{cameraOn?<Camera size={20}/>:<CameraOff size={20}/>}</button><button onClick={toggleScreen} className={`p-3 rounded-full ${sharing?'bg-[var(--av-primary)]':'bg-white/10'}`}><MonitorUp size={20}/></button><button onClick={recording?stopRecording:startRecording} className={`inline-flex items-center gap-2 rounded-full px-4 py-3 ${recording?'bg-red-600':'bg-white/10'}`}>{recording?<><Square size={16}/> Stop recording</>:<><span className="w-3 h-3 rounded-sm bg-red-500"/> Record</>}</button></div></section>
+ <aside className="bg-white text-black border-l border-black/10 flex flex-col min-h-0"><div className="p-4 border-b border-black/5"><h2 className="font-semibold flex items-center gap-2"><MessageSquare size={18}/> Capture</h2><p className="text-xs text-black/50 mt-1">Everything captured here stays attached to this meeting.</p></div><div className="p-4 border-b border-black/5 space-y-2"><textarea value={note} onChange={e=>setNote(e.target.value)} rows={3} className="w-full rounded-xl border border-black/10 p-3 text-sm" placeholder="Capture a decision, action, customer request or note…"/><button onClick={()=>{void saveCapture('text',note);setNote('')}} disabled={!note.trim()} className="w-full rounded-xl bg-[var(--av-primary)] text-white py-2.5 text-sm font-semibold disabled:opacity-40"><Send size={15} className="inline mr-2"/>Save capture</button><div className="grid grid-cols-2 gap-2"><button onClick={voiceListening?stopVoice:startVoice} className={`rounded-xl border border-black/10 py-2 text-sm ${voiceListening?'bg-red-50 text-red-600':''}`}><Mic size={15} className="inline mr-1"/>{voiceListening?'Stop voice':'Voice capture'}</button><label className="rounded-xl border border-black/10 py-2 text-sm text-center cursor-pointer"><Paperclip size={15} className="inline mr-1"/>Attach<input type="file" className="hidden" onChange={e=>{const f=e.target.files?.[0];if(f)void addAttachment(f);e.currentTarget.value=''}}/></label></div>{voiceText&&<div className="rounded-xl bg-black/[0.03] p-3 text-xs text-black/60">{voiceText}</div>}</div><div className="flex-1 overflow-y-auto p-4"><div className="flex items-center justify-between mb-3"><h3 className="text-sm font-semibold">Meeting captures</h3><span className="text-xs text-black/40">{captures.length}</span></div>{captures.length===0?<p className="text-xs text-black/40">No captures yet.</p>:<div className="space-y-2">{captures.map(c=><div key={c.id} className="rounded-xl border border-black/5 bg-[#F8F9FA] p-3"><div className="flex items-center justify-between gap-2"><span className="text-[10px] uppercase tracking-wide text-[var(--av-primary)]">{c.capture_type}</span><span className="text-[10px] text-black/35">{new Date(c.created_at).toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'})}</span></div><p className="text-sm font-medium mt-1">{c.title||'Capture'}</p>{c.body&&<p className="text-xs text-black/60 mt-1 whitespace-pre-wrap">{c.body}</p>}{c.storage_path&&<p className="text-[10px] text-black/40 mt-1">Attachment stored securely</p>}</div>)}</div>}</div></aside></main></div>
 }
