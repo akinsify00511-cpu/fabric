@@ -58,6 +58,9 @@ jobs:
       - name: Run module gate tests
         run: npx playwright test tests/ux/module-gate.spec.ts
         continue-on-error: true
+      - name: Run auth launch matrix tests
+        run: npx playwright test tests/ux/auth-matrix.spec.ts
+        continue-on-error: true
 
   # ============================================
   # JOB: Mobile UX Tests

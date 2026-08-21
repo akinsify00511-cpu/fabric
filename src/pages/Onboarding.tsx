@@ -119,9 +119,20 @@ export default function Onboarding() {
 
   // Form data
   const [businessName, setBusinessName] = useState('')
-  const [fullName, setFullName] = useState(
-    (session?.user.user_metadata?.full_name as string | undefined) ?? '',
-  )
+  const [fullName, setFullName] = useState(() => {
+    // OAuth signups: AuthCallback stashes the provider profile so the wizard
+    // opens with the person's name already filled. Consumed once here.
+    const metaName = (session?.user.user_metadata?.full_name as string | undefined) ?? ''
+    if (metaName) return metaName
+    try {
+      const pending = localStorage.getItem('avenize_oauth_pending')
+      if (!pending) return ''
+      const parsed = JSON.parse(pending) as { fullName?: string }
+      return parsed.fullName ?? ''
+    } catch {
+      return ''
+    }
+  })
   const [jobTitle, setJobTitle] = useState('')
   const [industry, setIndustry] = useState('')
   const [selectedColor, setSelectedColor] = useState<typeof BRAND_COLORS[0] | null>(null)
@@ -287,6 +298,7 @@ export default function Onboarding() {
       // RequireAuth would see the stale 'onboarding_required' state and bounce
       // the brand-new owner straight back here.
       await refreshStaff()
+      localStorage.removeItem('avenize_oauth_pending')
       navigate('/app', { replace: true })
     } catch (err: any) {
       console.error('Setup error:', err)
