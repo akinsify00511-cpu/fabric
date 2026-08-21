@@ -1,3 +1,49 @@
+## Session 48 (2026-08-21): Riverways Admin route integration
+
+The prior session committed riverways migrations elsewhere (the GitHub
+connector's truncated App.tsx forced it to stop). This session has the full
+local tree so the surgical edit is safe.
+
+### What shipped
+- Migration `20260821000000_riverways_admin.sql` (idempotent, applies clean +
+  re-applies on postgres:15): `public.riverways_admins` (RLS-denied to all
+  clients — service role only), `is_riverways_admin()` SECURITY DEFINER
+  (auth-email → allowlist; does NOT infer from client-side), and
+  `riverways_admin_overview()` aggregate-only JSONB (business/staff counts +
+  recent errors + integration health + open incidents; ordinary tenants get
+  `{authorized:false}` without leaking).
+- `src/lib/riverwaysAdmin.ts`: `isRiverwaysAdmin()` (fails closed),
+  `fetchRiverwaysAdminOverview()` (fails closed).
+- `src/pages/RiverwaysAdmin.tsx`: RequireAuth (MFA gate) → page calls
+  `isRiverwaysAdmin()` first; only provisioned operators request the
+  overview; restricted screen + `/login` return path for all others. Uses
+  tokens (no raw hex) — design-constitution PASS.
+- `src/App.tsx`: lazy import + `/riverways-admin` route wrapped in
+  RequireAuth.
+
+### What fixed
+- Parallel session's `20260821143000_schedule_integrity_auto_repair.sql` used
+  bare `create extension if not exists pg_cron` + `select cron.schedule(...)`
+  — both fail on CI's bare postgres:15 and `select ... into strict jobid` is
+  invalid PL/pgSQL. Guarded both behind `DO $$ EXCEPTION` blocks (matches
+  051/092 pattern) + replaced with `PERFORM`. Applies cleanly + idempotently
+  against postgres:15 twice.
+- CI failure was the first for this migration chain (previously 54 historical
+  baseline). Now green.
+
+### Verification
+postgres:15 tested apply+apply: `riverways_admins` row present → gate true,
+row absent → gate false. tsc clean, vite build 0 warnings, vitest 655/655,
+design-constitution PASS, schema-drift 13 RPCs.
+
+### Deployment
+Commits `7bd6e37` (route) + `077e572` (pg_cron guard) pushed; CI ✓; Schema
+Drift ✓; Vercel ✓. `/riverways-admin` will resolve once migrator runs
+against live DB (same gate as other pending migrations). Until the allowlist
+is provisioned, the page shows "Restricted" for everyone (fails closed).
+
+---
+
 ## Session 47 (2026-08-21): Stale-bundle purge + PostgREST-404 = schema failure
 
 User's production-reconciliation request — three structural corrections in one
