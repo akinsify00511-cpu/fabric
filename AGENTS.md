@@ -1,3 +1,59 @@
+## Session 49 (2026-08-21): Riverways Activity & Operations Center
+
+User directive: the Riverways console becomes a complete platform-wide
+operations view — live activity, user/org/AI/billing/security/errors,
+self-healing, analytics, global search. Event-driven, with the privacy rule:
+"everything necessary to operate and secure the platform, not unrestricted
+access to private user content."
+
+### Backend (migration 20260821150000_riverways_activity_ops.sql)
+- `platform_activity_events`: single real-time stream (event_type/actor/
+  business/feature/result/severity/service/correlation_id/payload). RLS
+  denies all clients. Realtime publication add guarded (bare-pg safe).
+- `emit_platform_activity`: the ONLY client writer. SECURITY DEFINER fills
+  actor server-side; `sanitize_platform_payload` strips credential-like keys
+  (password/token/secret/credential/api_key/totp/session) BEFORE insert.
+- 10 readers, every one gated by `is_riverways_admin()` returning
+  `{authorized:false}` with NO payload for non-admins: activity_feed,
+  global_search (users/orgs/RPCs/incidents/events), user/org activity,
+  ai_activity (metadata only — contents never stored), billing_activity,
+  security_center (pre-auth failures counted from security_audit_log since
+  emit needs a session), error_center, self_healing (integrity engine),
+  platform_analytics (DAU/WAU/MAU/signups/module adoption).
+
+### Emitters wired (best-effort, never block UX)
+AuthContext sign-in/out; Onboarding onboarding.completed; Leads imported/
+converted; Meetings scheduled; Tasks created; ask-avenize edge fn
+ai.completed/ai.failed + duration_ms; subscription-management edge fn
+checkout started/failed + cancel.
+
+### Frontend
+RiverwaysAdmin rebuilt: global search box, platform health strip, 10 tabs
+(Live Activity realtime stream, Accounts, Users, Organizations, AI, Billing,
+Security, Errors, Self-Healing, Analytics) + visible privacy-boundary copy.
+
+### Parallel-session collision (again — the Session 35 pattern)
+Remote pushed `RiverwaysAdminAccounts.tsx` calling
+`riverways_admin_list_accounts`/`riverways_assign_account_type` with NO
+backing migration. Closed with `20260821160000_riverways_account_management.sql`
+(riverways_account_types store + the two gated RPCs; assignment emits
+security.permission_changed; account type is an ops label, NOT staff.role).
+Panel mounted as the Accounts tab.
+
+### Verified (postgres:15 Docker, full gate matrix)
+apply+reapply clean; admin true/tenant authorized:false-no-payload on every
+reader; sanitizer strips password key; bogus account type rejected; tenant
+self-escalation denied; tenant sees 0 accounts. tsc 0, build 0 warnings,
+vitest 662/662 (+7), design-constitution PASS, schema-drift 0.
+Commits 9868ffe + ef0dff1 pushed; CI ✓, Schema Drift ✓, Vercel ✓.
+
+### Deploy gate (unchanged)
+Migrations 20260821150000 + 20260821160000 must apply to live Supabase;
+until then the console tabs show honest empty states / authorized:false
+screens. The console fails closed everywhere.
+
+---
+
 ## Session 48 (2026-08-21): Riverways Admin route integration
 
 The prior session committed riverways migrations elsewhere (the GitHub
