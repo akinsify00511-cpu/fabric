@@ -1,3 +1,19 @@
+## Session 46 (2026-08-21): `.slice` crash from Skip response body — null → []
+
+User pasted `TypeError: e.slice is not a function` after Session 45 went
+live. The network-level breaker's synthesized skip response returned
+`{data:null,error:null,count:null}` — supabase-js downstream `.slice()/`.length
+crashes on `null`. Skip now returns `[]` (empty array — valid JSON for
+tables AND rpcs), which downstream array ops survive.
+
+Verified: tsc clean, build 0 warnings, vitest 655/655, design constitution
+PASS. Commit db45e62 (pushed; CI ✓; Deploy ✓; bundle `index-BJVWIRgA.js`
+serving now).
+
+Lesson: when synthesizing a "skip" response for a generic JSON consumer,
+return the SHAPE closest to what the target SDK normally hands you
+(arrays for Supabase PostgREST), not a typed `{data,error,count}` object.
+
 ## Session 45 (2026-08-21): Network-level breaker — the out-of-box all-pages fix
 
 User asked for a single fix covering all remaining pages/features, not
