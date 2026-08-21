@@ -1,3 +1,26 @@
+## Session 47 (2026-08-21): Stale-bundle purge + PostgREST-404 = schema failure
+
+User's production-reconciliation request — three structural corrections in one
+commit:
+
+1. **Stale bundle refs** (user verified): removed TrialBanner lazy import +
+   JSX use (`/app/capture` redirect was already there but AICapture/TrialBanner
+   still leaked into the served chunk). Now `<MfaGate>` wraps only real
+   chrome. `/app/capture` -> `/app/meetings` redirect hard-coded.
+2. **PostgREST 404 not classified as schema failure** (user observation #2).
+   Previous verdict looked for PGRST text in the response body; a bare 404
+   means "not in the schema cache" — now classified as a schema/object
+   availability failure at the network layer. Only status>=400 && non-404
+   goes through PGRST text body inspection.
+3. The session also rebased over `4d575f0 chore(db): add guarded live schema
+   drift reconciliation` (the session-39 zzzz_live_schema_reconcile.sql
+   migration file) — no conflicts.
+
+Verified: tsc clean, build 0 warnings, vitest 655/655, schema-drift 0,
+design-constitution PASS. Bundle `index-s2hzDnHz.js` serving now.
+
+Commit c379187 (pushed; CI ✓; Deploy ✓).
+
 ## Session 46 (2026-08-21): `.slice` crash from Skip response body — null → []
 
 User pasted `TypeError: e.slice is not a function` after Session 45 went
