@@ -1,3 +1,31 @@
+## Session 42 (2026-08-21): Console-drift wall silenced — usage_events + user_workspace_selections guarded
+
+User pasted the production console: repeated 404s on
+- POST /rest/v1/usage_events (fired on EVERY navigation via useUsageTracking
+  route-view + onboarding-tool-toggle logUsageEvent), and
+- POST /rest/v1/user_workspace_selections upsert (Onboarding final step).
+
+Both tables exist only in migrations not yet applied to the live DB
+(deployment drift — same class as Session 38b, but these three call sites
+had never been routed through the Session 38b schemaAvailability circuit
+breaker). All other pages (useWorkspaceSelection's own select in the hook,
+etc.) were already guarded; these weren't.
+
+### Fix (commit cf00b75, pushed; deployed cf00b75 → production)
+- `useUsageTracking.ts`: both insert sites now short-circuit via
+  isSchemaAvailable('usage_events'); on a PGRST202/PGRST205-class error the
+  table is marked permanently unavailable for the session, so subsequent
+  route changes never even attempt the POST (no repeat wall).
+- `Onboarding.tsx`: the selection upsert now also uses
+  isSchemaAvailable + markSchemaUnavailable before attempting the POST.
+
+Verified: tsc clean, build 0 warnings, vitest 655/655, schema-drift 0,
+design-constitution PASS. CI SUCCESS; Vercel Deploy Production ✓ 1m55s.
+
+Lesson: any NEW `.from(<drifting_table>)` call site must use the
+schemaAvailability guard the first time it is introduced — not after the
+user sees the console wall.
+
 ## Session 41 (2026-08-20): Cmd/Ctrl+K fix + task-creation unlocked + gamified empty states
 
 User reports: "the search or jump to Ctrl+K is not working" and "no way to
