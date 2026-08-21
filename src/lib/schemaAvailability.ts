@@ -106,8 +106,10 @@ function extractPostgrestKey(url: string): string | null {
   return null
 }
 
-/** Schemas returned by a failed probe, used to synthesize a "not found" response. */
-const NOT_FOUND_BODY = { data: null, error: null, count: null } as const
+/** Empty body for a skipped probe. Must be an ARRAY — supabase-js `.rpc()/.from()`
+ * parses the response body as JSON and downstream code may `.slice()`/`.length`
+ * on it; `null` crashes (the `e.slice is not a function` the user hit). */
+const NOT_FOUND_BODY: unknown[] = []
 const NOT_FOUND_RESPONSE_HEADERS = { 'Content-Type': 'application/json' } as const
 
 let installed = false
