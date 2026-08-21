@@ -76,13 +76,13 @@ const VIEWS = [
   { title: 'Timelines', desc: 'See what happened and what comes next.', icon: Calendar },
 ]
 
+// Mirrors the canonical tiers on /pricing (Pricing.tsx). Update both together.
 const PRICING = [
-  { name: 'Starter', price: '₦15,000', desc: 'For getting your business organized.', features: ['Core workspace', 'CRM & contacts', 'Tasks & basic approvals', 'Up to 5 seats'], cta: 'Start free trial' },
-  { name: 'Team', price: '₦48,000', desc: 'For teams ready to work together.', features: ['Everything in Starter', 'Team collaboration', 'Projects & meetings', 'Up to 15 seats'], cta: 'Start free trial' },
-  { name: 'Growth', price: '₦85,000', desc: 'For a business gaining momentum.', features: ['Everything in Team', 'Finance workflows', 'People & HR tools', 'Up to 25 seats'], cta: 'Start free trial' },
-  { name: 'Business', price: '₦150,000', desc: 'For departments that need one system.', features: ['Everything in Growth', 'Advanced approvals', 'Business intelligence', 'Up to 50 seats'], cta: 'Start free trial', popular: true },
-  { name: 'Scale', price: '₦380,000', desc: 'For complex organizations and multiple teams.', features: ['Everything in Business', 'Custom hierarchy & committees', 'Advanced controls & SSO', 'Up to 150 seats'], cta: 'Talk to us' },
-  { name: 'Enterprise', price: 'Custom', desc: 'For organizations that need Avenize shaped around them.', features: ['Everything in Scale', 'Multi-entity architecture', 'Custom workflows & governance', 'Dedicated success support'], cta: 'Talk to us' },
+  { name: 'Starter', price: '₦15,000', desc: 'For getting your business organized.', features: ['Core workspace', 'CRM & contacts', 'Tasks & basic approvals', 'Up to 5 seats'], cta: 'Get started' },
+  { name: 'Team', price: '₦48,000', desc: 'For teams ready to work together.', features: ['Everything in Starter', 'Team collaboration', 'Projects & meetings', 'Up to 15 seats'], cta: 'Get started' },
+  { name: 'Business', price: '₦112,000', desc: 'For departments that need one system.', features: ['Everything in Team', 'Finance workflows', 'Approval workflows', 'Up to 30 seats'], cta: 'Get started', popular: true },
+  { name: 'Pro', price: '₦186,000', desc: 'For a growing, complex organization.', features: ['Everything in Business', 'Committees & OKRs', 'Advanced intelligence & risk', 'Up to 60 seats'], cta: 'Get started' },
+  { name: 'Scale', price: '₦380,000', desc: 'For large or multi-subsidiary operations.', features: ['Everything in Pro', 'SSO & custom roles', 'Multi-subsidiary & audit trail', 'Dedicated support'], cta: 'Talk to us' },
 ]
 
 const FAQS = [
@@ -113,7 +113,7 @@ function Navbar() {
           </div>
           <div className="flex items-center gap-3">
             <Link to="/login" className="hidden sm:block px-3 py-2 text-sm" style={{ color: BRAND.textSecondary }}>Sign in</Link>
-            <Link to="/signup" className="px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md transition" style={{ backgroundColor: BRAND.primary }}>Start free</Link>
+            <Link to="/signup" className="px-5 py-2.5 text-white text-sm font-semibold rounded-xl shadow-sm hover:shadow-md transition" style={{ backgroundColor: BRAND.primary }}>Get started</Link>
             <button className="lg:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle navigation" aria-expanded={mobileOpen}>{mobileOpen ? <X size={21} /> : <Menu size={21} />}</button>
           </div>
         </div>
@@ -148,13 +148,13 @@ function HeroSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mb-5">
               <Link to="/signup" className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl text-white font-semibold text-lg shadow-sm hover:shadow-lg transition" style={{ backgroundColor: BRAND.primary }}>
-                Start your free trial <ArrowRight size={20} />
+                Get started <ArrowRight size={20} />
               </Link>
               <a href="#stories" className="inline-flex items-center justify-center px-7 py-4 rounded-xl font-semibold text-lg bg-white border hover:bg-slate-50 transition" style={{ color: BRAND.text, borderColor: BRAND.border }}>
                 See how it feels
               </a>
             </div>
-            <p className="text-sm" style={{ color: BRAND.textSecondary }}>7-day free trial · No credit card required · Start with what you need</p>
+            <p className="text-sm" style={{ color: BRAND.textSecondary }}>Paid plans from ₦15,000/month · Cancel anytime · Start with what you need</p>
           </div>
 
           <div className="relative">
@@ -321,7 +321,7 @@ function FAQSection() {
 }
 
 function FinalCTA() {
-  return <section className="py-24 px-4 sm:px-6 overflow-hidden" style={{ backgroundColor: '#101827' }}><div className="max-w-4xl mx-auto text-center"><div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-7" style={{ background: BRAND.gradient }}><span className="text-white font-bold text-xl">A</span></div><h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-5">You should be able to see your business clearly.</h2><p className="text-lg leading-relaxed max-w-2xl mx-auto mb-9" style={{ color: 'rgba(255,255,255,.72)' }}>Not because your business became simpler. Because the system finally became good at carrying the complexity for you.</p><Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-lg shadow-lg hover:-translate-y-0.5 transition" style={{ backgroundColor: BRAND.primary }}>Start your free trial <ArrowRight size={20} /></Link><div className="flex flex-wrap items-center justify-center gap-6 mt-7 text-sm" style={{ color: 'rgba(255,255,255,.58)' }}><span className="flex items-center gap-2"><Shield size={15} />Secure by design</span><span className="flex items-center gap-2"><Clock size={15} />7-day trial</span><span className="flex items-center gap-2"><Headphones size={15} />Human support</span></div></div></section>
+  return <section className="py-24 px-4 sm:px-6 overflow-hidden" style={{ backgroundColor: '#101827' }}><div className="max-w-4xl mx-auto text-center"><div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-7" style={{ background: BRAND.gradient }}><span className="text-white font-bold text-xl">A</span></div><h2 className="text-4xl sm:text-5xl font-bold text-white tracking-tight mb-5">You should be able to see your business clearly.</h2><p className="text-lg leading-relaxed max-w-2xl mx-auto mb-9" style={{ color: 'rgba(255,255,255,.72)' }}>Not because your business became simpler. Because the system finally became good at carrying the complexity for you.</p><Link to="/signup" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-lg shadow-lg hover:-translate-y-0.5 transition" style={{ backgroundColor: BRAND.primary }}>Get started <ArrowRight size={20} /></Link><div className="flex flex-wrap items-center justify-center gap-6 mt-7 text-sm" style={{ color: 'rgba(255,255,255,.58)' }}><span className="flex items-center gap-2"><Shield size={15} />Secure by design</span><span className="flex items-center gap-2"><Clock size={15} />Set up in minutes</span><span className="flex items-center gap-2"><Headphones size={15} />Human support</span></div></div></section>
 }
 
 function Footer() {

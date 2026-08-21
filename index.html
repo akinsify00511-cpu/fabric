@@ -17,7 +17,7 @@
     <!-- Primary Meta Tags (SEO) -->
     <title>Avenize - The Business Operating System | CRM, Projects, Finance in One Platform</title>
     <meta name="title" content="Avenize - The Business Operating System | CRM, Projects, Finance in One Platform" />
-    <meta name="description" content="Avenize is the unified business operating system connecting CRM, projects, finance, HR and more. Stop juggling apps - everything works together. Start free." />
+    <meta name="description" content="Avenize is the unified business operating system connecting CRM, projects, finance, HR and more. Stop juggling apps - everything works together. Plans from ₦15,000/month." />
     <meta name="keywords" content="business operating system, unified platform, all-in-one CRM, project management software, HR software, finance tools, business automation, team collaboration, enterprise software, SaaS" />
     <meta name="author" content="Avenize, Inc." />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -34,7 +34,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://avenize.com/" />
     <meta property="og:title" content="Avenize - The Business Operating System" />
-    <meta property="og:description" content="Unify every business process into one platform. CRM, Projects, Finance, HR - all connected. Start free." />
+    <meta property="og:description" content="Unify every business process into one platform. CRM, Projects, Finance, HR - all connected. Plans from ₦15,000/month." />
     <meta property="og:image" content="https://avenize.com/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -88,7 +88,7 @@
           "name": "How much does Avenize cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Start free. Paid plans start at ₦15,000/month (Starter) up to ₦380,000/month (Scale) with multi-subsidiary support and dedicated support."
+            "text": "Plans start at ₦15,000/month (Starter) up to ₦380,000/month (Scale) with multi-subsidiary support and dedicated support."
           }
         }
       ]
@@ -132,14 +132,16 @@
       "description": "The Business Operating System - unified CRM, project management, finance, HR and business automation.",
       "offers": {
         "@type": "AggregateOffer",
-        "lowPrice": "0",
+        "lowPrice": "15000",
         "highPrice": "380000",
         "priceCurrency": "NGN"
       }
     }
     </script>
     
-    <!-- WebSite Schema with SearchAction -->
+    <!-- WebSite Schema. No SearchAction: there is no public /search route,
+         and structured data must never advertise a capability that doesn't
+         exist (B5 truthfulness). -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -148,12 +150,7 @@
       "url": "https://avenize.com",
       "name": "Avenize",
       "description": "The Business Operating System",
-      "publisher": {"@id": "https://avenize.com/#organization"},
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://avenize.com/search?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
+      "publisher": {"@id": "https://avenize.com/#organization"}
     }
     </script>
     
@@ -177,14 +174,14 @@
       "@context": "https://schema.org",
       "@type": "Product",
       "name": "Avenize",
-      "description": "The Business Operating System — plans from free to multi-subsidiary scale",
+      "description": "The Business Operating System — plans from solo starter to multi-subsidiary scale",
       "brand": {"@type": "Brand", "name": "Avenize"},
       "offers": {
         "@type": "AggregateOffer",
-        "lowPrice": "0",
+        "lowPrice": "15000",
         "highPrice": "380000",
         "priceCurrency": "NGN",
-        "offerCount": "6",
+        "offerCount": "5",
         "availability": "https://schema.org/InStock"
       }
     }

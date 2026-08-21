@@ -37,9 +37,10 @@
 
 ## Pricing
 
-- Free tier plus paid tiers billed in Nigerian Naira (NGN); founding pricing
-  applies during the founding period. See https://avenize.com/pricing for the
-  current tiers.
+- Paid tiers billed in Nigerian Naira (NGN), ₦15,000–₦380,000/month; there is
+  no free trial — subscriptions are paid from the first payment. Founding
+  pricing applies during the founding period. See
+  https://avenize.com/pricing for the current tiers.
 
 ## Contact
 
