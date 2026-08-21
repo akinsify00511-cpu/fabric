@@ -109,6 +109,7 @@ const OwnerIntelligence = lazy(() => import('./pages/OwnerIntelligence'))
 const DiscoveryIntelligence = lazy(() => import('./pages/DiscoveryIntelligence'))
 const BuilderDashboard = lazy(() => import('./pages/BuilderDashboard'))
 const PlatformOpsDashboard = lazy(() => import('./pages/PlatformOpsDashboard'))
+const RiverwaysAdmin = lazy(() => import('./pages/RiverwaysAdmin'))
 const MonthlyReview = lazy(() => import('./pages/MonthlyReview'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingCapture = lazy(() => import('./pages/MeetingCapture'))
@@ -400,6 +401,9 @@ function AppRoutes() {
             everyone." Gated by is_platform_admin() (same allowlist as
             /builder). Not a business-owner surface. */}
         <Route path="/platform-ops" element={<RequireAuth><PlatformOpsDashboard /></RequireAuth>} />
+        {/* Riverways platform command center — backend gate
+            (is_riverways_admin()) is the final authority. */}
+        <Route path="/riverways-admin" element={<RequireAuth><RiverwaysAdmin /></RequireAuth>} />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
