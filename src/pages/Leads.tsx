@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { logPlatformActivity } from '../lib/riverwaysActivity'
 import { convertLeadToContact, getLeadStats, LEAD_SOURCES, PRODUCT_INTERESTS } from '../lib/crm'
 import { useToast } from '../components/Toast'
 import DemandActionCentre from '../components/DemandActionCentre'
@@ -173,6 +174,11 @@ export default function LeadsPage() {
     try {
       const result = await convertLeadToContact(lead, staff.business_id, staff.id)
       if (result.success) {
+        logPlatformActivity('lead.converted', {
+          feature: 'crm',
+          businessId: staff.business_id,
+          result: 'completed',
+        })
         setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, status: 'converted' as const } : l))
         fetchStats(); showToast('Lead converted to contact!', 'success')
       } else showToast(result.error || 'Failed to convert lead', 'error')
@@ -215,6 +221,12 @@ export default function LeadsPage() {
       if (invalid >= 0) throw new Error(`Row ${invalid + 2} must include full_name and email`)
       const { error } = await supabase.from('leads').insert(payload)
       if (error) throw error
+      logPlatformActivity('lead.imported', {
+        feature: 'crm',
+        businessId: staff?.business_id,
+        result: 'completed',
+        payload: { count: payload.length },
+      })
       await Promise.all([fetchLeads(), fetchStats()])
       showToast(`${payload.length} lead${payload.length === 1 ? '' : 's'} imported successfully`, 'success')
     } catch (error) {

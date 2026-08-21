@@ -156,25 +156,47 @@ Deno.serve(async (req) => {
 
     const businessId = staffData.business_id;
 
+    // Platform activity: billing events for the Riverways ops console.
+    const emitBilling = (eventType: string, payload: Record<string, unknown>, severity = "info") => {
+      supabase.rpc("emit_platform_activity", {
+        p_event_type: eventType,
+        p_feature: "billing",
+        p_business_id: businessId,
+        p_result: severity === "error" ? "failed" : "completed",
+        p_severity: severity,
+        p_service: "edge-fn",
+        p_correlation_id: null,
+        p_payload: payload,
+      }).then(() => undefined, () => undefined);
+    };
+
     switch (action) {
       case "get":
         return await handleGetSubscription(supabase, businessId);
-      
+
       case "payments":
         return await handleGetPayments(supabase, businessId);
-      
+
       case "invoices":
         return await handleGetInvoices(supabase, businessId);
-      
-      case "cancel":
-        return await handleCancelSubscription(supabase, businessId, await req.json());
-      
-      case "create_checkout":
-        return await handleCreateCheckout(supabase, businessId, await req.json(), user.email);
-      
+
+      case "cancel": {
+        const res = await handleCancelSubscription(supabase, businessId, await req.json());
+        emitBilling(res.ok ? "subscription.cancelled" : "subscription.cancel_failed", {});
+        return res;
+      }
+
+      case "create_checkout": {
+        const payload = await req.json();
+        const res = await handleCreateCheckout(supabase, businessId, payload, user.email);
+        emitBilling(res.ok ? "billing.checkout_started" : "billing.checkout_failed",
+          { plan: payload?.plan ?? null }, res.ok ? "info" : "error");
+        return res;
+      }
+
       case "available_plans":
         return await handleGetAvailablePlans(supabase);
-      
+
       default:
         return json({ error: `Unknown action: ${action}` }, 400);
     }

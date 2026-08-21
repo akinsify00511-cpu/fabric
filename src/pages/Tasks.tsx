@@ -4,6 +4,7 @@ import {
   CheckCircle2, AlertCircle, User,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { logPlatformActivity } from '../lib/riverwaysActivity'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
@@ -168,6 +169,11 @@ export default function Tasks() {
     try {
       const { data, error } = await supabase.from('tasks').insert(payload).select().single()
       if (error) throw error
+      logPlatformActivity('task.created', {
+        feature: 'tasks',
+        businessId: staff?.business_id,
+        result: 'completed',
+      })
       setTasks((prev) => [data as Task, ...prev])
       resetForm()
       showToast('Task created and assigned', 'success')

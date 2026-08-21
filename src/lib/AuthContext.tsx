@@ -4,6 +4,7 @@ import { supabase } from './supabase'
 import { clearMfaVerified } from './mfa'
 import { clearModuleAccessCache } from './useModuleAccess'
 import { clearExperienceContextCache } from './useExperienceContext'
+import { logPlatformActivity } from './riverwaysActivity'
 import * as Sentry from '@sentry/react'
 
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
@@ -181,6 +182,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!mounted) return
+      if (event === 'SIGNED_IN' && newSession?.user) {
+        logPlatformActivity('user.signed_in', { feature: 'auth', result: 'completed' })
+      }
       if (event === 'SIGNED_OUT') {
         authGenerationRef.current += 1
         fetchIdRef.current += 1
@@ -323,6 +327,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     const signingOutUserId = session?.user?.id
+    if (signingOutUserId) {
+      logPlatformActivity('user.signed_out', { feature: 'auth', result: 'completed' })
+    }
     authGenerationRef.current += 1
     fetchIdRef.current += 1
     sessionUserIdRef.current = null

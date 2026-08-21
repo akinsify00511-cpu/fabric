@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { createBusinessAndOwner } from '../lib/onboarding'
 import { logUsageEvent } from '../lib/useUsageTracking'
+import { logPlatformActivity } from '../lib/riverwaysActivity'
 import { recordDiscoveryReferral } from '../lib/businessOS'
 import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from '../lib/schemaAvailability'
 import { getStoredAttribution, clearStoredAttribution } from '../lib/attribution'
@@ -211,6 +212,13 @@ export default function Onboarding() {
       }
 
       const businessId = result.businessId
+
+      logPlatformActivity('onboarding.completed', {
+        feature: 'onboarding',
+        businessId,
+        result: 'completed',
+        payload: { industry },
+      })
 
       if (selectedColor) {
         localStorage.setItem('avenize_theme_bg', selectedColor.hex)

@@ -226,6 +226,8 @@ Deno.serve(async (req: Request) => {
     global: { headers: { Authorization: `Bearer ${jwt}` } },
   })
   const service = createClient(supabaseUrl, serviceKey)
+  const startedAt = Date.now()
+  let businessId: string | null = null
 
   try {
     const { data: userData } = await userClient.auth.getUser()
@@ -235,7 +237,7 @@ Deno.serve(async (req: Request) => {
     const { data: staffRow } = await userClient
       .from('staff').select('id, business_id').eq('user_id', user.id).limit(1).maybeSingle()
     if (!staffRow?.business_id) return json({ error: 'No business membership.' }, 403)
-    const businessId = staffRow.business_id
+    businessId = staffRow.business_id
 
     let body: Record<string, any>
     try { body = await req.json() } catch { return json({ error: 'Invalid JSON' }, 400) }
@@ -300,9 +302,36 @@ Deno.serve(async (req: Request) => {
       { business_id: businessId, user_id: user.id, role: 'assistant', content: routed.answer, provider, sources: routed.sources, intent: routed.intent, context_snapshot: snapshot },
     ])
 
+    // Platform activity: AI usage metadata for the Riverways ops console.
+    // Metadata only — question/answer contents are never sent here.
+    try {
+      await service.rpc('emit_platform_activity', {
+        p_event_type: 'ai.completed',
+        p_feature: 'ask-avenize',
+        p_business_id: businessId,
+        p_result: 'completed',
+        p_severity: 'info',
+        p_service: 'edge-fn',
+        p_correlation_id: null,
+        p_payload: { intent: routed.intent, provider, duration_ms: Date.now() - startedAt },
+      })
+    } catch { /* telemetry must never fail the request */ }
+
     return json({ answer: routed.answer, sources: routed.sources, intent: routed.intent, confidence: routed.confidence, provider })
   } catch (e) {
     console.error('[ask-avenize]', e)
+    try {
+      await service.rpc('emit_platform_activity', {
+        p_event_type: 'ai.failed',
+        p_feature: 'ask-avenize',
+        p_business_id: businessId,
+        p_result: 'failed',
+        p_severity: 'error',
+        p_service: 'edge-fn',
+        p_correlation_id: null,
+        p_payload: { duration_ms: Date.now() - startedAt },
+      })
+    } catch { /* telemetry must never fail the request */ }
     return json({ error: 'Something went wrong answering that. Try again.' }, 500)
   }
 })
