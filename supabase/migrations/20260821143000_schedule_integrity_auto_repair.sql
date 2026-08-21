@@ -1,4 +1,11 @@
-create extension if not exists pg_cron with schema pg_catalog;
+-- pg_cron may not be available on bare postgres:15 (CI). Guard creation so
+-- the rest of the migration applies cleanly there.
+do $$
+begin
+  create extension if not exists pg_cron with schema pg_catalog;
+exception when others then
+  raise notice 'pg_cron unavailable on this host, skipping: %', sqlerrm;
+end $$;
 
 update public.integrity_rules
 set contract='{"object_type":"function","object_name":"meeting_analytics","signatures":["p_period_days integer"],"repairable":true}'::jsonb
@@ -51,5 +58,12 @@ begin
 end;
 $$;
 
-select cron.unschedule(jobid) from cron.job where jobname='avenize-integrity-auto-repair';
-select cron.schedule('avenize-integrity-auto-repair','*/10 * * * *','select public.run_integrity_repairs_internal();');
+-- Only schedule+unschedule when pg_cron actually loaded (SUPABASE/ prod
+-- hosts have it; bare CI postgres:15 skips gracefully).
+do $$
+begin
+  perform cron.unschedule(jobid) from cron.job where jobname='avenize-integrity-auto-repair';
+  select cron.schedule('avenize-integrity-auto-repair','*/10 * * * *','select public.run_integrity_repairs_internal();');
+exception when others then
+  raise notice 'cron scheduling skipped (pg_cron unavailable): %', sqlerrm;
+end $$;
