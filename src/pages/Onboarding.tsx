@@ -5,6 +5,7 @@ import { useAuth } from '../lib/AuthContext'
 import { createBusinessAndOwner } from '../lib/onboarding'
 import { logUsageEvent } from '../lib/useUsageTracking'
 import { recordDiscoveryReferral } from '../lib/businessOS'
+import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from '../lib/schemaAvailability'
 import { getStoredAttribution, clearStoredAttribution } from '../lib/attribution'
 import { TOOLS, type ToolKey } from '../lib/useToolAccess'
 import {
@@ -220,17 +221,22 @@ export default function Onboarding() {
       // working). Done before redirect so the app mounts with the curation.
       if (selectedTools.length > 0 && session.user.id) {
         try {
-          await supabase
-            .from('user_workspace_selections')
-            .upsert(
-              {
-                user_id: session.user.id,
-                business_id: businessId,
-                selected_tools: selectedTools,
-                selection_completed: true,
-              },
-              { onConflict: 'user_id' },
-            )
+          if (isSchemaAvailable('user_workspace_selections')) {
+            const { error: selectionError } = await supabase
+              .from('user_workspace_selections')
+              .upsert(
+                {
+                  user_id: session.user.id,
+                  business_id: businessId,
+                  selected_tools: selectedTools,
+                  selection_completed: true,
+                },
+                { onConflict: 'user_id' },
+              )
+            if (selectionError && isPermanentSchemaError(selectionError)) {
+              markSchemaUnavailable('user_workspace_selections')
+            }
+          }
         } catch {
           /* non-blocking — selection is advisory, not a hard requirement */
         }

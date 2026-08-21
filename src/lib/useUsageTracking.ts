@@ -12,6 +12,9 @@ import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
+import { isSchemaAvailable, markSchemaUnavailable, isPermanentSchemaError } from './schemaAvailability'
+
+const Table = 'usage_events' as const
 
 // Route prefix → module key. Keep aligned with ROUTE_MODULE in Shell.tsx.
 const ROUTE_MODULE: Record<string, string> = {
@@ -61,6 +64,7 @@ export function logUsageEvent(params: {
   context?: Record<string, any>
 }) {
   if (!sessionId) sessionId = crypto.randomUUID()
+  if (!isSchemaAvailable(Table)) return
   supabase.from('usage_events').insert({
     business_id: params.businessId,
     staff_id: params.staffId ?? null,
@@ -68,7 +72,9 @@ export function logUsageEvent(params: {
     action: params.action,
     context: params.context ?? {},
     session_id: sessionId,
-  }).then(undefined, () => { /* swallow — telemetry must never break UX */ })
+  }).then((res: any) => {
+    if (res?.error && isPermanentSchemaError(res.error)) markSchemaUnavailable(Table)
+  }, () => { /* swallow — telemetry must never break UX */ })
 }
 
 export function useUsageTracking() {
@@ -86,6 +92,7 @@ export function useUsageTracking() {
     if (!moduleKey) return
 
     if (!sessionId) sessionId = crypto.randomUUID()
+    if (!isSchemaAvailable(Table)) return
 
     // Fire-and-forget; never await, never throw on failure.
     supabase.from('usage_events').insert({
@@ -95,6 +102,8 @@ export function useUsageTracking() {
       route: path,
       action: 'view',
       session_id: sessionId,
-    }).then(undefined, () => { /* swallow — telemetry must never break UX */ })
+    }).then((res: any) => {
+      if (res?.error && isPermanentSchemaError(res.error)) markSchemaUnavailable(Table)
+    }, () => { /* swallow — telemetry must never break UX */ })
   }, [staff?.business_id, staff?.id, location.pathname])
 }
