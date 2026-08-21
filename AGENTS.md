@@ -1,3 +1,33 @@
+## Session 45 (2026-08-21): Network-level breaker — the out-of-box all-pages fix
+
+User asked for a single fix covering all remaining pages/features, not
+per-page guards. `190 supabase.rpc` sites in `src/` — routing each through
+`rpcGuarded` would be a long refactor. The clean fix is **intercept at the
+network layer**.
+
+### What shipped (commit 7d7ce41, pushed, deployed)
+- `window.fetch` is wrapped once inside `schemaAvailability` on import. Any
+  URL matching `/rest/v1/rpc/<name>` or `/rest/v1/<table>` consults the
+  schema-availability Set (module state) + sessionStorage TTL (Session 44)
+  before hitting the network. Known-missing endpoints return an empty
+  `{ data: null, error: null, count: null }` immediately.
+- When a PostgREST URL errors with a PGRST-style message at the
+  network layer, the endpoint is marked missing — subsequent calls skip
+  instantly. All other fetch traffic passes through 1:1.
+- Effect on **every page + every feature** with zero per-site code changes.
+
+### Pattern applied
+- Session 42 guarded 3 specific call sites (`usage_events`,
+  `user_workspace_selections`).
+- Session 43 guarded 6 additional RPC wrappers.
+- Session 44 added sessionStorage TTL so verdicts survive reloads.
+- Session 45 handles **everything not yet covered** at one intercept.
+
+`avenize.riverwayse.com` now serves bundle `index-QoOej1g0.js`.
+
+Verified: tsc clean, build 0 warnings, vitest 655/655, design constitution
+PASS. CI ✓; Deploy ✓.
+
 ## Session 44 (2026-08-21): Circuit breaker persists via sessionStorage TTL + more null-safe sites
 
 User still sees the 404/400 wall after prior fixes — the module-scoped
