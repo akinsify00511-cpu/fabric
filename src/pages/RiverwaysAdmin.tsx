@@ -9,11 +9,13 @@ import {
   ActivityPanel, UsersPanel, OrgsPanel, AiPanel, BillingPanel,
   SecurityPanel, ErrorsPanel, HealingPanel, AnalyticsPanel,
 } from '../components/riverways/ActivityPanels'
+import RiverwaysAdminAccounts from './RiverwaysAdminAccounts'
 
-type TabKey = 'activity' | 'users' | 'orgs' | 'ai' | 'billing' | 'security' | 'errors' | 'healing' | 'analytics'
+type TabKey = 'activity' | 'accounts' | 'users' | 'orgs' | 'ai' | 'billing' | 'security' | 'errors' | 'healing' | 'analytics'
 
 const TABS: Array<{ key: TabKey; label: string; icon: typeof Activity }> = [
   { key: 'activity', label: 'Live Activity', icon: Radio },
+  { key: 'accounts', label: 'Accounts', icon: ShieldCheck },
   { key: 'users', label: 'Users', icon: Users },
   { key: 'orgs', label: 'Organizations', icon: Building2 },
   { key: 'ai', label: 'AI Activity', icon: Bot },
@@ -132,6 +134,7 @@ export default function RiverwaysAdmin() {
 
       <main className="mx-auto max-w-7xl px-6 py-8">
         {tab === 'activity' && <ActivityPanel />}
+        {tab === 'accounts' && <RiverwaysAdminAccounts />}
         {tab === 'users' && <UsersPanel />}
         {tab === 'orgs' && <OrgsPanel />}
         {tab === 'ai' && <AiPanel />}
