@@ -141,32 +141,28 @@ export function installNetworkBreaker(): void {
       })
     }
     const response = await origFetch(input, init)
-    // Mark missing when PostgREST says PGRST (2xx-vs-error decoded by the
-    // supabase client; at the network layer we only see HTTP). Detect either
-    // the response headers' `x-postgrest-error-code` if exposed, or simply
-    // inspect status>=400 + read body clone. To stay cheap: read fully (clone)
-    // only when URL is PostgREST and status indicates error.
+    // Mark missing on schema-availability failures: PGRST diagnostics OR a
+    // bare 404 on a PostgREST route (means "not in the schema cache"). Real
+    // application failures (auth 401/403, validation 400, etc.) stay untouched.
     if (key && response.status >= 400) {
-      try {
-        const clone = response.clone()
-        const text = await clone.text()
-        // PGRST202/205 hint in body (or HTTP status means "schema cache miss").
-        const err: SchemaErrorLike = { message: text }
-        // Supabase's HTTP semantic: errors come with non-2xx; treat the URL as
-        // missing iff the body doesn't look like a success payload. This is the
-        // network-level verdict — guarded clients re-read the original response.
-        if (isPermanentSchemaError(err)) {
-          markSchemaUnavailable(key)
-          // Rewrite response to a success-empty so the supabase client
-          // doesn't surface the error (the guarded wrapper would handle this,
-          // but un-guarded page code gets a clean empty instead of noise).
-          return new Response(JSON.stringify(NOT_FOUND_BODY), {
-            status: 200,
-            headers: NOT_FOUND_RESPONSE_HEADERS as Record<string, string>,
-          })
+      const is404 = response.status === 404
+      let isSchemaError = is404
+      if (!is404) {
+        try {
+          const clone = response.clone()
+          const text = await clone.text()
+          const err: SchemaErrorLike = { message: text }
+          isSchemaError = isPermanentSchemaError(err)
+        } catch {
+          /* marking best-effort; fall through */
         }
-      } catch {
-        /* marking best-effort; fall through */
+      }
+      if (isSchemaError) {
+        markSchemaUnavailable(key)
+        return new Response(JSON.stringify(NOT_FOUND_BODY), {
+          status: 200,
+          headers: NOT_FOUND_RESPONSE_HEADERS as Record<string, string>,
+        })
       }
     }
     return response

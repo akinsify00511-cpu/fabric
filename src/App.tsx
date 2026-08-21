@@ -83,7 +83,7 @@ const Landing = lazy(() => import('./pages/Landing'))
 const LandingEnhanced = lazy(() => import('./pages/LandingEnhanced'))
 const CompanyHome = lazy(() => import('./pages/CompanyHome'))
 const BusinessHome = lazy(() => import('./pages/BusinessHome'))
-const AICapture = lazy(() => import('./pages/AICapture'))
+// AICapture is now surfaced inside Meetings only; /app/capture redirects to /app/meetings.
 const AskAvenize = lazy(() => import('./pages/AskAvenize'))
 const ObserverView = lazy(() => import('./pages/ObserverView'))
 const Simulation = lazy(() => import('./pages/Simulation'))
@@ -119,7 +119,6 @@ const ProjectsNigeria = lazy(() => import('./pages/ProjectsNigeria'))
 const InventoryNigeria = lazy(() => import('./pages/InventoryNigeria'))
 const FinanceNigeria = lazy(() => import('./pages/FinanceNigeria'))
 const Quotes = lazy(() => import('./pages/Quotes'))
-const TrialBanner = lazy(() => import('./components/TrialBanner'))
 const OwnerInsights = lazy(() => import('./pages/OwnerInsights'))
 const LeaseManagement = lazy(() => import('./pages/LeaseManagement'))
 const MaintenanceRequests = lazy(() => import('./pages/MaintenanceRequests'))
@@ -342,7 +341,6 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   // MFA then show app
   return (
     <MfaGate>
-      <TrialBanner />
       <SarahChat />
       <BetaFeedbackButton />
       {children}
@@ -476,7 +474,7 @@ function AppRoutes() {
         <Route path="staff/:staffId" element={mg('hr', <StaffProfile />)} />
         <Route path="infrastructure" element={mg('inventory', <BusinessInfrastructure />)} />
         <Route path="home" element={<Dashboard />} />
-        <Route path="capture" element={<AICapture />} />
+        <Route path="capture" element={<Navigate to="/app/meetings" replace />} />
         <Route path="ask" element={<AskAvenize />} />
         <Route path="observer" element={<ObserverView />} />
         <Route path="activity" element={<ObserverView />} />
