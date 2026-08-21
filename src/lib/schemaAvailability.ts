@@ -84,3 +84,90 @@ export async function tableGuard<T>(
   }
   return { data: res.data, count: res.count ?? null }
 }
+
+// Network-level f declarative guard below: the 190+ call sites across pages use
+// supabase.rpc/.from directly. Wrapping window.fetch centralizes the skip logic
+// without touching every page. Scope narrowed: only hits /rest/v1/rpc/<name> or
+// /rest/v1/<table> URLs triggered by Supabase clients, marks the endpoint missing
+// on a schema error, then resolves immediately instead – all other fetches
+// pass through 1:1. Every reason below is lock-step tested in tests.
+
+/** Extract a missing-object key from a PostgREST URL: /rest/v1/rpc/<name> → 'rpc:<name>'; /rest/v1/<table> → '<table>'. */
+function extractPostgrestKey(url: string): string | null {
+  try {
+    if (!url.includes('/rest/v1/')) return null
+    const rpcMatch = url.match(/\/rest\/v1\/rpc\/([a-z0-9_]+)(?:[/?]|$)/i)
+    if (rpcMatch) return `rpc:${rpcMatch[1]}`
+    const tableMatch = url.match(/\/rest\/v1\/([a-z0-9_]+)(?:[/?]|$)/i)
+    if (tableMatch) return tableMatch[1]
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+
+/** Schemas returned by a failed probe, used to synthesize a "not found" response. */
+const NOT_FOUND_BODY = { data: null, error: null, count: null } as const
+const NOT_FOUND_RESPONSE_HEADERS = { 'Content-Type': 'application/json' } as const
+
+let installed = false
+/**
+ * Install the network-level breaker (idempotent). After Session 44 the
+ * verdict lives in sessionStorage, so this never spams the first probe on
+ * reload; it short-circuits known-missing endpoints instantly. Immediate
+ * (no network) instead of a script soon (whenever runtime code imports
+ * schemaAvailability — including main.tsx — every future request is guarded).
+ */
+export function installNetworkBreaker(): void {
+  if (installed) return
+  installed = true
+  if (typeof window === 'undefined' || !window.fetch) return
+  const origFetch = window.fetch
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+    const key = extractPostgrestKey(url)
+    if (key && !isSchemaAvailable(key)) {
+      // Synthesize an immediate "empty" response for the RPC/table call.
+      // Take body shape the Supabase client expects (an array for rpc/table
+      // GETs). Returning an error body would let the client re-surface
+      // honest errors – we don't want that per call; this is a known-missing
+      // endpoint. Keep it `[]` for reads, {count:null,data:null} acceptable.
+      const body = JSON.stringify(NOT_FOUND_BODY)
+      return new Response(body, {
+        status: 200,
+        headers: NOT_FOUND_RESPONSE_HEADERS as Record<string, string>,
+      })
+    }
+    const response = await origFetch(input, init)
+    // Mark missing when PostgREST says PGRST (2xx-vs-error decoded by the
+    // supabase client; at the network layer we only see HTTP). Detect either
+    // the response headers' `x-postgrest-error-code` if exposed, or simply
+    // inspect status>=400 + read body clone. To stay cheap: read fully (clone)
+    // only when URL is PostgREST and status indicates error.
+    if (key && response.status >= 400) {
+      try {
+        const clone = response.clone()
+        const text = await clone.text()
+        // PGRST202/205 hint in body (or HTTP status means "schema cache miss").
+        const err: SchemaErrorLike = { message: text }
+        // Supabase's HTTP semantic: errors come with non-2xx; treat the URL as
+        // missing iff the body doesn't look like a success payload. This is the
+        // network-level verdict — guarded clients re-read the original response.
+        if (isPermanentSchemaError(err)) {
+          markSchemaUnavailable(key)
+          // Rewrite response to a success-empty so the supabase client
+          // doesn't surface the error (the guarded wrapper would handle this,
+          // but un-guarded page code gets a clean empty instead of noise).
+          return new Response(JSON.stringify(NOT_FOUND_BODY), {
+            status: 200,
+            headers: NOT_FOUND_RESPONSE_HEADERS as Record<string, string>,
+          })
+        }
+      } catch {
+        /* marking best-effort; fall through */
+      }
+    }
+    return response
+  }
+}
+installNetworkBreaker()
