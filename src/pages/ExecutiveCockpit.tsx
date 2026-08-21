@@ -1205,11 +1205,18 @@ function ValueLedgerCard({ ledger }: { ledger?: ValueLedger | null }) {
 function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }) {
   const [expanded, setExpanded] = useState(false)
   if (!leakage || !leakage.authorized) return null
+  // Defensive: the RPC payload is server-controlled; a drifted/defective
+  // response can omit the finding arrays (Session-42 crash). Treat missing
+  // arrays as empty so the card degrades to the "none" branch, not a crash.
+  const overdue = leakage.overdue ?? []
+  const declining_margin = leakage.declining_margin ?? []
+  const negative_margin_deals = leakage.negative_margin_deals ?? []
+  const stale_receivables = leakage.stale_receivables ?? []
   const hasFindings =
-    leakage.overdue.length > 0 ||
-    leakage.declining_margin.length > 0 ||
-    leakage.negative_margin_deals.length > 0 ||
-    leakage.stale_receivables.length > 0
+    overdue.length > 0 ||
+    declining_margin.length > 0 ||
+    negative_margin_deals.length > 0 ||
+    stale_receivables.length > 0
   if (!hasFindings) {
     return (
       <div className="av-card p-5 mb-4">
@@ -1232,26 +1239,26 @@ function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--av-danger)]">{leakage.overdue.length}</div>
+          <div className="text-lg font-bold text-[var(--av-danger)]">{overdue.length}</div>
           <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Overdue</div>
         </div>
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--av-warning)]">{leakage.declining_margin.length}</div>
+          <div className="text-lg font-bold text-[var(--av-warning)]">{declining_margin.length}</div>
           <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Declining margin</div>
         </div>
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--av-warning)]">{leakage.negative_margin_deals.length}</div>
+          <div className="text-lg font-bold text-[var(--av-warning)]">{negative_margin_deals.length}</div>
           <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Underpriced deals</div>
         </div>
         <div className="text-center">
-          <div className="text-lg font-bold text-[var(--av-text-secondary)]">{leakage.stale_receivables.length}</div>
+          <div className="text-lg font-bold text-[var(--av-text-secondary)]">{stale_receivables.length}</div>
           <div className="text-[10px] text-[var(--av-text-muted)] uppercase">Stale receivables</div>
         </div>
       </div>
-      {leakage.overdue.length > 0 && (
+      {overdue.length > 0 && (
         <div className="mb-2">
           <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Overdue invoices</p>
-          {leakage.overdue.slice(0, expanded ? undefined : 3).map((o, i) => (
+          {overdue.slice(0, expanded ? undefined : 3).map((o, i) => (
             <div key={i} className="flex items-center justify-between py-1 text-xs">
               <span className="text-[var(--av-text)] truncate">{o.client_name} {o.invoice_number && `· ${o.invoice_number}`}</span>
               <span className="text-[var(--av-danger)] font-medium">{naira(o.total ?? 0)} · {o.days_overdue}d late</span>
@@ -1259,10 +1266,10 @@ function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }
           ))}
         </div>
       )}
-      {leakage.declining_margin.length > 0 && (
+      {declining_margin.length > 0 && (
         <div className="mb-2">
           <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Customers with declining margin</p>
-          {leakage.declining_margin.slice(0, expanded ? undefined : 3).map((d, i) => (
+          {declining_margin.slice(0, expanded ? undefined : 3).map((d, i) => (
             <div key={i} className="flex items-center justify-between py-1 text-xs">
               <span className="text-[var(--av-text)] truncate">{d.client_name}</span>
               <span className="text-[var(--av-danger)] font-medium">{d.margin_pct}% (was {d.prior_margin}%)</span>
@@ -1285,7 +1292,9 @@ function LeakageCard({ leakage }: { leakage: ProfitabilityLeakageResult | null }
 // ============================================================================
 function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesResult | null }) {
   if (!pricing || !pricing.authorized) return null
-  if (pricing.high_margin.length === 0 && pricing.low_margin.length === 0) {
+  const high_margin = pricing.high_margin ?? []
+  const low_margin = pricing.low_margin ?? []
+  if (high_margin.length === 0 && low_margin.length === 0) {
     return (
       <div className="av-card p-5 mb-4">
         <div className="flex items-center gap-2 mb-1">
@@ -1305,10 +1314,10 @@ function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesRe
         <ClaimTag type="INFERENCE" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {pricing.high_margin.length > 0 && (
+        {high_margin.length > 0 && (
           <div>
             <p className="text-xs font-medium text-[var(--av-success)] mb-1">Room to discount (high margin ≥40%)</p>
-            {pricing.high_margin.map((p, i) => (
+            {high_margin.map((p, i) => (
               <div key={i} className="flex items-center justify-between py-1 text-xs">
                 <span className="text-[var(--av-text)] truncate">{p.product}</span>
                 <span className="text-[var(--av-success)] font-medium">{p.margin_pct}% · {naira(p.revenue)}</span>
@@ -1316,10 +1325,10 @@ function PricingOpportunitiesCard({ pricing }: { pricing: PricingOpportunitiesRe
             ))}
           </div>
         )}
-        {pricing.low_margin.length > 0 && (
+        {low_margin.length > 0 && (
           <div>
             <p className="text-xs font-medium text-[var(--av-danger)] mb-1">Raise price or cut cost (low margin ≤15%)</p>
-            {pricing.low_margin.map((p, i) => (
+            {low_margin.map((p, i) => (
               <div key={i} className="flex items-center justify-between py-1 text-xs">
                 <span className="text-[var(--av-text)] truncate">{p.product}</span>
                 <span className="text-[var(--av-danger)] font-medium">{p.margin_pct}% · {naira(p.revenue)}</span>
@@ -1350,6 +1359,8 @@ function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
       </div>
     )
   }
+  const nodesByType = graph.nodes_by_type ?? []
+  const hubEntities = graph.hub_entities ?? []
   return (
     <div className="av-card p-5 mb-4">
       <div className="flex items-center gap-2 mb-3">
@@ -1358,17 +1369,17 @@ function GraphOverviewCard({ graph }: { graph: GraphOverview | null }) {
         <span className="ml-auto text-xs text-[var(--av-text-muted)]">{graph.total_edges} connections</span>
       </div>
       <div className="flex flex-wrap gap-2 mb-3">
-        {graph.nodes_by_type.map((n, i) => (
+        {nodesByType.map((n, i) => (
           <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--av-surface-2)] text-xs text-[var(--av-text-secondary)]">
             <span className="capitalize">{n.entity_type}</span>
             <span className="font-medium text-[var(--av-text)]">{n.node_count}</span>
           </span>
         ))}
       </div>
-      {graph.hub_entities.length > 0 && (
+      {hubEntities.length > 0 && (
         <div>
           <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">Most connected (most influential)</p>
-          {graph.hub_entities.slice(0, 3).map((h, i) => (
+          {hubEntities.slice(0, 3).map((h, i) => (
             <div key={i} className="flex items-center justify-between py-1 text-xs">
               <span className="text-[var(--av-text)] capitalize">{h.entity_type}</span>
               <span className="text-[var(--av-primary)] font-medium">{h.connections} connections</span>
@@ -1510,12 +1521,12 @@ function ImpactSimulatorCard({
       {impact && impact.authorized && (
         <div className="space-y-1">
           <p className="text-xs font-medium text-[var(--av-text-secondary)] mb-1">
-            Downstream impact ({impact.impacted_entities.length} entities)
+            Downstream impact ({(impact.impacted_entities ?? []).length} entities)
           </p>
-          {impact.impacted_entities.length === 0 ? (
+          {(impact.impacted_entities ?? []).length === 0 ? (
             <p className="text-xs text-[var(--av-text-muted)] italic">{impact.note ?? 'No downstream entities mapped.'}</p>
           ) : (
-            impact.impacted_entities.slice(0, 8).map((e, i) => (
+            (impact.impacted_entities ?? []).slice(0, 8).map((e, i) => (
               <div key={i} className="flex items-center justify-between py-1 text-xs border-b border-[var(--av-border)] last:border-0">
                 <span className="text-[var(--av-text)] capitalize flex-1 truncate">{e.impact_description}</span>
                 <span className="w-24 text-right font-medium" style={{

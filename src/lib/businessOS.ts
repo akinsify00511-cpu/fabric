@@ -232,10 +232,8 @@ export async function recordRecommendationOutcome(claimId: string, actualImpact:
 }
 
 export async function fetchRecommendationEffectiveness(businessId: string) {
-  const { data, error } = await supabase.rpc('recommendation_effectiveness', {
-    p_business_id: businessId,
-  })
-  if (error) throw error
+  const data = await rpcGuarded<any[]>('recommendation_effectiveness', () =>
+    supabase.rpc('recommendation_effectiveness', { p_business_id: businessId }))
   return data || []
 }
 
@@ -638,16 +636,8 @@ export async function fetchProfitabilityBySegment(
   businessId: string,
   segment: 'customer' | 'product' | 'salesperson' | 'channel' = 'customer'
 ): Promise<ProfitabilityBySegmentResult | null> {
-  try {
-    const { data, error } = await supabase.rpc('profitability_by_segment', {
-      p_business_id: businessId, p_segment: segment,
-    })
-    if (error) throw error
-    return (data as ProfitabilityBySegmentResult) ?? null
-  } catch (e) {
-    console.error('fetchProfitabilityBySegment failed (non-blocking):', e)
-    return null
-  }
+  return rpcGuarded<ProfitabilityBySegmentResult | null>('profitability_by_segment', () =>
+    supabase.rpc('profitability_by_segment', { p_business_id: businessId, p_segment: segment }))
 }
 
 export interface LeakageFinding {
@@ -696,14 +686,8 @@ export interface PricingOpportunitiesResult {
   error?: string
 }
 export async function fetchPricingOpportunities(businessId: string): Promise<PricingOpportunitiesResult | null> {
-  try {
-    const { data, error } = await supabase.rpc('pricing_opportunities', { p_business_id: businessId })
-    if (error) throw error
-    return (data as PricingOpportunitiesResult) ?? null
-  } catch (e) {
-    console.error('fetchPricingOpportunities failed (non-blocking):', e)
-    return null
-  }
+  return rpcGuarded<PricingOpportunitiesResult | null>('pricing_opportunities', () =>
+    supabase.rpc('pricing_opportunities', { p_business_id: businessId }))
 }
 
 // ============================================================================
@@ -724,14 +708,8 @@ export interface GraphOverview {
   error?: string
 }
 export async function fetchGraphOverview(businessId: string): Promise<GraphOverview | null> {
-  try {
-    const { data, error } = await supabase.rpc('graph_overview', { p_business_id: businessId })
-    if (error) throw error
-    return (data as GraphOverview) ?? null
-  } catch (e) {
-    console.error('fetchGraphOverview failed (non-blocking):', e)
-    return null
-  }
+  return rpcGuarded<GraphOverview | null>('graph_overview', () =>
+    supabase.rpc('graph_overview', { p_business_id: businessId }))
 }
 
 export interface ImpactEntity {
@@ -1131,14 +1109,9 @@ export interface AlertAction {
 
 /** §5.5: the one-tap resolving action per alert rule. Best-effort. */
 export async function fetchAlertActions(businessId: string): Promise<AlertAction[]> {
-  try {
-    const { data, error } = await supabase.rpc('get_alert_actions', { p_business_id: businessId })
-    if (error) throw error
-    return (data as AlertAction[] | null) ?? []
-  } catch (e) {
-    console.error('fetchAlertActions failed (non-blocking):', e)
-    return []
-  }
+  const data = await rpcGuarded<AlertAction[] | null>('get_alert_actions', () =>
+    supabase.rpc('get_alert_actions', { p_business_id: businessId }))
+  return data ?? []
 }
 
 // ============================================================================
@@ -1171,18 +1144,13 @@ export async function computeEbitda(
   periodStart?: string,
   periodEnd?: string,
 ): Promise<EbitdaResult | null> {
-  try {
-    const { data, error } = await supabase.rpc('compute_ebitda', {
+  const data = await rpcGuarded<EbitdaResult | null>('compute_ebitda', () =>
+    supabase.rpc('compute_ebitda', {
       p_business_id: businessId,
       p_period_start: periodStart ?? null,
       p_period_end: periodEnd ?? null,
-    })
-    if (error) throw error
-    return data as EbitdaResult | null
-  } catch (e) {
-    console.error('computeEbitda failed (non-blocking):', e)
-    return null
-  }
+    }))
+  return data ?? null
 }
 
 // ============================================================================
