@@ -596,15 +596,16 @@ function BusinessHealthCard({ health }: { health: BusinessHealth | null }) {
           const dTone = dim.score == null ? 'var(--av-text-muted)'
             : dim.score >= 80 ? 'var(--av-success)'
             : dim.score >= 60 ? 'var(--av-warning)' : 'var(--av-danger)'
+          const dimMetrics = dim?.metrics ?? []
           return (
             <div key={key} className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
               <div className="text-[10px] text-[var(--av-text-muted)] uppercase tracking-wide">{DIM_LABELS[key] || key}</div>
               <div className="text-lg font-semibold" style={{ color: dTone }}>
-                {dim.score ?? '—'}
+                {dim?.score ?? '—'}
               </div>
               <div className="text-[9px] text-[var(--av-text-muted)]">
-                {dim.status === 'insufficient_data' ? 'no targets set' :
-                 dim.metrics.length === 0 ? 'no data' : `${dim.metrics.length} metric${dim.metrics.length > 1 ? 's' : ''}`}
+                {dim?.status === 'insufficient_data' ? 'no targets set' :
+                 dimMetrics.length === 0 ? 'no data' : `${dimMetrics.length} metric${dimMetrics.length > 1 ? 's' : ''}`}
               </div>
             </div>
           )
@@ -1114,10 +1115,10 @@ function DiagnosisItem({ d, bid }: { d: any; bid?: string | null }) {
       )}
       {open && recall && (
         <div className="mt-2 space-y-2 rounded-lg bg-[var(--av-surface-3)] p-3">
-          {recall.matches.length === 0 ? (
+          {(recall.matches ?? []).length === 0 ? (
             <p className="text-xs text-[var(--av-text-muted)]">{recall.note ?? 'No similar past problems found yet.'}</p>
           ) : (
-            recall.matches.map((m, j) => (
+            (recall.matches ?? []).map((m, j) => (
               <div key={j} className="text-xs">
                 <div className="flex items-center gap-1.5">
                   <span className="font-medium text-[var(--av-text)]">{m.title}</span>

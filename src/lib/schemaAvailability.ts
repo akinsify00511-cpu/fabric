@@ -27,6 +27,34 @@ export function isPermanentSchemaError(err: SchemaErrorLike | null | undefined):
 }
 
 const unavailable = new Set<string>()
+const MISSING_TTL_MS = 5 * 60_000 // re-probe after 5 minutes of silence
+
+// Best-effort sessionStorage hydration: without this the breaker resets on
+// every full reload, and a drifted workspace re-spams the same first probe
+// on every reload (the multi-minute console wall the user pasted). sessionStorage
+// keeps the verdict per-tab, keyed per schema object; TTL-bounded so a
+// just-applied migration starts working ~TTL after the verdict (then module state
+// still short-circuits). Storage access itself can throw (private mode, SSR);
+// every reach wrapped, failure = ignore.
+type CacheShape = Record<string, number>
+const CACHE_KEY = 'avenize.schema.missing.v1'
+
+function readCache(): CacheShape {
+  if (typeof sessionStorage === 'undefined') return {}
+  try { return JSON.parse(sessionStorage.getItem(CACHE_KEY) || '{}') || {} } catch { return {} }
+}
+function writeCache(map: CacheShape): void {
+  if (typeof sessionStorage === 'undefined') return
+  try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(map)) } catch { /* ignore */ }
+}
+
+function hydrateFromCache(): void {
+  const now = Date.now()
+  for (const [k, t] of Object.entries(readCache())) {
+    if (now - t < MISSING_TTL_MS) unavailable.add(k)
+  }
+}
+hydrateFromCache()
 
 export function isSchemaAvailable(key: string): boolean {
   return !unavailable.has(key)
@@ -34,6 +62,9 @@ export function isSchemaAvailable(key: string): boolean {
 
 export function markSchemaUnavailable(key: string): void {
   unavailable.add(key)
+  const map = readCache()
+  map[key] = Date.now()
+  writeCache(map)
 }
 
 /**
