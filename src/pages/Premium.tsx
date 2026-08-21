@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, CheckCircle2, CreditCard, Loader2, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, CreditCard, Loader2, ShieldCheck, XCircle } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { extractCheckoutReference, initialCheckoutState, stateFromVerification, type CheckoutReturnState } from '../lib/checkoutReturn'
 
 const PLANS = {
   starter: { name: 'Starter', monthly: 15000, yearly: 150000 },
@@ -24,9 +25,23 @@ export default function Premium() {
   const billing = params.get('billing') === 'yearly' ? 'yearly' : 'monthly'
   const plan = PLANS[planCode] || PLANS.starter
   const amount = billing === 'yearly' ? plan.yearly : plan.monthly
-  const success = params.get('success') === 'true'
-  const reference = params.get('reference')
+  const reference = extractCheckoutReference(params)
+  const [returnState, setReturnState] = useState<CheckoutReturnState>(() => initialCheckoutState(params))
   const callbackUrl = useMemo(() => `${window.location.origin}/upgrade?plan=${planCode}&billing=${billing}`, [planCode, billing])
+
+  // Return from Paystack: verify the reference server-side before claiming
+  // anything. The browser redirect alone proves nothing.
+  useEffect(() => {
+    if (returnState !== 'verifying' || !reference) return
+    let cancelled = false
+    supabase.functions.invoke('paystack-verify', { body: { reference } })
+      .then(({ data, error: verifyError }) => {
+        if (cancelled) return
+        setReturnState(verifyError ? 'failed' : stateFromVerification(data))
+      })
+      .catch(() => { if (!cancelled) setReturnState('failed') })
+    return () => { cancelled = true }
+  }, [returnState, reference])
 
   const startPayment = async () => {
     if (!session) {
@@ -45,13 +60,34 @@ export default function Premium() {
     }
   }
 
-  if (success) return (
+  if (returnState === 'verifying') return (
+    <div className="min-h-screen bg-[var(--av-surface-2)] flex items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-white rounded-2xl border border-black/5 p-8 text-center shadow-sm">
+        <Loader2 size={56} className="mx-auto text-[var(--av-primary)] mb-5 animate-spin" />
+        <h1 className="text-2xl font-bold text-black mb-2">Confirming your payment</h1>
+        <p className="text-black/60">Checking with the payment provider. This takes a few seconds — don't close this page.</p>
+      </div>
+    </div>
+  )
+
+  if (returnState === 'confirmed') return (
     <div className="min-h-screen bg-[var(--av-surface-2)] flex items-center justify-center p-6">
       <div className="w-full max-w-lg bg-white rounded-2xl border border-black/5 p-8 text-center shadow-sm">
         <CheckCircle2 size={56} className="mx-auto text-[var(--av-success)] mb-5" />
-        <h1 className="text-2xl font-bold text-black mb-2">Payment received</h1>
-        <p className="text-black/60 mb-6">We are confirming your payment and activating your {plan.name} subscription. Reference: {reference || 'pending confirmation'}.</p>
+        <h1 className="text-2xl font-bold text-black mb-2">Payment confirmed</h1>
+        <p className="text-black/60 mb-6">Your {plan.name} subscription is being activated. Access unlocks automatically once activation completes — usually within a minute.</p>
         <Link to="/app/subscription" className="inline-flex px-6 py-3 rounded-xl bg-[var(--av-primary)] text-white font-medium">Continue to subscription</Link>
+      </div>
+    </div>
+  )
+
+  if (returnState === 'failed') return (
+    <div className="min-h-screen bg-[var(--av-surface-2)] flex items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-white rounded-2xl border border-black/5 p-8 text-center shadow-sm">
+        <XCircle size={56} className="mx-auto text-[var(--av-danger)] mb-5" />
+        <h1 className="text-2xl font-bold text-black mb-2">Payment not completed</h1>
+        <p className="text-black/60 mb-6">We couldn't confirm this payment. No charge was applied to your account — you can try again below.</p>
+        <button onClick={() => setReturnState('form')} className="inline-flex px-6 py-3 rounded-xl bg-[var(--av-primary)] text-white font-medium">Try again</button>
       </div>
     </div>
   )

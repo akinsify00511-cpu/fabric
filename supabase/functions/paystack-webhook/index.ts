@@ -249,6 +249,20 @@ async function handleSubscriptionChargeSuccess(
     console.error("Failed to log subscription payment:", paymentErr);
   }
 
+  // Close the checkout attempt so ops views don't show phantom pendings.
+  const { error: attemptErr } = await supabase
+    .from("subscription_provider_attempts")
+    .update({ status: "success" })
+    .eq("provider_reference", reference)
+    .eq("operation", "subscription_checkout");
+  if (attemptErr) console.error("Failed to close checkout attempt:", attemptErr);
+
+  await emitBillingActivity(supabase, "billing.payment_succeeded", businessId, "completed", "info", {
+    plan_code: planCode,
+    billing_cycle: billingCycle,
+    amount_cents: amountKobo,
+  });
+
   // Also log to general accounting income, same as invoice payments
   const { error: accountingErr } = await supabase.from("payments").insert({
     business_id: businessId,
@@ -270,12 +284,13 @@ async function handleChargeFailed(
   data: Record<string, unknown>
 ) {
   const reference = data.reference as string;
+  const metadata = (data.metadata ?? {}) as Record<string, unknown>;
 
   const { error: updateErr } = await supabase
     .from("payments_paystack")
-    .update({ 
-      status: "failed", 
-      raw_response: data 
+    .update({
+      status: "failed",
+      raw_response: data
     })
     .eq("paystack_reference", reference);
 
@@ -284,6 +299,45 @@ async function handleChargeFailed(
   } else {
     console.log("Payment marked as failed:", reference);
   }
+
+  // Subscription checkouts live outside payments_paystack — close the
+  // attempt and surface the failure so no paid entitlement is expected.
+  if (metadata.business_id && metadata.plan_code) {
+    const { error: attemptErr } = await supabase
+      .from("subscription_provider_attempts")
+      .update({ status: "failed" })
+      .eq("provider_reference", reference)
+      .eq("operation", "subscription_checkout");
+    if (attemptErr) console.error("Failed to close failed checkout attempt:", attemptErr);
+
+    await emitBillingActivity(supabase, "billing.payment_failed", metadata.business_id as string, "failed", "error", {
+      plan_code: metadata.plan_code,
+    });
+  }
+}
+
+// Platform activity feed for the Riverways operations console. Telemetry
+// must never break payment processing — best-effort, all failures swallowed.
+async function emitBillingActivity(
+  supabase: ReturnType<typeof createClient>,
+  eventType: string,
+  businessId: string,
+  result: string,
+  severity: string,
+  payload: Record<string, unknown>
+) {
+  try {
+    await supabase.rpc("emit_platform_activity", {
+      p_event_type: eventType,
+      p_feature: "billing",
+      p_business_id: businessId,
+      p_result: result,
+      p_severity: severity,
+      p_service: "edge-fn",
+      p_correlation_id: null,
+      p_payload: payload,
+    });
+  } catch { /* telemetry must never fail the webhook */ }
 }
 
 async function verifySignature(rawBody: string, signature: string): Promise<boolean> {
