@@ -1,3 +1,35 @@
+## Session 43 (2026-08-21): RPC-wall silenced via rpcGuarded + Cockpit null-safety
+
+User re-pasted the production console after Session 42: the remaining 404
+wall came from the heavy ExecutiveCockpit cards. Session 42 guarded
+usage_events/user_workspace_selections; this session guarded the businessOS
+intelligence RPCs that the Cockpit fires at once.
+
+### Root causes found + closed
+1. `compute_ebitda`, `recommendation_effectiveness`,
+   `profitability_by_segment`, `pricing_opportunities`, `graph_overview`,
+   `get_alert_actions` were still calling `supabase.rpc` UNGUARDED — every
+   Cockpit mount on a drifted workspace spammed 404s. Routed through
+   `rpcGuarded` (isSchemaAvailable + markSchemaUnavailable), same pattern
+   as fetchBusinessBrain/fetchOpenRecommendations/fetchProfitabilityLeakage.
+   First failure probes, subsequent calls skip the round trip until reload.
+2. TypeError crash `Cannot read properties of undefined (reading 'length')`
+   in ExecutiveCockpit cards — five card components iterated RPC-payload
+   arrays (`leakage.overdue`, `pricing.high_margin`, `graph.nodes_by_type`,
+   `impact.impacted_entities`) without a guard, but the newly-guarded wrappers
+   can return `null`, and even a successfully-called RPC may legitimately
+   omit the array in a partial/shifted schema. Null-safe with `?? []`.
+
+### Verification + deploy
+- tsc clean, vite build 0 warnings, vitest 655/655, schema-drift 0,
+  design-constitution PASS. CI ✓, Vercel **Deploy Production ✓ 1m48s**,
+  commit `00a129b` (pushed).
+
+Lesson: guarding the RPC wrapper is not enough — always defensively
+compose the payload's arrays in the consuming card (guard + null-safe)
+because the same RPC may return `null` on failure, partial shape on
+schema drift, or type-defying payloads once the api surface matures.
+
 ## Session 42 (2026-08-21): Console-drift wall silenced — usage_events + user_workspace_selections guarded
 
 User pasted the production console: repeated 404s on
