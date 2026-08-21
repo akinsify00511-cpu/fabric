@@ -5,7 +5,7 @@ import { clearMfaVerified } from './mfa'
 import { clearModuleAccessCache } from './useModuleAccess'
 import { clearExperienceContextCache } from './useExperienceContext'
 import { logPlatformActivity } from './riverwaysActivity'
-import * as Sentry from '@sentry/react'
+import { captureSentryException, setSentryUser, setSentryTag } from './sentryLazy'
 
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
@@ -316,12 +316,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (staff) {
-      Sentry.setUser({ id: staff.id })
-      Sentry.setTag('business_id', staff.business_id)
-      Sentry.setTag('is_beta_tester', String(staff.is_beta_tester ?? false))
-      Sentry.setTag('user_role', staff.role)
+      setSentryUser({ id: staff.id })
+      setSentryTag('business_id', staff.business_id)
+      setSentryTag('is_beta_tester', String(staff.is_beta_tester ?? false))
+      setSentryTag('user_role', staff.role)
     } else {
-      Sentry.setUser(null)
+      setSentryUser(null)
     }
   }, [staff])
 
@@ -339,7 +339,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStaffChecked(true)
     setLoading(false)
 
-    Sentry.setUser(null)
+    setSentryUser(null)
     clearModuleAccessCache()
     clearExperienceContextCache()
     if (signingOutUserId) clearMfaVerified(signingOutUserId)
@@ -348,7 +348,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) {
       const code = (error as { code?: string }).code
       if (code !== 'session_not_found') {
-        Sentry.captureException(error)
+        captureSentryException(error)
         console.warn('Sign-out completed locally but server sign-out returned an error:', error)
       }
     }

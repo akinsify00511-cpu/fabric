@@ -1,6 +1,6 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-const CACHE_VERSION = 'v4'
+const CACHE_VERSION = 'v5'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
@@ -40,6 +40,14 @@ self.addEventListener('fetch', (event) => {
 
   if (request.destination === 'image') {
     event.respondWith(cacheFirstForImages(request))
+    return
+  }
+
+  // Content-hashed build assets (/assets/<name>-<hash>.js) are immutable by
+  // construction: a new deploy produces new filenames, so a cached copy can
+  // never go stale. Serve cache-first for instant repeat loads.
+  if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
+    event.respondWith(cacheFirstForHashedAsset(request))
     return
   }
 
@@ -88,6 +96,17 @@ async function networkFirstForStaticAsset(request) {
     if (cached) return cached
     return fetch(request)
   }
+}
+
+async function cacheFirstForHashedAsset(request) {
+  const cached = await caches.match(request)
+  if (cached) return cached
+  const response = await fetch(request)
+  if (response.ok) {
+    const cache = await caches.open(STATIC_CACHE)
+    await cache.put(request, response.clone())
+  }
+  return response
 }
 
 async function networkFirstWithOfflineIndicator(request) {

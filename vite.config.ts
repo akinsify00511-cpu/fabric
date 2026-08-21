@@ -9,17 +9,30 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            if (id.includes('@sentry')) return 'vendor-sentry'
+
+            if (id.includes('react-router') || id.includes('@remix-run')) return 'vendor-router'
             if (id.includes('react')) return 'vendor-react'
-            if (id.includes('react-router')) return 'vendor-router'
             if (id.includes('supabase')) return 'vendor-supabase'
-            if (id.includes('jspdf')) return 'vendor-pdf'
             if (id.includes('lucide')) return 'vendor-icons'
+            if (id.includes('otpauth') || id.includes('@simplewebauthn')) return 'vendor-auth'
           }
         },
       },
     },
-    chunkSizeWarningLimit: 600,
-    modulePreload: false,
+    // vendor-pdf (jspdf+html2canvas, ~660KB) is intentionally large and
+    // intentionally lazy — it loads only when a user generates a PDF.
+    chunkSizeWarningLimit: 700,
+    modulePreload: {
+      // Preload entry dependencies (vendor-react/-router/-supabase) in
+      // parallel with the entry chunk, but never the on-demand heavy chunks
+      // (pdf/html2canvas/tesseract/sentry) — those stay lazy by design.
+      resolveDependencies(_filename, deps) {
+        return deps.filter(
+          (d) => !/vendor-pdf|html2canvas|purify|tesseract|vendor-sentry|index\.es/.test(d),
+        )
+      },
+    },
   },
   server: {
     port: 5173,

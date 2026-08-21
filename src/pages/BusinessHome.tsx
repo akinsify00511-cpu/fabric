@@ -32,7 +32,7 @@
  * the greeting, and operational My Work still renders. One intelligence
  * engine failing never collapses the home (§N).
  */
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -95,33 +95,52 @@ export default function BusinessHome() {
   const [projects, setProjects] = useState<ProjectDeliveryData | null>(null)
   const [workload, setWorkload] = useState<WorkloadData | null>(null)
   const [loading, setLoading] = useState(true)
+  const hasLoadedOnce = useRef(false)
 
   useEffect(() => {
     if (!bid) return
     let active = true
-    setLoading(true)
+    // Only show the skeleton on the very first load — a later config change
+    // (e.g. ctx.activeTools resolving) must not flash the page again.
+    if (!hasLoadedOnce.current) setLoading(true)
 
-    // Fire-and-forget all intelligence loads in parallel; each is best-effort
-    // (§24). A failure in one never blocks the others — the cards degrade.
+    // Fire-and-forget intelligence loads in parallel, but ONLY for the data
+    // the displayed cards actually consume — a staff user sees ~3 cards, so
+    // firing all 15 requests would waste round trips (and schema-guard
+    // probes) on data no card renders. Each load is best-effort (§24).
+    const shown = new Set<CardKind>([...config.primaryCards, ...config.secondaryCards])
+    const needs = (...kinds: CardKind[]) => kinds.some(k => shown.has(k))
     const load = async () => {
-      refreshBusinessMetrics(bid).catch(() => {})
-      fetchBusinessBrain(bid).then(b => active && setBrain(b)).catch(() => {})
-      fetchCurrentMetrics(bid).then(m => active && setMetrics(m ?? [])).catch(() => {})
-      computeBusinessHealth(bid).catch(() => {})
-      fetchBusinessHealth(bid).then(h => active && setHealth(h)).catch(() => {})
-      fetchOpenRecommendations(bid, 20).then(r => active && setRecommendations(r ?? [])).catch(() => {})
-      fetchProfitabilityLeakage(bid).then(l => active && setLeakage(l)).catch(() => {})
-      fetchValueLedger(bid).then(v => active && setLedger(v)).catch(() => {})
+      if (needs('revenue', 'cash', 'profit', 'pipeline', 'customers')) {
+        refreshBusinessMetrics(bid).catch(() => {})
+        fetchCurrentMetrics(bid).then(m => active && setMetrics(m ?? [])).catch(() => {})
+      }
+      if (needs('state', 'next_best_action', 'diagnoses')) {
+        fetchBusinessBrain(bid).then(b => active && setBrain(b)).catch(() => {})
+      }
+      if (needs('pulse')) {
+        computeBusinessHealth(bid).catch(() => {})
+        fetchBusinessHealth(bid).then(h => active && setHealth(h)).catch(() => {})
+      }
+      if (needs('opportunities', 'risks')) {
+        fetchOpenRecommendations(bid, 20).then(r => active && setRecommendations(r ?? [])).catch(() => {})
+      }
+      if (needs('risks')) {
+        fetchProfitabilityLeakage(bid).then(l => active && setLeakage(l)).catch(() => {})
+      }
+      if (needs('value_ledger')) {
+        fetchValueLedger(bid).then(v => active && setLedger(v)).catch(() => {})
+      }
 
       // Function-specific loads — each backed by a REAL table. Best-effort,
       // non-blocking; a missing table degrades the card to "—" (§24).
-      loadCampaignData(bid).then(d => active && setCampaign(d)).catch(() => {})
-      loadLeadQuality(bid).then(d => active && setLeads(d)).catch(() => {})
-      loadReceivables(bid).then(d => active && setReceivables(d)).catch(() => {})
-      loadAttendance(bid).then(d => active && setAttendance(d)).catch(() => {})
-      loadLeave(bid).then(d => active && setLeave(d)).catch(() => {})
-      loadProjectDelivery(bid).then(d => active && setProjects(d)).catch(() => {})
-      loadWorkload(bid).then(d => active && setWorkload(d)).catch(() => {})
+      if (needs('campaign_performance')) loadCampaignData(bid).then(d => active && setCampaign(d)).catch(() => {})
+      if (needs('lead_quality')) loadLeadQuality(bid).then(d => active && setLeads(d)).catch(() => {})
+      if (needs('receivables')) loadReceivables(bid).then(d => active && setReceivables(d)).catch(() => {})
+      if (needs('attendance')) loadAttendance(bid).then(d => active && setAttendance(d)).catch(() => {})
+      if (needs('leave_balance')) loadLeave(bid).then(d => active && setLeave(d)).catch(() => {})
+      if (needs('project_delivery')) loadProjectDelivery(bid).then(d => active && setProjects(d)).catch(() => {})
+      if (needs('workload')) loadWorkload(bid).then(d => active && setWorkload(d)).catch(() => {})
 
       // Personal "what needs me" — pending approvals + overdue tasks.
       try {
@@ -140,11 +159,14 @@ export default function BusinessHome() {
         })
         setActions(items)
       } catch { /* non-blocking */ }
-      if (active) setLoading(false)
+      if (active) {
+        hasLoadedOnce.current = true
+        setLoading(false)
+      }
     }
     load()
     return () => { active = false }
-  }, [bid])
+  }, [bid, config])
 
   const firstName = (staff?.full_name || staff?.name || 'there').split(' ')[0]
   const state = brain?.state

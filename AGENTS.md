@@ -1,3 +1,71 @@
+## Standing business benchmark (2026-08-21, user-set)
+
+**Revenue target: $100M in 12 months (by ~2026-08).** Treat this as the
+benchmark against which all growth/marketing/feature-priority decisions are
+weighed. Implications for planning:
+- Marketing work is judged on measurable revenue contribution (attribution
+  must reach paid invoices, not just signups) — see the demand-capture
+  chain (zzzaaa_demand_capture) + attribution.ts (B14) + demand_revenue RPC.
+- Prioritize features that close the loop: acquisition (discovery/SEO,
+  campaigns, social) → conversion (leads→quotes→orders) → retention
+  (value ledger, trial experience) → expansion (upsell via recommend_plan).
+- Never fabricate market/revenue data to justify the target (§22); report
+  real funnel numbers honestly, including when they fall short.
+
+---
+
+## Session 50 (2026-08-21): Performance hardening for the $100M goal
+
+User directive: bring the app to a performance level that supports the goal.
+
+### Caching (repeat visits near-instant)
+- vercel.json: immutable Cache-Control (max-age=31536000) for /assets/*.
+- public/sw.js: cache-first for content-hashed /assets/* (new
+  cacheFirstForHashedAsset), network-first retained for non-hashed JS/CSS so
+  auth bundles never go stale. Cache version bumped.
+- vite.config.ts modulePreload ON: entry deps (rolldown runtime, vendor-react,
+  router, supabase, auth) preloaded in parallel — eliminates the sequential
+  waterfall on first paint. resolveDependencies filters out ALL dynamic-only
+  chunks (jspdf/html2canvas/purify/tesseract/sentry).
+
+### Lazy Sentry (~140KB raw / ~45KB gzip off the initial path)
+- src/lib/sentryLazy.ts: queues init/capture/set-user/set-tag until idle;
+  SDK fetched via dynamic import. main.tsx, errorCapture.ts, AuthContext,
+  BetaFeedbackButton migrated; zero static @sentry/react imports remain.
+- With no VITE_SENTRY_DSN at build time the SDK is tree-shaken out entirely.
+
+### RUNTIME (BusinessHome /app)
+- Intelligence loads now fire ONLY for data the displayed cards consume
+  (staff role ~3 cards, was firing all 15 RPCs + schema-guard probes).
+  <CardKind> needs() gate over primary+secondary cards; hasLoadedOnce ref
+  prevents skeleton re-flash when config resolves late (ctx.activeTools).
+
+### DB indexes (migration zzzzz_performance_indexes.sql, applies last)
+- 12 composite indexes matching real RLS query shapes:
+  invoices(business_id,status),(business_id,due_date);
+  deals(business_id,stage),(business_id,owner_id);
+  tasks(business_id,status,due_date); transactions(business_id,type),
+  (business_id,created_at DESC); leads(business_id,status);
+  email_campaigns(business_id,status); notifications(user_id,created_at DESC);
+  staff(business_id,active); transaction_items(transaction_id).
+- Verified on postgres:15 Docker: applies twice cleanly, EXPLAIN uses
+  idx_invoices_business_due (index scan, not seq scan).
+
+### Rolldown chunking lesson (BIG one)
+Grouping jspdf/html2canvas/dompurify into a vendor-pdf manual chunk trapped
+Vite's shared __vite__mapDeps/modulepreload helper inside it → the ENTRY
+chunk statically imported vendor-pdf → 430-660KB of PDF stack downloaded
+eagerly on every page. Detected via `vite build --manifest` + entry imports
+inspection + Lighthouse unused-javascript. Fix: no manual pdf chunk; jspdf
+returns to its own dynamic chunk. LESSON: after any manualChunks change,
+diff the manifest entry.imports — a helper trapped in a manual chunk makes
+the whole chunk eager.
+
+### Verified
+Lighthouse local (uncompressed preview, throttled): baseline 65 → 66 (FCP
+4.51→4.20s, LCP 6.35→5.77s). tsc 0, build 0 warnings, vitest 677/677,
+schema-drift OK (232 tables), design-constitution PASS (drift burning down).
+
 ## Session 49 (2026-08-21): Riverways Activity & Operations Center
 
 User directive: the Riverways console becomes a complete platform-wide
