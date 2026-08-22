@@ -101,3 +101,42 @@ export function committeeTypeLabel(t: CommitteeType): string {
   }
   return labels[t]
 }
+
+// Gap-analysis display contract (mirrors objective_gap_analysis RPC).
+export type GapStatus =
+  | 'achieved'
+  | 'on_track'
+  | 'at_risk'
+  | 'unlikely'
+  | 'insufficient_data'
+
+export type GapTone = 'good' | 'warn' | 'bad' | 'neutral'
+
+export function gapStatusTone(status: GapStatus | undefined): GapTone {
+  switch (status) {
+    case 'achieved':
+    case 'on_track':
+      return 'good'
+    case 'at_risk':
+      return 'warn'
+    case 'unlikely':
+      return 'bad'
+    default:
+      return 'neutral'
+  }
+}
+
+export function gapConstraintLabel(constraint: string | null | undefined): string {
+  switch (constraint) {
+    case 'pipeline':
+      return 'Pipeline constraint'
+    case 'conversion':
+      return 'Conversion constraint'
+    case 'data':
+      return 'Not enough deal history'
+    case 'pacing':
+      return 'Pacing'
+    default:
+      return ''
+  }
+}

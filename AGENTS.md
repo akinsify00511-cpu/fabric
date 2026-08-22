@@ -69,6 +69,25 @@ cascade_board_objective seeds a strategic_objective with the resolution
 provenance; further cascades nest via parent_id; the report shows progress
 vs elapsed-period honestly (at_risk only with real period dates; §22).
 
+### Continuation: island audit + CEO constraint-check (gap analysis)
+- Island audit (the directive's "every accidental island" test): residual
+  aux tables checked — `company_documents`/`staff_documents` (Operations
+  attachments), `notification_templates`/`notification_preferences`/
+  `intelligence_notification_log` (ancillary to canonical `notifications`),
+  meeting_actions (linked to REAL tasks by design session 26). No NEW
+  islands found; the governance layer itself composes on canonical systems.
+- Migration 20260822130000_objective_gap_analysis.sql: the directive's CEO
+  sentence, deterministic SQL over deals — "This objective is unlikely to
+  be achieved. The primary constraint is pipeline, which is N% below the
+  required level." target from currency key_result (094) or target_value
+  ->revenue (063); win_rate NULL unless >=5 closed deals (§21); binding
+  constraint derived (coverage<1=pipeline; required_rate>win_rate=
+  conversion); status ladder achieved/on_track/at_risk/unlikely/
+  insufficient_data; progress_only for non-revenue objectives.
+- Frontend: "Analyze constraint" per board objective in the Strategy tab
+  (GapPanel with headline + target/won/pipeline/coverage/win-rate/
+  projected numbers). +2 tone/label helper tests (685 total).
+
 ### Verified
 postgres:15 Docker: full chain applies clean; governance file idempotent
 (legacy pass-2 failures = known 54-file baseline, NOT this file). Functional

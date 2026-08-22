@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
   deriveResolutionOutcome,
   deriveCascadeStatus,
+  gapStatusTone,
+  gapConstraintLabel,
   BOARD_REPORT_EXCLUSIONS,
   COMMITTEE_TYPES,
   committeeTypeLabel,
@@ -91,5 +93,23 @@ describe('governance — labels stay honest', () => {
   })
   it('unknown cascade status is labeled as a missing period, not a failure', () => {
     expect(CASCADE_STATUS_LABELS.unknown).toContain('No period')
+  })
+})
+
+describe('governance — gap analysis display contract', () => {
+  it('tone ladder: achieved/on_track good, at_risk warn, unlikely bad, else neutral', () => {
+    expect(gapStatusTone('achieved')).toBe('good')
+    expect(gapStatusTone('on_track')).toBe('good')
+    expect(gapStatusTone('at_risk')).toBe('warn')
+    expect(gapStatusTone('unlikely')).toBe('bad')
+    expect(gapStatusTone('insufficient_data')).toBe('neutral')
+    expect(gapStatusTone(undefined)).toBe('neutral')
+  })
+  it('constraint labels: pipeline/conversion/data named honestly', () => {
+    expect(gapConstraintLabel('pipeline')).toBe('Pipeline constraint')
+    expect(gapConstraintLabel('conversion')).toBe('Conversion constraint')
+    expect(gapConstraintLabel('data')).toContain('Not enough')
+    expect(gapConstraintLabel(null)).toBe('')
+    expect(gapConstraintLabel(undefined)).toBe('')
   })
 })

@@ -2845,3 +2845,42 @@ export async function composeBoardReport(
     return null
   }
 }
+
+export interface ObjectiveGapAnalysis {
+  authorized: boolean
+  analysis_type?: 'revenue_gap' | 'progress_only'
+  objective_id?: string
+  title?: string
+  target?: number
+  period_start?: string | null
+  period_end?: string | null
+  elapsed_pct?: number | null
+  won_in_period?: number
+  remaining_gap?: number
+  open_pipeline?: number
+  pipeline_coverage?: number | null
+  closed_deals?: number
+  win_rate?: number | null
+  required_win_rate?: number | null
+  projected_outcome?: number | null
+  status?: 'achieved' | 'on_track' | 'at_risk' | 'unlikely' | 'insufficient_data'
+  binding_constraint?: 'pipeline' | 'conversion' | 'pacing' | 'data' | null
+  headline?: string
+  progress?: number | null
+  note?: string
+}
+
+export async function fetchObjectiveGapAnalysis(
+  objectiveId: string
+): Promise<ObjectiveGapAnalysis | null> {
+  try {
+    const { data, error } = await supabase.rpc('objective_gap_analysis', {
+      p_objective_id: objectiveId,
+    })
+    if (error) throw error
+    return (data as ObjectiveGapAnalysis) ?? null
+  } catch (e) {
+    console.warn('[governance] gap analysis failed (non-blocking):', e)
+    return null
+  }
+}

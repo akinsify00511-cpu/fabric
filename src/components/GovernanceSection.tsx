@@ -20,10 +20,13 @@ import EmptyState from './EmptyState'
 import {
   deriveCascadeStatus,
   committeeTypeLabel,
+  gapConstraintLabel,
+  gapStatusTone,
   COMMITTEE_TYPES,
   RESOLUTION_TYPE_LABELS,
   type CommitteeType,
   type ResolutionType,
+  type GapStatus,
 } from '../lib/governance'
 import {
   fetchGovernanceOverview,
@@ -31,11 +34,13 @@ import {
   cascadeBoardObjective,
   fetchCascadeTree,
   composeBoardReport,
+  fetchObjectiveGapAnalysis,
   type GovernanceOverview,
   type GovernanceMember,
   type GovernanceResolution,
   type BoardReport,
   type CascadeNode,
+  type ObjectiveGapAnalysis,
 } from '../lib/businessOS'
 
 type GovTab = 'board' | 'committees' | 'resolutions' | 'conflicts' | 'strategy'
@@ -93,6 +98,9 @@ export default function GovernanceSection() {
   const [reportLoading, setReportLoading] = useState(false)
   const [treeFor, setTreeFor] = useState<string | null>(null)
   const [tree, setTree] = useState<CascadeNode[]>([])
+  const [analysisFor, setAnalysisFor] = useState<string | null>(null)
+  const [analysis, setAnalysis] = useState<ObjectiveGapAnalysis | null>(null)
+  const [analysisLoading, setAnalysisLoading] = useState(false)
 
   const load = useCallback(async () => {
     if (!businessId) return
@@ -123,6 +131,19 @@ export default function GovernanceSection() {
     }
     setTreeFor(objectiveId)
     setTree(await fetchCascadeTree(objectiveId))
+  }
+
+  const toggleAnalysis = async (objectiveId: string) => {
+    if (analysisFor === objectiveId) {
+      setAnalysisFor(null)
+      setAnalysis(null)
+      return
+    }
+    setAnalysisFor(objectiveId)
+    setAnalysisLoading(true)
+    const a = await fetchObjectiveGapAnalysis(objectiveId)
+    setAnalysis(a && a.authorized ? a : null)
+    setAnalysisLoading(false)
   }
 
   const generateReport = async () => {
@@ -267,6 +288,10 @@ export default function GovernanceSection() {
           treeFor={treeFor}
           tree={tree}
           onToggleTree={toggleTree}
+          analysisFor={analysisFor}
+          analysis={analysis}
+          analysisLoading={analysisLoading}
+          onToggleAnalysis={toggleAnalysis}
           report={report}
           reportLoading={reportLoading}
           onGenerateReport={generateReport}
@@ -654,16 +679,97 @@ function ConflictsTab({
 }
 
 // ---------------------------------------------------------------------------
+// Gap analysis panel — the CEO constraint-check on one objective
+// ---------------------------------------------------------------------------
+
+function GapPanel({ analysis, loading }: { analysis: ObjectiveGapAnalysis | null; loading: boolean }) {
+  if (loading) {
+    return <p className="text-xs pl-6 mt-2" style={{ color: T.muted }}>Analyzing…</p>
+  }
+  if (!analysis) {
+    return <p className="text-xs pl-6 mt-2" style={{ color: T.muted }}>Gap analysis is not available yet — the objective-gap migration may not be applied.</p>
+  }
+  if (analysis.analysis_type === 'progress_only') {
+    return (
+      <p className="text-xs pl-6 mt-2" style={{ color: T.muted }}>
+        {analysis.note ?? 'This objective has no revenue target — progress only.'}
+      </p>
+    )
+  }
+  const tone = gapStatusTone(analysis.status as GapStatus)
+  const toneColor = tone === 'good' ? T.success : tone === 'warn' ? T.warning : tone === 'bad' ? T.danger : T.muted
+  return (
+    <div className="mt-3 ml-6 rounded-lg p-3" style={{ background: T.surface2 }}>
+      <p className="text-xs font-medium mb-2 flex items-center gap-1.5" style={{ color: toneColor }}>
+        <TrendingUp size={13} />
+        {analysis.headline}
+      </p>
+      {analysis.binding_constraint && (
+        <p className="text-xs mb-2" style={{ color: T.muted }}>
+          {gapConstraintLabel(analysis.binding_constraint)}
+        </p>
+      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>{fmtCompact(analysis.target ?? 0)}</p>
+          <p style={{ color: T.muted }}>Target</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>{fmtCompact(analysis.won_in_period ?? 0)}</p>
+          <p style={{ color: T.muted }}>Won so far</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>{fmtCompact(analysis.open_pipeline ?? 0)}</p>
+          <p style={{ color: T.muted }}>Open pipeline</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>
+            {analysis.pipeline_coverage === null || analysis.pipeline_coverage === undefined ? '—' : `${analysis.pipeline_coverage}×`}
+          </p>
+          <p style={{ color: T.muted }}>Coverage</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>
+            {analysis.win_rate === null || analysis.win_rate === undefined ? '—' : `${Math.round(analysis.win_rate * 100)}%`}
+          </p>
+          <p style={{ color: T.muted }}>Historical win rate</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>
+            {analysis.projected_outcome === null || analysis.projected_outcome === undefined ? '—' : fmtCompact(analysis.projected_outcome)}
+          </p>
+          <p style={{ color: T.muted }}>Projected</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>{analysis.closed_deals ?? 0}</p>
+          <p style={{ color: T.muted }}>Closed deals</p>
+        </div>
+        <div>
+          <p className="font-medium" style={{ color: T.text }}>{analysis.status?.replace('_', ' ') ?? '—'}</p>
+          <p style={{ color: T.muted }}>Status</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Strategy tab — the objective cascade + the board report
 // ---------------------------------------------------------------------------
 
 function StrategyTab({
-  objectives, treeFor, tree, onToggleTree, report, reportLoading, onGenerateReport,
+  objectives, treeFor, tree, onToggleTree,
+  analysisFor, analysis, analysisLoading, onToggleAnalysis,
+  report, reportLoading, onGenerateReport,
 }: {
   objectives: NonNullable<GovernanceOverview['board_objectives']>
   treeFor: string | null
   tree: CascadeNode[]
   onToggleTree: (id: string) => void
+  analysisFor: string | null
+  analysis: ObjectiveGapAnalysis | null
+  analysisLoading: boolean
+  onToggleAnalysis: (id: string) => void
   report: BoardReport | null
   reportLoading: boolean
   onGenerateReport: () => void
@@ -692,8 +798,8 @@ function StrategyTab({
             const status = deriveCascadeStatus(o.progress, null, null)
             return (
               <div key={o.id} className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-                <button onClick={() => onToggleTree(o.id)} className="w-full flex items-center justify-between gap-3 text-left">
-                  <div className="flex items-center gap-2 min-w-0">
+                <div className="flex items-center justify-between gap-3">
+                  <button onClick={() => onToggleTree(o.id)} className="flex items-center gap-2 min-w-0 text-left flex-1">
                     {treeFor === o.id ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
                     <div className="min-w-0">
                       <p className="font-medium text-sm truncate" style={{ color: T.text }}>{o.title}</p>
@@ -702,17 +808,26 @@ function StrategyTab({
                         {o.due_date ? ` · due ${fmtDate(o.due_date)}` : ''}
                       </p>
                     </div>
+                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => onToggleAnalysis(o.id)}
+                      className="text-xs px-2.5 py-1 rounded-lg"
+                      style={{ background: T.primarySoft, color: T.primary }}
+                    >
+                      {analysisLoading && analysisFor === o.id ? 'Analyzing…' : analysisFor === o.id ? 'Hide analysis' : 'Analyze constraint'}
+                    </button>
+                    <span
+                      className="text-xs px-2 py-0.5 rounded-full font-medium"
+                      style={{
+                        background: status === 'on_track' ? 'var(--av-success-soft, rgba(52,168,83,0.12))' : T.surface2,
+                        color: status === 'on_track' ? T.success : T.muted,
+                      }}
+                    >
+                      {o.progress === null ? '—' : status === 'on_track' ? 'On track' : 'Watch'}
+                    </span>
                   </div>
-                  <span
-                    className="text-xs px-2 py-0.5 rounded-full font-medium"
-                    style={{
-                      background: status === 'on_track' ? 'var(--av-success-soft, rgba(52,168,83,0.12))' : T.surface2,
-                      color: status === 'on_track' ? T.success : T.muted,
-                    }}
-                  >
-                    {o.progress === null ? '—' : status === 'on_track' ? 'On track' : 'Watch'}
-                  </span>
-                </button>
+                </div>
                 {treeFor === o.id && (
                   <div className="mt-3 space-y-1">
                     {tree.length === 0 ? (
@@ -732,6 +847,9 @@ function StrategyTab({
                       ))
                     )}
                   </div>
+                )}
+                {analysisFor === o.id && (
+                  <GapPanel analysis={analysis} loading={analysisLoading} />
                 )}
               </div>
             )
