@@ -293,7 +293,6 @@ def main():
             missing.append(f"frontend edge-function invoke has no canonical definition: {fn}")
 
     contract = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
         "counts": {
             "tables": len(tables),
             "views": len(views),
