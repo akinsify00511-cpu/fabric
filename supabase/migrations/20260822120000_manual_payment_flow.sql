@@ -377,7 +377,9 @@ begin
     delete from public.platform_integration_status where integration in ('paystack','flutterwave','termii','resend','whatsapp','meta');
   end if;
   if to_regclass('public.platform_alert_thresholds') is not null then
-    delete from public.platform_alert_thresholds where integration in ('paystack','flutterwave','termii','resend','whatsapp','meta');
+    delete from public.platform_alert_thresholds
+    where key ~ '^(paystack|flutterwave|termii|resend|whatsapp|meta)\.'
+       or (system in ('payments','notifications') and key not like 'supabase.%');
   end if;
 end $$;
 
