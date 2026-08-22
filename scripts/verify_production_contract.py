@@ -105,29 +105,77 @@ def main():
 
     contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
 
-    # --- PostgREST OpenAPI: tables + views + rpc signatures ---
+    # --- PostgREST probing. Preferred: root OpenAPI spec (elevated key).
+    # The root returns 401 to publishable keys by design, so publishable-key
+    # runs fall back to per-object HEAD/POST probes. RPC existence is decided
+    # from the PGRST error body ("no matches found in the schema cache" =
+    # missing; anything else = present). Signature drift needs the spec;
+    # probe-mode RPCs without spec are reported as existence-only.
+
+    def table_exists(name):
+        req = urllib.request.Request(
+            f"{base_url}/rest/v1/{name}?limit=0",
+            headers={"apikey": key, "Authorization": f"Bearer {key}"},
+            method="HEAD",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15):
+                return True
+        except urllib.error.HTTPError as e:
+            return e.code != 404
+        except Exception:
+            return None
+
+    def rpc_probe(name):
+        body_txt = ""
+        req = urllib.request.Request(
+            f"{base_url}/rest/v1/rpc/{name}",
+            data=b"{}",
+            headers={
+                "apikey": key, "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15) as res:
+                body_txt = res.read().decode("utf-8", errors="replace")
+                code = res.status
+        except urllib.error.HTTPError as e:
+            body_txt = e.read().decode("utf-8", errors="replace")
+            code = e.code
+        except Exception:
+            return None
+        excepted = "no matches found in the schema cache"
+        if excepted in body_txt:
+            return False
+        return code is not None and not (code == 404 and "not found" in body_txt.lower())
+
+    spec_mode = False
+    live_tables = set()
+    live_rpcs = {}
     try:
         status, body = http_get(f"{base_url}/rest/v1/", key)
-    except Exception as e:
-        print(f"ERROR: cannot reach {base_url}/rest/v1/ : {e}", file=sys.stderr)
-        sys.exit(2)
-    if status != 200:
-        print(f"ERROR: /rest/v1/ returned HTTP {status}", file=sys.stderr)
-        sys.exit(2)
-    spec = json.loads(body)
-    paths = spec.get("paths", {})
-    live_tables = {p.lstrip("/") for p in paths if not p.startswith("/rpc/")}
-    live_rpcs = {}
-    for p, info in paths.items():
-        if not p.startswith("/rpc/"):
-            continue
-        name = p[len("/rpc/"):]
-        params = []
-        post = info.get("post") or {}
-        for prm in post.get("parameters", []):
-            if prm.get("in") == "query" and prm.get("name") != "select":
-                params.append(prm["name"])
-        live_rpcs.setdefault(name, set()).add(tuple(sorted(params)))
+        if status == 200:
+            spec = json.loads(body)
+            if isinstance(spec, dict) and "paths" in spec:
+                spec_mode = True
+                paths = spec["paths"]
+                live_tables = {p.lstrip("/") for p in paths if not p.startswith("/rpc/")}
+                for p, info in paths.items():
+                    if not p.startswith("/rpc/"):
+                        continue
+                    name = p[len("/rpc/"):]
+                    params = []
+                    post = info.get("post") or {}
+                    for prm in post.get("parameters", []):
+                        if prm.get("in") == "query" and prm.get("name") != "select":
+                            params.append(prm["name"])
+                    live_rpcs.setdefault(name, set()).add(tuple(sorted(params)))
+    except Exception:
+        spec_mode = False
+    if not spec_mode:
+        print("note: OpenAPI spec not readable with this key — probing per object")
 
     # --- Storage buckets (needs a service key; publishable key gets 403) ---
     live_buckets = None
@@ -152,15 +200,31 @@ def main():
             "classification": None,
         }
         if kind in ("table", "view"):
-            if name in live_tables:
+            exists = (name in live_tables) if spec_mode else table_exists(name)
+            if exists is True:
                 results["ok"].append(entry)
+            elif exists is None:
+                entry["classification"] = "UNREACHABLE"
+                results["unknown"].append(entry)
             else:
                 entry["classification"] = (
                     "SECURITY_REPAIR_REQUIRED" if obj["security_sensitive"] else "AUTO_REPAIR_SAFE"
                 )
                 results["missing"].append(entry)
         elif kind == "function":
-            if name not in live_rpcs:
+            if not spec_mode:
+                exists = rpc_probe(name)
+                if exists is True:
+                    results["ok"].append(entry)
+                elif exists is None:
+                    entry["classification"] = "UNREACHABLE"
+                    results["unknown"].append(entry)
+                else:
+                    entry["classification"] = (
+                        "SECURITY_REPAIR_REQUIRED" if obj["security_sensitive"] else "AUTO_REPAIR_SAFE"
+                    )
+                    results["missing"].append(entry)
+            elif name not in live_rpcs:
                 entry["classification"] = (
                     "SECURITY_REPAIR_REQUIRED" if obj["security_sensitive"] else "AUTO_REPAIR_SAFE"
                 )

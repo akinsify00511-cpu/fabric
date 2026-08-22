@@ -12,8 +12,9 @@
 #   APP_URL        e.g. https://avenize.riverwayse.com (frontend smoke check)
 set -u
 
-BASE="${SUPABASE_URL%/}"
-KEY="${SUPABASE_KEY:-${SUPABASE_ANON_KEY:-}}"
+BASE="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"; BASE="${BASE%/}"
+KEY="${SUPABASE_KEY:-${SUPABASE_ANON_KEY:-${VITE_SUPABASE_ANON_KEY:-}}}"
+APP_URL="${APP_URL:-}"
 PASS=0
 FAIL=0
 
@@ -21,8 +22,26 @@ line()  { printf '%s\n' "$*"; }
 pass()  { PASS=$((PASS+1)); line "$(printf '%-16s PASS  %s' "$1" "$2")"; }
 fail()  { FAIL=$((FAIL+1)); line "$(printf '%-16s FAIL  %s' "$1" "$2")"; }
 
-if [ -z "${SUPABASE_URL:-}" ] || [ -z "$KEY" ]; then
-  line "ERROR: set SUPABASE_URL and SUPABASE_KEY"
+# Self-calibration: when no Supabase URL/key was provided, recover them from
+# the deployed frontend bundle (the publishable pair is deliberately embedded
+# in the public JS; RLS remains the boundary). Only the publishable key is
+# discovered — never a service role.
+if [ -n "$APP_URL" ] && { [ -z "$BASE" ] || [ -z "$KEY" ]; }; then
+  INDEX=$(curl -fs "$APP_URL/" 2>/dev/null)
+  BUNDLE=$(printf '%s' "$INDEX" | grep -oE '/assets/[A-Za-z0-9_-]+\.js' | head -1)
+  if [ -n "$BUNDLE" ]; then
+    JS=$(curl -fs "${APP_URL}${BUNDLE}" 2>/dev/null)
+    SB_URL=$(printf '%s' "$JS" | grep -oE 'https://[0-9a-z]+\.supabase\.co' | head -1)
+    SB_KEY=$(printf '%s' "$JS" | grep -oE 'sb_publishable_[A-Za-z0-9_\-]+' | head -1)
+    if [ -n "$SB_URL" ] && [ -n "$SB_KEY" ]; then
+      BASE="$SB_URL"; KEY="$SB_KEY"
+      line "self-calibrated Supabase URL+publishable key from $APP_URL"
+    fi
+  fi
+fi
+
+if [ -z "$BASE" ] || [ -z "$KEY" ]; then
+  line "ERROR: set SUPABASE_URL/SUPABASE_KEY (or pass APP_URL to self-calibrate)"
   exit 2
 fi
 
