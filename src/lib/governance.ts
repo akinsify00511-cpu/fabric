@@ -140,3 +140,61 @@ export function gapConstraintLabel(constraint: string | null | undefined): strin
       return ''
   }
 }
+
+// ── Board pack (printable report) ────────────────────────────────────────────
+// Self-contained HTML for print/PDF (no tokens — print needs absolute values).
+// Generated from the aggregate board report only: the §21 boundary holds.
+
+export interface BoardPackInput {
+  business_name?: string
+  period_start?: string | null
+  period_end?: string | null
+  headline?: string
+  totals?: {
+    resolutions_approved?: number
+    resolutions_open?: number
+    meetings_this_period?: number
+    members_count?: number
+  }
+  sections?: { title: string; lines: string[] }[]
+}
+
+function esc(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+}
+
+export function generateBoardPackHtml(input: BoardPackInput): string {
+  const period =
+    input.period_start || input.period_end
+      ? `${input.period_start ?? ''}${input.period_start && input.period_end ? ' → ' : ''}${input.period_end ?? ''}`
+      : 'Current period'
+  const totals = input.totals ?? {}
+  const sections = input.sections ?? []
+  return [
+    '<!doctype html><html><head><meta charset="utf-8">',
+    `<title>${esc(input.business_name ?? 'Board')} — Board pack</title>`,
+    '<style>body{font-family:Arial,sans-serif;padding:32px;color:#111;max-width:800px;margin:auto}',
+    'h1{font-size:22px;margin:0 0 4px} .muted{color:#555;font-size:12px}',
+    'h2{font-size:14px;margin:20px 0 6px;border-bottom:1px solid #ddd;padding-bottom:2px}',
+    'ul{margin:0;padding-left:18px}li{font-size:12px;margin:2px 0}',
+    '.grid{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0}.cell{min-width:120px}',
+    '.num{font-size:18px;font-weight:700} .cap{font-size:11px;color:#555}</style>',
+    '</head><body>',
+    `<h1>${esc(input.business_name ?? 'Board pack')}</h1>`,
+    `<p class="muted">${esc(period)}</p>`,
+    input.headline ? `<p class="muted">${esc(input.headline)}</p>` : '',
+    '<div class="grid">',
+    `<div class="cell"><div class="num">${totals.resolutions_approved ?? 0}</div><div class="cap">Resolutions approved</div></div>`,
+    `<div class="cell"><div class="num">${totals.resolutions_open ?? 0}</div><div class="cap">Open resolutions</div></div>`,
+    `<div class="cell"><div class="num">${totals.meetings_this_period ?? 0}</div><div class="cap">Meetings</div></div>`,
+    `<div class="cell"><div class="num">${totals.members_count ?? 0}</div><div class="cap">Board members</div></div>`,
+    '</div>',
+    ...sections.flatMap(s => [
+      `<h2>${esc(s.title)}</h2>`,
+      s.lines.length
+        ? `<ul>${s.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>`
+        : '<p class="muted">No items.</p>',
+    ]),
+    '</body></html>',
+  ].join('')
+}

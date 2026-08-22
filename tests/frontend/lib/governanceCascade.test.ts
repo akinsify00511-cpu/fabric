@@ -4,6 +4,7 @@ import {
   deriveCascadeStatus,
   gapStatusTone,
   gapConstraintLabel,
+  generateBoardPackHtml,
   BOARD_REPORT_EXCLUSIONS,
   COMMITTEE_TYPES,
   committeeTypeLabel,
@@ -111,5 +112,27 @@ describe('governance — gap analysis display contract', () => {
     expect(gapConstraintLabel('data')).toContain('Not enough')
     expect(gapConstraintLabel(null)).toBe('')
     expect(gapConstraintLabel(undefined)).toBe('')
+  })
+})
+
+describe('governance — board pack (printable report)', () => {
+  it('renders sections + totals and escapes HTML', () => {
+    const html = generateBoardPackHtml({
+      business_name: 'Acme <Ltd>',
+      period_start: '2026-01-01',
+      period_end: '2026-12-31',
+      totals: { resolutions_approved: 2, resolutions_open: 1 },
+      sections: [{ title: 'Finance', lines: ['Invoiced: 4.2K'] }],
+    })
+    expect(html).toContain('Acme &lt;Ltd&gt;')
+    expect(html).toContain('2026-01-01')
+    expect(html).toContain('Resolutions approved')
+    expect(html).toContain('Finance')
+    expect(html).toContain('Invoiced: 4.2K')
+    expect(html).not.toContain('<Ltd>')
+  })
+  it('empty sections render honest "No items."', () => {
+    const html = generateBoardPackHtml({ sections: [{ title: 'Empty', lines: [] }] })
+    expect(html).toContain('No items.')
   })
 })

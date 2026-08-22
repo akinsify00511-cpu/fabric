@@ -1687,6 +1687,7 @@ export async function createMeeting(
     visibility?: string
     description?: string
     createdBy?: string
+    boardCommitteeId?: string | null
   }
 ): Promise<CreateMeetingResult | null> {
   try {
@@ -1699,6 +1700,7 @@ export async function createMeeting(
       p_visibility: opts?.visibility ?? 'business',
       p_description: opts?.description ?? null,
       p_created_by: opts?.createdBy ?? null,
+      p_board_committee_id: opts?.boardCommitteeId ?? null,
     })
     if (error) {
       console.warn('[meetings] create_meeting failed:', error.message)

@@ -105,17 +105,35 @@ apply clean, Session-51 files idempotent, contract scan **942 healthy /
 0 drift / 0 missing**; non-admin scan denied (42501, fails closed);
 vitest 711/711 (combined suites).
 
-### Deploy status
-Pushed to main after rebase. Live DB still needs migrations
-20260822120000(governance)/125000–20260822170000 applied (idempotent);
-the new deploy.yml production-contract step will stay RED until then —
-that is the gate working as intended. Edge functions need deploy +
-secrets: PAYSTACK_SECRET_KEY (subscription-management, paystack-webhook,
-paystack-verify), RESEND_API_KEY + EMAIL_FROM (email-service),
-RESEND_WEBHOOK_SECRET (resend-webhook), APP_URL (checkout callback).
-Until deployed: Premium shows the manual rail (Paystack button shows
-honest "not configured"), emails stay queued in the ledger (visible in
-the admin console).
+### Deploy status (post-continuation)
+Pushed to main (3 commits: b0f4548 main work → 35cd42d deterministic
+manifest → e2583ac probe-mode/self-calibration). CI: Type Check, Unit
+Tests (711/711), Schema Drift, contract-manifest, migration-test, Build
+all green. Deploy.run: the production-contract gate SELF-CALIBRATES from
+the deployed bundle (publishable pair) and now honestly FAILS the run:
+Auth PASS; Database/RPC FAIL (live comparator: **320 ok / 114 missing /
+0 drift**); Payments FAIL (subscription-management + paystack-verify
+missing); Email FAIL (email-service + resend-webhook missing);
+paystack-webhook DEPLOYED (correct 401). That is the gate working as
+intended — the Vercel build alone no longer counts as "production".
+The gate turns green once the live DB is migrated (20260822120000–
+20260822170000) and the edge functions + secrets are deployed:
+PAYSTACK_SECRET_KEY, RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET,
+APP_URL. Until then Premium shows the manual rail and emails stay queued
+in the ledger (visible in the admin console). Live DB apply needs the
+user's SUPABASE_DB_URL (same gate as all prior sessions).
+
+### Gate plumbing lessons (reusable)
+- PostgREST root (/rest/v1/) returns 401 to publishable keys — never use
+  it as a reachability probe. Probe per-object: table HEAD 200/404, RPC
+  POST {} → "no matches found in the schema cache" = missing. (Session
+  19's live-RPC lesson now codified in scripts/verify_production_contract.py.)
+- A generated artifact committed to CI must be DETERMINISTIC — dropping
+  the `generated_at` timestamp from the contract manifest fixed the
+  contract-manifest gate (regenerate → git diff must be empty).
+- When secrets are unavailable in CI, self-calibrate the publishable URL
+  + key from the deployed bundle (it is embedded there by design; RLS is
+  the boundary) — never require a service-role key for a smoke gate.
 
 ---
 

@@ -11,7 +11,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import {
   Landmark, Users, Plus, X, Vote, FileText, AlertTriangle,
   GitBranch, ChevronRight, ChevronDown, Mail, Phone, Calendar,
-  Briefcase, Shield, TrendingUp, RefreshCw, Pencil,
+  Briefcase, Shield, TrendingUp, RefreshCw, Pencil, Printer,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -22,6 +22,7 @@ import {
   committeeTypeLabel,
   gapConstraintLabel,
   gapStatusTone,
+  generateBoardPackHtml,
   COMMITTEE_TYPES,
   RESOLUTION_TYPE_LABELS,
   type CommitteeType,
@@ -35,6 +36,7 @@ import {
   fetchCascadeTree,
   composeBoardReport,
   fetchObjectiveGapAnalysis,
+  createMeeting,
   type GovernanceOverview,
   type GovernanceMember,
   type GovernanceResolution,
@@ -78,6 +80,56 @@ function fmtCompact(n: number): string {
   return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n)
 }
 
+function printBoardPack(report: BoardReport): void {
+  const sections = [
+    {
+      title: 'Business health',
+      lines: [
+        `Overall: ${report.health?.overall_score !== undefined ? `${Math.round(report.health.overall_score)}/100` : 'not computed'}`,
+        ...(report.health?.note ? [report.health.note] : []),
+      ],
+    },
+    {
+      title: 'Finance',
+      lines: [
+        `Invoiced: ${fmtCompact(report.finance?.invoiced_in_period ?? 0)}`,
+        `Collected: ${fmtCompact(report.finance?.collected_in_period ?? 0)}`,
+        `Overdue: ${report.finance?.overdue_count ?? 0} invoice(s) (${fmtCompact(report.finance?.overdue_value ?? 0)})`,
+      ],
+    },
+    {
+      title: 'Resolutions since period start',
+      lines: (report.resolutions ?? []).map(
+        r => `${r.title} — ${r.type}, ${r.outcome} (${r.votes_for} for / ${r.votes_against} against)`
+      ),
+    },
+    {
+      title: 'Board-seeded objectives',
+      lines: (report.board_objectives ?? []).map(
+        o => `${o.title} — ${o.progress === null ? 'no key results' : `${Math.round(o.progress)}%`} (${o.status_label?.replace('_', ' ') ?? 'unknown'})`
+      ),
+    },
+  ]
+  const approved = (report.resolutions ?? []).filter(r => r.outcome === 'approved').length
+  const html = generateBoardPackHtml({
+    period_start: report.period_start ?? null,
+    period_end: report.period_end ?? null,
+    totals: {
+      resolutions_approved: approved,
+      resolutions_open: (report.resolutions ?? []).length - approved,
+      members_count: undefined,
+      meetings_this_period: undefined,
+    },
+    sections,
+  })
+  const w = window.open('', '_blank')
+  if (!w) return
+  w.document.write(html)
+  w.document.close()
+  w.focus()
+  w.print()
+}
+
 export default function GovernanceSection() {
   const { staff } = useAuth()
   const { showToast } = useToast()
@@ -94,6 +146,7 @@ export default function GovernanceSection() {
   const [voteModal, setVoteModal] = useState<GovernanceResolution | null>(null)
   const [cascadeModal, setCascadeModal] = useState<GovernanceResolution | null>(null)
   const [conflictModal, setConflictModal] = useState(false)
+  const [scheduleModal, setScheduleModal] = useState(false)
   const [report, setReport] = useState<BoardReport | null>(null)
   const [reportLoading, setReportLoading] = useState(false)
   const [treeFor, setTreeFor] = useState<string | null>(null)
@@ -245,9 +298,11 @@ export default function GovernanceSection() {
         <BoardTab
           members={members}
           meetings={meetings}
+          committees={committees}
           isAdmin={isAdmin}
           onAdd={() => setMemberModal({ editing: null })}
           onEdit={(m) => setMemberModal({ editing: m })}
+          onSchedule={() => setScheduleModal(true)}
         />
       )}
 
@@ -352,6 +407,15 @@ export default function GovernanceSection() {
           onSaved={load}
         />
       )}
+
+      {scheduleModal && (
+        <ScheduleMeetingModal
+          businessId={businessId!}
+          committees={committees}
+          onClose={() => setScheduleModal(false)}
+          onSaved={load}
+        />
+      )}
     </div>
   )
 }
@@ -361,13 +425,15 @@ export default function GovernanceSection() {
 // ---------------------------------------------------------------------------
 
 function BoardTab({
-  members, meetings, isAdmin, onAdd, onEdit,
+  members, meetings, committees, isAdmin, onAdd, onEdit, onSchedule,
 }: {
   members: GovernanceMember[]
   meetings: NonNullable<GovernanceOverview['upcoming_meetings']>
+  committees: NonNullable<GovernanceOverview['committees']>
   isAdmin: boolean
   onAdd: () => void
   onEdit: (m: GovernanceMember) => void
+  onSchedule: () => void
 }) {
   return (
     <div className="space-y-6">
@@ -417,12 +483,23 @@ function BoardTab({
       )}
 
       <div className="rounded-xl p-4" style={{ background: T.surface, border: `1px solid ${T.border}` }}>
-        <h3 className="font-semibold text-sm mb-3 flex items-center gap-2" style={{ color: T.text }}>
-          <Calendar size={15} /> Governance calendar — upcoming board & committee meetings
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold text-sm flex items-center gap-2" style={{ color: T.text }}>
+            <Calendar size={15} /> Governance calendar — upcoming board & committee meetings
+          </h3>
+          {isAdmin && (
+            <button
+              onClick={onSchedule}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium"
+              style={{ background: T.primary, color: 'var(--av-surface)' }}
+            >
+              <Plus size={13} /> Schedule meeting
+            </button>
+          )}
+        </div>
         {meetings.length === 0 ? (
           <p className="text-xs" style={{ color: T.muted }}>
-            No governance meetings scheduled. Board meetings use the same meeting system as the rest of the business — schedule one from Meetings and link it to a committee, or link a resolution to it.
+            No governance meetings yet. Use the same meeting system as the rest of the business — schedule a full-board meeting or pick a committee.
           </p>
         ) : (
           <div className="space-y-2">
@@ -868,15 +945,27 @@ function StrategyTab({
               Aggregate only — strategy, finance totals, risk profile, resolution log, objective progress. Never salaries, personal records, or operational detail.
             </p>
           </div>
-          <button
-            onClick={onGenerateReport}
-            disabled={reportLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white disabled:opacity-60"
-            style={{ background: T.primary }}
-          >
-            {reportLoading ? <RefreshCw size={13} className="animate-spin" /> : <FileText size={13} />}
-            {report ? 'Refresh report' : 'Generate report'}
-          </button>
+          <div className="flex items-center gap-2">
+            {report && (
+              <button
+                onClick={() => printBoardPack(report)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium"
+                style={{ background: T.surface2, color: T.text }}
+                title="Print or save the board pack as PDF"
+              >
+                <Printer size={13} /> Print pack
+              </button>
+            )}
+            <button
+              onClick={onGenerateReport}
+              disabled={reportLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white disabled:opacity-60"
+              style={{ background: T.primary }}
+            >
+              {reportLoading ? <RefreshCw size={13} className="animate-spin" /> : <FileText size={13} />}
+              {report ? 'Refresh report' : 'Generate report'}
+            </button>
+          </div>
         </div>
         {report && (
           <div className="grid gap-3 md:grid-cols-2 mt-3">
@@ -1355,4 +1444,84 @@ function ConflictModal({
   )
 }
 
+
+
+
+// ---------------------------------------------------------------------------
+// Schedule governance meeting (full board or a committee)
+// ---------------------------------------------------------------------------
+
+function ScheduleMeetingModal({
+  businessId, committees, onClose, onSaved,
+}: {
+  businessId: string
+  committees: NonNullable<GovernanceOverview['committees']>
+  onClose: () => void
+  onSaved: () => void
+}) {
+  const { showToast } = useToast()
+  const [scope, setScope] = useState('full')
+  const [title, setTitle] = useState('')
+  const [start, setStart] = useState('')
+  const [note, setNote] = useState('')
+
+  const committee = scope !== 'full' ? committees.find(c => c.id === scope) : null
+  const defaultTitle = committee ? `${committee.name} meeting` : 'Board of Directors meeting'
+
+  const submit = async () => {
+    const finalTitle = (title || defaultTitle).trim()
+    if (!finalTitle || !start) {
+      showToast('A start time is required.', 'error')
+      return
+    }
+    const result = await createMeeting(businessId, finalTitle, {
+      scheduledStart: start,
+      description: note.trim() || undefined,
+      boardCommitteeId: scope === 'full' ? null : scope,
+    })
+    if (!result) {
+      showToast('Could not schedule — the meeting-scheduling migration may not be applied.', 'error')
+      return
+    }
+    showToast('Meeting scheduled.', 'success')
+    onSaved()
+    onClose()
+  }
+
+  return (
+    <ModalShell title="Schedule governance meeting" onClose={onClose}>
+      <div className="space-y-3">
+        <select value={scope} onChange={e => setScope(e.target.value)} className={inputCls} style={inputStyle}>
+          <option value="full">Full board</option>
+          {committees.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          className={inputCls}
+          style={inputStyle}
+          placeholder={defaultTitle}
+        />
+        <input
+          type="datetime-local"
+          value={start}
+          onChange={e => setStart(e.target.value)}
+          className={inputCls}
+          style={inputStyle}
+        />
+        <input
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          className={inputCls}
+          style={inputStyle}
+          placeholder="Optional agenda note…"
+        />
+      </div>
+      <div className="flex gap-3 mt-4">
+        <button onClick={onClose} className="flex-1 px-4 py-2 rounded-lg border text-sm" style={{ borderColor: T.border, color: T.text }}>Cancel</button>
+        <button onClick={submit} className="flex-1 px-4 py-2 rounded-lg text-white text-sm" style={{ background: T.primary }}>Schedule</button>
+      </div>
+    </ModalShell>
+  )
+}
 

@@ -4686,12 +4686,13 @@
     {
       "kind": "function",
       "name": "create_meeting",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "defined_in": "20260822140000_governance_meeting_scheduling.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid"
+        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid",
+        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid, p_board_committee_id uuid"
       ]
     },
     {
@@ -9231,7 +9232,8 @@
       "p_lead_id uuid, p_request_type text, p_title text, p_description text, p_product_id uuid, p_quantity numeric, p_location text, p_budget numeric, p_urgency text, p_attachments jsonb"
     ],
     "create_meeting": [
-      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid"
+      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid",
+      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid, p_board_committee_id uuid"
     ],
     "create_notification": [
       "p_user_id uuid, p_business_id uuid, p_title text, p_message text, p_category notification_category, p_channel notification_channel, p_entity_type text, p_entity_id uuid, p_data jsonb, p_action_url text, p_action_text text, p_scheduled_for timestamptz"
