@@ -82,3 +82,14 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # A frontend deployment is NOT "successful" because Vercel built it.
+      # The production contract check actually calls the live Supabase and
+      # fails the deploy job if any frontend-referenced table/RPC is missing
+      # or drifted, or the payment/email edge functions are not deployed.
+      - name: Production contract verification
+        run: bash scripts/verify-production.sh
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          APP_URL: https://avenize.riverwayse.com

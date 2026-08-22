@@ -1,3 +1,124 @@
+## Session 51 (2026-08-22): Strategy reversal — retain best-in-class infra + Production Contract Reconciliation System
+
+User directive: the "remove all external services" philosophy was wrong.
+Correct end state: Avenize owns the intelligence/business-logic/orchestration/
+monitoring; commodity infrastructure is delegated to proven providers —
+Supabase (backend), Vercel (deploy), **Paystack (payments), Resend (email)**.
+The browser never holds privileged credentials and never decides payment
+success. Also: STOP patching individual 404s; build ONE Production Contract
+Reconciliation System instead.
+
+### Phase 1 — Production Contract Reconciliation (the anti-404 system)
+- `scripts/generate_contract_manifest.py`: extracts the canonical contract
+  from the migration chain (balanced-paren, string-literal-aware function
+  parser — naive `[^)]*` breaks on `DEFAULT NOW()`; strips `--` comments so
+  comment mentions of CREATE/DROP don't register phantoms; honors DROP
+  TABLE/FUNCTION) + scans the frontend for every `.from/.rpc/.storage.from/
+  .functions.invoke` reference. Fails (exit 1) if any frontend reference has
+  no canonical definition. Emits `supabase/contract/production_contract.json`
+  (940 objects) + the GENERATED seed migration `20260822160000_contract_
+  integrity_seed.sql` (one integrity_rules row per object; upsert +
+  prune-by-prefix so the rules table mirrors the contract exactly).
+- `20260822140000_contract_scan_extension.sql`: `run_integrity_scan()`
+  generalized to the full contract (function existence + identity-argument
+  drift via `contract_normalize_args`; tables/views via to_regclass; buckets
+  guarded). Never executes DDL — repairable objects → apply the canonical
+  migration; security-sensitive objects → critical SECURITY_REPAIR_REQUIRED
+  finding. `contract_status` column marks contract-managed rules; findings
+  for pruned rules auto-resolve. On a fully-migrated postgres:15: **932
+  healthy, 0 drift, 0 missing** (three `registered` edge-function rows).
+- Type aliases unified in THREE places with word-boundary matching
+  (int/integer→int4, decimal→numeric, bigserial→int8, etc.): the SQL
+  normalizer, the generator, the live comparator. Keep them in sync.
+- `scripts/verify-production.sh` + `verify_production_contract.py`: the
+  production smoke gate (§3 of the directive) — auth health, PostgREST
+  OpenAPI contract comparison (frontend-referenced objects), payment + email
+  edge-function probes, SPA-shell check. Prints `PRODUCTION READY` or fails.
+  Wired as the FINAL step of deploy.yml (deploy is not "successful" when
+  Vercel builds — it is successful when the contract check passes) and a
+  `contract-manifest` job in schema-drift.yml (fails on stale generated
+  artifacts).
+
+### Phase 4 — Paystack restored SECURELY (new architecture, not the old one)
+- `20260822150000_payment_provider_ledger.sql`: `payment_transactions`
+  (ledger; the ONLY payment state; explicit state machine
+  pending→processing→success / →failed / success→refunded enforced by the
+  `enforce_payment_transaction_transition` trigger),
+  `payment_webhook_events` (unique(provider,event_id) idempotency),
+  subscriptions→entitlements sync trigger, receipt/payment-failed email
+  queue trigger, paystack/resend platform-integration rows reseeded.
+- Edge functions: `subscription-management` (createCheckout: owner/admin
+  gate, server-side `plan_price_cents` price — browser NEVER supplies a
+  price; pending ledger row; 10-min idempotent reuse; cancel→
+  cancel_at_period_end), `paystack-webhook` (HMAC-SHA512 signature →
+  idempotency insert → RE-VERIFY against Paystack per Paystack docs →
+  settle ledger → upsert subscription → trigger unlocks entitlement →
+  trigger queues receipt email; email failure can never break settlement),
+  `paystack-verify` (browser-return helper; membership-gated; ledger is
+  authoritative, provider status informational).
+- `_shared/paymentsCore.ts`: pure shared logic (state machine, HMAC,
+  constant-time compare, idempotency key, amount-sufficiency) — the SAME
+  module vitest tests (no mirror-copy drift).
+- Frontend: `src/lib/payments.ts`; Premium.tsx shows BOTH rails (Paystack
+  primary + manual bank transfer — the manual flow from the parallel
+  session stays); Subscription.tsx handles the `?reference=` callback via
+  paystack-verify + refreshes entitlements. Plans: starter ₦15k/150k, team
+  ₦48k/480k, business ₦112k/1.12M monthly/yearly (kobo units).
+
+### Phase 5 — Resend email subsystem (one service, not scattered sends)
+- `20260822170000_resend_email_subsystem.sql`: `email_events` (internal
+  delivery ledger), `transactional_email_templates` (19 seeded: welcome,
+  invite, payment receipt/failed, subscription lifecycle, quote, invoice,
+  meeting reminder, lead, task, security alert, …), `queue_email` RPC
+  (membership-guarded), payment/subscription lifecycle triggers queue emails
+  (event-driven: payment.success → settle → queue email, never inline),
+  `business_email_domains` (per-business sending domains, Resend DNS
+  verification groundwork).
+- Edge functions: `email-service` (service-key/cron-secret auth; renders
+  template; business verified domain overrides platform From; delivers via
+  Resend; writes provider_message_id back to the ledger; `process` action
+  drains the queue), `resend-webhook` (svix signature verify; delivery/
+  bounce/open events advance the ledger status FORWARD only).
+- Resend owns delivery + domain authentication; Avenize owns the business
+  logic + ledger (§15 of the directive).
+
+### Verified
+tsc clean; vite build 0 warnings; vitest 693/693 (57 files, +2 suites:
+paymentsCore, emailSubsystem); schema-drift PASS; design-constitution PASS;
+full migration chain (192 files) applies CLEAN on fresh postgres:15 +
+idempotent; contract scanner 932 healthy / 0 drift / 0 missing on the
+migrated chain; payment/email smoke tests with real membership fixtures
+(transition guard, receipt+failed email queueing, member-vs-outsider RLS,
+cross-tenant denial) all pass.
+
+### Parallel-session collisions (third AND fourth — Sessions 32/35/50 pattern)
+Two parallel sessions pushed while this work was local: `ef03f4b` (Board
+governance, 20260822120000) and `b02f0aa` (CEO objective gap analysis,
+20260822130000). Resolution per the Session-31/32 protocol (unpushed side
+renumbers): manual-payment-flow 120000ŌåÆ`20260822125000`, brand-assets
+130000ŌåÆ`20260822135000`; two duplicate Session-51 headings renamed to
+51b. The slot is now unambiguously ordered: 120000 gov < 125000 manual <
+130000 gap < 135000 brand < 140000–170000 (this session). Contract
+manifest regenerated after every rebase (941 objects; governance + gap
+objects now contracted). Rebased chain verified on postgres:15: fresh
+apply clean, Session-51 files idempotent, contract scan **942 healthy /
+0 drift / 0 missing**; non-admin scan denied (42501, fails closed);
+vitest 711/711 (combined suites).
+
+### Deploy status
+Pushed to main after rebase. Live DB still needs migrations
+20260822120000(governance)/125000–20260822170000 applied (idempotent);
+the new deploy.yml production-contract step will stay RED until then —
+that is the gate working as intended. Edge functions need deploy +
+secrets: PAYSTACK_SECRET_KEY (subscription-management, paystack-webhook,
+paystack-verify), RESEND_API_KEY + EMAIL_FROM (email-service),
+RESEND_WEBHOOK_SECRET (resend-webhook), APP_URL (checkout callback).
+Until deployed: Premium shows the manual rail (Paystack button shows
+honest "not configured"), emails stay queued in the ledger (visible in
+the admin console).
+
+---
+
 ## Standing business benchmark (2026-08-21, user-set)
 
 **Revenue target: $100M in 12 months (by ~2026-08).** Treat this as the
@@ -14,7 +135,7 @@ weighed. Implications for planning:
 
 ---
 
-## Session 51 (2026-08-22): Board = governance structure, not a module (Organization & Governance)
+## Session 51b (2026-08-22, parallel session): Board = governance structure, not a module (Organization & Governance)
 
 User directive: a top-level "Board of Directors" page creates the wrong mental
 model. Organogram = structure; modules = business functions. The Board belongs

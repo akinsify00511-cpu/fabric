@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ArrowLeft, Building2, CheckCircle2, CreditCard, Loader2, ShieldCheck, Copy } from 'lucide-react'
+import { ArrowLeft, Building2, CheckCircle2, CreditCard, Loader2, ShieldCheck, Copy, Zap } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
+import { startPlanCheckout } from '../lib/payments'
 
 const PLANS = {
   starter: { name: 'Starter', monthly: 15000, yearly: 150000 },
@@ -88,6 +89,23 @@ export default function Premium() {
     }
   }
 
+  // Primary rail: Paystack checkout. The server sets the price and decides
+  // success (webhook + verification); the browser only redirects.
+  const startCardCheckout = async () => {
+    if (!session) {
+      window.location.assign(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`)
+      return
+    }
+    setBusy(true); setError(null)
+    try {
+      const checkout = await startPlanCheckout(planCode, billing)
+      window.location.assign(checkout.authorizationUrl)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start the secure checkout. Please try again.')
+      setBusy(false)
+    }
+  }
+
   const cancelRequest = async () => {
     setBusy(true)
     try { await supabase.rpc('cancel_payment_request') } catch { /* best-effort */ }
@@ -145,17 +163,18 @@ export default function Premium() {
         <Link to="/pricing" className="inline-flex items-center gap-2 text-sm text-black/60 hover:text-black mb-8"><ArrowLeft size={16} /> Back to plans</Link>
         <div className="grid lg:grid-cols-[1fr_420px] gap-6">
           <section className="bg-white rounded-2xl border border-black/5 p-8">
-            <div className="flex items-center gap-3 mb-6"><div className="w-11 h-11 rounded-xl bg-[var(--av-primary)]/10 text-[var(--av-primary)] flex items-center justify-center"><CreditCard size={22} /></div><div><p className="text-sm text-black/50">Plan upgrade</p><h1 className="text-2xl font-bold text-black">Get payment instructions</h1></div></div>
+            <div className="flex items-center gap-3 mb-6"><div className="w-11 h-11 rounded-xl bg-[var(--av-primary)]/10 text-[var(--av-primary)] flex items-center justify-center"><CreditCard size={22} /></div><div><p className="text-sm text-black/50">Plan upgrade</p><h1 className="text-2xl font-bold text-black">Choose how to pay</h1></div></div>
             <div className="rounded-xl bg-black/[0.03] p-5 mb-6"><p className="text-sm text-black/50 mb-1">Selected plan</p><div className="flex items-center justify-between"><strong className="text-xl text-black">{plan.name}</strong><span className="font-semibold text-black">{money(amount)}</span></div><p className="text-sm text-black/50 mt-1">Billed {billing}</p></div>
             <div className="space-y-3 text-sm text-black/65 mb-8">
-              <p className="flex gap-2"><ShieldCheck size={18} className="text-[var(--av-success)] shrink-0" /> You pay by bank transfer with a unique reference.</p>
-              <p className="flex gap-2"><ShieldCheck size={18} className="text-[var(--av-success)] shrink-0" /> Your plan activates after the transfer is confirmed.</p>
+              <p className="flex gap-2"><ShieldCheck size={18} className="text-[var(--av-success)] shrink-0" /> Pay instantly by card or bank with Paystack — your plan activates as soon as the payment is verified.</p>
+              <p className="flex gap-2"><ShieldCheck size={18} className="text-[var(--av-success)] shrink-0" /> Or pay by manual bank transfer with a unique reference — confirmed within one business day.</p>
               <p className="flex gap-2"><ShieldCheck size={18} className="text-[var(--av-success)] shrink-0" /> No free trial is attached to this purchase.</p>
             </div>
             {error && <div className="rounded-xl bg-red-50 text-red-700 p-4 text-sm mb-5">{error}</div>}
-            <button onClick={createRequest} disabled={busy} className="w-full py-3.5 rounded-xl bg-[var(--av-primary)] text-white font-semibold disabled:opacity-60 flex items-center justify-center gap-2">{busy ? <><Loader2 size={19} className="animate-spin" /> Creating payment request…</> : <>Continue to payment instructions <CreditCard size={18} /></>}</button>
+            <button onClick={startCardCheckout} disabled={busy} className="w-full py-3.5 rounded-xl bg-[var(--av-primary)] text-white font-semibold disabled:opacity-60 flex items-center justify-center gap-2">{busy ? <><Loader2 size={19} className="animate-spin" /> Starting secure checkout…</> : <>Pay now with Paystack <Zap size={18} /></>}</button>
+            <button onClick={createRequest} disabled={busy} className="w-full mt-3 py-3 rounded-xl border border-black/10 text-sm text-black/70 font-medium disabled:opacity-60">Pay by bank transfer instead</button>
           </section>
-          <aside className="bg-white rounded-2xl border border-black/5 p-8 h-fit"><h2 className="font-bold text-lg text-black mb-5">Order summary</h2><div className="flex justify-between text-sm mb-3"><span className="text-black/60">{plan.name}</span><span className="text-black">{money(amount)}</span></div><div className="border-t border-black/5 pt-4 mt-4 flex justify-between"><strong className="text-black">Total due now</strong><strong className="text-xl text-black">{money(amount)}</strong></div><p className="text-xs text-black/45 mt-5">Payment is by bank transfer to the Avenize account shown on the next step, using your unique reference.</p></aside>
+          <aside className="bg-white rounded-2xl border border-black/5 p-8 h-fit"><h2 className="font-bold text-lg text-black mb-5">Order summary</h2><div className="flex justify-between text-sm mb-3"><span className="text-black/60">{plan.name}</span><span className="text-black">{money(amount)}</span></div><div className="border-t border-black/5 pt-4 mt-4 flex justify-between"><strong className="text-black">Total due now</strong><strong className="text-xl text-black">{money(amount)}</strong></div><p className="text-xs text-black/45 mt-5">Paystack checkout is verified server-side — your plan activates only after Avenize confirms the transaction with Paystack.</p></aside>
         </div>
       </div>
     </div>

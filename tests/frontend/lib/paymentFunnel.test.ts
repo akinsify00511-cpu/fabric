@@ -51,7 +51,7 @@ describe('plan → entitlement mapping contract', () => {
 
 describe('manual payment confirmation contract', () => {
   // Mirrors request_plan_payment / confirm_plan_payment in
-  // 20260822120000_manual_payment_flow.sql.
+  // 20260822125000_manual_payment_flow.sql.
 
   // One open request per business: a repeat request returns the existing one.
   function requestPlanPayment(existing: { reference: string } | null, newRef: string): { reference: string } {
