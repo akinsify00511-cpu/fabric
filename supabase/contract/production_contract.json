@@ -2,7 +2,7 @@
   "counts": {
     "tables": 456,
     "views": 6,
-    "functions": 471,
+    "functions": 476,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -725,7 +725,7 @@
       "defined_in": "043_signatures_appointments_schema.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": true
+      "frontend_referenced": false
     },
     {
       "kind": "table",
@@ -3991,6 +3991,17 @@
     },
     {
       "kind": "function",
+      "name": "book_appointment_by_slug",
+      "defined_in": "20260822000000_public_booking_rpc.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_slug text, p_service_id uuid, p_name text, p_email text, p_start_time timestamptz, p_phone text, p_notes text, p_staff_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "bootstrap_business",
       "defined_in": "002_frontend_compat.sql",
       "repairable": false,
@@ -4175,6 +4186,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_business_id uuid, p_days int4"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "channel_in_my_business",
+      "defined_in": "20260822020000_channel_members_rls_recursion_fix.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_channel_id uuid"
       ]
     },
     {
@@ -5749,7 +5771,6 @@
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_start timestamptz, p_end timestamptz",
         "p_business_id uuid, p_start_date timestamptz, p_end_date timestamptz"
       ]
     },
@@ -8382,6 +8403,17 @@
     },
     {
       "kind": "function",
+      "name": "sync_contact_name",
+      "defined_in": "20260822010000_contacts_name_sync.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "sync_entitlement_from_subscription",
       "defined_in": "20260821170000_payment_entitlement_sync.sql",
       "repairable": false,
@@ -8415,10 +8447,32 @@
     },
     {
       "kind": "function",
+      "name": "sync_notification_message",
+      "defined_in": "20260822030000_notifications_message_body_sync.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "sync_organogram",
       "defined_in": "023_company_home_blocks.sql",
       "repairable": false,
       "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "sync_payment_aliases",
+      "defined_in": "20260822050000_payments_missing_columns.sql",
+      "repairable": true,
+      "security_sensitive": false,
       "frontend_referenced": false,
       "signatures": [
         ""
@@ -9041,6 +9095,9 @@
     "board_governance_overview": [
       "p_business_id uuid"
     ],
+    "book_appointment_by_slug": [
+      "p_business_slug text, p_service_id uuid, p_name text, p_email text, p_start_time timestamptz, p_phone text, p_notes text, p_staff_id uuid"
+    ],
     "bootstrap_business": [
       "p_business_name text, p_owner_name text, p_email text, p_password_hash text",
       "p_business_name text, p_staff_full_name text, p_user_id uuid"
@@ -9092,6 +9149,9 @@
     ],
     "cashflow_forecast_intelligence": [
       "p_business_id uuid, p_days int4"
+    ],
+    "channel_in_my_business": [
+      "p_channel_id uuid"
     ],
     "check_achievements": [
       "p_user_id uuid"
@@ -9522,7 +9582,6 @@
       "p_business_slug text"
     ],
     "get_events_in_range": [
-      "p_start timestamptz, p_end timestamptz",
       "p_business_id uuid, p_start_date timestamptz, p_end_date timestamptz"
     ],
     "get_exchange_rate": [
@@ -10248,6 +10307,9 @@
     "sync_business_location_point": [
       ""
     ],
+    "sync_contact_name": [
+      ""
+    ],
     "sync_entitlement_from_subscription": [
       ""
     ],
@@ -10257,7 +10319,13 @@
     "sync_kr_from_metric": [
       "p_business_id uuid"
     ],
+    "sync_notification_message": [
+      ""
+    ],
     "sync_organogram": [
+      ""
+    ],
+    "sync_payment_aliases": [
       ""
     ],
     "timesheet_recompute_on_entry_change": [
@@ -10454,7 +10522,6 @@
       "channels",
       "chat_conversations",
       "chat_messages",
-      "clients",
       "comments",
       "commission_rules",
       "commissions",
@@ -10643,6 +10710,7 @@
       "automation_health_with_dlq",
       "award_xp_with_streak",
       "board_governance_overview",
+      "book_appointment_by_slug",
       "builder_dashboard",
       "business_brain",
       "business_relationships",
