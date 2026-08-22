@@ -93,3 +93,11 @@ jobs:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           APP_URL: https://avenize.riverwayse.com
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-contract-report
+          path: supabase/contract/verification_report.json
+          if-no-files-found: warn
