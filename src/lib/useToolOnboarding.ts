@@ -125,6 +125,6 @@ export const TOOL_ONBOARDING_CONTENT: Record<string, { title: string; body: stri
   },
   settings: {
     title: 'Configure Avenize',
-    body: 'Set up integrations (Paystack, SMS, email), manage billing, and customize your workspace. Only admins see this section.',
+    body: 'Manage billing, security, and your workspace setup. Only admins see this section.',
   },
 }

@@ -24,7 +24,7 @@ const TOOL_CATEGORIES = [
   { key: 'ops', label: 'Operations', tools: ['projects', 'inventory', 'tasks', 'meetings', 'calendar', 'events', 'time-tracking', 'requisitions', 'knowledge', 'automations'] },
   { key: 'hr', label: 'HR & People', tools: ['people', 'approvals', 'merit', 'social-recognition'] },
   { key: 'support', label: 'Support', tools: ['tickets', 'chat'] },
-  { key: 'settings', label: 'Settings', tools: ['settings', 'integrations', 'api', 'branding'] },
+  { key: 'settings', label: 'Settings', tools: ['settings', 'api', 'branding'] },
 ]
 
 export default function RoleSettings() {

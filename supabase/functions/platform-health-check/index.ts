@@ -1,23 +1,18 @@
-// Supabase Edge Function: Platform Integration Health Checker
+// Supabase Edge Function: Platform Health Checker
 //
-// Pings each monitored third-party dependency (Paystack, Flutterwave, Termii,
-// Resend, Supabase itself) and writes the result via record_integration_check
-// (service-role). The threshold->incident automation (evaluate_platform_alerts,
-// pg_cron every 3 min) then reads this data and opens incidents when a
-// consecutive-failure streak crosses the tunable threshold.
-//
-// WhatsApp/Meta intentionally NOT checked here — per product direction, no
-// external dependency is built there, so there is nothing to health-check.
+// The platform has no third-party runtime dependencies, so the only health
+// signal is Supabase itself (database + REST). The result is written via
+// record_integration_check (service-role). The threshold->incident automation
+// (evaluate_platform_alerts, pg_cron every 3 min) then reads this data and
+// opens incidents when a consecutive-failure streak crosses the tunable
+// threshold.
 //
 // Invocation: external cron (Vercel cron / GitHub Actions) hits this endpoint
 // with the PLATFORM_HEALTH_CRON_SECRET. This secret-gate prevents public
-// abuse of the endpoint (it would otherwise let anyone force a flurry of
-// outbound dependency pings). It is NOT a webhook source.
+// abuse of the endpoint (it would otherwise let anyone force outbound pings).
+// It is NOT a webhook source.
 //
-// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ambient), plus per-provider
-// keys (PAYSTACK_SECRET_KEY, FLUTTERWAVE_SECRET_KEY, TERMII_API_KEY,
-// RESEND_API_KEY) IF you want real pings. Missing keys = the check is marked
-// 'unknown' for that integration (honest, not a fake 'healthy').
+// Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (ambient).
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -48,54 +43,6 @@ async function ping(url: string, init?: RequestInit & { timeoutMs?: number }): P
   }
 }
 
-async function checkPaystack(): Promise<CheckResult> {
-  const key = Deno.env.get('PAYSTACK_SECRET_KEY')
-  if (!key) return { status: 'unknown', error: 'no PAYSTACK_SECRET_KEY configured', latencyMs: null }
-  const r = await ping('https://api.paystack.co/transaction', {
-    headers: { Authorization: `Bearer ${key}` },
-    timeoutMs: 8000,
-  })
-  // 200 or 401/400 (auth/schema error but service reachable) means the service is up.
-  if (r.ok || r.status === 401 || r.status === 400) return { status: 'healthy', error: null, latencyMs: r.latencyMs }
-  if (r.status >= 500) return { status: 'degraded', error: `HTTP ${r.status}`, latencyMs: r.latencyMs }
-  return { status: 'down', error: r.error || `HTTP ${r.status}`, latencyMs: r.latencyMs }
-}
-
-async function checkFlutterwave(): Promise<CheckResult> {
-  const key = Deno.env.get('FLUTTERWAVE_SECRET_KEY')
-  if (!key) return { status: 'unknown', error: 'no FLUTTERWAVE_SECRET_KEY configured', latencyMs: null }
-  const r = await ping('https://api.flutterwave.com/v3/transactions', {
-    headers: { Authorization: `Bearer ${key}` },
-    timeoutMs: 8000,
-  })
-  if (r.ok || r.status === 401 || r.status === 400) return { status: 'healthy', error: null, latencyMs: r.latencyMs }
-  if (r.status >= 500) return { status: 'degraded', error: `HTTP ${r.status}`, latencyMs: r.latencyMs }
-  return { status: 'down', error: r.error || `HTTP ${r.status}`, latencyMs: r.latencyMs }
-}
-
-async function checkTermii(): Promise<CheckResult> {
-  const key = Deno.env.get('TERMII_API_KEY')
-  if (!key) return { status: 'unknown', error: 'no TERMII_API_KEY configured', latencyMs: null }
-  const r = await ping(`https://api.ng.termii.com/api/get-balance?api_key=${encodeURIComponent(key)}`, {
-    timeoutMs: 8000,
-  })
-  if (r.ok) return { status: 'healthy', error: null, latencyMs: r.latencyMs }
-  if (r.status >= 500) return { status: 'degraded', error: `HTTP ${r.status}`, latencyMs: r.latencyMs }
-  return { status: 'down', error: r.error || `HTTP ${r.status}`, latencyMs: r.latencyMs }
-}
-
-async function checkResend(): Promise<CheckResult> {
-  const key = Deno.env.get('RESEND_API_KEY')
-  if (!key) return { status: 'unknown', error: 'no RESEND_API_KEY configured', latencyMs: null }
-  const r = await ping('https://api.resend.com/domains', {
-    headers: { Authorization: `Bearer ${key}` },
-    timeoutMs: 8000,
-  })
-  if (r.ok || r.status === 401 || r.status === 400) return { status: 'healthy', error: null, latencyMs: r.latencyMs }
-  if (r.status >= 500) return { status: 'degraded', error: `HTTP ${r.status}`, latencyMs: r.latencyMs }
-  return { status: 'down', error: r.error || `HTTP ${r.status}`, latencyMs: r.latencyMs }
-}
-
 async function checkSupabase(supabaseUrl: string): Promise<CheckResult> {
   const r = await ping(`${supabaseUrl}/health/v1`, { timeoutMs: 8000 })
   if (r.ok) return { status: 'healthy', error: null, latencyMs: r.latencyMs }
@@ -110,8 +57,8 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  // Secret gate: this endpoint drives outbound dependency pings. Gate it so
-  // the public can't trigger a flood of pings.
+  // Secret gate: this endpoint drives outbound pings. Gate it so the public
+  // can't trigger a flood of them.
   const cronSecret = Deno.env.get('PLATFORM_HEALTH_CRON_SECRET')
   if (cronSecret) {
     const provided = req.headers.get('x-cron-secret') || new URL(req.url).searchParams.get('secret')
@@ -131,14 +78,8 @@ serve(async (req) => {
   }
   const supabase = createClient(supabaseUrl, serviceKey)
 
-  const [paystack, flutterwave, termii, resend, supa] = await Promise.all([
-    checkPaystack(), checkFlutterwave(), checkTermii(), checkResend(), checkSupabase(supabaseUrl),
-  ])
+  const supa = await checkSupabase(supabaseUrl)
   const checks: { integration: string; result: CheckResult }[] = [
-    { integration: 'paystack', result: paystack },
-    { integration: 'flutterwave', result: flutterwave },
-    { integration: 'termii', result: termii },
-    { integration: 'resend', result: resend },
     { integration: 'supabase', result: supa },
   ]
 

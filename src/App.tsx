@@ -63,12 +63,8 @@ const Accounting = lazy(() => import('./pages/Accounting'))
 const BrandingSettings = lazy(() => import('./pages/BrandingSettings'))
 const SecuritySettings = lazy(() => import('./pages/SecuritySettings'))
 const SSOSettings = lazy(() => import('./pages/SSOSettings'))
-const Integrations = lazy(() => import('./pages/Integrations'))
-const SMSBroadcast = lazy(() => import('./pages/SMSBroadcast'))
 const LiveChat = lazy(() => import('./pages/LiveChat'))
-const WhatsAppIntegration = lazy(() => import('./pages/WhatsAppIntegration'))
 const PublicAppointments = lazy(() => import('./pages/PublicAppointments'))
-const EInvoicing = lazy(() => import('./pages/EInvoicing'))
 const APISettings = lazy(() => import('./pages/APISettings'))
 const CustomerPortal = lazy(() => import('./pages/CustomerPortal'))
 const ProjectSettings = lazy(() => import('./pages/ProjectSettings'))
@@ -445,7 +441,7 @@ function AppRoutes() {
         <Route path="kudos" element={<Navigate to="/app/wall?tab=recognition" replace />} />
         <Route path="polls" element={<Navigate to="/app/wall?tab=polls" replace />} />
         {/* Nested-path aliases: callers used a deeper path than the route. */}
-        <Route path="finance/invoices" element={<Navigate to="/app/e-invoicing" replace />} />
+        <Route path="finance/invoices" element={<Navigate to="/app/finance" replace />} />
         <Route path="settings/subscription" element={<Navigate to="/app/subscription" replace />} />
         <Route path="recruitment" element={mg('hr', <Recruitment />)} />
         <Route path="appraisals" element={mg('hr', <Appraisals />)} />
@@ -522,11 +518,8 @@ function AppRoutes() {
         <Route path="branding" element={<BrandingSettings />} />
         <Route path="security" element={mg('security', <SecuritySettings />)} />
         <Route path="sso" element={mg('sso', <SSOSettings />)} />
-        <Route path="integrations" element={<Integrations />} />
-        <Route path="sms" element={mg('finance', <SMSBroadcast />)} />
         <Route path="live-chat" element={mg('chat', <LiveChat />)} />
-        <Route path="whatsapp" element={mg('chat', <WhatsAppIntegration />)} />
-        <Route path="e-invoicing" element={mg('finance', <EInvoicing />)} />
+        <Route path="e-invoicing" element={<Navigate to="/app/finance" replace />} />
         <Route path="api" element={mg('api', <APISettings />)} />
         <Route path="portal" element={<CustomerPortal />} />
         <Route path="calendar" element={<Calendar />} />

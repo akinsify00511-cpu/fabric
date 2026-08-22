@@ -47,8 +47,8 @@ export default function Pricing() {
   const [open, setOpen] = useState<number | null>(null)
   useEffect(() => { captureAttribution(); let active = true; supabase.rpc('get_pricing_tiers').then(({ data, error }) => { if (active && !error && Array.isArray(data) && data.length) setTiers(data as PricingTier[]) }); return () => { active = false } }, [])
   const faqs = [
-    ['What payment methods do you accept?', 'Paystack supports card, bank transfer, USSD and other available Nigerian payment methods.'],
-    ['When does my subscription become active?', 'Only after Paystack confirms a successful payment. The browser callback cannot activate access by itself.'],
+    ['How do I pay?', 'By bank transfer. When you choose a plan you get a unique payment reference and the account details — transfer the exact amount with the reference as the narration.'],
+    ['When does my subscription become active?', 'As soon as your transfer is confirmed, usually within one business day.'],
     ['Can I change plans later?', 'Yes. You can upgrade or downgrade according to the subscription rules shown in your account.'],
     ['Is there a free trial?', 'No. Avenize is paid from the first subscription payment.'],
   ]

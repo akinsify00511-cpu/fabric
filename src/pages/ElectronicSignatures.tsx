@@ -196,26 +196,32 @@ export default function ElectronicSignatures() {
     alert(`Signing link copied for ${signer.name}:\n${url}`)
   }
 
-  // Email every signer their unique signing link via the
-  // send-signature-request edge function. Falls back to a plain status
-  // flip if the function is unreachable so the admin can still copy links.
+  // No external email service in this deployment: signing links are shared
+  // manually. This copies every signer's unique link to the clipboard and
+  // flips the request to 'sent' (shared) so signers can act on it.
   const sendForSigning = async (request: SignatureRequest) => {
-    if (!confirm(`Email signing links to ${request.signers.length} signer(s)?`)) return
-    try {
-      const { data, error } = await supabase.functions.invoke('send-signature-request', {
-        body: { request_id: request.id },
-      })
-      if (error) throw error
-      if (data?.warning) {
-        alert(data.warning)
-      } else if (data?.success) {
-        alert(`Sent signing emails to ${data.sent} of ${data.total} signer(s).`)
-      }
-      fetchRequests()
-    } catch (err) {
-      console.error('send-signature-request failed:', err)
-      alert('Could not email signers. Check your email provider settings, or copy the signing link manually.')
+    const links = request.signers
+      .filter(s => s.signing_token)
+      .map(s => `${s.name}: ${window.location.origin}/sign/${s.signing_token}`)
+    if (links.length === 0) {
+      alert('No signing links available for this request yet.')
+      return
     }
+    try {
+      await navigator.clipboard.writeText(links.join('\n'))
+    } catch {
+      alert(links.join('\n'))
+    }
+    const { error } = await supabase
+      .from('signature_requests')
+      .update({ status: 'sent' })
+      .eq('id', request.id)
+    if (error) {
+      alert('Links copied, but the request status could not be updated.')
+      return
+    }
+    alert(`Copied ${links.length} signing link(s). Send each link to its signer through your own channel.`)
+    fetchRequests()
   }
 
   const resetForm = () => {

@@ -253,39 +253,6 @@ describe('Platform Ops — integration failure-streak', () => {
   })
 })
 
-describe('Platform Ops — paging dedup + contact management', () => {
-  // Mirrors the platform-pager edge function contract: an incident is paged
-  // once (paged_at set), not re-paged on every cron run while still open.
-  function shouldPage(incident: { paged_at: string | null; status: string; severity: string }): boolean {
-    return incident.status === 'open'
-      && incident.severity === 'critical'
-      && incident.paged_at === null
-  }
-  it('pages an open critical incident that has not been paged', () => {
-    expect(shouldPage({ paged_at: null, status: 'open', severity: 'critical' })).toBe(true)
-  })
-  it('does NOT re-page an incident already paged (paged_at set)', () => {
-    expect(shouldPage({ paged_at: '2026-08-18T08:00:00Z', status: 'open', severity: 'critical' })).toBe(false)
-  })
-  it('does not page a warning incident (critical only)', () => {
-    expect(shouldPage({ paged_at: null, status: 'open', severity: 'warning' })).toBe(false)
-  })
-  it('does not page a resolved incident', () => {
-    expect(shouldPage({ paged_at: null, status: 'resolved', severity: 'critical' })).toBe(false)
-  })
-
-  // Mirrors the upsert_platform_oncall gate: only platform admins can mutate.
-  function canManageOncall(isPlatformAdmin: boolean): boolean {
-    return isPlatformAdmin
-  }
-  it('a platform admin can add/update/delete paging contacts', () => {
-    expect(canManageOncall(true)).toBe(true)
-  })
-  it('a business owner cannot manage paging contacts', () => {
-    expect(canManageOncall(false)).toBe(false)
-  })
-})
-
 describe('Platform Ops — tunable threshold management', () => {
   // Mirrors update_platform_threshold: only platform admins can tune, and the
   // update is partial (COALESCE — unset fields keep their prior value).

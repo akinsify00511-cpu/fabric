@@ -157,8 +157,6 @@ serve(async (req) => {
     const businessId = staffData?.business_id || body.business_id
     const resolvedActorId = actorId || staffData?.id
     const result = parse(String(text))
-    const hasLLM = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('ANTHROPIC_API_KEY')
-    if (hasLLM) result.evidence.method = 'rule_parser_plus_llm_available'
 
     // §34/§37 AI Action Authority + Guardrails: if this capture implies an
     // autonomous write (destinations with action verbs), classify the

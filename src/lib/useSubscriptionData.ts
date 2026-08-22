@@ -12,11 +12,17 @@ export interface PaymentRecord { id: string; amount: number; currency: string; s
 export interface InvoiceRecord { id: string; invoice_number: string; amount: number; currency: string; status: 'paid' | 'pending' | 'failed' | 'refunded' | 'void'; due_date: string; paid_at: string | null; pdf_url: string | null }
 export interface AvailablePlan { code: string; name: string; monthly_price: number; yearly_price: number; yearly_monthly_equivalent: number; savings_percent: number }
 
+export interface PaymentRequestInfo {
+  reference: string; plan_code: string; billing_cycle: 'monthly' | 'yearly'
+  amount_cents: number; currency: string; status: string
+  instructions: { bank_name: string | null; account_name: string | null; account_number: string | null; note: string | null }
+}
+
 interface ReturnTypeData {
   subscription: SubscriptionDetails | null; payments: PaymentRecord[]; invoices: InvoiceRecord[]; availablePlans: AvailablePlan[]
   loading: boolean; error: string | null; refresh: () => Promise<void>
   cancelSubscription: (cancelAtPeriodEnd?: boolean) => Promise<{ success: boolean; message: string }>
-  createCheckout: (planCode: string, billingCycle: 'monthly' | 'yearly') => Promise<{ checkout_url: string; reference: string } | null>
+  requestPlanPayment: (planCode: string, billingCycle: 'monthly' | 'yearly') => Promise<PaymentRequestInfo | null>
 }
 
 export function useSubscriptionData(): ReturnTypeData {
@@ -57,16 +63,19 @@ export function useSubscriptionData(): ReturnTypeData {
     return { success: true, message: cancelAtPeriodEnd ? 'Subscription will be cancelled at the end of the billing period' : 'Subscription cancelled immediately' }
   }, [staff?.business_id, refresh])
 
-  const createCheckout = useCallback(async (planCode: string, billingCycle: 'monthly' | 'yearly') => {
+  // No external payment provider: create a manual payment request. The
+  // business pays by bank transfer with the returned reference; an operator
+  // confirms receipt and the plan activates.
+  const requestPlanPayment = useCallback(async (planCode: string, billingCycle: 'monthly' | 'yearly'): Promise<PaymentRequestInfo | null> => {
     if (!staff?.business_id) return null
     try {
-      const { data, error: invokeError } = await supabase.functions.invoke('subscription-checkout', { body: { plan_code: planCode, billing_cycle: billingCycle, callback_url: `${window.location.origin}/upgrade?plan=${encodeURIComponent(planCode)}&billing=${billingCycle}` } })
-      if (invokeError || !data?.checkout_url) { console.error('Checkout error:', invokeError, data); return null }
-      return { checkout_url: data.checkout_url as string, reference: data.reference as string }
-    } catch (e) { console.error('Checkout error:', e); return null }
+      const { data, error: rpcError } = await supabase.rpc('request_plan_payment', { p_plan_code: planCode, p_billing_cycle: billingCycle })
+      if (rpcError || !data?.ok) { console.error('Payment request error:', rpcError, data); return null }
+      return data as PaymentRequestInfo
+    } catch (e) { console.error('Payment request error:', e); return null }
   }, [staff?.business_id])
 
-  return { subscription, payments, invoices, availablePlans: getDefaultPlans(), loading, error, refresh, cancelSubscription, createCheckout }
+  return { subscription, payments, invoices, availablePlans: getDefaultPlans(), loading, error, refresh, cancelSubscription, requestPlanPayment }
 }
 
 function getDefaultPlans(): AvailablePlan[] {

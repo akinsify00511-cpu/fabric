@@ -17,8 +17,6 @@ const SECTIONS: MoreSection[] = [
     title: 'Communication',
     items: [
       { to: '/app/chat', label: 'Chat', icon: MessageSquare, desc: 'Team messaging', feature: 'chat' },
-      { to: '/app/whatsapp', label: 'WhatsApp', icon: MessageSquare, desc: 'WhatsApp Business', feature: null },
-      { to: '/app/sms', label: 'SMS Broadcast', icon: Mail, desc: 'Bulk SMS', feature: null },
       { to: '/app/meetings', label: 'Meetings', icon: Headphones, desc: 'Schedule & minutes', feature: 'meetings' },
       { to: '/app/announcements', label: 'Announcements', icon: Megaphone, desc: 'Company news', feature: null },
       { to: '/app/live-chat', label: 'Live Chat', icon: Headphones, desc: 'Customer chat', feature: 'tickets' },
@@ -41,8 +39,7 @@ const SECTIONS: MoreSection[] = [
   {
     title: 'Money & Finance',
     items: [
-      { to: '/app/finance', label: 'Finance Center', icon: Banknote, desc: 'Tax, banking & debtors', feature: null },
-      { to: '/app/e-invoicing', label: 'Invoices', icon: FileText, desc: 'FIRS e-invoicing', feature: null },
+      { to: '/app/finance', label: 'Finance & Invoices', icon: Banknote, desc: 'Tax, banking & debtors', feature: null },
       { to: '/app/payments', label: 'Payments', icon: CreditCard, desc: 'Receive & send', feature: null },
       { to: '/app/cashflow', label: 'Cash Flow', icon: DollarSign, desc: 'Income & expenses', feature: 'cashflow' },
       { to: '/app/budgets', label: 'Budgets', icon: Target, desc: 'Budget tracking', feature: null },
@@ -114,7 +111,6 @@ const SECTIONS: MoreSection[] = [
       { to: '/app/governance', label: 'Controls', icon: Shield, desc: 'Policy controls', feature: null },
       { to: '/app/control', label: 'Audit Log', icon: Shield, desc: 'Control & audit', feature: null },
       { to: '/app/audit-log', label: 'Audit Trail', icon: Scale, desc: 'Activity log', feature: null },
-      { to: '/app/integrations', label: 'Integrations', icon: Network, desc: 'Connect apps', feature: 'integrations' },
       { to: '/app/api', label: 'API & Webhooks', icon: FileText, desc: 'Developer access', feature: 'api' },
       { to: '/app/security', label: 'Security', icon: Lock, desc: '2FA & sessions', feature: null },
       { to: '/app/sso', label: 'SSO', icon: Lock, desc: 'Single sign-on', feature: null },

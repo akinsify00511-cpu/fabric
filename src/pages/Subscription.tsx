@@ -54,7 +54,6 @@ export default function Subscription() {
     error,
     refresh,
     cancelSubscription,
-    createCheckout,
   } = useSubscriptionData()
 
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
@@ -88,13 +87,7 @@ export default function Subscription() {
 
   const handleUpgrade = async (planCode: string) => {
     setProcessingPlan(planCode)
-    const result = await createCheckout(planCode, billingCycle)
-    if (result?.checkout_url) {
-      window.location.href = result.checkout_url
-    } else {
-      // Fallback: open pricing page
-      window.location.href = '/upgrade'
-    }
+    window.location.href = `/upgrade?plan=${encodeURIComponent(planCode)}&billing=${billingCycle}`
   }
 
   const formatDate = (dateStr: string | null) => {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Sparkles, Send, Loader2, Database, BrainCircuit, RotateCcw } from 'lucide-react'
+import { Sparkles, Send, Loader2, Database, RotateCcw } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
@@ -7,7 +7,7 @@ import { useToast } from '../components/Toast'
 interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
-  provider?: 'deterministic' | 'openai' | 'anthropic'
+  provider?: 'deterministic'
   sources?: string[]
   confidence?: string
 }
@@ -21,8 +21,6 @@ const SUGGESTIONS = [
 
 const PROVIDER_BADGE: Record<string, { label: string; icon: typeof Database }> = {
   deterministic: { label: 'Answered from your live data', icon: Database },
-  openai: { label: 'AI reasoning over your data', icon: BrainCircuit },
-  anthropic: { label: 'AI reasoning over your data', icon: BrainCircuit },
 }
 
 export default function AskAvenize() {
