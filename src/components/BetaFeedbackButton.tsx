@@ -17,7 +17,6 @@ import {
   Loader2,
 } from 'lucide-react'
 import { getCapturedErrors, clearCapturedErrors, formatErrorsForDisplay } from '../lib/errorCapture'
-import { captureSentryFeedback } from '../lib/sentryLazy'
 
 interface BetaFeedbackButtonProps {
   className?: string
@@ -60,15 +59,7 @@ export default function BetaFeedbackButton({ className = '' }: BetaFeedbackButto
 
       if (error) throw error
 
-      // Also send to Sentry for correlation
-      captureSentryFeedback({
-        message: description.trim(),
-        tags: {
-          business_id: staff?.business_id,
-          route: window.location.pathname,
-          is_beta_tester: String(staff?.is_beta_tester ?? false),
-        },
-      })
+      // Feedback is persisted to beta_feedback (the ops team reads it there).
 
       // Clear errors after successful submission
       clearCapturedErrors()

@@ -4,8 +4,6 @@
  * to capture context for bug reports
  */
 
-import { captureSentryException } from './sentryLazy'
-
 // Maximum number of errors to keep in buffer
 const MAX_ERRORS = 10
 
@@ -97,13 +95,6 @@ export function initErrorCapture(): void {
       severity: 'error',
     })
 
-    // Also let Sentry capture it (queued until the SDK loads at idle time)
-    captureSentryException(error || new Error(message as string), {
-      source,
-      lineno,
-      colno,
-    })
-
     return false // Let default handler run too
   }
 
@@ -130,9 +121,6 @@ export function initErrorCapture(): void {
       stack: error?.stack,
       severity: 'error',
     })
-
-    // Also let Sentry capture it (queued until the SDK loads at idle time)
-    captureSentryException(error, { type: 'unhandledrejection' })
   }
 
   // Capture console.error calls

@@ -1,8 +1,23 @@
 /* Avenize Design System v5 - Google Standard Edition */
-/* Primary font: Google Sans Flex (Open Font License, Google Fonts) */
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* Primary font: Google Sans Flex (Open Font License) — self-hosted, no CDN */
 @import "tailwindcss";
 @import "./styles/avenize-brand.css";
+
+/* Self-hosted variable fonts (latin subset, wght 400-700 axis) */
+@font-face {
+  font-family: 'Google Sans Flex';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/google-sans-flex-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+}
 
 /* ============================================
    GOOGLE STANDARD COMPATIBILITY LAYER
