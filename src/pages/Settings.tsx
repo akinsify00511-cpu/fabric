@@ -15,7 +15,6 @@ export default function Settings() {
     { to: '/app/branding', icon: Palette, label: 'Branding', desc: 'Colors, logo, theme', color: 'bg-pink-50 text-pink-500' },
     { to: '/app/security', icon: Shield, label: 'Security', desc: '2FA, audit log', color: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]' },
     { to: '/app/sso', icon: Key, label: 'Single Sign-On', desc: 'SAML, OIDC, Okta, Azure', color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' },
-    { to: '/app/integrations', icon: Plug, label: 'Integrations', desc: 'Social media, SMS, payments', color: 'bg-cyan-50 text-cyan-500' },
     { to: '/app/settings/api-keys', icon: KeyRound, label: 'API Keys', desc: 'Developer API access', color: 'bg-orange-50 text-orange-500' },
     { to: '/app/settings/webhooks', icon: Zap, label: 'Webhooks', desc: 'Outbound event delivery', color: 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]' },
     { to: '/app/portal', icon: Users, label: 'Customer Portal', desc: 'Client self-service', color: 'bg-teal-50 text-teal-500' },

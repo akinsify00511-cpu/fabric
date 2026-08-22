@@ -50,9 +50,7 @@ const STATUS_CONFIG = {
 export default function Campaigns() {
   const { staff } = useAuth()
   const { showToast } = useToast()
-  
-  // Email sending feature status - requires email provider integration (SendGrid, AWS SES, etc.)
-  const emailSendingAvailable = false
+
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
   const [loading, setLoading] = useState(true)
@@ -126,44 +124,10 @@ export default function Campaigns() {
     }
   }
 
-  const sendCampaign = async (campaignId: string) => {
-    if (!emailSendingAvailable) {
-      showToast('Email sending requires integration with an email provider', 'info')
-      return
-    }
-    
-    // Mark campaign as sending
-    const { error } = await supabase
-      .from('email_campaigns')
-      .update({ status: 'sending' })
-      .eq('id', campaignId)
-
-    if (error) {
-      showToast('Failed to start campaign', 'error')
-      return
-    }
-
-    try {
-      // Call Edge Function to send emails
-      const response = await supabase.functions.invoke('send-email', {
-        body: { campaignId }
-      })
-
-      if (response.error) {
-        throw new Error(response.error.message)
-      }
-
-      showToast('Campaign sent successfully!', 'success')
-    } catch (err) {
-      showToast('Failed to send campaign: ' + (err instanceof Error ? err.message : 'Unknown error'), 'error')
-      // Revert status
-      await supabase
-        .from('email_campaigns')
-        .update({ status: 'draft' })
-        .eq('id', campaignId)
-    }
-
-    load()
+  const sendCampaign = async (_campaignId: string) => {
+    // External email delivery was removed (no external dependencies). Campaign
+    // content can be copied and shared through your own channel.
+    showToast('Delivery is not available — copy the campaign content and share it through your own channel.', 'info')
   }
 
   const addContact = async () => {
@@ -225,23 +189,22 @@ export default function Campaigns() {
 
   return (
     <div className="pb-20">
-      {/* Coming Soon Banner */}
-      {!emailSendingAvailable && (
-        <div className="mb-6 p-4 bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-amber-100 rounded-lg">
-              <Mail size={20} className="text-[var(--av-warning)]" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-medium text-amber-900">Email Sending: Coming Soon</h3>
-              <p className="text-sm text-[var(--av-warning)] mt-1">
-                Email campaigns are currently in development. You can create and save campaigns, 
-                but actual email delivery requires integration with an email provider (SendGrid, Mailgun, or Resend).
-              </p>
-            </div>
+      {/* Delivery note: no external email provider in this deployment */}
+      <div className="mb-6 p-4 bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-amber-100 rounded-lg">
+            <Mail size={20} className="text-[var(--av-warning)]" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-medium text-amber-900">Delivery is not connected</h3>
+            <p className="text-sm text-[var(--av-warning)] mt-1">
+              You can draft campaigns and manage your contact lists here. This deployment has no
+              external email service, so delivery happens by copying the content into your own
+              channel.
+            </p>
           </div>
         </div>
-      )}
+      </div>
 
       <div className="flex items-center justify-between mb-6">
         <div>

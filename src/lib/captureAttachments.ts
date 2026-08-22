@@ -293,23 +293,6 @@ export async function listEventAttachments(eventId: string): Promise<CaptureAtta
   }
 }
 
-// Invoke the capture-process edge function (Whisper transcript / OCR).
-export async function processCaptureAttachment(
-  attachmentId: string,
-  action: 'transcribe' | 'ocr'
-): Promise<{ transcript?: string; ocr?: CaptureOcr; error?: string }> {
-  try {
-    const { data, error } = await supabase.functions.invoke('capture-process', {
-      body: { attachment_id: attachmentId, action },
-    })
-    if (error) return { error: error.message }
-    if (data?.error) return { error: data.error }
-    return data ?? {}
-  } catch (e) {
-    return { error: e instanceof Error ? e.message : 'Processing failed' }
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Upload with progress + retry (XHR — supabase-js storage.upload exposes no
 // progress events; the REST endpoint is the same one it wraps)

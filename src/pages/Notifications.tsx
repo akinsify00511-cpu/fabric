@@ -314,53 +314,9 @@ export default function NotificationSettings() {
             <p className="text-sm text-black">Get important updates via text message</p>
           </div>
         </div>
-
-        <div className="space-y-4">
-          <PreferenceToggle
-            label="Payment Confirmations"
-            description="SMS alerts for payments and invoices"
-            checked={preferences.sms_payments}
-            onChange={() => togglePreference('sms_payments')}
-          />
-          <PreferenceToggle
-            label="Reminders & Alerts"
-            description="Task due dates, meetings, and deadlines"
-            checked={preferences.sms_reminders}
-            onChange={() => togglePreference('sms_reminders')}
-          />
-          <PreferenceToggle
-            label="Security Alerts"
-            description="Login alerts and account security notifications"
-            checked={preferences.sms_security}
-            onChange={() => togglePreference('sms_security')}
-          />
-          <PreferenceToggle
-            label="Task Updates"
-            description="When tasks are assigned or completed"
-            checked={preferences.sms_tasks}
-            onChange={() => togglePreference('sms_tasks')}
-          />
-          <PreferenceToggle
-            label="Welcome Messages"
-            description="Onboarding and welcome SMS"
-            checked={preferences.sms_onboarding}
-            onChange={() => togglePreference('sms_onboarding')}
-          />
-          <PreferenceToggle
-            label="Promotions & Marketing"
-            description="Special offers and promotional SMS"
-            checked={preferences.sms_marketing}
-            onChange={() => togglePreference('sms_marketing')}
-            highlight
-          />
-        </div>
-
-        <div className="mt-4 pt-4 border-t border-black/[0.06]">
-          <p className="text-xs text-black">
-            <strong>Note:</strong> SMS charges may apply based on your Termii plan. 
-            Configure your SMS settings in <a href="/app/settings?tab=sms" className="text-[var(--av-primary)] hover:underline">Settings</a>.
-          </p>
-        </div>
+        <p className="text-sm text-black/60">
+          SMS delivery is not available in this deployment. Use in-app and email notifications instead.
+        </p>
       </section>
 
       {/* Info Box */}

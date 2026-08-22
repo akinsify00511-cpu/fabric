@@ -6,7 +6,6 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
-import { WhatsAppWeb } from '../lib/whatsappService'
 
 interface Notification {
   id: string

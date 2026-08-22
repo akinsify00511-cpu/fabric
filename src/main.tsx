@@ -4,13 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { initErrorCapture } from './lib/errorCapture'
-import { initSentry } from './lib/sentryLazy'
 import GlobalOrganismRuntime from './components/GlobalOrganismRuntime'
 
-// Error capture (console buffer + platform-ops feed) always runs; the Sentry
-// SDK itself loads lazily at idle time so it never delays first paint.
+// Error capture (console buffer + platform-ops feed) always runs.
 initErrorCapture()
-initSentry()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

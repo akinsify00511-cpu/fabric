@@ -84,7 +84,14 @@ export default function Receipts() {
 
       setProcessingStep('Reading the receipt…')
       const { createWorker } = await import('tesseract.js')
-      const worker = await createWorker('eng')
+      // Fully self-hosted: worker script, wasm core, and language data are
+      // vendored under /public/tesseract — no CDN fetch at runtime.
+      const worker = await createWorker('eng', 1, {
+        workerPath: '/tesseract/worker.min.js',
+        corePath: '/tesseract',
+        langPath: '/tesseract/lang',
+        gzip: true,
+      })
       try {
         const { data } = await worker.recognize(file)
         const parsed = parseReceiptText(data.text || '')

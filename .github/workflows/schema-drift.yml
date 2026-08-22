@@ -26,6 +26,25 @@ jobs:
       - name: Run schema drift check
         run: bash scripts/schema-drift-check.sh
 
+  # Production Contract gate: the canonical contract (extracted from the
+  # migration chain + frontend references) must cover every frontend
+  # reference, and the generated artifacts must be committed (regenerate
+  # with: python3 scripts/generate_contract_manifest.py).
+  contract-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify production contract coverage
+        run: python3 scripts/generate_contract_manifest.py
+
+      - name: Verify generated contract artifacts are committed
+        run: |
+          if ! git diff --exit-code -- supabase/contract/production_contract.json supabase/migrations/20260822160000_contract_integrity_seed.sql; then
+            echo "::error::Contract artifacts are stale. Run: python3 scripts/generate_contract_manifest.py and commit the result."
+            exit 1
+          fi
+
   # Phase A6: the Avenize Design Constitution gate. Fails when hardcoded-hex
   # or anti-slop-class drift grows beyond the recorded baseline (new screens
   # must use --av-* tokens; the baseline only burns down).

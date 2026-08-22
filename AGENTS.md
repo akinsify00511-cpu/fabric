@@ -1,3 +1,124 @@
+## Session 51 (2026-08-22): Strategy reversal — retain best-in-class infra + Production Contract Reconciliation System
+
+User directive: the "remove all external services" philosophy was wrong.
+Correct end state: Avenize owns the intelligence/business-logic/orchestration/
+monitoring; commodity infrastructure is delegated to proven providers —
+Supabase (backend), Vercel (deploy), **Paystack (payments), Resend (email)**.
+The browser never holds privileged credentials and never decides payment
+success. Also: STOP patching individual 404s; build ONE Production Contract
+Reconciliation System instead.
+
+### Phase 1 — Production Contract Reconciliation (the anti-404 system)
+- `scripts/generate_contract_manifest.py`: extracts the canonical contract
+  from the migration chain (balanced-paren, string-literal-aware function
+  parser — naive `[^)]*` breaks on `DEFAULT NOW()`; strips `--` comments so
+  comment mentions of CREATE/DROP don't register phantoms; honors DROP
+  TABLE/FUNCTION) + scans the frontend for every `.from/.rpc/.storage.from/
+  .functions.invoke` reference. Fails (exit 1) if any frontend reference has
+  no canonical definition. Emits `supabase/contract/production_contract.json`
+  (940 objects) + the GENERATED seed migration `20260822160000_contract_
+  integrity_seed.sql` (one integrity_rules row per object; upsert +
+  prune-by-prefix so the rules table mirrors the contract exactly).
+- `20260822140000_contract_scan_extension.sql`: `run_integrity_scan()`
+  generalized to the full contract (function existence + identity-argument
+  drift via `contract_normalize_args`; tables/views via to_regclass; buckets
+  guarded). Never executes DDL — repairable objects → apply the canonical
+  migration; security-sensitive objects → critical SECURITY_REPAIR_REQUIRED
+  finding. `contract_status` column marks contract-managed rules; findings
+  for pruned rules auto-resolve. On a fully-migrated postgres:15: **932
+  healthy, 0 drift, 0 missing** (three `registered` edge-function rows).
+- Type aliases unified in THREE places with word-boundary matching
+  (int/integer→int4, decimal→numeric, bigserial→int8, etc.): the SQL
+  normalizer, the generator, the live comparator. Keep them in sync.
+- `scripts/verify-production.sh` + `verify_production_contract.py`: the
+  production smoke gate (§3 of the directive) — auth health, PostgREST
+  OpenAPI contract comparison (frontend-referenced objects), payment + email
+  edge-function probes, SPA-shell check. Prints `PRODUCTION READY` or fails.
+  Wired as the FINAL step of deploy.yml (deploy is not "successful" when
+  Vercel builds — it is successful when the contract check passes) and a
+  `contract-manifest` job in schema-drift.yml (fails on stale generated
+  artifacts).
+
+### Phase 4 — Paystack restored SECURELY (new architecture, not the old one)
+- `20260822150000_payment_provider_ledger.sql`: `payment_transactions`
+  (ledger; the ONLY payment state; explicit state machine
+  pending→processing→success / →failed / success→refunded enforced by the
+  `enforce_payment_transaction_transition` trigger),
+  `payment_webhook_events` (unique(provider,event_id) idempotency),
+  subscriptions→entitlements sync trigger, receipt/payment-failed email
+  queue trigger, paystack/resend platform-integration rows reseeded.
+- Edge functions: `subscription-management` (createCheckout: owner/admin
+  gate, server-side `plan_price_cents` price — browser NEVER supplies a
+  price; pending ledger row; 10-min idempotent reuse; cancel→
+  cancel_at_period_end), `paystack-webhook` (HMAC-SHA512 signature →
+  idempotency insert → RE-VERIFY against Paystack per Paystack docs →
+  settle ledger → upsert subscription → trigger unlocks entitlement →
+  trigger queues receipt email; email failure can never break settlement),
+  `paystack-verify` (browser-return helper; membership-gated; ledger is
+  authoritative, provider status informational).
+- `_shared/paymentsCore.ts`: pure shared logic (state machine, HMAC,
+  constant-time compare, idempotency key, amount-sufficiency) — the SAME
+  module vitest tests (no mirror-copy drift).
+- Frontend: `src/lib/payments.ts`; Premium.tsx shows BOTH rails (Paystack
+  primary + manual bank transfer — the manual flow from the parallel
+  session stays); Subscription.tsx handles the `?reference=` callback via
+  paystack-verify + refreshes entitlements. Plans: starter ₦15k/150k, team
+  ₦48k/480k, business ₦112k/1.12M monthly/yearly (kobo units).
+
+### Phase 5 — Resend email subsystem (one service, not scattered sends)
+- `20260822170000_resend_email_subsystem.sql`: `email_events` (internal
+  delivery ledger), `transactional_email_templates` (19 seeded: welcome,
+  invite, payment receipt/failed, subscription lifecycle, quote, invoice,
+  meeting reminder, lead, task, security alert, …), `queue_email` RPC
+  (membership-guarded), payment/subscription lifecycle triggers queue emails
+  (event-driven: payment.success → settle → queue email, never inline),
+  `business_email_domains` (per-business sending domains, Resend DNS
+  verification groundwork).
+- Edge functions: `email-service` (service-key/cron-secret auth; renders
+  template; business verified domain overrides platform From; delivers via
+  Resend; writes provider_message_id back to the ledger; `process` action
+  drains the queue), `resend-webhook` (svix signature verify; delivery/
+  bounce/open events advance the ledger status FORWARD only).
+- Resend owns delivery + domain authentication; Avenize owns the business
+  logic + ledger (§15 of the directive).
+
+### Verified
+tsc clean; vite build 0 warnings; vitest 693/693 (57 files, +2 suites:
+paymentsCore, emailSubsystem); schema-drift PASS; design-constitution PASS;
+full migration chain (192 files) applies CLEAN on fresh postgres:15 +
+idempotent; contract scanner 932 healthy / 0 drift / 0 missing on the
+migrated chain; payment/email smoke tests with real membership fixtures
+(transition guard, receipt+failed email queueing, member-vs-outsider RLS,
+cross-tenant denial) all pass.
+
+### Parallel-session collisions (third AND fourth — Sessions 32/35/50 pattern)
+Two parallel sessions pushed while this work was local: `ef03f4b` (Board
+governance, 20260822120000) and `b02f0aa` (CEO objective gap analysis,
+20260822130000). Resolution per the Session-31/32 protocol (unpushed side
+renumbers): manual-payment-flow 120000ŌåÆ`20260822125000`, brand-assets
+130000ŌåÆ`20260822135000`; two duplicate Session-51 headings renamed to
+51b. The slot is now unambiguously ordered: 120000 gov < 125000 manual <
+130000 gap < 135000 brand < 140000–170000 (this session). Contract
+manifest regenerated after every rebase (941 objects; governance + gap
+objects now contracted). Rebased chain verified on postgres:15: fresh
+apply clean, Session-51 files idempotent, contract scan **942 healthy /
+0 drift / 0 missing**; non-admin scan denied (42501, fails closed);
+vitest 711/711 (combined suites).
+
+### Deploy status
+Pushed to main after rebase. Live DB still needs migrations
+20260822120000(governance)/125000–20260822170000 applied (idempotent);
+the new deploy.yml production-contract step will stay RED until then —
+that is the gate working as intended. Edge functions need deploy +
+secrets: PAYSTACK_SECRET_KEY (subscription-management, paystack-webhook,
+paystack-verify), RESEND_API_KEY + EMAIL_FROM (email-service),
+RESEND_WEBHOOK_SECRET (resend-webhook), APP_URL (checkout callback).
+Until deployed: Premium shows the manual rail (Paystack button shows
+honest "not configured"), emails stay queued in the ledger (visible in
+the admin console).
+
+---
+
 ## Standing business benchmark (2026-08-21, user-set)
 
 **Revenue target: $100M in 12 months (by ~2026-08).** Treat this as the
@@ -11,6 +132,96 @@ weighed. Implications for planning:
   (value ledger, trial experience) → expansion (upsell via recommend_plan).
 - Never fabricate market/revenue data to justify the target (§22); report
   real funnel numbers honestly, including when they fall short.
+
+---
+
+## Session 51b (2026-08-22, parallel session): Board = governance structure, not a module (Organization & Governance)
+
+User directive: a top-level "Board of Directors" page creates the wrong mental
+model. Organogram = structure; modules = business functions. The Board belongs
+to the first. "Organization & Governance" replaces "Board Management" in the
+master checklist. Bigger principle: audit every feature that became a separate
+island — "is this a business entity/relationship, or merely a view/function
+of an existing entity?" Board→Organization/Governance; Meetings→shared
+activity layer; Documents→shared document layer; AI/Analytics→shared
+intelligence layer; Tasks→shared execution layer.
+
+### What shipped (migration 20260822120000_governance_layer.sql)
+- `board_committees` + `board_committee_members` (audit/finance/risk/
+  remuneration/strategy/nomination/other; chair+member roles).
+- `board_resolutions` — the decision register (proposed/approved/rejected/
+  tabled/withdrawn; ordinary=simple majority, special=2/3 of cast votes;
+  votes recorded; decided_at; implemented_at on first cascade).
+- `board_conflicts` — conflicts-of-interest register (active/mitigated/
+  resolved).
+- `meetings.board_committee_id` — board/committee meetings reuse the
+  canonical meetings lifecycle; NO parallel meeting system (§0.5).
+- `strategic_objectives.board_resolution_id` — provenance link. parent_id
+  (063) was already the cascade tree; objective_progress (094) the roll-up.
+- RPCs (SECURITY DEFINER, membership/owner-admin guarded): record_board_vote
+  (outcome derived server-side), cascade_board_objective (ONLY approved
+  resolutions cascade; marks implemented_at), objective_cascade_tree
+  (recursive, depth-bounded 40 cycle guard), board_governance_overview
+  (one-call governance tab), compose_board_report (AGGREGATE ONLY: health,
+  finance totals, risk profile, resolutions, board-seeded objective progress
+  with at_risk=progress+15<elapsed_pct). The board-visibility boundary is
+  CONSTRUCTION-based: the report function never references payroll/salary/
+  PII/CRM tables (mirror contract in src/lib/governance.ts
+  BOARD_REPORT_EXCLUSIONS).
+
+### Frontend
+- Organization.tsx gains tabs: Structure (existing depts/teams) + Governance
+  (?tab=governance). Structure tab opens with a "Board of Directors" organogram
+  anchor linking into Governance — the Board sits ABOVE departments.
+- src/components/GovernanceSection.tsx: board roster (Chair first), committees
+  (chair+members), resolutions (propose/vote/cascade), conflicts, Strategy &
+  Cascade (objective progress + execution tree + aggregate board report).
+  Gamified EmptyStates (§AC). Pure --av-* tokens (design constitution PASS).
+- /app/board → redirect to /app/organization?tab=governance. BoardMembers.tsx
+  DELETED (content folded into GovernanceSection; old fetchBoardMembers/
+  saveBoardMember/deleteBoardMember wrappers removed from businessOS).
+- Shell: People group gains "Organization" (toolKey people); the old
+  "Board & Directors" ownerOnly secondary link REMOVED. ROUTE_MODULE:
+  /app/organization → hr (was /app/board → self_audit).
+
+### The objective cascade (the user's core ask)
+Board decision → company objective → department objectives → team targets.
+cascade_board_objective seeds a strategic_objective with the resolution
+provenance; further cascades nest via parent_id; the report shows progress
+vs elapsed-period honestly (at_risk only with real period dates; §22).
+
+### Continuation: island audit + CEO constraint-check (gap analysis)
+- Island audit (the directive's "every accidental island" test): residual
+  aux tables checked — `company_documents`/`staff_documents` (Operations
+  attachments), `notification_templates`/`notification_preferences`/
+  `intelligence_notification_log` (ancillary to canonical `notifications`),
+  meeting_actions (linked to REAL tasks by design session 26). No NEW
+  islands found; the governance layer itself composes on canonical systems.
+- Migration 20260822130000_objective_gap_analysis.sql: the directive's CEO
+  sentence, deterministic SQL over deals — "This objective is unlikely to
+  be achieved. The primary constraint is pipeline, which is N% below the
+  required level." target from currency key_result (094) or target_value
+  ->revenue (063); win_rate NULL unless >=5 closed deals (§21); binding
+  constraint derived (coverage<1=pipeline; required_rate>win_rate=
+  conversion); status ladder achieved/on_track/at_risk/unlikely/
+  insufficient_data; progress_only for non-revenue objectives.
+- Frontend: "Analyze constraint" per board objective in the Strategy tab
+  (GapPanel with headline + target/won/pipeline/coverage/win-rate/
+  projected numbers). +2 tone/label helper tests (685 total).
+
+### Verified
+postgres:15 Docker: full chain applies clean; governance file idempotent
+(legacy pass-2 failures = known 54-file baseline, NOT this file). Functional
+smoke ALL PASS: vote approved (4>1) + rejected (tie), cascade creates
+objective + marks implemented_at, tree returns with provenance flag, member
+authorized:true, non-member authorized:false on BOTH overview + report,
+report has no members block (construction boundary). tsc 0, vite build 0
+warnings, vitest 683/683 (+18 governanceCascade), schema-drift 0 (both
+checkers), design-constitution PASS (burning down).
+
+### Deploy gate (unchanged)
+Migration 20260822120000 must apply to live Supabase; until then the
+Governance tab shows the honest "governance not available yet" state (§24).
 
 ---
 

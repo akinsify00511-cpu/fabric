@@ -1,10 +1,10 @@
 // Voice capture modal for Quick Capture (checklist item 3 — Mic).
-// Production flow: getUserMedia (permission) → MediaRecorder (listening
-// state, stop/cancel) → private upload → Whisper transcript (edge fn) →
-// editable transcript → the transcript feeds the existing parse-intent →
-// confirm → business-event flow. Browser fallback: Web Speech API live
-// transcription when MediaRecorder is unavailable or Whisper fails. Error
-// recovery at every step (retry, re-record, attach-without-transcript).
+// Fully in-browser flow: getUserMedia (permission) → MediaRecorder (audio
+// evidence) + Web Speech API live transcription running on the same mic →
+// private upload → editable transcript → the transcript feeds the existing
+// parse-intent → confirm → business-event flow. No external transcription
+// service. Browsers without SpeechRecognition still save the audio and let
+// the user type what they said. Error recovery at every step.
 
 import { useEffect, useRef, useState } from 'react'
 import { Mic, X, Square, RefreshCw, Loader2, AlertTriangle, Keyboard } from 'lucide-react'
@@ -12,7 +12,6 @@ import {
   createCaptureAttachment,
   deleteCaptureAttachment,
   finalizeCaptureAttachment,
-  processCaptureAttachment,
   uploadCaptureFile,
 } from '../../lib/captureAttachments'
 
@@ -114,6 +113,47 @@ export default function VoiceCapture({ onComplete, onClose }: Props) {
     recognitionRef.current = null
   }
 
+  // Start SpeechRecognition on the same mic (when the browser supports it)
+  // so the transcript is captured live while MediaRecorder saves the audio.
+  function startSpeechRecognition(): boolean {
+    const Ctor = getSpeechRecognitionCtor()
+    if (!Ctor) return false
+    finalTranscriptRef.current = ''
+    setLiveText('')
+    const rec = new Ctor()
+    rec.continuous = true
+    rec.interimResults = true
+    rec.lang = 'en-NG'
+    rec.onresult = (e) => {
+      let interim = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i]
+        if (r.isFinal) finalTranscriptRef.current += r[0].transcript + ' '
+        else interim += r[0].transcript
+      }
+      setLiveText((finalTranscriptRef.current + interim).trim())
+    }
+    rec.onerror = () => { /* transcription is best-effort; the audio + typing paths remain */ }
+    rec.onend = () => { /* stopped alongside the recorder */ }
+    recognitionRef.current = rec
+    try {
+      rec.start()
+      return true
+    } catch {
+      recognitionRef.current = null
+      return false
+    }
+  }
+
+  function stopSpeechRecognition() {
+    try { recognitionRef.current?.stop() } catch { /* noop */ }
+    recognitionRef.current = null
+  }
+
+  function capturedTranscript(): string {
+    return (finalTranscriptRef.current || liveText).trim()
+  }
+
   async function startRecording() {
     setError(null)
     setElapsed(0)
@@ -138,10 +178,12 @@ export default function VoiceCapture({ onComplete, onClose }: Props) {
         const blob = new Blob(chunksRef.current, { type: mime })
         blobRef.current = blob
         durationRef.current = elapsed
-        void uploadAndTranscribe(blob)
+        stopSpeechRecognition()
+        void uploadAndEdit(blob)
       }
       recorderRef.current = recorder
       recorder.start(250)
+      startSpeechRecognition()
       setPhase('recording')
     } catch (e) {
       const name = (e as DOMException)?.name
@@ -208,7 +250,7 @@ export default function VoiceCapture({ onComplete, onClose }: Props) {
     }
   }
 
-  async function uploadAndTranscribe(blob: Blob) {
+  async function uploadAndEdit(blob: Blob) {
     setPhase('processing')
     setProgressLabel('Saving the recording…')
 
@@ -233,16 +275,10 @@ export default function VoiceCapture({ onComplete, onClose }: Props) {
       durationSeconds: durationRef.current,
     })
 
-    setProgressLabel('Transcribing…')
-    const result = await processCaptureAttachment(created.attachmentId, 'transcribe')
-    if (cancelledRef.current) return
-    if (result.error || !result.transcript) {
-      // Error recovery: fall back to live speech or let the user type
-      setError('Transcription is unavailable right now. You can try live transcription, or attach the recording and type what you said.')
-      setPhase('error')
-      return
-    }
-    setTranscript(result.transcript)
+    // The transcript was captured live in the browser (Web Speech API) while
+    // recording — no external transcription call. If the browser produced
+    // nothing, the editing phase opens empty so the user can type.
+    setTranscript(capturedTranscript())
     setPhase('editing')
   }
 
@@ -317,7 +353,7 @@ export default function VoiceCapture({ onComplete, onClose }: Props) {
             <p className="mt-1 text-sm text-[var(--av-text-secondary)]">
               {phase === 'recording' ? 'Listening… describe what happened.' : 'Live transcription… speak clearly.'}
             </p>
-            {phase === 'live' && liveText && (
+            {liveText && (
               <p className="mt-3 text-sm text-[var(--av-text)] bg-[var(--av-surface-2)] rounded-lg p-3 max-h-28 overflow-y-auto">{liveText}</p>
             )}
             <div className="mt-5 flex items-center justify-center gap-3">

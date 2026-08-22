@@ -38,7 +38,6 @@ export const TOOLS = [
   { key: 'cashflow', label: 'Cash Flow', category: 'finance', description: 'Track money in and out, and forecast your cash position.' },
   { key: 'merit', label: 'Merit', category: 'hr', description: 'Recognize team members for good work.' },
   { key: 'social-recognition', label: 'Recognition', category: 'hr', description: 'Public recognition and kudos for your team.' },
-  { key: 'integrations', label: 'Integrations', category: 'settings', description: 'Connect Avenize to your other tools.' },
   { key: 'api', label: 'API & Webhooks', category: 'settings', description: 'Programmatic access for developers.' },
   { key: 'branding', label: 'Branding', category: 'settings', description: 'Customize colors, logo, and appearance.' },
   { key: 'settings', label: 'Settings', category: 'settings', description: 'Account and workspace configuration.' },

@@ -18,9 +18,6 @@ import { useAuth } from '../lib/AuthContext'
 import { createBusinessAndOwner } from '../lib/onboarding'
 import { getUserMfa, mfaRequired, isMfaVerified } from '../lib/mfa'
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-
 export default function AuthCallback() {
   const navigate = useNavigate()
   const { session, membership, refreshStaff } = useAuth()
@@ -105,7 +102,7 @@ export default function AuthCallback() {
 
     // Email/password signup: use local storage when available, but fall back to
     // auth metadata so confirmation works on a different browser/device.
-    let pendingBusiness: { businessName?: string; industry?: string | null; fullName?: string; email?: string } | null = null
+    let pendingBusiness: { businessName?: string; industry?: string | null; fullName?: string } | null = null
     const storedPending = localStorage.getItem('avenize_pending_business')
     if (storedPending) {
       try {
@@ -118,7 +115,6 @@ export default function AuthCallback() {
     const businessName = pendingBusiness?.businessName || metadata.business_name
     const industry = pendingBusiness?.industry ?? metadata.industry ?? null
     const fullName = pendingBusiness?.fullName || metadata.full_name || metadata.name || ''
-    const email = pendingBusiness?.email || user.email || metadata.email || ''
 
     if (businessName) {
       setMessage(`Setting up ${businessName}…`)
@@ -145,7 +141,6 @@ export default function AuthCallback() {
       }
 
       localStorage.removeItem('avenize_pending_business')
-      void sendWelcomeEmail(email, fullName, businessName, session.access_token)
       setMessage('Email confirmed! Your workspace is ready. Redirecting…')
       await refreshStaff()
       navigate('/app', { replace: true })
@@ -181,18 +176,4 @@ export default function AuthCallback() {
       <p className="text-sm text-black mt-4">{message || 'Completing sign in…'}</p>
     </div></div>
   )
-}
-
-async function sendWelcomeEmail(email: string, fullName: string, businessName: string | undefined, accessToken: string) {
-  if (!email) return
-  try {
-    const response = await fetch(`${SUPABASE_URL}/functions/v1/send-welcome-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${accessToken}` },
-      body: JSON.stringify({ email, fullName, businessName }),
-    })
-    if (!response.ok) console.error('Failed to send welcome email:', response.statusText)
-  } catch (err) {
-    console.error('Error sending welcome email:', err)
-  }
 }

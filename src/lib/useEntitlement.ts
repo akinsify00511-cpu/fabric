@@ -21,7 +21,7 @@ export const FEATURES = {
   social_media: { label: 'Social Media', category: 'marketing' },
   whatsapp: { label: 'WhatsApp', category: 'marketing' },
   sms: { label: 'SMS', category: 'marketing' },
-  paystack: { label: 'Paystack Integration', category: 'payments' },
+  payments: { label: 'Payments', category: 'payments' },
   multi_bank: { label: 'Multi-Bank Transfers', category: 'payments' },
   inventory: { label: 'Inventory Management', category: 'ops' },
   projects: { label: 'Projects', category: 'ops' },
@@ -161,7 +161,7 @@ export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
     social_media: false,
     whatsapp: false,
     sms: false,
-    paystack: false,
+    payments: false,
     multi_bank: false,
     support_tickets: false,
     live_chat: false,
@@ -174,13 +174,13 @@ export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
     starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
     professional: { 
       crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_currency: true, campaigns: true, social_media: true, payments: true, 
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
       recognition: true 
     },
     pro: { // Alias for professional
       crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_currency: true, campaigns: true, social_media: true, payments: true, 
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
       recognition: true 
     },
@@ -303,13 +303,13 @@ export function useEntitlements(): {
     starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
     professional: { 
       crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_currency: true, campaigns: true, social_media: true, payments: true, 
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
       recognition: true 
     },
     pro: { // Alias for professional
       crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, paystack: true, 
+      multi_currency: true, campaigns: true, social_media: true, payments: true, 
       multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
       recognition: true 
     },

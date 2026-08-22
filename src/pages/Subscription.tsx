@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
   CreditCard,
   Calendar,
@@ -27,6 +27,7 @@ import {
 import { useSubscriptionData } from '../lib/useSubscriptionData'
 import { useAuth } from '../lib/AuthContext'
 import { fetchPlanRecommendation, type PlanRecommendation } from '../lib/businessOS'
+import { verifyPaymentReturn, type PaymentVerdict } from '../lib/payments'
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
   active: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Active' },
@@ -54,7 +55,6 @@ export default function Subscription() {
     error,
     refresh,
     cancelSubscription,
-    createCheckout,
   } = useSubscriptionData()
 
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
@@ -63,6 +63,37 @@ export default function Subscription() {
   const [cancelMessage, setCancelMessage] = useState('')
   const [processingPlan, setProcessingPlan] = useState<string | null>(null)
   const [recommendation, setRecommendation] = useState<PlanRecommendation | null>(null)
+  const [params, setParams] = useSearchParams()
+  const [paymentVerdict, setPaymentVerdict] = useState<PaymentVerdict | null>(null)
+
+  // Return from Paystack: the browser only says "Paystack returned me" — the
+  // SERVER (paystack-verify) decides what happened. Then refresh so the
+  // (webhook-updated) subscription shows.
+  useEffect(() => {
+    const reference = params.get('reference')
+    if (!reference) return
+    let cancelled = false
+    const check = async () => {
+      const verdict = await verifyPaymentReturn(reference)
+      if (cancelled) return
+      setPaymentVerdict(verdict)
+      params.delete('reference')
+      setParams(params, { replace: true })
+      // The webhook settles within seconds; poll briefly for the final state.
+      if (verdict && verdict.status !== 'success') {
+        setTimeout(async () => {
+          if (cancelled) return
+          const later = await verifyPaymentReturn(reference)
+          if (!cancelled && later) setPaymentVerdict(later)
+          void refresh()
+        }, 4000)
+      }
+      void refresh()
+    }
+    void check()
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // P0 #15: AI plan recommendation — deterministic, evidence-based. Only shown
   // to free/trial users (paid users already chose a plan). Best-effort: stays
@@ -88,13 +119,7 @@ export default function Subscription() {
 
   const handleUpgrade = async (planCode: string) => {
     setProcessingPlan(planCode)
-    const result = await createCheckout(planCode, billingCycle)
-    if (result?.checkout_url) {
-      window.location.href = result.checkout_url
-    } else {
-      // Fallback: open pricing page
-      window.location.href = '/upgrade'
-    }
+    window.location.href = `/upgrade?plan=${encodeURIComponent(planCode)}&billing=${billingCycle}`
   }
 
   const formatDate = (dateStr: string | null) => {
@@ -148,6 +173,38 @@ export default function Subscription() {
         <div className="mb-6 p-4 bg-[var(--av-danger-soft)] border border-[var(--av-danger-soft)] rounded-xl flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 text-[var(--av-danger)] shrink-0" />
           <p className="text-sm text-[var(--av-danger)]">{error}</p>
+        </div>
+      )}
+
+      {/* Server-verified Paystack return verdict */}
+      {paymentVerdict && (
+        <div
+          className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
+            paymentVerdict.status === 'success'
+              ? 'bg-[var(--av-success-soft)]'
+              : paymentVerdict.status === 'failed'
+                ? 'bg-[var(--av-danger-soft)]'
+                : 'bg-[var(--av-primary-soft)]'
+          }`}
+        >
+          {paymentVerdict.status === 'success' ? (
+            <Check className="w-5 h-5 text-[var(--av-success)] shrink-0" />
+          ) : paymentVerdict.status === 'failed' ? (
+            <X className="w-5 h-5 text-[var(--av-danger)] shrink-0" />
+          ) : (
+            <Loader2 className="w-5 h-5 text-[var(--av-primary)] shrink-0 animate-spin" />
+          )}
+          <p className="text-sm text-[var(--av-text)]">
+            {paymentVerdict.status === 'success' &&
+              'Payment verified. Your plan is now active — a receipt is on its way to your email.'}
+            {paymentVerdict.status === 'failed' &&
+              'The payment could not be completed. No charge was made and your plan has not changed.'}
+            {(paymentVerdict.status === 'pending' || paymentVerdict.status === 'processing') &&
+              'Confirming your payment with Paystack… this usually takes a few seconds.'}
+          </p>
+          <button onClick={() => setPaymentVerdict(null)} className="ml-auto text-xs text-[var(--av-text-muted)] hover:text-[var(--av-text)]">
+            Dismiss
+          </button>
         </div>
       )}
 

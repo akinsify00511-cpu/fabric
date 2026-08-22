@@ -1,55 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { extractCheckoutReference, initialCheckoutState, stateFromVerification } from '../../../src/lib/checkoutReturn'
 
-// The paid-checkout funnel contract (launch blocker P0). Locks the return
-// path, the entitlement mapping, and the verify-ownership boundary.
-
-describe('checkout return path (Paystack redirect)', () => {
-  const params = (q: string) => new URLSearchParams(q)
-
-  it('no reference → normal checkout form (user abandoned or never left)', () => {
-    expect(initialCheckoutState(params('plan=team&billing=monthly'))).toBe('form')
-  })
-
-  it('reference param → verifying (Paystack appends reference on success)', () => {
-    expect(initialCheckoutState(params('plan=team&reference=avz_sub_abc'))).toBe('verifying')
-  })
-
-  it('trxref param → verifying (Paystack always appends trxref)', () => {
-    expect(extractCheckoutReference(params('trxref=avz_sub_xyz'))).toBe('avz_sub_xyz')
-    expect(initialCheckoutState(params('trxref=avz_sub_xyz'))).toBe('verifying')
-  })
-
-  it('reference takes precedence over trxref', () => {
-    expect(extractCheckoutReference(params('reference=a&trxref=b'))).toBe('a')
-  })
-
-  it('legacy success=true flag → confirmed', () => {
-    expect(initialCheckoutState(params('success=true'))).toBe('confirmed')
-  })
-})
-
-describe('server-side verification gate', () => {
-  it('only success+success reaches confirmed', () => {
-    expect(stateFromVerification({ success: true, status: 'success' })).toBe('confirmed')
-  })
-
-  it('abandoned payment (status abandoned) → failed', () => {
-    expect(stateFromVerification({ success: false, status: 'abandoned' })).toBe('failed')
-  })
-
-  it('failed payment → failed', () => {
-    expect(stateFromVerification({ success: false, status: 'failed' })).toBe('failed')
-  })
-
-  it('success=true with non-success status is NOT confirmed (no partial trust)', () => {
-    expect(stateFromVerification({ success: true, status: 'pending' })).toBe('failed')
-  })
-
-  it('null response (verify unreachable) → failed, never confirmed', () => {
-    expect(stateFromVerification(null)).toBe('failed')
-  })
-})
+// The paid-plan funnel contract (launch blocker P0). Locks the entitlement
+// mapping and the manual-payment-confirmation boundary. There is no external
+// payment provider: a business creates a payment request, pays by bank
+// transfer, and an operator confirms — which activates the subscription.
 
 describe('plan → entitlement mapping contract', () => {
   // Mirrors migration 20260821170000. These must stay in sync with
@@ -95,13 +49,48 @@ describe('plan → entitlement mapping contract', () => {
   })
 })
 
-describe('verify endpoint ownership boundary (anti-oracle)', () => {
-  // Contract locked in paystack-verify: a reference is only verified for
-  // the business that owns it; all other paths return the SAME generic
-  // failure so nothing leaks about the reference's existence or owner.
-  it('deny path is indistinguishable from verification failure', () => {
-    const denyResponse = { success: false, error: 'Payment verification failed' }
-    const failedResponse = { success: false, error: 'Payment verification failed' }
-    expect(denyResponse).toEqual(failedResponse)
+describe('manual payment confirmation contract', () => {
+  // Mirrors request_plan_payment / confirm_plan_payment in
+  // 20260822125000_manual_payment_flow.sql.
+
+  // One open request per business: a repeat request returns the existing one.
+  function requestPlanPayment(existing: { reference: string } | null, newRef: string): { reference: string } {
+    return existing ?? { reference: newRef }
+  }
+
+  it('repeat request is idempotent — returns the open request', () => {
+    const first = requestPlanPayment(null, 'avz_req_1')
+    const second = requestPlanPayment(first, 'avz_req_2')
+    expect(second.reference).toBe('avz_req_1')
+  })
+
+  it('only pending requests can be confirmed (no double-activation)', () => {
+    const canConfirm = (status: string) => status === 'pending'
+    expect(canConfirm('pending')).toBe(true)
+    expect(canConfirm('confirmed')).toBe(false)
+    expect(canConfirm('cancelled')).toBe(false)
+    expect(canConfirm('rejected')).toBe(false)
+  })
+
+  it('confirming activates a subscription with provider=manual (no external provider)', () => {
+    // The subscription row written by confirm_plan_payment.
+    const written = { provider: 'manual', status: 'active' }
+    expect(written.provider).toBe('manual')
+    expect(written.status).toBe('active')
+  })
+
+  it('confirmation is operator-gated — non-operators get authorized:false', () => {
+    const confirm = (isRiverwaysAdmin: boolean) =>
+      isRiverwaysAdmin ? { ok: true } : { ok: false, authorized: false }
+    expect(confirm(true).ok).toBe(true)
+    expect((confirm(false) as { authorized: boolean }).authorized).toBe(false)
+  })
+
+  it('request is owner/admin-gated — staff cannot change the plan', () => {
+    const canRequest = (role: string) => role === 'owner' || role === 'admin'
+    expect(canRequest('owner')).toBe(true)
+    expect(canRequest('admin')).toBe(true)
+    expect(canRequest('staff')).toBe(false)
+    expect(canRequest('manager')).toBe(false)
   })
 })

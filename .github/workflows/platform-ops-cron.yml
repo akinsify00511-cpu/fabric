@@ -2,9 +2,7 @@ name: Platform Ops Cron
 
 on:
   schedule:
-    # Health check: every 5 minutes. Pager: every 2 minutes.
-    # GitHub Actions cron min granularity is 5 min, so both run every 5 min.
-    # The functions are idempotent and self-dedup (paged_at + record_integration_check).
+    # Health check: every 5 minutes (Supabase-only — no third-party providers).
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
@@ -19,26 +17,3 @@ jobs:
             -H "Content-Type: application/json" \
             "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/platform-health-check" \
             || echo "health-check failed (non-fatal)"
-
-  pager:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dispatch proactive pages
-        run: |
-          curl -sS -X POST \
-            -H "x-cron-secret: ${{ secrets.PLATFORM_PAGER_CRON_SECRET }}" \
-            -H "Content-Type: application/json" \
-            "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/platform-pager" \
-            || echo "pager failed (non-fatal)"
-
-  daily-digest:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send daily business digests (§7.4)
-        run: |
-          curl -sS -X POST \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"type":"daily"}' \
-            "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/send-business-digest" \
-            || echo "daily-digest failed (non-fatal)"
