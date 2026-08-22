@@ -892,6 +892,13 @@ END;
 
 $guard$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Calendar read path repair (canonicalized). Earlier chain files defined this
+-- over start_date/end_date which the UI never sets (inserts start_time/end_time),
+-- and the 2-arg overload was corrupted. Drops both, then defines one canonical
+-- 3-arg form with the membership guard.
+DROP FUNCTION IF EXISTS public.get_events_in_range(timestamp with time zone, timestamp with time zone);
+DROP FUNCTION IF EXISTS public.get_events_in_range(uuid, timestamp with time zone, timestamp with time zone);
+
 CREATE OR REPLACE FUNCTION public.get_events_in_range(p_business_id UUID,
   p_start_date TIMESTAMPTZ,
   p_end_date TIMESTAMPTZ)
@@ -899,33 +906,40 @@ RETURNS TABLE(
   id UUID,
   title TEXT,
   description TEXT,
-  start_date TIMESTAMPTZ,
-  end_date TIMESTAMPTZ,
+  event_type TEXT,
+  start_time TIMESTAMPTZ,
+  end_time TIMESTAMPTZ,
   all_day BOOLEAN,
-  event_type TEXT
+  location TEXT,
+  status TEXT,
+  organizer_name TEXT
 )
 AS $guard$
 
 BEGIN
--- Canonical tenant guard: only members of the business may use this RPC (Session-33 security closure).
   IF NOT EXISTS (SELECT 1 FROM public.get_current_staff() cs WHERE cs.business_id = p_business_id) THEN
     RETURN;
   END IF;
 
   RETURN QUERY
-  SELECT 
+  SELECT
     e.id,
     e.title,
     e.description,
-    e.start_date,
-    e.end_date,
+    e.event_type,
+    e.start_time,
+    e.end_time,
     e.all_day,
-    e.event_type
+    e.location,
+    e.status,
+    COALESCE(s.full_name, s.name) AS organizer_name
   FROM events e
+  LEFT JOIN staff s ON s.id = e.organizer_id
   WHERE e.business_id = p_business_id
-    AND e.start_date >= p_start_date
-    AND e.start_date <= p_end_date
-  ORDER BY e.start_date ASC;
+    AND (e.status IS NULL OR e.status <> 'cancelled')
+    AND e.start_time >= p_start_date
+    AND e.start_time <= p_end_date
+  ORDER BY e.start_time ASC;
 END;
 
 $guard$ LANGUAGE plpgsql SECURITY DEFINER;
