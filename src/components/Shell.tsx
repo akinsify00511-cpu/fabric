@@ -150,7 +150,8 @@ const NAV_GROUPS: NavGroup[] = [
     defaultOpen: false,
     items: [
       { to: '/app/finance', label: 'Finance', icon: Wallet, toolKey: 'finance' },
-      { to: '/app/e-invoicing', label: 'Invoices', icon: FileTextIcon, toolKey: 'finance' },
+      { to: '/app/invoices', label: 'Invoices', icon: FileTextIcon, toolKey: 'finance' },
+      { to: '/app/e-invoicing', label: 'FIRS Compliance', icon: FileTextIcon, toolKey: 'finance' },
       { to: '/app/payments', label: 'Payments', icon: DollarSign, toolKey: 'finance' },
       { to: '/app/budgets', label: 'Budgets', icon: Target, toolKey: 'finance' },
       { to: '/app/expenses', label: 'Expenses', icon: Receipt, toolKey: 'finance' },

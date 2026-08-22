@@ -25,6 +25,7 @@ type TeamMember = {
   department?: string
   avatar_url?: string
   joined_at: string
+  created_at?: string
   functional_roles?: string[] // Array of role IDs
 }
 
@@ -444,7 +445,7 @@ export default function People() {
                   )}
                 </td>
                 <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className="text-sm text-black">{new Date(member.joined_at).toLocaleDateString()}</span>
+                  <span className="text-sm text-black">{new Date(member.joined_at || member.created_at || '').toLocaleDateString()}</span>
                 </td>
               </tr>
             ))}

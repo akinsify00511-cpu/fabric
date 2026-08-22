@@ -526,6 +526,7 @@ function AppRoutes() {
         <Route path="sms" element={mg('finance', <SMSBroadcast />)} />
         <Route path="live-chat" element={mg('chat', <LiveChat />)} />
         <Route path="whatsapp" element={mg('chat', <WhatsAppIntegration />)} />
+        <Route path="invoices" element={mg('finance', <FinanceNigeria />)} />
         <Route path="e-invoicing" element={mg('finance', <EInvoicing />)} />
         <Route path="api" element={mg('api', <APISettings />)} />
         <Route path="portal" element={<CustomerPortal />} />

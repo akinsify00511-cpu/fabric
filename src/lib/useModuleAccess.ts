@@ -63,7 +63,9 @@ export function useModuleAccess(module: ModuleKey) {
           const fallback = isRpcMissing(error) ? PERMISSIVE_FALLBACK : NOT_READY_FALLBACK
           cache.set(key, fallback); setAccess(fallback); setLoading(false); return
         }
-        const a: ModuleAccess = data ?? NOT_READY_FALLBACK
+        // PostgREST returns TABLE RPCs as an array of rows.
+        const row = (Array.isArray(data) ? data[0] : data) as ModuleAccess | null
+        const a: ModuleAccess = row ?? NOT_READY_FALLBACK
         cache.set(key, a); setAccess(a); setLoading(false)
       })
     return () => { active = false }

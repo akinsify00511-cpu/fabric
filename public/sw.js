@@ -1,6 +1,6 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-const CACHE_VERSION = 'v5'
+const CACHE_VERSION = 'v6'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
@@ -33,7 +33,13 @@ self.addEventListener('fetch', (event) => {
 
   // Never cache Supabase/auth/API traffic.
   if (url.origin !== location.origin && !url.hostname.includes('cdn')) return
-  if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase')) {
+  const isApiPath = url.pathname.startsWith('/api/')
+    || url.pathname.startsWith('/rest/v1/')
+    || url.pathname.startsWith('/auth/v1/')
+    || url.pathname.startsWith('/functions/v1/')
+    || url.pathname.startsWith('/storage/v1/')
+    || url.hostname.includes('supabase')
+  if (isApiPath) {
     event.respondWith(networkFirstWithOfflineIndicator(request))
     return
   }

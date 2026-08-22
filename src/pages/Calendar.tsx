@@ -207,6 +207,7 @@ export default function Calendar() {
     } else {
       // Create
       const { error } = await supabase.from('events').insert({
+        business_id: staff?.business_id,
         title: eventTitle,
         description: eventDescription,
         event_type: eventType,

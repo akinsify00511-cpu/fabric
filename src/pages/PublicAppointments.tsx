@@ -207,55 +207,39 @@ export default function PublicAppointmentsPage() {
     setError(null)
 
     try {
-      // Create client (if not exists by email)
-      let clientId: string | null = null
-
-      // Upsert client by (business_id, email). Anonymous users cannot SELECT
-      // existing client rows (RLS blocks it), so a check-then-insert pattern
-      // would crash with a UNIQUE violation on the second booking by the same
-      // person. upsert with onConflict resolves this atomically.
-      const { data: client, error: clientError } = await supabase
-        .from('clients')
-        .upsert({
-          business_id: business.id,
-          business_name: form.name,
-          email: form.email,
-          phone: form.phone,
-        }, { onConflict: 'business_id,email' })
-        .select('id')
-        .single()
-
-      if (clientError) throw clientError
-      clientId = client.id
-
-      // Create appointment
+      // The write path goes through a SECURITY DEFINER RPC (same pattern as
+      // the public signing flow): anonymous bookers have no table privileges
+      // on bare-postgres deployments, and the client upsert's RETURNING needs
+      // a SELECT policy anon can never hold. The RPC validates the business +
+      // service, upserts the client, guards double-booking, and returns the
+      // booking reference atomically.
       const appointmentDate = new Date(`${form.date}T${form.time}`)
-      const service = services.find(s => s.id === form.service_id)
-      const endTime = new Date(appointmentDate.getTime() + (service?.duration_minutes || 60) * 60000)
 
-      const { data: appointment, error: apptError } = await supabase
-        .from('appointments')
-        .insert({
-          business_id: business.id,
-          client_id: clientId,
-          service_id: form.service_id,
-          staff_id: form.staff_id || null,
-          start_time: appointmentDate.toISOString(),
-          end_time: endTime.toISOString(),
-          status: 'confirmed',
-          notes: form.notes,
-          booking_reference: `APT-${Date.now().toString(36).toUpperCase()}`,
-        })
-        .select('booking_reference')
-        .single()
+      const { data, error: bookError } = await supabase.rpc('book_appointment_by_slug', {
+        p_business_slug: business.slug,
+        p_service_id: form.service_id,
+        p_name: form.name,
+        p_email: form.email,
+        p_start_time: appointmentDate.toISOString(),
+        p_phone: form.phone || null,
+        p_notes: form.notes || null,
+        p_staff_id: form.staff_id || null,
+      })
 
-      if (apptError) throw apptError
+      if (bookError) throw bookError
+      const row = Array.isArray(data) ? data[0] : data
+      if (!row?.booking_reference) throw new Error('Booking failed')
 
-      setBookingRef(appointment.booking_reference)
+      setBookingRef(row.booking_reference)
       setStep(4) // Success step
     } catch (err) {
       console.error('Error creating booking:', err)
-      setError('Failed to create booking. Please try again.')
+      const msg = err instanceof Error ? err.message : ''
+      setError(
+        msg.includes('time slot')
+          ? 'That time slot has just been taken — please pick another time.'
+          : 'Failed to create booking. Please try again.'
+      )
     } finally {
       setSubmitting(false)
     }
