@@ -1607,92 +1607,7 @@ export async function fetchPendingInvites(businessId: string): Promise<PendingIn
   }
 }
 
-// ---------------------------------------------------------------------------
-// Board members (migration 20260818330000) — governance roster
-// ---------------------------------------------------------------------------
 
-export type BoardTitle =
-  | 'Chair' | 'Vice Chair' | 'Director' | 'Secretary' | 'Treasurer' | 'Member' | 'Observer'
-
-export interface BoardMember {
-  id: string
-  name: string
-  email: string | null
-  phone: string | null
-  title: BoardTitle
-  bio: string | null
-  term_start: string | null
-  term_end: string | null
-  is_active: boolean
-}
-
-export async function fetchBoardMembers(businessId: string): Promise<BoardMember[]> {
-  try {
-    const { data, error } = await supabase
-      .from('board_members')
-      .select('id, name, email, phone, title, bio, term_start, term_end, is_active')
-      .eq('business_id', businessId)
-      .order('is_active', { ascending: false })
-      .order('name', { ascending: true })
-    if (error) throw error
-    return (data as BoardMember[]) ?? []
-  } catch (e) {
-    console.error('fetchBoardMembers failed (non-blocking):', e)
-    return []
-  }
-}
-
-export async function saveBoardMember(
-  businessId: string,
-  member: Partial<BoardMember> & { name: string; title: BoardTitle },
-): Promise<boolean> {
-  try {
-    if (member.id) {
-      const { error } = await supabase
-        .from('board_members')
-        .update({
-          name: member.name,
-          email: member.email ?? null,
-          phone: member.phone ?? null,
-          title: member.title,
-          bio: member.bio ?? null,
-          term_start: member.term_start ?? null,
-          term_end: member.term_end ?? null,
-          is_active: member.is_active ?? true,
-        })
-        .eq('id', member.id)
-      if (error) throw error
-    } else {
-      const { error } = await supabase.from('board_members').insert({
-        business_id: businessId,
-        name: member.name,
-        email: member.email ?? null,
-        phone: member.phone ?? null,
-        title: member.title,
-        bio: member.bio ?? null,
-        term_start: member.term_start ?? null,
-        term_end: member.term_end ?? null,
-        is_active: member.is_active ?? true,
-      })
-      if (error) throw error
-    }
-    return true
-  } catch (e) {
-    console.error('saveBoardMember failed:', e)
-    return false
-  }
-}
-
-export async function deleteBoardMember(id: string): Promise<boolean> {
-  try {
-    const { error } = await supabase.from('board_members').delete().eq('id', id)
-    if (error) throw error
-    return true
-  } catch (e) {
-    console.error('deleteBoardMember failed:', e)
-    return false
-  }
-}
 
 // ============================================================================
 // MEETING LIFECYCLE (Phase A — sections 6, 7, 9, 11, 12, 31, 32, 34)
@@ -2704,6 +2619,229 @@ export async function recordDiscoveryReferral(
     return (data as string) ?? null
   } catch (e) {
     console.warn('[discovery] referral record failed:', e)
+    return null
+  }
+}
+
+// =============================================================================
+// Governance layer (20260822120000) — Board = organization structure, not a
+// module. Best-effort, non-blocking (§24): null/empty when not deployed.
+// =============================================================================
+
+export interface GovernanceMember {
+  id: string
+  name: string
+  title: string
+  email: string | null
+  phone: string | null
+  bio: string | null
+  is_active: boolean
+  term_start: string | null
+  term_end: string | null
+}
+
+export interface GovernanceCommittee {
+  id: string
+  name: string
+  committee_type: string
+  description: string | null
+  members: { board_member_id: string; role: string; name: string }[]
+}
+
+export interface GovernanceResolution {
+  id: string
+  title: string
+  resolution_type: 'ordinary' | 'special'
+  status: 'proposed' | 'approved' | 'rejected' | 'tabled' | 'withdrawn'
+  due_date: string | null
+  votes_for: number
+  votes_against: number
+  votes_abstain: number
+  decided_at: string | null
+  implemented: boolean
+  created_at: string | null
+}
+
+export interface GovernanceConflict {
+  id: string
+  title: string
+  member_name: string
+  status: 'active' | 'mitigated' | 'resolved'
+  declared_at: string
+}
+
+export interface GovernanceObjective {
+  id: string
+  title: string
+  scope: 'company' | 'department' | 'team' | 'individual'
+  status: string
+  resolution_id: string
+  due_date: string | null
+  progress: number | null
+}
+
+export interface CascadeNode {
+  id: string
+  title: string
+  scope: string
+  status: string
+  depth: number
+  owner_name: string | null
+  department_name: string | null
+  due_date: string | null
+  progress: number | null
+  from_board_resolution: boolean
+}
+
+export interface GovernanceOverview {
+  authorized: boolean
+  members?: GovernanceMember[]
+  committees?: GovernanceCommittee[]
+  upcoming_meetings?: {
+    id: string
+    title: string
+    scheduled_start: string | null
+    committee_id: string | null
+    committee_name: string | null
+    status: string
+  }[]
+  open_resolutions?: GovernanceResolution[]
+  recent_decisions?: GovernanceResolution[]
+  active_conflicts?: GovernanceConflict[]
+  board_objectives?: GovernanceObjective[]
+}
+
+export interface BoardReport {
+  authorized: boolean
+  period_start?: string
+  period_end?: string
+  data_scope?: string
+  health?: {
+    overall_score?: number
+    computed_at?: string
+    dimension_scores?: Record<string, unknown>
+    note?: string
+  }
+  finance?: {
+    invoiced_in_period: number
+    collected_in_period: number
+    overdue_count: number
+    overdue_value: number
+  }
+  risk_profile?: Record<string, unknown>
+  resolutions?: {
+    title: string
+    type: string
+    outcome: string
+    votes_for: number
+    votes_against: number
+    decided_at: string
+  }[]
+  board_objectives?: {
+    title: string
+    scope: string
+    due_date: string | null
+    progress: number | null
+    elapsed_pct: number | null
+    status_label: 'on_track' | 'at_risk' | 'unknown'
+  }[]
+}
+
+export async function fetchGovernanceOverview(
+  businessId: string
+): Promise<GovernanceOverview | null> {
+  try {
+    const { data, error } = await supabase.rpc('board_governance_overview', {
+      p_business_id: businessId,
+    })
+    if (error) throw error
+    return (data as GovernanceOverview) ?? null
+  } catch (e) {
+    console.warn('[governance] overview failed (non-blocking):', e)
+    return null
+  }
+}
+
+export async function recordBoardVote(
+  resolutionId: string,
+  votesFor: number,
+  votesAgainst: number,
+  votesAbstain = 0
+): Promise<boolean> {
+  try {
+    const { error } = await supabase.rpc('record_board_vote', {
+      p_resolution_id: resolutionId,
+      p_for: votesFor,
+      p_against: votesAgainst,
+      p_abstain: votesAbstain,
+    })
+    if (error) throw error
+    return true
+  } catch (e) {
+    console.warn('[governance] vote failed:', e)
+    return false
+  }
+}
+
+export async function cascadeBoardObjective(params: {
+  resolutionId: string
+  title: string
+  scope?: 'company' | 'department' | 'team' | 'individual'
+  departmentId?: string | null
+  ownerId?: string | null
+  parentObjectiveId?: string | null
+  periodStart?: string | null
+  periodEnd?: string | null
+  dueDate?: string | null
+}): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('cascade_board_objective', {
+      p_resolution_id: params.resolutionId,
+      p_title: params.title,
+      p_scope: params.scope ?? 'company',
+      p_department_id: params.departmentId ?? null,
+      p_owner_id: params.ownerId ?? null,
+      p_parent_objective_id: params.parentObjectiveId ?? null,
+      p_period_start: params.periodStart ?? null,
+      p_period_end: params.periodEnd ?? null,
+      p_due_date: params.dueDate ?? null,
+    })
+    if (error) throw error
+    return (data as string) ?? null
+  } catch (e) {
+    console.warn('[governance] cascade objective failed:', e)
+    return null
+  }
+}
+
+export async function fetchCascadeTree(objectiveId: string): Promise<CascadeNode[]> {
+  try {
+    const { data, error } = await supabase.rpc('objective_cascade_tree', {
+      p_root_objective_id: objectiveId,
+    })
+    if (error) throw error
+    return (data as CascadeNode[]) ?? []
+  } catch (e) {
+    console.warn('[governance] cascade tree failed (non-blocking):', e)
+    return []
+  }
+}
+
+export async function composeBoardReport(
+  businessId: string,
+  periodStart?: string,
+  periodEnd?: string
+): Promise<BoardReport | null> {
+  try {
+    const { data, error } = await supabase.rpc('compose_board_report', {
+      p_business_id: businessId,
+      p_period_start: periodStart ?? null,
+      p_period_end: periodEnd ?? null,
+    })
+    if (error) throw error
+    return (data as BoardReport) ?? null
+  } catch (e) {
+    console.warn('[governance] board report failed (non-blocking):', e)
     return null
   }
 }

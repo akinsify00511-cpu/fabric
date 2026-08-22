@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Building2, Users, Plus, Edit2, Trash2, ChevronRight,
   ChevronDown, User, MoreHorizontal, Search, RefreshCw,
-  UserPlus, Briefcase, Crown, X, Check, Filter
+  UserPlus, Briefcase, Crown, X, Check, Filter, Landmark
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
+import GovernanceSection from '../components/GovernanceSection'
 
 interface Department {
   id: string
@@ -40,6 +42,8 @@ interface Position {
 export default function OrganizationPage() {
   const { staff } = useAuth()
   const { showToast } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab') === 'governance' ? 'governance' : 'structure'
   const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
   const [departments, setDepartments] = useState<Department[]>([])
   const [teams, setTeams] = useState<Team[]>([])
@@ -189,10 +193,10 @@ export default function OrganizationPage() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-black">Organization</h1>
-            <p className="text-sm text-black">Manage departments and teams</p>
+            <p className="text-sm text-black">Structure, governance, and the people layer</p>
           </div>
         </div>
-        {isAdmin && (
+        {isAdmin && tab === 'structure' && (
           <div className="flex gap-2">
             <button
               onClick={() => { setEditingItem(null); setShowModal('dept') }}
@@ -211,6 +215,47 @@ export default function OrganizationPage() {
           </div>
         )}
       </div>
+
+      {/* Tabs: Structure = organogram (departments/teams). Governance = the
+          Board, committees, resolutions, cascade — structure, not a module. */}
+      <div className="flex gap-1 mb-6">
+        {([['structure', 'Structure', Building2], ['governance', 'Governance & Board', Landmark]] as const).map(([key, label, Icon]) => (
+          <button
+            key={key}
+            onClick={() => setSearchParams(key === 'structure' ? {} : { tab: 'governance' })}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm"
+            style={{
+              background: tab === key ? 'var(--av-primary-soft)' : 'transparent',
+              color: tab === key ? 'var(--av-primary)' : 'var(--av-text-muted)',
+              fontWeight: tab === key ? 600 : 400,
+            }}
+          >
+            <Icon size={15} /> {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'governance' ? (
+        <GovernanceSection />
+      ) : (
+      <>
+      {/* Governance organogram anchor: the Board sits ABOVE departments. */}
+      <button
+        onClick={() => setSearchParams({ tab: 'governance' })}
+        className="w-full mb-6 rounded-xl p-4 flex items-center gap-3 text-left hover:shadow-sm transition-shadow"
+        style={{ background: 'var(--av-surface)', border: '1px solid var(--av-border)' }}
+      >
+        <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white" style={{ background: 'var(--av-primary)' }}>
+          <Landmark size={17} />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold" style={{ color: 'var(--av-text)' }}>Board of Directors</p>
+          <p className="text-xs" style={{ color: 'var(--av-text-muted)' }}>
+            The top of the organogram — board, committees, resolutions, and the objective cascade live in Governance.
+          </p>
+        </div>
+        <ChevronRight size={16} style={{ color: 'var(--av-text-muted)' }} />
+      </button>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -283,6 +328,8 @@ export default function OrganizationPage() {
           colors={colors}
           departments={departments}
         />
+      )}
+      </>
       )}
     </div>
   )

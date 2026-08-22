@@ -14,6 +14,77 @@ weighed. Implications for planning:
 
 ---
 
+## Session 51 (2026-08-22): Board = governance structure, not a module (Organization & Governance)
+
+User directive: a top-level "Board of Directors" page creates the wrong mental
+model. Organogram = structure; modules = business functions. The Board belongs
+to the first. "Organization & Governance" replaces "Board Management" in the
+master checklist. Bigger principle: audit every feature that became a separate
+island — "is this a business entity/relationship, or merely a view/function
+of an existing entity?" Board→Organization/Governance; Meetings→shared
+activity layer; Documents→shared document layer; AI/Analytics→shared
+intelligence layer; Tasks→shared execution layer.
+
+### What shipped (migration 20260822120000_governance_layer.sql)
+- `board_committees` + `board_committee_members` (audit/finance/risk/
+  remuneration/strategy/nomination/other; chair+member roles).
+- `board_resolutions` — the decision register (proposed/approved/rejected/
+  tabled/withdrawn; ordinary=simple majority, special=2/3 of cast votes;
+  votes recorded; decided_at; implemented_at on first cascade).
+- `board_conflicts` — conflicts-of-interest register (active/mitigated/
+  resolved).
+- `meetings.board_committee_id` — board/committee meetings reuse the
+  canonical meetings lifecycle; NO parallel meeting system (§0.5).
+- `strategic_objectives.board_resolution_id` — provenance link. parent_id
+  (063) was already the cascade tree; objective_progress (094) the roll-up.
+- RPCs (SECURITY DEFINER, membership/owner-admin guarded): record_board_vote
+  (outcome derived server-side), cascade_board_objective (ONLY approved
+  resolutions cascade; marks implemented_at), objective_cascade_tree
+  (recursive, depth-bounded 40 cycle guard), board_governance_overview
+  (one-call governance tab), compose_board_report (AGGREGATE ONLY: health,
+  finance totals, risk profile, resolutions, board-seeded objective progress
+  with at_risk=progress+15<elapsed_pct). The board-visibility boundary is
+  CONSTRUCTION-based: the report function never references payroll/salary/
+  PII/CRM tables (mirror contract in src/lib/governance.ts
+  BOARD_REPORT_EXCLUSIONS).
+
+### Frontend
+- Organization.tsx gains tabs: Structure (existing depts/teams) + Governance
+  (?tab=governance). Structure tab opens with a "Board of Directors" organogram
+  anchor linking into Governance — the Board sits ABOVE departments.
+- src/components/GovernanceSection.tsx: board roster (Chair first), committees
+  (chair+members), resolutions (propose/vote/cascade), conflicts, Strategy &
+  Cascade (objective progress + execution tree + aggregate board report).
+  Gamified EmptyStates (§AC). Pure --av-* tokens (design constitution PASS).
+- /app/board → redirect to /app/organization?tab=governance. BoardMembers.tsx
+  DELETED (content folded into GovernanceSection; old fetchBoardMembers/
+  saveBoardMember/deleteBoardMember wrappers removed from businessOS).
+- Shell: People group gains "Organization" (toolKey people); the old
+  "Board & Directors" ownerOnly secondary link REMOVED. ROUTE_MODULE:
+  /app/organization → hr (was /app/board → self_audit).
+
+### The objective cascade (the user's core ask)
+Board decision → company objective → department objectives → team targets.
+cascade_board_objective seeds a strategic_objective with the resolution
+provenance; further cascades nest via parent_id; the report shows progress
+vs elapsed-period honestly (at_risk only with real period dates; §22).
+
+### Verified
+postgres:15 Docker: full chain applies clean; governance file idempotent
+(legacy pass-2 failures = known 54-file baseline, NOT this file). Functional
+smoke ALL PASS: vote approved (4>1) + rejected (tie), cascade creates
+objective + marks implemented_at, tree returns with provenance flag, member
+authorized:true, non-member authorized:false on BOTH overview + report,
+report has no members block (construction boundary). tsc 0, vite build 0
+warnings, vitest 683/683 (+18 governanceCascade), schema-drift 0 (both
+checkers), design-constitution PASS (burning down).
+
+### Deploy gate (unchanged)
+Migration 20260822120000 must apply to live Supabase; until then the
+Governance tab shows the honest "governance not available yet" state (§24).
+
+---
+
 ## Session 50 (2026-08-21): Performance hardening for the $100M goal
 
 User directive: bring the app to a performance level that supports the goal.
