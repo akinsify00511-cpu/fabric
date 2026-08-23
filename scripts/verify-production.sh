@@ -45,6 +45,11 @@ if [ -z "$BASE" ] || [ -z "$KEY" ]; then
   exit 2
 fi
 
+# Hand the self-calibrated values to every child process (the python verifier
+# reads SUPABASE_URL/SUPABASE_KEY from its own environment).
+export SUPABASE_URL="$BASE"
+export SUPABASE_KEY="$KEY"
+
 line ""
 line "Avenize Production Contract"
 line "────────────────────────────"
