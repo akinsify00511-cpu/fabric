@@ -241,6 +241,25 @@ checkers), design-constitution PASS (burning down).
 Migration 20260822120000 must apply to live Supabase; until then the
 Governance tab shows the honest "governance not available yet" state (§24).
 
+
+
+### Continuation 2 (organogram + deploy-gate note)
+- Organogram.tsx: governance layer strip ABOVE the staff chart — Board of
+  Directors (chair marked) + committee chips, composed from
+  board_governance_overview (best-effort, fails closed) + get_org_chart.
+  One structure: Board -> executives -> departments -> teams. Links into
+  Organization -> Governance. Organization.tsx already had the Board anchor
+  into the Governance tab. Commit ca64530 -> ed5d856 (after rebase over
+  57e6418 artifact-upload CI fix). CI success (32640938959).
+- LESSON: git push prompted for a password after a large rebase — the token
+  embedded in the remote URL went stale. Fix: git remote set-url origin
+  https://${GITHUB_TOKEN}@github.com/... (refreshes the credential).
+- Deploy Production gate (verify-production.sh, e2583ac) still FAILs on LIVE
+  drift: Payments edge fns (subscription-management/paystack-verify), Email
+  edge fns (email-service/resend-webhook), Database/RPC contract — the
+  pending-migrations blocker from LIVE_DB_APPLY_RUNBOOK.md. Vercel frontend
+  deploy itself succeeds (Frontend PASS).
+
 ---
 
 ## Session 50 (2026-08-21): Performance hardening for the $100M goal
