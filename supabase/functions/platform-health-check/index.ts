@@ -97,7 +97,7 @@ serve(async (req) => {
 
   // After writing, trigger the alert evaluator so incidents open/close
   // immediately rather than waiting for the next 3-min pg_cron tick.
-  await supabase.rpc('evaluate_platform_alerts').catch(() => {
+  await Promise.resolve(supabase.rpc('evaluate_platform_alerts')).catch(() => {
     // best-effort; the pg_cron job will pick it up regardless.
   })
 
