@@ -59,7 +59,7 @@ if python3 scripts/verify_production_contract.py --frontend-only > /tmp/avenize-
   pass "Database" "all frontend-referenced tables/views present"
   pass "RPC contracts" "all frontend-referenced RPCs present, signatures match"
 else
-  grep -E '^\s+\[' /tmp/avenize-contract-check.txt | head -15
+  cat /tmp/avenize-contract-check.txt | head -40
   fail "Database/RPC" "contract broken — see supabase/contract/verification_report.json"
 fi
 

@@ -277,6 +277,7 @@ def main():
         "unknown": results["unknown"],
         "edge_functions": edge_results,
     }
+    Path(args.json_out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.json_out).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
     print("Avenize Production Contract")
