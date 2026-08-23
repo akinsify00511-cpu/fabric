@@ -126,8 +126,8 @@ user's SUPABASE_DB_URL (same gate as all prior sessions).
 ### Gate plumbing lessons (reusable)
 - PostgREST root (/rest/v1/) returns 401 to publishable keys — never use
   it as a reachability probe. Probe per-object: table HEAD 200/404, RPC
-  POST {} → "no matches found in the schema cache" = missing. (Session
-  19's live-RPC lesson now codified in scripts/verify_production_contract.py.)
+  POST {} → PGRST202 = missing. (Session 19's live-RPC lesson now
+  codified in scripts/verify_production_contract.py.)
 - A generated artifact committed to CI must be DETERMINISTIC — dropping
   the `generated_at` timestamp from the contract manifest fixed the
   contract-manifest gate (regenerate → git diff must be empty).
@@ -168,9 +168,10 @@ edge deploy + secrets remain user-credential-gated.
 - **paystack-webhook live-verified healthy**: OPTIONS → 204, unsigned POST →
   401 from its own HMAC gate (platform JWT correctly OFF). The other 11 edge
   functions have never been deployed.
-- LIVE_DB_APPLY_RUNBOOK.md: drift baseline (320 ok / 114 missing / 11 of 12
-  edge functions missing) + Step 4 (edge deploy + secrets) + Step 5 (the two
-  gates as the definition of done).
+- LIVE_DB_APPLY_RUNBOOK.md: drift baseline (129 ok / 305 missing / 11 of 12
+  edge functions missing — corrected 2026-08-23 after the PGRST202 detection
+  fix) + Step 4 (edge deploy + secrets) + Step 5 (the two gates as the
+  definition of done).
 
 Verified: deno check 12/12 clean, tsc 0, vitest 713/713, schema-drift OK,
 design-constitution PASS, manifest deterministic, ci.yml YAML-valid. CI green
@@ -180,8 +181,8 @@ incl. the new edge-functions job (20s). Rebased over parallel commit 65a7bb5
 ### Gate plumbing lessons (reusable)
 - PostgREST root (/rest/v1/) returns 401 to publishable keys — never use
   it as a reachability probe. Probe per-object: table HEAD 200/404, RPC
-  POST {} → "no matches found in the schema cache" = missing. (Session
-  19's live-RPC lesson now codified in scripts/verify_production_contract.py.)
+  POST {} → PGRST202 = missing. (Session 19's live-RPC lesson now
+  codified in scripts/verify_production_contract.py.)
 - A generated artifact committed to CI must be DETERMINISTIC — dropping
   the `generated_at` timestamp from the contract manifest fixed the
   contract-manifest gate (regenerate → git diff must be empty).
@@ -194,6 +195,13 @@ incl. the new edge-functions job (20s). Rebased over parallel commit 65a7bb5
 - Supabase PostgREST builders are thenables, not Promises: `.catch()` is a
   type error at compile time even though it "works" at runtime. Wrap in
   `Promise.resolve(...)` first.
+- **Never match a full PostgREST error sentence.** The missing-function
+  message is "no matches were found in the schema cache" on some versions
+  and "no matches found" on others — an exact-sentence match false-negatived
+  191 missing functions as "ok" (2026-08-23 fix; true baseline is 129 ok /
+  305 missing). Match stable fragments ("no matches" + "schema cache") or
+  the PGRST202 code, and verify a probe's verdict with one direct curl
+  before trusting a summary count.
 
 ---
 

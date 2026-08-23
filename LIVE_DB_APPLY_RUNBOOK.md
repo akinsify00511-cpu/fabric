@@ -106,18 +106,25 @@ query for each.)
   but the newer edge functions (`capture-process`, `webauthn`, `api-gateway`)
   will also need a first deploy if they have never been pushed.
 
-## Current drift baseline (2026-08-22, contract probe via publishable key)
+## Current drift baseline (2026-08-23, contract probe via publishable key)
 
 The Production Contract comparator (`scripts/verify_production_contract.py`,
 probe mode) reports the live project as:
 
-- **320 frontend-referenced objects OK / 114 missing / 0 signature drift**
+- **129 frontend-referenced objects OK / 305 missing / 0 signature drift**
+  (105 tables + 2 views + 191 functions + 7 storage buckets)
 - **11 of 12 edge functions missing** (only `paystack-webhook` is deployed,
   and verified healthy: OPTIONS → 204, unsigned POST → 401 from its own
   HMAC check — i.e. platform JWT is correctly OFF and the signature gate
   works. The other 11 need a first deploy via
   `scripts/deploy_edge_functions.sh`, which sets the correct per-function
   JWT policy)
+
+> Detection fix (2026-08-23): an earlier probe matched the exact sentence
+> "no matches found in the schema cache", but this PostgREST version says
+> "no matches **were** found" — a false-negative that hid 191 missing
+> functions (reported as 320 ok / 114 missing). Detection now matches the
+> stable fragments / the PGRST202 code.
 
 ## Step 4 — deploy edge functions + secrets (after Step 1)
 

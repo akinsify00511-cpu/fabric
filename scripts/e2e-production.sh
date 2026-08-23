@@ -42,14 +42,31 @@ AUTH=(-H "apikey: $KEY" -H "Content-Type: application/json")
 rpc() { # rpc <name> <token-or-empty> <json>
   local auth=()
   [ -n "$2" ] && auth=(-H "Authorization: Bearer $2")
-  curl -s -X POST "$BASE/rest/v1/rpc/$1" "${AUTH[@]}" "${auth[@]}" -d "$3"
+  curl -s -X POST "$BASE/rest/v1/rpc/$1" "${AUTH[@]}" ${auth[@]+"${auth[@]}"} -d "$3"
 }
 
 line ""
 line "Avenize E2E Production Journey"
 line "──────────────────────────────"
 
-# --- 1. signup (fresh account) ---
+# RPC existence is checkable WITHOUT a session (PGRST body detection) — this
+# is the contract half and must hard-fail in every environment.
+rpc_exists() { # rpc_exists <name>
+  local body
+  body=$(rpc "$1" "" "{}")
+  ! printf '%s' "$body" | grep -qE "no matches.*schema cache|PGRST202"
+}
+
+# --- 0. contract: RPCs the journeys depend on must EXIST ---
+for FN in create_business_and_owner business_brain current_metrics open_recommendations my_payment_request; do
+  if rpc_exists "$FN"; then
+    pass "contract/rpc" "$FN exists"
+  else
+    fail "contract/rpc" "$FN MISSING (PGRST202) — live DB not migrated"
+  fi
+done
+
+# --- 1. signup / login (obtain a session for the authenticated journeys) ---
 EMAIL="${E2E_EMAIL:-e2e-$(date +%s)@avenize-e2e.test}"
 PASSWORD="${E2E_PASSWORD:-E2e!$(date +%s | tail -c 9)aZ}"
 SIGNUP=$(curl -s -X POST "$BASE/auth/v1/signup" "${AUTH[@]}" \
@@ -57,27 +74,24 @@ SIGNUP=$(curl -s -X POST "$BASE/auth/v1/signup" "${AUTH[@]}" \
 TOKEN=$(printf '%s' "$SIGNUP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token') or '')" 2>/dev/null)
 if [ -n "$TOKEN" ]; then
   pass "signup" "session issued for $EMAIL"
-else
-  # Email confirmation enabled — try login with a provided account instead.
-  if [ -n "${E2E_EMAIL:-}" ]; then
-    LOGIN=$(curl -s -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" \
-      -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
-    TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token') or '')" 2>/dev/null)
-  fi
+elif [ -n "${E2E_EMAIL:-}" ]; then
+  LOGIN=$(curl -s -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" \
+    -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+  TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token') or '')" 2>/dev/null)
   if [ -n "$TOKEN" ]; then
     pass "signup" "email-confirm on; logged in provided account"
   else
-    fail "signup" "no session (email confirmation on and no E2E_EMAIL provided)"
+    fail "signup" "provided E2E_EMAIL could not log in"
   fi
+else
+  line "signup                 SKIP  email confirmation on; set E2E_EMAIL/E2E_PASSWORD secrets to run authenticated journeys"
 fi
 
 # --- 2. onboarding (create business) ---
 if [ -n "$TOKEN" ]; then
   OB=$(rpc create_business_and_owner "$TOKEN" \
     "{\"p_business_name\":\"E2E Contract Test $(date +%s)\",\"p_owner_name\":\"E2E Bot\",\"p_industry\":\"testing\"}")
-  if printf '%s' "$OB" | grep -q "no matches found in the schema cache"; then
-    fail "onboarding" "create_business_and_owner MISSING (PGRST202) — live DB not migrated"
-  elif printf '%s' "$OB" | grep -qiE '"id"|business_id|already'; then
+  if printf '%s' "$OB" | grep -qiE '"id"|business_id|already'; then
     pass "onboarding" "business created (or account already onboarded)"
   else
     fail "onboarding" "unexpected: $(printf '%s' "$OB" | head -c 120)"
@@ -95,11 +109,11 @@ if [ -n "$TOKEN" ]; then
   fi
 fi
 
-# --- 4. dashboard intelligence RPCs ---
+# --- 4. dashboard intelligence RPCs respond for a member ---
 for FN in business_brain current_metrics open_recommendations; do
   if [ -n "$TOKEN" ]; then
     R=$(rpc "$FN" "$TOKEN" "{}")
-    if printf '%s' "$R" | grep -q "no matches found in the schema cache"; then
+    if printf '%s' "$R" | grep -qE "no matches.*schema cache|PGRST202"; then
       fail "intelligence" "$FN MISSING"
     else
       pass "intelligence" "$FN responds"
@@ -110,7 +124,7 @@ done
 # --- 5. payment rail: manual bank-transfer flow (existing) ---
 if [ -n "$TOKEN" ]; then
   R=$(rpc my_payment_request "$TOKEN" "{}")
-  if printf '%s' "$R" | grep -q "no matches found in the schema cache"; then
+  if printf '%s' "$R" | grep -qE "no matches.*schema cache|PGRST202"; then
     fail "payments/manual" "my_payment_request MISSING"
   else
     pass "payments/manual" "manual bank-transfer rail responds"
