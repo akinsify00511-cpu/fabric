@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
+import { fetchGovernanceOverview, type GovernanceOverview } from '../lib/businessOS'
 import {
   Network, Users, ChevronDown, ChevronRight, Mail, MessageSquare,
   Phone, MoreVertical, Plus, Settings, RefreshCw, Search,
-  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2, PlusCircle
+  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2, PlusCircle,
+  Landmark, GitBranch,
 } from 'lucide-react'
 
 type OrgNode = {
@@ -38,6 +40,7 @@ export default function Organogram() {
   const [loading, setLoading] = useState(true)
   const [orgChart, setOrgChart] = useState<OrgNode[]>([])
   const [channels, setChannels] = useState<ReportingChannel[]>([])
+  const [governance, setGovernance] = useState<GovernanceOverview | null>(null)
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
   const [selectedNode, setSelectedNode] = useState<OrgNode | null>(null)
   const [view, setView] = useState<'org' | 'channels' | 'departments'>('org')
@@ -59,6 +62,12 @@ export default function Organogram() {
 
     // Load org chart
     const { data: orgData } = await supabase.rpc('get_org_chart')
+
+    // Governance layer (board + committees) — best-effort, fails closed.
+    if (staff?.business_id) {
+      const gov = await fetchGovernanceOverview(staff.business_id)
+      setGovernance(gov && gov.authorized ? gov : null)
+    }
 
     if (orgData && orgData.length > 0) {
       setOrgChart(orgData)
@@ -294,6 +303,53 @@ export default function Organogram() {
               </div>
             ))}
           </div>
+
+          {/* Governance layer — the Board sits ABOVE the executive org chart.
+              Same structure, not a separate module (master directive). */}
+          {governance && (governance.members?.length ?? 0) > 0 && (
+            <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold flex items-center gap-2 text-[var(--av-text)]">
+                  <Landmark size={15} className="text-[var(--av-primary)]" />
+                  Board of Directors
+                </h2>
+                <button
+                  onClick={() => navigate('/app/organization?tab=governance')}
+                  className="text-xs text-[var(--av-primary)] hover:underline"
+                >
+                  Governance →
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(governance.members ?? []).map(m => (
+                  <div
+                    key={m.id}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs"
+                    style={{ background: 'var(--av-primary-soft)', color: 'var(--av-text)' }}
+                  >
+                    {m.title === 'Chair' && <Crown size={12} className="text-[var(--av-warning)]" />}
+                    <span className="font-medium">{m.name}</span>
+                    <span className="text-[var(--av-text-muted)]">{m.title}</span>
+                  </div>
+                ))}
+              </div>
+              {(governance.committees?.length ?? 0) > 0 && (
+                <div className="mt-3 pt-3 border-t border-[var(--av-border)] flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-[var(--av-text-muted)] flex items-center gap-1">
+                    <GitBranch size={12} /> Committees:
+                  </span>
+                  {(governance.committees ?? []).map(c => (
+                    <span
+                      key={c.id}
+                      className="text-xs px-2 py-0.5 rounded-full border border-[var(--av-border)] text-[var(--av-text)]"
+                    >
+                      {c.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Org Chart */}
           <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-6 overflow-x-auto">

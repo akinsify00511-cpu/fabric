@@ -139,10 +139,24 @@ jobs:
           # EXCEPTION on failure, so ON_ERROR_STOP fails the job on any leak.
           psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/04_rls_attack_suite.sql
 
+  # Edge functions run on Deno, which does not type-check at runtime — a
+  # broken type only surfaces when the function is invoked in production.
+  # This gate runs `deno check` on every function pre-merge.
+  edge-functions:
+    name: Edge Functions Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: bash scripts/check_edge_functions.sh
+        name: deno check every edge function
+
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [typecheck, lint, unit-tests, database-tests, schema-drift, design-constitution]
+    needs: [typecheck, lint, unit-tests, database-tests, schema-drift, design-constitution, edge-functions]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

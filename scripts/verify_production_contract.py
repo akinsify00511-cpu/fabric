@@ -108,7 +108,7 @@ def main():
     # --- PostgREST probing. Preferred: root OpenAPI spec (elevated key).
     # The root returns 401 to publishable keys by design, so publishable-key
     # runs fall back to per-object HEAD/POST probes. RPC existence is decided
-    # from the PGRST error body ("no matches found in the schema cache" =
+    # from the PGRST error body ("no matches...schema cache" / PGRST202 =
     # missing; anything else = present). Signature drift needs the spec;
     # probe-mode RPCs without spec are reported as existence-only.
 
@@ -146,8 +146,10 @@ def main():
             code = e.code
         except Exception:
             return None
-        excepted = "no matches found in the schema cache"
-        if excepted in body_txt:
+        # PostgREST phrases this differently across versions ("no matches
+        # found" vs "no matches were found") — match on the stable fragments
+        # or the PGRST202 code, never the full sentence.
+        if ("no matches" in body_txt and "schema cache" in body_txt) or '"PGRST202"' in body_txt:
             return False
         return code is not None and not (code == 404 and "not found" in body_txt.lower())
 

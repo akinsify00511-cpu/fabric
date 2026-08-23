@@ -94,6 +94,19 @@ jobs:
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           APP_URL: https://avenize.riverwayse.com
 
+      # Phase 6: journey-level smoke. verify-production.sh checks that OBJECTS
+      # exist; this checks the real journeys behave (signup -> onboarding ->
+      # membership -> intelligence -> payment rails -> email rail -> frontend).
+      # Runs even when the contract gate failed so both reports are visible in
+      # the same run; its own exit code also fails the job.
+      - name: Production E2E journey test
+        if: always()
+        run: bash scripts/e2e-production.sh
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          APP_URL: https://avenize.riverwayse.com
+
       - name: Upload verification report
         if: always()
         uses: actions/upload-artifact@v4

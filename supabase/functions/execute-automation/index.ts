@@ -21,6 +21,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -38,6 +39,7 @@ interface Automation {
   name: string
   trigger_type: string
   trigger_config: Record<string, unknown>
+  run_count: number
   action_type: string
   action_config: Record<string, unknown>
   enabled: boolean
@@ -151,10 +153,10 @@ serve(async (req) => {
           })
 
           // Update automation stats
-          await supabase.rpc('increment_automation_stats', {
+          await Promise.resolve(supabase.rpc('increment_automation_stats', {
             auto_id: automation.id,
             run_duration: duration,
-          }).catch(() => {
+          })).catch(() => {
             // Fallback if RPC doesn't exist
             supabase.from('automations').update({
               run_count: automation.run_count + 1,
@@ -208,7 +210,7 @@ serve(async (req) => {
 // ACTION HANDLERS
 
 async function executeSendNotification(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   automation: Automation,
   payload: Record<string, unknown>
 ) {
@@ -242,7 +244,7 @@ async function executeSendNotification(
 }
 
 async function executeCreateTask(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   automation: Automation,
   payload: Record<string, unknown>
 ) {
@@ -270,7 +272,7 @@ async function executeCreateTask(
 }
 
 async function executePostToChat(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   automation: Automation,
   payload: Record<string, unknown>
 ) {
@@ -291,7 +293,7 @@ async function executePostToChat(
 }
 
 async function executeAwardMerit(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   automation: Automation,
   payload: Record<string, unknown>
 ) {
@@ -315,7 +317,7 @@ async function executeAwardMerit(
 }
 
 async function executeUpdateDeal(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   automation: Automation,
   payload: Record<string, unknown>
 ) {

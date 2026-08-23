@@ -85,7 +85,9 @@ export async function verifySvixSignature(
   if (Math.abs(Math.floor(Date.now() / 1000) - ts) > toleranceSeconds) return false
 
   const secretBytes = secret.startsWith('whsec_') ? base64ToBytes(secret.slice(6)) : new TextEncoder().encode(secret)
-  const key = await crypto.subtle.importKey('raw', secretBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
+  // new Uint8Array(...) narrows Uint8Array<ArrayBufferLike> to Uint8Array<ArrayBuffer>
+  // (TS 5.7 typed-array generics vs WebCrypto BufferSource).
+  const key = await crypto.subtle.importKey('raw', new Uint8Array(secretBytes), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
   const digest = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`${svixId}.${svixTimestamp}.${rawBody}`))
   const expected = bytesToBase64(new Uint8Array(digest))
 

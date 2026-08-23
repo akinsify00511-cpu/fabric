@@ -105,3 +105,61 @@ query for each.)
   (`supabase functions deploy`) — the console errors above are all DB-side,
   but the newer edge functions (`capture-process`, `webauthn`, `api-gateway`)
   will also need a first deploy if they have never been pushed.
+
+## Current drift baseline (2026-08-23, contract probe via publishable key)
+
+The Production Contract comparator (`scripts/verify_production_contract.py`,
+probe mode) reports the live project as:
+
+- **129 frontend-referenced objects OK / 305 missing / 0 signature drift**
+  (105 tables + 2 views + 191 functions + 7 storage buckets)
+- **11 of 12 edge functions missing** (only `paystack-webhook` is deployed,
+  and verified healthy: OPTIONS → 204, unsigned POST → 401 from its own
+  HMAC check — i.e. platform JWT is correctly OFF and the signature gate
+  works. The other 11 need a first deploy via
+  `scripts/deploy_edge_functions.sh`, which sets the correct per-function
+  JWT policy)
+
+> Detection fix (2026-08-23): an earlier probe matched the exact sentence
+> "no matches found in the schema cache", but this PostgREST version says
+> "no matches **were** found" — a false-negative that hid 191 missing
+> functions (reported as 320 ok / 114 missing). Detection now matches the
+> stable fragments / the PGRST202 code.
+
+## Step 4 — deploy edge functions + secrets (after Step 1)
+
+```bash
+export SUPABASE_ACCESS_TOKEN=<dashboard → Account → Access Tokens>
+bash scripts/deploy_edge_functions.sh          # all 12, correct JWT policy per function
+
+supabase secrets set \
+  PAYSTACK_SECRET_KEY=sk_live_... \
+  RESEND_API_KEY=re_... \
+  EMAIL_FROM="Avenize <hello@avenize.app>" \
+  RESEND_WEBHOOK_SECRET=whsec_... \
+  APP_URL=https://avenize.riverwayse.com \
+  EMAIL_SERVICE_CRON_SECRET=<random> \
+  PLATFORM_HEALTH_CRON_SECRET=<random> \
+  --project-ref kgsgqvatyleetyquffya
+```
+
+## Step 5 — production contract + E2E gates (the definition of "done")
+
+```bash
+bash scripts/verify-production.sh   # objects: expect PRODUCTION READY
+bash scripts/e2e-production.sh      # journeys: expect E2E READY
+```
+
+`verify-production.sh` self-calibrates the publishable URL+key from the
+deployed bundle, so no credentials are needed for the object gate. The deploy
+workflow runs it on every production deploy — it stays RED until Steps 1–4
+are complete. That is the gate working as intended.
+
+`e2e-production.sh` exercises the real journeys (signup → onboarding →
+membership → dashboard intelligence → manual + Paystack payment rails →
+email rail → frontend). With email confirmation enabled, pass a confirmed
+test account for the authenticated steps:
+
+```bash
+E2E_EMAIL=... E2E_PASSWORD=... bash scripts/e2e-production.sh
+```
