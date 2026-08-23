@@ -90,8 +90,6 @@ jobs:
       - name: Production contract verification
         run: bash scripts/verify-production.sh
         env:
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           APP_URL: https://avenize.riverwayse.com
 
       # Phase 6: journey-level smoke. verify-production.sh checks that OBJECTS
