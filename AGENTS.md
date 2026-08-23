@@ -135,6 +135,66 @@ user's SUPABASE_DB_URL (same gate as all prior sessions).
   + key from the deployed bundle (it is embedded there by design; RLS is
   the boundary) — never require a service-role key for a smoke gate.
 
+### Session 51 continuation 2 (2026-08-23): edge-function type gate + deploy script + Phase 6 e2e (commit aff94b6)
+
+User said "continue". Closed the remaining code-side gaps; live DB apply +
+edge deploy + secrets remain user-credential-gated.
+
+- **deno check on all 12 edge functions** (Deno runtime does NOT type-check —
+  broken types only surfaced on invocation). Found + fixed 4 real defects:
+  `_shared/emailRender.ts` `Uint8Array<ArrayBufferLike>` vs WebCrypto
+  `BufferSource` (TS 5.7 typed-array generics; broke email-service +
+  resend-webhook at type level); PostgREST thenable `.catch()` misuse in
+  platform-health-check + execute-automation (builders are thenables, not
+  Promises — wrap in `Promise.resolve(...)`); execute-automation's
+  `ReturnType<typeof createClient>` resolving to the never-schema overload
+  (12 downstream errors — use bare `SupabaseClient` for helper params).
+- `scripts/check_edge_functions.sh` + CI job `edge-functions`
+  (`denoland/setup-deno@v2`, `--node-modules-dir=none` because the repo-root
+  package.json would otherwise force node_modules resolution). `build` now
+  needs it. deno.lock committed for reproducibility.
+- `scripts/deploy_edge_functions.sh`: user-runnable deploy of all 12
+  functions with the **correct per-function platform JWT policy** (verified
+  against each function's code): verify-jwt ON for browser-JWT functions
+  (ask-avenize, parse-intent, paystack-verify, subscription-management);
+  `--no-verify-jwt` for HMAC (paystack/resend webhooks), shared-secret
+  (execute-automation, platform-health-check, email-service, dispatch-
+  webhooks), self-authed (api-gateway), and mixed-flow (webauthn pre-auth
+  ceremony) functions.
+- `scripts/e2e-production.sh`: the Phase 6 journey test (signup → onboarding
+  → membership → dashboard intelligence → manual + Paystack payment rails →
+  email rail → frontend). Self-calibrates from the deployed bundle like
+  verify-production.sh. Live run honestly reports E2E NOT READY.
+- **paystack-webhook live-verified healthy**: OPTIONS → 204, unsigned POST →
+  401 from its own HMAC gate (platform JWT correctly OFF). The other 11 edge
+  functions have never been deployed.
+- LIVE_DB_APPLY_RUNBOOK.md: drift baseline (320 ok / 114 missing / 11 of 12
+  edge functions missing) + Step 4 (edge deploy + secrets) + Step 5 (the two
+  gates as the definition of done).
+
+Verified: deno check 12/12 clean, tsc 0, vitest 713/713, schema-drift OK,
+design-constitution PASS, manifest deterministic, ci.yml YAML-valid. CI green
+incl. the new edge-functions job (20s). Rebased over parallel commit 65a7bb5
+(organogram Board layer) — 5th parallel-session collision, same protocol.
+
+### Gate plumbing lessons (reusable)
+- PostgREST root (/rest/v1/) returns 401 to publishable keys — never use
+  it as a reachability probe. Probe per-object: table HEAD 200/404, RPC
+  POST {} → "no matches found in the schema cache" = missing. (Session
+  19's live-RPC lesson now codified in scripts/verify_production_contract.py.)
+- A generated artifact committed to CI must be DETERMINISTIC — dropping
+  the `generated_at` timestamp from the contract manifest fixed the
+  contract-manifest gate (regenerate → git diff must be empty).
+- When secrets are unavailable in CI, self-calibrate the publishable URL
+  + key from the deployed bundle (it is embedded there by design; RLS is
+  the boundary) — never require a service-role key for a smoke gate.
+- Deno at the repo root discovers the root package.json and tries
+  node_modules resolution for npm: specifiers — pass
+  `--node-modules-dir=none` for edge-function checks from the repo root.
+- Supabase PostgREST builders are thenables, not Promises: `.catch()` is a
+  type error at compile time even though it "works" at runtime. Wrap in
+  `Promise.resolve(...)` first.
+
 ---
 
 ## Standing business benchmark (2026-08-21, user-set)
