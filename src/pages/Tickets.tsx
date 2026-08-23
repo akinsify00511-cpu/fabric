@@ -165,15 +165,23 @@ export default function Tickets() {
       loadTicketDetails(selectedTicket)
       // Update ticket status to in_progress if open
       if (selectedTicket.status === 'open') {
-        await supabase.from('tickets').update({ status: 'in_progress' }).eq('id', selectedTicket.id)
-        setSelectedTicket({ ...selectedTicket, status: 'in_progress' })
-        loadTickets()
+        const { error: statusErr } = await supabase.from('tickets').update({ status: 'in_progress' }).eq('id', selectedTicket.id)
+        if (statusErr) {
+          showToast('Reply sent, but ticket status could not be updated', 'error')
+        } else {
+          setSelectedTicket({ ...selectedTicket, status: 'in_progress' })
+          loadTickets()
+        }
       }
     }
   }
 
   const updateStatus = async (ticketId: string, status: TicketType['status']) => {
-    await supabase.from('tickets').update({ status, resolved_at: status === 'resolved' ? new Date().toISOString() : null }).eq('id', ticketId)
+    const { error } = await supabase.from('tickets').update({ status, resolved_at: status === 'resolved' ? new Date().toISOString() : null }).eq('id', ticketId)
+    if (error) {
+      showToast('Failed to update status', 'error')
+      return
+    }
     showToast(`Status updated to ${STATUS_CONFIG[status].label}`, 'success')
     if (selectedTicket?.id === ticketId) {
       setSelectedTicket({ ...selectedTicket, status })
@@ -182,7 +190,11 @@ export default function Tickets() {
   }
 
   const assignTicket = async (ticketId: string, assigneeId: string) => {
-    await supabase.from('tickets').update({ assignee_id: assigneeId }).eq('id', ticketId)
+    const { error } = await supabase.from('tickets').update({ assignee_id: assigneeId }).eq('id', ticketId)
+    if (error) {
+      showToast('Failed to assign ticket', 'error')
+      return
+    }
     showToast('Ticket assigned', 'success')
     loadTickets()
     if (selectedTicket?.id === ticketId) {

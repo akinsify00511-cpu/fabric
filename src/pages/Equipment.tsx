@@ -38,10 +38,14 @@ export default function Equipment() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    await supabase.from('equipment').insert({
+    const { error } = await supabase.from('equipment').insert({
       ...form,
       business_id: businessId,
     })
+    if (error) {
+      showToast('Failed to add equipment', 'error')
+      return
+    }
     showToast('Equipment added!', 'success')
     setShowForm(false)
     setForm({ name: '', equipment_type: 'general', serial_number: '', location: '' })

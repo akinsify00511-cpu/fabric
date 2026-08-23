@@ -122,7 +122,11 @@ export default function APISettings() {
   const deleteApiKey = async (key: APIKey) => {
     if (!confirm(`Delete API key "${key.name}"? This cannot be undone.`)) return
 
-    await supabase.from('api_keys').delete().eq('id', key.id)
+    const { error } = await supabase.from('api_keys').delete().eq('id', key.id)
+    if (error) {
+      showToast('Failed to revoke key', 'error')
+      return
+    }
     showToast('API key deleted', 'info')
     loadData()
   }
@@ -182,7 +186,11 @@ export default function APISettings() {
   const deleteWebhook = async (webhook: Webhook) => {
     if (!confirm(`Delete webhook "${webhook.name}"?`)) return
 
-    await supabase.from('webhooks').delete().eq('id', webhook.id)
+    const { error } = await supabase.from('webhooks').delete().eq('id', webhook.id)
+    if (error) {
+      showToast('Failed to delete webhook', 'error')
+      return
+    }
     showToast('Webhook deleted', 'info')
     loadData()
   }
