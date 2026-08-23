@@ -178,7 +178,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium webkit
       - name: Run Playwright tests
         run: npm run test:e2e
       - name: Upload Playwright Report

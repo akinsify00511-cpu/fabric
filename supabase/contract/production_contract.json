@@ -4128,7 +4128,7 @@
       "defined_in": "20260822125000_manual_payment_flow.sql",
       "repairable": false,
       "security_sensitive": true,
-      "frontend_referenced": true,
+      "frontend_referenced": false,
       "signatures": [
         ""
       ]
@@ -6764,7 +6764,7 @@
       "defined_in": "20260822125000_manual_payment_flow.sql",
       "repairable": false,
       "security_sensitive": true,
-      "frontend_referenced": true,
+      "frontend_referenced": false,
       "signatures": [
         ""
       ]
@@ -10716,7 +10716,6 @@
       "business_relationships",
       "business_value_ledger",
       "can_access_module",
-      "cancel_payment_request",
       "cancel_subscription",
       "capacity_intelligence",
       "cascade_board_objective",
@@ -10817,7 +10816,6 @@
       "market_intelligence",
       "meeting_analytics",
       "monthly_review",
-      "my_payment_request",
       "next_best_action",
       "objective_cascade_tree",
       "objective_gap_analysis",
