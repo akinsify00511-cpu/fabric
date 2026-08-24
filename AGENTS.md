@@ -4161,3 +4161,59 @@ by-email finds both transactions, non-admin {authorized:false}.
 - A5/A6/A7/A10 — real payment smoke, E2E green, email rail live, auth
   certification: all follow automatically once A1+A2 are done; the gates
   already honestly refuse to certify until then.
+
+## Session 54b (2026-08-24): Meta Pixel hardening — consent gate + server CAPI Purchase + platform ad→revenue (PR #27)
+
+Parallel-session collision (6th): while building the Meta Pixel + ad→revenue
+layer locally, the parallel session pushed 27fb2ac (browser pixel, per-business
+attribution_revenue, payment investigation, opt-in auto-rollback) to main.
+Resolved per the Session-35 protocol: reset onto origin/main, kept their work
+intact, applied ONLY the genuinely additive parts.
+
+### What shipped (PR #27, on top of 27fb2ac)
+- **Consent gating** (the parallel pixel ignored the cookie banner's marketing
+  toggle): metaPixel.ensureInit() requires marketing consent; CookieConsent
+  broadcasts `avenize:consent-changed` on save AND on mount-with-stored-choice;
+  subscribeToConsentChanges() initializes the pixel the moment consent arrives.
+  No consent → no fbq, no script, even with VITE_META_PIXEL_ID set.
+- **Meta click ids**: attribution.ts captures utm_content/utm_term/fbclid,
+  computes fbc (fb.1.<ts>.<fbclid>) at capture, prefers live _fbp/_fbc cookies
+  at checkout; paymentsCore.sanitizeAttribution allowlist extended (content/
+  term/fbclid/fbc/fbp) so ids flow into payment_transactions.metadata.
+- **CAPI Purchase**: paystack-webhook fires the server-authoritative Purchase
+  after VERIFIED settlement (exactly once — the settled-ledger guard
+  short-circuits redeliveries; best-effort so CAPI failure never breaks
+  settlement). paymentsCore.buildCapiPurchaseEvent: SHA-256-hashed email
+  (never raw), kobo→naira, fbc/fbp with fbclid fallback, event_source_url.
+  Browser trackPurchase passes eventID = payment reference → Meta dedupes
+  browser + server signals.
+- **Platform-level report**: marketing_attribution_report() (migration
+  20260824170000 — renumbered, parallel took 150000/160000) =
+  is_platform_admin-gated, aggregate-only (#21) cross-business signups →
+  checkouts → purchases → revenue per (source, medium, campaign). Builder
+  Dashboard section (best-effort §24). Complements (not replaces) the
+  per-business attribution_revenue (owner view).
+- Runbook Step 4: META_PIXEL_ID + META_CAPI_ACCESS_TOKEN edge secrets for the
+  paystack-webhook. VITE_META_PIXEL_ID stays a public build-time env var.
+
+### Verified
+tsc 0, vite build 0 warnings, vitest 761/761 (+22), schema-drift 0,
+design-constitution PASS, deno check 12/12, contract manifest regenerated
+(949 objects, deterministic), full chain (incl. parallel 20260824150000/
+160000) applies clean + idempotent on postgres:15, functional smoke (admin
+aggregates correct: 3 signups/4 checkouts/3 purchases/₦510,000; tenant +
+anonymous fail closed authorized:false). PR CI: Type Check/Lint/Unit/E2E/
+Edge Functions/Migrations/Schema Drift/Design Constitution all PASS.
+
+### Reusable lesson
+- When rebasing onto a parallel implementation with the SAME module names
+  (metaPixel.ts, sanitizeAttribution), extend their API in place rather than
+  replacing — their call sites (Landing/Signup/Pricing/Premium/Subscription)
+  and tests keep working; additive tests append to their test file.
+- Their pixel test contract needed updating for the consent gate: every
+  "pixel id configured" test must also grant marketing consent
+  (localStorage cookie_consent {marketing:true}) or ensureInit() returns
+  false — that's the gate working, not a regression.
+- object-literal spread + override pattern (`{ defaults, ...parsed, fbc: x }`)
+  trips TS1117 when the same key appears literally before AND after the
+  spread — keep only the post-spread occurrence.
