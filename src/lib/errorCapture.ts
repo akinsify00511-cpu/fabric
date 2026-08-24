@@ -4,6 +4,8 @@
  * to capture context for bug reports
  */
 
+import { captureException } from './sentry'
+
 // Maximum number of errors to keep in buffer
 const MAX_ERRORS = 10
 
@@ -95,6 +97,14 @@ export function initErrorCapture(): void {
       severity: 'error',
     })
 
+    // Sentry (no-op unless VITE_SENTRY_DSN is configured).
+    captureException(error ?? new Error(String(message)), {
+      source: 'window.onerror',
+      filename: source,
+      lineno,
+      colno,
+    })
+
     return false // Let default handler run too
   }
 
@@ -120,6 +130,11 @@ export function initErrorCapture(): void {
       message: error?.message || String(error),
       stack: error?.stack,
       severity: 'error',
+    })
+
+    // Sentry (no-op unless VITE_SENTRY_DSN is configured).
+    captureException(error instanceof Error ? error : new Error(String(error)), {
+      source: 'unhandledrejection',
     })
   }
 

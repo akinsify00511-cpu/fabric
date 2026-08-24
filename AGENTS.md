@@ -3972,3 +3972,47 @@ access — verify every factual claim against the tree before believing it.
   apply + subscription-management/paystack-verify edge deploys +
   PAYSTACK_SECRET_KEY, then the plan × billing-cycle smoke matrix (the
   browser never decides payment success).
+
+## Session 53 (2026-08-24): Sentry runtime error reporting (PR #26)
+
+User asked to "create sentry for catching building error". The old
+sentryLazy.ts from Session 50 no longer exists — built fresh.
+
+### What shipped (branch feat/sentry-runtime-error-reporting, PR #26)
+- @sentry/react ^10.70.0 (only new runtime dep).
+- src/lib/sentry.ts: DSN-gated wrapper — without VITE_SENTRY_DSN every call
+  is a synchronous no-op and rolldown ELIMINATES the SDK from the bundle
+  entirely (import.meta.env is statically replaced, so the DSN check is
+  compile-time DCE). With a DSN the SDK loads via dynamic import during
+  requestIdleCallback; pre-init calls queue (bounded 25) and flush on init.
+  defaultIntegrations: false (errorCapture.ts already owns the global
+  handlers — avoids double-reporting). The module never throws.
+- Wiring: main.tsx initSentry(); errorCapture window.onerror +
+  unhandledrejection → captureException; ErrorBoundary componentDidCatch →
+  captureException with errorId/componentStack/page; AuthContext
+  applySession → setSentryUser(id, email), cleared on sign-out.
+- 8 tests lock the no-DSN inert contract. vitest 723/723.
+
+### THE chunking trap (Session-50 lesson, new variant)
+vite.config.ts manualChunks: `if (id.includes('react')) return
+'vendor-react'` caught **@sentry/react** — the dynamic-only SDK was being
+trapped in the EAGER vendor-react chunk (155KB gzip on every page).
+Fix: `if (id.includes('@sentry')) return 'vendor-sentry'` BEFORE the react
+rule + modulePreload exclusion. Verified via `vite build --manifest` twice:
+no-DSN → zero sentry chunks; with-DSN → vendor-sentry dynamic-only, absent
+from the entry import graph. LESSON: manualChunks substring rules catch
+package names containing the substring (@sentry/react, react-* etc.) —
+when adding a dynamic-only dependency, check the manifest eager graph.
+
+### CI note
+PR #26 hit the same PR-only webkit E2E failure fixed on the PR #25 branch
+(main doesn't have the fix until a PR merges) — duplicated the one-line
+`chromium webkit` install fix on this branch; identical lines merge clean.
+LESSON: a CI fix that only exists on an unmerged branch means every OTHER
+new PR from main fails the same check — prefer landing PR-only CI fixes
+fast.
+
+### Activation (user action)
+Set VITE_SENTRY_DSN in Vercel env vars (sentry.io → Project → Client Keys).
+No DSN = production behaves exactly as today (no SDK download).
+Source-map upload (SENTRY_AUTH_TOKEN) intentionally not wired yet.

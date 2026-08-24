@@ -9,6 +9,9 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
+            // @sentry/react must stay out of the eager vendor-react chunk —
+            // it is only reachable via dynamic import (idle-time, DSN-gated).
+            if (id.includes('@sentry')) return 'vendor-sentry'
             if (id.includes('react-router') || id.includes('@remix-run')) return 'vendor-router'
             if (id.includes('react')) return 'vendor-react'
             if (id.includes('supabase')) return 'vendor-supabase'
@@ -27,7 +30,7 @@ export default defineConfig({
       // (pdf/html2canvas/tesseract) — those stay lazy by design.
       resolveDependencies(_filename, deps) {
         return deps.filter(
-          (d) => !/vendor-pdf|html2canvas|purify|tesseract|index\.es/.test(d),
+          (d) => !/vendor-pdf|vendor-sentry|html2canvas|purify|tesseract|index\.es/.test(d),
         )
       },
     },
