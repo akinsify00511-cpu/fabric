@@ -134,9 +134,9 @@ Meetings journey must not be claimed complete until every row above has acceptan
   connection-state surfacing (peers close silently on failure), no reconnection logic, and
   permission denial is a single toast with no recovery path. Refresh/rejoin behavior is
   undesigned (presence re-join works by accident, not by contract).
-- **G9 — Migration-number collision (known, unfixed):** `20260822140000` is used by BOTH
-  `contract_scan_extension.sql` and `governance_meeting_scheduling.sql`. Both are unapplied to the
-  live DB, so renumbering the governance file is safe; scheduled in M1.
+- **G9 — Migration-number collision — RESOLVED (commit d234222):** the duplicate
+  `20260822140000` (contract_scan_extension + governance_meeting_scheduling) was fixed by
+  renumbering the governance file to `20260822141000`. No action remains.
 
 ### 3.3 Explicitly retained decisions
 
@@ -395,16 +395,15 @@ may be called complete.
 - [ ] Meeting history assembles the full object (G7 closed).
 - [ ] Media robustness: device selection, levels, connection state, reconnect, permission
       recovery (G8 closed).
-- [ ] Migration-number collision resolved (G9 closed).
+- [x] Migration-number collision resolved (G9 closed — commit d234222).
 - [ ] Zero console errors in normal operation; design-constitution PASS; schema-drift 0;
       contract manifest regenerated.
 
 ## 12. Phased Closure Plan (backend first, frontend second, connect, test, commit)
 
 - **M1 — Lifecycle compliance.** Room + scheduler call `create/start/join/leave/end_meeting`;
-  participants + evidence written; `attendees` JSONB migrated/deprecated; renumber
-  `20260822140000_governance_meeting_scheduling` (G9). Migration + page changes + lifecycle
-  tests.
+  participants + evidence written; `attendees` JSONB migrated/deprecated; the G9
+  renumber landed separately in d234222. Migration + page changes + lifecycle tests.
 - **M2 — Native meeting chat.** `meeting_chat_messages` + RLS + realtime delivery + Chat tab
   (unread state, identity, timestamps) + persistence/rehydration. Acceptance: §10.6.
 - **M3 — Structured capture + transcription path.** Typed captures (decision/action/follow-up +

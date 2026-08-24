@@ -7,8 +7,8 @@
 > lifecycle RPCs (G1), there is no native meeting chat (G2), no post-meeting record (G3),
 > captures are untyped (G4), the transcription executor is absent (G5), business integration
 > is unwired (G6), meeting history is partial (G7), media robustness is undesigned (G8), and
-> the 20260822140000 migration-number collision is unresolved (G9). Closure plan: M1–M6 in the
-> target architecture. The specification below describes the domain contract to reach.
+> the 20260822140000 migration-number collision was since resolved (G9 closed by commit
+> d234222, renumbered to 20260822141000). Closure plan: M1–M6 in the target architecture. The specification below describes the domain contract to reach.
 
 **Purpose:** a complete meeting product — schedule, lobby, video/audio, participants,
 chat, agenda, capture, transcript, decisions, actions, report, analytics — as ONE
