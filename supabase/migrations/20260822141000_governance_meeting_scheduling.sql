@@ -1,3 +1,4 @@
+-- Migration: 20260822141000 (renumbered from 20260822140000 — collision with contract_scan_extension)
 -- Governance meeting scheduling — a 9-argument overload of the canonical
 -- create_meeting RPC (20260818400000) adding p_board_committee_id so the
 -- Governance tab can schedule full-board (NULL) or committee meetings through

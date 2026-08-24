@@ -4719,7 +4719,7 @@
     {
       "kind": "function",
       "name": "create_meeting",
-      "defined_in": "20260822140000_governance_meeting_scheduling.sql",
+      "defined_in": "20260822141000_governance_meeting_scheduling.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
