@@ -3936,6 +3936,70 @@ STILL needs live DB: migration 20260819090000 (discovery) + prior pending
 migrations must be applied to Supabase (project kgsgqvatyleetyquffya). All
 idempotent. Frontend degrades gracefully until then (┬¦24).
 
+## Session 53 (2026-08-24): Master Implementation Instruction — /docs governance hierarchy established (commit 08a2fdb, local, NOT pushed)
+
+User directive: the 48-section Master Engineering/Architecture/Quality Governance
+Directive (product constitution, canonical data model, state machines, event
+architecture, 20 domain specs, threat model, AI governance, quality gate, testing
+standard, DR, etc.). Executed per its own §40 loop: DISCOVER first.
+
+### Discovery (§4) — verified, not assumed
+- Fast-forwarded over parallel PR #26 (Sentry lazy runtime reporting, 93ed1b0) —
+  the parallel-session pattern continues; ALWAYS fetch + fast-forward before work.
+- Baseline at 93ed1b0: tsc 0, vitest 723/723 (59 files), schema-drift OK (225
+  tables / 19 RPCs / 4 buckets backed), design-constitution PASS (hex 1076/1214
+  burn-down), contract manifest 946 objects, 201 migrations, 13 edge fn dirs
+  (12 + _shared), 6 CI workflows.
+- **DISCOVERED (new):** duplicate migration NUMBER — 20260822140000 exists twice
+  (contract_scan_extension + governance_meeting_scheduling). Both unapplied to
+  live DB → safe to renumber the later one in a future session.
+- DEPRECATED candidate: MeetingsV2.tsx (route redirects to canonical Meetings).
+
+### What shipped (docs/ hierarchy, 36 files — all grounded in verified reality)
+- docs/constitution/: AVENIZE_PRODUCT_CONSTITUTION.md (9 articles: never-assume,
+  one-source-of-truth, composition, security boundaries, anti-fabrication,
+  resilience, event-driven, verification-as-done, amendments) +
+  AVENIZE_DESIGN_CONSTITUTION.md (constitutional layer; root file kept as
+  operational detail + a pointer line added; CI gate unchanged).
+- docs/architecture/: AVENIZE_MASTER_PRODUCT_ARCHITECTURE.md (system shape,
+  authoritative-boundaries table, Brain organism, contract reconciliation,
+  deploy gates, 8 invariants) + SUBSYSTEM_INVENTORY.md (25 subsystems classified
+  COMPLETE/PARTIAL/BLOCKED with evidence anchors).
+- docs/data/: canonical data model (concept → ONE table map + explicit
+  non-entities), event architecture (3 buses), state machines (12 real machines
+  with actors/side-effects/recovery), entitlements (two-flag gate).
+- docs/security/: security architecture (6 layers, edge-fn JWT matrix, credential
+  rules) + threat model (15 threats, each Prevention→Detection→Response→Test).
+- docs/ai/: AI governance (grounding, provenance, anti-fabrication, injection
+  defense, caps, fallback, evaluation).
+- docs/operations/: production readiness (the AVENIZE QUALITY GATE with honest
+  Production=FAIL row — credential-gated), incident response (P0–P4), disaster
+  recovery (schema-as-code restore, degraded-mode matrix, never-do list).
+- docs/testing/: testing standard (7 layers + hard rules).
+- docs/discovery/: SEO/GEO/AEO/AIO boundary architecture.
+- docs/domains/: 20 specs (IDENTITY, ONBOARDING, ORGANIZATION, PERMISSIONS,
+  OBJECTIVES, WORK, MEETINGS, CAPTURE, CRM, COMMERCE, PAYMENTS, NOTIFICATIONS,
+  GUIDANCE, ANALYTICS, AI_INTELLIGENCE, ADMIN, OBSERVABILITY, SEARCH, FILES,
+  INTEGRATIONS) — each on the full §9 template with real tables/RPCs/tests.
+- SEARCH.md honestly records the one PARTIAL gap: no unified tenant-scoped
+  business search RPC (specification included, scheduled as future work).
+
+### Verified after
+tsc 0, design-constitution PASS, schema-drift OK (docs-only change; vitest
+unaffected). Commit 08a2fdb local on main, NOT pushed (repo policy).
+
+### Tooling lesson (this environment)
+- file_editor `create` repeatedly dropped the file_text parameter in this
+  session → author bulk files via `cat > file << 'EOF'` heredocs; the terminal
+  rejects a trailing second command (run heredoc ALONE) and its echo shows stray
+  characters on some lines — VERIFY the file with sed/grep before trusting the
+  echo (echo garbling was display-only every time).
+
+### Standing blockers (unchanged, user-credential-gated)
+Live DB apply (SUPABASE_DB_URL), edge-fn deploys, secrets (PAYSTACK_SECRET_KEY,
+RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET, APP_URL). Production gate
+honestly FAILs until then — documented as the quality gate's only red row.
+
 ## Session 52 (2026-08-23): PR #25 unified-Paystack checkout — CI unblocked, all checks green
 
 User pasted an external AI conversation claiming several repo facts. Verified
