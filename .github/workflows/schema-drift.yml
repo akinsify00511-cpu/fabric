@@ -5,7 +5,9 @@ on:
     paths:
       - 'src/**'
       - 'supabase/migrations/**'
+      - 'supabase/contract/**'
       - 'scripts/schema-drift-check.sh'
+      - 'scripts/generate_contract_manifest.py'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
   push:
@@ -13,7 +15,9 @@ on:
     paths:
       - 'src/**'
       - 'supabase/migrations/**'
+      - 'supabase/contract/**'
       - 'scripts/schema-drift-check.sh'
+      - 'scripts/generate_contract_manifest.py'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
 
