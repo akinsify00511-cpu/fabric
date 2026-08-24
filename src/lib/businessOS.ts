@@ -3118,3 +3118,23 @@ export async function fetchMeetingActions(meetingId: string): Promise<MeetingAct
     return []
   }
 }
+
+
+/** M5: associate a meeting with a CRM record (lead/deal/contact/customer). */
+export async function linkMeetingToCrm(
+  meetingId: string,
+  entityType: 'lead' | 'deal' | 'contact' | 'customer',
+  entityId: string
+): Promise<boolean> {
+  try {
+    const { data, error } = await supabase.rpc('link_meeting_to_crm', {
+      p_meeting_id: meetingId,
+      p_entity_type: entityType,
+      p_entity_id: entityId,
+    })
+    if (error) return false
+    return data === true
+  } catch {
+    return false
+  }
+}

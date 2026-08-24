@@ -726,3 +726,54 @@ END;
 $$;
 REVOKE ALL ON FUNCTION public.generate_meeting_report(UUID, BOOLEAN) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.generate_meeting_report(UUID, BOOLEAN) TO authenticated;
+
+-- ============================================================================
+-- M5: journey wiring — meeting -> CRM record link
+-- ============================================================================
+-- A meeting can be associated with a CRM record (lead/deal/contact) so the
+-- meeting becomes business-intelligence input (meeting -> customer -> quote).
+-- Additive columns; NULL = standalone internal meeting.
+ALTER TABLE public.meetings
+  ADD COLUMN IF NOT EXISTS related_entity_type TEXT
+    CHECK (related_entity_type IN ('lead','deal','contact','customer')),
+  ADD COLUMN IF NOT EXISTS related_entity_id UUID;
+
+CREATE INDEX IF NOT EXISTS idx_meetings_related
+  ON public.meetings(related_entity_type, related_entity_id);
+
+-- link_meeting_to_crm: associate a meeting with a CRM record (membership-guarded).
+CREATE OR REPLACE FUNCTION public.link_meeting_to_crm(
+  p_meeting_id UUID,
+  p_entity_type TEXT,
+  p_entity_id UUID
+) RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff RECORD;
+  v_business_id UUID;
+BEGIN
+  SELECT * INTO v_staff FROM public.get_current_staff() LIMIT 1;
+  IF v_staff.id IS NULL THEN
+    RETURN FALSE;
+  END IF;
+  SELECT m.business_id INTO v_business_id FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RETURN FALSE;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.get_current_staff() cs WHERE cs.business_id = v_business_id) THEN
+    RETURN FALSE;
+  END IF;
+  IF p_entity_type NOT IN ('lead','deal','contact','customer') THEN
+    RETURN FALSE;
+  END IF;
+  UPDATE public.meetings
+  SET related_entity_type = p_entity_type, related_entity_id = p_entity_id
+  WHERE id = p_meeting_id;
+  RETURN TRUE;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.link_meeting_to_crm(UUID, TEXT, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.link_meeting_to_crm(UUID, TEXT, UUID) TO authenticated;

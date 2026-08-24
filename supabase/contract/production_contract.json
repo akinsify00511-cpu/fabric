@@ -2,7 +2,7 @@
   "counts": {
     "tables": 457,
     "views": 6,
-    "functions": 482,
+    "functions": 483,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -5519,7 +5519,7 @@
     {
       "kind": "function",
       "name": "generate_meeting_report",
-      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -6552,6 +6552,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_business_id uuid, p_source_type text, p_source_id uuid, p_relationship text, p_target_type text, p_target_id uuid, p_origin text, p_confidence numeric, p_metadata jsonb"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "link_meeting_to_crm",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_meeting_id uuid, p_entity_type text, p_entity_id uuid"
       ]
     },
     {
@@ -9869,6 +9880,9 @@
     "link_entities": [
       "p_business_id uuid, p_source_type text, p_source_id uuid, p_relationship text, p_target_type text, p_target_id uuid, p_origin text, p_confidence numeric, p_metadata jsonb"
     ],
+    "link_meeting_to_crm": [
+      "p_meeting_id uuid, p_entity_type text, p_entity_id uuid"
+    ],
     "list_accessible_modules": [
       "p_business_id uuid"
     ],
@@ -10898,6 +10912,7 @@
       "join_meeting",
       "leave_meeting",
       "link_capture_to_event",
+      "link_meeting_to_crm",
       "list_accessible_modules",
       "list_capture_attachments",
       "list_platform_oncall",
