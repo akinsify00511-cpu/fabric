@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { captureAttribution } from '../lib/attribution'
+import { trackPageView } from '../lib/metaPixel'
 import {
   ArrowRight, Check, Menu, X, Users, BarChart3, Briefcase, UserCheck,
   Clock, ListTodo, Calendar, MessageSquare, Shield, ChevronDown, Globe,
@@ -329,6 +330,9 @@ function Footer() {
 }
 
 export default function LandingEnhanced() {
+  // Public marketing surface: page view for the ads funnel.
+  useEffect(() => { trackPageView() }, [])
+
   // B14 attribution: capture UTM/referrer provenance on the public surface so
   // a later signup can be connected back to its discovery source.
   captureAttribution()

@@ -6,6 +6,7 @@
 // and the paystack-webhook are the source of truth.
 
 import { supabase } from './supabase'
+import { getStoredAttribution } from './attribution'
 
 export interface CheckoutStart {
   reference: string
@@ -25,8 +26,13 @@ export interface PaymentVerdict {
 }
 
 export async function startPlanCheckout(planCode: string, billingCycle: 'monthly' | 'yearly'): Promise<CheckoutStart> {
+  // Attach the stored UTM/referrer provenance so the ledger row carries the
+  // campaign that produced the payment (attribution -> revenue chain). The
+  // server sanitizes it; it is advisory metadata, never price- or access-
+  // relevant.
+  const attribution = getStoredAttribution()
   const { data, error } = await supabase.functions.invoke('subscription-management', {
-    body: { action: 'createCheckout', planCode, billingCycle },
+    body: { action: 'createCheckout', planCode, billingCycle, attribution },
   })
   if (error) throw new Error(error.message || 'Could not start checkout')
   if (data?.error) throw new Error(data.error)

@@ -5,6 +5,7 @@ import PasswordStrength from '../components/PasswordStrength'
 import { Check, Brain, MessageSquare, Shield, Network } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 import { captureAttribution } from '../lib/attribution'
+import { trackPageView } from '../lib/metaPixel'
 import { useAuth } from '../lib/AuthContext'
 import { createBusinessAndOwner } from '../lib/onboarding'
 import { checkAuthRateLimit, recordAuthFailure, resetAuthRateLimit, rateLimitMessage } from '../lib/authSecurity'
@@ -35,7 +36,7 @@ export default function Signup() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => { captureAttribution() }, [])
+  useEffect(() => { captureAttribution(); trackPageView() }, [])
 
   useEffect(() => {
     if (loading || step !== 'form' || error || !session) return

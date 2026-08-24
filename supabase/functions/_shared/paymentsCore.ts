@@ -34,6 +34,33 @@ export function buildCheckoutMetadata(businessId: string, planCode: string, bill
   return { business_id: businessId, plan_code: planCode, billing_cycle: billingCycle, kind: 'subscription_checkout' }
 }
 
+// --- Attribution (go/no-go item 9) ---
+// The browser-captured UTM/referrer provenance rides along on the checkout so
+// the payment_transactions ledger row carries it (metadata.attribution) and
+// attribution_revenue can connect campaign -> checkout -> revenue.
+// Advisory metadata only: never price- or access-relevant. Sanitized
+// server-side (allowlisted keys, string-only, length-capped) because the
+// browser is an untrusted source.
+
+export const ATTRIBUTION_KEYS = ['source', 'medium', 'campaign', 'referrer', 'landingPath'] as const
+
+export type AttributionMetadata = Partial<Record<(typeof ATTRIBUTION_KEYS)[number], string>>
+
+export function sanitizeAttribution(input: unknown): AttributionMetadata | null {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return null
+  const out: AttributionMetadata = {}
+  let found = false
+  for (const key of ATTRIBUTION_KEYS) {
+    const raw = (input as Record<string, unknown>)[key]
+    if (typeof raw !== 'string') continue
+    const value = raw.trim().slice(0, 200)
+    if (!value) continue
+    out[key] = value
+    found = true
+  }
+  return found ? out : null
+}
+
 // Paystack webhook payloads carry no dedicated event id; data.id is the
 // transaction id and is stable across retries, so the idempotency key is
 // `${event}:${data.id}` (falling back to the reference for safety).

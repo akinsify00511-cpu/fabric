@@ -28,6 +28,7 @@ import { useSubscriptionData } from '../lib/useSubscriptionData'
 import { useAuth } from '../lib/AuthContext'
 import { fetchPlanRecommendation, type PlanRecommendation } from '../lib/businessOS'
 import { verifyPaymentReturn, type PaymentVerdict } from '../lib/payments'
+import { trackPurchase } from '../lib/metaPixel'
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; label: string }> = {
   active: { color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]', label: 'Active' },
@@ -77,6 +78,12 @@ export default function Subscription() {
       const verdict = await verifyPaymentReturn(reference)
       if (cancelled) return
       setPaymentVerdict(verdict)
+      // The Purchase conversion fires ONLY when the server verified the
+      // payment — never on the Paystack redirect alone (ads must measure real
+      // revenue, not button clicks).
+      if (verdict?.status === 'success' && verdict.amountCents) {
+        trackPurchase(verdict.amountCents / 100, verdict.currency || 'NGN', reference)
+      }
       params.delete('reference')
       setParams(params, { replace: true })
       // The webhook settles within seconds; poll briefly for the final state.

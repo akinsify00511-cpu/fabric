@@ -14,7 +14,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { buildCheckoutMetadata } from '../_shared/paymentsCore.ts'
+import { buildCheckoutMetadata, sanitizeAttribution } from '../_shared/paymentsCore.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -109,7 +109,11 @@ serve(async (req) => {
   }
 
   const reference = `avz_${crypto.randomUUID().replace(/-/g, '')}`
-  const metadata = buildCheckoutMetadata(staff.business_id, planCode, billingCycle)
+  const attribution = sanitizeAttribution(body.attribution)
+  const metadata = {
+    ...buildCheckoutMetadata(staff.business_id, planCode, billingCycle),
+    ...(attribution ? { attribution } : {}),
+  }
 
   const { error: insertError } = await admin.from('payment_transactions').insert({
     business_id: staff.business_id,

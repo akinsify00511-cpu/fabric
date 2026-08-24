@@ -4080,3 +4080,84 @@ fast.
 Set VITE_SENTRY_DSN in Vercel env vars (sentry.io → Project → Client Keys).
 No DSN = production behaves exactly as today (no SDK download).
 Source-map upload (SENTRY_AUTH_TOKEN) intentionally not wired yet.
+
+---
+
+## Session 54 (2026-08-24): Go/No-Go closure — Meta Pixel, attribution→revenue, payment investigation, opt-in auto-rollback
+
+User posted the consolidated "still missing" audit (A: before-ads blockers,
+B: after-ad-gate, C: vision). Verified each item against the tree before
+building; built the four that are code-side closable; the rest are
+credential/live-env gated (documented below).
+
+### Verified closed by reality (not this session's code)
+- PR #25 (unified Paystack checkout) merged b098b9a; PR #26 (Sentry) merged
+  93ed1b0 → audit items A4 and B11-runtime-capture are closed.
+- PR #18 (parallel-session capture voice/attachments) was CONFLICTING and
+  superseded by Session 33's full multimodal system (20260819050000 +
+  capture-process edge fn) — closed with explanation.
+- B11 error→incident path exists end-to-end: errorCapture →
+  log_platform_error → platform_error_events → evaluate_platform_alerts →
+  platform_incidents (Session 22), plus Sentry (PR #26). No gap.
+- B12 health monitoring exists: platform_ops aggregator + health strip +
+  platform-health-check edge fn + platform-ops-cron.yml. No gap.
+
+### Built this session
+- **Meta Pixel (A8)** — src/lib/metaPixel.ts: VITE_META_PIXEL_ID-gated,
+  no-op + zero script injection when unset. Funnel: PageView (Landing,
+  Pricing, Signup, Premium), ViewContent (Pricing), InitiateCheckout
+  (Premium checkout start — intent only), Purchase (Subscription.tsx ONLY
+  when paystack-verify returns status=success, sessionStorage-deduped per
+  reference). Purchase never fires on a click or a bare Paystack redirect
+  (would fabricate ads revenue, §22). .env.example documents the var.
+- **Attribution → revenue chain (A9)** — the missing hop was checkout→
+  Paystack reference→revenue. payments.ts now attaches the stored
+  UTM/referrer provenance to createCheckout; subscription-management
+  sanitizes it server-side (paymentsCore.sanitizeAttribution: allowlisted
+  keys, string-only, 200-char cap — browser is untrusted) into
+  payment_transactions.metadata.attribution; new RPC
+  attribution_revenue (migration 20260824150000, membership-guarded) rolls
+  up checkouts/successful/revenue per campaign+source+medium with honest
+  '(no campaign)'/direct buckets; DiscoveryIntelligence B14 card gains the
+  "Revenue by campaign (payment ledger)" table.
+- **Payment Investigation (B14/A3 support)** — migration 20260824160000:
+  riverways_payment_investigation(p_reference, p_email, p_days) —
+  is_riverways_admin()-gated, {authorized:false}+no payload otherwise.
+  Per matched transaction: stage-by-stage checklist checkout/provider/
+  webhook/verification/ledger/subscription/entitlement with ok/missing/
+  failed/pending/external verdicts. Provider stage honestly 'external'
+  (Paystack dashboard is definitive there); a zero-match result IS the
+  answer for the Friday incident (no ledger row = checkout never reached
+  us; reconcile in Paystack dashboard). Client: src/lib/
+  paymentInvestigation.ts (firstBrokenStage/summarizeInvestigation pure
+  helpers) + Payments tab in RiverwaysAdmin (PaymentInvestigationPanel).
+- **Opt-in auto-rollback (B13)** — deploy.yml: on gate failure, if repo
+  variable VERCEL_AUTO_ROLLBACK=true, `vercel rollback --yes` restores the
+  previous production deployment. Deliberately opt-in: while the live DB
+  lags the migration chain the contract gate fails for DB reasons and
+  unconditional rollback would roll back good frontend deploys in a loop.
+
+### Verified
+tsc 0; vite build clean; vitest 739/739 (+16: metaPixel 5, paymentInvestigation
+7, paymentsCore sanitizeAttribution 4); schema-drift 0 (both checkers);
+design-constitution PASS; deno check 12/12 edge fns; contract manifest
+regenerated (948 objects, deterministic); full chain 203/203 applies clean
+on fresh postgres:15; both new migrations idempotent (re-apply OK);
+functional smoke on postgres:15: member attribution OK (NGN 15k 'launch'
+campaign + honest unattributed bucket), outsider {authorized:false}, admin
+investigation by reference returns the full 7-stage checklist (fixture shows
+the exact Friday pattern: ledger=success, subscription+entitlement missing),
+by-email finds both transactions, non-admin {authorized:false}.
+
+### Still credential/live-env gated (NOT closable from the codebase)
+- A1 live DB apply (129 ok / 305 missing baseline) — needs SUPABASE_DB_URL;
+  scripts/apply_migrations_live.sh then verify_live_db.sh (runbook).
+- A2 edge deploys (11 of 12) + secrets — scripts/deploy_edge_functions.sh;
+  PAYSTACK_SECRET_KEY, RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET,
+  APP_URL; set VITE_META_PIXEL_ID in Vercel for A8.
+- A3 Friday reconciliation — needs Paystack dashboard (transaction history
+  by customer email/reference); once the DB is migrated, the new Payments
+  tab answers our side of it.
+- A5/A6/A7/A10 — real payment smoke, E2E green, email rail live, auth
+  certification: all follow automatically once A1+A2 are done; the gates
+  already honestly refuse to certify until then.

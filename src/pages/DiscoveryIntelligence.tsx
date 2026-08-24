@@ -15,9 +15,9 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import {
   fetchDiscoveryOverview, fetchDiscoveryLeaderboard, fetchDiscoveryBrandTruths,
-  fetchDiscoveryRoi, seedDiscoveryDefaults,
+  fetchAttributionRevenue, fetchDiscoveryRoi, seedDiscoveryDefaults,
   type DiscoveryOverview, type DiscoveryLeaderboardRow, type DiscoveryBrandTruthRow,
-  type DiscoveryRoi, type ContentOpportunity, type DiscoveryTarget,
+  type DiscoveryRoi, type ContentOpportunity, type DiscoveryTarget, type AttributionRevenue,
 } from '../lib/businessOS'
 import { classifyBrandMismatch } from '../lib/discoveryIntel'
 import { deriveFunction } from '../lib/functionHome'
@@ -59,22 +59,25 @@ export default function DiscoveryIntelligence() {
   const [leaderboard, setLeaderboard] = useState<DiscoveryLeaderboardRow[]>([])
   const [truths, setTruths] = useState<DiscoveryBrandTruthRow[]>([])
   const [roi, setRoi] = useState<DiscoveryRoi | null>(null)
+  const [attrRev, setAttrRev] = useState<AttributionRevenue | null>(null)
   const [opportunities, setOpportunities] = useState<ContentOpportunity[]>([])
   const [targets, setTargets] = useState<DiscoveryTarget[]>([])
   const [showObserve, setShowObserve] = useState(false)
 
   async function loadAll() {
     if (!bid) return
-    const [ov, lb, tr, ro] = await Promise.all([
+    const [ov, lb, tr, ro, ar] = await Promise.all([
       fetchDiscoveryOverview(bid),
       fetchDiscoveryLeaderboard(bid),
       fetchDiscoveryBrandTruths(bid),
       fetchDiscoveryRoi(bid),
+      fetchAttributionRevenue(bid),
     ])
     setOverview(ov)
     setLeaderboard(lb)
     setTruths(tr)
     setRoi(ro)
+    setAttrRev(ar)
     const [{ data: opps }, { data: tgts }] = await Promise.all([
       supabase.from('content_opportunities').select('*').eq('business_id', bid)
         .order('priority_score', { ascending: false }).limit(50),
@@ -388,6 +391,32 @@ export default function DiscoveryIntelligence() {
                 </div>
               ))}
             </div>
+            {attrRev && (attrRev.by_campaign.length > 0 || attrRev.note) && (
+              <div className="mt-5 border-t border-[var(--av-border)] pt-4">
+                <p className="text-xs uppercase tracking-wider text-[var(--av-text-muted)] mb-3">Revenue by campaign (payment ledger)</p>
+                {attrRev.by_campaign.length > 0 ? (
+                  <div className="space-y-2">
+                    {attrRev.by_campaign.map((c) => (
+                      <div key={`${c.campaign}|${c.source}|${c.medium}`} className="flex items-center gap-3 text-sm">
+                        <div className="w-40 truncate text-[var(--av-text)]" title={c.campaign}>{c.campaign}</div>
+                        <div className="w-24 text-xs text-[var(--av-text-muted)]">{c.source}/{c.medium}</div>
+                        <div className="flex-1 h-2 rounded-full bg-[var(--av-surface-2)]">
+                          <div
+                            className="h-2 rounded-full bg-[var(--av-primary)]"
+                            style={{ width: `${attrRev.totals.revenue ? Math.min(100, (100 * c.revenue) / attrRev.totals.revenue) : 0}%` }}
+                          />
+                        </div>
+                        <div className="w-40 text-right text-xs text-[var(--av-text-muted)]">
+                          {c.successful}/{c.checkouts} paid · ₦{Math.round(c.revenue).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--av-text-muted)]">{attrRev.note}</p>
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

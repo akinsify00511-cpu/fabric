@@ -2,7 +2,7 @@
   "counts": {
     "tables": 456,
     "views": 6,
-    "functions": 476,
+    "functions": 478,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -3881,6 +3881,17 @@
     },
     {
       "kind": "function",
+      "name": "attribution_revenue",
+      "defined_in": "20260824150000_attribution_revenue.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "audit_procurement_event",
       "defined_in": "045_purchase_vendor_workflow.sql",
       "repairable": false,
@@ -7710,6 +7721,17 @@
     },
     {
       "kind": "function",
+      "name": "riverways_payment_investigation",
+      "defined_in": "20260824160000_payment_investigation.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_reference text, p_email text, p_days int4"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "riverways_platform_analytics",
       "defined_in": "20260821150000_riverways_activity_ops.sql",
       "repairable": false,
@@ -9065,6 +9087,9 @@
     "assess_four_reality_discrepancy": [
       "p_assessment_id uuid"
     ],
+    "attribution_revenue": [
+      "p_business_id uuid"
+    ],
     "audit_procurement_event": [
       ""
     ],
@@ -10118,6 +10143,9 @@
     "riverways_org_activity": [
       "p_business_id uuid"
     ],
+    "riverways_payment_investigation": [
+      "p_reference text, p_email text, p_days int4"
+    ],
     "riverways_platform_analytics": [
       ""
     ],
@@ -10706,6 +10734,7 @@
       "advance_incident",
       "advance_migration",
       "approve_requisition",
+      "attribution_revenue",
       "automation_health",
       "automation_health_with_dlq",
       "award_xp_with_streak",
@@ -10864,6 +10893,7 @@
       "riverways_error_center",
       "riverways_global_search",
       "riverways_org_activity",
+      "riverways_payment_investigation",
       "riverways_platform_analytics",
       "riverways_security_center",
       "riverways_self_healing",

@@ -10,8 +10,9 @@ import {
   SecurityPanel, ErrorsPanel, HealingPanel, AnalyticsPanel,
 } from '../components/riverways/ActivityPanels'
 import RiverwaysAdminAccounts from './RiverwaysAdminAccounts'
+import PaymentInvestigationPanel from '../components/riverways/PaymentInvestigationPanel'
 
-type TabKey = 'activity' | 'accounts' | 'users' | 'orgs' | 'ai' | 'billing' | 'security' | 'errors' | 'healing' | 'analytics'
+type TabKey = 'activity' | 'accounts' | 'users' | 'orgs' | 'ai' | 'billing' | 'payments' | 'security' | 'errors' | 'healing' | 'analytics'
 
 const TABS: Array<{ key: TabKey; label: string; icon: typeof Activity }> = [
   { key: 'activity', label: 'Live Activity', icon: Radio },
@@ -20,6 +21,7 @@ const TABS: Array<{ key: TabKey; label: string; icon: typeof Activity }> = [
   { key: 'orgs', label: 'Organizations', icon: Building2 },
   { key: 'ai', label: 'AI Activity', icon: Bot },
   { key: 'billing', label: 'Billing', icon: CreditCard },
+  { key: 'payments', label: 'Payments', icon: CreditCard },
   { key: 'security', label: 'Security', icon: ShieldAlert },
   { key: 'errors', label: 'Errors', icon: AlertTriangle },
   { key: 'healing', label: 'Self-Healing', icon: Wrench },
@@ -139,6 +141,7 @@ export default function RiverwaysAdmin() {
         {tab === 'orgs' && <OrgsPanel />}
         {tab === 'ai' && <AiPanel />}
         {tab === 'billing' && <BillingPanel />}
+        {tab === 'payments' && <PaymentInvestigationPanel />}
         {tab === 'security' && <SecurityPanel />}
         {tab === 'errors' && <ErrorsPanel />}
         {tab === 'healing' && <HealingPanel />}

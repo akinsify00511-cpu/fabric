@@ -2592,6 +2592,37 @@ export async function fetchDiscoveryRoi(businessId: string): Promise<DiscoveryRo
   }
 }
 
+export interface AttributionCampaignRow {
+  campaign: string
+  source: string
+  medium: string
+  checkouts: number
+  successful: number
+  revenue: number
+}
+
+export interface AttributionRevenue {
+  authorized: boolean
+  totals: { checkouts: number; successful: number; revenue: number; attributed_checkouts: number }
+  by_campaign: AttributionCampaignRow[]
+  note: string | null
+}
+
+// Attribution -> revenue (20260824150000): the checkout -> Paystack reference
+// -> revenue hop of the discovery loop. Best-effort (§24): null when the RPC
+// isn't deployed yet.
+export async function fetchAttributionRevenue(businessId: string): Promise<AttributionRevenue | null> {
+  try {
+    const { data, error } = await supabase.rpc('attribution_revenue', { p_business_id: businessId })
+    if (error) throw error
+    const payload = data as AttributionRevenue
+    return payload?.authorized ? payload : null
+  } catch (e) {
+    console.warn('[discovery] attribution revenue failed:', e)
+    return null
+  }
+}
+
 export async function recordDiscoveryReferral(
   businessId: string,
   attribution: {

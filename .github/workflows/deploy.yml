@@ -112,3 +112,19 @@ jobs:
           name: production-contract-report
           path: supabase/contract/verification_report.json
           if-no-files-found: warn
+
+      # Automated post-deploy rollback (opt-in). When a gate above FAILED after
+      # the Vercel deploy, roll production back to the previous deployment
+      # instead of leaving a contract-violating build live. Disabled by
+      # default — enable by setting the repo variable VERCEL_AUTO_ROLLBACK=true.
+      # It is deliberately opt-in: while the live DB is behind the migration
+      # chain the contract gate fails for database reasons, and unconditional
+      # auto-rollback would roll back good frontend deploys in a loop.
+      - name: Rollback Vercel on gate failure (opt-in)
+        if: failure() && vars.VERCEL_AUTO_ROLLBACK == 'true'
+        run: |
+          npm i -g vercel
+          vercel rollback --yes --token="${{ secrets.VERCEL_TOKEN }}"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

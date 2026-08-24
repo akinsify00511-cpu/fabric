@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Check, ChevronDown, Lock } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { captureAttribution } from '../lib/attribution'
+import { trackPageView, trackViewContent } from '../lib/metaPixel'
 
 interface PricingTier {
   plan_code: string
@@ -45,7 +46,7 @@ export default function Pricing() {
   const [tiers, setTiers] = useState(FALLBACK)
   const [yearly, setYearly] = useState(true)
   const [open, setOpen] = useState<number | null>(null)
-  useEffect(() => { captureAttribution(); let active = true; supabase.rpc('get_pricing_tiers').then(({ data, error }) => { if (active && !error && Array.isArray(data) && data.length) setTiers(data as PricingTier[]) }); return () => { active = false } }, [])
+  useEffect(() => { captureAttribution(); trackPageView(); trackViewContent('pricing'); let active = true; supabase.rpc('get_pricing_tiers').then(({ data, error }) => { if (active && !error && Array.isArray(data) && data.length) setTiers(data as PricingTier[]) }); return () => { active = false } }, [])
   const faqs = [
     ['How do I pay?', 'All published Avenize plans use the same secure Paystack checkout. You can pay by the payment methods presented by Paystack at checkout.'],
     ['When does my subscription become active?', 'Your subscription activates after Avenize verifies the successful Paystack transaction server-side.'],

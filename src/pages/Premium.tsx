@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, CreditCard, Loader2, ShieldCheck, Zap } from 'lucide-react'
 import { startPlanCheckout } from '../lib/payments'
+import { trackInitiateCheckout, trackPageView } from '../lib/metaPixel'
 import { useAuth } from '../lib/AuthContext'
 
 const PLANS = {
@@ -26,6 +27,9 @@ export default function Premium() {
   const plan = PLANS[planCode] || PLANS.starter
   const amount = billing === 'yearly' ? plan.yearly : plan.monthly
 
+  // Public marketing surface: page view for the ads funnel.
+  useEffect(() => { trackPageView() }, [])
+
   const startCheckout = async () => {
     if (!session) {
       window.location.assign(`/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`)
@@ -35,6 +39,8 @@ export default function Premium() {
     setError(null)
     try {
       const checkout = await startPlanCheckout(planCode, billing)
+      // Intent event only — Purchase fires solely on server-verified payment.
+      trackInitiateCheckout(amount, 'NGN')
       window.location.assign(checkout.authorizationUrl)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not start the secure Paystack checkout. Please try again.')

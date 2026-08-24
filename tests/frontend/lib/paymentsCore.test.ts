@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   buildCheckoutMetadata,
+  sanitizeAttribution,
   classifyPaystackEvent,
   constantTimeEqual,
   isAmountSufficient,
@@ -122,5 +123,36 @@ describe('checkout metadata + billing date', () => {
     expect(new Date(monthly).getUTCMonth()).toBe(8) // September (0-indexed)
     const yearly = nextBillingDate('2026-08-22T10:00:00.000Z', 'yearly')
     expect(new Date(yearly).getUTCFullYear()).toBe(2027)
+  })
+})
+
+describe('sanitizeAttribution', () => {
+  it('keeps allowlisted string keys and trims them', () => {
+    const out = sanitizeAttribution({ source: ' google ', campaign: 'launch', medium: 'cpc' })
+    expect(out).toEqual({ source: 'google', campaign: 'launch', medium: 'cpc' })
+  })
+
+  it('returns null for non-objects, arrays, and empty input', () => {
+    expect(sanitizeAttribution(null)).toBeNull()
+    expect(sanitizeAttribution('utm')).toBeNull()
+    expect(sanitizeAttribution(['a'])).toBeNull()
+    expect(sanitizeAttribution({})).toBeNull()
+  })
+
+  it('drops unknown keys and non-string values (browser is untrusted)', () => {
+    const out = sanitizeAttribution({
+      source: 'meta',
+      evil: '<script>',
+      amount: 999999,
+      nested: { x: 1 },
+      referrer: 42,
+    })
+    expect(out).toEqual({ source: 'meta' })
+  })
+
+  it('length-caps values at 200 chars and drops blank strings', () => {
+    const out = sanitizeAttribution({ campaign: 'x'.repeat(500), source: '   ' })
+    expect(out?.campaign).toHaveLength(200)
+    expect(out && 'source' in out).toBe(false)
   })
 })
