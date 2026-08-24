@@ -4207,4 +4207,8 @@ design-constitution PASS (hex 1076/1214, burns down); schema-drift OK (225 table
 UTF-8-verified after the terminal echo garbled em-dashes (display-only, as before).
 
 ### Deploy status
-Committed locally, NOT pushed (repo policy). No runtime/deploy impact.
+Pushed on user instruction (c1759c9): CI green (Type Check, Unit Tests, Schema Drift,
+Design Constitution, Build); Vercel frontend deploy ✓; production contract gate FAILs
+exactly as before (standing live-DB/edge-fn blocker — 305 missing objects, 11 of 12
+edge functions undeployed — unchanged by this docs-only commit; same failure as the
+run on the previous commit an hour earlier). No runtime/deploy impact.
