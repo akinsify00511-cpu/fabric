@@ -457,3 +457,136 @@ EXCEPTION
   WHEN duplicate_object THEN NULL;
   WHEN undefined_object THEN NULL;
 END $$;
+
+-- ============================================================================
+-- M3: typed capture + promote-to-task/decision
+-- ============================================================================
+
+-- Fix latent create_action_task (Phase C) emit signature drift + it used
+-- 'meeting_action_to_task' which is not in the business_events_source_check
+-- source list via positional call; re-declare with the correct named call.
+CREATE OR REPLACE FUNCTION public.create_action_task(
+  p_action_id UUID,
+  p_title TEXT,
+  p_assignee_id UUID DEFAULT NULL,
+  p_due_date DATE DEFAULT NULL,
+  p_priority TEXT DEFAULT 'medium'
+) RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff RECORD;
+  v_action RECORD;
+  v_task_id UUID;
+BEGIN
+  SELECT * INTO v_staff FROM public.get_current_staff() LIMIT 1;
+  IF v_staff.business_id IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  SELECT * INTO v_action FROM public.meeting_actions WHERE id = p_action_id AND business_id = v_staff.business_id;
+  IF v_action.id IS NULL THEN
+    RETURN NULL;
+  END IF;
+
+  INSERT INTO public.tasks (business_id, title, assignee_id, due_date, priority, status, created_by)
+  VALUES (v_action.business_id, p_title, p_assignee_id, p_due_date, p_priority, 'todo', v_staff.id)
+  RETURNING id INTO v_task_id;
+
+  UPDATE public.meeting_actions
+  SET task_id = v_task_id, status = 'in_progress'
+  WHERE id = p_action_id;
+
+  BEGIN
+    PERFORM public.emit_business_event(
+      p_business_id := v_staff.business_id,
+      p_event_type := 'meeting_action_to_task',
+      p_entity_type := 'task',
+      p_entity_id := v_task_id,
+      p_payload := jsonb_build_object('action_id', p_action_id, 'meeting_id', v_action.meeting_id),
+      p_actor_id := v_staff.id,
+      p_source := 'system'
+    );
+  EXCEPTION WHEN OTHERS THEN NULL;
+  END;
+
+  RETURN v_task_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.create_action_task(UUID, TEXT, UUID, DATE, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.create_action_task(UUID, TEXT, UUID, DATE, TEXT) TO authenticated;
+
+-- save_meeting_decision: record a decision captured live in the room.
+CREATE OR REPLACE FUNCTION public.save_meeting_decision(
+  p_meeting_id UUID,
+  p_decision_text TEXT,
+  p_rationale TEXT DEFAULT NULL,
+  p_status TEXT DEFAULT 'decided'
+) RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff RECORD;
+  v_business_id UUID;
+  v_id UUID;
+BEGIN
+  SELECT * INTO v_staff FROM public.get_current_staff() LIMIT 1;
+  IF v_staff.id IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  SELECT m.business_id INTO v_business_id FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.get_current_staff() cs WHERE cs.business_id = v_business_id) THEN
+    RAISE EXCEPTION 'Not authorized for this meeting';
+  END IF;
+  INSERT INTO public.meeting_decisions (business_id, meeting_id, decision_text, rationale, decided_by, status)
+  VALUES (v_business_id, p_meeting_id, p_decision_text, p_rationale, v_staff.id, p_status)
+  RETURNING id INTO v_id;
+  RETURN v_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.save_meeting_decision(UUID, TEXT, TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.save_meeting_decision(UUID, TEXT, TEXT, TEXT) TO authenticated;
+
+-- save_meeting_action: record an action item captured live in the room.
+CREATE OR REPLACE FUNCTION public.save_meeting_action(
+  p_meeting_id UUID,
+  p_action_text TEXT,
+  p_assignee_id UUID DEFAULT NULL,
+  p_due_date DATE DEFAULT NULL,
+  p_priority TEXT DEFAULT 'medium'
+) RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff RECORD;
+  v_business_id UUID;
+  v_id UUID;
+BEGIN
+  SELECT * INTO v_staff FROM public.get_current_staff() LIMIT 1;
+  IF v_staff.id IS NULL THEN
+    RAISE EXCEPTION 'Not authenticated';
+  END IF;
+  SELECT m.business_id INTO v_business_id FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.get_current_staff() cs WHERE cs.business_id = v_business_id) THEN
+    RAISE EXCEPTION 'Not authorized for this meeting';
+  END IF;
+  INSERT INTO public.meeting_actions (business_id, meeting_id, action_text, assignee_id, due_date, priority, status)
+  VALUES (v_business_id, p_meeting_id, p_action_text, p_assignee_id, p_due_date, p_priority, 'open')
+  RETURNING id INTO v_id;
+  RETURN v_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.save_meeting_action(UUID, TEXT, UUID, DATE, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.save_meeting_action(UUID, TEXT, UUID, DATE, TEXT) TO authenticated;

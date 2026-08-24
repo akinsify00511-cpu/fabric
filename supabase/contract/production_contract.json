@@ -2,7 +2,7 @@
   "counts": {
     "tables": 457,
     "views": 6,
-    "functions": 480,
+    "functions": 482,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -1941,7 +1941,7 @@
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": false
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -4595,7 +4595,7 @@
     {
       "kind": "function",
       "name": "create_action_task",
-      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -8025,6 +8025,28 @@
     },
     {
       "kind": "function",
+      "name": "save_meeting_action",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_meeting_id uuid, p_action_text text, p_assignee_id uuid, p_due_date date, p_priority text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "save_meeting_decision",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_meeting_id uuid, p_decision_text text, p_rationale text, p_status text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "save_meeting_decisions",
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
       "repairable": false,
@@ -10252,6 +10274,12 @@
     "save_capture_transcript": [
       "p_attachment_id uuid, p_transcript text"
     ],
+    "save_meeting_action": [
+      "p_meeting_id uuid, p_action_text text, p_assignee_id uuid, p_due_date date, p_priority text"
+    ],
+    "save_meeting_decision": [
+      "p_meeting_id uuid, p_decision_text text, p_rationale text, p_status text"
+    ],
     "save_meeting_decisions": [
       "p_meeting_id uuid, p_decisions jsonb, p_actions jsonb"
     ],
@@ -10660,6 +10688,7 @@
       "meeting_actions",
       "meeting_captures",
       "meeting_chat_messages",
+      "meeting_decisions",
       "meeting_media",
       "meeting_participant_events",
       "meeting_participants",
@@ -10942,6 +10971,8 @@
       "run_system_health_audit",
       "said_vs_used",
       "save_capture_transcript",
+      "save_meeting_action",
+      "save_meeting_decision",
       "scan_data_quality",
       "search_transcripts",
       "sector_benchmark",

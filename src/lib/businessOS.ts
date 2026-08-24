@@ -3018,3 +3018,103 @@ export async function fetchObjectiveGapAnalysis(
     return null
   }
 }
+
+
+// ============================================================================
+// M3: typed capture + promote-to-task/decision + meeting intelligence
+// ============================================================================
+
+/** Record a decision captured live in the room (typed capture -> decision). */
+export async function saveMeetingDecision(
+  meetingId: string,
+  decisionText: string,
+  rationale?: string
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('save_meeting_decision', {
+      p_meeting_id: meetingId,
+      p_decision_text: decisionText,
+      p_rationale: rationale ?? null,
+    })
+    if (error) return null
+    return (data as string | null) ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Record an action item captured live in the room. */
+export async function saveMeetingAction(
+  meetingId: string,
+  actionText: string,
+  assigneeId?: string | null,
+  dueDate?: string | null,
+  priority?: string
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('save_meeting_action', {
+      p_meeting_id: meetingId,
+      p_action_text: actionText,
+      p_assignee_id: assigneeId ?? null,
+      p_due_date: dueDate ?? null,
+      p_priority: priority ?? 'medium',
+    })
+    if (error) return null
+    return (data as string | null) ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Promote a meeting action into a REAL task (004). Returns the task id. */
+export async function promoteMeetingActionToTask(
+  actionId: string,
+  title: string,
+  assigneeId?: string | null,
+  dueDate?: string | null,
+  priority?: string
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('create_action_task', {
+      p_action_id: actionId,
+      p_title: title,
+      p_assignee_id: assigneeId ?? null,
+      p_due_date: dueDate ?? null,
+      p_priority: priority ?? 'medium',
+    })
+    if (error) return null
+    return (data as string | null) ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Fetch decisions for a meeting. */
+export async function fetchMeetingDecisions(meetingId: string): Promise<MeetingDecision[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meeting_decisions')
+      .select('*')
+      .eq('meeting_id', meetingId)
+      .order('created_at', { ascending: true })
+    if (error) return []
+    return (data as MeetingDecision[]) ?? []
+  } catch {
+    return []
+  }
+}
+
+/** Fetch action items for a meeting. */
+export async function fetchMeetingActions(meetingId: string): Promise<MeetingAction[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meeting_actions')
+      .select('*')
+      .eq('meeting_id', meetingId)
+      .order('created_at', { ascending: true })
+    if (error) return []
+    return (data as MeetingAction[]) ?? []
+  } catch {
+    return []
+  }
+}
