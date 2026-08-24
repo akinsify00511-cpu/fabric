@@ -3138,3 +3138,50 @@ export async function linkMeetingToCrm(
     return false
   }
 }
+
+// ─── Unified Business Search (Master Directive §27) ────────────────────────
+
+export type SearchEntityType =
+  | 'staff' | 'contact' | 'lead' | 'meeting' | 'objective'
+  | 'quote' | 'order' | 'task' | 'activity'
+
+export interface BusinessSearchHit {
+  type: SearchEntityType
+  id: string
+  title: string
+  subtitle: string | null
+  detail: string | null
+  route: string
+  created_at: string
+  rank: number
+}
+
+export interface BusinessSearchResult {
+  authorized: boolean
+  results: BusinessSearchHit[]
+  counts: Record<string, number>
+  total: number
+  query: string
+  note?: string
+}
+
+/** Unified tenant-scoped search. Best-effort: returns null when the RPC is not
+ *  deployed or the caller is not a member (authorized:false surface). */
+export async function businessSearch(
+  query: string,
+  types?: SearchEntityType[],
+  limit = 20
+): Promise<BusinessSearchResult | null> {
+  if (!query || query.trim().length < 2) return null
+  try {
+    const { data, error } = await supabase.rpc('business_search', {
+      p_query: query,
+      p_types: types ?? null,
+      p_limit: limit,
+    })
+    if (error) return null
+    return (data as BusinessSearchResult) ?? null
+  } catch {
+    return null
+  }
+}

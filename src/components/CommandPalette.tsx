@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKeyboardShortcuts, formatShortcut, type KeyboardShortcut } from '../hooks/useKeyboardShortcuts'
 import { useAuth } from '../lib/AuthContext'
+import { businessSearch, type BusinessSearchHit, type SearchEntityType } from '../lib/businessOS'
 
 // GOOGLE STANDARD BRAND COLORS
 const BRAND = {
@@ -32,22 +33,73 @@ interface CommandPaletteProps {
   items: CommandItem[]
 }
 
+// Map a search entity type to a short glyph used as the result icon.
+const TYPE_ICON: Record<SearchEntityType, string> = {
+  staff: '👤', contact: '👥', lead: '✨', meeting: '📹', objective: '🎯',
+  quote: '💬', order: '📦', task: '✅', activity: '⚡',
+}
+const TYPE_CATEGORY: Record<SearchEntityType, string> = {
+  staff: 'People', contact: 'Contacts', lead: 'Leads', meeting: 'Meetings',
+  objective: 'Objectives', quote: 'Quotes', order: 'Orders', task: 'Tasks',
+  activity: 'Activity',
+}
+
 export default function CommandPalette({ isOpen, onClose, items }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [searchHits, setSearchHits] = useState<BusinessSearchHit[]>([])
+  const [searching, setSearching] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
+  const searchSeq = useRef(0)
+
+  // Debounced unified business search (best-effort; navigation search still works
+  // when the RPC is not deployed). Results are dropped if a newer query started.
+  useEffect(() => {
+    const q = query.trim()
+    if (q.length < 2) {
+      setSearchHits([])
+      setSearching(false)
+      return
+    }
+    setSearching(true)
+    const seq = ++searchSeq.current
+    const t = setTimeout(async () => {
+      const res = await businessSearch(q)
+      if (seq !== searchSeq.current) return // a newer query superseded this one
+      setSearching(false)
+      setSearchHits(res && res.authorized ? res.results : [])
+    }, 200)
+    return () => clearTimeout(t)
+  }, [query])
+
+  const searchItems = useMemo<CommandItem[]>(
+    () =>
+      searchHits.map((hit) => ({
+        id: `search-${hit.type}-${hit.id}`,
+        label: hit.title,
+        description: [hit.subtitle, hit.detail].filter(Boolean).join(' · ') || undefined,
+        category: TYPE_CATEGORY[hit.type] ?? 'Results',
+        icon: <span aria-hidden>{TYPE_ICON[hit.type] ?? '🔎'}</span>,
+        action: () => navigate(hit.route),
+      })),
+    [searchHits, navigate]
+  )
 
   const filteredItems = useMemo(() => {
-    if (!query) return items
     const lowerQuery = query.toLowerCase()
-    return items.filter(
-      (item) =>
-        item.label.toLowerCase().includes(lowerQuery) ||
-        item.description?.toLowerCase().includes(lowerQuery) ||
-        item.category?.toLowerCase().includes(lowerQuery)
-    )
-  }, [items, query])
+    const navMatches = !query
+      ? items
+      : items.filter(
+          (item) =>
+            item.label.toLowerCase().includes(lowerQuery) ||
+            item.description?.toLowerCase().includes(lowerQuery) ||
+            item.category?.toLowerCase().includes(lowerQuery)
+        )
+    // Business records first (the actual search), then matching navigation/actions.
+    return [...searchItems, ...navMatches]
+  }, [items, query, searchItems])
 
   useEffect(() => {
     if (isOpen) {
@@ -171,7 +223,9 @@ export default function CommandPalette({ isOpen, onClose, items }: CommandPalett
         >
           {filteredItems.length === 0 ? (
             <div className="px-4 py-8 text-center" style={{ color: BRAND.textMuted }}>
-              No results found for "{query}"
+              {searching
+                ? `Searching your business for "${query}"…`
+                : `No results found for "${query}"`}
             </div>
           ) : (
             Object.entries(groupedItems).map(([category, categoryItems]) => (

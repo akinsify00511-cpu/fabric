@@ -2,7 +2,7 @@
   "counts": {
     "tables": 457,
     "views": 6,
-    "functions": 483,
+    "functions": 484,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -4084,6 +4084,17 @@
       "frontend_referenced": true,
       "signatures": [
         "p_business_id uuid, p_start_type text, p_start_id uuid, p_max_depth int4"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "business_search",
+      "defined_in": "20260824170000_unified_business_search.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_query text, p_types text[], p_limit int4"
       ]
     },
     {
@@ -9203,6 +9214,9 @@
     ],
     "business_relationships": [
       "p_business_id uuid, p_start_type text, p_start_id uuid, p_max_depth int4"
+    ],
+    "business_search": [
+      "p_query text, p_types text[], p_limit int4"
     ],
     "business_value_ledger": [
       "p_business_id uuid"
