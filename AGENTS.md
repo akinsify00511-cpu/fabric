@@ -3936,6 +3936,43 @@ STILL needs live DB: migration 20260819090000 (discovery) + prior pending
 migrations must be applied to Supabase (project kgsgqvatyleetyquffya). All
 idempotent. Frontend degrades gracefully until then (┬¦24).
 
+## Session 52 (2026-08-23): PR #25 unified-Paystack checkout — CI unblocked, all checks green
+
+User pasted an external AI conversation claiming several repo facts. Verified
+against the ACTUAL repo before acting — several claims were STALE/WRONG:
+- "No ErrorBoundary" — FALSE. src/components/ErrorBoundary.tsx exists and
+  wraps the entire app (App.tsx 367-566) with retry + qcLogger/issueReporter.
+- "No runtime error capture" — FALSE. src/lib/errorCapture.ts is wired in
+  main.tsx (initErrorCapture) → logPlatformError → platform_error_events.
+- "No Sentry" — TRUE (no @sentry in package.json; first-party capture instead).
+- "Meta Pixel absent" — TRUE (no fbq anywhere). Real remaining gap.
+LESSON (again): external AI conversations about this repo have no live repo
+access — verify every factual claim against the tree before believing it.
+
+### PR #25 (fix/unified-payments-paystack) — reviewed + CI fixed
+- The PR itself is sound: all published plans → /upgrade self-service checkout
+  (Scale no longer routes to /contact), manual bank-transfer rail removed from
+  Premium.tsx, Paystack single rail, honest FAQ copy. Server-side price +
+  verification architecture preserved.
+- Two checks were failing; fixed both in commit 0d6335f:
+  1. E2E Tests (Playwright): the PR-gate job installed `chromium` only but
+     tests/e2e/example.spec.ts runs a Mobile Safari (webkit) project → every
+     webkit test failed with "Executable doesn't exist at .../webkit-*/pw_run.sh".
+     The job has `if: github.event_name == 'pull_request'` — that is why main
+     stayed green while every PR failed. Fix: install `chromium webkit`
+     (matches ux-tests.yml). LESSON: when a CI job is PR-only, main being
+     green proves nothing about it.
+  2. contract-manifest: removing the manual rail dropped the
+     my_payment_request / cancel_payment_request frontend RPC references →
+     stale generated artifact. Fix: `python3 scripts/generate_contract_manifest.py`
+     + commit (946 objects; deterministic — second run = no diff).
+- Verified locally: tsc clean, vitest 715/715, design-constitution PASS
+  (4 files improved). All 17 PR checks green after push.
+- Still required before the payment path is production-certified: live DB
+  apply + subscription-management/paystack-verify edge deploys +
+  PAYSTACK_SECRET_KEY, then the plan × billing-cycle smoke matrix (the
+  browser never decides payment success).
+
 ## Session 53 (2026-08-24): Sentry runtime error reporting (PR #26)
 
 User asked to "create sentry for catching building error". The old

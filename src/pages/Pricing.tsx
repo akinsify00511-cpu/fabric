@@ -29,7 +29,7 @@ const money = (cents: number) => '₦' + Math.round(cents / 100).toLocaleString(
 function Card({ tier, yearly }: { tier: PricingTier; yearly: boolean }) {
   const navigate = useNavigate()
   const monthly = yearly ? Math.round(tier.yearly_cents / 12) : tier.monthly_cents
-  const go = () => tier.plan_code === 'scale' ? navigate('/contact') : navigate(`/upgrade?plan=${encodeURIComponent(tier.plan_code)}&billing=${yearly ? 'yearly' : 'monthly'}`)
+  const go = () => navigate(`/upgrade?plan=${encodeURIComponent(tier.plan_code)}&billing=${yearly ? 'yearly' : 'monthly'}`)
   return <div className="rounded-2xl p-6 relative bg-white border transition" style={{ borderColor: tier.is_popular ? 'var(--av-primary)' : '#E8EAED', borderWidth: tier.is_popular ? 2 : 1 }}>
     {tier.is_popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium text-white bg-[var(--av-primary)]">Most popular</span>}
     <h3 className="font-bold text-lg text-black">{tier.display_name}</h3><p className="text-xs text-black/50 mb-4">{tier.tagline}</p>
@@ -37,7 +37,7 @@ function Card({ tier, yearly }: { tier: PricingTier; yearly: boolean }) {
     {yearly && <p className="text-xs text-[var(--av-success)] mb-3">Billed yearly · {money(tier.yearly_cents)}/yr</p>}
     {tier.is_founding_price && tier.founding_label && <div className="flex gap-1.5 items-center mb-4 text-xs text-[var(--av-primary)]"><Lock size={11}/> {tier.founding_label} — price locked while subscribed</div>}
     <ul className="space-y-2 mb-6">{tier.features.map((f, i) => <li key={i} className="flex gap-2 text-sm text-black/65"><Check size={14} className="mt-0.5 text-[var(--av-success)] shrink-0"/>{f}</li>)}</ul>
-    <button onClick={go} className={`w-full py-2.5 rounded-lg text-sm font-medium ${tier.is_popular ? 'bg-[var(--av-primary)] text-white' : 'bg-[#F8F9FA] text-black border border-black/10'}`}>{tier.plan_code === 'scale' ? 'Contact sales' : 'Continue to checkout'} <ArrowRight size={15} className="inline ml-1"/></button>
+    <button onClick={go} className={`w-full py-2.5 rounded-lg text-sm font-medium ${tier.is_popular ? 'bg-[var(--av-primary)] text-white' : 'bg-[#F8F9FA] text-black border border-black/10'}`}>Continue to checkout <ArrowRight size={15} className="inline ml-1"/></button>
   </div>
 }
 
@@ -47,13 +47,14 @@ export default function Pricing() {
   const [open, setOpen] = useState<number | null>(null)
   useEffect(() => { captureAttribution(); let active = true; supabase.rpc('get_pricing_tiers').then(({ data, error }) => { if (active && !error && Array.isArray(data) && data.length) setTiers(data as PricingTier[]) }); return () => { active = false } }, [])
   const faqs = [
-    ['How do I pay?', 'By bank transfer. When you choose a plan you get a unique payment reference and the account details — transfer the exact amount with the reference as the narration.'],
-    ['When does my subscription become active?', 'As soon as your transfer is confirmed, usually within one business day.'],
+    ['How do I pay?', 'All published Avenize plans use the same secure Paystack checkout. You can pay by the payment methods presented by Paystack at checkout.'],
+    ['When does my subscription become active?', 'Your subscription activates after Avenize verifies the successful Paystack transaction server-side.'],
     ['Can I change plans later?', 'Yes. You can upgrade or downgrade according to the subscription rules shown in your account.'],
     ['Is there a free trial?', 'No. Avenize is paid from the first subscription payment.'],
+    ['When do I need to contact Avenize?', 'Only when you need requirements outside the published plans and pricing, such as bespoke enterprise arrangements or custom implementation requirements.'],
   ]
   return <div className="min-h-screen bg-white">
-    <section className="pt-24 pb-14 px-4 bg-[#F8F9FA]"><div className="max-w-5xl mx-auto text-center"><Link to="/" className="text-2xl font-semibold text-black">Avenize</Link><h1 className="text-4xl sm:text-5xl font-bold text-black mt-8 mb-4">Simple, honest pricing</h1><p className="text-lg text-black/60 mb-7">Choose a paid plan. Pay securely. Start using Avenize after payment confirmation.</p><div className="inline-flex rounded-full p-1 bg-white border border-black/10"><button onClick={() => setYearly(false)} className={`px-5 py-2 rounded-full text-sm ${!yearly ? 'bg-[var(--av-primary)] text-white' : 'text-black/60'}`}>Monthly</button><button onClick={() => setYearly(true)} className={`px-5 py-2 rounded-full text-sm ${yearly ? 'bg-[var(--av-primary)] text-white' : 'text-black/60'}`}>Yearly · save ~17%</button></div></div></section>
+    <section className="pt-24 pb-14 px-4 bg-[#F8F9FA]"><div className="max-w-5xl mx-auto text-center"><Link to="/" className="text-2xl font-semibold text-black">Avenize</Link><h1 className="text-4xl sm:text-5xl font-bold text-black mt-8 mb-4">Simple, honest pricing</h1><p className="text-lg text-black/60 mb-7">Choose a paid plan. Pay securely with Paystack. Start using Avenize after payment verification.</p><div className="inline-flex rounded-full p-1 bg-white border border-black/10"><button onClick={() => setYearly(false)} className={`px-5 py-2 rounded-full text-sm ${!yearly ? 'bg-[var(--av-primary)] text-white' : 'text-black/60'}`}>Monthly</button><button onClick={() => setYearly(true)} className={`px-5 py-2 rounded-full text-sm ${yearly ? 'bg-[var(--av-primary)] text-white' : 'text-black/60'}`}>Yearly · save ~17%</button></div></div></section>
     <section className="py-16 px-4"><div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-5 gap-4">{tiers.map(t => <Card key={t.plan_code} tier={t} yearly={yearly}/>)}</div></section>
     <section className="py-16 px-4 bg-[#F8F9FA]"><div className="max-w-3xl mx-auto"><h2 className="text-3xl font-bold text-black mb-8 text-center">Questions</h2>{faqs.map(([q,a], i) => <div key={q} className="mb-3 rounded-xl bg-white p-5"><button onClick={() => setOpen(open === i ? null : i)} className="w-full flex justify-between text-left font-medium text-black"><span>{q}</span><ChevronDown size={20} className={open === i ? 'rotate-180' : ''}/></button>{open === i && <p className="mt-4 text-sm text-black/60">{a}</p>}</div>)}</div></section>
   </div>
