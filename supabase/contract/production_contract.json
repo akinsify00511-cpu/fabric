@@ -4092,7 +4092,7 @@
       "defined_in": "20260824170000_unified_business_search.sql",
       "repairable": false,
       "security_sensitive": true,
-      "frontend_referenced": false,
+      "frontend_referenced": true,
       "signatures": [
         "p_query text, p_types text[], p_limit int4"
       ]
@@ -10835,6 +10835,7 @@
       "builder_dashboard",
       "business_brain",
       "business_relationships",
+      "business_search",
       "business_value_ledger",
       "can_access_module",
       "cancel_subscription",
