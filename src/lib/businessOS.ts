@@ -2623,6 +2623,44 @@ export async function fetchAttributionRevenue(businessId: string): Promise<Attri
   }
 }
 
+// ---------- Marketing Attribution (20260824170000) ----------
+// The PLATFORM-OPERATOR ad → revenue join: signups (discovery_referrals) →
+// checkouts → verified purchases → revenue per (source, medium, campaign)
+// across the whole platform. Complements the per-business
+// attribution_revenue. Gated by is_platform_admin() server-side;
+// aggregate-only (#21) — never business identities. Best-effort +
+// non-blocking (§24): returns null when the migration isn't deployed.
+
+export interface MarketingChannel {
+  source: string
+  medium: string
+  campaign: string
+  signups: number
+  checkouts: number
+  purchases: number
+  revenue_cents: number
+  avg_order_value_cents: number | null
+  signup_to_purchase_rate: number | null
+  last_conversion_at: string | null
+}
+
+export interface MarketingAttributionReport {
+  authorized: boolean
+  channels: MarketingChannel[]
+  totals: { signups: number; checkouts: number; purchases: number; revenue_cents: number } | null
+  data_scope?: string
+}
+
+export async function fetchMarketingAttributionReport(): Promise<MarketingAttributionReport | null> {
+  try {
+    const { data, error } = await supabase.rpc('marketing_attribution_report')
+    if (error) return null
+    return (data as MarketingAttributionReport) ?? null
+  } catch {
+    return null
+  }
+}
+
 export async function recordDiscoveryReferral(
   businessId: string,
   attribution: {

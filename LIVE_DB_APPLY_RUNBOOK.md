@@ -141,6 +141,15 @@ supabase secrets set \
   EMAIL_SERVICE_CRON_SECRET=<random> \
   PLATFORM_HEALTH_CRON_SECRET=<random> \
   --project-ref kgsgqvatyleetyquffya
+
+# Meta Conversions API (optional — the server-authoritative Purchase signal
+# for ad attribution; paystack-webhook fires it after verified settlement):
+supabase secrets set \
+  META_PIXEL_ID=<meta events manager pixel id> \
+  META_CAPI_ACCESS_TOKEN=<meta conversions api token> \
+  --project-ref kgsgqvatyleetyquffya
+# The browser pixel id is a PUBLIC build-time value (like the Supabase anon
+# key), not an edge secret: set VITE_META_PIXEL_ID in Vercel env vars.
 ```
 
 ## Step 5 — production contract + E2E gates (the definition of "done")

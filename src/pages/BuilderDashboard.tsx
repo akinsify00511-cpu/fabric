@@ -16,11 +16,16 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { fetchBuilderDashboard, type BuilderDashboard } from '../lib/businessOS'
+import {
+  fetchBuilderDashboard,
+  fetchMarketingAttributionReport,
+  type BuilderDashboard,
+  type MarketingAttributionReport,
+} from '../lib/businessOS'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   Loader2, ShieldCheck, Lock, BarChart3, Users, TrendingUp, Globe,
-  Activity, AlertTriangle,
+  Activity, AlertTriangle, Megaphone,
 } from 'lucide-react'
 
 export default function BuilderDashboardPage() {
@@ -29,6 +34,9 @@ export default function BuilderDashboardPage() {
   const [data, setData] = useState<BuilderDashboard | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  // Fetched separately (best-effort, §24): null = the 20260824170000 migration
+  // isn't deployed yet — the rest of the dashboard still works.
+  const [marketing, setMarketing] = useState<MarketingAttributionReport | null>(null)
 
   useEffect(() => {
     let active = true
@@ -48,6 +56,7 @@ export default function BuilderDashboardPage() {
         if (active) setLoading(false)
       }
     })()
+    fetchMarketingAttributionReport().then((report) => { if (active) setMarketing(report) })
     return () => { active = false }
   }, [])
 
@@ -149,6 +158,73 @@ export default function BuilderDashboardPage() {
           )}
         </section>
       )}
+
+      {/* Marketing attribution — the platform-level ad → revenue join */}
+      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <Megaphone className="w-4 h-4 text-[var(--av-primary)]" />
+          Marketing Attribution (Ad → Revenue)
+        </h2>
+        <p className="text-xs text-gray-500 mb-3">
+          Provenance captured at visit (UTM/fbclid) → signup → checkout → verified Paystack payment.
+          Revenue counts only server-settled payments — never a button click.
+        </p>
+        {!marketing ? (
+          <ClaimNote tone="muted">Attribution reporting is not available on this deployment yet (migration pending).</ClaimNote>
+        ) : marketing.channels.length === 0 ? (
+          <ClaimNote tone="muted">No attributed signups or payments yet. Once campaigns carry UTM/fbclid provenance and the first payments settle, channels appear here.</ClaimNote>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
+                  <th className="pb-2 pr-4 font-medium">Channel</th>
+                  <th className="pb-2 pr-4 font-medium">Signups</th>
+                  <th className="pb-2 pr-4 font-medium">Checkouts</th>
+                  <th className="pb-2 pr-4 font-medium">Purchases</th>
+                  <th className="pb-2 pr-4 font-medium">Signup → paid</th>
+                  <th className="pb-2 pr-4 font-medium">Revenue</th>
+                  <th className="pb-2 font-medium">Last conversion</th>
+                </tr>
+              </thead>
+              <tbody>
+                {marketing.channels.map((c) => (
+                  <tr key={`${c.source}/${c.medium}/${c.campaign}`} className="border-b border-gray-50">
+                    <td className="py-2 pr-4">
+                      <span className="font-medium text-gray-900">{c.source}</span>
+                      <span className="text-gray-500"> / {c.medium}</span>
+                      {c.campaign !== 'none' && <span className="text-gray-500"> / {c.campaign}</span>}
+                    </td>
+                    <td className="py-2 pr-4 text-gray-700">{c.signups}</td>
+                    <td className="py-2 pr-4 text-gray-700">{c.checkouts}</td>
+                    <td className="py-2 pr-4 text-gray-700">{c.purchases}</td>
+                    <td className="py-2 pr-4 text-gray-700">
+                      {c.signup_to_purchase_rate != null ? `${Math.round(c.signup_to_purchase_rate * 100)}%` : '—'}
+                    </td>
+                    <td className="py-2 pr-4 font-medium text-gray-900">{formatNaira(c.revenue_cents / 100)}</td>
+                    <td className="py-2 text-gray-500">
+                      {c.last_conversion_at ? new Date(c.last_conversion_at).toLocaleDateString() : '—'}
+                    </td>
+                  </tr>
+                ))}
+                {marketing.totals && (
+                  <tr className="font-semibold text-gray-900">
+                    <td className="py-2 pr-4">Total</td>
+                    <td className="py-2 pr-4">{marketing.totals.signups}</td>
+                    <td className="py-2 pr-4">{marketing.totals.checkouts}</td>
+                    <td className="py-2 pr-4">{marketing.totals.purchases}</td>
+                    <td className="py-2 pr-4">
+                      {marketing.totals.signups > 0 ? `${Math.round((marketing.totals.purchases / marketing.totals.signups) * 100)}%` : '—'}
+                    </td>
+                    <td className="py-2 pr-4">{formatNaira(marketing.totals.revenue_cents / 100)}</td>
+                    <td className="py-2" />
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
       {/* Cross-business module adoption */}
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -254,6 +330,9 @@ export default function BuilderDashboardPage() {
     </div>
   )
 }
+
+const formatNaira = (value: number) =>
+  new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value)
 
 function Stat({ label, value, tone }: { label: string; value: number | string; tone?: 'green' | 'amber' }) {
   const color = tone === 'green' ? 'text-[var(--av-success)]' : tone === 'amber' ? 'text-[var(--av-warning)]' : 'text-gray-900'

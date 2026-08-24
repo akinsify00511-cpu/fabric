@@ -42,7 +42,7 @@ export function buildCheckoutMetadata(businessId: string, planCode: string, bill
 // server-side (allowlisted keys, string-only, length-capped) because the
 // browser is an untrusted source.
 
-export const ATTRIBUTION_KEYS = ['source', 'medium', 'campaign', 'referrer', 'landingPath'] as const
+export const ATTRIBUTION_KEYS = ['source', 'medium', 'campaign', 'content', 'term', 'fbclid', 'fbc', 'fbp', 'referrer', 'landingPath', 'capturedAt'] as const
 
 export type AttributionMetadata = Partial<Record<(typeof ATTRIBUTION_KEYS)[number], string>>
 
@@ -119,4 +119,66 @@ export const PLAN_DISPLAY_NAMES: Record<string, string> = {
   business: 'Business',
   pro: 'Pro',
   scale: 'Scale',
+}
+
+// --- Meta Conversions API (CAPI) — the server-authoritative Purchase signal ---
+// The browser pixel is the session-side companion; this event, fired by the
+// paystack-webhook after VERIFIED settlement, is the revenue signal Meta can
+// trust. Both carry event_id = payment reference so Meta deduplicates them.
+
+// Meta's documented _fbc format when the pixel cookie is unavailable:
+// fb.<creation_index>.<timestamp_ms>.<fbclid>.
+export function buildFbcFromFbclid(fbclid: string, tsMs: number): string {
+  return `fb.1.${tsMs}.${fbclid}`
+}
+
+export async function sha256Hex(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))
+  return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+export interface CapiPurchaseInput {
+  reference: string            // event_id — shared with the browser pixel so Meta deduplicates
+  paidAtIso: string            // event_time source (seconds since epoch)
+  amountCents: number          // ledger amount in the lowest unit (kobo)
+  currency: string             // ISO currency (NGN)
+  planCode: string
+  planName: string
+  email?: string | null        // raw payer email — hashed, never sent raw
+  fbp?: string | null
+  fbc?: string | null
+  fbclid?: string | null       // used to compute fbc when the cookie is absent
+  sourceUrl?: string | null    // event_source_url (the landing path that started the funnel)
+}
+
+/**
+ * Build one Meta Conversions API Purchase event. Pure except for the email
+ * hash (crypto.subtle). The event_id is the payment reference so a browser
+ * pixel Purchase for the same payment is deduplicated by Meta.
+ */
+export async function buildCapiPurchaseEvent(input: CapiPurchaseInput): Promise<Record<string, unknown>> {
+  const userData: Record<string, unknown> = {}
+  const email = input.email?.trim().toLowerCase()
+  if (email) userData.em = [await sha256Hex(email)]
+  if (input.fbp) userData.fbp = input.fbp
+  const fbc = input.fbc ?? (input.fbclid ? buildFbcFromFbclid(input.fbclid, Date.parse(input.paidAtIso) || Date.now()) : null)
+  if (fbc) userData.fbc = fbc
+
+  return {
+    event_name: 'Purchase',
+    event_time: Math.floor((Date.parse(input.paidAtIso) || Date.now()) / 1000),
+    event_id: input.reference,
+    action_source: 'website',
+    ...(input.sourceUrl ? { event_source_url: input.sourceUrl } : {}),
+    user_data: userData,
+    custom_data: {
+      value: input.amountCents / 100,
+      currency: input.currency,
+      content_ids: [input.planCode],
+      content_name: input.planName,
+      content_type: 'product',
+      num_items: 1,
+      order_id: input.reference,
+    },
+  }
 }

@@ -159,6 +159,9 @@ export function parseAttribution(url: string, referrer?: string | null): {
   source: string | null
   medium: string | null
   campaign: string | null
+  content: string | null
+  term: string | null
+  fbclid: string | null
   landingPath: string | null
   referrer: string | null
 } {
@@ -167,6 +170,9 @@ export function parseAttribution(url: string, referrer?: string | null): {
     const source = u.searchParams.get('utm_source')
     const medium = u.searchParams.get('utm_medium')
     const campaign = u.searchParams.get('utm_campaign')
+    const content = u.searchParams.get('utm_content')
+    const term = u.searchParams.get('utm_term')
+    const fbclid = u.searchParams.get('fbclid')
     // Known AI answer engines → classify as ai-citation when no explicit UTM.
     const ref = referrer || null
     let derivedSource = source
@@ -185,10 +191,13 @@ export function parseAttribution(url: string, referrer?: string | null): {
       source: derivedSource,
       medium: derivedMedium,
       campaign,
+      content,
+      term,
+      fbclid,
       landingPath: u.pathname,
       referrer: ref,
     }
   } catch {
-    return { source: null, medium: null, campaign: null, landingPath: null, referrer: referrer || null }
+    return { source: null, medium: null, campaign: null, content: null, term: null, fbclid: null, landingPath: null, referrer: referrer || null }
   }
 }

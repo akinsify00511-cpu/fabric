@@ -27,6 +27,15 @@ export default function CookieConsent() {
       const timer = setTimeout(() => setShowBanner(true), 1000)
       return () => clearTimeout(timer)
     }
+    // A stored choice exists: re-broadcast it so consent-gated integrations
+    // (e.g. the Meta pixel) initialize on revisit without waiting for a new
+    // consent decision.
+    try {
+      const prefs = JSON.parse(consent)
+      window.dispatchEvent(new CustomEvent('avenize:consent-changed', { detail: prefs }))
+    } catch {
+      /* malformed stored consent — integrations stay off */
+    }
   }, [])
 
   const handleAcceptAll = () => {
@@ -69,6 +78,8 @@ export default function CookieConsent() {
       ...prefs,
       timestamp: new Date().toISOString(),
     }))
+    // Notify consent-gated integrations (Meta pixel) immediately — no reload.
+    window.dispatchEvent(new CustomEvent('avenize:consent-changed', { detail: prefs }))
     // Enable/disable cookies based on preferences
     if (prefs.analytics) {
       // Enable analytics

@@ -2,7 +2,7 @@
   "counts": {
     "tables": 456,
     "views": 6,
-    "functions": 478,
+    "functions": 479,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -6747,6 +6747,17 @@
     },
     {
       "kind": "function",
+      "name": "marketing_attribution_report",
+      "defined_in": "20260824170000_marketing_attribution.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "meeting_analytics",
       "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
       "repairable": false,
@@ -9873,6 +9884,9 @@
     "market_intelligence": [
       "p_metric text, p_geography text"
     ],
+    "marketing_attribution_report": [
+      ""
+    ],
     "meeting_analytics": [
       "p_period_days int4",
       "p_business_id uuid",
@@ -10843,6 +10857,7 @@
       "mark_recommendation_acted",
       "mark_signature_viewed",
       "market_intelligence",
+      "marketing_attribution_report",
       "meeting_analytics",
       "monthly_review",
       "next_best_action",

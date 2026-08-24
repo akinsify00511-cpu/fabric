@@ -17,6 +17,12 @@
  *
  * Privacy boundary: tracking is for the public marketing funnel. Internal
  * /app workspace pages never fire the pixel.
+ *
+ * Consent boundary: the pixel loads ONLY after the visitor grants marketing
+ * consent in the cookie banner. The banner broadcasts `avenize:consent-changed`;
+ * subscribeToConsentChanges() re-attempts initialization when consent arrives
+ * later in the session. Without consent every function stays inert even when
+ * VITE_META_PIXEL_ID is set.
  */
 
 declare global {
@@ -65,11 +71,49 @@ function inject(): void {
   document.head.appendChild(script)
 }
 
+const CONSENT_KEY = 'cookie_consent'
+
+/** Parse the cookie-consent choice: true only when marketing was granted. */
+export function parseMarketingConsent(raw: string | null): boolean {
+  if (!raw) return false
+  try {
+    const parsed = JSON.parse(raw)
+    return Boolean(parsed && parsed.marketing === true)
+  } catch {
+    return false
+  }
+}
+
+/** Read the stored cookie consent (localStorage is best-effort). */
+export function hasMarketingConsent(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return parseMarketingConsent(window.localStorage.getItem(CONSENT_KEY))
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Re-attempt pixel initialization whenever the visitor grants marketing
+ * consent later in the session. Returns an unsubscribe function.
+ */
+export function subscribeToConsentChanges(): () => void {
+  if (typeof window === 'undefined') return () => {}
+  const handler = (event: Event) => {
+    const detail = (event as CustomEvent).detail
+    if (detail && detail.marketing === true) ensureInit()
+  }
+  window.addEventListener('avenize:consent-changed', handler)
+  return () => window.removeEventListener('avenize:consent-changed', handler)
+}
+
 function ensureInit(): boolean {
   const id = pixelId()
   if (!id) return false
   if (initDone) return true
   if (typeof window === 'undefined') return false
+  if (!hasMarketingConsent()) return false
   // Standard Meta bootstrap stub: calls queue until fbevents.js loads.
   if (typeof window.fbq !== 'function') {
     const fbq = ((...args: unknown[]) => {
@@ -87,9 +131,12 @@ function ensureInit(): boolean {
   return true
 }
 
-function track(event: string, params?: Record<string, unknown>): void {
+function track(event: string, params?: Record<string, unknown>, eventId?: string): void {
   if (!ensureInit()) return
-  window.fbq!('track', event, params)
+  // The eventID lets Meta deduplicate the browser event against the server
+  // Conversions API event carrying the same id (payment reference).
+  if (eventId) window.fbq!('track', event, params, { eventID: eventId })
+  else window.fbq!('track', event, params)
 }
 
 /** PageView for public marketing surfaces only. */
@@ -122,5 +169,7 @@ export function trackPurchase(value: number, currency: string, dedupeKey: string
       /* storage unavailable — fire anyway */
     }
   }
-  track('Purchase', { value, currency })
+  // eventID = the Paystack reference — the paystack-webhook Conversions API
+  // Purchase uses the same id, so Meta deduplicates browser + server signals.
+  track('Purchase', { value, currency }, dedupeKey)
 }

@@ -15,10 +15,13 @@
 //      receipt email — email failure can never break settlement.
 //
 // Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, PAYSTACK_SECRET_KEY.
+//      Optional: META_PIXEL_ID + META_CAPI_ACCESS_TOKEN (server-authoritative
+//      Purchase conversion signal), APP_URL (event_source_url base).
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import {
+  buildCapiPurchaseEvent,
   classifyPaystackEvent,
   isAmountSufficient,
   nextBillingDate,
@@ -184,6 +187,45 @@ serve(async (req) => {
     description: `${PLAN_DISPLAY_NAMES[planCode] ?? planCode} plan (${cycle})`,
     paid_at: paidAt,
   })
+
+  // --- Meta Conversions API Purchase (server-authoritative revenue signal) ---
+  // Fires exactly once per reference: the 'already settled' guard above
+  // returns early on repeat deliveries. The browser pixel Purchase (fired on
+  // the verified return) shares event_id = reference, so Meta deduplicates.
+  // Best-effort: a CAPI failure must never break settlement (same rule as
+  // the receipt email).
+  const metaPixelId = Deno.env.get('META_PIXEL_ID')
+  const metaCapiToken = Deno.env.get('META_CAPI_ACCESS_TOKEN')
+  if (metaPixelId && metaCapiToken) {
+    try {
+      const attribution = (ledger.metadata?.attribution ?? null) as Record<string, string> | null
+      const appUrl = (Deno.env.get('APP_URL') || 'https://avenize.riverwayse.com').replace(/\/$/, '')
+      const event = await buildCapiPurchaseEvent({
+        reference,
+        paidAtIso: paidAt,
+        amountCents: ledger.amount_cents ?? providerAmount,
+        currency: ledger.currency || 'NGN',
+        planCode,
+        planName: PLAN_DISPLAY_NAMES[planCode] ?? planCode,
+        email: verifyBody?.data?.customer?.email ?? null,
+        fbp: attribution?.fbp ?? null,
+        fbc: attribution?.fbc ?? null,
+        fbclid: attribution?.fbclid ?? null,
+        sourceUrl: attribution?.landingPath ? `${appUrl}${attribution.landingPath}` : appUrl,
+      })
+      const capiRes = await fetch(`https://graph.facebook.com/v21.0/${metaPixelId}/events?access_token=${metaCapiToken}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: [event] }),
+      })
+      const capiBody = await capiRes.json().catch(() => null)
+      if (!capiRes.ok || (capiBody?.events_received ?? 0) < 1) {
+        console.warn('Meta CAPI Purchase not accepted', { status: capiRes.status, body: capiBody })
+      }
+    } catch (capiError) {
+      console.warn('Meta CAPI Purchase failed (non-blocking):', capiError)
+    }
+  }
 
   await finish('processed')
   return json({ status: 'processed' })
