@@ -8,10 +8,13 @@ Governance hierarchy (a lower layer may never silently override a higher one):
 
 ```text
 PRODUCT CONSTITUTION (this file)
-  → docs/architecture/AVENIZE_MASTER_PRODUCT_ARCHITECTURE.md
-    → docs/domains/*.md (domain specifications)
-      → docs/constitution/AVENIZE_DESIGN_CONSTITUTION.md + design system
-        → implementation (src/, supabase/)
+  → docs/constitution/AVENIZE_EXCELLENCE_CONSTITUTION.md (the world-class standard;
+    Journey Rule: no feature is complete until its entire user journey works from
+    entry point to business outcome)
+    → docs/architecture/AVENIZE_MASTER_PRODUCT_ARCHITECTURE.md
+      → docs/domains/*.md (domain specifications)
+        → docs/constitution/AVENIZE_DESIGN_CONSTITUTION.md + design system
+          → implementation (src/, supabase/)
 ```
 
 ---

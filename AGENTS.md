@@ -4161,3 +4161,50 @@ by-email finds both transactions, non-admin {authorized:false}.
 - A5/A6/A7/A10 — real payment smoke, E2E green, email rail live, auth
   certification: all follow automatically once A1+A2 are done; the gates
   already honestly refuse to certify until then.
+
+## Session 55 (2026-08-24): Excellence Constitution + Meeting System target architecture (docs only)
+
+User directive (meeting-architecture gap analysis + "create the architecture md for the
+AI dev" + "a standard constitution stating the level of exceptionality we must hold").
+
+### Verified current meeting reality (origin/main 27fb2ac — tree moved far past the session notes)
+- MeetingCapture.tsx is a REAL native WebRTC room: getUserMedia, RTCPeerConnection mesh,
+  Supabase Realtime private channel `meeting:<id>` signaling + presence, screen share,
+  MediaRecorder → private `meeting-captures` bucket, text/voice(Web Speech)/attachment
+  captures → `meeting_captures` (20260820210000_native_meetings: RLS + storage RLS +
+  realtime.messages RLS all membership-keyed). Jitsi/VideoRoom is GONE.
+- /app/capture is a pure redirect to /app/meetings (AICapture.tsx = redirect only).
+- Phase A–E migrations (184–188) exist (lifecycle RPCs, participants/evidence, transcripts/
+  decisions/actions, reports, analytics), but the LIVE pages bypass them: Meetings.tsx
+  inserts meetings directly with legacy JSONB attendees; the room flips status with direct
+  updates; only businessOS.ts references the lifecycle RPCs.
+- transcribe-audio + capture-process edge functions NO LONGER EXIST in supabase/functions/
+  (12 + _shared only) — Phase C tables/RPCs have no executor.
+- No meeting_chat table/messages anywhere — native meeting chat genuinely missing.
+- Duplicate migration number 20260822140000 (contract_scan_extension +
+  governance_meeting_scheduling) still unresolved.
+
+### What shipped (docs only, no code)
+- docs/constitution/AVENIZE_EXCELLENCE_CONSTITUTION.md — the world-class standard.
+  Article I = THE JOURNEY RULE: no feature is complete until its entire user journey works
+  from entry point to business outcome (audits by journey, not by page; UI is never evidence
+  of capability). Six-dimension exceptionality bar, measurable experience standards, five
+  non-negotiables per capability, acceptance-evidence contract, ratchet rule.
+- docs/architecture/AVENIZE_MEETING_SYSTEM_ARCHITECTURE.md — target architecture: unified
+  Meeting workspace (video/audio/chat/capture in-meeting), the meeting record as central
+  object, component map (MediaSession provider boundary — mesh today, SFU-pluggable),
+  data model (new: meeting_chat_messages, typed captures, CRM/objective FK links), state
+  machines incl. refresh/reconnect contract, integration contracts (CRM/objectives/
+  notifications; announcements ≠ notifications), failure matrix, 15-test acceptance suite,
+  gap list G1–G9, phased closure M1–M6, anti-patterns.
+- Amendments: Product Constitution hierarchy now includes the Excellence Constitution;
+  Master Product Architecture gained invariant 9 (Journey Rule) + subsystem-doc pointer;
+  docs/domains/MEETINGS.md honestly marks the journey INCOMPLETE with the G1–G9 summary.
+
+### Verified
+design-constitution PASS (hex 1076/1214, burns down); schema-drift OK (225 tables / 19 RPCs /
+4 buckets). Docs-only change — tsc/vitest/contract manifest unaffected. All four docs
+UTF-8-verified after the terminal echo garbled em-dashes (display-only, as before).
+
+### Deploy status
+Committed locally, NOT pushed (repo policy). No runtime/deploy impact.

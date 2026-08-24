@@ -122,3 +122,11 @@ See `LIVE_DB_APPLY_RUNBOOK.md`.
 7. Telemetry is fire-and-forget; a telemetry failure never breaks a business write.
 8. New `.from()`/`.rpc()` references must have backing migrations BEFORE merge
    (schema-drift gate). New SECRET handling never reaches the client.
+9. The Journey Rule: no feature is complete until its entire user journey works from entry
+   point to business outcome, proven by an executable acceptance suite — never inferred from
+   pages existing (Excellence Constitution, Article I).
+
+Subsystem target architectures (grounded in verified current state):
+- Meetings: `docs/architecture/AVENIZE_MEETING_SYSTEM_ARCHITECTURE.md` (unified Meeting
+  workspace: video/audio/chat/capture in-meeting; the meeting record as the central object;
+  gap list G1–G9 + phased closure M1–M6).

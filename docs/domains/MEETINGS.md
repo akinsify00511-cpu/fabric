@@ -1,5 +1,15 @@
 # DOMAIN: MEETINGS
 
+> **Target architecture + verified gap list:** see
+> `docs/architecture/AVENIZE_MEETING_SYSTEM_ARCHITECTURE.md` (v1.0, 2026-08-24). As of
+> origin/main `27fb2ac` the Meetings journey is **INCOMPLETE** (Excellence Constitution,
+> Article I): the native WebRTC room and capture tray are real, but the live pages bypass the
+> lifecycle RPCs (G1), there is no native meeting chat (G2), no post-meeting record (G3),
+> captures are untyped (G4), the transcription executor is absent (G5), business integration
+> is unwired (G6), meeting history is partial (G7), media robustness is undesigned (G8), and
+> the 20260822140000 migration-number collision is unresolved (G9). Closure plan: M1–M6 in the
+> target architecture. The specification below describes the domain contract to reach.
+
 **Purpose:** a complete meeting product — schedule, lobby, video/audio, participants,
 chat, agenda, capture, transcript, decisions, actions, report, analytics — as ONE
 domain. Capture belongs naturally inside it (see CAPTURE.md), never a detached app.
