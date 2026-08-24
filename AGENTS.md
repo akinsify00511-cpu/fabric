@@ -4259,3 +4259,42 @@ Design Constitution, Build); Vercel frontend deploy ✓; production contract gat
 exactly as before (standing live-DB/edge-fn blocker — 305 missing objects, 11 of 12
 edge functions undeployed — unchanged by this docs-only commit; same failure as the
 run on the previous commit an hour earlier). No runtime/deploy impact.
+
+
+## Session 55 (2026-08-24): M1 Meeting lifecycle compliance (commit 6d5550f)
+
+Built M1 of the Meeting System closure plan (M1-M6). The live pages previously
+bypassed the canonical lifecycle (20260818400000) — Meetings created rows via
+raw INSERT and the room set status directly, so no participant evidence was
+ever written and history/analytics had nothing to assemble.
+
+### What shipped (migration 20260824200000_meeting_lifecycle_compliance.sql)
+- meeting_participants unique key (meeting_id, staff_id) WHERE staff_id IS NOT
+  NULL — required for join_meeting's ON CONFLICT to be inferable.
+- Backfill legacy meetings.attendees JSONB -> meeting_participants rows.
+- meeting_chat_messages (native meeting chat, RLS participant-scoped, guest
+  token path) + send_meeting_chat / send_meeting_chat_guest RPCs.
+- meetings CRM/objective link columns (contact_id/deal_id/lead_id/objective_id).
+- FIXED latent create_meeting/start_meeting/end_meeting emit_business_event
+  signature drift (they used a 4-arg positional call against the real 10-arg
+  function — would have failed on any fresh DB) + create_meeting populating the
+  NOT NULL date/start_time columns; added business_events.updated_at (the
+  event-bus trigger defect from Session 33).
+
+### Frontend
+- Meetings.tsx: create -> create_meeting RPC; invite attendees as relational
+  participants + notifications.
+- MeetingCapture.tsx: join -> join_meeting (stores participantId), leave ->
+  leave_meeting on unmount + end -> end_meeting (best-effort fallback to direct
+  update if the RPC isn't deployed yet, §24).
+
+### Verified
+tsc 0, vite build 0 warnings, vitest 745/745 (+6 lifecycle contract tests),
+schema-drift 0, design-constitution PASS, migration applies clean + idempotent
+on postgres:15, functional smoke (participants=2, events=3, chat=2, completed).
+CI + Schema Drift green on push.
+
+### Deploy gate (unchanged)
+The Deploy-to-Vercel workflow still fails on the production-contract gate
+because the live DB lags the migration chain (standing blocker, needs
+SUPABASE_DB_URL). The CI workflow itself is green.

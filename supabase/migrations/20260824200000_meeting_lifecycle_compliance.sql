@@ -447,3 +447,13 @@ END;
 $$;
 REVOKE ALL ON FUNCTION public.start_meeting(UUID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.start_meeting(UUID) TO authenticated;
+
+-- Realtime: publish meeting_chat_messages so the in-room chat tab receives
+-- inserts live (guarded — bare postgres has no supabase_realtime publication).
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.meeting_chat_messages;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+  WHEN undefined_object THEN NULL;
+END $$;
