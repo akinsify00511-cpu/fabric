@@ -5,6 +5,7 @@ import { clearMfaVerified } from './mfa'
 import { clearModuleAccessCache } from './useModuleAccess'
 import { clearExperienceContextCache } from './useExperienceContext'
 import { logPlatformActivity } from './riverwaysActivity'
+import { setSentryUser } from './sentry'
 
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
@@ -161,6 +162,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStaff(null)
       setStaffError(false)
       setStaffChecked(!nextId)
+      // Attach (or clear) the user identity on error reports.
+      setSentryUser(
+        nextId ? { id: nextId, email: newSession?.user?.email ?? undefined } : null,
+      )
     }
     setSession(newSession)
     setLoading(false)

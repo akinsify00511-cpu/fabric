@@ -2,6 +2,7 @@ import { Component, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { qcLogger, issueReporter } from '../lib/quality-control'
+import { captureException } from '../lib/sentry'
 
 interface Props {
   children: ReactNode
@@ -49,6 +50,13 @@ export default class ErrorBoundary extends Component<Props, State> {
         userAgent: navigator.userAgent,
       }
     )
+
+    // Sentry (no-op unless VITE_SENTRY_DSN is configured).
+    captureException(error, {
+      errorId,
+      componentStack: errorInfo?.componentStack,
+      page: window.location.pathname,
+    })
 
     this.setState({ errorId })
     this.props.onError?.(error, errorInfo)
