@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
+import { joinMeeting, leaveMeeting, endMeeting as endMeetingRpc } from '../lib/businessOS'
 import { useToast } from '../components/Toast'
 import { ArrowLeft, Camera, CameraOff, Mic, MicOff, MonitorUp, PhoneOff, Paperclip, Send, Square, MessageSquare, Users, Loader2 } from 'lucide-react'
 
@@ -17,6 +18,7 @@ export default function MeetingCapture(){
  const [meeting,setMeeting]=useState<any|null>(null); const [captures,setCaptures]=useState<Capture[]>([]); const [participants,setParticipants]=useState<Participant[]>([]); const [loading,setLoading]=useState(true)
  const [micOn,setMicOn]=useState(true); const [cameraOn,setCameraOn]=useState(true); const [sharing,setSharing]=useState(false); const [recording,setRecording]=useState(false); const [recordingSeconds,setRecordingSeconds]=useState(0)
  const [note,setNote]=useState(''); const [voiceText,setVoiceText]=useState(''); const [voiceListening,setVoiceListening]=useState(false); const [remoteStreams,setRemoteStreams]=useState<Record<string,MediaStream>>({})
+ const participantIdRef=useRef<string|null>(null)
  const localVideoRef=useRef<HTMLVideoElement|null>(null); const localStreamRef=useRef<MediaStream|null>(null); const screenStreamRef=useRef<MediaStream|null>(null); const channelRef=useRef<any>(null); const peersRef=useRef<Record<string,RTCPeerConnection>>({}); const candidateQueueRef=useRef<Record<string,RTCIceCandidateInit[]>>({}); const remoteVideoRefs=useRef<Record<string,HTMLVideoElement|null>>({}); const recorderRef=useRef<MediaRecorder|null>(null); const recordChunks=useRef<Blob[]>([]); const recognitionRef=useRef<any>(null); const recordTimerRef=useRef<ReturnType<typeof setInterval>|null>(null)
 
  const load=useCallback(async()=>{
@@ -72,8 +74,12 @@ export default function MeetingCapture(){
    })
    .on('presence',{event:'join'},()=>{})
    .on('presence',{event:'leave'},({key}:{key:string})=>closePeer(key))
-  ch.subscribe(async status=>{if(status==='SUBSCRIBED'){await ch.track({user_id:staff.user_id,name:staff.full_name||staff.name||staff.email||'Participant',staff_id:staff.id});const { error: statusErr } = await supabase.from('meetings').update({status:'in_progress'}).eq('id',meetingId);if(statusErr)console.error(statusErr)}})
-  return()=>{mounted=false;Object.keys(peersRef.current).forEach(closePeer);void ch.untrack();void supabase.removeChannel(ch);channelRef.current=null;screenStreamRef.current?.getTracks().forEach(t=>t.stop());if(localStreamRef.current)localStreamRef.current.getTracks().forEach(t=>t.stop());if(recordTimerRef.current)clearInterval(recordTimerRef.current);if(recognitionRef.current)recognitionRef.current.stop();if(!mounted)return}
+  ch.subscribe(async status=>{if(status==='SUBSCRIBED'){await ch.track({user_id:staff.user_id,name:staff.full_name||staff.name||staff.email||'Participant',staff_id:staff.id});
+    // Canonical lifecycle: join (writes participant + evidence). Falls back to a
+    // direct status update only if the lifecycle RPC isn't deployed yet (best-effort).
+    const j=await joinMeeting(meetingId);if(j?.participantId){participantIdRef.current=j.participantId}
+    else{const { error: statusErr } = await supabase.from('meetings').update({status:'in_progress'}).eq('id',meetingId);if(statusErr)console.error(statusErr)}}})
+  return()=>{mounted=false;Object.keys(peersRef.current).forEach(closePeer);void ch.untrack();void supabase.removeChannel(ch);channelRef.current=null;if(meetingId&&participantIdRef.current)void leaveMeeting(meetingId,participantIdRef.current);screenStreamRef.current?.getTracks().forEach(t=>t.stop());if(localStreamRef.current)localStreamRef.current.getTracks().forEach(t=>t.stop());if(recordTimerRef.current)clearInterval(recordTimerRef.current);if(recognitionRef.current)recognitionRef.current.stop();if(!mounted)return}
  },[closePeer,handleSignal,meeting,meetingId,negotiate,staff?.email,staff?.full_name,staff?.id,staff?.name,staff?.user_id])
 
  useEffect(()=>{Object.entries(remoteStreams).forEach(([id,stream])=>{const el=remoteVideoRefs.current[id];if(el&&el.srcObject!==stream)el.srcObject=stream})},[remoteStreams])
@@ -94,7 +100,11 @@ export default function MeetingCapture(){
 
  const startRecording=()=>{if(!localStreamRef.current){showToast('Camera/microphone is not ready','error');return}const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':'video/webm';const r=new MediaRecorder(localStreamRef.current,{mimeType:mime});recordChunks.current=[];r.ondataavailable=e=>{if(e.data.size)recordChunks.current.push(e.data)};r.onstop=async()=>{if(!meeting||!staff?.business_id||!staff.id)return;const blob=new Blob(recordChunks.current,{type:mime});const path=`${meeting.id}/${crypto.randomUUID()}-meeting-recording.webm`;const {error:up}=await supabase.storage.from('meeting-captures').upload(path,blob,{contentType:mime});if(up){showToast('Recording upload failed','error');return}const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:'recording',title:'Meeting recording',storage_path:path,mime_type:mime,size_bytes:blob.size,duration_seconds:recordingSeconds}).select().single();if(!error)setCaptures(v=>[data,...v]);showToast(error?'Recording saved locally but capture record failed':'Meeting recording captured','success')};r.start(1000);recorderRef.current=r;setRecording(true);setRecordingSeconds(0);recordTimerRef.current=setInterval(()=>setRecordingSeconds(v=>v+1),1000)}
  const stopRecording=()=>{recorderRef.current?.stop();setRecording(false);if(recordTimerRef.current)clearInterval(recordTimerRef.current)}
- const endMeeting=async()=>{if(meetingId){const { error } = await supabase.from('meetings').update({status:'completed'}).eq('id',meetingId);if(error)console.error(error)};window.location.assign('/app/meetings')}
+ const endMeeting=async()=>{if(meetingId){
+   if(participantIdRef.current)await leaveMeeting(meetingId,participantIdRef.current)
+   const ok=await endMeetingRpc(meetingId)
+   if(!ok){const { error } = await supabase.from('meetings').update({status:'completed'}).eq('id',meetingId);if(error)console.error(error)}
+ };window.location.assign('/app/meetings')}
 
  if(loading)return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]"/></div>
  if(!meeting)return <div className="min-h-screen flex items-center justify-center p-6"><div className="text-center"><h1 className="text-xl font-semibold">Meeting not found</h1><Link to="/app/meetings" className="text-[var(--av-primary)] mt-3 inline-block">Back to Meetings</Link></div></div>

@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 456,
+    "tables": 457,
     "views": 6,
-    "functions": 478,
+    "functions": 480,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -1923,6 +1923,14 @@
       "kind": "table",
       "name": "meeting_captures",
       "defined_in": "20260820210000_native_meetings.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": true
+    },
+    {
+      "kind": "table",
+      "name": "meeting_chat_messages",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
@@ -4719,13 +4727,12 @@
     {
       "kind": "function",
       "name": "create_meeting",
-      "defined_in": "20260822141000_governance_meeting_scheduling.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid",
-        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid, p_board_committee_id uuid"
+        "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid"
       ]
     },
     {
@@ -5270,7 +5277,7 @@
     {
       "kind": "function",
       "name": "end_meeting",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -6473,7 +6480,7 @@
     {
       "kind": "function",
       "name": "join_meeting",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -8205,6 +8212,28 @@
     },
     {
       "kind": "function",
+      "name": "send_meeting_chat",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_meeting_id uuid, p_body text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "send_meeting_chat_guest",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_meeting_id uuid, p_guest_token text, p_body text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "send_notification",
       "defined_in": "013_notifications_calendar.sql",
       "repairable": false,
@@ -8349,7 +8378,7 @@
     {
       "kind": "function",
       "name": "start_meeting",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -9317,8 +9346,7 @@
       "p_lead_id uuid, p_request_type text, p_title text, p_description text, p_product_id uuid, p_quantity numeric, p_location text, p_budget numeric, p_urgency text, p_attachments jsonb"
     ],
     "create_meeting": [
-      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid",
-      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid, p_board_committee_id uuid"
+      "p_business_id uuid, p_title text, p_scheduled_start timestamptz, p_scheduled_end timestamptz, p_meeting_type text, p_visibility text, p_description text, p_created_by uuid"
     ],
     "create_notification": [
       "p_user_id uuid, p_business_id uuid, p_title text, p_message text, p_category notification_category, p_channel notification_channel, p_entity_type text, p_entity_id uuid, p_data jsonb, p_action_url text, p_action_text text, p_scheduled_for timestamptz"
@@ -10275,6 +10303,12 @@
     "send_follow_up": [
       "p_requisition_id uuid"
     ],
+    "send_meeting_chat": [
+      "p_meeting_id uuid, p_body text"
+    ],
+    "send_meeting_chat_guest": [
+      "p_meeting_id uuid, p_guest_token text, p_body text"
+    ],
     "send_notification": [
       "p_user_id uuid, p_type text, p_title text, p_body text, p_data jsonb, p_priority text"
     ],
@@ -10625,6 +10659,7 @@
       "market_intelligence_signals",
       "meeting_actions",
       "meeting_captures",
+      "meeting_chat_messages",
       "meeting_media",
       "meeting_participant_events",
       "meeting_participants",
@@ -10914,6 +10949,8 @@
       "seed_discovery_defaults",
       "send_business_digest",
       "send_follow_up",
+      "send_meeting_chat",
+      "send_meeting_chat_guest",
       "set_active_role",
       "set_member_kind",
       "set_recommendation_decision",

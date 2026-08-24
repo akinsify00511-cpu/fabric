@@ -1838,6 +1838,107 @@ export async function fetchMeetingParticipants(meetingId: string): Promise<Meeti
   }
 }
 
+// ============================================================================
+// M1: MEETING LIFECYCLE COMPLIANCE — chat + participant invite wrappers
+// ============================================================================
+
+export interface MeetingChatMessage {
+  id: string
+  meeting_id: string
+  business_id: string
+  staff_id: string | null
+  guest_token: string | null
+  guest_name: string | null
+  body: string
+  created_at: string
+  edited_at: string | null
+  sender_name?: string
+}
+
+export async function fetchMeetingChat(meetingId: string): Promise<MeetingChatMessage[]> {
+  try {
+    const { data, error } = await supabase
+      .from('meeting_chat_messages')
+      .select('*')
+      .eq('meeting_id', meetingId)
+      .order('created_at', { ascending: true })
+    if (error) {
+      console.warn('[meetings] fetch chat failed:', error.message)
+      return []
+    }
+    return (data as MeetingChatMessage[]) ?? []
+  } catch (e) {
+    console.warn('[meetings] fetch chat error:', e)
+    return []
+  }
+}
+
+export async function sendMeetingChat(meetingId: string, body: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('send_meeting_chat', {
+      p_meeting_id: meetingId,
+      p_body: body,
+    })
+    if (error) {
+      console.warn('[meetings] send chat failed:', error.message)
+      return null
+    }
+    return (data as string) ?? null
+  } catch (e) {
+    console.warn('[meetings] send chat error:', e)
+    return null
+  }
+}
+
+export async function sendMeetingChatGuest(
+  meetingId: string,
+  guestToken: string,
+  body: string
+): Promise<string | null> {
+  try {
+    const { data, error } = await supabase.rpc('send_meeting_chat_guest', {
+      p_meeting_id: meetingId,
+      p_guest_token: guestToken,
+      p_body: body,
+    })
+    if (error) {
+      console.warn('[meetings] send guest chat failed:', error.message)
+      return null
+    }
+    return (data as string) ?? null
+  } catch (e) {
+    console.warn('[meetings] send guest chat error:', e)
+    return null
+  }
+}
+
+/**
+ * Invite a staff member to a meeting: writes a relational participant row
+ * (invited) so the participant evidence model is populated. Idempotent via the
+ * (meeting_id, staff_id) unique key. Returns true on success.
+ */
+export async function inviteMeetingParticipant(
+  meetingId: string,
+  staffId: string
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('meeting_participants')
+      .upsert(
+        { meeting_id: meetingId, staff_id: staffId, role: 'participant', status: 'invited' },
+        { onConflict: 'meeting_id,staff_id' }
+      )
+    if (error) {
+      console.warn('[meetings] invite participant failed:', error.message)
+      return false
+    }
+    return true
+  } catch (e) {
+    console.warn('[meetings] invite participant error:', e)
+    return false
+  }
+}
+
 export async function fetchMeetingEvidence(meetingId: string): Promise<MeetingParticipantEvent[]> {
   try {
     const { data, error } = await supabase

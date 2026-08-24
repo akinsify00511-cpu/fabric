@@ -4,6 +4,7 @@ import { useBusiness } from '../lib/BusinessContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { logPlatformActivity } from '../lib/riverwaysActivity'
+import { createMeeting, inviteMeetingParticipant } from '../lib/businessOS'
 import { AttendeeSelector, AgendaBuilder } from '../components/MeetingComponents'
 import { Calendar, Clock, Plus, Search, Video, Users, Bell, Trash2, ExternalLink, Loader2 } from 'lucide-react'
 
@@ -23,7 +24,18 @@ export default function Meetings(){
  useEffect(()=>{void load()},[load]); useEffect(()=>{if(businessId)supabase.from('staff').select('id,full_name,email').eq('business_id',businessId).then(({data})=>setStaffList(data||[]))},[businessId])
  const reset=()=>{setForm({title:'',description:'',date:today(),start_time:'09:00',end_time:'10:00',location:'',notes:''});setInvitees([]);setAgenda([])}
  const openCreate=()=>{reset();setMode('create')}; const openEdit=(m:Meeting)=>{setSelected(m);setForm({title:m.title,description:m.description||'',date:m.date,start_time:m.start_time,end_time:m.end_time||'',location:m.location||'',notes:m.notes||''});setInvitees(m.attendees||[]);setAgenda(m.agenda?JSON.parse(m.agenda):[]);setMode('edit')}
- const create=async()=>{if(!businessId||!staff?.id||!form.title.trim()){showToast('Meeting title is required','error');return}const {data,error}=await supabase.from('meetings').insert({title:form.title.trim(),description:form.description||null,date:form.date,start_time:form.start_time,end_time:form.end_time||null,location:form.location||null,agenda:agenda.length?JSON.stringify(agenda):null,notes:form.notes||null,attendees:invitees,status:'scheduled',staff_id:staff.id,business_id:businessId}).select().single();if(error){console.error(error);showToast('Failed to schedule meeting','error');return}setMeetings(v=>[...v,data]);reset();setMode('list');showToast('Meeting scheduled','success');logPlatformActivity('meeting.scheduled',{feature:'meetings',businessId,result:'completed',payload:{title:data.title}});for(const a of invitees)await supabase.from('notifications').insert({business_id:businessId,staff_id:a.id,title:'Meeting Invitation',body:`You've been invited to ${data.title} on ${dateLabel(data.date)} at ${time12(data.start_time)}`,type:'meeting',related_id:data.id})}
+ const create=async()=>{if(!businessId||!staff?.id||!form.title.trim()){showToast('Meeting title is required','error');return}
+  const scheduledStart=`${form.date}T${form.start_time}:00`;const scheduledEnd=form.end_time?`${form.date}T${form.end_time}:00`:undefined
+  const created=await createMeeting(businessId,form.title.trim(),{scheduledStart,scheduledEnd,description:form.description||undefined,createdBy:staff.id})
+  if(!created){showToast('Failed to schedule meeting','error');return}
+  const mid=created.meeting_id
+  // Persist the extended fields the RPC doesn't take (location, agenda, notes)
+  const {data,error}=await supabase.from('meetings').update({date:form.date,start_time:form.start_time,end_time:form.end_time||null,location:form.location||null,agenda:agenda.length?JSON.stringify(agenda):null,notes:form.notes||null}).eq('id',mid).select().single()
+  if(error){console.error(error);showToast('Meeting created but details failed to save','error')}
+  // Invite attendees as relational participants (evidence model) + notify.
+  for(const a of invitees){await inviteMeetingParticipant(mid,a.id);await supabase.from('notifications').insert({business_id:businessId,staff_id:a.id,title:'Meeting Invitation',body:`You've been invited to ${form.title.trim()} on ${dateLabel(form.date)} at ${time12(form.start_time)}`,type:'meeting',related_id:mid})}
+  if(data)setMeetings(v=>[...v,{...data,attendees:invitees}])
+  reset();setMode('list');showToast('Meeting scheduled','success');logPlatformActivity('meeting.scheduled',{feature:'meetings',businessId,result:'completed',payload:{title:form.title.trim()}})}
  const update=async()=>{if(!selected||!form.title.trim())return;const {data,error}=await supabase.from('meetings').update({title:form.title.trim(),description:form.description||null,date:form.date,start_time:form.start_time,end_time:form.end_time||null,location:form.location||null,agenda:agenda.length?JSON.stringify(agenda):null,notes:form.notes||null,updated_at:new Date().toISOString()}).eq('id',selected.id).select().single();if(error){showToast('Failed to update meeting','error');return}setMeetings(v=>v.map(m=>m.id===selected.id?data:m));setSelected(data);setMode('detail');showToast('Meeting updated','success')}
  const remove=async(id:string)=>{if(!confirm('Delete this meeting?'))return;const {error}=await supabase.from('meetings').delete().eq('id',id);if(error){showToast('Failed to delete meeting','error');return}setMeetings(v=>v.filter(m=>m.id!==id));setSelected(null);setMode('list');showToast('Meeting deleted','success')}
  const remind=async(m:Meeting)=>{for(const a of m.attendees||[])await supabase.from('notifications').insert({business_id:businessId,staff_id:a.id,title:'Meeting Reminder',body:`${m.title} starts at ${time12(m.start_time)}`,type:'reminder',related_id:m.id});showToast('Reminders sent','success')}

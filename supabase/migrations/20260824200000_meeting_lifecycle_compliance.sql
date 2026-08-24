@@ -1,0 +1,449 @@
+-- M1: Meeting lifecycle compliance
+-- Additive + idempotent. Closes the drift between the canonical lifecycle
+-- (20260818400000) and the live pages that bypassed it.
+-- 1) meeting_participants unique key for join_meeting's ON CONFLICT.
+-- 2) Backfill legacy meetings.attendees JSONB -> meeting_participants rows.
+-- 3) meeting_chat_messages (native meeting chat, persisted, meeting-scoped).
+-- 4) meetings business-context links (CRM/objective association).
+
+-- 0. Pre-existing event-bus defect (Session 33): business_events has the
+-- update_updated_at trigger but no updated_at column, so every UPDATE (incl.
+-- process_business_event's re-queue) raised "record new has no field
+-- updated_at". Add the column additively so the event bus works on a fresh DB.
+ALTER TABLE public.business_events ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND indexname = 'meeting_participants_meeting_staff_key'
+  ) THEN
+    CREATE UNIQUE INDEX meeting_participants_meeting_staff_key
+      ON public.meeting_participants (meeting_id, staff_id)
+      WHERE staff_id IS NOT NULL;
+  END IF;
+END $$;
+
+DO $$
+DECLARE
+  r RECORD;
+  a JSONB;
+  v_staff UUID;
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'meetings' AND column_name = 'attendees'
+  ) THEN
+    FOR r IN
+      SELECT id AS meeting_id, business_id, attendees
+      FROM public.meetings
+      WHERE attendees IS NOT NULL AND jsonb_typeof(attendees) = 'array'
+        AND jsonb_array_length(attendees) > 0
+    LOOP
+      FOR a IN SELECT * FROM jsonb_array_elements(r.attendees)
+      LOOP
+        BEGIN
+          v_staff := NULL;
+          IF (a ? 'id') THEN
+            SELECT s.id INTO v_staff FROM public.staff s
+            WHERE s.id = (a->>'id')::uuid AND s.business_id = r.business_id
+            LIMIT 1;
+          END IF;
+          IF v_staff IS NOT NULL THEN
+            INSERT INTO public.meeting_participants
+              (meeting_id, staff_id, role, status)
+            VALUES (r.meeting_id, v_staff, 'participant', 'invited')
+            ON CONFLICT (meeting_id, staff_id)
+              WHERE staff_id IS NOT NULL
+            DO NOTHING;
+          END IF;
+        EXCEPTION WHEN OTHERS THEN
+          NULL;
+        END;
+      END LOOP;
+    END LOOP;
+  END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS public.meeting_chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  meeting_id UUID NOT NULL REFERENCES public.meetings(id) ON DELETE CASCADE,
+  business_id UUID NOT NULL REFERENCES public.businesses(id) ON DELETE CASCADE,
+  staff_id UUID REFERENCES public.staff(id) ON DELETE SET NULL,
+  guest_token TEXT,
+  guest_name TEXT,
+  body TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  edited_at TIMESTAMPTZ,
+  CHECK ((staff_id IS NOT NULL) OR (guest_token IS NOT NULL))
+);
+
+CREATE INDEX IF NOT EXISTS idx_meeting_chat_meeting
+  ON public.meeting_chat_messages(meeting_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_meeting_chat_business
+  ON public.meeting_chat_messages(business_id, created_at);
+
+ALTER TABLE public.meeting_chat_messages ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS meeting_chat_select_participant ON public.meeting_chat_messages;
+CREATE POLICY meeting_chat_select_participant ON public.meeting_chat_messages
+  FOR SELECT TO authenticated
+  USING (
+    business_id IN (SELECT business_id FROM public.get_current_staff())
+    OR (guest_token IS NOT NULL
+        AND guest_token = current_setting('meeting.guest_token', true))
+  );
+
+DROP POLICY IF EXISTS meeting_chat_insert_member ON public.meeting_chat_messages;
+CREATE POLICY meeting_chat_insert_member ON public.meeting_chat_messages
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    business_id IN (SELECT business_id FROM public.get_current_staff())
+    AND EXISTS (
+      SELECT 1 FROM public.get_current_staff() s
+      WHERE s.id = meeting_chat_messages.staff_id
+        AND s.business_id = meeting_chat_messages.business_id
+    )
+  );
+
+DROP POLICY IF EXISTS meeting_chat_insert_guest ON public.meeting_chat_messages;
+CREATE POLICY meeting_chat_insert_guest ON public.meeting_chat_messages
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    guest_token IS NOT NULL
+    AND guest_token = current_setting('meeting.guest_token', true)
+  );
+
+CREATE OR REPLACE FUNCTION public.send_meeting_chat_guest(
+  p_meeting_id UUID,
+  p_guest_token TEXT,
+  p_body TEXT
+) RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_business_id UUID;
+  v_guest_name TEXT;
+  v_id UUID;
+BEGIN
+  IF p_body IS NULL OR length(trim(p_body)) = 0 THEN
+    RAISE EXCEPTION 'Message body is required';
+  END IF;
+  SELECT m.business_id INTO v_business_id
+  FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+  SELECT p.guest_name INTO v_guest_name
+  FROM public.meeting_participants p
+  WHERE p.meeting_id = p_meeting_id AND p.guest_token = p_guest_token
+    AND p.status IN ('invited', 'joined', 'left')
+  LIMIT 1;
+  IF v_guest_name IS NULL THEN
+    RAISE EXCEPTION 'Invalid guest token';
+  END IF;
+  PERFORM set_config('meeting.guest_token', p_guest_token, true);
+  INSERT INTO public.meeting_chat_messages
+    (meeting_id, business_id, guest_token, guest_name, body)
+  VALUES (p_meeting_id, v_business_id, p_guest_token, v_guest_name, trim(p_body))
+  RETURNING id INTO v_id;
+  RETURN v_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.send_meeting_chat_guest(UUID, TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.send_meeting_chat_guest(UUID, TEXT, TEXT) TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.send_meeting_chat(
+  p_meeting_id UUID,
+  p_body TEXT
+) RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_business_id UUID;
+  v_staff_id UUID;
+  v_id UUID;
+BEGIN
+  IF p_body IS NULL OR length(trim(p_body)) = 0 THEN
+    RAISE EXCEPTION 'Message body is required';
+  END IF;
+  SELECT m.business_id INTO v_business_id
+  FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+  SELECT s.id INTO v_staff_id
+  FROM public.get_current_staff() s
+  WHERE s.business_id = v_business_id LIMIT 1;
+  IF v_staff_id IS NULL THEN
+    RAISE EXCEPTION 'Not authorized to chat in this meeting';
+  END IF;
+  INSERT INTO public.meeting_chat_messages
+    (meeting_id, business_id, staff_id, body)
+  VALUES (p_meeting_id, v_business_id, v_staff_id, trim(p_body))
+  RETURNING id INTO v_id;
+  RETURN v_id;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.send_meeting_chat(UUID, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.send_meeting_chat(UUID, TEXT) TO authenticated;
+
+-- 1b. Fix create_meeting: it never populated the legacy NOT NULL
+-- date/start_time columns (998), so every RPC-created meeting failed with a
+-- null-constraint violation. Re-declare the base 8-arg overload only (the
+-- 9-arg governance overload in 20260822141000 is a separate signature,
+-- untouched here).
+DROP FUNCTION IF EXISTS public.create_meeting(UUID, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, TEXT, TEXT, UUID);
+CREATE OR REPLACE FUNCTION public.create_meeting(
+  p_business_id UUID,
+  p_title TEXT,
+  p_scheduled_start TIMESTAMPTZ DEFAULT NULL,
+  p_scheduled_end TIMESTAMPTZ DEFAULT NULL,
+  p_meeting_type TEXT DEFAULT 'internal',
+  p_visibility TEXT DEFAULT 'business',
+  p_description TEXT DEFAULT NULL,
+  p_created_by UUID DEFAULT NULL
+) RETURNS TABLE(meeting_id UUID, join_token TEXT)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff_id UUID;
+  v_meeting_id UUID;
+  v_token TEXT;
+BEGIN
+  SELECT s.id INTO v_staff_id
+  FROM public.get_current_staff() s
+  WHERE s.business_id = p_business_id
+  LIMIT 1;
+  IF v_staff_id IS NULL THEN
+    RAISE EXCEPTION 'Not authorized to create meetings for this business';
+  END IF;
+  INSERT INTO public.meetings (
+    business_id, staff_id, created_by, title, description,
+    meeting_type, scheduled_start, scheduled_end, visibility, status,
+    date, start_time, end_time
+  ) VALUES (
+    p_business_id, COALESCE(p_created_by, v_staff_id), COALESCE(p_created_by, v_staff_id),
+    p_title, p_description, p_meeting_type, p_scheduled_start, p_scheduled_end,
+    p_visibility, 'scheduled',
+    COALESCE(p_scheduled_start, NOW())::DATE,
+    COALESCE(p_scheduled_start, NOW())::TIME,
+    COALESCE(p_scheduled_end, COALESCE(p_scheduled_start, NOW()) + INTERVAL '1 hour')::TIME
+  ) RETURNING id INTO v_meeting_id;
+  v_token := encode(gen_random_bytes(24), 'hex');
+  INSERT INTO public.meeting_participants (
+    meeting_id, staff_id, user_id, role, status
+  ) VALUES (
+    v_meeting_id, v_staff_id, auth.uid(), 'host', 'invited'
+  );
+  PERFORM public.emit_business_event(
+    p_business_id := p_business_id,
+    p_event_type := 'meeting_created',
+    p_entity_type := 'meeting',
+    p_entity_id := v_meeting_id,
+    p_payload := jsonb_build_object('meeting_id', v_meeting_id, 'title', p_title, 'meeting_type', p_meeting_type),
+    p_actor_id := v_staff_id,
+    p_source := 'system'
+  );
+  RETURN QUERY SELECT v_meeting_id, v_token;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.create_meeting(UUID, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, TEXT, TEXT, UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.create_meeting(UUID, TEXT, TIMESTAMPTZ, TIMESTAMPTZ, TEXT, TEXT, TEXT, UUID) TO authenticated;
+
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='contacts') THEN
+    ALTER TABLE public.meetings ADD COLUMN IF NOT EXISTS contact_id UUID;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='deals') THEN
+    ALTER TABLE public.meetings ADD COLUMN IF NOT EXISTS deal_id UUID;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='leads') THEN
+    ALTER TABLE public.meetings ADD COLUMN IF NOT EXISTS lead_id UUID;
+  END IF;
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='strategic_objectives') THEN
+    ALTER TABLE public.meetings ADD COLUMN IF NOT EXISTS objective_id UUID;
+  END IF;
+END $$;
+
+-- 1c. join_meeting's ON CONFLICT (meeting_id, staff_id) cannot infer the
+-- partial unique index (WHERE staff_id IS NOT NULL) without the predicate.
+-- Re-declare join_meeting with the matching index specification.
+CREATE OR REPLACE FUNCTION public.join_meeting(
+  p_meeting_id UUID,
+  p_guest_token TEXT DEFAULT NULL
+) RETURNS TABLE(participant_id UUID, authorized BOOLEAN)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_business_id UUID;
+  v_staff_id UUID;
+  v_participant_id UUID;
+  v_is_guest BOOLEAN := (p_guest_token IS NOT NULL);
+BEGIN
+  SELECT m.business_id INTO v_business_id
+  FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+
+  IF v_is_guest THEN
+    SELECT id INTO v_participant_id
+    FROM public.meeting_participants
+    WHERE meeting_id = p_meeting_id AND guest_token = p_guest_token
+      AND status IN ('invited', 'joined', 'left');
+    IF v_participant_id IS NULL THEN
+      RETURN QUERY SELECT NULL::UUID, false;
+      RETURN;
+    END IF;
+  ELSE
+    SELECT s.id INTO v_staff_id
+    FROM public.get_current_staff() s
+    WHERE s.business_id = v_business_id LIMIT 1;
+    IF v_staff_id IS NULL THEN
+      RAISE EXCEPTION 'Not authorized to join this meeting';
+    END IF;
+
+    INSERT INTO public.meeting_participants (meeting_id, staff_id, user_id, role, status, joined_at)
+    VALUES (p_meeting_id, v_staff_id, auth.uid(), 'participant', 'joined', NOW())
+    ON CONFLICT (meeting_id, staff_id) WHERE staff_id IS NOT NULL DO UPDATE
+      SET status = 'joined', joined_at = NOW(), left_at = NULL
+    RETURNING id INTO v_participant_id;
+  END IF;
+
+  INSERT INTO public.meeting_participant_events (meeting_id, participant_id, event_type)
+  VALUES (p_meeting_id, v_participant_id, 'joined');
+
+  UPDATE public.meetings SET status = 'live', actual_start = COALESCE(actual_start, NOW())
+    WHERE id = p_meeting_id AND status IN ('scheduled', 'starting');
+
+  PERFORM public.emit_business_event(
+    p_business_id := v_business_id,
+    p_event_type := 'meeting_joined',
+    p_entity_type := 'meeting',
+    p_entity_id := p_meeting_id,
+    p_payload := jsonb_build_object('meeting_id', p_meeting_id, 'is_guest', v_is_guest),
+    p_actor_id := v_staff_id,
+    p_source := 'system'
+  );
+
+  RETURN QUERY SELECT v_participant_id, true;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.join_meeting(UUID, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.join_meeting(UUID, TEXT) TO authenticated;
+
+-- 2. Backfill legacy JSONB attendees -> relational participant rows.
+-- 1d. end_meeting (from 20260818400000) used the wrong 4-arg positional
+-- emit_business_event signature. Re-declare with the correct named-arg call.
+CREATE OR REPLACE FUNCTION public.end_meeting(p_meeting_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_business_id UUID;
+  v_staff_id UUID;
+  v_actual_start TIMESTAMPTZ;
+BEGIN
+  SELECT m.business_id, m.actual_start INTO v_business_id, v_actual_start
+  FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+
+  SELECT s.id INTO v_staff_id
+  FROM public.get_current_staff() s
+  WHERE s.business_id = v_business_id LIMIT 1;
+  IF v_staff_id IS NULL THEN
+    RAISE EXCEPTION 'Not authorized to end this meeting';
+  END IF;
+
+  IF EXISTS (SELECT 1 FROM public.meetings WHERE id = p_meeting_id AND status = 'completed') THEN
+    RETURN true;
+  END IF;
+
+  UPDATE public.meetings
+    SET status = 'completed', actual_end = NOW(),
+        duration_seconds = CASE
+          WHEN actual_start IS NOT NULL
+          THEN GREATEST(0, EXTRACT(EPOCH FROM (NOW() - actual_start))::INT)
+          ELSE NULL
+        END
+    WHERE id = p_meeting_id;
+
+  UPDATE public.meeting_participants
+    SET status = 'left', left_at = NOW(),
+        total_seconds = GREATEST(0, EXTRACT(EPOCH FROM (NOW() - joined_at))::INT)
+    WHERE meeting_id = p_meeting_id AND status = 'joined';
+
+  PERFORM public.emit_business_event(
+    p_business_id := v_business_id,
+    p_event_type := 'meeting_ended',
+    p_entity_type := 'meeting',
+    p_entity_id := p_meeting_id,
+    p_payload := jsonb_build_object('meeting_id', p_meeting_id),
+    p_actor_id := v_staff_id,
+    p_source := 'system'
+  );
+
+  RETURN true;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.end_meeting(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.end_meeting(UUID) TO authenticated;
+
+-- 1e. start_meeting (from 20260818400000) had the same wrong emit signature.
+CREATE OR REPLACE FUNCTION public.start_meeting(p_meeting_id UUID)
+RETURNS TABLE(live BOOLEAN)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_business_id UUID;
+  v_staff_id UUID;
+BEGIN
+  SELECT m.business_id INTO v_business_id
+  FROM public.meetings m WHERE m.id = p_meeting_id;
+  IF v_business_id IS NULL THEN
+    RAISE EXCEPTION 'Meeting not found';
+  END IF;
+  SELECT s.id INTO v_staff_id
+  FROM public.get_current_staff() s
+  WHERE s.business_id = v_business_id LIMIT 1;
+  IF v_staff_id IS NULL THEN
+    RAISE EXCEPTION 'Not authorized to start this meeting';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.meetings WHERE id = p_meeting_id AND status = 'live') THEN
+    RETURN QUERY SELECT true;
+    RETURN;
+  END IF;
+  UPDATE public.meetings
+    SET status = 'live', actual_start = NOW()
+    WHERE id = p_meeting_id AND status IN ('scheduled', 'starting');
+  PERFORM public.emit_business_event(
+    p_business_id := v_business_id,
+    p_event_type := 'meeting_started',
+    p_entity_type := 'meeting',
+    p_entity_id := p_meeting_id,
+    p_payload := jsonb_build_object('meeting_id', p_meeting_id),
+    p_actor_id := v_staff_id,
+    p_source := 'system'
+  );
+  RETURN QUERY SELECT true;
+END;
+$$;
+REVOKE ALL ON FUNCTION public.start_meeting(UUID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.start_meeting(UUID) TO authenticated;
