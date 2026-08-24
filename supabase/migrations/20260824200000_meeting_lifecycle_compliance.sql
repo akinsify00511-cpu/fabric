@@ -590,3 +590,139 @@ END;
 $$;
 REVOKE ALL ON FUNCTION public.save_meeting_action(UUID, TEXT, UUID, DATE, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.save_meeting_action(UUID, TEXT, UUID, DATE, TEXT) TO authenticated;
+
+-- ============================================================================
+-- M4: fix generate_meeting_report emit signature (post-meeting record)
+-- ============================================================================
+-- The Phase D generate_meeting_report used the wrong 4-arg positional
+-- emit_business_event call. Re-declare the telemetry block correctly by
+-- re-creating the function (same signature, corrected emit).
+CREATE OR REPLACE FUNCTION public.generate_meeting_report(
+  p_meeting_id UUID,
+  p_send_notifications BOOLEAN DEFAULT true
+) RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO public, pg_temp
+AS $$
+DECLARE
+  v_staff RECORD;
+  v_meeting RECORD;
+  v_summary TEXT;
+  v_key_points TEXT[];
+  v_decisions JSONB;
+  v_actions JSONB;
+  v_attendees JSONB;
+  v_report_data JSONB;
+  v_report_id UUID;
+  v_attendee RECORD;
+  v_notify_count INT := 0;
+BEGIN
+  SELECT * INTO v_staff FROM public.get_current_staff() LIMIT 1;
+  SELECT * INTO v_meeting FROM public.meetings WHERE id = p_meeting_id;
+
+  IF v_meeting.business_id IS NULL OR v_meeting.business_id != v_staff.business_id THEN
+    RETURN jsonb_build_object('error', 'Not authorized');
+  END IF;
+
+  SELECT summary INTO v_summary FROM public.meeting_summaries
+  WHERE meeting_id = p_meeting_id ORDER BY created_at DESC LIMIT 1;
+
+  SELECT key_points INTO v_key_points FROM public.meeting_summaries
+  WHERE meeting_id = p_meeting_id ORDER BY created_at DESC LIMIT 1;
+
+  SELECT COALESCE(jsonb_agg(jsonb_build_object(
+    'id', d.id, 'text', d.decision_text, 'rationale', d.rationale,
+    'status', d.status, 'timestamp_ms', d.timestamp_ms
+  )), '[]'::jsonb) INTO v_decisions
+  FROM public.meeting_decisions d WHERE d.meeting_id = p_meeting_id;
+
+  SELECT COALESCE(jsonb_agg(jsonb_build_object(
+    'id', a.id, 'text', a.action_text, 'assignee_id', a.assignee_id,
+    'due_date', a.due_date, 'priority', a.priority, 'status', a.status,
+    'task_id', a.task_id
+  )), '[]'::jsonb) INTO v_actions
+  FROM public.meeting_actions a WHERE a.meeting_id = p_meeting_id;
+
+  v_attendees := COALESCE(v_meeting.attendees, '[]'::jsonb);
+
+  v_report_data := jsonb_build_object(
+    'meeting', jsonb_build_object(
+      'id', v_meeting.id, 'title', v_meeting.title,
+      'date', v_meeting.date, 'start_time', v_meeting.start_time,
+      'end_time', v_meeting.end_time, 'location', v_meeting.location,
+      'meeting_link', v_meeting.meeting_link
+    ),
+    'summary', COALESCE(v_summary, ''),
+    'key_points', COALESCE(v_key_points, '[]'::jsonb),
+    'decisions', v_decisions,
+    'actions', v_actions,
+    'attendees', v_attendees,
+    'generated_at', NOW(),
+    'generated_by', v_staff.id
+  );
+
+  INSERT INTO public.meeting_reports (meeting_id, business_id, generated_by, report_data)
+  VALUES (p_meeting_id, v_staff.business_id, v_staff.id, v_report_data)
+  RETURNING id INTO v_report_id;
+
+  IF p_send_notifications THEN
+    FOR v_attendee IN
+      SELECT s.id, s.user_id FROM public.staff s
+      WHERE s.business_id = v_staff.business_id
+        AND s.active = true
+        AND (
+          s.id = v_meeting.staff_id
+          OR s.id = ANY (SELECT * FROM jsonb_array_elements_text(v_attendees))
+        )
+    LOOP
+      BEGIN
+        INSERT INTO public.notifications (user_id, business_id, title, message, category, channel, entity_type, entity_id, data)
+        VALUES (
+          v_attendee.user_id,
+          v_staff.business_id,
+          'Meeting report ready: ' || v_meeting.title,
+          'The post-meeting report for "' || v_meeting.title || '" is ready to review.',
+          'meeting',
+          'both',
+          'meeting',
+          p_meeting_id,
+          jsonb_build_object('report_id', v_report_id, 'meeting_id', p_meeting_id)
+        );
+        v_notify_count := v_notify_count + 1;
+      EXCEPTION WHEN OTHERS THEN NULL;
+      END;
+    END LOOP;
+
+    UPDATE public.meeting_reports
+    SET sent_to = ARRAY(
+      SELECT s.id FROM public.staff s
+      WHERE s.business_id = v_staff.business_id AND s.active = true
+        AND (s.id = v_meeting.staff_id OR s.id = ANY (SELECT * FROM jsonb_array_elements_text(v_attendees)))
+    ),
+    sent_at = NOW()
+    WHERE id = v_report_id;
+  END IF;
+
+  BEGIN
+    PERFORM public.emit_business_event(
+      p_business_id := v_staff.business_id,
+      p_event_type := 'meeting_report_generated',
+      p_entity_type := 'meeting',
+      p_entity_id := p_meeting_id,
+      p_payload := jsonb_build_object('meeting_id', p_meeting_id, 'report_id', v_report_id, 'notified', v_notify_count),
+      p_actor_id := v_staff.id,
+      p_source := 'system'
+    );
+  EXCEPTION WHEN OTHERS THEN NULL;
+  END;
+
+  RETURN jsonb_build_object(
+    'report_id', v_report_id,
+    'report_data', v_report_data,
+    'notified', v_notify_count
+  );
+END;
+$$;
+REVOKE ALL ON FUNCTION public.generate_meeting_report(UUID, BOOLEAN) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.generate_meeting_report(UUID, BOOLEAN) TO authenticated;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
-import { joinMeeting, leaveMeeting, endMeeting as endMeetingRpc } from '../lib/businessOS'
+import { joinMeeting, leaveMeeting, endMeeting as endMeetingRpc, generateMeetingReport } from '../lib/businessOS'
 import MeetingChatPanel from '../components/meeting/MeetingChatPanel'
 import { saveMeetingDecision, saveMeetingAction, promoteMeetingActionToTask, fetchMeetingDecisions, fetchMeetingActions, type MeetingAction, type MeetingDecision } from '../lib/businessOS'
 import { useToast } from '../components/Toast'
@@ -118,7 +118,10 @@ export default function MeetingCapture(){
    if(participantIdRef.current)await leaveMeeting(meetingId,participantIdRef.current)
    const ok=await endMeetingRpc(meetingId)
    if(!ok){const { error } = await supabase.from('meetings').update({status:'completed'}).eq('id',meetingId);if(error)console.error(error)}
- };window.location.assign('/app/meetings')}
+   // M4: generate the post-meeting record (report + attendee notifications)
+   // best-effort so ending never fails if the report migration is not applied.
+   try{await generateMeetingReport(meetingId,true)}catch{}
+ };window.location.assign(`/app/meetings/${meetingId}/report`)}
 
  const handleChatUnread=(n:number)=>{setChatUnread(n===0?0:n===-1?chatUnread+1:n)}
  if(loading)return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]"/></div>
