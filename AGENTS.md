@@ -3936,6 +3936,53 @@ STILL needs live DB: migration 20260819090000 (discovery) + prior pending
 migrations must be applied to Supabase (project kgsgqvatyleetyquffya). All
 idempotent. Frontend degrades gracefully until then (┬¦24).
 
+## Session 53 continuation (2026-08-24): duplicate migration number fixed + deployed (commit d234222)
+
+User said "continue" after the docs deploy. Worked the REMAINING list.
+
+### Fixed
+- **Duplicate migration number 20260822140000** (contract_scan_extension +
+  governance_meeting_scheduling sharing a timestamp): renumbered the later file
+  to `20260822141000` (both unapplied to live DB → safe). Contract manifest +
+  integrity seed regenerated (deterministic — empty diff on re-run; the
+  contract-manifest CI job confirmed it).
+- MeetingsV2.tsx deletion was ALREADY done by a parallel session — only the
+  meetings-new → meetings redirect remains (correct final state; nothing to do).
+- SUBSYSTEM_INVENTORY.md findings #1/#2 marked RESOLVED.
+
+### Verified
+- Full 201-migration chain applies CLEAN on bare postgres:15 (pass 1: 201/201);
+  renumbered file idempotent (3 applies, exit 0); create_meeting 8-arg + 9-arg
+  overloads both present; zero numeric migration duplicates remain.
+- Pass-2 re-apply shows the documented legacy non-idempotency baseline (~80
+  files: policies/triggers/enums already-exists) — pre-existing debt in files
+  NOT touched by this change; the CI migration-test job tracks it.
+- vitest 723/723, tsc 0, schema-drift OK, design-constitution PASS.
+- CI ✅ + Schema Drift Check ✅ (contract-manifest, schema-drift,
+  design-constitution, migration-test all green). Vercel deploy step ✅,
+  Frontend PASS (current SPA shell live from d234222). Contract gate honestly
+  FAILs on the SAME standing credential-gated blockers (live DB + 4 edge fns).
+
+### Parallel-session collision #6 + push lessons
+- Parallel session pushed 27fb2ac (Meta Pixel conversion tracking — the gap
+  Session 52 flagged!) + c1759c9 (Excellence Constitution + Meeting System
+  architecture doc, which EDITS docs/constitution/AVENIZE_PRODUCT_CONSTITUTION.md
+  and docs/domains/MEETINGS.md from this session's hierarchy — compatible
+  additions, no conflict).
+- Rebase needed `git config user.name/email` first (the -c flags on commit
+  don't carry into rebase); an interrupted rebase left staged-but-uncommitted
+  changes on top of origin/main — recommit cleanly.
+- **`git push origin main` was rejected non-fast-forward even when 1-ahead/
+  0-behind with ls-remote proving FF possible** — stale push negotiation after
+  the failed password-prompt attempt. Fix: `git push origin HEAD:refs/heads/main`
+  (explicit refspec) succeeded immediately. ALSO: refresh the remote URL with
+  the current token first (`git remote set-url origin https://${GITHUB_TOKEN}@...`)
+  — the token had rotated (Session 51b lesson recurred).
+
+### Standing blockers (unchanged, user-credential-gated)
+Live DB apply (SUPABASE_DB_URL), edge-fn deploys, secrets (PAYSTACK_SECRET_KEY,
+RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET, APP_URL).
+
 ## Session 53 (2026-08-24): Master Implementation Instruction — /docs governance hierarchy established (commit 08a2fdb, local, NOT pushed)
 
 User directive: the 48-section Master Engineering/Architecture/Quality Governance

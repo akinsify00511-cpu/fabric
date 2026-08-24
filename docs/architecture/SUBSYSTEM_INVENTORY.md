@@ -44,13 +44,15 @@ awaiting the live-DB/edge deploy step that requires user credentials.
 
 ## Duplicates / drift found during THIS audit
 
-1. **DUPLICATED migration number:** `20260822140000_contract_scan_extension.sql` and
-   `20260822140000_governance_meeting_scheduling.sql` share a timestamp. They coexist
-   by filename order, but the number collision violates the one-number-per-migration
-   convention — REMAINING (rename the later-authored one; renumber only if unapplied
-   to live DB — it is unapplied, so safe to rename).
-2. **DEPRECATED:** `MeetingsV2.tsx` file retained (route redirects to canonical
-   Meetings); candidate for deletion after live verification.
+1. **DUPLICATED migration number — RESOLVED (2026-08-24):**
+   `20260822140000_governance_meeting_scheduling.sql` was renumbered to
+   `20260822141000` (collided with `20260822140000_contract_scan_extension.sql`).
+   Verified unapplied to live DB before renumbering; contract manifest + integrity
+   seed regenerated (deterministic); full chain applies clean on postgres:15; zero
+   numeric duplicates remain.
+2. **DEPRECATED — RESOLVED:** `MeetingsV2.tsx` was removed on origin/main by a
+   parallel session; only the `/app/meetings-new → /app/meetings` redirect remains
+   (the correct final state).
 3. Root-level doc sprawl (30+ governance .md files at repo root) — consolidated by
    reference into `docs/`; root files kept as operational detail, not deleted, to avoid
    breaking CI references (`check_design_constitution.py` reads the root baseline JSON).
