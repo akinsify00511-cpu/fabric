@@ -1,3 +1,4 @@
+<!-- Governance: the constitutional layer for design law lives at docs/constitution/AVENIZE_DESIGN_CONSTITUTION.md (added 2026-08-24). This file remains the operational detail + CI-enforced baseline reference. -->
 # AVENIZE DESIGN CONSTITUTION
 
 The governing document for every visual and experiential decision in Avenize.
