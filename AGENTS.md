@@ -3936,6 +3936,58 @@ STILL needs live DB: migration 20260819090000 (discovery) + prior pending
 migrations must be applied to Supabase (project kgsgqvatyleetyquffya). All
 idempotent. Frontend degrades gracefully until then (┬¦24).
 
+## Session 54 (2026-08-24): Unified tenant-scoped Business Search (§27) — BUILT, commit local, PUSH BLOCKED on expired token
+
+User said "continue" → took the NEXT PRIORITY from Session 53: the unified
+business search RPC (the one PARTIAL domain in the §4 inventory).
+
+### What shipped (local commit, NOT pushed — GITHUB_TOKEN returned 401 Bad
+### credentials mid-session; push blocked until the credential refreshes)
+- Migration `20260824170000_unified_business_search.sql`: `business_search(
+  p_query, p_types[], p_limit)` — membership-guarded SECURITY DEFINER over an
+  explicit 9-type allowlist (staff/contacts/leads/meetings/objectives/quotes/
+  orders/tasks/activities) scoped to the caller's business. Ranking exact(0) >
+  prefix(1) > substring(2), recency tiebreaker, per-type caps (limit/3, min 1).
+  ILIKE metacharacters escaped (`%`/`_`/`\`) so user input is literal —
+  injection-safe. Payroll/finance/walled content excluded BY CONSTRUCTION.
+  REVOKE anon, GRANT authenticated.
+- `businessOS.businessSearch` wrapper (best-effort, null when RPC not deployed).
+- CommandPalette.tsx: debounced (200ms) unified search merged ABOVE navigation
+  results, grouped by entity type with icons, keyboard-navigable, stale-response
+  guarded (searchSeq). Navigation search still works when the RPC is absent (§24).
+- tests/frontend/lib/unifiedSearch.test.ts: 9 contract tests (allowlist excludes
+  walled content, ranking order, per-type cap, empty-query no-op, ILIKE escape,
+  membership gate fails closed).
+- Contract manifest regenerated (business_search added; 226 tables / 208 RPCs).
+
+### Verified (bare postgres:15 Docker)
+- Full 201-migration chain applies CLEAN (pass 1, 201/201); search migration
+  idempotent (re-apply exit 0).
+- Functional smoke test (2 businesses, cross-tenant fixture): MEMBER 'acme' →
+  total=3 (own contact+lead+task), leaked_b_rows=0 (other tenant's 'Acme Bob'
+  INVISIBLE → tenant isolation holds); exact-match rank=0; non-member →
+  authorized:false + total=0; type filter → 1 distinct type; '%' wildcard →
+  total=0 (literal, no broad match).
+- vitest 773/773 (+9), tsc 0, schema-drift OK (227 tables), design PASS.
+
+### Environment gotchas this session
+- Docker daemon DIED mid-session → `sudo dockerd > /tmp/dockerd.log 2>&1 &` then
+  `sudo docker run --rm -d --name pg53 -e POSTGRES_PASSWORD=test -e POSTGRES_DB=avenize postgres:15`.
+  Daemon restart wiped the container → re-applied the full chain fresh.
+- businesses.organization_id is NOT NULL → test fixtures must create an
+  organizations row first.
+- staff.id is UUID → fixture ids must be valid hex (sa000000… fails; aa000000… ok).
+- **GITHUB_TOKEN expired mid-session** (was working for the d234222 push, then
+  401 Bad credentials on api.github.com/user + gh api). Refreshing the remote
+  URL did NOT help (token itself dead). Push is BLOCKED until the platform
+  injects a refreshed token. The commit is safe locally.
+
+### Deploy status
+Commit local (feat(search)…). Push + CI + Vercel deploy PENDING token refresh.
+Live DB still needs migration 20260824170000 applied (same credential gate as
+all prior sessions); CommandPalette degrades to navigation-only search until
+then (best-effort §24).
+
 ## Session 53 continuation (2026-08-24): duplicate migration number fixed + deployed (commit d234222)
 
 User said "continue" after the docs deploy. Worked the REMAINING list.
