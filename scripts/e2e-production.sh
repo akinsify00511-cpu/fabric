@@ -49,20 +49,53 @@ line ""
 line "Avenize E2E Production Journey"
 line "──────────────────────────────"
 
-# RPC existence is checkable WITHOUT a session (PGRST body detection) — this
-# is the contract half and must hard-fail in every environment.
-rpc_exists() { # rpc_exists <name>
-  local body
-  body=$(rpc "$1" "" "{}")
-  ! printf '%s' "$body" | grep -qE "no matches.*schema cache|PGRST202"
+# Canonical wire contract for each RPC the journey depends on (from the
+# migration definitions — verified against zzz_auth_protocol_repair.sql and
+# the production DB). {} is INVALID for parameterized RPCs (PostgREST returns
+# PGRST202 on argument mismatch for an existing function), so the checker
+# uses the real signature.
+RPC_WIRE_CONTRACTS() {
+  case "$1" in
+    create_business_and_owner) printf '%s' '{"p_business_name":"__E2E_NAME__","p_industry":"testing","p_staff_name":"E2E Bot","p_job_title":"Owner"}' ;;
+    business_brain)            printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
+    current_metrics)           printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
+    open_recommendations)      printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000","p_limit":1}' ;;
+    my_payment_request)        printf '%s' '{}' ;;
+    *)                         printf '%s' '{}' ;;
+  esac
 }
 
-# --- 0. contract: RPCs the journeys depend on must EXIST ---
-for FN in create_business_and_owner business_brain current_metrics open_recommendations my_payment_request; do
-  if rpc_exists "$FN"; then
-    pass "contract/rpc" "$FN exists"
+# Classify a PostgREST RPC response body into a 3-state verdict:
+#   ABSENT  — function not in the schema cache (genuinely missing)
+#   ARGERR  — exists, but the argument shape is wrong (PGRST202 arg-mismatch)
+#   OK      — exists and callable at the wire level (business/RLS errors pass)
+rpc_verdict() { # rpc_verdict <response-body>
+  local body="$1"
+  if printf '%s' "$body" | grep -qiE '"no matches were found in the schema cache"'; then
+    printf 'ABSENT'
+  elif printf '%s' "$body" | grep -qE 'Could not find the function .* in the schema cache|no matches were found in the schema cache.*argument'; then
+    # PGRST202 argument-mismatch phrasing: exists, but wrong args
+    printf 'ARGERR'
+  elif printf '%s' "$body" | grep -qE '"PGRST202"'; then
+    # Bare PGRST202 without the absence phrasing = argument mismatch
+    printf 'ARGERR'
   else
-    fail "contract/rpc" "$FN MISSING (PGRST202) — live DB not migrated"
+    printf 'OK'
+  fi
+}
+
+# --- 0. contract: RPCs the journeys depend on must EXIST with the right signature ---
+for FN in create_business_and_owner business_brain current_metrics open_recommendations my_payment_request; do
+  BODY=$(RPC_WIRE_CONTRACTS "$FN")
+  BODY=${BODY/__E2E_NAME__/E2E Contract Test $(date +%s)}
+  RESP=$(rpc "$FN" "" "$BODY")
+  VERDICT=$(rpc_verdict "$RESP")
+  if [ "$VERDICT" = "OK" ]; then
+    pass "contract/rpc" "$FN exists + signature OK"
+  elif [ "$VERDICT" = "ARGERR" ]; then
+    fail "contract/rpc" "$FN exists but ARGUMENT MISMATCH: $(printf '%s' "$RESP" | head -c 140)"
+  else
+    fail "contract/rpc" "$FN ABSENT (not in schema cache) — live DB not migrated"
   fi
 done
 
@@ -89,12 +122,13 @@ fi
 
 # --- 2. onboarding (create business) ---
 if [ -n "$TOKEN" ]; then
-  OB=$(rpc create_business_and_owner "$TOKEN" \
-    "{\"p_business_name\":\"E2E Contract Test $(date +%s)\",\"p_owner_name\":\"E2E Bot\",\"p_industry\":\"testing\"}")
-  if printf '%s' "$OB" | grep -qiE '"id"|business_id|already'; then
+  OB_BODY=$(RPC_WIRE_CONTRACTS create_business_and_owner)
+  OB_BODY=${OB_BODY/__E2E_NAME__/E2E Contract Test $(date +%s)}
+  OB=$(rpc create_business_and_owner "$TOKEN" "$OB_BODY")
+  if printf '%s' "$OB" | grep -qiE '"p_business_id"|"id"|business_id|already|duplicate'; then
     pass "onboarding" "business created (or account already onboarded)"
   else
-    fail "onboarding" "unexpected: $(printf '%s' "$OB" | head -c 120)"
+    fail "onboarding" "unexpected: $(printf '%s' "$OB" | head -c 160)"
   fi
 fi
 
