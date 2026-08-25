@@ -383,7 +383,7 @@
       "name": "budget_transactions"
     },
     {
-      "defined_in": "039_operations_backbone.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "kind": "table",
       "name": "budgets"
@@ -941,7 +941,7 @@
       "name": "emails"
     },
     {
-      "defined_in": "058_business_event_bus.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "kind": "table",
       "name": "entity_freshness"
@@ -2821,7 +2821,7 @@
       "name": "approval_requests"
     },
     {
-      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "kind": "view",
       "name": "entity_freshness_status"
