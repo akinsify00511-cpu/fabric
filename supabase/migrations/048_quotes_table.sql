@@ -27,6 +27,7 @@ CREATE INDEX IF NOT EXISTS idx_quotes_deal_id ON quotes(deal_id);
 ALTER TABLE quotes ENABLE ROW LEVEL SECURITY;
 
 -- Staff can see quotes for their own business.
+DROP POLICY IF EXISTS "Staff can view own business quotes" ON quotes;
 CREATE POLICY "Staff can view own business quotes"
   ON quotes FOR SELECT
   USING (
@@ -35,6 +36,7 @@ CREATE POLICY "Staff can view own business quotes"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can insert own business quotes" ON quotes;
 CREATE POLICY "Staff can insert own business quotes"
   ON quotes FOR INSERT
   WITH CHECK (
@@ -43,6 +45,7 @@ CREATE POLICY "Staff can insert own business quotes"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can update own business quotes" ON quotes;
 CREATE POLICY "Staff can update own business quotes"
   ON quotes FOR UPDATE
   USING (
@@ -56,6 +59,7 @@ CREATE POLICY "Staff can update own business quotes"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can delete own business quotes" ON quotes;
 CREATE POLICY "Staff can delete own business quotes"
   ON quotes FOR DELETE
   USING (
