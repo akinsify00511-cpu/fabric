@@ -1,0 +1,1212 @@
+{
+  "counts": {
+    "policies": 241
+  },
+  "policies": [
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "action_runs_managing",
+      "table": "action_protocol_runs"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "action_runs_viewable",
+      "table": "action_protocol_runs"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "adaptive_managing",
+      "table": "adaptive_experience_overrides"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "adaptive_viewable",
+      "table": "adaptive_experience_overrides"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "guardrail_managing",
+      "table": "agent_guardrail_checks"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "guardrail_viewable",
+      "table": "agent_guardrail_checks"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "ai_agent_logs_managing",
+      "table": "ai_agent_logs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "ai_agent_logs_viewable",
+      "table": "ai_agent_logs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "ai_agents_managing",
+      "table": "ai_agents"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "ai_agents_viewable",
+      "table": "ai_agents"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "aicap_managing",
+      "table": "ai_capability_authorities"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "aicap_viewable",
+      "table": "ai_capability_authorities"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "anomaly_managing",
+      "table": "anomaly_events"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "anomaly_viewable",
+      "table": "anomaly_events"
+    },
+    {
+      "defined_in": "070_enforcement_gate.sql",
+      "policy": "enforcement_log_managing",
+      "table": "approval_enforcement_logs"
+    },
+    {
+      "defined_in": "070_enforcement_gate.sql",
+      "policy": "enforcement_log_viewable",
+      "table": "approval_enforcement_logs"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "attendance_events_select",
+      "table": "attendance_events"
+    },
+    {
+      "defined_in": "20260817110300_presence_policy_manage.sql",
+      "policy": "attendance_policies_manage",
+      "table": "attendance_policies"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "attendance_policies_select",
+      "table": "attendance_policies"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "attendance_records_select",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "061_observer_exceptions_indexes.sql",
+      "policy": "attention_managing",
+      "table": "attention_exceptions"
+    },
+    {
+      "defined_in": "061_observer_exceptions_indexes.sql",
+      "policy": "attention_viewable",
+      "table": "attention_exceptions"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "authority_managing",
+      "table": "authority_graph"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "authority_viewable",
+      "table": "authority_graph"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "automation_proposals_managing",
+      "table": "automation_proposals"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "automation_proposals_viewable",
+      "table": "automation_proposals"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "backup_managing",
+      "table": "backup_runs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "backup_viewable",
+      "table": "backup_runs"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "bcm_read",
+      "table": "board_committee_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "bcm_write",
+      "table": "board_committee_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_committees_read",
+      "table": "board_committees"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_committees_write",
+      "table": "board_committees"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_conflicts_read",
+      "table": "board_conflicts"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_conflicts_write",
+      "table": "board_conflicts"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "policy": "board_members_business_read",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "policy": "board_members_owner_admin_delete",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "policy": "board_members_owner_admin_insert",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "policy": "board_members_owner_admin_update",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_resolutions_read",
+      "table": "board_resolutions"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "policy": "board_resolutions_write",
+      "table": "board_resolutions"
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "policy": "business_approval_config_owner",
+      "table": "business_approval_config"
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "policy": "business_approval_config_read",
+      "table": "business_approval_config"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "policy": "business_email_domains_member_read",
+      "table": "business_email_domains"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "policy": "business_email_domains_owner_insert",
+      "table": "business_email_domains"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "policy": "business_events_inserting",
+      "table": "business_events"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "policy": "business_events_viewable",
+      "table": "business_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "business_locations_manage",
+      "table": "business_locations"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "business_locations_select",
+      "table": "business_locations"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "business_ontology_managing",
+      "table": "business_ontology"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "business_ontology_viewable",
+      "table": "business_ontology"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "policy": "business_risks_delete",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "policy": "business_risks_insert",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "policy": "business_risks_select",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "policy": "business_risks_update",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "policy": "capture_attachments_delete",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "policy": "capture_attachments_insert",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "policy": "capture_attachments_select",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "policy": "capture_attachments_update",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "circuit_breaker_managing",
+      "table": "circuit_breaker_events"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "circuit_breaker_viewable",
+      "table": "circuit_breaker_events"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "claims_managing",
+      "table": "claims"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "claims_viewable",
+      "table": "claims"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "company_entities_managing",
+      "table": "company_entities"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "company_entities_viewable",
+      "table": "company_entities"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "config_managing",
+      "table": "configuration_changes"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "config_viewable",
+      "table": "configuration_changes"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "config_versions_managing",
+      "table": "configuration_versions"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "config_versions_viewable",
+      "table": "configuration_versions"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "control_plane_managing",
+      "table": "control_plane_objects"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "control_plane_viewable",
+      "table": "control_plane_objects"
+    },
+    {
+      "defined_in": "20260819040000_copilot_governance.sql",
+      "policy": "copilot_messages_business_select",
+      "table": "copilot_messages"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "cost_governor_limits_select",
+      "table": "cost_governor_limits"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "cost_governor_limits_write",
+      "table": "cost_governor_limits"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "customer_cost_ledger_read",
+      "table": "customer_cost_ledger"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "dq_managing",
+      "table": "data_quality_checks"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "dq_viewable",
+      "table": "data_quality_checks"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "dead_wf_managing",
+      "table": "dead_workflow_findings"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "dead_wf_viewable",
+      "table": "dead_workflow_findings"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "decision_records_managing",
+      "table": "decision_records"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "decision_records_viewable",
+      "table": "decision_records"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "decisions_managing",
+      "table": "decisions"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "decisions_viewable",
+      "table": "decisions"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "policy": "demand_activity_insert",
+      "table": "demand_activity"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "policy": "demand_activity_read",
+      "table": "demand_activity"
+    },
+    {
+      "defined_in": "20260818220000_business_brain.sql",
+      "policy": "diagnosis_rules_read",
+      "table": "diagnosis_rules"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "dup_auto_managing",
+      "table": "duplicate_automation_findings"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "dup_auto_viewable",
+      "table": "duplicate_automation_findings"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "policy": "email_events_member_read",
+      "table": "email_events"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "policy": "entity_freshness_viewable",
+      "table": "entity_freshness"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "entity_relationships_managing",
+      "table": "entity_relationships"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "policy": "entity_relationships_viewable",
+      "table": "entity_relationships"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "escalation_managing",
+      "table": "escalation_rules"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "escalation_viewable",
+      "table": "escalation_rules"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "flags_managing",
+      "table": "feature_flags"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "flags_viewable",
+      "table": "feature_flags"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "field_visit_events_select",
+      "table": "field_visit_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "policy": "field_visits_select",
+      "table": "field_visits"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "four_reality_managing",
+      "table": "four_reality_assessments"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "four_reality_viewable",
+      "table": "four_reality_assessments"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "friction_managing",
+      "table": "friction_metrics"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "friction_viewable",
+      "table": "friction_metrics"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "handoffs_managing",
+      "table": "handoffs"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "handoffs_viewable",
+      "table": "handoffs"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "incidents_managing",
+      "table": "incidents"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "incidents_viewable",
+      "table": "incidents"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "policy": "integrity_findings_platform_admin",
+      "table": "integrity_findings"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "policy": "integrity_repairs_platform_admin",
+      "table": "integrity_repairs"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "policy": "integrity_rules_platform_admin",
+      "table": "integrity_rules"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "intercompany_managing",
+      "table": "intercompany_transactions"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "policy": "intercompany_viewable",
+      "table": "intercompany_transactions"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "key_results_delete",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "key_results_insert",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "key_results_select",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "key_results_update",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "policy": "lead_requests_business_all",
+      "table": "lead_requests"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "policy": "maintenance_property_managing_by_business",
+      "table": "maintenance_records"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "policy": "maintenance_property_viewable_by_business",
+      "table": "maintenance_records"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "policy": "benchmarks_managing",
+      "table": "market_benchmarks"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "policy": "benchmarks_viewable",
+      "table": "market_benchmarks"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_actions_delete",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_actions_insert",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_actions_select",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_actions_update",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "policy": "meeting_captures_delete",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_captures_delete_member",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "policy": "meeting_captures_insert",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_captures_insert_member",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "policy": "meeting_captures_select",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_captures_select_member",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "policy": "meeting_captures_update",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_captures_update_member",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "policy": "meeting_chat_insert_guest",
+      "table": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "policy": "meeting_chat_insert_member",
+      "table": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "policy": "meeting_chat_select_participant",
+      "table": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_decisions_delete",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_decisions_insert",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_decisions_select",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_decisions_update",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_media_business_read",
+      "table": "meeting_media"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_media_host_write",
+      "table": "meeting_media"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participant_events_business_read",
+      "table": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participant_events_host_insert",
+      "table": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participants_business_read",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participants_guest_self_read",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participants_host_delete",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participants_host_insert",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "policy": "meeting_participants_host_update",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "policy": "meeting_reports_delete",
+      "table": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "policy": "meeting_reports_insert",
+      "table": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "policy": "meeting_reports_select",
+      "table": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_summaries_delete",
+      "table": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_summaries_insert",
+      "table": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_summaries_select",
+      "table": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_summaries_update",
+      "table": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_transcripts_delete",
+      "table": "meeting_transcripts"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_transcripts_insert",
+      "table": "meeting_transcripts"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_transcripts_select",
+      "table": "meeting_transcripts"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "meeting_transcripts_update",
+      "table": "meeting_transcripts"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meetings_delete_member",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meetings_insert_member",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meetings_select_member",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meetings_update_member",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "086_metric_registry_and_engine.sql",
+      "policy": "metric_definitions_read",
+      "table": "metric_definitions"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "migration_managing",
+      "table": "migration_jobs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "migration_viewable",
+      "table": "migration_jobs"
+    },
+    {
+      "defined_in": "20260818190000_feature_discovery.sql",
+      "policy": "module_value_propositions_read",
+      "table": "module_value_propositions"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "policy": "organization_memberships_select_self",
+      "table": "organization_memberships"
+    },
+    {
+      "defined_in": "20260818100000_fix_org_hierarchy_is_active.sql",
+      "policy": "organizations_select_member",
+      "table": "organizations"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "policy": "payment_providers_managing",
+      "table": "payment_providers"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "policy": "payment_providers_viewable",
+      "table": "payment_providers"
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "policy": "payment_requests_member_read",
+      "table": "payment_requests"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "policy": "payment_transactions_member_read",
+      "table": "payment_transactions"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "discovery_managing",
+      "table": "persona_discovery_iterations"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "discovery_viewable",
+      "table": "persona_discovery_iterations"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "journeys_managing",
+      "table": "persona_journeys"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "journeys_viewable",
+      "table": "persona_journeys"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "need_signals_managing",
+      "table": "persona_need_signals"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "need_signals_viewable",
+      "table": "persona_need_signals"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "persona_managing",
+      "table": "persona_profiles"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "policy": "persona_viewable",
+      "table": "persona_profiles"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "policy": "platform_activity_events_no_client",
+      "table": "platform_activity_events"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "portal_accounts_managing",
+      "table": "portal_accounts"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "portal_accounts_viewable",
+      "table": "portal_accounts"
+    },
+    {
+      "defined_in": "20260818200000_pricing_engine.sql",
+      "policy": "pricing_tiers_anon_read",
+      "table": "pricing_tiers"
+    },
+    {
+      "defined_in": "20260818200000_pricing_engine.sql",
+      "policy": "pricing_tiers_read",
+      "table": "pricing_tiers"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "drift_managing",
+      "table": "process_drift_findings"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "policy": "drift_viewable",
+      "table": "process_drift_findings"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "provider_cost_catalog_read",
+      "table": "provider_cost_catalog"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "provider_module_map_read",
+      "table": "provider_module_map"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "native_meeting_realtime_insert",
+      "table": "realtime"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "native_meeting_realtime_select",
+      "table": "realtime"
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "policy": "receipt_documents_business_all",
+      "table": "receipt_documents"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "recon_managing",
+      "table": "reconciliation_runs"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "recon_viewable",
+      "table": "reconciliation_runs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "retention_managing",
+      "table": "retention_policies"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "policy": "retention_viewable",
+      "table": "retention_policies"
+    },
+    {
+      "defined_in": "20260821160000_riverways_account_management.sql",
+      "policy": "riverways_account_types_no_client",
+      "table": "riverways_account_types"
+    },
+    {
+      "defined_in": "20260821000000_riverways_admin.sql",
+      "policy": "riverways_admins_no_client",
+      "table": "riverways_admins"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "policy": "sales_orders_business_all",
+      "table": "sales_orders"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "audit_managing",
+      "table": "self_audit_findings"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "audit_viewable",
+      "table": "self_audit_findings"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sod_managing",
+      "table": "separation_of_duties_rules"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sod_viewable",
+      "table": "separation_of_duties_rules"
+    },
+    {
+      "defined_in": "062_simulation_compensation_affordability.sql",
+      "policy": "simulations_managing",
+      "table": "simulations"
+    },
+    {
+      "defined_in": "062_simulation_compensation_affordability.sql",
+      "policy": "simulations_viewable",
+      "table": "simulations"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sla_managing",
+      "table": "sla_definitions"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sla_viewable",
+      "table": "sla_definitions"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sla_track_managing",
+      "table": "sla_trackers"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "sla_track_viewable",
+      "table": "sla_trackers"
+    },
+    {
+      "defined_in": "20260822135000_brand_assets_bucket.sql",
+      "policy": "brand_assets_member_write",
+      "table": "storage"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_capture_objects_delete",
+      "table": "storage"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_capture_objects_insert",
+      "table": "storage"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "policy": "meeting_capture_objects_select",
+      "table": "storage"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "policy": "objectives_managing",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "policy": "objectives_viewable",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "strategic_objectives_delete",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "strategic_objectives_insert",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "strategic_objectives_select",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "policy": "strategic_objectives_update",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "policy": "subscription_provider_attempts_no_client",
+      "table": "subscription_provider_attempts"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "sys_deps_managing",
+      "table": "system_dependencies"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "policy": "sys_deps_viewable",
+      "table": "system_dependencies"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "policy": "timesheets_manageable_by_business",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "policy": "timesheets_self_select",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "policy": "timesheets_self_update",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "policy": "timesheets_viewable_by_business",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "policy": "transactional_email_templates_read",
+      "table": "transactional_email_templates"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "transcript_segments_delete",
+      "table": "transcript_segments"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "transcript_segments_insert",
+      "table": "transcript_segments"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "policy": "transcript_segments_select",
+      "table": "transcript_segments"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "policy": "usage_events_insert_own",
+      "table": "usage_events"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "policy": "usage_events_read_own",
+      "table": "usage_events"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "policy": "usage_meter_monthly_read",
+      "table": "usage_meter_monthly"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "policy": "user_workspace_selections_self_select",
+      "table": "user_workspace_selections"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "policy": "webauthn_audit_own",
+      "table": "webauthn_audit_log"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "policy": "webauthn_credentials_own",
+      "table": "webauthn_credentials"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "policy": "webauthn_credentials_own_revoke",
+      "table": "webauthn_credentials"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "work_deps_managing",
+      "table": "work_dependencies"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "work_deps_viewable",
+      "table": "work_dependencies"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "work_routes_managing",
+      "table": "work_routes"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "policy": "work_routes_viewable",
+      "table": "work_routes"
+    }
+  ]
+}

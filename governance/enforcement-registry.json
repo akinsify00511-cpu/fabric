@@ -1,0 +1,173 @@
+{
+  "engine": "avenize_governance",
+  "rules": [
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "autonomy",
+      "requirement": "Autonomy policies complete (precondition\u2192rollback\u2192escalation)",
+      "rule_id": "autonomy.registry",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_autonomy_registry",
+      "verification": "avenize_governance.py:autonomy.registry"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "governing",
+      "requirement": "Every registered constitutional layer document exists",
+      "rule_id": "const.hierarchy",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_hierarchy_consistency",
+      "verification": "avenize_governance.py:const.hierarchy"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "governing",
+      "requirement": "Governing document + machine-readable registry exist",
+      "rule_id": "const.registry.governing",
+      "severity": "P0",
+      "validator": "scripts/governance/checks.py::check_governing_constitution",
+      "verification": "avenize_governance.py:const.registry.governing"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "design",
+      "requirement": "Design constitution gate passes (baseline-ratchet)",
+      "rule_id": "design.constitution",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_design_constitution",
+      "verification": "avenize_governance.py:design.constitution"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "operations",
+      "requirement": "All edge functions type-check (deno)",
+      "rule_id": "edge.functions",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_edge_functions",
+      "verification": "avenize_governance.py:edge.functions"
+    },
+    {
+      "blocking": false,
+      "escalation": "incident",
+      "layer": "product",
+      "requirement": "Feature registry entries complete",
+      "rule_id": "features.registry",
+      "severity": "P4",
+      "validator": "scripts/governance/checks.py::check_feature_registry",
+      "verification": "avenize_governance.py:features.registry"
+    },
+    {
+      "blocking": false,
+      "escalation": "incident",
+      "layer": "observability",
+      "requirement": "Platform-ops and governance objects in desired contract",
+      "rule_id": "platform.observability",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_platform_self_observability",
+      "verification": "avenize_governance.py:platform.observability"
+    },
+    {
+      "blocking": false,
+      "escalation": "incident",
+      "layer": "operations",
+      "requirement": "No dead /app links",
+      "rule_id": "routes.integrity",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_route_integrity",
+      "verification": "avenize_governance.py:routes.integrity"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "security",
+      "requirement": "No hardcoded service-role/provider secrets in client code",
+      "rule_id": "security.secrets",
+      "severity": "P0",
+      "validator": "scripts/governance/checks.py::check_no_hardcoded_secrets",
+      "verification": "avenize_governance.py:security.secrets"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "supabase",
+      "requirement": "Production contract regenerates deterministically",
+      "rule_id": "supabase.contract.deterministic",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_contract_manifest_deterministic",
+      "verification": "avenize_governance.py:supabase.contract.deterministic"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "supabase",
+      "requirement": "Every frontend data reference has a canonical definition",
+      "rule_id": "supabase.contract.frontend",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_frontend_contract_backed",
+      "verification": "avenize_governance.py:supabase.contract.frontend"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "supabase",
+      "requirement": "Zero frontend\u2194schema drift",
+      "rule_id": "supabase.drift",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_schema_drift",
+      "verification": "avenize_governance.py:supabase.drift"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "supabase",
+      "requirement": "Supabase source-of-truth manifests present and valid",
+      "rule_id": "supabase.manifests",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_supabase_manifests",
+      "verification": "avenize_governance.py:supabase.manifests"
+    },
+    {
+      "blocking": false,
+      "escalation": "incident",
+      "layer": "supabase",
+      "requirement": "Migration naming convention enforced (no banned names)",
+      "rule_id": "supabase.migration.naming",
+      "severity": "P3",
+      "validator": "scripts/governance/checks.py::check_migration_naming",
+      "verification": "avenize_governance.py:supabase.migration.naming"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "developer",
+      "requirement": "TypeScript compiles with zero errors",
+      "rule_id": "types.clean",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_typescript",
+      "verification": "avenize_governance.py:types.clean"
+    },
+    {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "developer",
+      "requirement": "Unit test suite passes",
+      "rule_id": "units.pass",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_unit_tests",
+      "verification": "avenize_governance.py:units.pass"
+    }
+  ],
+  "severity_ladder": {
+    "P0": "catastrophic \u2014 immediate containment",
+    "P1": "critical \u2014 release/production blocked",
+    "P2": "major \u2014 incident created, prioritized remediation",
+    "P3": "minor \u2014 tracked defect",
+    "P4": "improvement \u2014 optimization"
+  },
+  "version": 1
+}

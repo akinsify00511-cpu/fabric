@@ -1,0 +1,2854 @@
+{
+  "counts": {
+    "tables": 468,
+    "views": 6
+  },
+  "tables": [
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "account_balances"
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "accounts"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "achievements"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "action_protocol_runs"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "action_reversals"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "activity_timeline"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "adaptive_experience_overrides"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "agent_guardrail_checks"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ai_agent_logs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "ai_agents"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ai_capability_authorities"
+    },
+    {
+      "defined_in": "20260818150000_proactive_digest_alerts.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "alert_action_map"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "alert_history"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "alert_rules"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "analytics_events"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "analytics_summary"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "announcement_views"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "announcements"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "anomaly_events"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "api_keys"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "api_request_logs"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "api_usage"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "appointments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "approval_actions"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "approval_decisions"
+    },
+    {
+      "defined_in": "070_enforcement_gate.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "approval_enforcement_logs"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "approval_levels"
+    },
+    {
+      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "approval_rules"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "approval_templates"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "approval_workflow_log"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "approvals"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "asset_assignments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "asset_categories"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "asset_depreciation"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "assets"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "attendance_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "attendance_policies"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "attendance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "attendance_settings"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "attendance_summary"
+    },
+    {
+      "defined_in": "061_observer_exceptions_indexes.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "attention_exceptions"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "audit_logs"
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "auth_rate_limits"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "authority_graph"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "automation_logs"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "automation_proposals"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "automation_runs"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "automations"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "autonomy_actions"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "backup_runs"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "bank_accounts"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "bank_transactions"
+    },
+    {
+      "defined_in": "029_beta_testing_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "beta_feedback"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "board_committee_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "board_committees"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "board_conflicts"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "board_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "board_resolutions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "booking_conflicts"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "branches"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "brand_assets"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "budget_allocations"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "budget_transactions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "budgets"
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_approval_config"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_branding"
+    },
+    {
+      "defined_in": "20260818150000_proactive_digest_alerts.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "business_digest_log"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "business_email_domains"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_entitlements"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "business_event_handlers"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_events"
+    },
+    {
+      "defined_in": "029_beta_testing_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_feature_overrides"
+    },
+    {
+      "defined_in": "093_business_health_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "business_health_scores"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_locations"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "business_ontology"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_risks"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "business_subscriptions"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "businesses"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "calibration_records"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "capture_attachments"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "cashflow"
+    },
+    {
+      "defined_in": "004_tasks_merit_cashflow.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "cashflow_entries"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "challenge_completions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "channel_members"
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "channel_reads"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "channels"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "chat_conversations"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "chat_messages"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "circuit_breaker_events"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "claims"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "clients"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "comments"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "commission_plans"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "commission_rules"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "commissions"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "company_documents"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "company_entities"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "company_home_blocks"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "compliance_items"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "configuration_changes"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "configuration_versions"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "contacts"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "content_opportunities"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "control_plane_objects"
+    },
+    {
+      "defined_in": "20260819040000_copilot_governance.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "copilot_messages"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "cost_allocations"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "cost_centers"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "cost_governor_limits"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "creditors"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "crm_configurations"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "crm_pipeline_stages"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "currency_balances"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "custom_domains"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "customer_cost_ledger"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "customer_risk_scores"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "daily_challenges"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "daily_time_summaries"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "dashboard_widgets"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "dashboards"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "data_exports"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "data_quality_checks"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "dead_workflow_findings"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "deal_analytics"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "deals"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "debtors"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "decision_log"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "decision_records"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "decisions"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "delivery_orders"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "demand_activity"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "department_members"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "departments"
+    },
+    {
+      "defined_in": "20260818220000_business_brain.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "diagnosis_rules"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "discovery_brand_checks"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "discovery_brand_truths"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "discovery_content"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "discovery_observations"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "discovery_referrals"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "discovery_targets"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "document_folders"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "documents"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "duplicate_automation_findings"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "e_invoices"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_bounces"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "email_campaigns"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_clicks"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "email_contacts"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_events"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_link_clicks"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_sends"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_sequence_enrollments"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_sequence_steps"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_sequences"
+    },
+    {
+      "defined_in": "20260101000001_email_templates.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_templates"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "email_variables"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "emails"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "entity_freshness"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "entity_relationships"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "equipment"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "escalation_paths"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "escalation_rules"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_analytics"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_emails"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_participants"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_registrations"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_sessions"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_types"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "event_waitlist"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "events"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "exchange_rates"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "expense_categories"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "expense_claims"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "feature_adoption"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "feature_flags"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "feature_tips"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "field_visit_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "field_visits"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "file_access"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "file_attachments"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "four_reality_assessments"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "friction_metrics"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "functional_role_tools"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "functional_roles"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "goods_receipt_lines"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "goods_receipts"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "governance_audit_log"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "governance_events"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "governance_incidents"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "governance_reports"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "handoffs"
+    },
+    {
+      "defined_in": "093_business_health_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "health_metric_map"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "heartbeat_logs"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "heartbeats"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "home_block_comments"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "home_block_reactions"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "human_decisions"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "incident_timeline"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "incidents"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "integration_sync_logs"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "integrations"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "integrity_findings"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "integrity_repairs"
+    },
+    {
+      "defined_in": "20260821140000_restore_meeting_analytics_and_self_healing_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "integrity_rules"
+    },
+    {
+      "defined_in": "099_intelligence_notifications.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "intelligence_notification_log"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "intercompany_transactions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "inventory"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "inventory_categories"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "invites"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "invoice_items"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "invoices"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "issues"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "job_applications"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "job_postings"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "job_titles"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "job_types"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "jobs"
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "journal_entries"
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "journal_lines"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "kb_page_comments"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "kb_page_permissions"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "kb_page_versions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "kb_pages"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "kb_spaces"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "kb_templates"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "key_results"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "kpi_metrics"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "lab_samples"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "lab_tests"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "lead_requests"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "leads"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "lease_agreements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "leave_balances"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "leave_request_history"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "leave_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "leave_types"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "legal_cases"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "legal_contracts"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "legal_obligations"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "liabilities"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "loan_repayments"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "loans"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "maintenance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "maintenance_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "maintenance_schedules"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "market_benchmarks"
+    },
+    {
+      "defined_in": "20260818000000_create_market_intelligence_signals.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "market_intelligence_signals"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_actions"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_captures"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_media"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "meeting_transcripts"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "meetings"
+    },
+    {
+      "defined_in": "004_tasks_merit_cashflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "merit_entries"
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "message_reactions"
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "messages"
+    },
+    {
+      "defined_in": "086_metric_registry_and_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "metric_definitions"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "migration_jobs"
+    },
+    {
+      "defined_in": "20260101000005_two_flag_module_gate.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "module_plan_tiers"
+    },
+    {
+      "defined_in": "20260101000005_two_flag_module_gate.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "module_status"
+    },
+    {
+      "defined_in": "20260818190000_feature_discovery.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "module_value_propositions"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "monitor_checks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "monitors"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "notification_preferences"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "notification_templates"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "notifications"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "onboarding_progress"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "organization_memberships"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "organizational_memory"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "organizations"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "organogram_nodes"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "otp_requests"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_gateways"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_links"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_providers"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_refunds"
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_requests"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_transactions"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "payment_webhook_events"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "payments"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "payroll_items"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "payroll_records"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "payroll_runs"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "performance_reviews"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "persona_discovery_iterations"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "persona_journeys"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "persona_need_signals"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "persona_profiles"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "pipeline_stages"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "plan_pricing"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_activity_events"
+    },
+    {
+      "defined_in": "20260101000012_builder_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_admins"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_alert_thresholds"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_error_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "platform_incident_investigations"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_incidents"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_integration_status"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_oncall_contacts"
+    },
+    {
+      "defined_in": "20260818120100_platform_pager_tracking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_pages"
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "platform_payment_instructions"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "poll_votes"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "polls"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "portal_accounts"
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portal_comments"
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "portal_invitations"
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portal_sessions"
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portal_tickets"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portfolio_items"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portfolio_sections"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "portfolio_team"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "positions"
+    },
+    {
+      "defined_in": "20260818200000_pricing_engine.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "pricing_tiers"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "process_drift_findings"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "process_workflows"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "products"
+    },
+    {
+      "defined_in": "002_frontend_compat.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "projects"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "properties"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "property_commissions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "property_enquiries"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "property_inspections"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "property_owners"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "property_sales"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "provider_cost_catalog"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "provider_module_map"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "public_pages"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "purchase_order_items"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "purchase_orders"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "purchase_request_items"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "purchase_requests"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "push_subscriptions"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "qc_reports"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "quality_checks"
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "quotes"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "rate_limits"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "reality_gaps"
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "receipt_documents"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "recognition"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "reconciliation_runs"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "recruitment_stages"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "recurring_expenses"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "rent_payments"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "report_definitions"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "report_filters"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "report_runs"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "report_snapshots"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "reporting_channels"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "reporting_structure"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "reporting_updates"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "requisition_categories"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "requisition_follow_ups"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "requisitions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "resource_availability"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "resource_bookings"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "resources"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "retention_policies"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "rfq_line_items"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "rfqs"
+    },
+    {
+      "defined_in": "20260821160000_riverways_account_management.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "riverways_account_types"
+    },
+    {
+      "defined_in": "20260821000000_riverways_admin.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "riverways_admins"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "sales_orders"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "sales_targets"
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "saml_metadata_cache"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "saved_searches"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "scheduled_reports"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "search_indexes"
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "security_audit_log"
+    },
+    {
+      "defined_in": "082_schema_drift_repair.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "self_audit_findings"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "separation_of_duties_rules"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "services"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "session_registrations"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "settings"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "signature_requests"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "signature_signers"
+    },
+    {
+      "defined_in": "062_simulation_compensation_affordability.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "simulations"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sla_definitions"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sla_policies"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sla_trackers"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_campaigns"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_contacts"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_integrations"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_logs"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_messages"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sms_templates"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "social_integrations"
+    },
+    {
+      "defined_in": "003_social_media.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "social_metrics"
+    },
+    {
+      "defined_in": "003_social_media.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "social_posts"
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sso_audit_log"
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sso_connections"
+    },
+    {
+      "defined_in": "053_sso_providers.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "sso_providers"
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "sso_sessions"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff_assignments"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff_benefits"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "staff_branch_assignments"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff_commissions"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff_contracts"
+    },
+    {
+      "defined_in": "032_fix_plan_pricing.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "staff_documents"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "staff_functional_roles"
+    },
+    {
+      "defined_in": "20260818250000_multi_role_switching.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "staff_secondary_roles"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "standard_procedures"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "status_page_incidents"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "status_page_subscribers"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "status_pages"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "stock_movements"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "strategic_objectives"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "subscription_invoices"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "subscription_payments"
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "subscription_provider_attempts"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "subsidiary_profiles"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "system_dependencies"
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "task_comments"
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "task_time_logs"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "tasks"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "tax_configurations"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "teams"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "tenants"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "testimonials"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ticket_activity"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ticket_attachments"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ticket_comments"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "ticket_replies"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "ticket_tags"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "tickets"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "time_blocks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "time_entries"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "time_off_requests"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "timesheets"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "training_records"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "transaction_items"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "transactional_email_templates"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "transactions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "transcript_segments"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "uptime_records"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "usage_events"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "usage_meter_monthly"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_achievements"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_activity_daily"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "user_engagement"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_learning"
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "user_locale"
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_mfa"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_workspace_selections"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_xp"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "validation_rules"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "vat_records"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "vendor_invoices"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "vendors"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "webauthn_audit_log"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "webauthn_challenges"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "webauthn_credentials"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "webhook_deliveries"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "webhook_logs"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "webhooks"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "whatsapp_optins"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "whatsapp_templates"
+    },
+    {
+      "defined_in": "034_sales_tax_banking.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "wht_records"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "work_dependencies"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "work_routes"
+    },
+    {
+      "defined_in": "033_process_workflow_hr.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "workflow_instances"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "workflow_runs"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "workflows"
+    },
+    {
+      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "xp_history"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "xp_transactions"
+    }
+  ],
+  "views": [
+    {
+      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "frontend_referenced": true,
+      "kind": "view",
+      "name": "approval_requests"
+    },
+    {
+      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "frontend_referenced": true,
+      "kind": "view",
+      "name": "entity_freshness_status"
+    },
+    {
+      "defined_in": "20260819000000_crm_intelligence_views.sql",
+      "frontend_referenced": true,
+      "kind": "view",
+      "name": "forecast_integrity"
+    },
+    {
+      "defined_in": "20260819000000_crm_intelligence_views.sql",
+      "frontend_referenced": true,
+      "kind": "view",
+      "name": "pre_call_briefing"
+    },
+    {
+      "defined_in": "20260819000000_crm_intelligence_views.sql",
+      "frontend_referenced": true,
+      "kind": "view",
+      "name": "smart_call_list"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "frontend_referenced": false,
+      "kind": "view",
+      "name": "unified_maintenance"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "principles": [
+    "Autonomy is bounded by the four-tier authority ladder (Observe/Validate/Safe Repair/Controlled Recovery); human authority is required beyond Level 3.",
+    "Every automated action has preconditions, execution, postconditions, rollback, max_attempts, escalation, and audit.",
+    "No repair loops forever: attempts stop at max_attempts, then escalate.",
+    "Every autonomous action writes to the governance audit log before and after execution."
+  ],
+  "levels": {
+    "0": "observe — inspect, report, calculate, monitor",
+    "1": "validate — run checks, compare state, classify failures",
+    "2": "safe-repair — retry transient failures, regenerate derived state, reconcile approved deterministic objects, refresh caches, re-run failed safe jobs",
+    "3": "controlled-recovery — approved recovery procedures with full audit",
+    "4": "human-authority — destructive or ambiguous; financial/payment/auth/security/permission changes; irreversible operations; constitutional changes"
+  },
+  "policies": [
+    {
+      "action": "refresh-integrity-scan",
+      "level": 2,
+      "allowed_when": ["integrity scan has not run in the cooldown window", "database reachable"],
+      "forbidden_when": ["governance engine degraded", "emergency safe mode active"],
+      "risk": "low",
+      "preconditions": ["integrity_rules table reachable", "run_integrity_scan() callable"],
+      "execution": "call run_integrity_scan(); record result count as governance event",
+      "postconditions": ["new scan count matches expectation or honest zero"],
+      "rollback": "not-applicable (read-only verification)",
+      "max_attempts": 3,
+      "backoff_seconds": 60,
+      "escalation": "create incident P3 when attempts exhausted",
+      "audit": "record actor=AUTONOMY_ENGINE before and after"
+    },
+    {
+      "action": "regenerate-derived-manifests",
+      "level": 2,
+      "allowed_when": ["contract manifest non-deterministic in working tree", "generator exits clean"],
+      "forbidden_when": ["generator fails", "frontend contract violation detected"],
+      "risk": "low",
+      "preconditions": ["scripts/generate_contract_manifest.py exits 0"],
+      "execution": "run generators; commit nothing; surface diff to CI artifact",
+      "postconditions": ["git diff of generated artifacts is empty"],
+      "rollback": "git checkout -- <generated files>",
+      "max_attempts": 2,
+      "backoff_seconds": 0,
+      "escalation": "create incident P2 (manifest cannot be made deterministic)",
+      "audit": "record actor=AUTONOMY_ENGINE before and after"
+    },
+    {
+      "action": "retry-failed-safe-jobs",
+      "level": 2,
+      "allowed_when": ["automation_runs row failed", "automation remains enabled", "retry_count < max_retries"],
+      "forbidden_when": ["automation disabled", "already dead-lettered"],
+      "risk": "low",
+      "preconditions": ["existing automation_runs retry/DLQ columns exist"],
+      "execution": "requeue via existing reprocess_failed_automations()",
+      "postconditions": ["row transitions to success or remains with incremented retry_count"],
+      "rollback": "not-applicable (existing DLQ records the failure)",
+      "max_attempts": 3,
+      "backoff_seconds": 30,
+      "escalation": "create incident P2 when rows dead-letter",
+      "audit": "record actor=AUTONOMY_ENGINE before and after"
+    },
+    {
+      "action": "reconcile-approved-deterministic-object",
+      "level": 3,
+      "allowed_when": ["object missing in live but repairable in contract", "canonical migration exists", "human decision approved"],
+      "forbidden_when": ["object is security-sensitive", "migration irreversible", "no approved human decision", "emergency safe mode active"],
+      "risk": "high",
+      "preconditions": ["human_decisions row approved for this object", "SUPABASE_DB_URL available to operator"],
+      "execution": "apply the canonical migration file for the object; re-run contract verification",
+      "postconditions": ["object present in live contract comparison"],
+      "rollback": "document manual rollback in the human decision when not technically reversible",
+      "max_attempts": 1,
+      "backoff_seconds": 0,
+      "escalation": "escalate to P1 incident on failure; require new approval to retry",
+      "audit": "record actor=AUTONOMY_ENGINE + the approving ADMIN identity"
+    },
+    {
+      "action": "payment-or-auth-or-security-change",
+      "level": 4,
+      "allowed_when": ["never autonomous"],
+      "forbidden_when": ["always"],
+      "risk": "critical",
+      "preconditions": ["explicit authenticated admin decision with reason"],
+      "execution": "human performs via pull request and reviewed migration",
+      "postconditions": ["production contract verification passes"],
+      "rollback": "named rollback plan in the decision record",
+      "max_attempts": 0,
+      "backoff_seconds": 0,
+      "escalation": "immediate P0 incident on attempt without approval",
+      "audit": "record actor=ADMIN with before/after snapshots"
+    }
+  ]
+}

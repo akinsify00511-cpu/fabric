@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 462,
+    "tables": 468,
     "views": 6,
-    "functions": 489,
+    "functions": 504,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -390,6 +390,14 @@
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
+    },
+    {
+      "kind": "table",
+      "name": "autonomy_actions",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
     },
     {
       "kind": "table",
@@ -1481,6 +1489,38 @@
     },
     {
       "kind": "table",
+      "name": "governance_audit_log",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "governance_events",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "governance_incidents",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "governance_reports",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "handoffs",
       "defined_in": "066_control_plane_work_routing_action_protocol.sql",
       "repairable": true,
@@ -1523,6 +1563,14 @@
       "kind": "table",
       "name": "home_block_reactions",
       "defined_in": "023_company_home_blocks.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "human_decisions",
+      "defined_in": "20260825160000_governance_engine.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -3764,6 +3812,17 @@
     },
     {
       "kind": "function",
+      "name": "_governance_guard",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "accept_invite",
       "defined_in": "20260819015000_account_member_kinds.sql",
       "repairable": false,
@@ -4002,6 +4061,17 @@
       "frontend_referenced": true,
       "signatures": [
         "p_business_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "autonomy_feed",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_limit int4"
       ]
     },
     {
@@ -4788,6 +4858,28 @@
     },
     {
       "kind": "function",
+      "name": "create_human_decision",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_title text, p_risk text, p_reason text, p_proposed_action jsonb, p_impact jsonb, p_rollback_available boolean"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "create_incident",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_component text, p_severity text, p_description text, p_impact text, p_root_cause text, p_correlation_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "create_invite",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
       "repairable": false,
@@ -5008,6 +5100,17 @@
     },
     {
       "kind": "function",
+      "name": "decide_human_decision",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_decision_id uuid, p_decision text, p_reason text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "decide_timesheet",
       "defined_in": "055_timesheets_approval_cycle.sql",
       "repairable": false,
@@ -5015,6 +5118,17 @@
       "frontend_referenced": true,
       "signatures": [
         "p_timesheet_id uuid, p_decision text, p_approver_id uuid, p_reason text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "decisions_feed",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_status text, p_limit int4"
       ]
     },
     {
@@ -6222,6 +6336,28 @@
     },
     {
       "kind": "function",
+      "name": "governance_overview",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "governance_self_health",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "grant_business_plan",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
       "repairable": false,
@@ -6328,6 +6464,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_business_id uuid, p_object_type text, p_object_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "incidents_feed",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_limit int4"
       ]
     },
     {
@@ -6735,6 +6882,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_action text, p_resource_type text, p_resource_id uuid, p_resource_name text, p_details jsonb"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "log_governance_event",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_component text, p_event_key text, p_message text, p_status text, p_severity text, p_payload jsonb, p_correlation_id uuid, p_business_id uuid, p_actor text"
       ]
     },
     {
@@ -7216,6 +7374,28 @@
     },
     {
       "kind": "function",
+      "name": "publish_compliance_report",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_payload jsonb, p_p_fingerprint text, p_channel text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "queue_autonomy_action",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_action text, p_level int4, p_max_attempts int4, p_context jsonb, p_cooldown_seconds int4, p_policy jsonb"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "queue_email",
       "defined_in": "20260822170000_resend_email_subsystem.sql",
       "repairable": false,
@@ -7334,7 +7514,8 @@
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid, p_user_id uuid, p_action text, p_entity_type text, p_entity_id uuid, p_old_values jsonb, p_new_values jsonb"
+        "p_business_id uuid, p_user_id uuid, p_action text, p_entity_type text, p_entity_id uuid, p_old_values jsonb, p_new_values jsonb",
+        "p_actor text, p_action text, p_target text, p_before jsonb, p_after jsonb, p_result text, p_risk text, p_approval jsonb, p_verification jsonb"
       ]
     },
     {
@@ -7346,6 +7527,17 @@
       "frontend_referenced": true,
       "signatures": [
         "p_identifier text, p_action text, p_max_attempts int4, p_window_seconds int4, p_lockout_seconds int4"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "record_autonomy_attempt",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_action_id uuid, p_success boolean, p_error text"
       ]
     },
     {
@@ -8219,6 +8411,17 @@
     },
     {
       "kind": "function",
+      "name": "search_audit",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_action text, p_actor text, p_limit int4"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "search_transcripts",
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
       "repairable": false,
@@ -8736,6 +8939,17 @@
     },
     {
       "kind": "function",
+      "name": "transition_incident",
+      "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_incident_id uuid, p_to_status text, p_reason text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "trial_assistance",
       "defined_in": "20260818210000_trial_assistance.sql",
       "repairable": false,
@@ -9210,6 +9424,9 @@
     "_ensure_test_auth_user": [
       "p_email text"
     ],
+    "_governance_guard": [
+      ""
+    ],
     "accept_invite": [
       "p_token text, p_staff_name text"
     ],
@@ -9275,6 +9492,9 @@
     ],
     "automation_health_with_dlq": [
       "p_business_id uuid"
+    ],
+    "autonomy_feed": [
+      "p_limit int4"
     ],
     "award_xp": [
       "p_user_id uuid, p_xp_amount int4, p_action_type text, p_description text"
@@ -9490,6 +9710,12 @@
     "create_field_visit": [
       "p_assigned_staff_id uuid, p_customer_name text, p_customer_phone text, p_customer_address text, p_lat numeric, p_lng numeric, p_radius_meters numeric, p_scheduled_at timestamptz, p_notes text"
     ],
+    "create_human_decision": [
+      "p_title text, p_risk text, p_reason text, p_proposed_action jsonb, p_impact jsonb, p_rollback_available boolean"
+    ],
+    "create_incident": [
+      "p_component text, p_severity text, p_description text, p_impact text, p_root_cause text, p_correlation_id uuid"
+    ],
     "create_invite": [
       "p_email text, p_role text, p_member_kind text, p_business_id uuid, p_expires_days int4"
     ],
@@ -9550,8 +9776,14 @@
     "deal_stage_age_days": [
       "p_deal_id uuid"
     ],
+    "decide_human_decision": [
+      "p_decision_id uuid, p_decision text, p_reason text"
+    ],
     "decide_timesheet": [
       "p_timesheet_id uuid, p_decision text, p_approver_id uuid, p_reason text"
+    ],
+    "decisions_feed": [
+      "p_status text, p_limit int4"
     ],
     "decline_signature": [
       "p_token text"
@@ -9884,6 +10116,12 @@
     "get_webhook_events": [
       ""
     ],
+    "governance_overview": [
+      ""
+    ],
+    "governance_self_health": [
+      ""
+    ],
     "grant_business_plan": [
       "p_business_id uuid, p_plan text, p_billing_cycle text, p_amount numeric, p_source text, p_paystack_reference text, p_granted_by uuid"
     ],
@@ -9913,6 +10151,9 @@
     ],
     "impact_analysis_for": [
       "p_business_id uuid, p_object_type text, p_object_id uuid"
+    ],
+    "incidents_feed": [
+      "p_limit int4"
     ],
     "increment": [
       "p_x int4"
@@ -10024,6 +10265,9 @@
     ],
     "log_audit_event": [
       "p_action text, p_resource_type text, p_resource_id uuid, p_resource_name text, p_details jsonb"
+    ],
+    "log_governance_event": [
+      "p_component text, p_event_key text, p_message text, p_status text, p_severity text, p_payload jsonb, p_correlation_id uuid, p_business_id uuid, p_actor text"
     ],
     "log_platform_error": [
       "p_source text, p_severity text, p_message text, p_source_detail text, p_business_id uuid, p_stack text, p_client_event_id uuid"
@@ -10158,6 +10402,12 @@
     "provision_sso_user": [
       "p_connection_id uuid, p_provider_user_id text, p_email text, p_name text, p_provider_data jsonb"
     ],
+    "publish_compliance_report": [
+      "p_payload jsonb, p_p_fingerprint text, p_channel text"
+    ],
+    "queue_autonomy_action": [
+      "p_action text, p_level int4, p_max_attempts int4, p_context jsonb, p_cooldown_seconds int4, p_policy jsonb"
+    ],
     "queue_email": [
       "p_business_id uuid, p_template text, p_recipient text, p_data jsonb, p_user_id uuid"
     ],
@@ -10191,10 +10441,14 @@
       "p_business_id uuid, p_user_id uuid, p_event_name text, p_category event_category, p_page text, p_component text, p_action text, p_metadata jsonb, p_duration_ms int4, p_session_id text"
     ],
     "record_audit": [
-      "p_business_id uuid, p_user_id uuid, p_action text, p_entity_type text, p_entity_id uuid, p_old_values jsonb, p_new_values jsonb"
+      "p_business_id uuid, p_user_id uuid, p_action text, p_entity_type text, p_entity_id uuid, p_old_values jsonb, p_new_values jsonb",
+      "p_actor text, p_action text, p_target text, p_before jsonb, p_after jsonb, p_result text, p_risk text, p_approval jsonb, p_verification jsonb"
     ],
     "record_auth_failure": [
       "p_identifier text, p_action text, p_max_attempts int4, p_window_seconds int4, p_lockout_seconds int4"
+    ],
+    "record_autonomy_attempt": [
+      "p_action_id uuid, p_success boolean, p_error text"
     ],
     "record_board_vote": [
       "p_resolution_id uuid, p_for int4, p_against int4, p_abstain int4"
@@ -10433,6 +10687,9 @@
     "scan_exceptions": [
       "p_business_id uuid"
     ],
+    "search_audit": [
+      "p_action text, p_actor text, p_limit int4"
+    ],
     "search_transcripts": [
       "p_query text, p_limit int4"
     ],
@@ -10573,6 +10830,9 @@
     ],
     "transition_demand": [
       "p_entity text, p_entity_id uuid, p_to_status text, p_lost_reason text"
+    ],
+    "transition_incident": [
+      "p_incident_id uuid, p_to_status text, p_reason text"
     ],
     "trial_assistance": [
       "p_business_id uuid"
@@ -10939,6 +11199,7 @@
       "attribution_revenue",
       "automation_health",
       "automation_health_with_dlq",
+      "autonomy_feed",
       "award_xp_with_streak",
       "board_governance_overview",
       "book_appointment_by_slug",
@@ -10971,6 +11232,7 @@
       "create_capture",
       "create_capture_attachment",
       "create_field_visit",
+      "create_incident",
       "create_invite",
       "create_invoice",
       "create_lead_request",
@@ -10983,7 +11245,9 @@
       "current_business_health",
       "current_metrics",
       "data_quality_findings",
+      "decide_human_decision",
       "decide_timesheet",
+      "decisions_feed",
       "decline_signature",
       "delete_capture_attachment",
       "delete_platform_oncall",
@@ -11026,7 +11290,10 @@
       "get_quote_by_token",
       "get_signature_request_by_token",
       "get_staff_roles",
+      "governance_overview",
+      "governance_self_health",
       "graph_overview",
+      "incidents_feed",
       "increment_capture_view",
       "increment_saved_search_use",
       "increment_user_learning",
@@ -11115,6 +11382,7 @@
       "save_meeting_action",
       "save_meeting_decision",
       "scan_data_quality",
+      "search_audit",
       "search_transcripts",
       "sector_benchmark",
       "seed_ai_roles",
@@ -11133,6 +11401,7 @@
       "submit_requisition",
       "submit_timesheet",
       "transition_demand",
+      "transition_incident",
       "trial_assistance",
       "trust_health",
       "update_leave_balance",

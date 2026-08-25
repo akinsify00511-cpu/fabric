@@ -18,7 +18,15 @@
     "test:e2e": "playwright test tests/e2e",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:ux": "playwright test tests/ux"
+    "test:ux": "playwright test tests/ux",
+    "avenize:governance": "python3 scripts/governance/avenize_governance.py",
+    "avenize:governance:check": "python3 scripts/governance/avenize_governance.py check",
+    "avenize:governance:drift": "python3 scripts/governance/avenize_governance.py drift",
+    "avenize:governance:contracts": "python3 scripts/governance/avenize_governance.py contracts",
+    "avenize:governance:security": "python3 scripts/governance/avenize_governance.py security",
+    "avenize:governance:e2e": "python3 scripts/governance/avenize_governance.py e2e",
+    "avenize:governance:reconcile": "python3 scripts/governance/avenize_governance.py reconcile",
+    "avenize:governance:report": "python3 scripts/governance/avenize_governance.py report"
   },
   "homepage": "https://avenize.com",
   "dependencies": {

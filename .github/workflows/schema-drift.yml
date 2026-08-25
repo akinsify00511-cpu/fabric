@@ -7,8 +7,12 @@ on:
       - 'src/**'
       - 'supabase/migrations/**'
       - 'supabase/contract/**'
+      - 'supabase/constitution/**'
+      - 'governance/**'
+      - 'package.json'
       - 'scripts/schema-drift-check.sh'
       - 'scripts/generate_contract_manifest.py'
+      - 'scripts/governance/**'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
   push:
@@ -17,8 +21,12 @@ on:
       - 'src/**'
       - 'supabase/migrations/**'
       - 'supabase/contract/**'
+      - 'supabase/constitution/**'
+      - 'governance/**'
+      - 'package.json'
       - 'scripts/schema-drift-check.sh'
       - 'scripts/generate_contract_manifest.py'
+      - 'scripts/governance/**'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
 
@@ -60,6 +68,32 @@ jobs:
 
       - name: Run design constitution gate
         run: python3 scripts/check_design_constitution.py
+
+  # Governance release gate: the enforcement-registry validators must report
+  # RELEASE APPROVED (no blocking P0/P1 failures, no blocking UNKNOWNs).
+  # Replicates npm run avenize:governance:contracts + :meta + :security.
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verify governance registries are committed
+        run: |
+          python3 scripts/governance/emit_enforcement_registry.py
+          python3 scripts/generate_supabase_manifests.py
+          git diff --exit-code -- governance/ supabase/constitution/
+
+      - name: Governance contracts gate
+        run: python3 scripts/governance/avenize_governance.py contracts
+
+      - name: Governance meta + security gates
+        run: |
+          python3 scripts/governance/avenize_governance.py meta
+          python3 scripts/governance/avenize_governance.py security
 
   migration-test:
     runs-on: ubuntu-latest
