@@ -1,0 +1,18 @@
+{
+  "deployed": [
+    "api-gateway",
+    "ask-avenize",
+    "dispatch-webhooks",
+    "email-service",
+    "execute-automation",
+    "parse-intent",
+    "paystack-verify",
+    "paystack-webhook",
+    "platform-health-check",
+    "resend-webhook",
+    "subscription-management",
+    "webauthn"
+  ],
+  "missing": [],
+  "probe_failed": []
+}

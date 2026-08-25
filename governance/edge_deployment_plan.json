@@ -1,0 +1,97 @@
+{
+  "total_in_manifest": 12,
+  "deployed": [
+    {
+      "name": "api-gateway",
+      "secrets": [],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "ask-avenize",
+      "secrets": [],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "dispatch-webhooks",
+      "secrets": [
+        "RESEND_API_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "email-service",
+      "secrets": [
+        "RESEND_API_KEY",
+        "EMAIL_FROM"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "execute-automation",
+      "secrets": [],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "parse-intent",
+      "secrets": [],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "paystack-verify",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "paystack-webhook",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "platform-health-check",
+      "secrets": [
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "resend-webhook",
+      "secrets": [
+        "RESEND_API_KEY",
+        "RESEND_WEBHOOK_SECRET"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "subscription-management",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    },
+    {
+      "name": "webauthn",
+      "secrets": [
+        "WEBAUTHN_RP_ID",
+        "WEBAUTHN_ORIGINS"
+      ],
+      "deploy_status": "DEPLOYED"
+    }
+  ],
+  "missing": [],
+  "missing_count": 0,
+  "deployed_count": 12,
+  "secrets_required": [
+    "EMAIL_FROM",
+    "PAYSTACK_SECRET_KEY",
+    "RESEND_API_KEY",
+    "RESEND_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "WEBAUTHN_ORIGINS",
+    "WEBAUTHN_RP_ID"
+  ],
+  "note": "Cross-checked against a live per-function probe (edge_inventory.json). The earlier report surfaced 11 MISSING / paystack-webhook DEPLOYED from a stale snapshot; the live probe now shows the full inventory. JSON-mm transform: deployed MUST not appear in missing."
+}

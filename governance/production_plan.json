@@ -1,0 +1,637 @@
+{
+  "ordered_sources": [
+    "20240101000001_automation_webhook_tables.sql",
+    "20260101000002_auth_functions.sql",
+    "20260101000004_gap_fill_modules.sql",
+    "20260101000005_two_flag_module_gate.sql",
+    "20260101000010_owner_intelligence.sql",
+    "20260101000011_sector_intelligence_behavior_rules.sql",
+    "20260101000012_builder_dashboard.sql",
+    "20260101000013_automation_health_and_scheduled.sql",
+    "20260817110200_field_visit_rpcs.sql",
+    "20260818120000_platform_ops_dashboard.sql",
+    "20260818140000_server_derived_invoice_totals.sql",
+    "20260818150000_proactive_digest_alerts.sql",
+    "20260818170000_business_approval_config.sql",
+    "20260818180000_ai_plan_recommendation.sql",
+    "20260818190000_feature_discovery.sql",
+    "20260818200000_pricing_engine.sql",
+    "20260818210000_trial_assistance.sql",
+    "20260818230000_business_memory_recall.sql",
+    "20260818240000_platform_resilience.sql",
+    "20260818250000_multi_role_switching.sql",
+    "20260818270000_business_graph_impact.sql",
+    "20260818280000_evolved_business_review.sql",
+    "20260818310000_subsidiary_crm_architecture.sql",
+    "20260818320000_canonical_create_subsidiary.sql",
+    "20260818330000_board_members_seats_invites.sql",
+    "20260818400000_meeting_lifecycle_phase_a.sql",
+    "20260818500000_meeting_recording_capture_phase_b.sql",
+    "20260818600000_meeting_transcript_decisions_phase_c.sql",
+    "20260818700000_meeting_report_notifications_phase_d.sql",
+    "20260819015000_account_member_kinds.sql",
+    "20260819025000_receipt_ocr.sql",
+    "20260819030000_webauthn_passkeys.sql",
+    "20260819040000_copilot_governance.sql",
+    "20260819050000_quick_capture_multimodal.sql",
+    "20260819090000_discovery_intelligence.sql",
+    "20260820210000_native_meetings.sql",
+    "20260821150000_riverways_activity_ops.sql",
+    "20260821160000_riverways_account_management.sql",
+    "20260822000000_public_booking_rpc.sql",
+    "20260822120000_governance_layer.sql",
+    "20260822125000_manual_payment_flow.sql",
+    "20260822130000_objective_gap_analysis.sql",
+    "20260822135000_brand_assets_bucket.sql",
+    "20260824150000_attribution_revenue.sql",
+    "20260824160000_payment_investigation.sql",
+    "20260824170000_unified_business_search.sql",
+    "20260824170000_cost_governor.sql",
+    "20260824200000_meeting_lifecycle_compliance.sql",
+    "20260825160000_governance_engine.sql",
+    "20260825200000_step_up_human_decisions.sql",
+    "010_accounting.sql",
+    "038_critical_infrastructure.sql",
+    "065_ai_roles_automation_convenience_veneer_continuity.sql",
+    "068_self_audit_reconciliation_incidents_flags.sql",
+    "015_api_webhooks.sql",
+    "043_signatures_appointments_schema.sql",
+    "039_operations_backbone.sql",
+    "072_rls_backfill_cross_tenant_tables.sql",
+    "061_observer_exceptions_indexes.sql",
+    "064_org_memory_authority_multicompany.sql",
+    "007_automations.sql",
+    "029_beta_testing_infrastructure.sql",
+    "022_business_branding.sql",
+    "095_risk_register.sql",
+    "998_create_all_missing_tables.sql",
+    "034_sales_tax_banking.sql",
+    "zzzaaa_demand_capture.sql",
+    "009_email_campaigns.sql",
+    "058_business_event_bus.sql",
+    "021_monitoring.sql",
+    "026_job_types.sql",
+    "006_knowledge_base.sql",
+    "094_okr_engine.sql",
+    "031_business_infrastructure.sql",
+    "069_four_reality_persona_intelligence.sql",
+    "016_customer_portal.sql",
+    "067_ai_guardrails_drift_config_impact.sql",
+    "032_fix_plan_pricing.sql",
+    "023_company_home_blocks.sql",
+    "062_simulation_compensation_affordability.sql",
+    "003_social_media.sql",
+    "053_sso_providers.sql",
+    "084_task_management_enhancements.sql",
+    "008_support_tickets.sql",
+    "055_timesheets_approval_cycle.sql",
+    "037_analytics_events_system.sql",
+    "080_fix_cross_tenant_rls_subquery.sql",
+    "088_recommendation_outcome_loop.sql",
+    "018_time_tracking.sql",
+    "017_requisitions_approvals.sql",
+    "077_atomic_xp_award.sql",
+    "zz_live_console_drift_reconciliation.sql",
+    "zz_rpc_tenant_guards_closure.sql",
+    "zz_rpc_role_authorization_closure.sql",
+    "zzz_auth_protocol_repair.sql",
+    "050_public_signing_flow.sql",
+    "071_capture_propagation_and_missing_rpc.sql",
+    "005_chat.sql",
+    "063_intelligence_domains.sql",
+    "020_events.sql",
+    "046_missing_table_backfill.sql",
+    "1001_documents_storage_bucket.sql",
+    "082_schema_drift_repair.sql"
+  ],
+  "missing_by_source": {
+    "20240101000001_automation_webhook_tables.sql": [
+      "automation_runs",
+      "recognition"
+    ],
+    "20260101000002_auth_functions.sql": [
+      "get_invite_info"
+    ],
+    "20260101000004_gap_fill_modules.sql": [
+      "decision_log",
+      "legal_cases",
+      "legal_contracts",
+      "legal_obligations",
+      "organizational_memory",
+      "purchase_requests",
+      "reality_gaps",
+      "rfqs"
+    ],
+    "20260101000005_two_flag_module_gate.sql": [
+      "can_access_module",
+      "list_accessible_modules"
+    ],
+    "20260101000010_owner_intelligence.sql": [
+      "owner_intelligence"
+    ],
+    "20260101000011_sector_intelligence_behavior_rules.sql": [
+      "sector_benchmark"
+    ],
+    "20260101000012_builder_dashboard.sql": [
+      "builder_dashboard"
+    ],
+    "20260101000013_automation_health_and_scheduled.sql": [
+      "automation_health"
+    ],
+    "20260817110200_field_visit_rpcs.sql": [
+      "create_field_visit"
+    ],
+    "20260818120000_platform_ops_dashboard.sql": [
+      "platform_incident_investigations",
+      "delete_platform_oncall",
+      "investigate_business_incident",
+      "list_platform_oncall",
+      "list_platform_thresholds",
+      "log_platform_error",
+      "platform_ops",
+      "resolve_platform_error",
+      "update_platform_incident",
+      "update_platform_threshold",
+      "upsert_platform_oncall"
+    ],
+    "20260818140000_server_derived_invoice_totals.sql": [
+      "create_invoice",
+      "record_invoice_payment"
+    ],
+    "20260818150000_proactive_digest_alerts.sql": [
+      "compose_business_digest",
+      "send_business_digest"
+    ],
+    "20260818170000_business_approval_config.sql": [
+      "business_approval_config",
+      "is_approval_required"
+    ],
+    "20260818180000_ai_plan_recommendation.sql": [
+      "recommend_plan"
+    ],
+    "20260818190000_feature_discovery.sql": [
+      "feature_discovery"
+    ],
+    "20260818200000_pricing_engine.sql": [
+      "get_pricing_tiers"
+    ],
+    "20260818210000_trial_assistance.sql": [
+      "trial_assistance"
+    ],
+    "20260818230000_business_memory_recall.sql": [
+      "diagnose_business",
+      "recall_similar_problems"
+    ],
+    "20260818240000_platform_resilience.sql": [
+      "automation_health_with_dlq",
+      "revive_dead_lettered_automation"
+    ],
+    "20260818250000_multi_role_switching.sql": [
+      "clear_active_role",
+      "get_staff_roles",
+      "set_active_role"
+    ],
+    "20260818270000_business_graph_impact.sql": [
+      "propagate_impact"
+    ],
+    "20260818280000_evolved_business_review.sql": [
+      "compose_business_review"
+    ],
+    "20260818310000_subsidiary_crm_architecture.sql": [
+      "crm_configurations",
+      "crm_pipeline_stages",
+      "subsidiary_profiles"
+    ],
+    "20260818320000_canonical_create_subsidiary.sql": [
+      "create_subsidiary"
+    ],
+    "20260818330000_board_members_seats_invites.sql": [
+      "board_members",
+      "revoke_invite"
+    ],
+    "20260818400000_meeting_lifecycle_phase_a.sql": [
+      "meeting_media",
+      "meeting_participant_events",
+      "meeting_participants",
+      "generate_meeting_token",
+      "leave_meeting",
+      "meeting-recordings"
+    ],
+    "20260818500000_meeting_recording_capture_phase_b.sql": [
+      "create_capture",
+      "finalize_recording",
+      "generate_recording_signed_url",
+      "increment_capture_view"
+    ],
+    "20260818600000_meeting_transcript_decisions_phase_c.sql": [
+      "meeting_actions",
+      "meeting_decisions",
+      "get_meeting_intelligence",
+      "search_transcripts"
+    ],
+    "20260818700000_meeting_report_notifications_phase_d.sql": [
+      "get_meeting_reports"
+    ],
+    "20260819015000_account_member_kinds.sql": [
+      "accept_invite",
+      "set_member_kind"
+    ],
+    "20260819025000_receipt_ocr.sql": [
+      "receipt_documents",
+      "confirm_receipt",
+      "create_receipt_upload_path",
+      "finalize_receipt_extraction",
+      "reject_receipt",
+      "receipts"
+    ],
+    "20260819030000_webauthn_passkeys.sql": [
+      "webauthn_credentials",
+      "revoke_my_passkey"
+    ],
+    "20260819040000_copilot_governance.sql": [
+      "copilot_messages"
+    ],
+    "20260819050000_quick_capture_multimodal.sql": [
+      "create_capture_attachment",
+      "delete_capture_attachment",
+      "finalize_capture_attachment",
+      "generate_capture_attachment_url",
+      "link_capture_to_event",
+      "save_capture_transcript"
+    ],
+    "20260819090000_discovery_intelligence.sql": [
+      "content_opportunities",
+      "discovery_brand_checks",
+      "discovery_observations",
+      "discovery_targets",
+      "discovery_brand_truth_report",
+      "discovery_overview",
+      "discovery_query_leaderboard",
+      "discovery_roi",
+      "record_discovery_referral",
+      "seed_discovery_defaults"
+    ],
+    "20260820210000_native_meetings.sql": [
+      "meeting-captures"
+    ],
+    "20260821150000_riverways_activity_ops.sql": [
+      "emit_platform_activity",
+      "riverways_activity_feed",
+      "riverways_ai_activity",
+      "riverways_billing_activity",
+      "riverways_error_center",
+      "riverways_global_search",
+      "riverways_org_activity",
+      "riverways_platform_analytics",
+      "riverways_security_center",
+      "riverways_self_healing",
+      "riverways_user_activity"
+    ],
+    "20260821160000_riverways_account_management.sql": [
+      "riverways_assign_account_type"
+    ],
+    "20260822000000_public_booking_rpc.sql": [
+      "book_appointment_by_slug"
+    ],
+    "20260822120000_governance_layer.sql": [
+      "board_committee_members",
+      "board_committees",
+      "board_conflicts",
+      "board_resolutions",
+      "board_governance_overview",
+      "cascade_board_objective",
+      "compose_board_report",
+      "objective_cascade_tree",
+      "record_board_vote"
+    ],
+    "20260822125000_manual_payment_flow.sql": [
+      "request_plan_payment"
+    ],
+    "20260822130000_objective_gap_analysis.sql": [
+      "objective_gap_analysis"
+    ],
+    "20260822135000_brand_assets_bucket.sql": [
+      "brand-assets"
+    ],
+    "20260824150000_attribution_revenue.sql": [
+      "attribution_revenue"
+    ],
+    "20260824160000_payment_investigation.sql": [
+      "riverways_payment_investigation"
+    ],
+    "20260824170000_unified_business_search.sql": [
+      "business_search"
+    ],
+    "20260824170000_cost_governor.sql": [
+      "cost_governor"
+    ],
+    "20260824200000_meeting_lifecycle_compliance.sql": [
+      "meeting_chat_messages",
+      "create_action_task",
+      "create_meeting",
+      "end_meeting",
+      "generate_meeting_report",
+      "join_meeting",
+      "link_meeting_to_crm",
+      "save_meeting_action",
+      "save_meeting_decision",
+      "send_meeting_chat",
+      "send_meeting_chat_guest",
+      "start_meeting"
+    ],
+    "20260825160000_governance_engine.sql": [
+      "autonomy_feed",
+      "create_incident",
+      "decisions_feed",
+      "governance_overview",
+      "governance_self_health",
+      "incidents_feed",
+      "search_audit",
+      "transition_incident"
+    ],
+    "20260825200000_step_up_human_decisions.sql": [
+      "decide_human_decision"
+    ],
+    "010_accounting.sql": [
+      "accounts",
+      "journal_entries"
+    ],
+    "038_critical_infrastructure.sql": [
+      "activity_timeline",
+      "comments",
+      "data_exports",
+      "exchange_rates",
+      "saved_searches",
+      "search_indexes",
+      "webhook_deliveries",
+      "workflows",
+      "convert_currency",
+      "get_exchange_rate"
+    ],
+    "065_ai_roles_automation_convenience_veneer_continuity.sql": [
+      "ai_agents",
+      "automation_proposals",
+      "migration_jobs",
+      "portal_accounts",
+      "advance_migration",
+      "seed_ai_roles"
+    ],
+    "068_self_audit_reconciliation_incidents_flags.sql": [
+      "anomaly_events",
+      "reconciliation_runs",
+      "advance_incident"
+    ],
+    "015_api_webhooks.sql": [
+      "api_keys",
+      "webhooks",
+      "generate_api_key"
+    ],
+    "043_signatures_appointments_schema.sql": [
+      "appointments",
+      "services",
+      "signature_requests",
+      "signature_signers"
+    ],
+    "039_operations_backbone.sql": [
+      "approval_actions",
+      "budgets",
+      "cost_centers",
+      "maintenance_requests",
+      "staff_assignments"
+    ],
+    "072_rls_backfill_cross_tenant_tables.sql": [
+      "approval_rules"
+    ],
+    "061_observer_exceptions_indexes.sql": [
+      "attention_exceptions"
+    ],
+    "064_org_memory_authority_multicompany.sql": [
+      "authority_graph",
+      "decisions"
+    ],
+    "007_automations.sql": [
+      "automations"
+    ],
+    "029_beta_testing_infrastructure.sql": [
+      "beta_feedback",
+      "resolve_feature_flag"
+    ],
+    "022_business_branding.sql": [
+      "brand_assets"
+    ],
+    "095_risk_register.sql": [
+      "business_risks"
+    ],
+    "998_create_all_missing_tables.sql": [
+      "daily_time_summaries",
+      "incidents",
+      "inventory",
+      "kb_pages",
+      "kb_spaces",
+      "monitors",
+      "tickets",
+      "get_active_time_entry"
+    ],
+    "034_sales_tax_banking.sql": [
+      "deal_analytics",
+      "delivery_orders"
+    ],
+    "zzzaaa_demand_capture.sql": [
+      "demand_activity",
+      "lead_requests",
+      "sales_orders",
+      "create_lead_request",
+      "create_quote",
+      "create_sales_order",
+      "demand_funnel",
+      "demand_pipeline",
+      "demand_revenue",
+      "get_quote_by_token",
+      "respond_to_quote",
+      "transition_demand"
+    ],
+    "009_email_campaigns.sql": [
+      "email_campaigns",
+      "email_contacts"
+    ],
+    "058_business_event_bus.sql": [
+      "entity_freshness"
+    ],
+    "021_monitoring.sql": [
+      "heartbeats"
+    ],
+    "026_job_types.sql": [
+      "job_types"
+    ],
+    "006_knowledge_base.sql": [
+      "kb_page_versions"
+    ],
+    "094_okr_engine.sql": [
+      "key_results",
+      "objective_progress"
+    ],
+    "031_business_infrastructure.sql": [
+      "payroll_items"
+    ],
+    "069_four_reality_persona_intelligence.sql": [
+      "persona_discovery_iterations",
+      "persona_journeys",
+      "persona_need_signals",
+      "persona_profiles"
+    ],
+    "016_customer_portal.sql": [
+      "portal_invitations",
+      "generate_portal_invitation"
+    ],
+    "067_ai_guardrails_drift_config_impact.sql": [
+      "process_drift_findings"
+    ],
+    "032_fix_plan_pricing.sql": [
+      "recruitment_stages",
+      "staff_benefits"
+    ],
+    "023_company_home_blocks.sql": [
+      "reporting_channels"
+    ],
+    "062_simulation_compensation_affordability.sql": [
+      "simulations"
+    ],
+    "003_social_media.sql": [
+      "social_metrics",
+      "social_posts"
+    ],
+    "053_sso_providers.sql": [
+      "sso_providers"
+    ],
+    "084_task_management_enhancements.sql": [
+      "task_comments",
+      "task_time_logs"
+    ],
+    "008_support_tickets.sql": [
+      "ticket_replies"
+    ],
+    "055_timesheets_approval_cycle.sql": [
+      "timesheets",
+      "decide_timesheet",
+      "submit_timesheet"
+    ],
+    "037_analytics_events_system.sql": [
+      "user_activity_daily",
+      "update_user_engagement"
+    ],
+    "080_fix_cross_tenant_rls_subquery.sql": [
+      "approval_requests",
+      "entity_freshness_status"
+    ],
+    "088_recommendation_outcome_loop.sql": [
+      "acknowledge_recommendation",
+      "mark_recommendation_acted",
+      "record_recommendation_outcome",
+      "set_recommendation_decision"
+    ],
+    "018_time_tracking.sql": [
+      "add_manual_time_entry",
+      "request_time_off",
+      "stop_time_tracking"
+    ],
+    "017_requisitions_approvals.sql": [
+      "approve_requisition",
+      "create_requisition",
+      "deny_requisition",
+      "resubmit_requisition",
+      "send_follow_up",
+      "submit_requisition"
+    ],
+    "077_atomic_xp_award.sql": [
+      "award_xp_with_streak"
+    ],
+    "zz_live_console_drift_reconciliation.sql": [
+      "business_brain",
+      "compute_ebitda",
+      "get_alert_actions",
+      "graph_overview",
+      "pricing_opportunities",
+      "profitability_by_segment",
+      "profitability_leakage"
+    ],
+    "zz_rpc_tenant_guards_closure.sql": [
+      "business_relationships",
+      "cancel_subscription",
+      "capacity_intelligence",
+      "compute_business_health",
+      "continuity_status",
+      "convenience_index",
+      "current_business_health",
+      "current_metrics",
+      "data_quality_findings",
+      "early_warnings",
+      "enforce_approval",
+      "get_events_in_range",
+      "get_org_chart",
+      "intelligence_indexes",
+      "monthly_review",
+      "observer_snapshot",
+      "open_recommendations",
+      "process_bottleneck_intelligence",
+      "recommendation_effectiveness",
+      "record_analytics_event",
+      "record_audit",
+      "refresh_business_metrics",
+      "revenue_forecast",
+      "risk_anomaly_intelligence",
+      "run_behavior_recommendation_rules",
+      "run_business_health_audit",
+      "run_recommendation_rules",
+      "run_reconciliation",
+      "run_simulation",
+      "run_system_health_audit",
+      "scan_data_quality",
+      "start_approval_protocol",
+      "trust_health"
+    ],
+    "zz_rpc_role_authorization_closure.sql": [
+      "business_value_ledger",
+      "classify_business_state",
+      "create_invite",
+      "emit_business_event",
+      "next_best_action",
+      "said_vs_used"
+    ],
+    "zzz_auth_protocol_repair.sql": [
+      "check_auth_rate_limit",
+      "create_business_and_owner",
+      "log_security_event",
+      "record_auth_failure",
+      "reset_auth_rate_limit"
+    ],
+    "050_public_signing_flow.sql": [
+      "decline_signature",
+      "get_signature_request_by_token",
+      "mark_signature_viewed",
+      "record_signature"
+    ],
+    "071_capture_propagation_and_missing_rpc.sql": [
+      "increment_saved_search_use",
+      "increment_user_learning",
+      "update_leave_balance"
+    ],
+    "005_chat.sql": [
+      "join_channel"
+    ],
+    "063_intelligence_domains.sql": [
+      "market_intelligence"
+    ],
+    "020_events.sql": [
+      "register_for_event"
+    ],
+    "046_missing_table_backfill.sql": [
+      "avatars"
+    ],
+    "1001_documents_storage_bucket.sql": [
+      "documents"
+    ],
+    "082_schema_drift_repair.sql": [
+      "signatures"
+    ]
+  }
+}
