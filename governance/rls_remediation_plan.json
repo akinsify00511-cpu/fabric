@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "reason": "Neither SUPABASE_ACCESS_TOKEN nor SUPABASE_DB_URL is set.",
+  "required": [
+    "SUPABASE_ACCESS_TOKEN (for api.supabase.com advisors endpoint)",
+    "SUPABASE_DB_URL (for SQL linter queries)"
+  ]
+}

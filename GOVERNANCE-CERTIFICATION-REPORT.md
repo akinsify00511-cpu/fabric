@@ -8,6 +8,38 @@
 steps are completed. The report is structured so each closing step is directly
 linkable to its blocker.
 
+## 2026-08-25 — Live-probe evidence refresh (apikey-only method)
+
+The publishable key must be sent in the `apikey` header ONLY. Sending it as
+`Authorization: Bearer` makes the gateway reject it as an invalid JWT
+("Invalid API key") and was polluting prior probes. All four verifiers
+(e2e-production.sh, verify-production.sh, verify_production_contract.py,
+verify_live_db.sh) corrected.
+
+**Verified production truth (publishable key, apikey-only):**
+- RPCs EXIST + signature OK: create_business_and_owner (4-arg canonical),
+  business_brain, current_metrics, open_recommendations, business_value_ledger,
+  profitability_leakage, recommend_plan, trial_assistance, my_payment_request.
+  (business_brain correctly returns {"authorized":false} to anon — gate works.)
+- get_current_staff: EXISTS but EXECUTE denied to anon/authenticated (42501).
+  This breaks EVERY RLS-protected table read. Repair: forward-only grant
+  migration 20260825180000 (function NOT redefined).
+- create_subsidiary: EXISTS, anon denied — CORRECT (authenticated-only by design).
+- Tables genuinely MISSING (PGRST205): budgets, entity_freshness,
+  entity_freshness_status — created by 20260825180000 (canonical 039/058 shapes,
+  canonical get_current_staff RLS, security_barrier view, idempotent,
+  verified 2x clean on postgres:15).
+- RPCs genuinely MISSING (PGRST202): check_auth_rate_limit, record_auth_failure,
+  reset_auth_rate_limit, log_security_event, can_access_module, feature_discovery
+  — owned by the full migration-chain apply (they have table dependencies;
+  a partial repair would create half-systems).
+- Edge functions: paystack-webhook DEPLOYED (204); subscription-management +
+  email-service NOT deployed (404) — deployment staged in
+  scripts/deploy_edge_functions.sh, gated on SUPABASE_ACCESS_TOKEN (still missing).
+- E2E wire-contract bug fixed: onboarding payload now sends p_staff_name +
+  p_job_title (canonical), not p_owner_name.
+
+
 ### Live governance probes (publishable keys)
 
 | Probe | Expected | Live |

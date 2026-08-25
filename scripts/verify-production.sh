@@ -70,7 +70,7 @@ fi
 
 # --- Payments: the payment subsystem contract objects ---
 for rpc in request_plan_payment plan_price_cents my_payment_request; do
-  detail=$(curl -s -X POST "$BASE/rest/v1/rpc/$rpc" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' -d '{}' || true)
+  detail=$(curl -s -X POST "$BASE/rest/v1/rpc/$rpc" -H "apikey: $KEY" -H 'Content-Type: application/json' -d '{}' || true)
   if printf '%s' "$detail" | grep -q "no matches found in the schema cache"; then
     fail "Payments" "rpc $rpc missing"
   fi
@@ -83,7 +83,7 @@ done
 [ "$missing_pay" = "0" ] && pass "Payments" "checkout + webhook + verify edge functions deployed" || FAIL=$((FAIL+1))
 
 # --- Email: the email subsystem contract objects ---
-detail=$(curl -s -X POST "$BASE/rest/v1/rpc/queue_email" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H 'Content-Type: application/json' -d '{}' || true)
+detail=$(curl -s -X POST "$BASE/rest/v1/rpc/queue_email" -H "apikey: $KEY" -H 'Content-Type: application/json' -d '{}' || true)
 if printf '%s' "$detail" | grep -q "no matches found in the schema cache"; then
   fail "Email" "rpc queue_email missing"
 fi
