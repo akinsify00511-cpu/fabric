@@ -15,5 +15,49 @@
     "subscription-management",
     "webauthn"
   ],
-  "probe_failed": []
+  "extra_deployed": [
+    "paystack-initialize",
+    "process-crm-activity",
+    "refresh-deal-follow-through",
+    "refresh-deal-risk",
+    "send-welcome-email",
+    "subscription-checkout"
+  ],
+  "probe_failed": [],
+  "http": {
+    "api-gateway": 404,
+    "ask-avenize": 404,
+    "dispatch-webhooks": 404,
+    "email-service": 404,
+    "execute-automation": 404,
+    "parse-intent": 404,
+    "paystack-initialize": 200,
+    "paystack-verify": 404,
+    "paystack-webhook": 204,
+    "platform-health-check": 404,
+    "process-crm-activity": 200,
+    "refresh-deal-follow-through": 200,
+    "refresh-deal-risk": 200,
+    "resend-webhook": 404,
+    "send-welcome-email": 200,
+    "subscription-checkout": 200,
+    "subscription-management": 404,
+    "webauthn": 404
+  },
+  "dashboard_verified": [
+    "paystack-initialize",
+    "paystack-webhook",
+    "process-crm-activity",
+    "refresh-deal-follow-through",
+    "refresh-deal-risk",
+    "send-welcome-email",
+    "subscription-checkout"
+  ],
+  "frontend_referenced": [
+    "ask-avenize",
+    "paystack-verify",
+    "subscription-management",
+    "webauthn"
+  ],
+  "method": "OPTIONS only (POST is invalid: gateway returns 401 for both deployed and missing functions)"
 }

@@ -21,14 +21,39 @@ def _try(url: str, key: str):
         return getattr(e, "status", getattr(e, "code", -1))
 
 
+# Authoritative production dashboard inventory (user-verified Supabase dashboard
+# for kgsgqvatyleetyquffya, 2026-08-25). A manifest-only probe reported
+# 1 deployed / 11 missing precisely because it never probed these legacy names.
+DASHBOARD_DEPLOYED = [
+    "paystack-initialize",
+    "paystack-webhook",
+    "process-crm-activity",
+    "refresh-deal-follow-through",
+    "refresh-deal-risk",
+    "send-welcome-email",
+    "subscription-checkout",
+]
+
+
 def probe() -> dict:
     base, key = self_calibrate()
-    manifest = json.loads((ROOT / "supabase" / "constitution" / "edge-function-manifest.json").read_text())["directory"]
-    results = {"deployed": [], "missing": [], "probe_failed": []}
-    for fn in manifest:
-        dash = fn.replace("_", "-")
+    manifest_path = ROOT / "supabase" / "constitution" / "edge-function-manifest.json"
+    manifest = json.loads(manifest_path.read_text())["directory"]
+    manifest_frontend = json.loads(manifest_path.read_text())["frontend_referenced"]
+    universe = sorted(set(manifest) | set(DASHBOARD_DEPLOYED))
+    results = {
+        "deployed": [],
+        "missing": [],
+        "extra_deployed": [],
+        "probe_failed": [],
+        "http": {},
+        "dashboard_verified": DASHBOARD_DEPLOYED,
+        "frontend_referenced": manifest_frontend,
+        "method": "OPTIONS only (POST is invalid: gateway returns 401 for both deployed and missing functions)",
+    }
+    for fn in universe:
         if base and key:
-            req = urllib.request.Request(f"{base}/functions/v1/{dash}", method="OPTIONS")
+            req = urllib.request.Request(f"{base}/functions/v1/{fn}", method="OPTIONS")
             req.add_header("Authorization", f"Bearer {key}")
             try:
                 code = urllib.request.urlopen(req, timeout=20).status
@@ -36,12 +61,16 @@ def probe() -> dict:
                 code = getattr(e, "status", getattr(e, "code", -1))
         else:
             code = -1
-        if code == 404:
-            results["missing"].append(fn)
-        elif code == -1:
-            results["probe_failed"].append(fn)
-        else:
+        results["http"][fn] = code
+        if code in (404, -1):
+            if fn in manifest:
+                results["missing"].append(fn)
+            else:
+                results["probe_failed"].append(fn)
+        elif fn in manifest:
             results["deployed"].append(fn)
+        else:
+            results["extra_deployed"].append(fn)
     return results
 
 
