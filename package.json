@@ -26,7 +26,13 @@
     "avenize:governance:security": "python3 scripts/governance/avenize_governance.py security",
     "avenize:governance:e2e": "python3 scripts/governance/avenize_governance.py e2e",
     "avenize:governance:reconcile": "python3 scripts/governance/avenize_governance.py reconcile",
-    "avenize:governance:report": "python3 scripts/governance/avenize_governance.py report"
+    "avenize:governance:report": "python3 scripts/governance/avenize_governance.py report",
+    "avenize:governance:certify": "python3 scripts/governance/production_certification.py",
+    "avenize:governance:classify": "python3 scripts/governance/classify_missing.py",
+    "avenize:governance:order": "python3 scripts/governance/ordered_migrations.py",
+    "avenize:governance:edge-inventory": "python3 scripts/governance/edge_inventory_probe.py",
+    "avenize:governance:edge-plan": "python3 scripts/governance/edge_function_deploy_plan.py",
+    "avenize:governance:schema": "python3 scripts/governance/verify_governance_schema.py"
   },
   "homepage": "https://avenize.com",
   "dependencies": {

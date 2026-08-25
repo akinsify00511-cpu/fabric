@@ -1,6 +1,6 @@
 {
   "counts": {
-    "policies": 241
+    "policies": 247
   },
   "policies": [
     {
@@ -202,6 +202,26 @@
       "defined_in": "20260822120000_governance_layer.sql",
       "policy": "board_resolutions_write",
       "table": "board_resolutions"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "budgets_tenant_delete",
+      "table": "budgets"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "budgets_tenant_insert",
+      "table": "budgets"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "budgets_tenant_select",
+      "table": "budgets"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "budgets_tenant_update",
+      "table": "budgets"
     },
     {
       "defined_in": "20260818170000_business_approval_config.sql",
@@ -444,7 +464,17 @@
       "table": "email_events"
     },
     {
-      "defined_in": "058_business_event_bus.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "entity_freshness_tenant_insert",
+      "table": "entity_freshness"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "policy": "entity_freshness_tenant_update",
+      "table": "entity_freshness"
+    },
+    {
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "policy": "entity_freshness_viewable",
       "table": "entity_freshness"
     },

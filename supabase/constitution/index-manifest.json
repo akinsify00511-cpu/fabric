@@ -344,12 +344,12 @@
       "table": "branches"
     },
     {
-      "defined_in": "039_operations_backbone.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "index": "idx_budgets_business",
       "table": "budgets"
     },
     {
-      "defined_in": "039_operations_backbone.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "index": "idx_budgets_fiscal",
       "table": "budgets"
     },
@@ -859,7 +859,7 @@
       "table": "emails"
     },
     {
-      "defined_in": "058_business_event_bus.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "index": "idx_entity_freshness_entity",
       "table": "entity_freshness"
     },

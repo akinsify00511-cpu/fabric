@@ -1,0 +1,4 @@
+{
+  "names": [],
+  "explanation": "No intentionally-absent objects registered. Security-sensitive objects stay production-required and must be dealt with via RLS gates and not treated as wallpaper."
+}

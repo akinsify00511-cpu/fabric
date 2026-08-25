@@ -43,7 +43,7 @@ CONTRACT_PATH = ROOT / "supabase" / "contract" / "production_contract.json"
 def http_get(url, key, timeout=30):
     req = urllib.request.Request(
         url,
-        headers={"apikey": key, "Authorization": f"Bearer {key}", "Accept": "application/json"},
+        headers={"apikey": key, "Accept": "application/json"},
         method="GET",
     )
     with urllib.request.urlopen(req, timeout=timeout) as res:
@@ -53,7 +53,7 @@ def http_get(url, key, timeout=30):
 def probe_edge_function(base_url, name, key, timeout=15):
     req = urllib.request.Request(
         f"{base_url}/functions/v1/{name}",
-        headers={"apikey": key, "Authorization": f"Bearer {key}"},
+        headers={"apikey": key},
         method="OPTIONS",
     )
     try:
@@ -115,7 +115,7 @@ def main():
     def table_exists(name):
         req = urllib.request.Request(
             f"{base_url}/rest/v1/{name}?limit=0",
-            headers={"apikey": key, "Authorization": f"Bearer {key}"},
+            headers={"apikey": key},
             method="HEAD",
         )
         try:
@@ -132,7 +132,7 @@ def main():
             f"{base_url}/rest/v1/rpc/{name}",
             data=b"{}",
             headers={
-                "apikey": key, "Authorization": f"Bearer {key}",
+                "apikey": key,
                 "Content-Type": "application/json",
             },
             method="POST",

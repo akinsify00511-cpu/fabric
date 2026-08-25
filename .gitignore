@@ -32,3 +32,4 @@ playwright-report/
 supabase/contract/verification_report.json
 __pycache__/
 governance/reports/
+supabase/.temp/

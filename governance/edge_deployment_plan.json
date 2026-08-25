@@ -1,0 +1,162 @@
+{
+  "total_in_manifest": 12,
+  "deployed": [
+    {
+      "name": "paystack-webhook",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "DEPLOYED",
+      "decision": "KEEP"
+    }
+  ],
+  "missing": [
+    {
+      "name": "api-gateway",
+      "secrets": [],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "ask-avenize",
+      "secrets": [],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "dispatch-webhooks",
+      "secrets": [
+        "RESEND_API_KEY"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "email-service",
+      "secrets": [
+        "RESEND_API_KEY",
+        "EMAIL_FROM"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "execute-automation",
+      "secrets": [],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "parse-intent",
+      "secrets": [],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "paystack-verify",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "platform-health-check",
+      "secrets": [
+        "SUPABASE_SERVICE_ROLE_KEY"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "resend-webhook",
+      "secrets": [
+        "RESEND_API_KEY",
+        "RESEND_WEBHOOK_SECRET"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "subscription-management",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    },
+    {
+      "name": "webauthn",
+      "secrets": [
+        "WEBAUTHN_RP_ID",
+        "WEBAUTHN_ORIGINS"
+      ],
+      "deploy_status": "MISSING",
+      "decision": "DEPLOY"
+    }
+  ],
+  "legacy_extra": [
+    {
+      "name": "paystack-initialize",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "subscription-management + paystack-verify",
+      "evidence": "Payment flow consolidated: checkout initialization lives in subscription-management (createCheckout); verification separated into paystack-verify."
+    },
+    {
+      "name": "process-crm-activity",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "execute-automation",
+      "evidence": "Single automation executor (execute-automation) replaced per-domain activity processors."
+    },
+    {
+      "name": "refresh-deal-follow-through",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "execute-automation",
+      "evidence": "Follow-through scheduling folded into the automation executor + dispatch-webhooks."
+    },
+    {
+      "name": "refresh-deal-risk",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "execute-automation + platform-health-check",
+      "evidence": "Deal-risk recomputation is a scheduled automation/health concern."
+    },
+    {
+      "name": "send-welcome-email",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "email-service",
+      "evidence": "Resend email subsystem (migration 20260822170000) consolidates all transactional email into email-service with a template ledger."
+    },
+    {
+      "name": "subscription-checkout",
+      "deploy_status": "DEPLOYED",
+      "decision": "HOLD (no deletion without human decision)",
+      "frontend_referenced": false,
+      "superseded_by_hypothesis": "subscription-management",
+      "evidence": "Migration 20260821170000_payment_entitlement_sync.sql comment: 'The subscription-checkout edge function records each checkout attempt in subscription_provider_attempts' \u2014 the table exists, the manifest successor is subscription-management."
+    }
+  ],
+  "missing_count": 11,
+  "deployed_count": 1,
+  "legacy_extra_count": 6,
+  "secrets_required": [
+    "EMAIL_FROM",
+    "PAYSTACK_SECRET_KEY",
+    "RESEND_API_KEY",
+    "RESEND_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "WEBAUTHN_ORIGINS",
+    "WEBAUTHN_RP_ID"
+  ],
+  "dashboard_crosscheck": "OPTIONS-probe universe (12 manifest + 7 dashboard-verified) reconciles exactly with the user-verified Supabase dashboard inventory: 1 expected deployed (paystack-webhook), 11 expected missing, 6 legacy-extra held.",
+  "note": "Constitution: DEPLOYED never appears in missing; legacy-extra NEVER deleted without a human decision. Renamed-replaced supersession mapping is a hypothesis layer with cited evidence, not an action."
+}

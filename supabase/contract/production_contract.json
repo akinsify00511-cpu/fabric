@@ -514,7 +514,7 @@
     {
       "kind": "table",
       "name": "budgets",
-      "defined_in": "039_operations_backbone.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
@@ -1258,7 +1258,7 @@
     {
       "kind": "table",
       "name": "entity_freshness",
-      "defined_in": "058_business_event_bus.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
@@ -3762,7 +3762,7 @@
     {
       "kind": "view",
       "name": "entity_freshness_status",
-      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
