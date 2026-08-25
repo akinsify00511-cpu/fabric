@@ -2,16 +2,56 @@
   "version": "1.0.0",
   "authority": "governance/AVENIZE-GOVERNING-CONSTITUTION.md",
   "layers": [
-    {"id":"governing","document":"AVENIZE-GOVERNING-CONSTITUTION.md","priority":1000},
-    {"id":"product","document":"../AVENIZE_MASTER_PRODUCT_ARCHITECTURE.md","priority":900},
-    {"id":"design","document":"../AVENIZE-DESIGN-CONSTITUTION.md","priority":800},
-    {"id":"data","document":"AVENIZE-DATA-CONSTITUTION.md","priority":700},
-    {"id":"supabase","document":"AVENIZE-SUPABASE-CONSTITUTION.md","priority":700},
-    {"id":"api","document":"AVENIZE-API-CONTRACT-CONSTITUTION.md","priority":650},
-    {"id":"security","document":"AVENIZE-SECURITY-CONSTITUTION.md","priority":650},
-    {"id":"operations","document":"AVENIZE-OPERATIONS-CONSTITUTION.md","priority":600},
-    {"id":"autonomy","document":"AVENIZE-AUTONOMY-CONSTITUTION.md","priority":600},
-    {"id":"developer","document":"AVENIZE-DEVELOPER-CONSTITUTION.md","priority":500}
+    {
+      "id": "governing",
+      "document": "AVENIZE-GOVERNING-CONSTITUTION.md",
+      "priority": 1000
+    },
+    {
+      "id": "product",
+      "document": "docs/architecture/AVENIZE_MASTER_PRODUCT_ARCHITECTURE.md",
+      "priority": 900
+    },
+    {
+      "id": "design",
+      "document": "../AVENIZE-DESIGN-CONSTITUTION.md",
+      "priority": 800
+    },
+    {
+      "id": "data",
+      "document": "AVENIZE-DATA-CONSTITUTION.md",
+      "priority": 700
+    },
+    {
+      "id": "supabase",
+      "document": "AVENIZE-SUPABASE-CONSTITUTION.md",
+      "priority": 700
+    },
+    {
+      "id": "api",
+      "document": "AVENIZE-API-CONTRACT-CONSTITUTION.md",
+      "priority": 650
+    },
+    {
+      "id": "security",
+      "document": "AVENIZE-SECURITY-CONSTITUTION.md",
+      "priority": 650
+    },
+    {
+      "id": "operations",
+      "document": "AVENIZE-OPERATIONS-CONSTITUTION.md",
+      "priority": 600
+    },
+    {
+      "id": "autonomy",
+      "document": "AVENIZE-AUTONOMY-CONSTITUTION.md",
+      "priority": 600
+    },
+    {
+      "id": "developer",
+      "document": "AVENIZE-DEVELOPER-CONSTITUTION.md",
+      "priority": 500
+    }
   ],
   "mandatory_controls": {
     "production_schema_drift": "block",

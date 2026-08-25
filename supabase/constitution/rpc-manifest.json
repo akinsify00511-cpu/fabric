@@ -1,0 +1,3535 @@
+{
+  "counts": {
+    "functions": 504
+  },
+  "functions": [
+    {
+      "defined_in": "098_golden_test_datasets.sql",
+      "frontend_referenced": false,
+      "name": "_ensure_test_auth_user",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "_governance_guard",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819015000_account_member_kinds.sql",
+      "frontend_referenced": true,
+      "name": "accept_invite",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "name": "accept_portal_invitation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "name": "acknowledge_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "frontend_referenced": true,
+      "name": "acknowledge_recommendation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "frontend_referenced": false,
+      "name": "action_authority_rung_rank",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "name": "action_protocol_steps",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": true,
+      "name": "add_manual_time_entry",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "frontend_referenced": false,
+      "name": "advance_action_step",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "frontend_referenced": true,
+      "name": "advance_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "name": "advance_migration",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": false,
+      "name": "apply_goods_receipt",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "name": "approval_requests_update",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "approve_requisition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "name": "approve_time_off",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "assess_four_reality_discrepancy",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824150000_attribution_revenue.sql",
+      "frontend_referenced": true,
+      "name": "attribution_revenue",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": false,
+      "name": "audit_procurement_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "frontend_referenced": false,
+      "name": "audit_property_commission",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "frontend_referenced": false,
+      "name": "audit_row_change",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "frontend_referenced": false,
+      "name": "audit_signature_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000013_automation_health_and_scheduled.sql",
+      "frontend_referenced": true,
+      "name": "automation_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "frontend_referenced": true,
+      "name": "automation_health_with_dlq",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "autonomy_feed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "name": "award_xp",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "077_atomic_xp_award.sql",
+      "frontend_referenced": true,
+      "name": "award_xp_with_streak",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "blocked_work",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "name": "board_governance_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822000000_public_booking_rpc.sql",
+      "frontend_referenced": true,
+      "name": "book_appointment_by_slug",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "002_frontend_compat.sql",
+      "frontend_referenced": false,
+      "name": "bootstrap_business",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "frontend_referenced": false,
+      "name": "br_set_risk_score",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "broadcast_notification",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000012_builder_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "builder_dashboard",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "business_brain",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "business_relationships",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_unified_business_search.sql",
+      "frontend_referenced": true,
+      "name": "business_search",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "business_value_ledger",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "name": "calculate_level",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000005_two_flag_module_gate.sql",
+      "frontend_referenced": true,
+      "name": "can_access_module",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "frontend_referenced": false,
+      "name": "can_add_team_member",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "can_approve",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "cancel_payment_request",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "name": "cancel_registration",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "cancel_subscription",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "capacity_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "name": "cascade_board_objective",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "cashflow_forecast_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822020000_channel_members_rls_recursion_fix.sql",
+      "frontend_referenced": false,
+      "name": "channel_in_my_business",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "name": "check_achievements",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "check_ai_action_authority",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "frontend_referenced": false,
+      "name": "check_api_key_usage",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": true,
+      "name": "check_auth_rate_limit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818160000_ebitda_automation_idempotency.sql",
+      "frontend_referenced": false,
+      "name": "check_deal_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "name": "check_in_attendee",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "check_invoice_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "check_separation_of_duties",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "check_staff_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "check_task_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "classify_business_state",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "frontend_referenced": false,
+      "name": "cleanup_expired_rate_limits",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "098_golden_test_datasets.sql",
+      "frontend_referenced": false,
+      "name": "cleanup_golden_datasets",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818250000_multi_role_switching.sql",
+      "frontend_referenced": true,
+      "name": "clear_active_role",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110100_presence_field_rpcs.sql",
+      "frontend_referenced": true,
+      "name": "clock_in_staff",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110100_presence_field_rpcs.sql",
+      "frontend_referenced": true,
+      "name": "clock_out_staff",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "059_event_emitter_triggers.sql",
+      "frontend_referenced": false,
+      "name": "col_text",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "company_tree",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "compensation_review_recommendation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110200_field_visit_rpcs.sql",
+      "frontend_referenced": false,
+      "name": "complete_field_visit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "name": "compose_board_report",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818150000_proactive_digest_alerts.sql",
+      "frontend_referenced": true,
+      "name": "compose_business_digest",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818280000_evolved_business_review.sql",
+      "frontend_referenced": true,
+      "name": "compose_business_review",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "092_intelligence_cron_schedules.sql",
+      "frontend_referenced": false,
+      "name": "compute_all_business_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "compute_business_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "compute_ebitda",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "confirm_plan_payment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "frontend_referenced": true,
+      "name": "confirm_receipt",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "continuity_status",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822140000_contract_scan_extension.sql",
+      "frontend_referenced": false,
+      "name": "contract_function_status",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822140000_contract_scan_extension.sql",
+      "frontend_referenced": false,
+      "name": "contract_normalize_args",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "convenience_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "name": "convert_currency",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819040000_copilot_governance.sql",
+      "frontend_referenced": false,
+      "name": "copilot_daily_usage",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": true,
+      "name": "cost_governor",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "name": "cost_governor_compute_ledger",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "name": "cost_governor_limit_for",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "name": "cost_governor_resolve_plan",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "frontend_referenced": false,
+      "name": "cost_governor_rollup",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "create_action_task",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": true,
+      "name": "create_business_and_owner",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": true,
+      "name": "create_capture",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "create_capture_attachment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": false,
+      "name": "create_default_channel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": false,
+      "name": "create_default_kb_space",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "frontend_referenced": false,
+      "name": "create_default_notification_preferences",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110200_field_visit_rpcs.sql",
+      "frontend_referenced": true,
+      "name": "create_field_visit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "create_human_decision",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "create_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "create_invite",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818140000_server_derived_invoice_totals.sql",
+      "frontend_referenced": true,
+      "name": "create_invoice",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "name": "create_journal_entry",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "create_lead_request",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "create_meeting",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "create_notification",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "name": "create_portal_session",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "create_quote",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "frontend_referenced": true,
+      "name": "create_receipt_upload_path",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": false,
+      "name": "create_recording_upload_path",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "create_requisition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "create_sales_order",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818320000_canonical_create_subsidiary.sql",
+      "frontend_referenced": true,
+      "name": "create_subsidiary",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "current_business_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "current_metrics",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "data_integrity_scores",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "data_quality_findings",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "108_schema_version_tracking.sql",
+      "frontend_referenced": false,
+      "name": "db_is_current",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "108_schema_version_tracking.sql",
+      "frontend_referenced": false,
+      "name": "db_schema_version",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000006_applied_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "deal_stage_age_days",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "decide_human_decision",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "frontend_referenced": true,
+      "name": "decide_timesheet",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "decisions_feed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "050_public_signing_flow.sql",
+      "frontend_referenced": true,
+      "name": "decline_signature",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "delete_capture_attachment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "delete_platform_oncall",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "demand_funnel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": false,
+      "name": "demand_notify",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "demand_pipeline",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "demand_revenue",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "deny_requisition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "name": "deny_time_off",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "detect_contracts_expiring",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "detect_contracts_expiring_all",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "detect_customer_inactive",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "detect_customer_inactive_all",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "detect_payroll_due",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "detect_payroll_due_all",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818230000_business_memory_recall.sql",
+      "frontend_referenced": true,
+      "name": "diagnose_business",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "discovery_brand_truth_report",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "discovery_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "discovery_query_leaderboard",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "discovery_roi",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "early_warnings",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "emit_business_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "emit_campaign_converted",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "emit_deal_lost",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "emit_deal_won",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "emit_inventory_low",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "emit_invoice_overdue",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "059_event_emitter_triggers.sql",
+      "frontend_referenced": false,
+      "name": "emit_payment_received",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "emit_platform_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "emit_project_delayed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "frontend_referenced": false,
+      "name": "emit_staff_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "059_event_emitter_triggers.sql",
+      "frontend_referenced": false,
+      "name": "emit_staff_joined",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "090_event_catalog_completion.sql",
+      "frontend_referenced": false,
+      "name": "emit_task_completed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "end_meeting",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "enforce_approval",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "070_enforcement_gate.sql",
+      "frontend_referenced": false,
+      "name": "enforce_approval_on_status_change",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819080000_businesses_structural_immutability.sql",
+      "frontend_referenced": false,
+      "name": "enforce_business_structural_immutability",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "enforce_content_quality_gate",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "frontend_referenced": false,
+      "name": "enforce_payment_transaction_transition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819060000_staff_role_immutability.sql",
+      "frontend_referenced": false,
+      "name": "enforce_staff_role_immutability",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "frontend_referenced": false,
+      "name": "ensure_business_approval_config",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
+      "frontend_referenced": false,
+      "name": "ensure_meeting_analytics_contract",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "name": "evaluate_platform_alerts",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "execute_automation_action",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "073_automation_secret.sql",
+      "frontend_referenced": false,
+      "name": "execute_due_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": false,
+      "name": "expire_recordings",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "name": "fanout_email_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "feature_activation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818190000_feature_discovery.sql",
+      "frontend_referenced": true,
+      "name": "feature_discovery",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "finalize_capture_attachment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "frontend_referenced": true,
+      "name": "finalize_receipt_extraction",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": true,
+      "name": "finalize_recording",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "financial_health_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": true,
+      "name": "generate_api_key",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "generate_capture_attachment_url",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "generate_meeting_report",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "frontend_referenced": true,
+      "name": "generate_meeting_token",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "frontend_referenced": false,
+      "name": "generate_mfa_backup_codes",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": false,
+      "name": "generate_po_number",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": true,
+      "name": "generate_portal_invitation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "name": "generate_property_slug",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": true,
+      "name": "generate_recording_signed_url",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "generate_reporting_update",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "name": "get_account_balance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "name": "get_active_time_entry",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "get_alert_actions",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "frontend_referenced": false,
+      "name": "get_auth_error_message",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "get_automation_actions",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "frontend_referenced": false,
+      "name": "get_automation_triggers",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_business_branding",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_business_subscription",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "name": "get_campaign_stats",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "frontend_referenced": false,
+      "name": "get_contact_count_by_tags",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818100000_fix_org_hierarchy_is_active.sql",
+      "frontend_referenced": true,
+      "name": "get_current_accessible_businesses",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "frontend_referenced": false,
+      "name": "get_current_organization_memberships",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": true,
+      "name": "get_current_staff",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "get_direct_reports",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_email_template",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "053_sso_providers.sql",
+      "frontend_referenced": false,
+      "name": "get_enabled_sso_providers",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "get_events_in_range",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "frontend_referenced": true,
+      "name": "get_exchange_rate",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "get_full_team",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000002_auth_functions.sql",
+      "frontend_referenced": true,
+      "name": "get_invite_info",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": true,
+      "name": "get_meeting_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "frontend_referenced": true,
+      "name": "get_meeting_reports",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "name": "get_mime_category",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "frontend_referenced": true,
+      "name": "get_my_channels",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "name": "get_next_entry_number",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "get_org_chart",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": false,
+      "name": "get_pending_approvals",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "get_plan_features",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "name": "get_portal_invitation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818200000_pricing_engine.sql",
+      "frontend_referenced": true,
+      "name": "get_pricing_tiers",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_public_profile",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "get_quote_by_token",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "050_public_signing_flow.sql",
+      "frontend_referenced": true,
+      "name": "get_signature_request_by_token",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "frontend_referenced": false,
+      "name": "get_space_pages",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "name": "get_sso_login_options",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818250000_multi_role_switching.sql",
+      "frontend_referenced": true,
+      "name": "get_staff_roles",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_subscription_invoices",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "get_subscription_payments",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "028_business_entitlements.sql",
+      "frontend_referenced": false,
+      "name": "get_team_count",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "name": "get_ticket_stats",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "name": "get_ticket_with_replies",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "name": "get_time_entries_range",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "name": "get_trial_balance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "frontend_referenced": false,
+      "name": "get_unread_notification_count",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "name": "get_upcoming_events",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": false,
+      "name": "get_webhook_events",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "governance_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "governance_self_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "grant_business_plan",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "graph_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "087_context_graph_wiring.sql",
+      "frontend_referenced": false,
+      "name": "handler_derive_relationships",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "frontend_referenced": false,
+      "name": "handler_propagate_capture",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "frontend_referenced": false,
+      "name": "handler_update_entity_freshness",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "has_business_role",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "028_business_entitlements.sql",
+      "frontend_referenced": false,
+      "name": "has_feature",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "has_open_recommendation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "ignored_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "impact_analysis_for",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "incidents_feed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "name": "increment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": false,
+      "name": "increment_automation_stats",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": true,
+      "name": "increment_capture_view",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "name": "increment_email_clicks",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "name": "increment_email_opens",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "frontend_referenced": true,
+      "name": "increment_saved_search_use",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "frontend_referenced": true,
+      "name": "increment_user_learning",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_capacity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_cashflow_forecast",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_early_warnings",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "intelligence_indexes",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_process_bottlenecks",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_risk_anomalies",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "intelligence_sales_performance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "investigate_business_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "frontend_referenced": true,
+      "name": "is_approval_required",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "is_business_in_trial",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "is_business_member",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "is_feature_enabled",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000012_builder_dashboard.sql",
+      "frontend_referenced": false,
+      "name": "is_platform_admin",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821000000_riverways_admin.sql",
+      "frontend_referenced": true,
+      "name": "is_riverways_admin",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "issue_recommendation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "frontend_referenced": true,
+      "name": "join_channel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "join_meeting",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "knowledge_concentration",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "frontend_referenced": false,
+      "name": "leave_channel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "frontend_referenced": true,
+      "name": "leave_meeting",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": false,
+      "name": "link_capture_to_entity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "link_capture_to_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "link_entities",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "link_meeting_to_crm",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000005_two_flag_module_gate.sql",
+      "frontend_referenced": true,
+      "name": "list_accessible_modules",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "list_capture_attachments",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "list_platform_oncall",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "list_platform_thresholds",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "frontend_referenced": false,
+      "name": "list_recordings",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "frontend_referenced": false,
+      "name": "log_audit_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "log_governance_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "log_platform_error",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": true,
+      "name": "log_security_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "name": "log_sso_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "name": "log_ticket_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "frontend_referenced": false,
+      "name": "maintain_task_actual_hours",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "frontend_referenced": false,
+      "name": "mark_automation_run_failed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "frontend_referenced": false,
+      "name": "mark_automation_run_success",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "frontend_referenced": false,
+      "name": "mark_notification_read",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "name": "mark_notifications_read",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "frontend_referenced": true,
+      "name": "mark_recommendation_acted",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "050_public_signing_flow.sql",
+      "frontend_referenced": true,
+      "name": "mark_signature_viewed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "frontend_referenced": true,
+      "name": "market_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
+      "frontend_referenced": true,
+      "name": "meeting_analytics",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "monthly_review",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "my_payment_request",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "next_best_action",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "099_intelligence_notifications.sql",
+      "frontend_referenced": false,
+      "name": "notify_critical_recommendation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "052_email_provider_wiring.sql",
+      "frontend_referenced": false,
+      "name": "notify_email_channel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "name": "objective_cascade_tree",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822130000_objective_gap_analysis.sql",
+      "frontend_referenced": true,
+      "name": "objective_gap_analysis",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "frontend_referenced": true,
+      "name": "objective_progress",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "observer_snapshot",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "frontend_referenced": false,
+      "name": "on_business_created",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000009_self_instrumentation.sql",
+      "frontend_referenced": false,
+      "name": "onboarding_conversion",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "onboarding_funnel",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "open_recommendations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "operational_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "opportunity_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "owner_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "name": "page_platform_oncall",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "pending_payment_requests",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "people_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "persona_conflict_detection",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "persona_success_metrics_summary",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": false,
+      "name": "plan_price_cents",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "platform_ops",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "pricing_opportunities",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "process_bottleneck_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "frontend_referenced": false,
+      "name": "process_business_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "profitability_by_segment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": true,
+      "name": "profitability_leakage",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818270000_business_graph_impact.sql",
+      "frontend_referenced": true,
+      "name": "propagate_impact",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "name": "provision_sso_user",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "publish_compliance_report",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "queue_autonomy_action",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "name": "queue_email",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "name": "queue_payment_lifecycle_email",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "frontend_referenced": false,
+      "name": "queue_subscription_lifecycle_email",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "quick_turnoff",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "frontend_referenced": false,
+      "name": "recalc_po_total",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818230000_business_memory_recall.sql",
+      "frontend_referenced": true,
+      "name": "recall_similar_problems",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818180000_ai_plan_recommendation.sql",
+      "frontend_referenced": true,
+      "name": "recommend_plan",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "recommendation_effectiveness",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "frontend_referenced": false,
+      "name": "recompute_timesheet_totals",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "record_analytics_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "record_audit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": true,
+      "name": "record_auth_failure",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": false,
+      "name": "record_autonomy_attempt",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "frontend_referenced": true,
+      "name": "record_board_vote",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "name": "record_check",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "frontend_referenced": false,
+      "name": "record_decision_learning",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818230000_business_memory_recall.sql",
+      "frontend_referenced": false,
+      "name": "record_diagnosis",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "record_discovery_referral",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "name": "record_heartbeat",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": false,
+      "name": "record_integration_check",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818140000_server_derived_invoice_totals.sql",
+      "frontend_referenced": true,
+      "name": "record_invoice_payment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "frontend_referenced": false,
+      "name": "record_otp_verification",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "frontend_referenced": false,
+      "name": "record_outcome",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "frontend_referenced": true,
+      "name": "record_recommendation_outcome",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "record_reconciliation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "050_public_signing_flow.sql",
+      "frontend_referenced": true,
+      "name": "record_signature",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "recursive_neighbors",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "092_intelligence_cron_schedules.sql",
+      "frontend_referenced": false,
+      "name": "refresh_all_business_metrics",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "refresh_business_metrics",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": true,
+      "name": "register_for_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "frontend_referenced": true,
+      "name": "reject_receipt",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "frontend_referenced": false,
+      "name": "reprocess_failed_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "frontend_referenced": true,
+      "name": "request_plan_payment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": true,
+      "name": "request_time_off",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "frontend_referenced": true,
+      "name": "reset_auth_rate_limit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "resolve_canonical",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "029_beta_testing_infrastructure.sql",
+      "frontend_referenced": true,
+      "name": "resolve_feature_flag",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "frontend_referenced": false,
+      "name": "resolve_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "resolve_payment_provider",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "frontend_referenced": false,
+      "name": "resolve_plan_tier",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "resolve_platform_error",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "respond_to_quote",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "resubmit_requisition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "revenue_forecast",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "frontend_referenced": true,
+      "name": "revive_dead_lettered_automation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "frontend_referenced": true,
+      "name": "revoke_invite",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "frontend_referenced": true,
+      "name": "revoke_my_passkey",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "risk_anomaly_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "risk_summary",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_activity_feed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821160000_riverways_account_management.sql",
+      "frontend_referenced": true,
+      "name": "riverways_admin_list_accounts",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821000000_riverways_admin.sql",
+      "frontend_referenced": true,
+      "name": "riverways_admin_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_ai_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821160000_riverways_account_management.sql",
+      "frontend_referenced": true,
+      "name": "riverways_assign_account_type",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_billing_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_error_center",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_global_search",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_org_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824160000_payment_investigation.sql",
+      "frontend_referenced": true,
+      "name": "riverways_payment_investigation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_platform_analytics",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_security_center",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_self_healing",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": true,
+      "name": "riverways_user_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "route_work",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "020_events.sql",
+      "frontend_referenced": false,
+      "name": "rsvp_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "run_agent_guardrail",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000011_sector_intelligence_behavior_rules.sql",
+      "frontend_referenced": false,
+      "name": "run_all_recommendation_rules",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_behavior_recommendation_rules",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_business_health_audit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000013_automation_health_and_scheduled.sql",
+      "frontend_referenced": false,
+      "name": "run_due_automations",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
+      "frontend_referenced": false,
+      "name": "run_integrity_repairs_internal",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822140000_contract_scan_extension.sql",
+      "frontend_referenced": true,
+      "name": "run_integrity_scan",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_recommendation_rules",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_reconciliation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "frontend_referenced": false,
+      "name": "run_report",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_simulation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "run_system_health_audit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": true,
+      "name": "said_vs_used",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "salary_affordability",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "sales_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "sales_performance_intelligence",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "frontend_referenced": false,
+      "name": "sanitize_platform_payload",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "frontend_referenced": false,
+      "name": "save_business_branding",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": false,
+      "name": "save_capture_ocr",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "frontend_referenced": true,
+      "name": "save_capture_transcript",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "save_meeting_action",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "save_meeting_decision",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": false,
+      "name": "save_meeting_decisions",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": false,
+      "name": "save_transcript",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "092_intelligence_cron_schedules.sql",
+      "frontend_referenced": false,
+      "name": "scan_all_business_data_quality",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "scan_data_quality",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "scan_exceptions",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "search_audit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "frontend_referenced": true,
+      "name": "search_transcripts",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000011_sector_intelligence_behavior_rules.sql",
+      "frontend_referenced": true,
+      "name": "sector_benchmark",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000008_said_vs_used_reality_gap.sql",
+      "frontend_referenced": false,
+      "name": "sector_module_usage",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "frontend_referenced": true,
+      "name": "seed_ai_roles",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "frontend_referenced": false,
+      "name": "seed_default_functional_roles",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "frontend_referenced": false,
+      "name": "seed_default_job_types",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "frontend_referenced": false,
+      "name": "seed_default_pipeline_stages",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "frontend_referenced": true,
+      "name": "seed_discovery_defaults",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "098_golden_test_datasets.sql",
+      "frontend_referenced": false,
+      "name": "seed_golden_dataset",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818150000_proactive_digest_alerts.sql",
+      "frontend_referenced": true,
+      "name": "send_business_digest",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "frontend_referenced": false,
+      "name": "send_email_notification",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "send_follow_up",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "send_meeting_chat",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "send_meeting_chat_guest",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "frontend_referenced": false,
+      "name": "send_notification",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818250000_multi_role_switching.sql",
+      "frontend_referenced": true,
+      "name": "set_active_role",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "frontend_referenced": false,
+      "name": "set_avenize_meeting_room",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "frontend_referenced": false,
+      "name": "set_first_response",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260819015000_account_member_kinds.sql",
+      "frontend_referenced": true,
+      "name": "set_member_kind",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "frontend_referenced": true,
+      "name": "set_recommendation_decision",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "set_reporting_manager",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "frontend_referenced": false,
+      "name": "set_updated_at",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "similar_decisions",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "sla_breaches",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "snapshot_config",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "start_approval_protocol",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110200_field_visit_rpcs.sql",
+      "frontend_referenced": false,
+      "name": "start_field_visit",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "frontend_referenced": true,
+      "name": "start_meeting",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": true,
+      "name": "start_time_tracking",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": true,
+      "name": "stop_time_tracking",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "strategic_alignment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "frontend_referenced": true,
+      "name": "submit_requisition",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "frontend_referenced": true,
+      "name": "submit_timesheet",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": false,
+      "name": "sync_business_location_point",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822010000_contacts_name_sync.sql",
+      "frontend_referenced": false,
+      "name": "sync_contact_name",
+      "security_sensitive": false,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "frontend_referenced": false,
+      "name": "sync_entitlement_from_subscription",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "frontend_referenced": false,
+      "name": "sync_field_visit_point",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "sync_kr_from_metric",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822030000_notifications_message_body_sync.sql",
+      "frontend_referenced": false,
+      "name": "sync_notification_message",
+      "security_sensitive": false,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "sync_organogram",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260822050000_payments_missing_columns.sql",
+      "frontend_referenced": false,
+      "name": "sync_payment_aliases",
+      "security_sensitive": false,
+      "signature": ""
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "frontend_referenced": false,
+      "name": "timesheet_recompute_on_entry_change",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "name": "touch_conversation_on_message",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "frontend_referenced": false,
+      "name": "touch_quotes_updated_at",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "frontend_referenced": false,
+      "name": "touch_workspace_selections_updated_at",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "track_analytics_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "frontend_referenced": true,
+      "name": "transition_demand",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "frontend_referenced": true,
+      "name": "transition_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818210000_trial_assistance.sql",
+      "frontend_referenced": true,
+      "name": "trial_assistance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": false,
+      "name": "trigger_deal_automation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "frontend_referenced": false,
+      "name": "trigger_escalation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "frontend_referenced": false,
+      "name": "trigger_task_automation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "frontend_referenced": false,
+      "name": "trigger_webhook",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "trip_circuit_breaker",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": true,
+      "name": "trust_health",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "trust_index",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "name": "unlock_achievement",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "frontend_referenced": false,
+      "name": "update_account_balances",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": false,
+      "name": "update_daily_activity",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "frontend_referenced": false,
+      "name": "update_daily_summary",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "update_email_template",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "029_beta_testing_infrastructure.sql",
+      "frontend_referenced": false,
+      "name": "update_feature_flag_timestamp",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "frontend_referenced": true,
+      "name": "update_leave_balance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "update_platform_incident",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "update_platform_threshold",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "name": "update_property_status",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "frontend_referenced": false,
+      "name": "update_sms_status",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "frontend_referenced": false,
+      "name": "update_sso_session",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "frontend_referenced": false,
+      "name": "update_streak",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_tenant_guards_closure.sql",
+      "frontend_referenced": false,
+      "name": "update_subscription_from_webhook",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "frontend_referenced": false,
+      "name": "update_subsidiary_profile_timestamp",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "frontend_referenced": false,
+      "name": "update_updated_at",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "frontend_referenced": false,
+      "name": "update_updated_at_column",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": true,
+      "name": "update_user_engagement",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "frontend_referenced": false,
+      "name": "update_user_streak",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "frontend_referenced": true,
+      "name": "upsert_platform_oncall",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000007_usage_telemetry.sql",
+      "frontend_referenced": false,
+      "name": "usage_cross_business_adoption",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "zz_rpc_role_authorization_closure.sql",
+      "frontend_referenced": false,
+      "name": "usage_module_adoption",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "name": "user_in_business",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "frontend_referenced": false,
+      "name": "user_is_admin",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "frontend_referenced": false,
+      "name": "validate_invite_token",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000014_api_key_gateway.sql",
+      "frontend_referenced": false,
+      "name": "verify_api_key",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "frontend_referenced": false,
+      "name": "verify_custom_domain",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "016_customer_portal.sql",
+      "frontend_referenced": false,
+      "name": "verify_portal_session",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260101000010_owner_intelligence.sql",
+      "frontend_referenced": false,
+      "name": "workflow_funnel",
+      "security_sensitive": true,
+      "signature": ""
+    }
+  ]
+}

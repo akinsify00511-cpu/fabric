@@ -1,0 +1,1082 @@
+{
+  "counts": {
+    "triggers": 215
+  },
+  "triggers": [
+    {
+      "defined_in": "010_accounting.sql",
+      "table": "accounts",
+      "trigger": "accounts_updated_at"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "table": "action_protocol_runs",
+      "trigger": "action_protocol_updated_at"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "table": "alert_rules",
+      "trigger": "alert_rules_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "announcements",
+      "trigger": "update_announcements_updated_at"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "table": "api_keys",
+      "trigger": "api_keys_updated_at"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "table": "appointments",
+      "trigger": "appointments_updated_at"
+    },
+    {
+      "defined_in": "070_enforcement_gate.sql",
+      "table": "approvals",
+      "trigger": "approvals_enforce_gate"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "approvals",
+      "trigger": "audit_approvals"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "approvals",
+      "trigger": "update_approvals_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "assets",
+      "trigger": "update_assets_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "attendance_records",
+      "trigger": "update_attendance_records_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "attendance_summary",
+      "trigger": "update_attendance_summary_updated_at"
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "table": "audit_logs",
+      "trigger": "audit_logs_created_at"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "table": "authority_graph",
+      "trigger": "authority_graph_updated_at"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "table": "automations",
+      "trigger": "automations_updated_at"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "table": "board_committees",
+      "trigger": "trg_board_committees_updated_at"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "table": "board_conflicts",
+      "trigger": "trg_board_conflicts_updated_at"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "table": "board_members",
+      "trigger": "trg_board_members_updated_at"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "table": "board_resolutions",
+      "trigger": "trg_board_resolutions_updated_at"
+    },
+    {
+      "defined_in": "003_social_media.sql",
+      "table": "brand_assets",
+      "trigger": "brand_assets_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "budgets",
+      "trigger": "update_budgets_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "business_branding",
+      "trigger": "business_branding_updated_at"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "table": "business_email_domains",
+      "trigger": "business_email_domains_updated_at"
+    },
+    {
+      "defined_in": "049_server_side_trial.sql",
+      "table": "business_entitlements",
+      "trigger": "trg_start_trial"
+    },
+    {
+      "defined_in": "028_business_entitlements.sql",
+      "table": "business_entitlements",
+      "trigger": "update_business_entitlements_updated_at"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "table": "business_events",
+      "trigger": "business_events_updated_at"
+    },
+    {
+      "defined_in": "096_trust_dr_audit_extension.sql",
+      "table": "business_risks",
+      "trigger": "audit_business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "table": "business_risks",
+      "trigger": "business_risks_before_insert"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "table": "business_risks",
+      "trigger": "business_risks_before_update"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "business_subscriptions",
+      "trigger": "audit_business_subscriptions"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "table": "business_subscriptions",
+      "trigger": "update_business_subscriptions_updated_at"
+    },
+    {
+      "defined_in": "20260819080000_businesses_structural_immutability.sql",
+      "table": "businesses",
+      "trigger": "businesses_structural_immutability"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "businesses",
+      "trigger": "businesses_updated_at"
+    },
+    {
+      "defined_in": "20260818170000_business_approval_config.sql",
+      "table": "businesses",
+      "trigger": "ensure_business_approval_config"
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "table": "businesses",
+      "trigger": "on_business_created"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "table": "businesses",
+      "trigger": "on_business_created_kb"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "table": "capture_attachments",
+      "trigger": "trg_capture_attachments_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "cashflow",
+      "trigger": "cashflow_updated_at"
+    },
+    {
+      "defined_in": "004_tasks_merit_cashflow.sql",
+      "table": "cashflow_entries",
+      "trigger": "cashflow_entries_updated_at"
+    },
+    {
+      "defined_in": "005_chat.sql",
+      "table": "channels",
+      "trigger": "channels_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "chat_conversations",
+      "trigger": "chatconv_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "chat_messages",
+      "trigger": "chat_msg_touch_conv"
+    },
+    {
+      "defined_in": "096_trust_dr_audit_extension.sql",
+      "table": "claims",
+      "trigger": "audit_claims"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "company_home_blocks",
+      "trigger": "update_company_home_blocks_updated_at"
+    },
+    {
+      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
+      "table": "configuration_changes",
+      "trigger": "configuration_changes_updated_at"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "contacts",
+      "trigger": "contacts_updated_at"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "table": "content_opportunities",
+      "trigger": "content_opportunities_quality_gate"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "table": "crm_configurations",
+      "trigger": "crm_configurations_updated_at"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "table": "crm_pipeline_stages",
+      "trigger": "crm_pipeline_stages_updated_at"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "table": "currency_balances",
+      "trigger": "update_currency_balances_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "custom_domains",
+      "trigger": "custom_domains_updated_at"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "table": "daily_time_summaries",
+      "trigger": "daily_time_summaries_updated_at"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "table": "dashboard_widgets",
+      "trigger": "dashboard_widgets_updated_at"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "table": "dashboards",
+      "trigger": "dashboards_updated_at"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "table": "deals",
+      "trigger": "deal_automation_trigger"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "deals",
+      "trigger": "deals_updated_at"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "table": "deals",
+      "trigger": "on_deal_updated_automation"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "table": "decision_records",
+      "trigger": "decision_records_updated_at"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "table": "decisions",
+      "trigger": "decisions_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "departments",
+      "trigger": "departments_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "departments",
+      "trigger": "update_departments_updated_at"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "table": "documents",
+      "trigger": "update_documents_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "e_invoices",
+      "trigger": "einv_updated_at"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "table": "email_campaigns",
+      "trigger": "email_campaigns_updated_at"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "table": "email_contacts",
+      "trigger": "email_contacts_updated_at"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "table": "email_events",
+      "trigger": "email_events_fanout"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "table": "email_events",
+      "trigger": "email_events_updated_at"
+    },
+    {
+      "defined_in": "009_email_campaigns.sql",
+      "table": "email_templates",
+      "trigger": "email_templates_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "email_templates",
+      "trigger": "update_email_templates_updated_at"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "table": "emails",
+      "trigger": "update_emails_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "escalation_paths",
+      "trigger": "escalation_paths_updated_at"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "table": "event_analytics",
+      "trigger": "event_analytics_updated_at"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "table": "event_registrations",
+      "trigger": "event_registrations_updated_at"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "table": "event_types",
+      "trigger": "event_types_updated_at"
+    },
+    {
+      "defined_in": "020_events.sql",
+      "table": "events",
+      "trigger": "events_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "expense_claims",
+      "trigger": "update_expense_claims_updated_at"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "table": "feature_adoption",
+      "trigger": "update_feature_adoption_updated_at"
+    },
+    {
+      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
+      "table": "feature_flags",
+      "trigger": "feature_flags_updated_at"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "table": "file_attachments",
+      "trigger": "file_attachments_updated_at"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "table": "functional_roles",
+      "trigger": "update_functional_roles_updated_at"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "goods_receipt_lines",
+      "trigger": "gr_apply"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "table": "heartbeats",
+      "trigger": "heartbeats_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "home_block_comments",
+      "trigger": "update_home_block_comments_updated_at"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "table": "incidents",
+      "trigger": "incidents_updated_at"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "table": "integrations",
+      "trigger": "integrations_updated_at"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "invoices",
+      "trigger": "audit_invoices"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "invoices",
+      "trigger": "invoices_updated_at"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "table": "invoices",
+      "trigger": "on_invoice_updated_automation"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "table": "job_types",
+      "trigger": "update_job_types_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "jobs",
+      "trigger": "jobs_updated_at"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "journal_entries",
+      "trigger": "audit_journal_entries"
+    },
+    {
+      "defined_in": "010_accounting.sql",
+      "table": "journal_entries",
+      "trigger": "journal_entries_updated_at"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "table": "kb_page_comments",
+      "trigger": "kb_page_comments_updated_at"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "table": "kb_pages",
+      "trigger": "kb_pages_updated_at"
+    },
+    {
+      "defined_in": "006_knowledge_base.sql",
+      "table": "kb_spaces",
+      "trigger": "kb_spaces_updated_at"
+    },
+    {
+      "defined_in": "096_trust_dr_audit_extension.sql",
+      "table": "key_results",
+      "trigger": "audit_key_results"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "table": "key_results",
+      "trigger": "key_results_updated_at"
+    },
+    {
+      "defined_in": "096_trust_dr_audit_extension.sql",
+      "table": "kpi_metrics",
+      "trigger": "audit_kpi_metrics"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "table": "kpi_metrics",
+      "trigger": "kpi_metrics_updated_at"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "table": "lead_requests",
+      "trigger": "trg_lead_requests_updated_at"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "table": "leads",
+      "trigger": "update_leads_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "lease_agreements",
+      "trigger": "leases_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "lease_agreements",
+      "trigger": "update_property_on_lease_change"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "leave_balances",
+      "trigger": "update_leave_balances_updated_at"
+    },
+    {
+      "defined_in": "002_frontend_compat.sql",
+      "table": "leave_requests",
+      "trigger": "leave_requests_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "leave_requests",
+      "trigger": "update_leave_requests_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "maintenance_records",
+      "trigger": "update_maintenance_records_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "maintenance_requests",
+      "trigger": "maintenance_updated_at"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "table": "meeting_actions",
+      "trigger": "trg_meeting_actions_updated_at"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "table": "meeting_captures",
+      "trigger": "trg_meeting_captures_updated_at"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "table": "meeting_decisions",
+      "trigger": "trg_meeting_decisions_updated_at"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "table": "meeting_media",
+      "trigger": "trg_meeting_media_updated_at"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "table": "meeting_participants",
+      "trigger": "trg_meeting_participants_updated_at"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "table": "meeting_summaries",
+      "trigger": "trg_meeting_summaries_updated_at"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "table": "meeting_transcripts",
+      "trigger": "trg_meeting_transcripts_updated_at"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "table": "meetings",
+      "trigger": "trg_set_avenize_meeting_room"
+    },
+    {
+      "defined_in": "086_metric_registry_and_engine.sql",
+      "table": "metric_definitions",
+      "trigger": "metric_definitions_updated_at"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "table": "migration_jobs",
+      "trigger": "migration_jobs_updated_at"
+    },
+    {
+      "defined_in": "20260101000005_two_flag_module_gate.sql",
+      "table": "module_status",
+      "trigger": "trg_module_status_updated"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "table": "monitors",
+      "trigger": "monitors_updated_at"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "table": "notification_preferences",
+      "trigger": "preferences_updated_at"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "table": "notification_preferences",
+      "trigger": "update_notification_preferences_updated_at"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "table": "notification_templates",
+      "trigger": "update_notification_templates_updated_at"
+    },
+    {
+      "defined_in": "052_email_provider_wiring.sql",
+      "table": "notifications",
+      "trigger": "notifications_email_fanout"
+    },
+    {
+      "defined_in": "013_notifications_calendar.sql",
+      "table": "notifications",
+      "trigger": "notifications_updated_at"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "table": "notifications",
+      "trigger": "update_notifications_updated_at"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "table": "onboarding_progress",
+      "trigger": "onboarding_progress_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "organogram_nodes",
+      "trigger": "organogram_nodes_updated_at"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "table": "payment_providers",
+      "trigger": "payment_providers_updated_at"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "table": "payment_transactions",
+      "trigger": "payment_transactions_transition"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "payments",
+      "trigger": "audit_payments"
+    },
+    {
+      "defined_in": "059_event_emitter_triggers.sql",
+      "table": "payments",
+      "trigger": "evt_payment_received_insert"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "table": "payments",
+      "trigger": "update_payments_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "payroll_records",
+      "trigger": "payroll_updated_at"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "payroll_runs",
+      "trigger": "audit_payroll_runs"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "performance_reviews",
+      "trigger": "performance_reviews_updated_at"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "table": "persona_journeys",
+      "trigger": "persona_journeys_updated_at"
+    },
+    {
+      "defined_in": "069_four_reality_persona_intelligence.sql",
+      "table": "persona_profiles",
+      "trigger": "persona_profiles_updated_at"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "table": "pipeline_stages",
+      "trigger": "update_pipeline_stages_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "portfolio_items",
+      "trigger": "portfolio_items_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "portfolio_sections",
+      "trigger": "portfolio_sections_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "portfolio_team",
+      "trigger": "portfolio_team_updated_at"
+    },
+    {
+      "defined_in": "059_event_emitter_triggers.sql",
+      "table": "products",
+      "trigger": "evt_inventory_low"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "products",
+      "trigger": "products_updated_at"
+    },
+    {
+      "defined_in": "002_frontend_compat.sql",
+      "table": "projects",
+      "trigger": "projects_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "properties",
+      "trigger": "properties_updated_at"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "table": "property_commissions",
+      "trigger": "audit_property_commission_insert"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "property_commissions",
+      "trigger": "audit_property_commissions"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "table": "property_commissions",
+      "trigger": "commissions_updated_at"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "table": "property_owners",
+      "trigger": "owners_updated_at"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "table": "property_sales",
+      "trigger": "sales_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "public_pages",
+      "trigger": "public_pages_updated_at"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "purchase_order_items",
+      "trigger": "po_total_on_item_change"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "purchase_orders",
+      "trigger": "po_number_gen"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "purchase_orders",
+      "trigger": "po_updated_at"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "table": "push_subscriptions",
+      "trigger": "update_push_subscriptions_updated_at"
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "table": "quotes",
+      "trigger": "trg_quotes_updated_at"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "table": "rate_limits",
+      "trigger": "update_rate_limits_updated_at"
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "table": "receipt_documents",
+      "trigger": "trg_receipt_documents_updated_at"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "table": "report_definitions",
+      "trigger": "report_definitions_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "reporting_channels",
+      "trigger": "reporting_channels_updated_at"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "table": "reporting_structure",
+      "trigger": "reporting_structure_updated_at"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "table": "requisition_categories",
+      "trigger": "requisition_categories_updated_at"
+    },
+    {
+      "defined_in": "017_requisitions_approvals.sql",
+      "table": "requisitions",
+      "trigger": "requisitions_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "resource_bookings",
+      "trigger": "update_resource_bookings_updated_at"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "table": "sales_orders",
+      "trigger": "trg_sales_orders_updated_at"
+    },
+    {
+      "defined_in": "019_reports_analytics.sql",
+      "table": "scheduled_reports",
+      "trigger": "scheduled_reports_updated_at"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "table": "search_indexes",
+      "trigger": "update_search_indexes_updated_at"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "table": "services",
+      "trigger": "services_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "settings",
+      "trigger": "settings_updated_at"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "signature_requests",
+      "trigger": "audit_signature_requests"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "table": "signature_requests",
+      "trigger": "sigreq_updated_at"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "table": "signature_signers",
+      "trigger": "sigsig_updated_at"
+    },
+    {
+      "defined_in": "062_simulation_compensation_affordability.sql",
+      "table": "simulations",
+      "trigger": "simulations_updated_at"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "table": "sms_integrations",
+      "trigger": "update_sms_integrations_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "sms_templates",
+      "trigger": "sms_templates_updated_at"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "table": "social_integrations",
+      "trigger": "update_social_integrations_updated_at"
+    },
+    {
+      "defined_in": "003_social_media.sql",
+      "table": "social_posts",
+      "trigger": "social_posts_updated_at"
+    },
+    {
+      "defined_in": "014_sso_auth.sql",
+      "table": "sso_connections",
+      "trigger": "sso_connections_updated_at"
+    },
+    {
+      "defined_in": "053_sso_providers.sql",
+      "table": "sso_providers",
+      "trigger": "sso_providers_updated_at"
+    },
+    {
+      "defined_in": "056_trigger_based_audit_logging.sql",
+      "table": "staff",
+      "trigger": "audit_staff"
+    },
+    {
+      "defined_in": "109_event_catalog_completion_and_repairs.sql",
+      "table": "staff",
+      "trigger": "evt_staff_joined"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "table": "staff",
+      "trigger": "on_staff_created_automation"
+    },
+    {
+      "defined_in": "20260819060000_staff_role_immutability.sql",
+      "table": "staff",
+      "trigger": "staff_role_immutability"
+    },
+    {
+      "defined_in": "001_initial_schema.sql",
+      "table": "staff",
+      "trigger": "staff_updated_at"
+    },
+    {
+      "defined_in": "021_monitoring.sql",
+      "table": "status_pages",
+      "trigger": "status_pages_updated_at"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "table": "strategic_objectives",
+      "trigger": "strategic_objectives_updated_at"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "table": "subsidiary_profiles",
+      "trigger": "subsidiary_profiles_updated_at"
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "table": "task_time_logs",
+      "trigger": "trg_task_time_logs_actual_hours"
+    },
+    {
+      "defined_in": "007_automations.sql",
+      "table": "tasks",
+      "trigger": "on_task_updated_automation"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "table": "tasks",
+      "trigger": "task_automation_trigger"
+    },
+    {
+      "defined_in": "004_tasks_merit_cashflow.sql",
+      "table": "tasks",
+      "trigger": "tasks_updated_at"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "table": "teams",
+      "trigger": "update_teams_updated_at"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "table": "tenants",
+      "trigger": "tenants_updated_at"
+    },
+    {
+      "defined_in": "022_business_branding.sql",
+      "table": "testimonials",
+      "trigger": "testimonials_updated_at"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "table": "tickets",
+      "trigger": "on_ticket_update_first_response"
+    },
+    {
+      "defined_in": "008_support_tickets.sql",
+      "table": "tickets",
+      "trigger": "tickets_updated_at"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "table": "time_blocks",
+      "trigger": "time_blocks_updated_at"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "table": "time_entries",
+      "trigger": "time_entries_recompute_timesheet"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "table": "time_entries",
+      "trigger": "time_entries_updated_at"
+    },
+    {
+      "defined_in": "018_time_tracking.sql",
+      "table": "time_off_requests",
+      "trigger": "time_off_requests_updated_at"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "table": "timesheets",
+      "trigger": "timesheets_updated_at"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "table": "training_records",
+      "trigger": "training_updated_at"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "table": "user_engagement",
+      "trigger": "update_user_engagement_updated_at"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "table": "user_learning",
+      "trigger": "update_user_learning_updated_at"
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "table": "user_locale",
+      "trigger": "user_locale_updated_at"
+    },
+    {
+      "defined_in": "012_custom_branding.sql",
+      "table": "user_mfa",
+      "trigger": "user_mfa_updated_at"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "table": "user_workspace_selections",
+      "trigger": "trg_workspace_selections_updated"
+    },
+    {
+      "defined_in": "011_gamification.sql",
+      "table": "user_xp",
+      "trigger": "user_xp_updated_at"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "vendor_invoices",
+      "trigger": "vi_updated_at"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "table": "vendors",
+      "trigger": "vendors_updated_at"
+    },
+    {
+      "defined_in": "015_api_webhooks.sql",
+      "table": "webhooks",
+      "trigger": "webhooks_updated_at"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "table": "whatsapp_messages",
+      "trigger": "update_whatsapp_updated_at"
+    },
+    {
+      "defined_in": "066_control_plane_work_routing_action_protocol.sql",
+      "table": "work_routes",
+      "trigger": "work_routes_updated_at"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "table": "workflows",
+      "trigger": "update_workflows_updated_at"
+    }
+  ]
+}

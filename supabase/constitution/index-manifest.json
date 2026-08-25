@@ -1,0 +1,2652 @@
+{
+  "counts": {
+    "indexes": 529
+  },
+  "indexes": [
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "index": "idx_accounts_currency",
+      "table": "accounts"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_action_reversals_entity",
+      "table": "action_reversals"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_timeline_created",
+      "table": "activity_timeline"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_timeline_entity",
+      "table": "activity_timeline"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "index": "idx_ai_logs_agent",
+      "table": "ai_agent_logs"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_analytics_events_business",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_analytics_events_created",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_analytics_events_type",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_analytics_events_user",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "111_analytics_events_reconciliation.sql",
+      "index": "idx_events_business",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "111_analytics_events_reconciliation.sql",
+      "index": "idx_events_category",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "111_analytics_events_reconciliation.sql",
+      "index": "idx_events_created",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "111_analytics_events_reconciliation.sql",
+      "index": "idx_events_name",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_events_session",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "111_analytics_events_reconciliation.sql",
+      "index": "idx_events_user",
+      "table": "analytics_events"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_announcements_business",
+      "table": "announcements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_announcements_dates",
+      "table": "announcements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_announcements_status",
+      "table": "announcements"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_api_usage_user",
+      "table": "api_usage"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_appointments_business_time",
+      "table": "appointments"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_appointments_reference",
+      "table": "appointments"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_appointments_staff_time",
+      "table": "appointments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_actions_approval",
+      "table": "approval_actions"
+    },
+    {
+      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
+      "index": "idx_approval_rules_business",
+      "table": "approval_rules"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_approval_templates_entity",
+      "table": "approval_templates"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_approvals_entity",
+      "table": "approvals"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_approvals_requester",
+      "table": "approvals"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_approvals_status",
+      "table": "approvals"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assets_assigned",
+      "table": "assets"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_assets_branch",
+      "table": "assets"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assets_business",
+      "table": "assets"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assets_category",
+      "table": "assets"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assets_status",
+      "table": "assets"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "attendance_events_business_idx",
+      "table": "attendance_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "attendance_events_staff_idx",
+      "table": "attendance_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "attendance_records_business_date_idx",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "attendance_records_staff_date_idx",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "attendance_records_staff_date_uidx",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_attendance_date",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_attendance_staff",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_attendance_status",
+      "table": "attendance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_attendance_summary_period",
+      "table": "attendance_summary"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_attendance_summary_staff",
+      "table": "attendance_summary"
+    },
+    {
+      "defined_in": "061_observer_exceptions_indexes.sql",
+      "index": "idx_attention_open",
+      "table": "attention_exceptions"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_audit_business",
+      "table": "audit_logs"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_audit_created",
+      "table": "audit_logs"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_audit_entity",
+      "table": "audit_logs"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_audit_user",
+      "table": "audit_logs"
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "index": "idx_auth_rate_limits_expired",
+      "table": "auth_rate_limits"
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "index": "idx_auth_rate_limits_lookup",
+      "table": "auth_rate_limits"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "index": "idx_authority_scope",
+      "table": "authority_graph"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "index": "idx_authority_staff",
+      "table": "authority_graph"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_automation_runs_automation_id",
+      "table": "automation_runs"
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "index": "idx_automation_runs_dead_letter",
+      "table": "automation_runs"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_automation_runs_executed_at",
+      "table": "automation_runs"
+    },
+    {
+      "defined_in": "20260818240000_platform_resilience.sql",
+      "index": "idx_automation_runs_retry",
+      "table": "automation_runs"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "autonomy_actions_action_idx",
+      "table": "autonomy_actions"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "autonomy_actions_due_idx",
+      "table": "autonomy_actions"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "index": "idx_backup_runs",
+      "table": "backup_runs"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_bcm_committee",
+      "table": "board_committee_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_bcm_member",
+      "table": "board_committee_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_board_committees_business",
+      "table": "board_committees"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_board_conflicts_business",
+      "table": "board_conflicts"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "index": "idx_board_members_active",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260818330000_board_members_seats_invites.sql",
+      "index": "idx_board_members_business",
+      "table": "board_members"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_board_resolutions_business",
+      "table": "board_resolutions"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_board_resolutions_status",
+      "table": "board_resolutions"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_branches_business",
+      "table": "branches"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_budgets_business",
+      "table": "budgets"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_budgets_fiscal",
+      "table": "budgets"
+    },
+    {
+      "defined_in": "20260818150000_proactive_digest_alerts.sql",
+      "index": "idx_digest_log_business",
+      "table": "business_digest_log"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_business_entitlements_business",
+      "table": "business_entitlements"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "index": "idx_business_events_business_type",
+      "table": "business_events"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "index": "idx_business_events_entity",
+      "table": "business_events"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "index": "idx_business_events_unprocessed",
+      "table": "business_events"
+    },
+    {
+      "defined_in": "093_business_health_engine.sql",
+      "index": "idx_bhs_business",
+      "table": "business_health_scores"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "business_locations_business_idx",
+      "table": "business_locations"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "business_locations_geo_idx",
+      "table": "business_locations"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "business_locations_one_primary_idx",
+      "table": "business_locations"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "index": "idx_br_business",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "index": "idx_br_category",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "index": "idx_br_score",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "095_risk_register.sql",
+      "index": "idx_br_status",
+      "table": "business_risks"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_subscriptions_business_id",
+      "table": "business_subscriptions"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_subscriptions_status",
+      "table": "business_subscriptions"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "index": "businesses_organization_id_idx",
+      "table": "businesses"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "index": "businesses_parent_business_id_idx",
+      "table": "businesses"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_businesses_slug",
+      "table": "businesses"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "index": "idx_capture_attachments_business",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "20260819050000_quick_capture_multimodal.sql",
+      "index": "idx_capture_attachments_event",
+      "table": "capture_attachments"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_cashflow_business",
+      "table": "cashflow"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_cashflow_date",
+      "table": "cashflow"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_cashflow_direction",
+      "table": "cashflow"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_channel_members_channel",
+      "table": "channel_members"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_channel_members_user",
+      "table": "channel_members"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_channels_business",
+      "table": "channels"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_chatconv_business",
+      "table": "chat_conversations"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_chatconv_last_msg",
+      "table": "chat_conversations"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_chatconv_status",
+      "table": "chat_conversations"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_chatmsg_conv",
+      "table": "chat_messages"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_chatmsg_created",
+      "table": "chat_messages"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_claims_business_type",
+      "table": "claims"
+    },
+    {
+      "defined_in": "20260818230000_business_memory_recall.sql",
+      "index": "idx_claims_diagnosis_rule",
+      "table": "claims"
+    },
+    {
+      "defined_in": "20260818230000_business_memory_recall.sql",
+      "index": "idx_claims_diagnosis_symptom",
+      "table": "claims"
+    },
+    {
+      "defined_in": "091_recommendation_issuer.sql",
+      "index": "idx_claims_open_dedup",
+      "table": "claims"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_claims_review",
+      "table": "claims"
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "index": "idx_claims_rule",
+      "table": "claims"
+    },
+    {
+      "defined_in": "088_recommendation_outcome_loop.sql",
+      "index": "idx_claims_status",
+      "table": "claims"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_claims_subject",
+      "table": "claims"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_clients_business_email",
+      "table": "clients"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_comments_created",
+      "table": "comments"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_comments_entity",
+      "table": "comments"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_comments_parent",
+      "table": "comments"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "index": "idx_company_entities_parent",
+      "table": "company_entities"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "index": "idx_company_home_blocks_business",
+      "table": "company_home_blocks"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "index": "idx_company_home_blocks_order",
+      "table": "company_home_blocks"
+    },
+    {
+      "defined_in": "023_company_home_blocks.sql",
+      "index": "idx_company_home_blocks_published",
+      "table": "company_home_blocks"
+    },
+    {
+      "defined_in": "075_leads_business_id_and_rls.sql",
+      "index": "idx_contacts_lead_id",
+      "table": "contacts"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "content_opportunities_business_idx",
+      "table": "content_opportunities"
+    },
+    {
+      "defined_in": "20260819040000_copilot_governance.sql",
+      "index": "idx_copilot_messages_business_day",
+      "table": "copilot_messages"
+    },
+    {
+      "defined_in": "20260819040000_copilot_governance.sql",
+      "index": "idx_copilot_messages_user",
+      "table": "copilot_messages"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_cost_centers_business",
+      "table": "cost_centers"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "index": "idx_cost_governor_limits_business",
+      "table": "cost_governor_limits"
+    },
+    {
+      "defined_in": "20260824170000_cost_governor.sql",
+      "index": "idx_cost_governor_limits_plan",
+      "table": "cost_governor_limits"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "index": "idx_crm_pipeline_stages_business",
+      "table": "crm_pipeline_stages"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_risk_scores_contact",
+      "table": "customer_risk_scores"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_daily_summaries_date",
+      "table": "daily_time_summaries"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_daily_summaries_staff",
+      "table": "daily_time_summaries"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_exports_business",
+      "table": "data_exports"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_exports_status",
+      "table": "data_exports"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_exports_user",
+      "table": "data_exports"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_dq_business_status",
+      "table": "data_quality_checks"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_deals_business_owner",
+      "table": "deals"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_deals_business_stage",
+      "table": "deals"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_decision_log_business",
+      "table": "decision_log"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "index": "idx_decisions_review",
+      "table": "decisions"
+    },
+    {
+      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "index": "idx_decisions_tags",
+      "table": "decisions"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_demand_activity_business",
+      "table": "demand_activity"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_demand_activity_lead",
+      "table": "demand_activity"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_departments_business",
+      "table": "departments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_departments_parent",
+      "table": "departments"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_brand_checks_business_idx",
+      "table": "discovery_brand_checks"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_brand_truths_business_aspect_key",
+      "table": "discovery_brand_truths"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_content_business_url_key",
+      "table": "discovery_content"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_observations_business_idx",
+      "table": "discovery_observations"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_observations_target_idx",
+      "table": "discovery_observations"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_referrals_business_idx",
+      "table": "discovery_referrals"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_referrals_entity_idx",
+      "table": "discovery_referrals"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_targets_business_idx",
+      "table": "discovery_targets"
+    },
+    {
+      "defined_in": "20260819090000_discovery_intelligence.sql",
+      "index": "discovery_targets_business_query_key",
+      "table": "discovery_targets"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_documents_business",
+      "table": "documents"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_documents_category",
+      "table": "documents"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_documents_entity",
+      "table": "documents"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_documents_folder",
+      "table": "documents"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_einv_business",
+      "table": "e_invoices"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_einv_invoice",
+      "table": "e_invoices"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_einv_status",
+      "table": "e_invoices"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_email_bounces_email",
+      "table": "email_bounces"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_email_bounces_suppressed",
+      "table": "email_bounces"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_email_campaigns_business_status",
+      "table": "email_campaigns"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_email_clicks_email",
+      "table": "email_clicks"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "index": "email_events_business_idx",
+      "table": "email_events"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "index": "email_events_provider_message_idx",
+      "table": "email_events"
+    },
+    {
+      "defined_in": "20260822170000_resend_email_subsystem.sql",
+      "index": "email_events_queued_idx",
+      "table": "email_events"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_email_templates_category",
+      "table": "email_templates"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_business",
+      "table": "emails"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_created",
+      "table": "emails"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_entity",
+      "table": "emails"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_opened",
+      "table": "emails"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_status",
+      "table": "emails"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_emails_template",
+      "table": "emails"
+    },
+    {
+      "defined_in": "058_business_event_bus.sql",
+      "index": "idx_entity_freshness_entity",
+      "table": "entity_freshness"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_er_rel",
+      "table": "entity_relationships"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_er_source",
+      "table": "entity_relationships"
+    },
+    {
+      "defined_in": "060_context_graph_ontology_trust.sql",
+      "index": "idx_er_target",
+      "table": "entity_relationships"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_events_business",
+      "table": "events"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_events_date",
+      "table": "events"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_exchange_date",
+      "table": "exchange_rates"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_exchange_pair",
+      "table": "exchange_rates"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_expense_date",
+      "table": "expense_claims"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_expense_staff",
+      "table": "expense_claims"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_expense_status",
+      "table": "expense_claims"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_adoption_feature",
+      "table": "feature_adoption"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "field_visit_events_business_idx",
+      "table": "field_visit_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "field_visit_events_visit_idx",
+      "table": "field_visit_events"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "field_visits_business_idx",
+      "table": "field_visits"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "field_visits_geo_idx",
+      "table": "field_visits"
+    },
+    {
+      "defined_in": "20260817110000_presence_field_schema.sql",
+      "index": "field_visits_staff_idx",
+      "table": "field_visits"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "index": "idx_friction_workflow",
+      "table": "friction_metrics"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "index": "idx_functional_role_tools_role",
+      "table": "functional_role_tools"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "index": "idx_functional_roles_business",
+      "table": "functional_roles"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_gr_business",
+      "table": "goods_receipts"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_gr_po",
+      "table": "goods_receipts"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_audit_log_action_idx",
+      "table": "governance_audit_log"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_audit_log_actor_idx",
+      "table": "governance_audit_log"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_audit_log_created_idx",
+      "table": "governance_audit_log"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_events_component_idx",
+      "table": "governance_events"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_events_correlation_idx",
+      "table": "governance_events"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_events_created_idx",
+      "table": "governance_events"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_incidents_component_idx",
+      "table": "governance_incidents"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_incidents_status_idx",
+      "table": "governance_incidents"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "governance_reports_published_idx",
+      "table": "governance_reports"
+    },
+    {
+      "defined_in": "20260825160000_governance_engine.sql",
+      "index": "human_decisions_pending_idx",
+      "table": "human_decisions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_incidents_business",
+      "table": "incidents"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_incidents_status",
+      "table": "incidents"
+    },
+    {
+      "defined_in": "20260822140000_contract_scan_extension.sql",
+      "index": "integrity_findings_contract_object_uniq",
+      "table": "integrity_findings"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_inventory_business",
+      "table": "inventory"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_inventory_category",
+      "table": "inventory"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_invoices_business_due",
+      "table": "invoices"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_invoices_business_status",
+      "table": "invoices"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "index": "idx_invoices_currency",
+      "table": "invoices"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "index": "idx_job_types_business",
+      "table": "job_types"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "index": "idx_job_types_sort",
+      "table": "job_types"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_jobs_business",
+      "table": "jobs"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_jobs_number_unique",
+      "table": "jobs"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_jobs_staff",
+      "table": "jobs"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_jobs_stage",
+      "table": "jobs"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "index": "idx_journal_entries_currency",
+      "table": "journal_entries"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_kb_pages_archived",
+      "table": "kb_pages"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_kb_pages_business",
+      "table": "kb_pages"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_kb_pages_space",
+      "table": "kb_pages"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_kb_spaces_business",
+      "table": "kb_spaces"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "index": "idx_kr_business",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "094_okr_engine.sql",
+      "index": "idx_kr_objective",
+      "table": "key_results"
+    },
+    {
+      "defined_in": "086_metric_registry_and_engine.sql",
+      "index": "idx_kpi_metrics_biz_key_period",
+      "table": "kpi_metrics"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_lead_requests_business",
+      "table": "lead_requests"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_lead_requests_contact",
+      "table": "lead_requests"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_lead_requests_lead",
+      "table": "lead_requests"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_lead_requests_status",
+      "table": "lead_requests"
+    },
+    {
+      "defined_in": "075_leads_business_id_and_rls.sql",
+      "index": "idx_leads_business",
+      "table": "leads"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_leads_business_status",
+      "table": "leads"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "index": "idx_leads_created",
+      "table": "leads"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "index": "idx_leads_email",
+      "table": "leads"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "index": "idx_leads_source",
+      "table": "leads"
+    },
+    {
+      "defined_in": "041_business_insert_policy.sql",
+      "index": "idx_leads_status",
+      "table": "leads"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leases_property",
+      "table": "lease_agreements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leases_status",
+      "table": "lease_agreements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leases_tenant",
+      "table": "lease_agreements"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_balances_staff",
+      "table": "leave_balances"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_balances_year",
+      "table": "leave_balances"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leave_dates",
+      "table": "leave_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leave_staff",
+      "table": "leave_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_leave_status",
+      "table": "leave_requests"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_legal_cases_business",
+      "table": "legal_cases"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_legal_contracts_business",
+      "table": "legal_contracts"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_legal_contracts_end_date",
+      "table": "legal_contracts"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_legal_contracts_status",
+      "table": "legal_contracts"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_legal_obligations_business",
+      "table": "legal_obligations"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_loans_business",
+      "table": "loans"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "index": "idx_maintenance_property_id",
+      "table": "maintenance_records"
+    },
+    {
+      "defined_in": "054_maintenance_unification.sql",
+      "index": "idx_maintenance_source_type",
+      "table": "maintenance_records"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_maintenance_priority",
+      "table": "maintenance_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_maintenance_property",
+      "table": "maintenance_requests"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_maintenance_status",
+      "table": "maintenance_requests"
+    },
+    {
+      "defined_in": "063_intelligence_domains.sql",
+      "index": "idx_benchmarks_metric",
+      "table": "market_benchmarks"
+    },
+    {
+      "defined_in": "20260818000000_create_market_intelligence_signals.sql",
+      "index": "market_intelligence_signals_business_idx",
+      "table": "market_intelligence_signals"
+    },
+    {
+      "defined_in": "20260818000000_create_market_intelligence_signals.sql",
+      "index": "market_intelligence_signals_org_idx",
+      "table": "market_intelligence_signals"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_actions_assignee",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_actions_business",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_actions_meeting",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_actions_task",
+      "table": "meeting_actions"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "index": "idx_meeting_captures_business",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "index": "idx_meeting_captures_creator",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "index": "idx_meeting_captures_meeting",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "index": "meeting_captures_business_idx",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "index": "meeting_captures_meeting_idx",
+      "table": "meeting_captures"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "index": "idx_meeting_chat_business",
+      "table": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "index": "idx_meeting_chat_meeting",
+      "table": "meeting_chat_messages"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_decisions_business",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_decisions_meeting",
+      "table": "meeting_decisions"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_media_meeting",
+      "table": "meeting_media"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_media_status",
+      "table": "meeting_media"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_events_meeting",
+      "table": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_events_participant",
+      "table": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_events_time",
+      "table": "meeting_participant_events"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_participants_meeting",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_participants_staff",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_participants_status",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meeting_participants_token",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "index": "meeting_participants_meeting_staff_key",
+      "table": "meeting_participants"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "index": "idx_meeting_reports_business",
+      "table": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "index": "idx_meeting_reports_meeting",
+      "table": "meeting_reports"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_summaries_meeting",
+      "table": "meeting_summaries"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_meeting_transcripts_meeting",
+      "table": "meeting_transcripts"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_meetings_board_committee",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_meetings_business",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meetings_business_status",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meetings_created_by",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_meetings_date",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "index": "idx_meetings_related",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meetings_scheduled_start",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_meetings_staff",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
+      "index": "idx_meetings_status",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "index": "meetings_business_date_idx",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "20260820210000_native_meetings.sql",
+      "index": "meetings_business_status_idx",
+      "table": "meetings"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_monitors_business",
+      "table": "monitors"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "index": "idx_notifications_business",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_notifications_business_id",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "index": "idx_notifications_category",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_notifications_created",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_notifications_created_at",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_notifications_read",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "index": "idx_notifications_scheduled",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "047_notifications_schema_fix.sql",
+      "index": "idx_notifications_staff_id",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_notifications_type",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "047_notifications_schema_fix.sql",
+      "index": "idx_notifications_unread",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "036_notifications_system.sql",
+      "index": "idx_notifications_unsent_email",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_notifications_user",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_notifications_user_created",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_notifications_user_id",
+      "table": "notifications"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "index": "organization_memberships_org_idx",
+      "table": "organization_memberships"
+    },
+    {
+      "defined_in": "20260817150000_multi_entity_foundation_v1.sql",
+      "index": "organization_memberships_user_idx",
+      "table": "organization_memberships"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_org_memory_business",
+      "table": "organizational_memory"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_org_memory_topic",
+      "table": "organizational_memory"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "index": "idx_otp_requests_phone",
+      "table": "otp_requests"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "index": "idx_otp_requests_pin_id",
+      "table": "otp_requests"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payment_gateways_active",
+      "table": "payment_gateways"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payment_gateways_business",
+      "table": "payment_gateways"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payment_links_business",
+      "table": "payment_links"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payment_links_code",
+      "table": "payment_links"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "index": "idx_payment_providers_business",
+      "table": "payment_providers"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_refunds_payment",
+      "table": "payment_refunds"
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "index": "payment_requests_business_idx",
+      "table": "payment_requests"
+    },
+    {
+      "defined_in": "20260822125000_manual_payment_flow.sql",
+      "index": "payment_requests_one_open_idx",
+      "table": "payment_requests"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "index": "payment_transactions_business_idx",
+      "table": "payment_transactions"
+    },
+    {
+      "defined_in": "20260822150000_payment_provider_ledger.sql",
+      "index": "payment_transactions_status_idx",
+      "table": "payment_transactions"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_business",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_created",
+      "table": "payments"
+    },
+    {
+      "defined_in": "057_multi_currency_and_payment_rails.sql",
+      "index": "idx_payments_currency",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_customer",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_invoice",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_provider",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_reference",
+      "table": "payments"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_payments_status",
+      "table": "payments"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_payroll_items_staff",
+      "table": "payroll_items"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_payroll_business",
+      "table": "payroll_records"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_payroll_period",
+      "table": "payroll_records"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_payroll_staff",
+      "table": "payroll_records"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "index": "idx_pipeline_stages_business",
+      "table": "pipeline_stages"
+    },
+    {
+      "defined_in": "026_job_types.sql",
+      "index": "idx_pipeline_stages_sort",
+      "table": "pipeline_stages"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "index": "platform_activity_events_actor_idx",
+      "table": "platform_activity_events"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "index": "platform_activity_events_business_idx",
+      "table": "platform_activity_events"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "index": "platform_activity_events_created_idx",
+      "table": "platform_activity_events"
+    },
+    {
+      "defined_in": "20260821150000_riverways_activity_ops.sql",
+      "index": "platform_activity_events_type_idx",
+      "table": "platform_activity_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_error_events_business_idx",
+      "table": "platform_error_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_error_events_captured_idx",
+      "table": "platform_error_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_error_events_client_event_uidx",
+      "table": "platform_error_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_error_events_source_severity_idx",
+      "table": "platform_error_events"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_incident_investigations_business_idx",
+      "table": "platform_incident_investigations"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_incident_investigations_incident_idx",
+      "table": "platform_incident_investigations"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_incidents_opened_idx",
+      "table": "platform_incidents"
+    },
+    {
+      "defined_in": "20260818120000_platform_ops_dashboard.sql",
+      "index": "platform_incidents_status_idx",
+      "table": "platform_incidents"
+    },
+    {
+      "defined_in": "20260818120100_platform_pager_tracking.sql",
+      "index": "platform_pages_incident_idx",
+      "table": "platform_pages"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_poll_votes_poll",
+      "table": "poll_votes"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_polls_business",
+      "table": "polls"
+    },
+    {
+      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
+      "index": "idx_portal_accounts_user",
+      "table": "portal_accounts"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_positions_business",
+      "table": "positions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_positions_department",
+      "table": "positions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_properties_business",
+      "table": "properties"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_properties_listing",
+      "table": "properties"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_properties_location",
+      "table": "properties"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_properties_status",
+      "table": "properties"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_properties_type",
+      "table": "properties"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_commissions_agent",
+      "table": "property_commissions"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_commissions_business",
+      "table": "property_commissions"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_commissions_status",
+      "table": "property_commissions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_enquiries_property",
+      "table": "property_enquiries"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_enquiries_status",
+      "table": "property_enquiries"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_inspections_property",
+      "table": "property_inspections"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_inspections_status",
+      "table": "property_inspections"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_owners_business",
+      "table": "property_owners"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_sales_agent",
+      "table": "property_sales"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_sales_property",
+      "table": "property_sales"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_sales_status",
+      "table": "property_sales"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_po_items_po",
+      "table": "purchase_order_items"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_po_items_product",
+      "table": "purchase_order_items"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_po_business",
+      "table": "purchase_orders"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_po_status",
+      "table": "purchase_orders"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_po_vendor",
+      "table": "purchase_orders"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_purchase_requests_business",
+      "table": "purchase_requests"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_push_subscriptions_endpoint",
+      "table": "push_subscriptions"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_push_subscriptions_user",
+      "table": "push_subscriptions"
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "index": "idx_quotes_business_id",
+      "table": "quotes"
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "index": "idx_quotes_deal_id",
+      "table": "quotes"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_quotes_lead",
+      "table": "quotes"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_quotes_request",
+      "table": "quotes"
+    },
+    {
+      "defined_in": "048_quotes_table.sql",
+      "index": "idx_quotes_status",
+      "table": "quotes"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_reality_gaps_business",
+      "table": "reality_gaps"
+    },
+    {
+      "defined_in": "20260819025000_receipt_ocr.sql",
+      "index": "idx_receipt_documents_business_status",
+      "table": "receipt_documents"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_recognition_business_id",
+      "table": "recognition"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_recognition_user_id",
+      "table": "recognition"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_recurring_costs_business",
+      "table": "recurring_costs"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_rent_due",
+      "table": "rent_payments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_rent_lease",
+      "table": "rent_payments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_rent_status",
+      "table": "rent_payments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_rent_tenant",
+      "table": "rent_payments"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_req_categories_business",
+      "table": "requisition_categories"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_requisitions_business",
+      "table": "requisitions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_requisitions_requester",
+      "table": "requisitions"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_requisitions_status",
+      "table": "requisitions"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_bookings_resource",
+      "table": "resource_bookings"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_bookings_status",
+      "table": "resource_bookings"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_bookings_time",
+      "table": "resource_bookings"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_resources_active",
+      "table": "resources"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_resources_business",
+      "table": "resources"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_resources_type",
+      "table": "resources"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_rfqs_business",
+      "table": "rfqs"
+    },
+    {
+      "defined_in": "20260101000004_gap_fill_modules.sql",
+      "index": "idx_rfqs_request",
+      "table": "rfqs"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_sales_orders_business",
+      "table": "sales_orders"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_sales_orders_lead",
+      "table": "sales_orders"
+    },
+    {
+      "defined_in": "zzzaaa_demand_capture.sql",
+      "index": "idx_sales_orders_quote",
+      "table": "sales_orders"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_saved_searches_user",
+      "table": "saved_searches"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_search_business",
+      "table": "search_indexes"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_search_entity",
+      "table": "search_indexes"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_search_rank",
+      "table": "search_indexes"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_search_vector",
+      "table": "search_indexes"
+    },
+    {
+      "defined_in": "zzz_auth_protocol_repair.sql",
+      "index": "idx_security_audit_created",
+      "table": "security_audit_log"
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "index": "idx_security_audit_type",
+      "table": "security_audit_log"
+    },
+    {
+      "defined_in": "999_security_fixes.sql",
+      "index": "idx_security_audit_user",
+      "table": "security_audit_log"
+    },
+    {
+      "defined_in": "089_data_quality_scanner.sql",
+      "index": "idx_self_audit_finding_dedup",
+      "table": "self_audit_findings"
+    },
+    {
+      "defined_in": "089_data_quality_scanner.sql",
+      "index": "idx_self_audit_finding_dedup_noent",
+      "table": "self_audit_findings"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_services_business",
+      "table": "services"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_settings_business_key",
+      "table": "settings"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigreq_business_created",
+      "table": "signature_requests"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigreq_status",
+      "table": "signature_requests"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigsig_business",
+      "table": "signature_signers"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigsig_request_order",
+      "table": "signature_signers"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigsig_status",
+      "table": "signature_signers"
+    },
+    {
+      "defined_in": "043_signatures_appointments_schema.sql",
+      "index": "idx_sigsig_token",
+      "table": "signature_signers"
+    },
+    {
+      "defined_in": "062_simulation_compensation_affordability.sql",
+      "index": "idx_simulations_business",
+      "table": "simulations"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_integrations_business",
+      "table": "sms_integrations"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_integrations_provider",
+      "table": "sms_integrations"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "index": "idx_sms_logs_business_id",
+      "table": "sms_logs"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "index": "idx_sms_logs_created_at",
+      "table": "sms_logs"
+    },
+    {
+      "defined_in": "20260101000003_sms_tables.sql",
+      "index": "idx_sms_logs_status",
+      "table": "sms_logs"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_messages_business",
+      "table": "sms_messages"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_messages_sent_at",
+      "table": "sms_messages"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_messages_status",
+      "table": "sms_messages"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_sms_messages_to",
+      "table": "sms_messages"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_sms_templates_business",
+      "table": "sms_templates"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_social_integrations_business",
+      "table": "social_integrations"
+    },
+    {
+      "defined_in": "025_integrations.sql",
+      "index": "idx_social_integrations_platform",
+      "table": "social_integrations"
+    },
+    {
+      "defined_in": "053_sso_providers.sql",
+      "index": "idx_sso_providers_business",
+      "table": "sso_providers"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_staff_business_active",
+      "table": "staff"
+    },
+    {
+      "defined_in": "030_fix_staff_profile_and_storage.sql",
+      "index": "idx_staff_business_id",
+      "table": "staff"
+    },
+    {
+      "defined_in": "20260819015000_account_member_kinds.sql",
+      "index": "idx_staff_business_member_kind",
+      "table": "staff"
+    },
+    {
+      "defined_in": "030_fix_staff_profile_and_storage.sql",
+      "index": "idx_staff_department",
+      "table": "staff"
+    },
+    {
+      "defined_in": "030_fix_staff_profile_and_storage.sql",
+      "index": "idx_staff_user_id",
+      "table": "staff"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assignments_dept",
+      "table": "staff_assignments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assignments_staff",
+      "table": "staff_assignments"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_assignments_team",
+      "table": "staff_assignments"
+    },
+    {
+      "defined_in": "031_business_infrastructure.sql",
+      "index": "idx_commissions_staff",
+      "table": "staff_commissions"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "index": "idx_staff_functional_roles_role",
+      "table": "staff_functional_roles"
+    },
+    {
+      "defined_in": "027_functional_roles.sql",
+      "index": "idx_staff_functional_roles_staff",
+      "table": "staff_functional_roles"
+    },
+    {
+      "defined_in": "20260818250000_multi_role_switching.sql",
+      "index": "idx_staff_secondary_roles_staff",
+      "table": "staff_secondary_roles"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_stock_movements_business",
+      "table": "stock_movements"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_stock_movements_inventory",
+      "table": "stock_movements"
+    },
+    {
+      "defined_in": "20260822120000_governance_layer.sql",
+      "index": "idx_so_board_resolution",
+      "table": "strategic_objectives"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_subscription_invoices_business_id",
+      "table": "subscription_invoices"
+    },
+    {
+      "defined_in": "042_push_subscriptions.sql",
+      "index": "idx_subscription_payments_business_id",
+      "table": "subscription_payments"
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "index": "subscription_provider_attempts_business_idx",
+      "table": "subscription_provider_attempts"
+    },
+    {
+      "defined_in": "20260821170000_payment_entitlement_sync.sql",
+      "index": "subscription_provider_attempts_ref_idx",
+      "table": "subscription_provider_attempts"
+    },
+    {
+      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
+      "index": "idx_subsidiary_profiles_industry",
+      "table": "subsidiary_profiles"
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "index": "idx_task_comments_task_id",
+      "table": "task_comments"
+    },
+    {
+      "defined_in": "084_task_management_enhancements.sql",
+      "index": "idx_task_time_logs_task_id",
+      "table": "task_time_logs"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tasks_assigned",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tasks_assignee",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tasks_business",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_tasks_business_status_due",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tasks_due",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tasks_status",
+      "table": "tasks"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_teams_business",
+      "table": "teams"
+    },
+    {
+      "defined_in": "039_operations_backbone.sql",
+      "index": "idx_teams_department",
+      "table": "teams"
+    },
+    {
+      "defined_in": "044_property_vertical_completion.sql",
+      "index": "idx_tenants_business",
+      "table": "tenants"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_ticket_comments_ticket",
+      "table": "ticket_comments"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tickets_assigned",
+      "table": "tickets"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tickets_business",
+      "table": "tickets"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_tickets_status",
+      "table": "tickets"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_time_entries_business",
+      "table": "time_entries"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_time_entries_staff",
+      "table": "time_entries"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_time_entries_task",
+      "table": "time_entries"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "index": "idx_time_entries_timesheet",
+      "table": "time_entries"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "index": "idx_timesheets_business",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "index": "idx_timesheets_staff",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "index": "idx_timesheets_status",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "055_timesheets_approval_cycle.sql",
+      "index": "idx_timesheets_week",
+      "table": "timesheets"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_training_staff",
+      "table": "training_records"
+    },
+    {
+      "defined_in": "046_missing_table_backfill.sql",
+      "index": "idx_training_status",
+      "table": "training_records"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_transaction_items_transaction",
+      "table": "transaction_items"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_transactions_business_created",
+      "table": "transactions"
+    },
+    {
+      "defined_in": "zzzzz_performance_indexes.sql",
+      "index": "idx_transactions_business_type",
+      "table": "transactions"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_transcript_segments_search",
+      "table": "transcript_segments"
+    },
+    {
+      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "index": "idx_transcript_segments_transcript",
+      "table": "transcript_segments"
+    },
+    {
+      "defined_in": "20260101000009_self_instrumentation.sql",
+      "index": "idx_usage_events_action",
+      "table": "usage_events"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "index": "idx_usage_events_business_time",
+      "table": "usage_events"
+    },
+    {
+      "defined_in": "zz_live_console_drift_reconciliation.sql",
+      "index": "idx_usage_events_module",
+      "table": "usage_events"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_achievements_unlocked",
+      "table": "user_achievements"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_achievements_user",
+      "table": "user_achievements"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_achievements_user_unlocked",
+      "table": "user_achievements"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_user_achievements_user",
+      "table": "user_achievements"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_activity_user_date",
+      "table": "user_activity_daily"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_engagement_business",
+      "table": "user_engagement"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_engagement_date",
+      "table": "user_engagement"
+    },
+    {
+      "defined_in": "037_analytics_events_system.sql",
+      "index": "idx_engagement_user",
+      "table": "user_engagement"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_user_learning_user",
+      "table": "user_learning"
+    },
+    {
+      "defined_in": "998_create_all_missing_tables.sql",
+      "index": "idx_user_xp_user",
+      "table": "user_xp"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_vi_business",
+      "table": "vendor_invoices"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_vi_po",
+      "table": "vendor_invoices"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_vi_status",
+      "table": "vendor_invoices"
+    },
+    {
+      "defined_in": "045_purchase_vendor_workflow.sql",
+      "index": "idx_vendors_business",
+      "table": "vendors"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "index": "idx_webauthn_audit_user",
+      "table": "webauthn_audit_log"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "index": "idx_webauthn_challenges_expiry",
+      "table": "webauthn_challenges"
+    },
+    {
+      "defined_in": "20260819030000_webauthn_passkeys.sql",
+      "index": "idx_webauthn_credentials_user",
+      "table": "webauthn_credentials"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_webhook_deliveries",
+      "table": "webhook_deliveries"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_webhook_logs_created_at",
+      "table": "webhook_logs"
+    },
+    {
+      "defined_in": "20240101000001_automation_webhook_tables.sql",
+      "index": "idx_webhook_logs_webhook_id",
+      "table": "webhook_logs"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_business",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_contact",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_created",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_entity",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_recipient",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_status",
+      "table": "whatsapp_messages"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_optins_consent",
+      "table": "whatsapp_optins"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_optins_phone",
+      "table": "whatsapp_optins"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_templates_business",
+      "table": "whatsapp_templates"
+    },
+    {
+      "defined_in": "040_payments_email_whatsapp.sql",
+      "index": "idx_whatsapp_templates_status",
+      "table": "whatsapp_templates"
+    },
+    {
+      "defined_in": "038_critical_infrastructure.sql",
+      "index": "idx_workflow_runs",
+      "table": "workflow_runs"
+    },
+    {
+      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
+      "index": "idx_xp_history_business",
+      "table": "xp_history"
+    },
+    {
+      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
+      "index": "idx_xp_history_user",
+      "table": "xp_history"
+    }
+  ]
+}

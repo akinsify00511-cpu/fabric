@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "purpose": "Definition-of-Done registry: every production feature with its verifiable constitution requirements. A feature is not complete until its record here is fully evidenced.",
+  "features": [
+    {
+      "feature": "onboarding-business-creation",
+      "domain": "identity",
+      "route": "/onboarding",
+      "backend": "create_business_and_owner",
+      "database": ["organizations", "businesses", "staff", "organization_memberships"],
+      "permissions": "session + anon-create allowed pre-membership (guard in RPC)",
+      "status": "verified-once-live-db-applied",
+      "tests": ["migration apply clean", "anon guard 42501", "already-member recovery"],
+      "health": "blocked-by-unapplied-migrations"
+    },
+    {
+      "feature": "payments-paystack-checkout",
+      "domain": "payments",
+      "route": "/app/premium",
+      "backend": "subscription-management + paystack-webhook + paystack-verify",
+      "database": ["payment_transactions", "payment_webhook_events", "subscriptions"],
+      "permissions": "owner/admin checkout; HMAC webhook; membership verify",
+      "status": "code-complete-pending-edge-deploy",
+      "tests": ["paymentsCore vitest suite", "HMAC signature deny 401"],
+      "health": "blocked-by-undeployed-edge-functions"
+    },
+    {
+      "feature": "email-subsystem-resend",
+      "domain": "notifications",
+      "route": "—",
+      "backend": "email-service + resend-webhook",
+      "database": ["email_events", "transactional_email_templates", "business_email_domains"],
+      "permissions": "service-key/cron-secret auth; svix webhook",
+      "status": "code-complete-pending-edge-deploy",
+      "tests": ["emailSubsystem vitest suite"],
+      "health": "blocked-by-undeployed-edge-functions"
+    },
+    {
+      "feature": "business-search",
+      "domain": "search",
+      "route": "command-palette",
+      "backend": "business_search",
+      "database": ["nine-type allowlist — tenant-scoped"],
+      "permissions": "membership-guarded SECURITY DEFINER",
+      "status": "verified-once-live-db-applied",
+      "tests": ["unifiedSearch.test.ts 9 contract tests", "cross-tenant smoke"],
+      "health": "blocked-by-unapplied-migrations"
+    },
+    {
+      "feature": "governance-control-center",
+      "domain": "governance",
+      "route": "/avenize/governance",
+      "backend": "governance_overview + incident/autonomy/audit RPCs",
+      "database": ["governance_events", "governance_incidents", "autonomy_actions", "governance_audit_log", "human_decisions"],
+      "permissions": "is_riverways_admin / is_platform_admin gated",
+      "status": "implemented-this-change",
+      "tests": ["migration apply+idempotent on postgres:15", "guard matrix smoke", "vitest helpers"],
+      "health": "blocked-by-unapplied-migrations"
+    },
+    {
+      "feature": "platform-ops-dashboard",
+      "domain": "observability",
+      "route": "/platform-ops",
+      "backend": "platform_ops + evaluate_platform_alerts",
+      "database": ["platform_error_events", "platform_incidents", "platform_integration_status"],
+      "permissions": "is_platform_admin gated; aggregate-only",
+      "status": "verified-once-live-db-applied",
+      "tests": ["platformOps.test.ts"],
+      "health": "blocked-by-unapplied-migrations"
+    },
+    {
+      "feature": "production-contract-reconciliation",
+      "domain": "governance",
+      "route": "—",
+      "backend": "run_integrity_scan + verify_production_contract.py",
+      "database": ["integrity_rules"],
+      "permissions": "platform admin; service role scan",
+      "status": "verified",
+      "tests": ["942 healthy / 0 drift on full chain", "contract-manifest CI job"],
+      "health": "operational"
+    }
+  ]
+}
