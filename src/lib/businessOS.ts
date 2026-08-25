@@ -2693,6 +2693,51 @@ export async function fetchDiscoveryRoi(businessId: string): Promise<DiscoveryRo
   }
 }
 
+export interface ProviderLimitRow {
+  provider: string
+  plan: string
+  month: string
+  used_units: number
+  limit_units: number | null
+  overage_action: 'allow' | 'notify' | 'throttle' | 'block'
+  blocked: boolean
+  throttled: boolean
+  over_limit: boolean
+}
+
+export interface CostLedgerRow {
+  business_id: string
+  month: string
+  revenue_cents: number
+  priced_cost_cents: number
+  gross_margin_cents: number
+  unpriced_units: number
+  notes: string[]
+  computed_at: string
+}
+
+export interface CostGovernorPayload {
+  authorized: boolean
+  business_id?: string
+  month?: string
+  limits?: ProviderLimitRow[]
+  ledger?: CostLedgerRow[]
+}
+
+// Cost Governor (20260824170000): usage limits + infra-cost margin ledger.
+// Best-effort (§24): null when the RPC isn't deployed yet.
+export async function fetchCostGovernor(businessId: string): Promise<CostGovernorPayload | null> {
+  try {
+    const { data, error } = await supabase.rpc('cost_governor', { p_business_id: businessId })
+    if (error) throw error
+    const payload = data as CostGovernorPayload
+    return payload?.authorized ? payload : null
+  } catch (e) {
+    console.warn('[costGovernor] failed:', e)
+    return null
+  }
+}
+
 export interface AttributionCampaignRow {
   campaign: string
   source: string

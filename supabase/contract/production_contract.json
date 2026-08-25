@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 457,
+    "tables": 462,
     "views": 6,
-    "functions": 484,
+    "functions": 489,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -857,6 +857,14 @@
     },
     {
       "kind": "table",
+      "name": "cost_governor_limits",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "creditors",
       "defined_in": "034_sales_tax_banking.sql",
       "repairable": true,
@@ -891,6 +899,14 @@
       "kind": "table",
       "name": "custom_domains",
       "defined_in": "022_business_branding.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "customer_cost_ledger",
+      "defined_in": "20260824170000_cost_governor.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -2553,6 +2569,22 @@
     },
     {
       "kind": "table",
+      "name": "provider_cost_catalog",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "provider_module_map",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "public_pages",
       "defined_in": "022_business_branding.sql",
       "repairable": true,
@@ -3430,6 +3462,14 @@
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": true
+    },
+    {
+      "kind": "table",
+      "name": "usage_meter_monthly",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
     },
     {
       "kind": "table",
@@ -4596,6 +4636,61 @@
       "kind": "function",
       "name": "copilot_daily_usage",
       "defined_in": "20260819040000_copilot_governance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "cost_governor",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "cost_governor_compute_ledger",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_month date"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "cost_governor_limit_for",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_provider_key text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "cost_governor_resolve_plan",
+      "defined_in": "20260824170000_cost_governor.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "cost_governor_rollup",
+      "defined_in": "20260824170000_cost_governor.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -9356,6 +9451,21 @@
     "copilot_daily_usage": [
       "p_business_id uuid"
     ],
+    "cost_governor": [
+      "p_business_id uuid"
+    ],
+    "cost_governor_compute_ledger": [
+      "p_business_id uuid, p_month date"
+    ],
+    "cost_governor_limit_for": [
+      "p_business_id uuid, p_provider_key text"
+    ],
+    "cost_governor_resolve_plan": [
+      "p_business_id uuid"
+    ],
+    "cost_governor_rollup": [
+      "p_business_id uuid"
+    ],
     "create_action_task": [
       "p_action_id uuid, p_title text, p_assignee_id uuid, p_due_date date, p_priority text"
     ],
@@ -10855,6 +10965,7 @@
       "continuity_status",
       "convenience_index",
       "convert_currency",
+      "cost_governor",
       "create_action_task",
       "create_business_and_owner",
       "create_capture",

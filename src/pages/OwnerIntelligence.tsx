@@ -12,7 +12,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
-import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, fetchAutomationDLQHealth, reviveDeadLetteredAutomation, type OwnerIntelligence, type SectorBenchmark, type AutomationHealth, type AutomationDLQHealth } from '../lib/businessOS'
+import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, fetchAutomationDLQHealth, fetchCostGovernor, reviveDeadLetteredAutomation, type OwnerIntelligence, type SectorBenchmark, type AutomationHealth, type AutomationDLQHealth, type CostGovernorPayload } from '../lib/businessOS'
+import { marginStatus, marginStatusLabel, usageFraction, formatCents, overageLabel, type LedgerMonth } from '../lib/costGovernor'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   ShieldCheck, ShieldAlert, Loader2, Activity, Zap, Clock, AlertTriangle,
@@ -42,6 +43,7 @@ export default function OwnerIntelligence() {
   const [benchmark, setBenchmark] = useState<SectorBenchmark | null>(null)
   const [health, setHealth] = useState<AutomationHealth | null>(null)
   const [dlq, setDlq] = useState<AutomationDLQHealth | null>(null)
+  const [cost, setCost] = useState<CostGovernorPayload | null>(null)
 
   useEffect(() => {
     if (!bid || !isOwnerAdmin) {
@@ -82,6 +84,9 @@ export default function OwnerIntelligence() {
       }
       // §N automation dead-letter queue health (best-effort, non-blocking).
       fetchAutomationDLQHealth(bid).then(d => { if (active) setDlq(d) })
+        .catch(() => { /* migration not deployed — non-blocking */ })
+      // C15/C16 cost governor + ledger (best-effort, non-blocking).
+      fetchCostGovernor(bid).then(c => { if (active) setCost(c) })
         .catch(() => { /* migration not deployed — non-blocking */ })
     })()
     return () => { active = false }
@@ -380,6 +385,82 @@ export default function OwnerIntelligence() {
                 </button>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* C15/C16 — Cost Governor + infrastructure-cost ledger (owner/admin). */}
+      {cost && (
+        <section className="max-w-7xl mx-auto px-4 pb-8">
+          <h2 className="text-sm font-semibold text-[var(--av-text)] mb-3 flex items-center gap-2">
+            <TrendingDown className="w-4 h-4 text-[var(--av-primary)]" />
+            Cost Governor & Margin Ledger
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] p-4">
+              <p className="text-xs uppercase tracking-wider text-[var(--av-text-muted)] mb-3">Usage limits this month</p>
+              <div className="space-y-3">
+                {(cost.limits || []).map((l) => {
+                  const frac = usageFraction(l)
+                  return (
+                    <div key={l.provider}>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="capitalize text-[var(--av-text)]">{l.provider}</span>
+                        <span className="text-xs text-[var(--av-text-muted)]">
+                          {l.limit_units == null
+                            ? 'unlimited'
+                            : `${l.used_units.toLocaleString()} / ${l.limit_units.toLocaleString()}`}
+                        </span>
+                      </div>
+                      {frac != null && (
+                        <div className="mt-1 h-1.5 rounded-full bg-[var(--av-surface-2)]">
+                          <div
+                            className={`h-1.5 rounded-full ${l.over_limit ? 'bg-[var(--av-warning)]' : 'bg-[var(--av-primary)]'}`}
+                            style={{ width: `${Math.max(2, frac * 100)}%` }}
+                          />
+                        </div>
+                      )}
+                      {l.over_limit && (
+                        <p className="text-xs text-[var(--av-warning)] mt-0.5">{overageLabel(l.overage_action)}</p>
+                      )}
+                    </div>
+                  )
+                })}
+                {(cost.limits || []).length === 0 && (
+                  <p className="text-sm text-[var(--av-text-muted)]">No provider catalog active yet.</p>
+                )}
+              </div>
+            </div>
+            <div className="rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] p-4">
+              <p className="text-xs uppercase tracking-wider text-[var(--av-text-muted)] mb-3">Infrastructure-cost margin</p>
+              {(cost.ledger || []).length === 0 ? (
+                <p className="text-sm text-[var(--av-text-muted)]">No ledger months computed yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {(cost.ledger || []).slice(0, 6).map((m: LedgerMonth) => {
+                    const s = marginStatus(m)
+                    return (
+                      <div key={m.month} className="flex items-center justify-between text-sm">
+                        <span className="text-[var(--av-text-muted)]">{m.month}</span>
+                        <span className="text-right">
+                          <span className={`text-xs ${s === 'healthy' ? 'text-[var(--av-success)]' : s === 'thin' ? 'text-[var(--av-warning)]' : 'text-[var(--av-danger)]'}`}>
+                            {marginStatusLabel(s)}
+                          </span>
+                          <span className="block text-[var(--av-text)]">
+                            margin {formatCents(m.gross_margin_cents)}
+                          </span>
+                        </span>
+                      </div>
+                    )
+                  })}
+                  {(cost.ledger || []).some((m) => m.unpriced_units > 0) && (
+                    <p className="text-xs text-[var(--av-warning)]">
+                      Some usage is unpriced — excluded from the margin until a rate exists (it is never fabricated).
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </section>
       )}
