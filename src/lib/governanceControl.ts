@@ -190,14 +190,21 @@ export async function getDecisionsFeed(status?: 'pending'): Promise<HumanDecisio
   return (data ?? []) as HumanDecision[]
 }
 
+// decideHumanDecision: a high-risk decision needs step-up authorization.
+// The client confirms the admin explicitly re-proved their authority (e.g.
+// a second-click confirm dialog) before calling with p_step_up = true.
+// stepUp defaults to TRUE so callers must consciously lower the gate only
+// when the risk itself is 'low'.
 export async function decideHumanDecision(
   id: string,
   decision: 'approved' | 'rejected',
   reason?: string,
+  stepUp = true,
 ): Promise<boolean> {
   if (!await guard()) return false
   const { data, error } = await supabase.rpc('decide_human_decision', {
     p_decision_id: id, p_decision: decision, p_reason: reason ?? null,
+    p_step_up: stepUp,
   })
   return !error && data === true
 }

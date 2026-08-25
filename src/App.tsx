@@ -106,7 +106,6 @@ const DiscoveryIntelligence = lazy(() => import('./pages/DiscoveryIntelligence')
 const BuilderDashboard = lazy(() => import('./pages/BuilderDashboard'))
 const PlatformOpsDashboard = lazy(() => import('./pages/PlatformOpsDashboard'))
 const RiverwaysAdmin = lazy(() => import('./pages/RiverwaysAdmin'))
-const GovernanceControlCenter = lazy(() => import('./pages/GovernanceControlCenter'))
 const MonthlyReview = lazy(() => import('./pages/MonthlyReview'))
 const Meetings = lazy(() => import('./pages/Meetings'))
 const MeetingCapture = lazy(() => import('./pages/MeetingCapture'))
@@ -401,11 +400,16 @@ function AppRoutes() {
         {/* Riverways platform command center — backend gate
             (is_riverways_admin()) is the final authority. */}
         <Route path="/riverways-admin" element={<RequireAuth><RiverwaysAdmin /></RequireAuth>} />
-        {/* Governance Control Center — the human window into the autonomous
-            governance system (constitution monitor, incident engine, bounded
-            autonomy queue, human decision center, audit center, release gate).
-            The is_riverways_admin() RPC gate is the final authority. */}
-        <Route path="/avenize/governance" element={<RequireAuth><GovernanceControlCenter /></RequireAuth>} />
+        {/* System Governance is reachable ONLY through the Riverways Admin
+            Control Plane (section=governance). The old standalone path is a
+            nested redirect so any bookmarked link lands inside the admin
+            surface, not on the raw governance panel. */}
+        <Route
+          path="/avenize/governance"
+          element={
+            <Navigate to="/riverways-admin?section=governance" replace />
+          }
+        />
         <Route path="/knowledge" element={<HelpCenter />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
