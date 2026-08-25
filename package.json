@@ -26,7 +26,8 @@
     "avenize:governance:security": "python3 scripts/governance/avenize_governance.py security",
     "avenize:governance:e2e": "python3 scripts/governance/avenize_governance.py e2e",
     "avenize:governance:reconcile": "python3 scripts/governance/avenize_governance.py reconcile",
-    "avenize:governance:report": "python3 scripts/governance/avenize_governance.py report"
+    "avenize:governance:report": "python3 scripts/governance/avenize_governance.py report",
+    "avenize:governance:production-certification": "python3 scripts/governance/production_certification.py"
   },
   "homepage": "https://avenize.com",
   "dependencies": {
