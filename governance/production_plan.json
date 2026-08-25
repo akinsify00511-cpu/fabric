@@ -1,18 +1,8 @@
 {
-  "total": 316,
+  "total": 215,
   "genuine_production": [
     {
-      "order": 2,
-      "name": "accounts",
-      "kind": "table",
-      "defined_in": "010_accounting.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 4,
+      "order": 3,
       "name": "activity_timeline",
       "kind": "table",
       "defined_in": "038_critical_infrastructure.sql",
@@ -22,37 +12,7 @@
       "signatures": null
     },
     {
-      "order": 8,
-      "name": "ai_agents",
-      "kind": "table",
-      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 9,
-      "name": "anomaly_events",
-      "kind": "table",
-      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 11,
-      "name": "appointments",
-      "kind": "table",
-      "defined_in": "043_signatures_appointments_schema.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 12,
+      "order": 7,
       "name": "approval_actions",
       "kind": "table",
       "defined_in": "039_operations_backbone.sql",
@@ -62,7 +22,7 @@
       "signatures": null
     },
     {
-      "order": 13,
+      "order": 8,
       "name": "approval_requests",
       "kind": "view",
       "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
@@ -72,57 +32,7 @@
       "signatures": null
     },
     {
-      "order": 14,
-      "name": "approval_rules",
-      "kind": "table",
-      "defined_in": "072_rls_backfill_cross_tenant_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 16,
-      "name": "attention_exceptions",
-      "kind": "table",
-      "defined_in": "061_observer_exceptions_indexes.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 21,
-      "name": "automation_proposals",
-      "kind": "table",
-      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 22,
-      "name": "automation_runs",
-      "kind": "table",
-      "defined_in": "20240101000001_automation_webhook_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 23,
-      "name": "automations",
-      "kind": "table",
-      "defined_in": "007_automations.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 24,
+      "order": 13,
       "name": "avatars",
       "kind": "bucket",
       "defined_in": "046_missing_table_backfill.sql",
@@ -132,67 +42,7 @@
       "signatures": null
     },
     {
-      "order": 26,
-      "name": "beta_feedback",
-      "kind": "table",
-      "defined_in": "029_beta_testing_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 27,
-      "name": "board_committee_members",
-      "kind": "table",
-      "defined_in": "20260822120000_governance_layer.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 28,
-      "name": "board_committees",
-      "kind": "table",
-      "defined_in": "20260822120000_governance_layer.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 29,
-      "name": "board_conflicts",
-      "kind": "table",
-      "defined_in": "20260822120000_governance_layer.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 31,
-      "name": "board_members",
-      "kind": "table",
-      "defined_in": "20260818330000_board_members_seats_invites.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 32,
-      "name": "board_resolutions",
-      "kind": "table",
-      "defined_in": "20260822120000_governance_layer.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 34,
+      "order": 17,
       "name": "brand-assets",
       "kind": "bucket",
       "defined_in": "20260822135000_brand_assets_bucket.sql",
@@ -202,47 +52,17 @@
       "signatures": null
     },
     {
-      "order": 35,
-      "name": "brand_assets",
-      "kind": "table",
-      "defined_in": "022_business_branding.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 36,
+      "order": 18,
       "name": "budgets",
       "kind": "table",
-      "defined_in": "039_operations_backbone.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "security_sensitive": false,
       "repairable": true,
       "signatures": null
     },
     {
-      "order": 38,
-      "name": "business_approval_config",
-      "kind": "table",
-      "defined_in": "20260818170000_business_approval_config.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 41,
-      "name": "business_risks",
-      "kind": "table",
-      "defined_in": "095_risk_register.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 51,
+      "order": 31,
       "name": "comments",
       "kind": "table",
       "defined_in": "038_critical_infrastructure.sql",
@@ -252,27 +72,7 @@
       "signatures": null
     },
     {
-      "order": 58,
-      "name": "content_opportunities",
-      "kind": "table",
-      "defined_in": "20260819090000_discovery_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 62,
-      "name": "copilot_messages",
-      "kind": "table",
-      "defined_in": "20260819040000_copilot_governance.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 63,
+      "order": 41,
       "name": "cost_centers",
       "kind": "table",
       "defined_in": "039_operations_backbone.sql",
@@ -282,87 +82,7 @@
       "signatures": null
     },
     {
-      "order": 80,
-      "name": "crm_configurations",
-      "kind": "table",
-      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 81,
-      "name": "crm_pipeline_stages",
-      "kind": "table",
-      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 84,
-      "name": "daily_time_summaries",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 85,
-      "name": "data_exports",
-      "kind": "table",
-      "defined_in": "038_critical_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 87,
-      "name": "deal_analytics",
-      "kind": "table",
-      "defined_in": "034_sales_tax_banking.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 90,
-      "name": "decision_log",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 91,
-      "name": "decisions",
-      "kind": "table",
-      "defined_in": "064_org_memory_authority_multicompany.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 95,
-      "name": "delivery_orders",
-      "kind": "table",
-      "defined_in": "034_sales_tax_banking.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 96,
+      "order": 66,
       "name": "demand_activity",
       "kind": "table",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -372,37 +92,7 @@
       "signatures": null
     },
     {
-      "order": 102,
-      "name": "discovery_brand_checks",
-      "kind": "table",
-      "defined_in": "20260819090000_discovery_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 104,
-      "name": "discovery_observations",
-      "kind": "table",
-      "defined_in": "20260819090000_discovery_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 108,
-      "name": "discovery_targets",
-      "kind": "table",
-      "defined_in": "20260819090000_discovery_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 109,
+      "order": 76,
       "name": "documents",
       "kind": "bucket",
       "defined_in": "1001_documents_storage_bucket.sql",
@@ -412,47 +102,27 @@
       "signatures": null
     },
     {
-      "order": 111,
-      "name": "email_campaigns",
-      "kind": "table",
-      "defined_in": "009_email_campaigns.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 112,
-      "name": "email_contacts",
-      "kind": "table",
-      "defined_in": "009_email_campaigns.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 117,
+      "order": 82,
       "name": "entity_freshness",
       "kind": "table",
-      "defined_in": "058_business_event_bus.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "security_sensitive": false,
       "repairable": true,
       "signatures": null
     },
     {
-      "order": 118,
+      "order": 83,
       "name": "entity_freshness_status",
       "kind": "view",
-      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "defined_in": "20260825180000_live_gaps_repair.sql",
       "frontend_referenced": true,
       "security_sensitive": false,
       "repairable": true,
       "signatures": null
     },
     {
-      "order": 119,
+      "order": 84,
       "name": "exchange_rates",
       "kind": "table",
       "defined_in": "038_critical_infrastructure.sql",
@@ -462,27 +132,7 @@
       "signatures": null
     },
     {
-      "order": 143,
-      "name": "heartbeats",
-      "kind": "table",
-      "defined_in": "021_monitoring.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 144,
-      "name": "incidents",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 149,
+      "order": 110,
       "name": "inventory",
       "kind": "table",
       "defined_in": "998_create_all_missing_tables.sql",
@@ -492,67 +142,7 @@
       "signatures": null
     },
     {
-      "order": 152,
-      "name": "job_types",
-      "kind": "table",
-      "defined_in": "026_job_types.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 155,
-      "name": "journal_entries",
-      "kind": "table",
-      "defined_in": "010_accounting.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 156,
-      "name": "kb_page_versions",
-      "kind": "table",
-      "defined_in": "006_knowledge_base.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 157,
-      "name": "kb_pages",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 158,
-      "name": "kb_spaces",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 159,
-      "name": "key_results",
-      "kind": "table",
-      "defined_in": "094_okr_engine.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 160,
+      "order": 115,
       "name": "lead_requests",
       "kind": "table",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -562,37 +152,7 @@
       "signatures": null
     },
     {
-      "order": 162,
-      "name": "legal_cases",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 163,
-      "name": "legal_contracts",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 164,
-      "name": "legal_obligations",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 172,
+      "order": 122,
       "name": "maintenance_requests",
       "kind": "table",
       "defined_in": "039_operations_backbone.sql",
@@ -602,7 +162,7 @@
       "signatures": null
     },
     {
-      "order": 176,
+      "order": 126,
       "name": "meeting-captures",
       "kind": "bucket",
       "defined_in": "20260820210000_native_meetings.sql",
@@ -612,7 +172,7 @@
       "signatures": null
     },
     {
-      "order": 177,
+      "order": 127,
       "name": "meeting-recordings",
       "kind": "bucket",
       "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
@@ -622,17 +182,7 @@
       "signatures": null
     },
     {
-      "order": 178,
-      "name": "meeting_actions",
-      "kind": "table",
-      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 179,
+      "order": 128,
       "name": "meeting_chat_messages",
       "kind": "table",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -642,197 +192,7 @@
       "signatures": null
     },
     {
-      "order": 180,
-      "name": "meeting_decisions",
-      "kind": "table",
-      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 181,
-      "name": "meeting_media",
-      "kind": "table",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 182,
-      "name": "meeting_participant_events",
-      "kind": "table",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 183,
-      "name": "meeting_participants",
-      "kind": "table",
-      "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 184,
-      "name": "migration_jobs",
-      "kind": "table",
-      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 185,
-      "name": "monitors",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 193,
-      "name": "organizational_memory",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 195,
-      "name": "payroll_items",
-      "kind": "table",
-      "defined_in": "031_business_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 196,
-      "name": "persona_discovery_iterations",
-      "kind": "table",
-      "defined_in": "069_four_reality_persona_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 197,
-      "name": "persona_journeys",
-      "kind": "table",
-      "defined_in": "069_four_reality_persona_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 198,
-      "name": "persona_need_signals",
-      "kind": "table",
-      "defined_in": "069_four_reality_persona_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 199,
-      "name": "persona_profiles",
-      "kind": "table",
-      "defined_in": "069_four_reality_persona_intelligence.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 200,
-      "name": "platform_incident_investigations",
-      "kind": "table",
-      "defined_in": "20260818120000_platform_ops_dashboard.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 202,
-      "name": "portal_accounts",
-      "kind": "table",
-      "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 203,
-      "name": "portal_invitations",
-      "kind": "table",
-      "defined_in": "016_customer_portal.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 206,
-      "name": "process_drift_findings",
-      "kind": "table",
-      "defined_in": "067_ai_guardrails_drift_config_impact.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 210,
-      "name": "purchase_requests",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 211,
-      "name": "reality_gaps",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 213,
-      "name": "receipt_documents",
-      "kind": "table",
-      "defined_in": "20260819025000_receipt_ocr.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 214,
+      "order": 143,
       "name": "receipts",
       "kind": "bucket",
       "defined_in": "20260819025000_receipt_ocr.sql",
@@ -842,27 +202,7 @@
       "signatures": null
     },
     {
-      "order": 215,
-      "name": "recognition",
-      "kind": "table",
-      "defined_in": "20240101000001_automation_webhook_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 218,
-      "name": "reconciliation_runs",
-      "kind": "table",
-      "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 227,
+      "order": 154,
       "name": "recruitment_stages",
       "kind": "table",
       "defined_in": "032_fix_plan_pricing.sql",
@@ -872,7 +212,7 @@
       "signatures": null
     },
     {
-      "order": 231,
+      "order": 158,
       "name": "reporting_channels",
       "kind": "table",
       "defined_in": "023_company_home_blocks.sql",
@@ -882,17 +222,7 @@
       "signatures": null
     },
     {
-      "order": 243,
-      "name": "rfqs",
-      "kind": "table",
-      "defined_in": "20260101000004_gap_fill_modules.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 264,
+      "order": 183,
       "name": "sales_orders",
       "kind": "table",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -902,57 +232,7 @@
       "signatures": null
     },
     {
-      "order": 268,
-      "name": "saved_searches",
-      "kind": "table",
-      "defined_in": "038_critical_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 270,
-      "name": "search_indexes",
-      "kind": "table",
-      "defined_in": "038_critical_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 279,
-      "name": "services",
-      "kind": "table",
-      "defined_in": "043_signatures_appointments_schema.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 283,
-      "name": "signature_requests",
-      "kind": "table",
-      "defined_in": "043_signatures_appointments_schema.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 284,
-      "name": "signature_signers",
-      "kind": "table",
-      "defined_in": "043_signatures_appointments_schema.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 285,
+      "order": 199,
       "name": "signatures",
       "kind": "bucket",
       "defined_in": "082_schema_drift_repair.sql",
@@ -962,47 +242,7 @@
       "signatures": null
     },
     {
-      "order": 286,
-      "name": "simulations",
-      "kind": "table",
-      "defined_in": "062_simulation_compensation_affordability.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 287,
-      "name": "social_metrics",
-      "kind": "table",
-      "defined_in": "003_social_media.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 288,
-      "name": "social_posts",
-      "kind": "table",
-      "defined_in": "003_social_media.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 289,
-      "name": "sso_providers",
-      "kind": "table",
-      "defined_in": "053_sso_providers.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 290,
+      "order": 200,
       "name": "staff_assignments",
       "kind": "table",
       "defined_in": "039_operations_backbone.sql",
@@ -1012,7 +252,7 @@
       "signatures": null
     },
     {
-      "order": 291,
+      "order": 201,
       "name": "staff_benefits",
       "kind": "table",
       "defined_in": "032_fix_plan_pricing.sql",
@@ -1022,67 +262,7 @@
       "signatures": null
     },
     {
-      "order": 297,
-      "name": "subsidiary_profiles",
-      "kind": "table",
-      "defined_in": "20260818310000_subsidiary_crm_architecture.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 298,
-      "name": "task_comments",
-      "kind": "table",
-      "defined_in": "084_task_management_enhancements.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 299,
-      "name": "task_time_logs",
-      "kind": "table",
-      "defined_in": "084_task_management_enhancements.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 300,
-      "name": "ticket_replies",
-      "kind": "table",
-      "defined_in": "008_support_tickets.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 301,
-      "name": "tickets",
-      "kind": "table",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 302,
-      "name": "timesheets",
-      "kind": "table",
-      "defined_in": "055_timesheets_approval_cycle.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 312,
+      "order": 214,
       "name": "user_activity_daily",
       "kind": "table",
       "defined_in": "037_analytics_events_system.sql",
@@ -1092,27 +272,7 @@
       "signatures": null
     },
     {
-      "order": 314,
-      "name": "webhook_deliveries",
-      "kind": "table",
-      "defined_in": "038_critical_infrastructure.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 315,
-      "name": "webhooks",
-      "kind": "table",
-      "defined_in": "015_api_webhooks.sql",
-      "frontend_referenced": true,
-      "security_sensitive": false,
-      "repairable": true,
-      "signatures": null
-    },
-    {
-      "order": 316,
+      "order": 215,
       "name": "workflows",
       "kind": "table",
       "defined_in": "038_critical_infrastructure.sql",
@@ -1136,7 +296,7 @@
       ]
     },
     {
-      "order": 3,
+      "order": 2,
       "name": "acknowledge_recommendation",
       "kind": "function",
       "defined_in": "088_recommendation_outcome_loop.sql",
@@ -1148,7 +308,7 @@
       ]
     },
     {
-      "order": 5,
+      "order": 4,
       "name": "add_manual_time_entry",
       "kind": "function",
       "defined_in": "018_time_tracking.sql",
@@ -1160,7 +320,7 @@
       ]
     },
     {
-      "order": 6,
+      "order": 5,
       "name": "advance_incident",
       "kind": "function",
       "defined_in": "068_self_audit_reconciliation_incidents_flags.sql",
@@ -1172,7 +332,7 @@
       ]
     },
     {
-      "order": 7,
+      "order": 6,
       "name": "advance_migration",
       "kind": "function",
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
@@ -1184,17 +344,7 @@
       ]
     },
     {
-      "order": 10,
-      "name": "api_keys",
-      "kind": "table",
-      "defined_in": "015_api_webhooks.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": null
-    },
-    {
-      "order": 15,
+      "order": 9,
       "name": "approve_requisition",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -1206,7 +356,7 @@
       ]
     },
     {
-      "order": 17,
+      "order": 10,
       "name": "attribution_revenue",
       "kind": "function",
       "defined_in": "20260824150000_attribution_revenue.sql",
@@ -1218,17 +368,7 @@
       ]
     },
     {
-      "order": 18,
-      "name": "authority_graph",
-      "kind": "table",
-      "defined_in": "064_org_memory_authority_multicompany.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": null
-    },
-    {
-      "order": 19,
+      "order": 11,
       "name": "automation_health",
       "kind": "function",
       "defined_in": "20260101000013_automation_health_and_scheduled.sql",
@@ -1240,7 +380,7 @@
       ]
     },
     {
-      "order": 20,
+      "order": 12,
       "name": "automation_health_with_dlq",
       "kind": "function",
       "defined_in": "20260818240000_platform_resilience.sql",
@@ -1252,7 +392,7 @@
       ]
     },
     {
-      "order": 25,
+      "order": 14,
       "name": "award_xp_with_streak",
       "kind": "function",
       "defined_in": "077_atomic_xp_award.sql",
@@ -1264,7 +404,7 @@
       ]
     },
     {
-      "order": 30,
+      "order": 15,
       "name": "board_governance_overview",
       "kind": "function",
       "defined_in": "20260822120000_governance_layer.sql",
@@ -1276,7 +416,7 @@
       ]
     },
     {
-      "order": 33,
+      "order": 16,
       "name": "book_appointment_by_slug",
       "kind": "function",
       "defined_in": "20260822000000_public_booking_rpc.sql",
@@ -1288,7 +428,7 @@
       ]
     },
     {
-      "order": 37,
+      "order": 19,
       "name": "builder_dashboard",
       "kind": "function",
       "defined_in": "20260101000012_builder_dashboard.sql",
@@ -1300,7 +440,7 @@
       ]
     },
     {
-      "order": 39,
+      "order": 20,
       "name": "business_brain",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -1312,7 +452,7 @@
       ]
     },
     {
-      "order": 40,
+      "order": 21,
       "name": "business_relationships",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1324,7 +464,7 @@
       ]
     },
     {
-      "order": 42,
+      "order": 22,
       "name": "business_search",
       "kind": "function",
       "defined_in": "20260824170000_unified_business_search.sql",
@@ -1336,7 +476,7 @@
       ]
     },
     {
-      "order": 43,
+      "order": 23,
       "name": "business_value_ledger",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -1348,7 +488,7 @@
       ]
     },
     {
-      "order": 44,
+      "order": 24,
       "name": "can_access_module",
       "kind": "function",
       "defined_in": "20260101000005_two_flag_module_gate.sql",
@@ -1360,7 +500,7 @@
       ]
     },
     {
-      "order": 45,
+      "order": 25,
       "name": "cancel_subscription",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1372,7 +512,7 @@
       ]
     },
     {
-      "order": 46,
+      "order": 26,
       "name": "capacity_intelligence",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1384,7 +524,7 @@
       ]
     },
     {
-      "order": 47,
+      "order": 27,
       "name": "cascade_board_objective",
       "kind": "function",
       "defined_in": "20260822120000_governance_layer.sql",
@@ -1396,7 +536,7 @@
       ]
     },
     {
-      "order": 48,
+      "order": 28,
       "name": "check_auth_rate_limit",
       "kind": "function",
       "defined_in": "zzz_auth_protocol_repair.sql",
@@ -1408,7 +548,7 @@
       ]
     },
     {
-      "order": 49,
+      "order": 29,
       "name": "classify_business_state",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -1420,7 +560,7 @@
       ]
     },
     {
-      "order": 50,
+      "order": 30,
       "name": "clear_active_role",
       "kind": "function",
       "defined_in": "20260818250000_multi_role_switching.sql",
@@ -1432,7 +572,7 @@
       ]
     },
     {
-      "order": 52,
+      "order": 32,
       "name": "compose_board_report",
       "kind": "function",
       "defined_in": "20260822120000_governance_layer.sql",
@@ -1444,7 +584,7 @@
       ]
     },
     {
-      "order": 53,
+      "order": 33,
       "name": "compose_business_digest",
       "kind": "function",
       "defined_in": "20260818150000_proactive_digest_alerts.sql",
@@ -1456,7 +596,7 @@
       ]
     },
     {
-      "order": 54,
+      "order": 34,
       "name": "compose_business_review",
       "kind": "function",
       "defined_in": "20260818280000_evolved_business_review.sql",
@@ -1468,7 +608,7 @@
       ]
     },
     {
-      "order": 55,
+      "order": 35,
       "name": "compute_business_health",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1480,7 +620,7 @@
       ]
     },
     {
-      "order": 56,
+      "order": 36,
       "name": "compute_ebitda",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -1492,7 +632,7 @@
       ]
     },
     {
-      "order": 57,
+      "order": 37,
       "name": "confirm_receipt",
       "kind": "function",
       "defined_in": "20260819025000_receipt_ocr.sql",
@@ -1504,7 +644,7 @@
       ]
     },
     {
-      "order": 59,
+      "order": 38,
       "name": "continuity_status",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1516,7 +656,7 @@
       ]
     },
     {
-      "order": 60,
+      "order": 39,
       "name": "convenience_index",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1528,7 +668,7 @@
       ]
     },
     {
-      "order": 61,
+      "order": 40,
       "name": "convert_currency",
       "kind": "function",
       "defined_in": "038_critical_infrastructure.sql",
@@ -1540,7 +680,7 @@
       ]
     },
     {
-      "order": 64,
+      "order": 42,
       "name": "cost_governor",
       "kind": "function",
       "defined_in": "20260824170000_cost_governor.sql",
@@ -1552,7 +692,7 @@
       ]
     },
     {
-      "order": 65,
+      "order": 43,
       "name": "create_action_task",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -1564,7 +704,7 @@
       ]
     },
     {
-      "order": 66,
+      "order": 44,
       "name": "create_business_and_owner",
       "kind": "function",
       "defined_in": "zzz_auth_protocol_repair.sql",
@@ -1576,7 +716,7 @@
       ]
     },
     {
-      "order": 67,
+      "order": 45,
       "name": "create_capture",
       "kind": "function",
       "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
@@ -1588,7 +728,7 @@
       ]
     },
     {
-      "order": 68,
+      "order": 46,
       "name": "create_capture_attachment",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -1600,7 +740,7 @@
       ]
     },
     {
-      "order": 69,
+      "order": 47,
       "name": "create_field_visit",
       "kind": "function",
       "defined_in": "20260817110200_field_visit_rpcs.sql",
@@ -1612,7 +752,7 @@
       ]
     },
     {
-      "order": 70,
+      "order": 48,
       "name": "create_incident",
       "kind": "function",
       "defined_in": "20260825160000_governance_engine.sql",
@@ -1624,7 +764,7 @@
       ]
     },
     {
-      "order": 71,
+      "order": 49,
       "name": "create_invite",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -1636,7 +776,7 @@
       ]
     },
     {
-      "order": 72,
+      "order": 50,
       "name": "create_invoice",
       "kind": "function",
       "defined_in": "20260818140000_server_derived_invoice_totals.sql",
@@ -1648,7 +788,7 @@
       ]
     },
     {
-      "order": 73,
+      "order": 51,
       "name": "create_lead_request",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1660,7 +800,7 @@
       ]
     },
     {
-      "order": 74,
+      "order": 52,
       "name": "create_meeting",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -1672,7 +812,7 @@
       ]
     },
     {
-      "order": 75,
+      "order": 53,
       "name": "create_quote",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1684,7 +824,7 @@
       ]
     },
     {
-      "order": 76,
+      "order": 54,
       "name": "create_receipt_upload_path",
       "kind": "function",
       "defined_in": "20260819025000_receipt_ocr.sql",
@@ -1696,7 +836,7 @@
       ]
     },
     {
-      "order": 77,
+      "order": 55,
       "name": "create_requisition",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -1708,7 +848,7 @@
       ]
     },
     {
-      "order": 78,
+      "order": 56,
       "name": "create_sales_order",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1720,7 +860,7 @@
       ]
     },
     {
-      "order": 79,
+      "order": 57,
       "name": "create_subsidiary",
       "kind": "function",
       "defined_in": "20260818320000_canonical_create_subsidiary.sql",
@@ -1732,7 +872,7 @@
       ]
     },
     {
-      "order": 82,
+      "order": 58,
       "name": "current_business_health",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1744,7 +884,7 @@
       ]
     },
     {
-      "order": 83,
+      "order": 59,
       "name": "current_metrics",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1756,7 +896,7 @@
       ]
     },
     {
-      "order": 86,
+      "order": 60,
       "name": "data_quality_findings",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1768,7 +908,7 @@
       ]
     },
     {
-      "order": 88,
+      "order": 61,
       "name": "decide_human_decision",
       "kind": "function",
       "defined_in": "20260825200000_step_up_human_decisions.sql",
@@ -1781,7 +921,7 @@
       ]
     },
     {
-      "order": 89,
+      "order": 62,
       "name": "decide_timesheet",
       "kind": "function",
       "defined_in": "055_timesheets_approval_cycle.sql",
@@ -1793,7 +933,7 @@
       ]
     },
     {
-      "order": 92,
+      "order": 63,
       "name": "decline_signature",
       "kind": "function",
       "defined_in": "050_public_signing_flow.sql",
@@ -1805,7 +945,7 @@
       ]
     },
     {
-      "order": 93,
+      "order": 64,
       "name": "delete_capture_attachment",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -1817,7 +957,7 @@
       ]
     },
     {
-      "order": 94,
+      "order": 65,
       "name": "delete_platform_oncall",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -1829,7 +969,7 @@
       ]
     },
     {
-      "order": 97,
+      "order": 67,
       "name": "demand_funnel",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1841,7 +981,7 @@
       ]
     },
     {
-      "order": 98,
+      "order": 68,
       "name": "demand_pipeline",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1853,7 +993,7 @@
       ]
     },
     {
-      "order": 99,
+      "order": 69,
       "name": "demand_revenue",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -1865,7 +1005,7 @@
       ]
     },
     {
-      "order": 100,
+      "order": 70,
       "name": "deny_requisition",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -1877,7 +1017,7 @@
       ]
     },
     {
-      "order": 101,
+      "order": 71,
       "name": "diagnose_business",
       "kind": "function",
       "defined_in": "20260818230000_business_memory_recall.sql",
@@ -1889,7 +1029,7 @@
       ]
     },
     {
-      "order": 103,
+      "order": 72,
       "name": "discovery_brand_truth_report",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -1901,7 +1041,7 @@
       ]
     },
     {
-      "order": 105,
+      "order": 73,
       "name": "discovery_overview",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -1913,7 +1053,7 @@
       ]
     },
     {
-      "order": 106,
+      "order": 74,
       "name": "discovery_query_leaderboard",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -1925,7 +1065,7 @@
       ]
     },
     {
-      "order": 107,
+      "order": 75,
       "name": "discovery_roi",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -1937,7 +1077,7 @@
       ]
     },
     {
-      "order": 110,
+      "order": 77,
       "name": "early_warnings",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1949,7 +1089,7 @@
       ]
     },
     {
-      "order": 113,
+      "order": 78,
       "name": "emit_business_event",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -1961,7 +1101,7 @@
       ]
     },
     {
-      "order": 114,
+      "order": 79,
       "name": "emit_platform_activity",
       "kind": "function",
       "defined_in": "20260821150000_riverways_activity_ops.sql",
@@ -1973,7 +1113,7 @@
       ]
     },
     {
-      "order": 115,
+      "order": 80,
       "name": "end_meeting",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -1985,7 +1125,7 @@
       ]
     },
     {
-      "order": 116,
+      "order": 81,
       "name": "enforce_approval",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -1997,7 +1137,7 @@
       ]
     },
     {
-      "order": 120,
+      "order": 85,
       "name": "feature_discovery",
       "kind": "function",
       "defined_in": "20260818190000_feature_discovery.sql",
@@ -2009,7 +1149,7 @@
       ]
     },
     {
-      "order": 121,
+      "order": 86,
       "name": "finalize_capture_attachment",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -2021,7 +1161,7 @@
       ]
     },
     {
-      "order": 122,
+      "order": 87,
       "name": "finalize_receipt_extraction",
       "kind": "function",
       "defined_in": "20260819025000_receipt_ocr.sql",
@@ -2033,7 +1173,7 @@
       ]
     },
     {
-      "order": 123,
+      "order": 88,
       "name": "finalize_recording",
       "kind": "function",
       "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
@@ -2045,7 +1185,7 @@
       ]
     },
     {
-      "order": 124,
+      "order": 89,
       "name": "generate_api_key",
       "kind": "function",
       "defined_in": "015_api_webhooks.sql",
@@ -2057,7 +1197,7 @@
       ]
     },
     {
-      "order": 125,
+      "order": 90,
       "name": "generate_capture_attachment_url",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -2069,7 +1209,7 @@
       ]
     },
     {
-      "order": 126,
+      "order": 91,
       "name": "generate_meeting_report",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -2081,7 +1221,7 @@
       ]
     },
     {
-      "order": 127,
+      "order": 92,
       "name": "generate_meeting_token",
       "kind": "function",
       "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
@@ -2093,7 +1233,7 @@
       ]
     },
     {
-      "order": 128,
+      "order": 93,
       "name": "generate_portal_invitation",
       "kind": "function",
       "defined_in": "016_customer_portal.sql",
@@ -2105,7 +1245,7 @@
       ]
     },
     {
-      "order": 129,
+      "order": 94,
       "name": "generate_recording_signed_url",
       "kind": "function",
       "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
@@ -2117,20 +1257,7 @@
       ]
     },
     {
-      "order": 130,
-      "name": "get_active_time_entry",
-      "kind": "function",
-      "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        "",
-        "p_staff_id uuid"
-      ]
-    },
-    {
-      "order": 131,
+      "order": 95,
       "name": "get_alert_actions",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -2142,7 +1269,7 @@
       ]
     },
     {
-      "order": 132,
+      "order": 96,
       "name": "get_events_in_range",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2154,7 +1281,7 @@
       ]
     },
     {
-      "order": 133,
+      "order": 97,
       "name": "get_exchange_rate",
       "kind": "function",
       "defined_in": "038_critical_infrastructure.sql",
@@ -2166,7 +1293,7 @@
       ]
     },
     {
-      "order": 134,
+      "order": 98,
       "name": "get_invite_info",
       "kind": "function",
       "defined_in": "20260101000002_auth_functions.sql",
@@ -2178,7 +1305,7 @@
       ]
     },
     {
-      "order": 135,
+      "order": 99,
       "name": "get_meeting_intelligence",
       "kind": "function",
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
@@ -2190,7 +1317,7 @@
       ]
     },
     {
-      "order": 136,
+      "order": 100,
       "name": "get_meeting_reports",
       "kind": "function",
       "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
@@ -2202,7 +1329,7 @@
       ]
     },
     {
-      "order": 137,
+      "order": 101,
       "name": "get_org_chart",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2215,19 +1342,7 @@
       ]
     },
     {
-      "order": 138,
-      "name": "get_pricing_tiers",
-      "kind": "function",
-      "defined_in": "20260818200000_pricing_engine.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 139,
+      "order": 102,
       "name": "get_quote_by_token",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -2239,7 +1354,7 @@
       ]
     },
     {
-      "order": 140,
+      "order": 103,
       "name": "get_signature_request_by_token",
       "kind": "function",
       "defined_in": "050_public_signing_flow.sql",
@@ -2251,7 +1366,7 @@
       ]
     },
     {
-      "order": 141,
+      "order": 104,
       "name": "get_staff_roles",
       "kind": "function",
       "defined_in": "20260818250000_multi_role_switching.sql",
@@ -2263,7 +1378,7 @@
       ]
     },
     {
-      "order": 142,
+      "order": 105,
       "name": "graph_overview",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -2275,7 +1390,7 @@
       ]
     },
     {
-      "order": 145,
+      "order": 106,
       "name": "increment_capture_view",
       "kind": "function",
       "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
@@ -2287,7 +1402,7 @@
       ]
     },
     {
-      "order": 146,
+      "order": 107,
       "name": "increment_saved_search_use",
       "kind": "function",
       "defined_in": "071_capture_propagation_and_missing_rpc.sql",
@@ -2299,7 +1414,7 @@
       ]
     },
     {
-      "order": 147,
+      "order": 108,
       "name": "increment_user_learning",
       "kind": "function",
       "defined_in": "071_capture_propagation_and_missing_rpc.sql",
@@ -2311,7 +1426,7 @@
       ]
     },
     {
-      "order": 148,
+      "order": 109,
       "name": "intelligence_indexes",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2323,7 +1438,7 @@
       ]
     },
     {
-      "order": 150,
+      "order": 111,
       "name": "investigate_business_incident",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -2335,7 +1450,7 @@
       ]
     },
     {
-      "order": 151,
+      "order": 112,
       "name": "is_approval_required",
       "kind": "function",
       "defined_in": "20260818170000_business_approval_config.sql",
@@ -2347,7 +1462,7 @@
       ]
     },
     {
-      "order": 153,
+      "order": 113,
       "name": "join_channel",
       "kind": "function",
       "defined_in": "005_chat.sql",
@@ -2359,7 +1474,7 @@
       ]
     },
     {
-      "order": 154,
+      "order": 114,
       "name": "join_meeting",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -2371,7 +1486,7 @@
       ]
     },
     {
-      "order": 161,
+      "order": 116,
       "name": "leave_meeting",
       "kind": "function",
       "defined_in": "20260818400000_meeting_lifecycle_phase_a.sql",
@@ -2383,7 +1498,7 @@
       ]
     },
     {
-      "order": 165,
+      "order": 117,
       "name": "link_capture_to_event",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -2395,7 +1510,7 @@
       ]
     },
     {
-      "order": 166,
+      "order": 118,
       "name": "link_meeting_to_crm",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -2407,7 +1522,7 @@
       ]
     },
     {
-      "order": 167,
+      "order": 119,
       "name": "list_accessible_modules",
       "kind": "function",
       "defined_in": "20260101000005_two_flag_module_gate.sql",
@@ -2419,31 +1534,7 @@
       ]
     },
     {
-      "order": 168,
-      "name": "list_platform_oncall",
-      "kind": "function",
-      "defined_in": "20260818120000_platform_ops_dashboard.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 169,
-      "name": "list_platform_thresholds",
-      "kind": "function",
-      "defined_in": "20260818120000_platform_ops_dashboard.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 170,
+      "order": 120,
       "name": "log_platform_error",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -2455,7 +1546,7 @@
       ]
     },
     {
-      "order": 171,
+      "order": 121,
       "name": "log_security_event",
       "kind": "function",
       "defined_in": "zzz_auth_protocol_repair.sql",
@@ -2467,7 +1558,7 @@
       ]
     },
     {
-      "order": 173,
+      "order": 123,
       "name": "mark_recommendation_acted",
       "kind": "function",
       "defined_in": "088_recommendation_outcome_loop.sql",
@@ -2479,7 +1570,7 @@
       ]
     },
     {
-      "order": 174,
+      "order": 124,
       "name": "mark_signature_viewed",
       "kind": "function",
       "defined_in": "050_public_signing_flow.sql",
@@ -2491,7 +1582,7 @@
       ]
     },
     {
-      "order": 175,
+      "order": 125,
       "name": "market_intelligence",
       "kind": "function",
       "defined_in": "063_intelligence_domains.sql",
@@ -2503,7 +1594,7 @@
       ]
     },
     {
-      "order": 186,
+      "order": 129,
       "name": "monthly_review",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2515,7 +1606,7 @@
       ]
     },
     {
-      "order": 187,
+      "order": 130,
       "name": "next_best_action",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -2527,7 +1618,7 @@
       ]
     },
     {
-      "order": 188,
+      "order": 131,
       "name": "objective_cascade_tree",
       "kind": "function",
       "defined_in": "20260822120000_governance_layer.sql",
@@ -2539,7 +1630,7 @@
       ]
     },
     {
-      "order": 189,
+      "order": 132,
       "name": "objective_gap_analysis",
       "kind": "function",
       "defined_in": "20260822130000_objective_gap_analysis.sql",
@@ -2551,7 +1642,7 @@
       ]
     },
     {
-      "order": 190,
+      "order": 133,
       "name": "objective_progress",
       "kind": "function",
       "defined_in": "094_okr_engine.sql",
@@ -2563,7 +1654,7 @@
       ]
     },
     {
-      "order": 191,
+      "order": 134,
       "name": "observer_snapshot",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2575,7 +1666,7 @@
       ]
     },
     {
-      "order": 192,
+      "order": 135,
       "name": "open_recommendations",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2587,7 +1678,7 @@
       ]
     },
     {
-      "order": 194,
+      "order": 136,
       "name": "owner_intelligence",
       "kind": "function",
       "defined_in": "20260101000010_owner_intelligence.sql",
@@ -2599,19 +1690,7 @@
       ]
     },
     {
-      "order": 201,
-      "name": "platform_ops",
-      "kind": "function",
-      "defined_in": "20260818120000_platform_ops_dashboard.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 204,
+      "order": 137,
       "name": "pricing_opportunities",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -2624,7 +1703,7 @@
       ]
     },
     {
-      "order": 205,
+      "order": 138,
       "name": "process_bottleneck_intelligence",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2636,7 +1715,7 @@
       ]
     },
     {
-      "order": 207,
+      "order": 139,
       "name": "profitability_by_segment",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -2648,7 +1727,7 @@
       ]
     },
     {
-      "order": 208,
+      "order": 140,
       "name": "profitability_leakage",
       "kind": "function",
       "defined_in": "zz_live_console_drift_reconciliation.sql",
@@ -2661,7 +1740,7 @@
       ]
     },
     {
-      "order": 209,
+      "order": 141,
       "name": "propagate_impact",
       "kind": "function",
       "defined_in": "20260818270000_business_graph_impact.sql",
@@ -2673,7 +1752,7 @@
       ]
     },
     {
-      "order": 212,
+      "order": 142,
       "name": "recall_similar_problems",
       "kind": "function",
       "defined_in": "20260818230000_business_memory_recall.sql",
@@ -2685,7 +1764,7 @@
       ]
     },
     {
-      "order": 216,
+      "order": 144,
       "name": "recommend_plan",
       "kind": "function",
       "defined_in": "20260818180000_ai_plan_recommendation.sql",
@@ -2697,7 +1776,7 @@
       ]
     },
     {
-      "order": 217,
+      "order": 145,
       "name": "recommendation_effectiveness",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2709,7 +1788,7 @@
       ]
     },
     {
-      "order": 219,
+      "order": 146,
       "name": "record_analytics_event",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2723,7 +1802,7 @@
       ]
     },
     {
-      "order": 220,
+      "order": 147,
       "name": "record_audit",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2736,7 +1815,7 @@
       ]
     },
     {
-      "order": 221,
+      "order": 148,
       "name": "record_auth_failure",
       "kind": "function",
       "defined_in": "zzz_auth_protocol_repair.sql",
@@ -2748,7 +1827,7 @@
       ]
     },
     {
-      "order": 222,
+      "order": 149,
       "name": "record_board_vote",
       "kind": "function",
       "defined_in": "20260822120000_governance_layer.sql",
@@ -2760,7 +1839,7 @@
       ]
     },
     {
-      "order": 223,
+      "order": 150,
       "name": "record_discovery_referral",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -2772,7 +1851,7 @@
       ]
     },
     {
-      "order": 224,
+      "order": 151,
       "name": "record_invoice_payment",
       "kind": "function",
       "defined_in": "20260818140000_server_derived_invoice_totals.sql",
@@ -2784,7 +1863,7 @@
       ]
     },
     {
-      "order": 225,
+      "order": 152,
       "name": "record_recommendation_outcome",
       "kind": "function",
       "defined_in": "088_recommendation_outcome_loop.sql",
@@ -2796,7 +1875,7 @@
       ]
     },
     {
-      "order": 226,
+      "order": 153,
       "name": "record_signature",
       "kind": "function",
       "defined_in": "050_public_signing_flow.sql",
@@ -2808,7 +1887,7 @@
       ]
     },
     {
-      "order": 228,
+      "order": 155,
       "name": "refresh_business_metrics",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2820,7 +1899,7 @@
       ]
     },
     {
-      "order": 229,
+      "order": 156,
       "name": "register_for_event",
       "kind": "function",
       "defined_in": "020_events.sql",
@@ -2832,7 +1911,7 @@
       ]
     },
     {
-      "order": 230,
+      "order": 157,
       "name": "reject_receipt",
       "kind": "function",
       "defined_in": "20260819025000_receipt_ocr.sql",
@@ -2844,7 +1923,7 @@
       ]
     },
     {
-      "order": 232,
+      "order": 159,
       "name": "request_plan_payment",
       "kind": "function",
       "defined_in": "20260822125000_manual_payment_flow.sql",
@@ -2856,7 +1935,7 @@
       ]
     },
     {
-      "order": 233,
+      "order": 160,
       "name": "request_time_off",
       "kind": "function",
       "defined_in": "018_time_tracking.sql",
@@ -2868,7 +1947,7 @@
       ]
     },
     {
-      "order": 234,
+      "order": 161,
       "name": "reset_auth_rate_limit",
       "kind": "function",
       "defined_in": "zzz_auth_protocol_repair.sql",
@@ -2880,7 +1959,7 @@
       ]
     },
     {
-      "order": 235,
+      "order": 162,
       "name": "resolve_feature_flag",
       "kind": "function",
       "defined_in": "029_beta_testing_infrastructure.sql",
@@ -2892,7 +1971,7 @@
       ]
     },
     {
-      "order": 236,
+      "order": 163,
       "name": "resolve_platform_error",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -2904,7 +1983,7 @@
       ]
     },
     {
-      "order": 237,
+      "order": 164,
       "name": "respond_to_quote",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -2916,7 +1995,7 @@
       ]
     },
     {
-      "order": 238,
+      "order": 165,
       "name": "resubmit_requisition",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -2928,7 +2007,7 @@
       ]
     },
     {
-      "order": 239,
+      "order": 166,
       "name": "revenue_forecast",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2940,7 +2019,7 @@
       ]
     },
     {
-      "order": 240,
+      "order": 167,
       "name": "revive_dead_lettered_automation",
       "kind": "function",
       "defined_in": "20260818240000_platform_resilience.sql",
@@ -2952,7 +2031,7 @@
       ]
     },
     {
-      "order": 241,
+      "order": 168,
       "name": "revoke_invite",
       "kind": "function",
       "defined_in": "20260818330000_board_members_seats_invites.sql",
@@ -2964,7 +2043,7 @@
       ]
     },
     {
-      "order": 242,
+      "order": 169,
       "name": "revoke_my_passkey",
       "kind": "function",
       "defined_in": "20260819030000_webauthn_passkeys.sql",
@@ -2976,7 +2055,7 @@
       ]
     },
     {
-      "order": 244,
+      "order": 170,
       "name": "risk_anomaly_intelligence",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -2988,31 +2067,7 @@
       ]
     },
     {
-      "order": 245,
-      "name": "riverways_activity_feed",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        "p_limit int4, p_event_type text, p_severity text, p_business_id uuid, p_actor_email text"
-      ]
-    },
-    {
-      "order": 246,
-      "name": "riverways_ai_activity",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        "p_limit int4"
-      ]
-    },
-    {
-      "order": 247,
+      "order": 171,
       "name": "riverways_assign_account_type",
       "kind": "function",
       "defined_in": "20260821160000_riverways_account_management.sql",
@@ -3024,31 +2079,7 @@
       ]
     },
     {
-      "order": 248,
-      "name": "riverways_billing_activity",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 249,
-      "name": "riverways_error_center",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 250,
+      "order": 172,
       "name": "riverways_global_search",
       "kind": "function",
       "defined_in": "20260821150000_riverways_activity_ops.sql",
@@ -3060,7 +2091,7 @@
       ]
     },
     {
-      "order": 251,
+      "order": 173,
       "name": "riverways_org_activity",
       "kind": "function",
       "defined_in": "20260821150000_riverways_activity_ops.sql",
@@ -3072,7 +2103,7 @@
       ]
     },
     {
-      "order": 252,
+      "order": 174,
       "name": "riverways_payment_investigation",
       "kind": "function",
       "defined_in": "20260824160000_payment_investigation.sql",
@@ -3084,43 +2115,7 @@
       ]
     },
     {
-      "order": 253,
-      "name": "riverways_platform_analytics",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 254,
-      "name": "riverways_security_center",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 255,
-      "name": "riverways_self_healing",
-      "kind": "function",
-      "defined_in": "20260821150000_riverways_activity_ops.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 256,
+      "order": 175,
       "name": "riverways_user_activity",
       "kind": "function",
       "defined_in": "20260821150000_riverways_activity_ops.sql",
@@ -3132,7 +2127,7 @@
       ]
     },
     {
-      "order": 257,
+      "order": 176,
       "name": "run_behavior_recommendation_rules",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3144,7 +2139,7 @@
       ]
     },
     {
-      "order": 258,
+      "order": 177,
       "name": "run_business_health_audit",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3156,7 +2151,7 @@
       ]
     },
     {
-      "order": 259,
+      "order": 178,
       "name": "run_recommendation_rules",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3168,7 +2163,7 @@
       ]
     },
     {
-      "order": 260,
+      "order": 179,
       "name": "run_reconciliation",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3180,7 +2175,7 @@
       ]
     },
     {
-      "order": 261,
+      "order": 180,
       "name": "run_simulation",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3192,7 +2187,7 @@
       ]
     },
     {
-      "order": 262,
+      "order": 181,
       "name": "run_system_health_audit",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3204,7 +2199,7 @@
       ]
     },
     {
-      "order": 263,
+      "order": 182,
       "name": "said_vs_used",
       "kind": "function",
       "defined_in": "zz_rpc_role_authorization_closure.sql",
@@ -3216,7 +2211,7 @@
       ]
     },
     {
-      "order": 265,
+      "order": 184,
       "name": "save_capture_transcript",
       "kind": "function",
       "defined_in": "20260819050000_quick_capture_multimodal.sql",
@@ -3228,7 +2223,7 @@
       ]
     },
     {
-      "order": 266,
+      "order": 185,
       "name": "save_meeting_action",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -3240,7 +2235,7 @@
       ]
     },
     {
-      "order": 267,
+      "order": 186,
       "name": "save_meeting_decision",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -3252,7 +2247,7 @@
       ]
     },
     {
-      "order": 269,
+      "order": 187,
       "name": "scan_data_quality",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3264,7 +2259,7 @@
       ]
     },
     {
-      "order": 271,
+      "order": 188,
       "name": "search_transcripts",
       "kind": "function",
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
@@ -3276,7 +2271,7 @@
       ]
     },
     {
-      "order": 272,
+      "order": 189,
       "name": "sector_benchmark",
       "kind": "function",
       "defined_in": "20260101000011_sector_intelligence_behavior_rules.sql",
@@ -3288,7 +2283,7 @@
       ]
     },
     {
-      "order": 273,
+      "order": 190,
       "name": "seed_ai_roles",
       "kind": "function",
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
@@ -3300,7 +2295,7 @@
       ]
     },
     {
-      "order": 274,
+      "order": 191,
       "name": "seed_discovery_defaults",
       "kind": "function",
       "defined_in": "20260819090000_discovery_intelligence.sql",
@@ -3312,7 +2307,7 @@
       ]
     },
     {
-      "order": 275,
+      "order": 192,
       "name": "send_business_digest",
       "kind": "function",
       "defined_in": "20260818150000_proactive_digest_alerts.sql",
@@ -3324,7 +2319,7 @@
       ]
     },
     {
-      "order": 276,
+      "order": 193,
       "name": "send_follow_up",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -3336,7 +2331,7 @@
       ]
     },
     {
-      "order": 277,
+      "order": 194,
       "name": "send_meeting_chat",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -3348,7 +2343,7 @@
       ]
     },
     {
-      "order": 278,
+      "order": 195,
       "name": "send_meeting_chat_guest",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -3360,7 +2355,7 @@
       ]
     },
     {
-      "order": 280,
+      "order": 196,
       "name": "set_active_role",
       "kind": "function",
       "defined_in": "20260818250000_multi_role_switching.sql",
@@ -3372,7 +2367,7 @@
       ]
     },
     {
-      "order": 281,
+      "order": 197,
       "name": "set_member_kind",
       "kind": "function",
       "defined_in": "20260819015000_account_member_kinds.sql",
@@ -3384,7 +2379,7 @@
       ]
     },
     {
-      "order": 282,
+      "order": 198,
       "name": "set_recommendation_decision",
       "kind": "function",
       "defined_in": "088_recommendation_outcome_loop.sql",
@@ -3396,7 +2391,7 @@
       ]
     },
     {
-      "order": 292,
+      "order": 202,
       "name": "start_approval_protocol",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3408,7 +2403,7 @@
       ]
     },
     {
-      "order": 293,
+      "order": 203,
       "name": "start_meeting",
       "kind": "function",
       "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
@@ -3420,19 +2415,7 @@
       ]
     },
     {
-      "order": 294,
-      "name": "stop_time_tracking",
-      "kind": "function",
-      "defined_in": "018_time_tracking.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        ""
-      ]
-    },
-    {
-      "order": 295,
+      "order": 204,
       "name": "submit_requisition",
       "kind": "function",
       "defined_in": "017_requisitions_approvals.sql",
@@ -3444,7 +2427,7 @@
       ]
     },
     {
-      "order": 296,
+      "order": 205,
       "name": "submit_timesheet",
       "kind": "function",
       "defined_in": "055_timesheets_approval_cycle.sql",
@@ -3456,7 +2439,7 @@
       ]
     },
     {
-      "order": 303,
+      "order": 206,
       "name": "transition_demand",
       "kind": "function",
       "defined_in": "zzzaaa_demand_capture.sql",
@@ -3468,7 +2451,7 @@
       ]
     },
     {
-      "order": 304,
+      "order": 207,
       "name": "transition_incident",
       "kind": "function",
       "defined_in": "20260825160000_governance_engine.sql",
@@ -3480,7 +2463,7 @@
       ]
     },
     {
-      "order": 305,
+      "order": 208,
       "name": "trial_assistance",
       "kind": "function",
       "defined_in": "20260818210000_trial_assistance.sql",
@@ -3492,7 +2475,7 @@
       ]
     },
     {
-      "order": 306,
+      "order": 209,
       "name": "trust_health",
       "kind": "function",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
@@ -3504,7 +2487,7 @@
       ]
     },
     {
-      "order": 307,
+      "order": 210,
       "name": "update_leave_balance",
       "kind": "function",
       "defined_in": "071_capture_propagation_and_missing_rpc.sql",
@@ -3516,7 +2499,7 @@
       ]
     },
     {
-      "order": 308,
+      "order": 211,
       "name": "update_platform_incident",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -3528,7 +2511,7 @@
       ]
     },
     {
-      "order": 309,
+      "order": 212,
       "name": "update_platform_threshold",
       "kind": "function",
       "defined_in": "20260818120000_platform_ops_dashboard.sql",
@@ -3540,7 +2523,7 @@
       ]
     },
     {
-      "order": 310,
+      "order": 213,
       "name": "update_user_engagement",
       "kind": "function",
       "defined_in": "037_analytics_events_system.sql",
@@ -3550,28 +2533,6 @@
       "signatures": [
         "p_user_id uuid, p_session_id text, p_event_type text, p_feature_name text, p_duration_seconds int4"
       ]
-    },
-    {
-      "order": 311,
-      "name": "upsert_platform_oncall",
-      "kind": "function",
-      "defined_in": "20260818120000_platform_ops_dashboard.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": [
-        "p_id uuid, p_name text, p_email text, p_phone text, p_channel text, p_is_active boolean"
-      ]
-    },
-    {
-      "order": 313,
-      "name": "webauthn_credentials",
-      "kind": "table",
-      "defined_in": "20260819030000_webauthn_passkeys.sql",
-      "frontend_referenced": true,
-      "security_sensitive": true,
-      "repairable": false,
-      "signatures": null
     }
   ],
   "intentional_absent": [],
