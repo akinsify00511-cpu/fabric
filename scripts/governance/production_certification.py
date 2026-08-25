@@ -114,8 +114,33 @@ def main() -> int:
         release_pass = False
         release_out = f"error: {e}"
 
-    # Final governance verdict
-    verdict = "PASS" if base and release_pass else "BLOCKED" if base else "SKIPPED"
+    # RLS/security integrity track: converge with migration integrity. The
+    # certification gate rejects an unreviewed or unresolved security track:
+    # an ENABLE RLS alone is NOT resolution — findings must be classified and
+    # remediated via the quadrant (FIX_NOW/FIX_WITH_MIGRATION/GOVERNED_EXCEPTION).
+    rls_plan_path = ROOT / "governance" / "rls_remediation_plan.json"
+    rls_track = {"status": "unknown", "blocking": True}
+    if rls_plan_path.exists():
+        rls_plan = json.loads(rls_plan_path.read_text())
+        rls_status = rls_plan.get("status")
+        rls_track = {
+            "status": rls_status,
+            "unresolved": sum(rls_plan.get("summary", {}).get(k, 0) for k in ("FIX_NOW", "FIX_WITH_MIGRATION")) if rls_plan.get("summary") else None,
+            # Constitution: an unreviewed security track (findings not yet
+            # retrieved/classified) BLOCKS certification — UNKNOWN ≠ HEALTHY.
+            # An "empty/clean" plan is OK; a classified plan with FIX items blocks.
+            "blocking": (
+                rls_status == "blocked"
+                or (rls_status == "classified" and any(
+                    rls_plan.get("summary", {}).get(k, 0) for k in ("FIX_NOW", "FIX_WITH_MIGRATION")
+                ))
+            ),
+        }
+    security_pass = not rls_track["blocking"]
+
+    # Final governance verdict — BOTH tracks must pass.
+    migration_pass = base and release_pass
+    verdict = "PASS" if (migration_pass and security_pass) else ("BLOCKED" if base else "SKIPPED")
     report = {
         "verdict": verdict,
         "governance_schema": {
@@ -123,6 +148,7 @@ def main() -> int:
             "ok": ok_total if base else None,
         },
         "release_gate": {"pass": release_pass, "probe_out": release_out[-1200:]},
+        "rls_security_track": rls_track,
     }
 
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
