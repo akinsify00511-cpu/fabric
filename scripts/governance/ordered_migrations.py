@@ -2,6 +2,10 @@
 """
 Ordered production migration plan (never blindly apply).
 
+Note: governance/production_plan.json is owned by classify_missing.py
+(classification artifact). This script writes ordered_migrations.json instead —
+the two artifacts must not share a path.
+
 Conventions like `zz_live_schema_reconcile.sql` or `zzzzz_*` are deliberate
 teardown forks; they must sort after every canonical timestamp. This emits
 the classification + the dependency-graph ordering per-object the classifier
@@ -17,7 +21,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-PLAN_PATH = ROOT / "governance" / "production_plan.json"
+PLAN_PATH = ROOT / "governance" / "ordered_migrations.json"
 INTERNAL_AB = ROOT / "governance" / "intentionally-absent.json"
 REPORT = ROOT / "supabase" / "contract" / "verification_report.json"
 CONTRACT = json.loads((ROOT / "supabase" / "contract" / "production_contract.json").read_text())

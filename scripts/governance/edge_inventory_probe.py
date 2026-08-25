@@ -28,7 +28,7 @@ def probe() -> dict:
     for fn in manifest:
         dash = fn.replace("_", "-")
         if base and key:
-            req = urllib.request.Request(f"{base}/functions/v1/{dash}", method="POST", data=b"{}")
+            req = urllib.request.Request(f"{base}/functions/v1/{dash}", method="OPTIONS")
             req.add_header("Authorization", f"Bearer {key}")
             try:
                 code = urllib.request.urlopen(req, timeout=20).status

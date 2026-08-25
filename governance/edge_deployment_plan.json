@@ -2,21 +2,30 @@
   "total_in_manifest": 12,
   "deployed": [
     {
+      "name": "paystack-webhook",
+      "secrets": [
+        "PAYSTACK_SECRET_KEY"
+      ],
+      "deploy_status": "DEPLOYED"
+    }
+  ],
+  "missing": [
+    {
       "name": "api-gateway",
       "secrets": [],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "ask-avenize",
       "secrets": [],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "dispatch-webhooks",
       "secrets": [
         "RESEND_API_KEY"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "email-service",
@@ -24,38 +33,31 @@
         "RESEND_API_KEY",
         "EMAIL_FROM"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "execute-automation",
       "secrets": [],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "parse-intent",
       "secrets": [],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "paystack-verify",
       "secrets": [
         "PAYSTACK_SECRET_KEY"
       ],
-      "deploy_status": "DEPLOYED"
-    },
-    {
-      "name": "paystack-webhook",
-      "secrets": [
-        "PAYSTACK_SECRET_KEY"
-      ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "platform-health-check",
       "secrets": [
         "SUPABASE_SERVICE_ROLE_KEY"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "resend-webhook",
@@ -63,14 +65,14 @@
         "RESEND_API_KEY",
         "RESEND_WEBHOOK_SECRET"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "subscription-management",
       "secrets": [
         "PAYSTACK_SECRET_KEY"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     },
     {
       "name": "webauthn",
@@ -78,12 +80,11 @@
         "WEBAUTHN_RP_ID",
         "WEBAUTHN_ORIGINS"
       ],
-      "deploy_status": "DEPLOYED"
+      "deploy_status": "MISSING"
     }
   ],
-  "missing": [],
-  "missing_count": 0,
-  "deployed_count": 12,
+  "missing_count": 11,
+  "deployed_count": 1,
   "secrets_required": [
     "EMAIL_FROM",
     "PAYSTACK_SECRET_KEY",
