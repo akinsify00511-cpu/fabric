@@ -3982,11 +3982,23 @@ business search RPC (the one PARTIAL domain in the §4 inventory).
   URL did NOT help (token itself dead). Push is BLOCKED until the platform
   injects a refreshed token. The commit is safe locally.
 
-### Deploy status
-Commit local (feat(search)…). Push + CI + Vercel deploy PENDING token refresh.
-Live DB still needs migration 20260824170000 applied (same credential gate as
-all prior sessions); CommandPalette degrades to navigation-only search until
-then (best-effort §24).
+### Deploy status — RESOLVED (token refreshed, pushed + deployed 2026-08-24)
+GITHUB_TOKEN refreshed on retry; pushed bdeed70 (feature) + 3f42571 (docs).
+Then two follow-ups the contract-manifest gate surfaced:
+- **c5808a9**: manifest regenerated AFTER the businessSearch wrapper was added —
+  the first regeneration ran before the frontend referenced the RPC, so the
+  committed manifest said frontend_referenced:false → gate FAILED on 3f42571.
+  LESSON: regenerate the contract manifest LAST, after all frontend wiring.
+- **410b769 + f0384f7**: CI governance gap fixed — schema-drift.yml's path
+  filter omitted `supabase/contract/**` and `scripts/generate_contract_manifest.py`,
+  so an artifact-only regeneration commit never re-ran the contract-manifest
+  gate. Added both paths + `workflow_dispatch` (manually re-runnable now).
+Final state: CI ✅, Schema Drift Check ✅ (all 4 jobs incl. contract-manifest,
+dispatched run 32791374301), UX Tests ✅ (Lighthouse + mobile + desktop),
+Vercel deploy step ✅, Frontend PASS (current SPA shell live from f0384f7).
+Contract gate honestly FAILs on the SAME standing blockers (live DB +
+4 edge fns). Live DB still needs migration 20260824170000 applied; the
+CommandPalette degrades to navigation-only search until then (best-effort §24).
 
 ## Session 53 continuation (2026-08-24): duplicate migration number fixed + deployed (commit d234222)
 
