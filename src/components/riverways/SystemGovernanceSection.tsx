@@ -1,5 +1,5 @@
-// Avenize Governance Control Center — the human window into the autonomous
-// governance system (NOT just another admin dashboard).
+// Avenize System Governance — the SYSTEM GOVERNANCE section INSIDE the
+// existing Riverways Admin console (not a standalone destination).
 //
 // Scope of responsibility (per the master directive):
 //  * constitution monitor (rules + layers from the machine-readable registry)
@@ -13,7 +13,8 @@
 //
 // All reads/writes go through is_riverways_admin()-gated SECURITY DEFINER
 // RPCs. Non-admins get a restricted screen — the RPC gate is the real
-// boundary (the client check is UX-only).
+// boundary (the client check is UX-only). Step-up authorization for sensitive
+// operations is enforced server-side via p_step_up=TRUE on decision RPCs.
 
 import { useEffect, useState } from 'react'
 import {
@@ -21,7 +22,7 @@ import {
   RefreshCw, CheckCircle2, FileText, Network, Route,
   Loader2, ChevronDown, ChevronRight,
 } from 'lucide-react'
-import { isRiverwaysAdmin } from '../lib/riverwaysAdmin'
+import { isRiverwaysAdmin } from '../../lib/riverwaysAdmin'
 import {
   getGovernanceOverview, getSelfHealth, getIncidents, getAutonomyFeed,
   searchAudit, transitionIncident, createIncident, decideHumanDecision,
@@ -29,11 +30,11 @@ import {
   INCIDENT_LIFECYCLE, ACTORS, SEVERITY_ORDER,
   type GovernanceOverview, type SelfHealth, type GovernanceIncident,
   type AutonomyAction, type HumanDecision, type AuditEntry, type IncidentStatus,
-} from '../lib/governanceControl'
-import constitutionRegistry from '../../governance/constitution-registry.json'
-import enforcementRegistry from '../../governance/enforcement-registry.json'
-import autonomyRegistry from '../../governance/autonomy-policy-registry.json'
-import featureRegistry from '../../governance/feature-registry.json'
+} from '../../lib/governanceControl'
+import constitutionRegistry from '../../../governance/constitution-registry.json'
+import enforcementRegistry from '../../../governance/enforcement-registry.json'
+import autonomyRegistry from '../../../governance/autonomy-policy-registry.json'
+import featureRegistry from '../../../governance/feature-registry.json'
 
 type TabKey = 'home' | 'constitution' | 'incidents' | 'autonomy' | 'decisions' | 'audit' | 'dependencies' | 'journey' | 'release'
 const TABS: { key: TabKey; label: string; icon: any }[] = [
@@ -76,7 +77,7 @@ function Section({ title, children, className = '' }: { title: string; children:
   )
 }
 
-export default function GovernanceControlCenter() {
+export default function SystemGovernanceSection() {
   const [authorized, setAuthorized] = useState<boolean | null>(null)
   const [tab, setTab] = useState<TabKey>('home')
   const [overview, setOverview] = useState<GovernanceOverview | null>(null)
@@ -140,7 +141,7 @@ export default function GovernanceControlCenter() {
   const pendingDecisions = overview?.decisions?.pending ?? 0
 
   return (
-    <div className="min-h-screen bg-[var(--av-surface-2)]">
+    <div className="bg-[var(--av-surface-2)]">
       <header className="border-b border-[var(--av-border)] bg-[var(--av-surface)]">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -348,7 +349,7 @@ export default function GovernanceControlCenter() {
 
         {tab === 'decisions' && (
           <Section title="Human Decision Center (Level 4 authority)">
-            <DecisionsPanel onDecide={(id, d) => decideHumanDecision(id, d).then(() => load('view'))} />
+            <DecisionsPanel onDecide={(id, d, stepUp) => decideHumanDecision(id, d, undefined, stepUp).then(() => load('view'))} />
           </Section>
         )}
 
@@ -507,8 +508,11 @@ function AutonomyFeed({ rows }: { rows: AutonomyAction[] }) {
   )
 }
 
-function DecisionsPanel({ onDecide }: { onDecide: (id: string, d: 'approved' | 'rejected') => void }) {
+function DecisionsPanel({ onDecide }: {
+  onDecide: (id: string, d: 'approved' | 'rejected', stepUp: boolean) => void
+}) {
   const [rows, setRows] = useState<HumanDecision[]>([])
+  const [pendingGate, setPendingGate] = useState<{ id: string; decision: 'approved' | 'rejected' } | null>(null)
   useEffect(() => {
     ;(async () => {
       const feed = await getDecisionsFeed()
@@ -530,10 +534,27 @@ function DecisionsPanel({ onDecide }: { onDecide: (id: string, d: 'approved' | '
           <div className="text-xs text-[var(--av-text-muted)] mt-1">{d.reason}</div>
           {d.status === 'pending' && (
             <div className="mt-2 flex gap-2">
-              <button onClick={() => onDecide(d.id, 'approved')}
-                className="px-2 py-1 text-xs rounded-md bg-[var(--av-success-soft)] text-[var(--av-success)]">APPROVE</button>
-              <button onClick={() => onDecide(d.id, 'rejected')}
-                className="px-2 py-1 text-xs rounded-md bg-[var(--av-danger-soft)] text-[var(--av-danger)]">REJECT</button>
+              {pendingGate?.id === d.id ? (
+                <>
+                  {/* Step-up: a second confirm sends p_step_up = true. The server
+                      will reject the RPC unless it was sent explicitly. */}
+                  <button onClick={() => { onDecide(d.id, pendingGate.decision, true); setPendingGate(null) }}
+                    className="px-2 py-1 text-xs rounded-md bg-[var(--av-warning)] text-white">
+                    Confirm {pendingGate.decision === 'approved' ? 'APPROVAL' : 'REJECTION'}
+                  </button>
+                  <button onClick={() => setPendingGate(null)}
+                    className="px-2 py-1 text-xs rounded-md bg-[var(--av-surface-2)] text-[var(--av-text-muted)]">
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button onClick={() => setPendingGate({ id: d.id, decision: 'approved' })}
+                    className="px-2 py-1 text-xs rounded-md bg-[var(--av-success-soft)] text-[var(--av-success)]">APPROVE</button>
+                  <button onClick={() => setPendingGate({ id: d.id, decision: 'rejected' })}
+                    className="px-2 py-1 text-xs rounded-md bg-[var(--av-danger-soft)] text-[var(--av-danger)]">REJECT</button>
+                </>
+              )}
             </div>
           )}
         </div>

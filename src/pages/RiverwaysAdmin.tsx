@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   ShieldCheck, Activity, AlertTriangle, RefreshCw, Search, Radio, Users,
   Building2, Bot, CreditCard, ShieldAlert, Wrench, BarChart3, HeartPulse,
+  Sliders,
 } from 'lucide-react'
 import { getRiverwaysAdminOverview, isRiverwaysAdmin, type RiverwaysAdminOverview } from '../lib/riverwaysAdmin'
 import { globalSearch, type GlobalSearchResult } from '../lib/riverwaysActivity'
@@ -11,8 +13,10 @@ import {
 } from '../components/riverways/ActivityPanels'
 import RiverwaysAdminAccounts from './RiverwaysAdminAccounts'
 import PaymentInvestigationPanel from '../components/riverways/PaymentInvestigationPanel'
+import SystemGovernanceSection from '../components/riverways/SystemGovernanceSection'
 
-type TabKey = 'activity' | 'accounts' | 'users' | 'orgs' | 'ai' | 'billing' | 'payments' | 'security' | 'errors' | 'healing' | 'analytics'
+type TabKey = 'activity' | 'accounts' | 'users' | 'orgs' | 'ai' | 'billing' | 'payments' | 'security' | 'errors' | 'healing' | 'analytics' | 'governance'
+type Section = 'operations' | 'governance'
 
 const TABS: Array<{ key: TabKey; label: string; icon: typeof Activity }> = [
   { key: 'activity', label: 'Live Activity', icon: Radio },
@@ -26,6 +30,7 @@ const TABS: Array<{ key: TabKey; label: string; icon: typeof Activity }> = [
   { key: 'errors', label: 'Errors', icon: AlertTriangle },
   { key: 'healing', label: 'Self-Healing', icon: Wrench },
   { key: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { key: 'governance', label: 'System Governance', icon: Sliders },
 ]
 
 function GlobalSearchBox() {
@@ -80,6 +85,9 @@ function GlobalSearchBox() {
 }
 
 export default function RiverwaysAdmin() {
+  const [params, setParams] = useSearchParams()
+  const section = (params.get('section') as Section) || 'operations'
+  const setSection = (s: Section) => setParams(prev => { prev.set('section', s); return prev }, { replace: true })
   const [authorized, setAuthorized] = useState<boolean | null>(null)
   const [overview, setOverview] = useState<RiverwaysAdminOverview | null>(null)
   const [error, setError] = useState('')
@@ -113,48 +121,69 @@ export default function RiverwaysAdmin() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Riverways Platform</p>
-            <h1 className="mt-1 text-2xl font-semibold">Activity & Operations Center</h1>
+            <h1 className="mt-1 text-2xl font-semibold">Admin Control Plane</h1>
           </div>
-          <div className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${healthy ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300'}`}>
-            <HeartPulse size={15} />
-            {d ? `Platform ${healthy ? 'healthy' : `${d.healthy}/${d.total} healthy`}` : 'Platform status loading'}
+          <div className="flex items-center gap-3">
+            {/* Section selector */}
+            <div className="flex rounded-full border border-white/10 p-0.5 text-sm">
+              {(['operations','governance'] as Section[]).map(s => (
+                <button
+                  key={s}
+                  onClick={() => { setSection(s); if (s === 'governance') setTab('governance'); if (s === 'operations') setTab('activity') }}
+                  className={`px-3 py-1 rounded-full capitalize ${section === s ? 'bg-white text-slate-950 font-medium' : 'text-slate-400'}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <div className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm ${healthy ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300'}`}>
+              <HeartPulse size={15} />
+              {d ? `Platform ${healthy ? 'healthy' : `${d.healthy}/${d.total} healthy`}` : 'Platform status loading'}
+            </div>
           </div>
         </div>
         <div className="mx-auto mt-4 max-w-7xl"><GlobalSearchBox /></div>
       </header>
 
-      <nav className="border-b border-white/10 px-6">
-        <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">
-          {TABS.map(({ key, label, icon: Icon }) => (
-            <button key={key} onClick={() => setTab(key)}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm ${tab === key ? 'bg-white text-slate-950 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}>
-              <Icon size={15} /> {label}
-            </button>
-          ))}
-        </div>
-      </nav>
+      {section === 'operations' && (
+        <nav className="border-b border-white/10 px-6">
+          <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">
+            {TABS.map(({ key, label, icon: Icon }) => (
+              <button key={key} onClick={() => setTab(key)}
+                className={`flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm ${tab === key ? 'bg-white text-slate-950 font-medium' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`}>
+                <Icon size={15} /> {label}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        {tab === 'activity' && <ActivityPanel />}
-        {tab === 'accounts' && <RiverwaysAdminAccounts />}
-        {tab === 'users' && <UsersPanel />}
-        {tab === 'orgs' && <OrgsPanel />}
-        {tab === 'ai' && <AiPanel />}
-        {tab === 'billing' && <BillingPanel />}
-        {tab === 'payments' && <PaymentInvestigationPanel />}
-        {tab === 'security' && <SecurityPanel />}
-        {tab === 'errors' && <ErrorsPanel />}
-        {tab === 'healing' && <HealingPanel />}
-        {tab === 'analytics' && <AnalyticsPanel />}
+      <main className={`mx-auto ${section === 'governance' ? 'max-w-none px-6 py-8' : 'max-w-7xl px-6 py-8'}`}>
+        {section === 'governance' && <SystemGovernanceSection />}
+        {section === 'operations' && (
+          <div>
+            {tab === 'activity' && <ActivityPanel />}
+            {tab === 'accounts' && <RiverwaysAdminAccounts />}
+            {tab === 'users' && <UsersPanel />}
+            {tab === 'orgs' && <OrgsPanel />}
+            {tab === 'ai' && <AiPanel />}
+            {tab === 'billing' && <BillingPanel />}
+            {tab === 'payments' && <PaymentInvestigationPanel />}
+            {tab === 'security' && <SecurityPanel />}
+            {tab === 'errors' && <ErrorsPanel />}
+            {tab === 'healing' && <HealingPanel />}
+            {tab === 'analytics' && <AnalyticsPanel />}
 
-        <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="text-lg font-medium">Privacy boundary</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            This console shows <em className="text-slate-300">who did what, when, where, which feature, and whether the system is healthy</em>.
-            Passwords, auth tokens, API keys, payment credentials, private secrets, and private conversation contents are never stored in the
-            activity stream — the server strips credential-like keys before any event is recorded.
-          </p>
-        </section>
+            <section className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+              <h2 className="text-lg font-medium">Privacy boundary</h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                This console shows <em className="text-slate-300">who did what, when, where, which feature, and whether the system is healthy</em>.
+                Passwords, auth tokens, API keys, payment credentials, private secrets, and private conversation contents are never stored in the
+                activity stream — the server strips credential-like keys before any event is recorded.
+              </p>
+            </section>
+          </div>
+        )}
       </main>
     </div>
   )
