@@ -35,6 +35,7 @@ import constitutionRegistry from '../../../governance/constitution-registry.json
 import enforcementRegistry from '../../../governance/enforcement-registry.json'
 import autonomyRegistry from '../../../governance/autonomy-policy-registry.json'
 import featureRegistry from '../../../governance/feature-registry.json'
+import GovernanceAssistantPanel from './GovernanceAssistantPanel'
 
 type TabKey = 'home' | 'constitution' | 'incidents' | 'autonomy' | 'decisions' | 'audit' | 'dependencies' | 'journey' | 'release'
 const TABS: { key: TabKey; label: string; icon: any }[] = [
@@ -64,11 +65,11 @@ const STATUS_STYLE: Record<string, string> = {
   ESCALATED: 'bg-[var(--av-danger-soft)] text-[var(--av-danger)]',
 }
 
-function Badge({ text, style }: { text: string; style: string }) {
+export function Badge({ text, style }: { text: string; style: string }) {
   return <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${style}`}>{text}</span>
 }
 
-function Section({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) {
+export function Section({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={`rounded-2xl border border-[var(--av-border)] bg-[var(--av-surface)] p-4 ${className}`}>
       <h3 className="text-sm font-semibold text-[var(--av-text)] mb-3">{title}</h3>
@@ -219,20 +220,25 @@ export default function SystemGovernanceSection() {
           </div>
         )}
         {tab === 'home' && (
-          <div className="grid md:grid-cols-2 gap-4">
-            <Section title="Latest incidents (P0–P2 first)">
-              <IncidentRows
-                rows={incidents.slice(0, 8)}
-                onTransition={(id, to) => transitionIncident(id, to).then(() => load('view')) }
-              />
-            </Section>
-            <Section title="Governance self-health">
-              <SelfHealthPanel health={selfHealth} />
-              <p className="mt-3 text-xs text-[var(--av-text-muted)]">
-                If monitoring stops or audit ingestion fails, the engine reports DEGRADED — never healthy (NO FALSE GREEN).
-              </p>
-            </Section>
-          </div>
+          <>
+            <div className="grid md:grid-cols-2 gap-4">
+              <Section title="Latest incidents (P0–P2 first)">
+                <IncidentRows
+                  rows={incidents.slice(0, 8)}
+                  onTransition={(id, to) => transitionIncident(id, to).then(() => load('view')) }
+                />
+              </Section>
+              <Section title="Governance self-health">
+                <SelfHealthPanel health={selfHealth} />
+                <p className="mt-3 text-xs text-[var(--av-text-muted)]">
+                  If monitoring stops or audit ingestion fails, the engine reports DEGRADED — never healthy (NO FALSE GREEN).
+                </p>
+              </Section>
+            </div>
+            <div className="mt-4">
+              <GovernanceAssistantPanel />
+            </div>
+          </>
         )}
 
         {tab === 'constitution' && (
