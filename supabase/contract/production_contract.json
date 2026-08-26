@@ -2,7 +2,7 @@
   "counts": {
     "tables": 468,
     "views": 6,
-    "functions": 504,
+    "functions": 506,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -5586,6 +5586,17 @@
     },
     {
       "kind": "function",
+      "name": "ensure_business_organization",
+      "defined_in": "20260826190000_auth_data_contract_self_healing.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "ensure_meeting_analytics_contract",
       "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
       "repairable": false,
@@ -7715,7 +7726,8 @@
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid"
+        "p_business_id uuid",
+        ""
       ]
     },
     {
@@ -7793,6 +7805,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_business_id uuid, p_alias text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "resolve_current_user_context",
+      "defined_in": "20260826190000_auth_data_contract_self_healing.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        ""
       ]
     },
     {
@@ -9912,6 +9935,9 @@
     "ensure_business_approval_config": [
       ""
     ],
+    "ensure_business_organization": [
+      ""
+    ],
     "ensure_meeting_analytics_contract": [
       ""
     ],
@@ -10500,7 +10526,8 @@
       ""
     ],
     "refresh_business_metrics": [
-      "p_business_id uuid"
+      "p_business_id uuid",
+      ""
     ],
     "register_for_event": [
       "p_event_id uuid, p_email text, p_full_name text, p_phone text, p_company text, p_custom_answers jsonb"
@@ -10522,6 +10549,9 @@
     ],
     "resolve_canonical": [
       "p_business_id uuid, p_alias text"
+    ],
+    "resolve_current_user_context": [
+      ""
     ],
     "resolve_feature_flag": [
       "p_key text, p_business_id uuid, p_is_beta boolean"
@@ -11351,6 +11381,7 @@
       "request_plan_payment",
       "request_time_off",
       "reset_auth_rate_limit",
+      "resolve_current_user_context",
       "resolve_feature_flag",
       "resolve_platform_error",
       "respond_to_quote",
