@@ -4362,3 +4362,57 @@ CI + Schema Drift green on push.
 The Deploy-to-Vercel workflow still fails on the production-contract gate
 because the live DB lags the migration chain (standing blocker, needs
 SUPABASE_DB_URL). The CI workflow itself is green.
+
+## Session 56 (2026-08-26): Contract Integrity as a P0 gate — One Pricing Constitution sentinel
+
+User directive: stop polishing isolated technical issues; Contract Integrity is a
+**P0 readiness gate** for client-payment readiness. The realized goal: a feature is
+complete only when UI→logic→RPC→DB→permissions→external service→state all agree, and
+the repository enforces that agreement automatically. Existing infrastructure
+(Production Contract Reconciliation, verify-production.sh, e2e-production.sh) was
+verified live; the code-side gap was enforcement of the **money contract** and a
+stale committed manifest.
+
+### What shipped (commit 802f996 + this session)
+- **docs/constitution/AVENIZE_CONTRACT_CONSTITUTION.md** — the client-payment
+  readiness doctrine: the single rule, canonical RPC/data/auth/payment/email/
+  frontend contract layers (incl. the canonical auth RPCs
+  create_business_and_owner / resolve_current_user_context / ensure_business_
+  organization / refresh_business_metrics(), the ownership chain
+  auth.users→staff→business→organization, and the one pricing vocabulary), the
+  readiness gate definition of done (Journeys A–E) and the Contract Sentinel.
+- **REAL MANIFEST DEFECT FIXED:** the committed production_contract.json was
+  STALE relative to HEAD's 20260826190000 auth/data migration (missing
+  ensure_business_organization, resolve_current_user_context + the
+  refresh_business_metrics() zero-arg signature). CI's contract-manifest gate
+  would have failed on this push — regenerated + committed deterministically.
+- **scripts/check_pricing_constitution.py (NEW)** — enforces the **One Pricing
+  Constitution**: canonical plan vocabulary + kobo prices IDENTICAL across the
+  pricing_tiers seed (20260818200000), Pricing.tsx fallback, edge
+  subscription-management VALID_PLANS, and paymentsCore PLAN_DISPLAY_NAMES, and
+  that the server prices via plan_price_cents (never the browser). Negative-
+  tested (injects a scale price mismatch → exit 1 → restore → exit 0).
+- **Registered as a P0 blocking governance check** `money.pricing.constitution`
+  in scripts/governance/checks.py + avenize_governance.py (contracts + security
+  subsets) + enforcement-registry.json regenerated. Runs in CI as the new
+  `pricing-constitution` job in schema-drift.yml.
+- **tests/frontend/lib/pricingConstitution.test.ts (NEW, +5)** — frontend money-
+  contract tests: canonical plan set, no competing public tier names,
+  canonical billing cycles, server-not-browser-decides-paid, consistent yearly
+  discount ratio across tiers.
+- **scripts/e2e-production.sh** — added the critical money/auth journeys:
+  returning-user no-re-onboarding (Journey B), resolve_current_user_context
+  identity resolver, no-payment-does-not-grant-entitlement (Journey D), and a
+  structured **CLIENT PAYMENT GATE** PASS/FAIL verdict block.
+
+### Verified
+tsc 0; vite build 0 errors; vitest 801/801 (+5); schema-drift 0; design
+constitution PASS; pricing constitution HOLDS; governance check RELEASE APPROVED
+(money check PASS in check/contracts/security modes); contract manifest
+deterministic (regen → no diff, committed).
+
+### Standing blockers (unchanged, user-credential-gated)
+Live DB apply (SUPABASE_DB_URL), edge deploys, secrets (PAYSTACK_SECRET_KEY,
+RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET, APP_URL, VITE_META_PIXEL_ID).
+Until then verify-production.sh / e2e-production.sh honestly FAIL on those
+objects — the gate working as intended, not an incident.

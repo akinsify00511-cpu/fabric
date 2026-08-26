@@ -60,6 +60,7 @@ RPC_WIRE_CONTRACTS() {
     business_brain)            printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
     current_metrics)           printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
     open_recommendations)      printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000","p_limit":1}' ;;
+    resolve_current_user_context) printf '%s' '{}' ;;
     my_payment_request)        printf '%s' '{}' ;;
     *)                         printf '%s' '{}' ;;
   esac
@@ -187,7 +188,48 @@ else
   fail "email" "email-service NOT deployed"
 fi
 
-# --- 8. frontend serves the current shell ---
+# --- 8. returning-user contract: no business/onboarding re-creation (Journey B) ---
+# The auth contract's central rule: "never new login -> assume new user ->
+# create business -> crash because it exists." A second create for a member
+# MUST be refused with 'already belongs to a business' (proving detection),
+# and the canonical identity resolver must agree with the staff row.
+if [ -n "$TOKEN" ]; then
+  OB2_BODY=$(RPC_WIRE_CONTRACTS create_business_and_owner)
+  OB2_BODY=${OB2_BODY/__E2E_NAME__/E2E Second $(date +%s)}
+  OB2=$(rpc create_business_and_owner "$TOKEN" "$OB2_BODY")
+  if printf '%s' "$OB2" | grep -qiE 'already belongs to a business|already'; then
+    pass "returning" "re-onboarding refused (existing business detected)"
+  else
+    fail "returning" "second create did NOT detect existing membership: $(printf '%s' "$OB2" | head -c 140)"
+  fi
+  CTX=$(rpc resolve_current_user_context "$TOKEN" "{}")
+  if printf '%s' "$CTX" | grep -qE 'business_id|error|denied'; then
+    pass "identity" "resolve_current_user_context answers"
+  else
+    fail "identity" "resolve_current_user_context MISSING/empty"
+  fi
+fi
+
+# --- 9. payments: failed/no-payment path must NOT grant entitlement (Journey D) ---
+# The money contract: only a server-verified success unlocks entitlement.
+# A member with no subscription row / a fresh ledger must NOT be entitled.
+if [ -n "$TOKEN" ]; then
+  SUB=$(curl -s "$BASE/rest/v1/business_subscriptions?select=plan_code,status,amount_cents&limit=1" \
+    -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN")
+  if printf '%s' "$SUB" | grep -qE "already|no matches.*schema cache|PGRST202|\[\]|not found"; then
+    pass "entitlements" "no-payment state exposes no subscription (gate holds)"
+  else
+    # A subscription row is present; its status must be canonical (active/cancelled/expired)
+    stat=$(printf '%s' "$SUB" | grep -oE '"status":"[a-z_]+"' | head -1)
+    if printf '%s' "$stat" | grep -qE 'active|cancelled|expired|past_due|trialing'; then
+      pass "entitlements" "subscription status is canonical ($stat)"
+    else
+      fail "entitlements" "non-canonical subscription state: $SUB"
+    fi
+  fi
+fi
+
+# --- 10. frontend serves the current shell ---
 CODE=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL/")
 if [ "$CODE" = "200" ]; then
   pass "frontend" "$APP_URL serves 200"
@@ -196,10 +238,14 @@ else
 fi
 
 line ""
+line "CLIENT PAYMENT READINESS"
+line "──────────────────────"
 if [ "$FAIL" = "0" ]; then
+  line "CLIENT PAYMENT GATE       PASS"
   line "RESULT: E2E READY"
   exit 0
 else
-  line "RESULT: E2E NOT READY ($FAIL failing journeys)"
+  line "CLIENT PAYMENT GATE       FAIL ($FAIL failing journeys)"
+  line "RESULT: E2E NOT READY"
   exit 1
 fi

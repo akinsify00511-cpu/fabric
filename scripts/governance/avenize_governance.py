@@ -32,8 +32,9 @@ MODE_SUBSETS = {
     "contracts": {
         "supabase.contract.deterministic", "supabase.contract.frontend",
         "edge.functions", "supabase.manifests", "platform.observability",
+        "money.pricing.constitution",
     },
-    "security": {"security.secrets", "supabase.drift"},
+    "security": {"security.secrets", "supabase.drift", "money.pricing.constitution"},
     "e2e": {"units.pass", "types.clean"},
     "meta": {"autonomy.registry", "features.registry", "const.registry.governing", "const.hierarchy"},
     "reconcile": None,  # regen manifest + enforcement registry, then verify

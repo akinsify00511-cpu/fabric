@@ -15,6 +15,7 @@ on:
       - 'scripts/governance/**'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
+      - 'scripts/check_pricing_constitution.py'
   push:
     branches: [main]
     paths:
@@ -29,6 +30,7 @@ on:
       - 'scripts/governance/**'
       - 'scripts/check_design_constitution.py'
       - 'scripts/design_constitution_baseline.json'
+      - 'scripts/check_pricing_constitution.py'
 
 jobs:
   schema-drift:
@@ -57,6 +59,18 @@ jobs:
             echo "::error::Contract artifacts are stale. Run: python3 scripts/generate_contract_manifest.py and commit the result."
             exit 1
           fi
+
+  # One Pricing Constitution (money contract): the canonical plan vocabulary
+  # and kobo prices must be IDENTICAL across the pricing_tiers seed, the
+  # frontend fallback tiers, the edge VALID_PLANS, and paymentsCore display
+  # names, and the server must price via plan_price_cents (never the browser).
+  pricing-constitution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify the One Pricing Constitution
+        run: python3 scripts/check_pricing_constitution.py
 
   # Phase A6: the Avenize Design Constitution gate. Fails when hardcoded-hex
   # or anti-slop-class drift grows beyond the recorded baseline (new screens

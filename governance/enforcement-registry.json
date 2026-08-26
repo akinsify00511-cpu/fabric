@@ -62,6 +62,16 @@
       "verification": "avenize_governance.py:features.registry"
     },
     {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "money",
+      "requirement": "One Pricing Constitution: canonical plans + kobo prices identical everywhere",
+      "rule_id": "money.pricing.constitution",
+      "severity": "P0",
+      "validator": "scripts/governance/checks.py::check_pricing_constitution",
+      "verification": "avenize_governance.py:money.pricing.constitution"
+    },
+    {
       "blocking": false,
       "escalation": "incident",
       "layer": "observability",

@@ -152,6 +152,24 @@ def check_schema_drift() -> CheckResult:
     return CheckResult("PASS")
 
 
+def check_pricing_constitution() -> CheckResult:
+    """One Pricing Constitution (money contract, P0).
+
+    The canonical plan vocabulary and kobo prices must be IDENTICAL across the
+    pricing_tiers seed, the frontend fallback tiers, the edge VALID_PLANS, and
+    paymentsCore display names, and the server must price via plan_price_cents
+    (the browser never prices). A mismatch means a customer is quoted one price
+    and charged another — a blocking release failure.
+    """
+    script = ROOT / "scripts/check_pricing_constitution.py"
+    if not script.exists():
+        return CheckResult("UNKNOWN", "P0", True, {"missing": "check_pricing_constitution.py"})
+    code, out = _run([sys.executable, str(script)])
+    if code != 0:
+        return CheckResult("FAIL", "P0", True, {"pricing_mismatch": out[-600:]})
+    return CheckResult("PASS")
+
+
 def check_design_constitution() -> CheckResult:
     code, out = _run([sys.executable, str(ROOT / "scripts/check_design_constitution.py")])
     if code != 0:
@@ -376,6 +394,13 @@ CHECKS = {
         "blocking": True,
         "fn": check_schema_drift,
         "summary": "Zero frontend↔schema drift",
+    },
+    "money.pricing.constitution": {
+        "layer": "money",
+        "severity": "P0",
+        "blocking": True,
+        "fn": check_pricing_constitution,
+        "summary": "One Pricing Constitution: canonical plans + kobo prices identical everywhere",
     },
     "supabase.manifests": {
         "layer": "supabase",
