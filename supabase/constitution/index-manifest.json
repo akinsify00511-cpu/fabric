@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 529
+    "indexes": 530
   },
   "indexes": [
     {
@@ -471,6 +471,11 @@
     {
       "defined_in": "998_create_all_missing_tables.sql",
       "index": "idx_channel_members_channel",
+      "table": "channel_members"
+    },
+    {
+      "defined_in": "20260825200000_onboarding_chain_repair.sql",
+      "index": "idx_channel_members_staff",
       "table": "channel_members"
     },
     {

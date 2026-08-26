@@ -174,7 +174,7 @@
       "trigger": "ensure_business_approval_config"
     },
     {
-      "defined_in": "005_chat.sql",
+      "defined_in": "20260825200000_onboarding_chain_repair.sql",
       "table": "businesses",
       "trigger": "on_business_created"
     },
