@@ -163,3 +163,41 @@ test account for the authenticated steps:
 ```bash
 E2E_EMAIL=... E2E_PASSWORD=... bash scripts/e2e-production.sh
 ```
+
+## Latest live probe — 2026-08-27 (authoritative frontier)
+
+Re-probed live (publishable key, apikey-only) before any further apply. The
+live DB is PARTIALLY migrated / hand-managed — NOT a clean application of the
+repo chain. Exact findings:
+
+| Signal | Live result | Verdict |
+|---|---|---|
+| Auth `/auth/v1/health` | 200 | PASS |
+| `plan_price_cents('starter','monthly')` | returns `1500000` | EXISTS + correct |
+| `request_plan_payment(...)` | rejects non-member ("Not a member of any business") | EXISTS; membership gate working |
+| `resolve_current_user_context` | 42501 (anon denied) | EXISTS (auth-gated) |
+| `get_current_staff` | **42501 to anon** even after some grants | **BLOCKER: LIVE NEEDS `20260825180000_live_gaps_repair.sql` (grant EXECUTE to anon/authenticated). Until applied, every RLS table read fails 42501.** |
+| `queue_email` (22170000) | **ABSENT** | Email subsystem `20260822170000` NOT applied |
+| `transactional_email_templates`, `email_events` | ABSENT | same |
+| `budgets`, `user_goals`, `user_pinned_items`, `user_ai_memory`, `cost_centers`, `workflows`, `activity_timeline`, `approval_actions` | ABSENT | later-chain tables pending |
+| `governance_overview` (25160000) | EXISTS | live ≥ `20260825160000` |
+| Edge functions deployed | only `subscription-management`, `paystack-webhook`, `paystack-verify` | 9 of 12 MISSING (all email + ask-avenize + parse-intent + capture-process + api-gateway + webauthn + execute-automation + platform-health-check + dispatch-webhooks) |
+
+Overall production contract gate (CI `verify-production.sh`, HEAD 65f2c06):
+**Database/RPC FAIL — ~218 frontend-referenced objects missing / 0 drift**;
+**Payments PASS** (3 payment edge fns deployed, money RPCs present);
+**Email FAIL** (queue_email + email-service + resend-webhook missing);
+**Auth PASS**; **Frontend PASS**.
+
+### Interpretation for Steps 1–5
+- The full 214-file chain applies CLEAN to fresh postgres:15 (verified
+  locally 2026-08-27: 214/214 OK); the migration path itself is sound.
+- Live is stuck around `20260825160000`–`20260826190000` (partial): Step 1
+  (`apply_migrations_live.sh`) will reconcile the rest. Live DB apply +
+  Step 4 edge deploys + Step 5 gates are the ONLY remaining path to PRODUCTION
+  READY. All are credential-gated (`SUPABASE_DB_URL`, `SUPABASE_ACCESS_TOKEN`,
+  plus secrets PAYSTACK_SECRET_KEY/RESEND_API_KEY/EMAIL_FROM/
+  RESEND_WEBHOOK_SECRET/APP_URL).
+- Note: `resolve_current_user_context` existing on live while earlier objects
+  are absent confirms the live DB was applied out-of-order / selectively —
+  do NOT assume presence of any object; trust the apply + the gates.
