@@ -25,18 +25,41 @@ create trigger trg_business_organization_contract
 before insert or update of organization_id on public.businesses
 for each row execute function public.ensure_business_organization();
 
-create or replace function public.resolve_current_user_context()
-returns table(business_id uuid, staff_id uuid, role text)
+-- The canonical resolver contract (user_id, staff_id, business_id, role, active,
+-- onboarding_required) is established by 20260826180000. 1900 previously re-declared
+-- a shrunk 3-column shape with CREATE OR REPLACE, which (a) fails to apply on a fresh
+-- chain ("cannot change return type of existing function") and (b) dropped the
+-- `active`/`user_id` columns consumers read. Drop-then-create keeps the canonical
+-- 6-column contract intact and the chain applying.
+drop function if exists public.resolve_current_user_context();
+
+create function public.resolve_current_user_context()
+returns table (
+  user_id uuid,
+  staff_id uuid,
+  business_id uuid,
+  role text,
+  active boolean,
+  onboarding_required boolean
+)
 language sql
 stable
 security definer
 set search_path = public, pg_temp
 as $$
-  select s.business_id, s.id, s.role
+  select
+    auth.uid() as user_id,
+    s.id as staff_id,
+    s.business_id,
+    s.role,
+    coalesce(s.active, true) as active,
+    false as onboarding_required
   from public.staff s
   where s.user_id = auth.uid()
-    and coalesce(s.is_active, s.active, true) = true
-  order by s.created_at asc
+  order by
+    case when coalesce(s.active, true) then 0 else 1 end,
+    s.created_at asc nulls last,
+    s.id asc
   limit 1;
 $$;
 revoke execute on function public.resolve_current_user_context() from public, anon;
