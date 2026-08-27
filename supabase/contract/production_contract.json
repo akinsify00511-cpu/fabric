@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 468,
+    "tables": 471,
     "views": 6,
-    "functions": 506,
+    "functions": 508,
     "buckets": 8,
     "edge_functions": 12
   },
@@ -3537,11 +3537,27 @@
     },
     {
       "kind": "table",
+      "name": "user_ai_memory",
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": true
+    },
+    {
+      "kind": "table",
       "name": "user_engagement",
       "defined_in": "037_analytics_events_system.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "user_goals",
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -3565,6 +3581,14 @@
       "defined_in": "012_custom_branding.sql",
       "repairable": false,
       "security_sensitive": true,
+      "frontend_referenced": true
+    },
+    {
+      "kind": "table",
+      "name": "user_pinned_items",
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "repairable": true,
+      "security_sensitive": false,
       "frontend_referenced": true
     },
     {
@@ -7066,11 +7090,33 @@
     },
     {
       "kind": "function",
+      "name": "my_context",
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "my_payment_request",
       "defined_in": "20260822125000_manual_payment_flow.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "my_workspace_arrangement",
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
       "signatures": [
         ""
       ]
@@ -10341,7 +10387,13 @@
     "monthly_review": [
       "p_business_id uuid, p_period_start date, p_period_end date"
     ],
+    "my_context": [
+      ""
+    ],
     "my_payment_request": [
+      ""
+    ],
+    "my_workspace_arrangement": [
       ""
     ],
     "next_best_action": [
@@ -11207,8 +11259,11 @@
       "usage_events",
       "user_achievements",
       "user_activity_daily",
+      "user_ai_memory",
+      "user_goals",
       "user_learning",
       "user_mfa",
+      "user_pinned_items",
       "user_workspace_selections",
       "user_xp",
       "vat_records",
@@ -11347,6 +11402,8 @@
       "market_intelligence",
       "meeting_analytics",
       "monthly_review",
+      "my_context",
+      "my_workspace_arrangement",
       "next_best_action",
       "objective_cascade_tree",
       "objective_gap_analysis",

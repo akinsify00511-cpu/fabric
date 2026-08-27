@@ -59,6 +59,7 @@ import {
   type LeaveBalanceData, type ProjectDeliveryData, type WorkloadData,
 } from '../components/BusinessHomeCards'
 import { Sparkles, ArrowRight, ListTodo, CheckCircle2, Loader2 } from 'lucide-react'
+import PersonalWorkspaceStrip from '../components/PersonalWorkspaceStrip'
 
 interface ActionItem { id: string; title: string; to: string; tone: 'red' | 'amber' | 'blue'; detail?: string }
 
@@ -228,6 +229,9 @@ export default function BusinessHome() {
             </div>
           </div>
         </header>
+
+        {/* ── Personal workspace (My Avenize: pins + goals) ───────── */}
+        <PersonalWorkspaceStrip />
 
         {loading ? (
           <HomeSkeleton />

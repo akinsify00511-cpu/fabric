@@ -118,7 +118,40 @@ PRODUCT CONSTITUTION (this file)
 4. The production smoke gate (`scripts/verify-production.sh`) is the definition of a
    successful deploy: a Vercel build alone is never "production".
 
-## Article IX — Amendments
+## Article IX — Personalization Constitution
+
+1. **Every authenticated human user receives an experience derived from their verified
+   identity, business membership, role, permissions, responsibilities, business context,
+   entitlements, preferences, and relevant activity.** No user is shown a generic
+   experience when sufficient verified context exists to provide a more relevant one.
+2. **The canonical context contract is ONE object.** All consumers — navigation, home
+   surface, notifications, quick actions, recommendations, assistance — derive from the
+   authoritative `my_context()` object (server-assembled; see docs/domains/PERSONAL_EXPERIENCE.md).
+   No screen re-invents identity/membership/role/who-am-I ad hoc.
+3. **Personalization may change presentation, prioritization, recommendations, workspace
+   configuration, and assistance, but must NEVER:**
+   - grant any permission the user does not already hold, or bypass RLS (Article IV);
+   - alter subscription entitlements or the plan gate (SECURITY DEFINER is never a
+     personalization lever);
+   - expose any information outside the user's authorized scope — including cross-tenant,
+     other-business, walled (legal/disciplinary/payroll/board), or other-person's data.
+4. **A returning user is never re-onboarded.** The identity resolver
+   (`resolve_current_user_context()`) is the sole authority over member vs onboarding
+   classification; membership wins over any transient fetch/RLS artifact.
+5. **Responsibilities scope attention.** "What matters to this person" is derived from
+   their role, department/team, reporting lines, position, and held scopes — never from
+   unfettered cross-business aggregation. Personal support (AI memory) assembles only
+   facts within the user's own authorized scope; it is never surveillance, and every
+   memory entry is labelled with its source (SYSTEM CAPTURED / AI INFERRED / USER ENTERED /
+   USER CONFIRMED).
+6. **Personal goals re-use governed metrics when possible** so progress is a real number
+   or an honest insufficient-data note (Article V) — never an invented figure.
+7. **The Personalization Constitution is applied ON the existing architecture by
+   composition** (Article III) — existing canonical objects (staff, roles, assignments,
+   entitlements, preferences, events) are consumed, never duplicated into parallel
+   `user_*` tables.
+
+## Article X — Amendments
 
 1. This constitution changes only by explicit, documented decision. Amendments are
    committed with rationale in the commit message and recorded in AGENTS.md.
