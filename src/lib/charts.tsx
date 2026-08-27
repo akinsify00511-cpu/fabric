@@ -633,11 +633,3 @@ function renderProgressRing(canvasId: string, progress: number, size: number, st
   ctx.stroke()
 }
 
-export default {
-  BarChart,
-  LineChart,
-  PieChart,
-  DonutChart,
-  Sparkline,
-  ProgressRing,
-}
