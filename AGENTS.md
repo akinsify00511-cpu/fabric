@@ -4416,3 +4416,50 @@ Live DB apply (SUPABASE_DB_URL), edge deploys, secrets (PAYSTACK_SECRET_KEY,
 RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET, APP_URL, VITE_META_PIXEL_ID).
 Until then verify-production.sh / e2e-production.sh honestly FAIL on those
 objects — the gate working as intended, not an incident.
+
+## Session 56b (2026-08-26): Contract Sentinel goes permanent + live money/auth baseline
+
+User: "do whatever you need to do without the db url." Executed the credential-free
+half of the readiness plan — made the sentinel permanent and captured the honest
+LIVE baseline (no DB creds used; scripts self-calibrate the publishable key).
+
+### LIVE baseline (honest, current — self-calibrated from avenize.riverwayse.com)
+- verify-production.sh: **Auth PASS, Frontend PASS, Payments PASS** (subscription-
+  management + paystack-webhook + paystack-verify **deployed**);
+  **Database/RPC FAIL** 240 ok / 213 missing (live DB lags the migration chain);
+  **Email FAIL** (email-service + resend-webhook not deployed). Big net progress
+  vs the historical 129 ok / 305 missing baseline — the auth/data reconciliation
+  has materially landed on live.
+- e2e-production.sh: **CLIENT PAYMENT GATE FAIL** (signup journey needs email
+  confirmation, email-service missing) but the critical RPCs + payment rails all
+  PASS on live — create_business_and_owner, business_brain, current_metrics,
+  open_recommendations, my_payment_request all answered.
+
+### What shipped (commit c83a0a3)
+- **.github/workflows/contract-sentinel.yml (NEW)** — the permanent Contract
+  Sentinel: nightly (00:30 UTC) + workflow_dispatch, runs verify-production.sh +
+  e2e-production.sh against LIVE with NO secrets (self-calibrates host+key from
+  the deployed bundle; RLS is the boundary). Fails the workflow honestly on
+  contract breakage, uploads the verification_report.json artifact, and has a
+  `verdict` job that prints CONTRACT SENTINEL GREEN/RED. Overridable app via
+  repo variables APP_URL/APP_URL_DEFAULT. This is the "BLOCK RELEASE on contract
+  failure" ideal made machine-checked on a schedule.
+- **tests/frontend/lib/paymentsCore.test.ts +3** — client money-boundary tests:
+  canonical status set is exactly the DB ledger states (no browser
+  confirmed/paid/settled shortcut), success reachable only server-side
+  (pending/processing→success), fresh checkout starts pending (never entitled
+  before settlement). Locks the money contract in the unit suite.
+- Verified paymentsCore already enforces amount-sufficiency, HMAC, idempotency,
+  and sanitizeAttribution ("browser is untrusted") — the browser client only
+  ASKS paystack-verify; it never decides paid.
+
+### Verified
+tsc 0; vitest 804/804 (+3); vite build 0 errors; schema-drift 0; design PASS;
+pricing constitution HOLDS; governance RELEASE APPROVED (money check PASS);
+contract manifest deterministic (regen → no diff). Pushed to origin/main.
+
+### Standing blockers (unchanged — user-credential-gated)
+Live DB apply (SUPABASE_DB_URL) → clears Database/RPC; edge deploys for
+email-service + resend-webhook (EMAIL_FROM key) → clears Email; a real vetted
+signup email for the E2E signup journey. Until then the sentinel honestly FAILs
+— that is the gate working, and now it is on a nightly schedule.
