@@ -7314,7 +7314,6 @@
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid, p_period_start date, p_period_end date",
         "p_business_id uuid"
       ]
     },
@@ -7359,7 +7358,6 @@
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_business_id uuid, p_period_start date, p_period_end date",
         "p_business_id uuid"
       ]
     },
@@ -10410,7 +10408,6 @@
       ""
     ],
     "pricing_opportunities": [
-      "p_business_id uuid, p_period_start date, p_period_end date",
       "p_business_id uuid"
     ],
     "process_bottleneck_intelligence": [
@@ -10423,7 +10420,6 @@
       "p_business_id uuid, p_segment text, p_period_start date, p_period_end date"
     ],
     "profitability_leakage": [
-      "p_business_id uuid, p_period_start date, p_period_end date",
       "p_business_id uuid"
     ],
     "propagate_impact": [
