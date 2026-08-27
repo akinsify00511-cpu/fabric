@@ -8,10 +8,8 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import {
-  Plus, Search, Filter, Download, Receipt, CheckCircle2,
-  Clock, AlertCircle, CreditCard, Building2, Smartphone,
-  Banknote, FileText, X, ChevronDown, DollarSign, TrendingUp,
-  Calendar, ArrowUpRight, ArrowDownRight, Wallet, ReceiptText
+  Plus, Search, CreditCard, Building2, Smartphone,
+  Banknote, FileText, X, Calendar, ArrowUpRight, ArrowDownRight, Wallet, ReceiptText
 } from 'lucide-react'
 
 type PaymentMethod = 'bank_transfer' | 'cash' | 'mobile_money' | 'pos' | 'cheque'
@@ -35,15 +33,6 @@ interface Payment {
   created_at: string
   staff_id: string
   business_id: string
-}
-
-interface BankAccount {
-  id: string
-  bank_name: PaymentBank
-  account_number: string
-  account_name: string
-  is_primary: boolean
-  balance: number
 }
 
 const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNode; color: string }> = {
@@ -92,10 +81,8 @@ export default function Payments() {
   const { showToast } = useToast()
   
   const [payments, setPayments] = useState<Payment[]>([])
-  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
-  const [typeFilter, setTypeFilter] = useState<PaymentType | 'all'>('all')
   const [methodFilter, setMethodFilter] = useState<PaymentMethod | 'all'>('all')
   const [showNewPayment, setShowNewPayment] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null)

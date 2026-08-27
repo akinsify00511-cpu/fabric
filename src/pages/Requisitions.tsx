@@ -4,8 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
   Plus, FileText, Clock, CheckCircle2, XCircle, AlertTriangle,
-  ArrowUpRight, ArrowDownRight, Send, RefreshCw, Eye, Edit3, Trash2,
-  ChevronRight, Filter, Search, DollarSign, Calendar, User
+  Send, RefreshCw, Eye, Search, DollarSign, Calendar
 } from 'lucide-react'
 
 type Requisition = {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Mail, Phone, HelpCircle, Book, Video, FileText, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Mail, Phone, HelpCircle, Book, Video, FileText } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 
 const FAQ_ITEMS = [

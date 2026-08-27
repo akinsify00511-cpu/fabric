@@ -3,9 +3,9 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  TrendingUp, Target, DollarSign, Users, Award, BarChart3,
-  Plus, Loader2, Trophy, ChevronRight, Calendar, CheckCircle2,
-  XCircle, Clock, Target as TargetIcon, Percent, Gift
+  TrendingUp, Target, Award, BarChart3,
+  Plus, Loader2, CheckCircle2,
+  XCircle, Target as TargetIcon, Gift
 } from 'lucide-react'
 
 type SalesTab = 'targets' | 'commissions' | 'forecasting' | 'winloss'
@@ -14,7 +14,7 @@ export default function SalesPerformance() {
   const { staff } = useAuth()
   const businessId = staff?.business_id
   const [activeTab, setActiveTab] = useState<SalesTab>('targets')
-  const { showToast } = useToast()
+  
 
   const tabs = [
     { id: 'targets', label: 'Targets', icon: TargetIcon },
@@ -59,7 +59,7 @@ export default function SalesPerformance() {
 }
 
 // Targets Tab
-function TargetsTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+function TargetsTab({ businessId, _staffId }: { businessId?: string; staffId?: string }) {
   const [targets, setTargets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -338,7 +338,7 @@ function CommissionsTab({ businessId, staffId }: { businessId?: string; staffId?
 // Forecasting Tab
 function ForecastingTab({ businessId }: { businessId?: string }) {
   const [forecasts, setForecasts] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
 
   useEffect(() => {
     loadForecasts()

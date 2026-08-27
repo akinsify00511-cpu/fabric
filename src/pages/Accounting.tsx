@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Calculator, Plus, FileText, ArrowDownRight, ArrowUpRight, Wallet, CreditCard,
-  TrendingUp, Receipt, ChevronRight, X, Save, Trash2, DollarSign, Building2,
-  Percent, BarChart3, PieChart
+  Plus, FileText, Wallet, CreditCard,
+  TrendingUp, Receipt, X, Trash2, Building2,
+  BarChart3, PieChart
 } from 'lucide-react'
 
 type Account = {
@@ -28,25 +27,11 @@ type JournalEntry = {
   total: number
 }
 
-type JournalLine = {
-  id: string
-  account_id: string
-  account_name: string
-  debit: number
-  credit: number
-  description: string | null
-}
-
 type JournalLineInput = {
   account_id: string
   debit: string
   credit: string
   description: string
-}
-
-type BalanceSheetRow = {
-  label: string
-  amount: number
 }
 
 const ACCOUNT_TYPES = [
@@ -58,12 +43,12 @@ const ACCOUNT_TYPES = [
 ]
 
 export default function Accounting() {
-  const { staff } = useAuth()
+  
   const { showToast } = useToast()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [entries, setEntries] = useState<JournalEntry[]>([])
-  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [,setSelectedEntry] = useState<JournalEntry | null>(null)
+  const [,setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
   const [activeTab, setActiveTab] = useState<'chart' | 'journal' | 'reports'>('chart')
   const [reportType, setReportType] = useState<'balance' | 'income'>('balance')
@@ -99,12 +84,7 @@ export default function Accounting() {
     load()
   }, [])
 
-  const getAccountBalance = (accountId: string) => {
-    const account = accounts.find((a) => a.id === accountId)
-    if (!account) return 0
-    // Simplified: in real app, calculate from journal_lines
-    return account.opening_balance || 0
-  }
+  
 
   const createAccount = async () => {
     if (creating) return
@@ -128,7 +108,7 @@ export default function Accounting() {
       setNewOpening('0')
       setShowNewAccount(false)
       load()
-    } catch (err) {
+    } catch  {
       showToast('Failed to create account', 'error')
     } finally {
       setCreating(false)

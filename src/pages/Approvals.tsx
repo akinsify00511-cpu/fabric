@@ -4,12 +4,11 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import EmptyState from '../components/EmptyState'
 import { 
-  CheckCircle, XCircle, Clock, AlertTriangle, ChevronRight,
-  User, DollarSign, Calendar, ShoppingCart, FileText,
-  Filter, Search, Check, X, MessageSquare, ArrowUpRight
+  CheckCircle, Clock, DollarSign, Calendar, ShoppingCart, FileText,
+  Check, X
 } from 'lucide-react'
-import type { ApprovalRequest, ApprovalDecision } from '../lib/approvalWorkflow'
-import { APPROVAL_TYPE_LABELS, APPROVAL_STATUS_COLORS } from '../lib/approvalWorkflow'
+import type { ApprovalRequest } from '../lib/approvalWorkflow'
+import { APPROVAL_TYPE_LABELS } from '../lib/approvalWorkflow'
 
 export default function Approvals() {
   const { staff } = useAuth()
@@ -20,7 +19,7 @@ export default function Approvals() {
   const [selectedRequest, setSelectedRequest] = useState<ApprovalRequest | null>(null)
   const [actionComment, setActionComment] = useState('')
   const [processing, setProcessing] = useState(false)
-  const [filterStatus, setFilterStatus] = useState<'pending' | 'all'>('pending')
+  const [filterStatus] = useState<'pending' | 'all'>('pending')
   const [filterType, setFilterType] = useState<string>('all')
 
   useEffect(() => {

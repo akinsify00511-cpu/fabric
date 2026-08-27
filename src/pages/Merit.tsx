@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { ListSkeleton } from '../components/Skeleton'
-import { Award, Plus, Star, TrendingUp } from 'lucide-react'
+import { Award, Star, TrendingUp } from 'lucide-react'
 
 type MeritEntry = {
   id: string

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
-import { useToast } from '../components/Toast'
 import {
-  Truck, Package, MapPin, Phone, Clock, CheckCircle2, 
-  Plus, Loader2, ChevronRight, Navigation, AlertCircle
+  Truck, MapPin, Phone, Clock, Loader2
 } from 'lucide-react'
 
 export default function Logistics() {
@@ -12,7 +10,7 @@ export default function Logistics() {
   const businessId = staff?.business_id
   const [deliveries, setDeliveries] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const { showToast } = useToast()
+  
 
   useEffect(() => {
     loadDeliveries()

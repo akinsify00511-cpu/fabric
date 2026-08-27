@@ -10,9 +10,9 @@ import { useToast } from '../components/Toast'
 import DemandActionCentre from '../components/DemandActionCentre'
 import { fetchDemandFunnel, type DemandFunnel } from '../lib/demand'
 import { 
-  Search, Filter, UserPlus, Phone, Mail, Building2, 
+  Search, Phone, Mail, Building2, 
   ChevronDown, ChevronRight, CheckCircle2, XCircle, 
-  MoreHorizontal, ArrowRight, Users, TrendingUp, Clock,
+  ArrowRight, Users, TrendingUp, Clock,
   Upload, Download
 } from 'lucide-react'
 
@@ -206,7 +206,7 @@ export default function LeadsPage() {
       const rows = parseCsv(await file.text())
       if (!rows.length) throw new Error('The CSV file is empty')
       const validStatuses = new Set(['new', 'contacted', 'qualified', 'converted', 'lost'])
-      const payload = rows.map((row, index) => ({
+      const payload = rows.map((row, _index) => ({
         business_id: staff.business_id,
         full_name: row.full_name?.trim(),
         email: row.email?.trim(),

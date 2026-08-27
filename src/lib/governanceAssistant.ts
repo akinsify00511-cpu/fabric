@@ -8,15 +8,12 @@
 // always lists the rules that fired (explainability).
 
 import {
-  getGovernanceOverview,
   getIncidents,
   getAutonomyFeed,
   getDecisionsFeed,
   getSelfHealth,
   searchAudit,
   sortedIncidents,
-  INCIDENT_LIFECYCLE,
-  ACTORS,
 } from './governanceControl'
 import constitutionRegistry from '../../governance/constitution-registry.json'
 import enforcementRegistry from '../../governance/enforcement-registry.json'

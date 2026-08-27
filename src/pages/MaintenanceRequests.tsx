@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { 
-  Wrench, Plus, Search, Filter, AlertTriangle, Clock, 
-  CheckCircle, User, Building2, ChevronDown, Edit, Trash2,
-  X, Check, AlertCircle, Calendar
+  Wrench, Plus, Search, AlertTriangle, Clock, 
+  CheckCircle, User, Building2, Calendar
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -75,7 +74,6 @@ export default function MaintenanceRequests() {
   const [filterPriority, setFilterPriority] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [showModal, setShowModal] = useState(false)
-  const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null)
 
   const [formData, setFormData] = useState({
     property_id: '',

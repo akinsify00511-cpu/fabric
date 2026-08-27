@@ -10,9 +10,8 @@ import { useToast } from '../components/Toast'
 import { generateInvoicePDF } from '../lib/PDFGenerator'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import {
-  Plus, Search, Filter, DollarSign, TrendingUp, TrendingDown,
-  Receipt, FileText, Clock, CheckCircle2, AlertCircle, Download,
-  CreditCard, Building2, Smartphone, Banknote, Printer, X
+  Plus, Search, Receipt, FileText, CheckCircle2, Download,
+  CreditCard, Building2, Smartphone, Banknote, X
 } from 'lucide-react'
 
 type InvoiceStatus = 'draft' | 'sent' | 'partially_paid' | 'paid' | 'overdue' | 'cancelled'
@@ -86,7 +85,7 @@ const METHOD_LABELS: Record<PaymentMethod, { label: string; icon: React.ReactNod
 
 const VAT_RATE = 0.075 // 7.5%
 const WHT_RATE_RESIDENT = 0.05 // 5% for resident companies
-const WHT_RATE_NON_RESIDENT = 0.10 // 10% for non-resident
+ // 10% for non-resident
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-NG', {

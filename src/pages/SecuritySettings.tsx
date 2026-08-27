@@ -4,10 +4,9 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { useFeatureFlag, FEATURE_FLAG_KEYS } from '../lib/useFeatureFlag'
 import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
-import BetaTesterGate from '../components/BetaTesterGate'
-import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
+import { BetaBadge } from '../components/BetaTesterGate'
 import {
-  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Sparkles, Fingerprint
+  Shield, Smartphone, Key, Clock, CheckCircle2, Trash2, AlertTriangle, Clock4, Fingerprint
 } from 'lucide-react'
 import { TOTP, Secret } from 'otpauth'
 import { hashBackupCode } from '../lib/mfa'
@@ -60,7 +59,7 @@ export default function SecuritySettings() {
   const [showSetup2FA, setShowSetup2FA] = useState(false)
   const [setupStep, setSetupStep] = useState<'verify' | 'backup'>('verify')
   const [totpSecret, setTotpSecret] = useState('')
-  const [totpUrl, setTotpUrl] = useState('')
+  const [,setTotpUrl] = useState('')
   const [verifyCode, setVerifyCode] = useState('')
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState<'security' | 'audit'>('security')

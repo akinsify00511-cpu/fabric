@@ -7,10 +7,7 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Webhook, Plus, Settings, Trash2, Play, Pause, RefreshCw,
-  ChevronRight, CheckCircle2, XCircle, Clock, ExternalLink,
-  Copy, Eye, EyeOff, Zap, AlertTriangle, Activity, Filter,
-  Search, MoreVertical, RefreshCw as Reload
+  Webhook, Plus, Settings, Trash2, Play, Pause, ChevronRight, Copy, Eye, EyeOff, Zap, Search
 } from 'lucide-react'
 
 interface WebhookEndpoint {

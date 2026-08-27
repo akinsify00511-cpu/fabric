@@ -27,8 +27,7 @@ import {
   getGovernanceOverview, getSelfHealth, getIncidents, getAutonomyFeed,
   searchAudit, transitionIncident, createIncident, decideHumanDecision,
   getDecisionsFeed, sortedIncidents,
-  INCIDENT_LIFECYCLE, ACTORS, SEVERITY_ORDER,
-  type GovernanceOverview, type SelfHealth, type GovernanceIncident,
+  INCIDENT_LIFECYCLE, ACTORS, type GovernanceOverview, type SelfHealth, type GovernanceIncident,
   type AutonomyAction, type HumanDecision, type AuditEntry, type IncidentStatus,
 } from '../../lib/governanceControl'
 import constitutionRegistry from '../../../governance/constitution-registry.json'

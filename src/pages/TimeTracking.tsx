@@ -5,8 +5,7 @@ import { useToast } from '../components/Toast'
 import EntitlementGate from '../components/EntitlementGate'
 import {
   Clock, Play, Square, Plus, Calendar, ChevronLeft, ChevronRight,
-  CheckCircle2, Coffee, Plane, Heart, User, Trash2, Edit3,
-  Timer, TrendingUp, Target, AlertCircle, Send
+  CheckCircle2, Plane, Heart, User, TrendingUp, Target, Send
 } from 'lucide-react'
 
 type TimeEntry = {
@@ -41,7 +40,7 @@ const LEAVE_TYPES = [
 export default function TimeTracking() {
   const { staff } = useAuth()
   const { showToast } = useToast()
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
   const [activeEntry, setActiveEntry] = useState<TimeEntry | null>(null)
   const [entries, setEntries] = useState<TimeEntry[]>([])
   const [summaries, setSummaries] = useState<DailySummary[]>([])
@@ -168,7 +167,7 @@ export default function TimeTracking() {
 
   async function handleStart() {
     setSaving(true)
-    const { data, error } = await supabase.rpc('start_time_tracking', {
+    const { error } = await supabase.rpc('start_time_tracking', {
       p_description: 'Working...',
     })
     if (error) {
@@ -238,13 +237,6 @@ export default function TimeTracking() {
       setTimeOffForm({ leaveType: 'vacation', startDate: '', endDate: '', reason: '' })
     }
     setSaving(false)
-  }
-
-  async function deleteEntry(entry: TimeEntry) {
-    if (!confirm('Delete this time entry?')) return
-    await supabase.from('time_entries').delete().eq('id', entry.id)
-    showToast('Entry deleted', 'info')
-    loadData()
   }
 
   // Submit the current week's entries as a timesheet for manager approval.

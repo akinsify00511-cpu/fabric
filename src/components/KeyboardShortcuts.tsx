@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { X, Search, Home, MessageSquare, Bell, Settings, Keyboard } from 'lucide-react'
+import { X, Keyboard } from 'lucide-react'
 
 interface Shortcut {
   keys: string[]

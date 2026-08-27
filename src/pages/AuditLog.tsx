@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import {
   Shield, Clock, User, FileText, Plus, Edit2, Trash2,
-  Download, Filter, ChevronDown, ChevronUp, Search, RefreshCw,
-  ArrowUpDown, Eye, Settings, Activity, ArrowRight
+  Download, ChevronDown, ChevronUp, Search, RefreshCw,
+  Activity, ArrowRight
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
-import { useAuditLogs, type AuditLog } from '../lib/auditLogger'
+import { type AuditLog } from '../lib/auditLogger'
 import { supabase } from '../lib/supabase'
 
 // Visual Diff Component
@@ -185,7 +185,7 @@ export default function AuditLogPage() {
   }
 
   const entityTypes = [...new Set(logs.map(l => l.entity_type))]
-  const users = [...new Set(logs.filter(l => l.user_id).map(l => l.user_id))]
+  
 
   return (
     <div className="max-w-7xl mx-auto pb-20">

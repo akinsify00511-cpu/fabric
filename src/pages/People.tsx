@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Users, Search, Mail, Phone, Briefcase, UserCog, X, Check, Copy, Clock, Trash2, Upload } from 'lucide-react'
+import { Plus, Users, Search, Mail, UserCog, X, Check, Copy, Clock, Trash2, Upload } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth, MEMBER_KIND_CONFIG, memberKindLabel, type MemberKind } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
@@ -36,7 +36,7 @@ export default function People() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [functionalRoles, setFunctionalRoles] = useState<FunctionalRole[]>([])
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -127,7 +127,7 @@ export default function People() {
     )
   })
 
-  const departments = [...new Set(members.map(m => m.department).filter(Boolean))]
+  
   const isAdmin = currentStaff?.role === 'owner' || currentStaff?.role === 'admin'
 
   const sendInvite = async () => {
@@ -260,12 +260,7 @@ export default function People() {
     }
   }
 
-  const getRoleNames = (roleIds: string[] | undefined): string => {
-    if (!roleIds || roleIds.length === 0) return '-'
-    return roleIds
-      .map(id => functionalRoles.find(r => r.id === id)?.name || 'Unknown')
-      .join(', ')
-  }
+  
 
   const getRoleLabels = (roleIds: string[] | undefined) => {
     if (!roleIds || roleIds.length === 0) return []

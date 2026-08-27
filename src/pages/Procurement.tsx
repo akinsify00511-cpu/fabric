@@ -10,8 +10,8 @@ import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import { useToast } from '../components/Toast'
 import {
-  ShoppingCart, Plus, Loader2, ArrowRight, Send, Trophy,
-  X, FileText, Trash2, Package,
+  ShoppingCart, Plus, Loader2, ArrowRight, Trophy,
+  X, FileText, Package,
 } from 'lucide-react'
 
 type Stage = 'requests' | 'rfqs'
@@ -100,7 +100,7 @@ export default function Procurement() {
   )
 }
 
-function RequestList({ items, onCompare, onSendRfq, showToast }: any) {
+function RequestList({ items, onCompare }: any) {
   if (items.length === 0) return <Empty label="purchase requests" />
   return (
     <div className="space-y-2">
@@ -157,7 +157,7 @@ function RfqList({ rfqs, vendors, compareFor, onAction, showToast, bid, staffId 
   )
 }
 
-function RfqCard({ rfq, vendors, onAction, showToast, bid, staffId }: any) {
+function RfqCard({ rfq, vendors, onAction, showToast, _bid }: any) {
   const [awarding, setAwarding] = useState(false)
   async function award() {
     setAwarding(true)

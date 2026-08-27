@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { 
   Bug, Activity, Heart, AlertTriangle, Clock, TrendingUp, 
   Database, Zap, Wifi, Shield, RefreshCw, Trash2, Download,
-  ChevronDown, ChevronRight, X, CheckCircle, XCircle, AlertCircle
+  X, CheckCircle, XCircle, AlertCircle
 } from 'lucide-react'
 import { qcLogger, performanceMonitor, healthChecker, issueReporter } from '../lib/quality-control'
 

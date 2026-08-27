@@ -8,8 +8,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
-  UserCircle, Loader2, Target, Compass, Repeat, AlertTriangle,
-  TrendingUp, BookOpen
+  UserCircle, Loader2, Target, Compass, Repeat, BookOpen
 } from 'lucide-react'
 
 type Tab = 'profiles' | 'needs' | 'journeys' | 'discovery'

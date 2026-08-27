@@ -425,7 +425,7 @@ export default function GovernanceSection() {
 // ---------------------------------------------------------------------------
 
 function BoardTab({
-  members, meetings, committees, isAdmin, onAdd, onEdit, onSchedule,
+  members, meetings, _committees, isAdmin, onAdd, onEdit, onSchedule,
 }: {
   members: GovernanceMember[]
   meetings: NonNullable<GovernanceOverview['upcoming_meetings']>

@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Mail, Plus, Send, Clock, Users, MousePointer, Eye, TrendingUp,
-  BarChart3, X, Settings, Copy, Trash2, Calendar, ChevronRight, Play
+  Mail, Plus, Send, Users, MousePointer, Eye, TrendingUp,
+  X, Trash2, Play
 } from 'lucide-react'
 
 type Campaign = {
@@ -32,12 +32,6 @@ type Contact = {
   status: string
 }
 
-type Template = {
-  id: string
-  name: string
-  subject: string
-}
-
 const STATUS_CONFIG = {
   draft: { label: 'Draft', color: 'bg-[var(--av-surface)] text-[var(--av-text)]' },
   scheduled: { label: 'Scheduled', color: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]' },
@@ -56,7 +50,6 @@ export default function Campaigns() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'campaigns' | 'contacts' | 'templates'>('campaigns')
   const [showBuilder, setShowBuilder] = useState(false)
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null)
 
   // Builder state
   const [name, setName] = useState('')
@@ -64,7 +57,6 @@ export default function Campaigns() {
   const [preheader, setPreheader] = useState('')
   const [content, setContent] = useState('')
   const [selectedContacts, setSelectedContacts] = useState<string[]>([])
-  const [tagFilter, setTagFilter] = useState('')
 
   const load = async () => {
     setLoading(true)

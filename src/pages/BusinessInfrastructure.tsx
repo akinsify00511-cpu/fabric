@@ -639,7 +639,7 @@ function RecurringTab({ businessId }: { businessId?: string }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId) return
-    const { error } = await supabase.from('recurring_expenses').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
+    await supabase.from('recurring_expenses').insert({ ...form, business_id: businessId, amount: parseFloat(form.amount) })
     setForm({ name: '', category: 'rent', amount: '', frequency: 'monthly', vendor: '' })
     setShowForm(false)
     loadExpenses()
@@ -732,7 +732,7 @@ function TimeTrackingTab({ businessId, staffId }: { businessId?: string; staffId
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!businessId || !staffId) return
-    const { error } = await supabase.from('time_entries').insert({ ...form, business_id: businessId, staff_id: staffId, hours: parseFloat(form.hours) })
+    await supabase.from('time_entries').insert({ ...form, business_id: businessId, staff_id: staffId, hours: parseFloat(form.hours) })
     setForm({ date: new Date().toISOString().split('T')[0], hours: '', description: '', billable: true })
     setShowForm(false)
     loadEntries()

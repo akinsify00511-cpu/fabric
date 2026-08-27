@@ -34,7 +34,7 @@ export interface Contact {
 export async function convertLeadToContact(
   lead: Lead,
   businessId: string,
-  createdBy: string
+  _createdBy: string
 ): Promise<{ success: boolean; contact?: Contact; error?: string }> {
   try {
     // Create contact from lead

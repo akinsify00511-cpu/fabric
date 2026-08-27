@@ -6,7 +6,7 @@ import { joinMeeting, leaveMeeting, endMeeting as endMeetingRpc, generateMeeting
 import MeetingChatPanel from '../components/meeting/MeetingChatPanel'
 import { saveMeetingDecision, saveMeetingAction, promoteMeetingActionToTask, fetchMeetingDecisions, fetchMeetingActions, type MeetingAction, type MeetingDecision } from '../lib/businessOS'
 import { useToast } from '../components/Toast'
-import { ArrowLeft, Camera, CameraOff, Mic, MicOff, MonitorUp, PhoneOff, Paperclip, Send, Square, MessageSquare, Users, Loader2 } from 'lucide-react'
+import { Camera, CameraOff, Mic, MicOff, MonitorUp, PhoneOff, Paperclip, Send, Square, MessageSquare, Loader2 } from 'lucide-react'
 
 type Participant = { user_id:string; name:string; staff_id?:string }
 type Capture = { id:string; capture_type:string; title:string|null; body:string|null; storage_path:string|null; mime_type:string|null; size_bytes:number|null; created_at:string }
@@ -16,7 +16,7 @@ type Signal = { to:string; from:string; kind:'offer'|'answer'|'candidate'; descr
 const formatDuration=(seconds:number)=>{const m=Math.floor(seconds/60);const s=seconds%60;return `${m}:${s.toString().padStart(2,'0')}`}
 
 export default function MeetingCapture(){
- const [params]=useSearchParams(); const meetingId=params.get('meeting'); const {staff,session}=useAuth(); const {showToast}=useToast()
+ const [params]=useSearchParams(); const meetingId=params.get('meeting'); const {staff,}=useAuth(); const {showToast}=useToast()
  const [meeting,setMeeting]=useState<any|null>(null); const [captures,setCaptures]=useState<Capture[]>([]); const [participants,setParticipants]=useState<Participant[]>([]); const [loading,setLoading]=useState(true)
  const [sideTab,setSideTab]=useState<'chat'|'capture'>('capture'); const [chatUnread,setChatUnread]=useState(0)
  const [micOn,setMicOn]=useState(true); const [cameraOn,setCameraOn]=useState(true); const [sharing,setSharing]=useState(false); const [recording,setRecording]=useState(false); const [recordingSeconds,setRecordingSeconds]=useState(0)

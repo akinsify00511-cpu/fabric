@@ -5,7 +5,6 @@ import {
   updateGoalStatus,
   upsertPinnedItem,
   type MyContext,
-  type PinnedItem,
   type PinEntityType,
 } from './personalExperience'
 import { useAuth } from './AuthContext'

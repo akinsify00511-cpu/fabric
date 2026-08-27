@@ -9,9 +9,9 @@ import {
   fetchLeadChain, fetchDemandActivity, canOrder,
   REQUEST_TYPES, REQUEST_STATUS, QUOTE_STATUS, ORDER_STATUS,
   type DemandChain, type DemandActivityItem, type RequestType, type LeadRequest,
-  type DemandQuote, type SalesOrder, type Urgency,
+  type DemandQuote, type Urgency,
 } from '../lib/demand'
-import { ClipboardList, FileText, PackageOpen, ChevronRight, Send, CalendarClock } from 'lucide-react'
+import { ClipboardList, FileText, PackageOpen, ChevronRight, CalendarClock } from 'lucide-react'
 
 interface Props {
   leadId: string
@@ -21,7 +21,7 @@ interface Props {
 
 type ActionKind = 'request' | 'quote' | 'order' | null
 
-export default function DemandActionCentre({ leadId, leadName, onToast }: Props) {
+export default function DemandActionCentre({ leadId, _leadName, onToast }: Props) {
   const [chain, setChain] = useState<DemandChain | null>(null)
   const [activity, setActivity] = useState<DemandActivityItem[]>([])
   const [kind, setKind] = useState<ActionKind>(null)

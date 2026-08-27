@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import {
-  Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, Clock,
-  MapPin, Users, X, Check, Trash2, Edit3
+  ChevronLeft, ChevronRight, Plus, Clock,
+  MapPin, X
 } from 'lucide-react'
 
 type Event = {
@@ -41,11 +41,10 @@ export default function Calendar() {
   const { staff } = useAuth()
   const { showToast } = useToast()
   const [events, setEvents] = useState<Event[]>([])
-  const [staffMembers, setStaffMembers] = useState<StaffMember[]>([])
-  const [loading, setLoading] = useState(true)
+  const [,setStaffMembers] = useState<StaffMember[]>([])
+  const [,setLoading] = useState(true)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
-  const [view, setView] = useState<'month' | 'week' | 'day'>('month')
   const [showEventModal, setShowEventModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
 
@@ -58,7 +57,7 @@ export default function Calendar() {
   const [endTime, setEndTime] = useState('10:00')
   const [allDay, setAllDay] = useState(false)
   const [location, setLocation] = useState('')
-  const [attendees, setAttendees] = useState<string[]>([])
+  const [,setAttendees] = useState<string[]>([])
 
   const loadEvents = async () => {
     setLoading(true)

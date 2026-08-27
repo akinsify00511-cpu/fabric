@@ -2,14 +2,11 @@ import { useState, useEffect } from 'react'
 import { 
   BarChart3, Users, Activity, TrendingUp, Clock, 
   AlertTriangle, Eye, MousePointer, Search, Zap,
-  Calendar, Filter, Download, RefreshCw, ChevronDown,
-  Database, Globe, MessageSquare, CreditCard, Settings,
-  CheckCircle, XCircle, Filter as FilterIcon, TrendingDown, PieChart as PieChartIcon
+  Download, RefreshCw, MessageSquare, CreditCard, PieChart as PieChartIcon
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { getAdminAnalytics, getRecentEvents } from '../lib/eventTracker'
-import { supabase } from '../lib/supabase'
-import { BarChart, LineChart, PieChart, DonutChart, Sparkline } from '../lib/charts'
+import { BarChart, LineChart, PieChart } from '../lib/charts'
 
 // Admin-only check
 function useIsAdmin() {
@@ -24,14 +21,6 @@ interface AnalyticsData {
   errorCount: number
   totalEvents: number
   eventsOverTime: { label: string; value: number }[]
-}
-
-interface RawAnalyticsData {
-  eventsByCategory?: any[]
-  userActivity?: any[]
-  topFeatures?: any[]
-  errorCount?: number
-  totalEvents?: number
 }
 
 export default function AdminAnalytics() {

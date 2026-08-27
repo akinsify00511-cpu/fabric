@@ -4,8 +4,7 @@ import { captureAttribution } from '../lib/attribution'
 import { trackPageView } from '../lib/metaPixel'
 import {
   ArrowRight, Check, Menu, X, Users, BarChart3, Briefcase, UserCheck,
-  Clock, ListTodo, Calendar, MessageSquare, Shield, ChevronDown, Globe,
-  Headphones, Brain, Network, HelpCircle, DollarSign, Eye, Heart,
+  Clock, ListTodo, Calendar, MessageSquare, Shield, ChevronDown, Headphones, Network, DollarSign, Heart,
   Building2, WalletCards, Target, Sparkles, Layers3,
 } from 'lucide-react'
 import SarahChat from '../components/SarahChat'

@@ -33,7 +33,7 @@ import { supabase } from '../lib/supabase'
 import { ClaimTag } from '../components/Evidence'
 import {
   Loader2, Lock, Activity, AlertTriangle, CheckCircle2, XCircle,
-  Server, Zap, ShieldAlert, Bell, RefreshCw, ExternalLink, Settings, Trash2, Plus,
+  Server, Zap, ShieldAlert, Bell, RefreshCw, Settings, Trash2, Plus,
   Search,
 } from 'lucide-react'
 

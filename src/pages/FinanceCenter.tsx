@@ -3,9 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Building2, DollarSign, CreditCard, FileText, Plus, Loader2,
-  TrendingUp, TrendingDown, ArrowRight, AlertCircle,
-  Receipt, Banknote, Send, Clock, CheckCircle2, X
+  Building2, CreditCard, FileText, Plus, Loader2,
+  TrendingUp, TrendingDown, ArrowRight, Receipt, Banknote, CheckCircle2
 } from 'lucide-react'
 
 type FinanceTab = 'overview' | 'banking' | 'vat' | 'wht' | 'debtors' | 'creditors'
@@ -14,7 +13,7 @@ export default function FinanceCenter() {
   const { staff } = useAuth()
   const businessId = staff?.business_id
   const [activeTab, setActiveTab] = useState<FinanceTab>('overview')
-  const { showToast } = useToast()
+  
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },

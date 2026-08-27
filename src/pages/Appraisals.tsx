@@ -7,9 +7,8 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Award, Users, Plus, Search, Filter, ChevronDown, ChevronUp,
-  Star, TrendingUp, Calendar, FileText, Edit2, Trash2,
-  Eye, MoreHorizontal, Send, CheckCircle2, Clock, ChevronRight
+  Award, Plus, Search, Star, TrendingUp, Calendar, FileText, Edit2, Trash2,
+  ChevronRight
 } from 'lucide-react'
 
 interface PerformanceReview {
@@ -41,7 +40,6 @@ export default function AppraisalsPage() {
   const { staff } = useAuth()
   const { showToast } = useToast()
 
-  const [activeTab, setActiveTab] = useState<'reviews' | 'overview'>('reviews')
   const [reviews, setReviews] = useState<PerformanceReview[]>([])
   const [allStaff, setAllStaff] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)

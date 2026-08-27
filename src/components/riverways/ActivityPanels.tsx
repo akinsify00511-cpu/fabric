@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import {
   fetchActivityFeed, fetchUserActivity, fetchOrgActivity, fetchAiActivity,

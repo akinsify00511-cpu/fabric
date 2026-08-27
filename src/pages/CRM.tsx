@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Plus, Search, Users, X, Trash2, Sparkles } from 'lucide-react'
+import { Plus, Search, Users, X, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useBusiness } from '../lib/BusinessContext'
 import { useToast } from '../components/Toast'
-import { canCreate, canDelete, canEdit } from '../lib/permissions'
+import { canCreate, canDelete } from '../lib/permissions'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import { Avatar } from '../components/ImageComponents'
 import CRMIntelligenceSurface from '../components/CRMIntelligenceSurface'
@@ -57,9 +57,9 @@ export default function CRM() {
   const role = staff?.active_role ?? staff?.role ?? 'staff'
   const canCreateDeal = canCreate(role, 'deals')
   const canDeleteDeal = canDelete(role, 'deals')
-  const canEditDeal = canEdit(role, 'deals')
+  
   const canCreateContact = canCreate(role, 'clients')
-  const canDeleteContact = canDelete(role, 'clients')
+  
   const isSalesIndividual = role === 'staff' || role === 'team_lead'
   const [mineOnly, setMineOnly] = useState(isSalesIndividual)
 

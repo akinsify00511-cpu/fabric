@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Edit, Trash2, Package, Truck, FileText, CheckCircle2, Clock, X, ChevronDown, ChevronRight } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, Package, Truck, FileText, CheckCircle2, X, ChevronDown, ChevronRight } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import Modal from '../components/Modal'

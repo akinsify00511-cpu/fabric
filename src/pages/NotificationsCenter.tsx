@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Bell, Check, CheckCheck, Trash2, Clock, FileText,
   DollarSign, Calendar, User, MessageSquare, AlertTriangle,
-  ChevronRight, Settings, Filter, RefreshCw, Eye
+  Settings, RefreshCw
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'

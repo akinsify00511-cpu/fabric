@@ -443,7 +443,7 @@ class HealthChecker {
 
   private async checkAuth(): Promise<boolean> {
     return this.measureHealthCheck(async () => {
-      const { data: { session } } = await supabase.auth.getSession()
+      await supabase.auth.getSession()
       return true // Auth is healthy even if no session
     })
   }

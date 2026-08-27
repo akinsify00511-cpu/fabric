@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Key, Plus, Trash2, Copy, Eye, EyeOff, Check, X, Zap, Webhook,
-  AlertTriangle, RefreshCw, CheckCircle2, Clock, ExternalLink
+  Key, Plus, Trash2, Copy, X, Zap, Webhook,
+  AlertTriangle, CheckCircle2, Clock
 } from 'lucide-react'
 
 type APIKey = {
@@ -64,7 +64,6 @@ export default function APISettings() {
   const [showNewWebhookModal, setShowNewWebhookModal] = useState(false)
   const [newKeyName, setNewKeyName] = useState('')
   const [newKey, setNewKey] = useState('')
-  const [showKey, setShowKey] = useState(false)
   const [saving, setSaving] = useState(false)
 
   // Webhook form
@@ -73,10 +72,7 @@ export default function APISettings() {
   const [webhookEvents, setWebhookEvents] = useState<string[]>([])
 
   // 🚨 Webhook execution warning
-  const webhookExecutionWarning = `
-    ⚠️ Webhook dispatch is not yet live. Currently, saving a webhook creates a record but 
-    events will not be delivered to your endpoint. This will be enabled via Edge Functions + pg_net.
-  `
+  
 
   const loadData = async () => {
     setLoading(true)

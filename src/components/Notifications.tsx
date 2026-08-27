@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Bell, Check, CheckCheck, X, Mail, Clock, CreditCard, Users, AlertCircle, Sparkles, MessageSquare } from 'lucide-react'
+import { Bell, Check, CheckCheck, Clock, CreditCard, Users, AlertCircle, Sparkles } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { Link } from 'react-router-dom'

@@ -199,7 +199,7 @@ export async function createApprovalRequest(
 export async function getPendingApprovals(
   businessId: string,
   userRole: string,
-  userId: string
+  _userId: string
 ): Promise<ApprovalRequest[]> {
   // Get rules where this user/role is an approver
   const { data: rules } = await supabase

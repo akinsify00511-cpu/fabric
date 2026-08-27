@@ -2,15 +2,14 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import {
   Home, Users2, FolderKanban, Wallet, Contact, Boxes, BarChart3, Settings as SettingsIcon,
-  LayoutGrid, User, Search, Share2, CheckSquare, Book, Headphones,
-  Calendar as CalendarIcon, Clock, FileText, CalendarDays, Activity, Network, Palette,
+  LayoutGrid, Search, Share2, CheckSquare, Book, Headphones,
+  Calendar as CalendarIcon, Clock, FileText, Activity, Network, Palette,
   Crown, MessageSquare as ChatIcon, Building2, Target, UserPlus, Briefcase, Award,
   Receipt, ScanLine, Building, HeadphonesIcon, FileText as FileTextIcon,
   Landmark,
-  Shield, Tag, UserRound, TrendingUp, Truck, ClipboardList, PackageOpen, Sparkles, FlaskConical, Brain,
-  ShieldCheck, ChevronDown, Plus, LogOut, Zap, Mail, Calculator, DollarSign, LineChart,
-  ShieldAlert,
-  Wrench, CreditCard, Bell, Megaphone, Users, Hash, LifeBuoy, Settings2,
+  Shield, Tag, TrendingUp, Truck, ClipboardList, PackageOpen, Sparkles, FlaskConical, Brain,
+  ShieldCheck, ChevronDown, LogOut, Calculator, DollarSign, ShieldAlert,
+  Wrench, CreditCard, Bell, Megaphone, LifeBuoy, Settings2,
   Scale, ShoppingCart, BookOpen, Globe, Stethoscope, GitCompare, Video,
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
@@ -20,7 +19,6 @@ import { useExperienceContext } from '../lib/useExperienceContext'
 import { useWorkspaceSelection } from '../lib/useWorkspaceSelection'
 import { useUsageTracking } from '../lib/useUsageTracking'
 import { useBusinessPulse } from '../lib/useBusinessPulse'
-import { useLocale } from '../lib/LocaleContext'
 import { useDbState } from '../lib/useDbState'
 import { AvenizeMark } from './AvenizeMark'
 import NotificationBell from './NotificationBell'
@@ -236,7 +234,7 @@ export default function Shell() {
   const { loading: roleSelLoading } = useWorkspaceSelection()
   useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
   const { events: pulseEvents, live: pulseLive } = useBusinessPulse(staff?.business_id)
-  const { t } = useLocale()
+  
   const dbState = useDbState()
   const location = useLocation()
   const navigate = useNavigate()

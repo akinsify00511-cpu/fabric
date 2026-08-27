@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  DollarSign, RefreshCw, TrendingUp, TrendingDown, 
-  ArrowRightLeft, Calculator, Calendar, Save, Trash2,
-  ChevronDown, AlertCircle
+  DollarSign, RefreshCw, TrendingUp, ArrowRightLeft, Calculator, Trash2,
+  ChevronDown
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -146,7 +145,7 @@ export default function CurrencyExchangePage() {
     setToCurrency(fromCurrency)
   }
 
-  const fromCurrencyData = CURRENCIES.find(c => c.code === fromCurrency)
+  
   const toCurrencyData = CURRENCIES.find(c => c.code === toCurrency)
 
   // Group rates by base currency

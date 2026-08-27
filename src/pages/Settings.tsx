@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
-import { Shield, Palette, Globe, Key, ChevronRight, User, Zap, Users, Plug, Share2, MessageSquare, CreditCard, KeyRound, LayoutGrid } from 'lucide-react'
+import { Shield, Palette, Globe, Key, ChevronRight, User, Zap, Users, CreditCard, KeyRound, LayoutGrid } from 'lucide-react'
 import { useLocale } from '../lib/LocaleContext'
 
 export default function Settings() {

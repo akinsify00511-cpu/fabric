@@ -135,7 +135,7 @@ type CurrentStaffIdentity = {
   role: string
 }
 
-async function resolveStaffIdentity(userId: string): Promise<CurrentStaffIdentity | null> {
+async function resolveStaffIdentity(_userId: string): Promise<CurrentStaffIdentity | null> {
   const { data, error } = await supabase.rpc('get_current_staff')
   if (error) {
     throw error

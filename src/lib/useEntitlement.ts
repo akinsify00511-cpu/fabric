@@ -3,7 +3,7 @@
  * Real plan gating with feature-level access control
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 

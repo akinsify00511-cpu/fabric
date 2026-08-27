@@ -7,9 +7,9 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Building2, Plus, Search, Filter, Grid, List, MapPin, Bed, Bath, Car,
-  MapPin as MapPinIcon, Eye, Edit2, Trash2, MoreHorizontal, X,
-  Home, DollarSign, Calendar, ChevronRight, Image, Upload, CheckCircle2
+  Building2, Plus, Search, Grid, List, Bed, Bath, Car,
+  MapPin as MapPinIcon, Eye, Edit2, Trash2, X,
+  Home, DollarSign, CheckCircle2
 } from 'lucide-react'
 
 interface Property {
@@ -68,7 +68,7 @@ export default function PropertiesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [listingFilter, setListingFilter] = useState<string>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [statusFilter] = useState<string>('all')
   const [showModal, setShowModal] = useState(false)
   const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)

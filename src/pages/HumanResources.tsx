@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
-import { Avatar } from '../components/ImageComponents'
 import {
   Users, Calendar, Clock, Award, FileText, Briefcase,
-  Plus, ChevronRight, Loader2, Check, X, AlertCircle,
-  UserPlus, TrendingUp, Star, Heart, MapPin, Phone, Mail,
-  Wallet, Download, GraduationCap, Gift
+  Plus, Loader2, Check, X, AlertCircle,
+  UserPlus, TrendingUp, Star, Heart, Wallet, Download, GraduationCap, Gift
 } from 'lucide-react'
 
 type HRTab = 'overview' | 'employees' | 'leave' | 'attendance' | 'payroll' | 'performance' | 'recruitment' | 'contracts' | 'benefits' | 'training'
@@ -16,7 +14,7 @@ export default function HumanResources() {
   const { staff } = useAuth()
   const businessId = staff?.business_id
   const [activeTab, setActiveTab] = useState<HRTab>('overview')
-  const { showToast } = useToast()
+  
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -189,7 +187,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
 }
 
 // Leave Tab
-function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+function LeaveTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
   const [requests, setRequests] = useState<any[]>([])
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -349,7 +347,7 @@ function LeaveTab({ businessId, staffId }: { businessId?: string; staffId?: stri
 }
 
 // Attendance Tab
-function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+function AttendanceTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
   const [records, setRecords] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [checkingIn, setCheckingIn] = useState(false)
@@ -361,7 +359,7 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
 
   async function loadRecords() {
     setLoading(true)
-    const today = new Date().toISOString().split('T')[0]
+    
     const { data } = await supabase
       .from('attendance_records')
       .select('*')
@@ -489,7 +487,7 @@ function AttendanceTab({ businessId, staffId }: { businessId?: string; staffId?:
 }
 
 // Performance Tab
-function PerformanceTab({ businessId }: { businessId?: string }) {
+function PerformanceTab({ _businessId }: { businessId?: string }) {
   const [reviews, setReviews] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -736,7 +734,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
 }
 
 // Contracts Tab
-function ContractsTab({ businessId }: { businessId?: string }) {
+function ContractsTab({ _businessId }: { businessId?: string }) {
   const [contracts, setContracts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -802,7 +800,7 @@ function ContractsTab({ businessId }: { businessId?: string }) {
 }
 
 // Employees Tab
-function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any }) {
+function EmployeesTab({ businessId, _staff }: { businessId?: string; staff?: any }) {
   const [employees, setEmployees] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -876,7 +874,7 @@ function EmployeesTab({ businessId, staff }: { businessId?: string; staff?: any 
 }
 
 // Payroll Tab
-function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+function PayrollTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
   const [payslips, setPayslips] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedPayslip, setSelectedPayslip] = useState<any>(null)
@@ -1048,9 +1046,9 @@ function PayrollTab({ businessId, staffId }: { businessId?: string; staffId?: st
 }
 
 // Benefits Tab
-function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: string }) {
+function BenefitsTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
   const [benefits, setBenefits] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
 
   const defaultBenefits = [
     { id: 'health', name: 'Health Insurance', provider: 'National Health Insurance', status: 'active', coverage: 'Family Coverage' },
@@ -1118,7 +1116,7 @@ function BenefitsTab({ businessId, staffId }: { businessId?: string; staffId?: s
 }
 
 // Training Tab
-function TrainingTab({ businessId }: { businessId?: string }) {
+function TrainingTab({ _businessId }: { businessId?: string }) {
   const [trainings, setTrainings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const { showToast } = useToast()

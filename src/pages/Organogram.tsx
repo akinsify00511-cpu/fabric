@@ -6,8 +6,8 @@ import { useToast } from '../components/Toast'
 import { fetchGovernanceOverview, type GovernanceOverview } from '../lib/businessOS'
 import {
   Network, Users, ChevronDown, ChevronRight, Mail, MessageSquare,
-  Phone, MoreVertical, Plus, Settings, RefreshCw, Search,
-  UserPlus, UserMinus, ArrowUpRight, Crown, Briefcase, Building2, PlusCircle,
+  MoreVertical, Plus, Settings, RefreshCw, Search,
+  UserPlus, ArrowUpRight, Crown, Briefcase, Building2, PlusCircle,
   Landmark, GitBranch,
 } from 'lucide-react'
 
@@ -125,9 +125,7 @@ export default function Organogram() {
     setExpandedNodes(newExpanded)
   }
 
-  const getDirectReports = (managerId: string) => {
-    return orgChart.filter((n) => n.manager_id === managerId)
-  }
+  
 
   const getRootNodes = () => {
     return orgChart.filter((n) => !n.manager_id || n.manager_id === '')
@@ -155,7 +153,7 @@ export default function Organogram() {
     return colors[Math.min(level, colors.length - 1)]
   }
 
-  const renderNode = (node: OrgNode, isLast: boolean = false) => {
+  const renderNode = (node: OrgNode, _isLast: boolean = false) => {
     const children = getChildren(node.staff_id)
     const isExpanded = expandedNodes.has(node.staff_id)
     const style = getNodeStyle(node.level)

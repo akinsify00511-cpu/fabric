@@ -37,7 +37,7 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useExperienceContext } from '../lib/useExperienceContext'
-import { getRoleHomeConfig, roleLabel, type CardKind } from '../lib/roleHomeConfig'
+import { getRoleHomeConfig, type CardKind } from '../lib/roleHomeConfig'
 import { tableGuard } from '../lib/schemaAvailability'
 import {
   deriveFunction, deriveSeniority, getFunctionHome, functionLabel, seniorityLabel,
@@ -52,13 +52,12 @@ import {
 import {
   GlassCard, StateCard, NextBestActionCard, RevenueCard, CashCard, ProfitCard,
   PulseCard, OperationsCard, PeopleCard, ValueLedgerCard, OpportunitiesCard,
-  RisksCard, DiagnosesCard, PipelineCard, CustomersCard, BigNumber,
-  CampaignPerformanceCard, LeadQualityCard, ReceivablesCard, AttendanceCard,
+  RisksCard, DiagnosesCard, PipelineCard, CustomersCard, CampaignPerformanceCard, LeadQualityCard, ReceivablesCard, AttendanceCard,
   LeaveBalanceCard, ProjectDeliveryCard, WorkloadCard,
   type CampaignData, type LeadQualityData, type ReceivablesData, type AttendanceData,
   type LeaveBalanceData, type ProjectDeliveryData, type WorkloadData,
 } from '../components/BusinessHomeCards'
-import { Sparkles, ArrowRight, ListTodo, CheckCircle2, Loader2 } from 'lucide-react'
+import { Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react'
 import PersonalWorkspaceStrip from '../components/PersonalWorkspaceStrip'
 
 interface ActionItem { id: string; title: string; to: string; tone: 'red' | 'amber' | 'blue'; detail?: string }

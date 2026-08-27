@@ -8,8 +8,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { 
-  Mail, Phone, MapPin, Building2, User, 
-  Target, CheckCircle, MessageCircle, RefreshCw
+  Mail, Phone, Building2, User, 
+  Target, CheckCircle, MessageCircle
 } from 'lucide-react'
 
 interface StaffProfile {
@@ -82,15 +82,7 @@ export default function StaffProfile() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'owner': return 'bg-[var(--av-warning-soft)] text-[var(--av-warning)]'
-      case 'admin': return 'bg-purple-100 text-purple-800'
-      case 'manager': return 'bg-[var(--av-primary-soft)] text-[var(--av-primary-hover)]'
-      case 'team_lead': return 'bg-emerald-100 text-emerald-800'
-      default: return 'bg-[var(--av-text-secondary)] text-white'
-    }
-  }
+  
 
   // Role history data
   const roleHistory: RoleHistory[] = profile ? [

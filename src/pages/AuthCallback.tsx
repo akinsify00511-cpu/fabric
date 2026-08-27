@@ -80,7 +80,7 @@ export default function AuthCallback() {
 
   const routeAfterCallback = async () => {
     const type = searchParams.get('type')
-    const token = searchParams.get('token')
+    
     const hadCode = !!searchParams.get('code')
 
     if (type === 'recovery') {

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Receipt, Upload, Loader2, CheckCircle2, XCircle, Eye,
+  Receipt, Upload, Loader2, CheckCircle2, Eye,
   AlertTriangle, FileText, Trash2,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -52,7 +52,6 @@ export default function Receipts() {
   const [draft, setDraft] = useState<ParsedReceipt | null>(null)
   const [draftReceiptId, setDraftReceiptId] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
-  const [viewUrl, setViewUrl] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const load = useCallback(async () => {

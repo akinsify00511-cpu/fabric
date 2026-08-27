@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Download, FileText, FileSpreadsheet, FileJson, File,
-  Clock, CheckCircle, XCircle, RefreshCw, Trash2,
-  Calendar, Filter, Plus, DownloadCloud, FileDown
+  Clock, CheckCircle, XCircle, RefreshCw, Plus, DownloadCloud
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { getUserExports, type ExportOptions } from '../lib/auditLogger'

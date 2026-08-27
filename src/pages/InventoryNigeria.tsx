@@ -11,9 +11,7 @@ import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 import EntitlementGate from '../components/EntitlementGate'
 import {
-  Package, Plus, Search, Filter, AlertTriangle, TrendingDown,
-  ArrowUpDown, ChevronDown, Edit2, Trash2, MapPin,
-  Factory, Warehouse, Truck, ShoppingCart, ArrowDown
+  Package, Plus, Search, AlertTriangle, Factory, Warehouse, Truck, ArrowDown
 } from 'lucide-react'
 
 type StockLocation = 'raw_materials' | 'finished_goods' | 'site_materials'

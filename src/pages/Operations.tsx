@@ -3,11 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Building2, FileText, GitBranch, AlertTriangle, CheckCircle2, Clock,
-  Plus, ChevronRight, Loader2, X, Send, Pin, PinOff, Filter,
-  Users, Briefcase, Shield, ScrollText, TrendingUp,
-  AlertCircle, Bell, BookOpen, Scale, Archive, Play, Pause,
-  Edit3, Trash2, Eye, MoreVertical, User, Zap, Calendar
+  Building2, FileText, GitBranch, AlertTriangle, CheckCircle2, Plus, Loader2, Pin, Users, Briefcase, Shield, ScrollText, TrendingUp,
+  AlertCircle, Bell, BookOpen, Scale, Archive, User, Calendar
 } from 'lucide-react'
 
 type OpsTab = 'overview' | 'announcements' | 'issues' | 'sops' | 'workflows' | 'compliance' | 'documents' | 'departments'
@@ -16,7 +13,7 @@ export default function Operations() {
   const { staff } = useAuth()
   const businessId = staff?.business_id
   const [activeTab, setActiveTab] = useState<OpsTab>('overview')
-  const { showToast } = useToast()
+  
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: TrendingUp },
@@ -69,7 +66,7 @@ export default function Operations() {
 }
 
 // Overview Tab
-function OverviewTab({ businessId, staff, onNavigate }: { businessId?: string; staff: any; onNavigate: (tab: OpsTab) => void }) {
+function OverviewTab({ businessId, _staff, onNavigate }: { businessId?: string; staff: any; onNavigate: (tab: OpsTab) => void }) {
   const [stats, setStats] = useState<any>({
     openIssues: 0,
     pendingCompliance: 0,

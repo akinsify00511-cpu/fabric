@@ -19,13 +19,13 @@ import {
   fetchProfitabilityLeakage, fetchPricingOpportunities, fetchGraphOverview,
   fetchProfitabilityBySegment, propagateImpact,
   type ProfitabilityLeakageResult, type PricingOpportunitiesResult, type GraphOverview,
-  type ProfitabilityBySegmentResult, type ProfitabilitySegment, type PropagateImpactResult,
+  type ProfitabilityBySegmentResult, type PropagateImpactResult,
 } from '../lib/businessOS'
 import {
   TrendingUp, DollarSign, Users, Activity, AlertTriangle, Target,
   ArrowRight, Loader2, Banknote, Receipt, Briefcase, ShieldAlert,
   CalendarClock, Gauge, Sparkles, Check, X, Lightbulb, HeartPulse, HelpCircle, ListTodo,
-  History, ChevronDown, Network, TrendingDown, Wallet, Tag, BarChart3, CheckCircle2,
+  History, ChevronDown, Network, Wallet, Tag, BarChart3, CheckCircle2,
 } from 'lucide-react'
 import { ClaimTag, ClaimNote, EvidencePanel } from '../components/Evidence'
 import { RepresentationEngine, type RepresentableData } from '../components/RepresentationEngine'
@@ -336,7 +336,7 @@ function deriveMetrics(d: any): Record<Lens, Metric[]> {
   const staffList = d?.staff || []
   const fc = d?.forecast
   const cap = d?.capacity
-  const proc = d?.process
+  
 
   const collected = txns.filter((t: any) => t.type === 'income' || t.type === 'credit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
   const spent = txns.filter((t: any) => t.type === 'expense' || t.type === 'debit').reduce((s: number, t: any) => s + Number(t.total || 0), 0)
