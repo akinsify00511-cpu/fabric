@@ -115,7 +115,7 @@ function MemoryTab({ bid }: { bid?: string }) {
 }
 
 // ---------- Authority Graph ----------
-function AuthorityTab({ bid, _staffId }: { bid?: string; staffId?: string }) {
+function AuthorityTab({ bid }: { bid?: string; staffId?: string }) {
   const [auth, setAuth] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 

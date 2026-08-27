@@ -351,7 +351,7 @@ export default function RecruitmentPage() {
             { label: 'Total Applications', value: stats.totalApplications, color: 'gray' },
             { label: 'New Applications', value: stats.newApplications, color: 'amber' },
             { label: 'Hired', value: stats.hired, color: 'green' },
-          ].map(({ label, value, _color }) => (
+          ].map(({ label, value }) => (
             <div key={label} className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
               <p className="text-2xl font-bold text-[var(--av-text)]">{value}</p>
               <p className="text-sm text-[var(--av-text-muted)]">{label}</p>

@@ -59,7 +59,7 @@ export default function SalesPerformance() {
 }
 
 // Targets Tab
-function TargetsTab({ businessId, _staffId }: { businessId?: string; staffId?: string }) {
+function TargetsTab({ businessId }: { businessId?: string; staffId?: string }) {
   const [targets, setTargets] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)

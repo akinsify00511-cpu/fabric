@@ -298,7 +298,6 @@ export default function GovernanceSection() {
         <BoardTab
           members={members}
           meetings={meetings}
-          committees={committees}
           isAdmin={isAdmin}
           onAdd={() => setMemberModal({ editing: null })}
           onEdit={(m) => setMemberModal({ editing: m })}
@@ -425,11 +424,10 @@ export default function GovernanceSection() {
 // ---------------------------------------------------------------------------
 
 function BoardTab({
-  members, meetings, _committees, isAdmin, onAdd, onEdit, onSchedule,
+  members, meetings, isAdmin, onAdd, onEdit, onSchedule,
 }: {
   members: GovernanceMember[]
   meetings: NonNullable<GovernanceOverview['upcoming_meetings']>
-  committees: NonNullable<GovernanceOverview['committees']>
   isAdmin: boolean
   onAdd: () => void
   onEdit: (m: GovernanceMember) => void

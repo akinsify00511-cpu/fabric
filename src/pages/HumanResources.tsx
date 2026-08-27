@@ -187,7 +187,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
 }
 
 // Leave Tab
-function LeaveTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
+function LeaveTab({ staffId }: { businessId?: string; staffId?: string }) {
   const [requests, setRequests] = useState<any[]>([])
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -347,7 +347,7 @@ function LeaveTab({ _businessId, staffId }: { businessId?: string; staffId?: str
 }
 
 // Attendance Tab
-function AttendanceTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
+function AttendanceTab({ staffId }: { businessId?: string; staffId?: string }) {
   const [records, setRecords] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [checkingIn, setCheckingIn] = useState(false)
@@ -487,7 +487,7 @@ function AttendanceTab({ _businessId, staffId }: { businessId?: string; staffId?
 }
 
 // Performance Tab
-function PerformanceTab({ _businessId }: { businessId?: string }) {
+function PerformanceTab(_props: { businessId?: string }) {
   const [reviews, setReviews] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -734,7 +734,7 @@ function RecruitmentTab({ businessId }: { businessId?: string }) {
 }
 
 // Contracts Tab
-function ContractsTab({ _businessId }: { businessId?: string }) {
+function ContractsTab(_props: { businessId?: string }) {
   const [contracts, setContracts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -800,7 +800,7 @@ function ContractsTab({ _businessId }: { businessId?: string }) {
 }
 
 // Employees Tab
-function EmployeesTab({ businessId, _staff }: { businessId?: string; staff?: any }) {
+function EmployeesTab({ businessId }: { businessId?: string; staff?: any }) {
   const [employees, setEmployees] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -874,7 +874,7 @@ function EmployeesTab({ businessId, _staff }: { businessId?: string; staff?: any
 }
 
 // Payroll Tab
-function PayrollTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
+function PayrollTab({ staffId }: { businessId?: string; staffId?: string }) {
   const [payslips, setPayslips] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedPayslip, setSelectedPayslip] = useState<any>(null)
@@ -1046,7 +1046,7 @@ function PayrollTab({ _businessId, staffId }: { businessId?: string; staffId?: s
 }
 
 // Benefits Tab
-function BenefitsTab({ _businessId, staffId }: { businessId?: string; staffId?: string }) {
+function BenefitsTab({ staffId }: { businessId?: string; staffId?: string }) {
   const [benefits, setBenefits] = useState<any[]>([])
   const [,setLoading] = useState(true)
 
@@ -1116,7 +1116,7 @@ function BenefitsTab({ _businessId, staffId }: { businessId?: string; staffId?: 
 }
 
 // Training Tab
-function TrainingTab({ _businessId }: { businessId?: string }) {
+function TrainingTab(_props: { businessId?: string }) {
   const [trainings, setTrainings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const { showToast } = useToast()

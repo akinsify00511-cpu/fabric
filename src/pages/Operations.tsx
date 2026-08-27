@@ -66,7 +66,7 @@ export default function Operations() {
 }
 
 // Overview Tab
-function OverviewTab({ businessId, _staff, onNavigate }: { businessId?: string; staff: any; onNavigate: (tab: OpsTab) => void }) {
+function OverviewTab({ businessId, onNavigate }: { businessId?: string; staff: any; onNavigate: (tab: OpsTab) => void }) {
   const [stats, setStats] = useState<any>({
     openIssues: 0,
     pendingCompliance: 0,

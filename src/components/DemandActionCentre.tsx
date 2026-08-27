@@ -21,7 +21,7 @@ interface Props {
 
 type ActionKind = 'request' | 'quote' | 'order' | null
 
-export default function DemandActionCentre({ leadId, _leadName, onToast }: Props) {
+export default function DemandActionCentre({ leadId, onToast }: Props) {
   const [chain, setChain] = useState<DemandChain | null>(null)
   const [activity, setActivity] = useState<DemandActivityItem[]>([])
   const [kind, setKind] = useState<ActionKind>(null)
