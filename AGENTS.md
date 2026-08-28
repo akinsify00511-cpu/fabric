@@ -4636,3 +4636,21 @@ import-safe candidates are react-email (typed templates, MIT) and umami
 (marketing analytics, MIT, optional, later). Everything else is ADAPT/STUDY
 reference material only. PHASE-0 (production closure) remains the sole
 P0 gate; no feature/dependency expansion should precede the green gate.
+### Tooling staged (2026-08-28, before credentials land)
+- `psql` 17.11 installed via apt (`postgresql-client`) — the apply script's
+  `psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f` path works. (Supabase's
+  managed Postgres is PG15-wire-compatible for the client.)
+- `supabase` CLI 2.116.0 installed globally (`sudo npm i -g supabase` —
+  /usr/local/lib/node_modules needs root). Verified: `functions deploy [name]`
+  accepts `<name...>` + `--project-ref` + `--no-verify-jwt` (matches
+  scripts/deploy_edge_functions.sh exactly), and `secrets set` exists.
+
+- The moment credentials land (SUPABASE_DB_URL, SUPABASE_ACCESS_TOKEN,
+  PAYSTACK_SECRET_KEY, RESEND_API_KEY, EMAIL_FROM, RESEND_WEBHOOK_SECRET,
+  E2E_EMAIL, E2E_PASSWORD), run in order WITHOUT further setup:
+  `apply_migrations_live.sh` → `deploy_edge_functions.sh` → `supabase secrets set`
+  → `verify-production.sh` → `e2e-production.sh` → real Paystack test transaction.
+- `docs/operations/CLIENT_PAYMENT_GATE.md` — the single deterministic launch
+  definition (18-row gate checklist, exact evidence per row, final verdict
+  only when ALL rows true against production). No enhancement (P1–P4) begins
+  until that gate is green.
