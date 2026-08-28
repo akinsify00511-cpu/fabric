@@ -44,7 +44,7 @@ export default function VendorPortal() {
       setForm({ name: '', email: '', contact_id: '', portal_type: 'vendor' })
       setShowForm(false)
       load()
-    } catch (e) { showToast('Could not create account', 'error') }
+    } catch  { showToast('Could not create account', 'error') }
   }
 
   if (loading) return <div className="p-10 flex justify-center"><Loader2 className="animate-spin text-[var(--av-primary)]" /></div>

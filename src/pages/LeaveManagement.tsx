@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  Calendar, Plus, Clock, CheckCircle, XCircle, AlertCircle,
-  ChevronRight, RefreshCw, Filter, CalendarDays,
-  ChevronDown, User, Trash2, Edit2, Eye
+  Calendar, Plus, Clock, CheckCircle, XCircle, RefreshCw, CalendarDays
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -58,7 +56,6 @@ export default function LeaveManagementPage() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [tab, setTab] = useState<'my' | 'team' | 'approvals'>('my')
-  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null)
 
   useEffect(() => {
     loadData()
@@ -364,7 +361,7 @@ export default function LeaveManagementPage() {
             <div className="divide-y divide-black/[0.06]">
               {pendingApprovals.map(pending => {
                 const req = pending.request
-                const status = statusColors.pending
+                
 
                 return (
                   <div key={pending.id} className="p-4">

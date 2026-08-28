@@ -1,14 +1,11 @@
 // ============================================
 // AUTH CALLBACK PAGE
-// Handles email confirmation for signup and invite acceptance
+// Handles OAuth, email confirmation, recovery and invite callbacks.
 // ============================================
-// Supabase's browser client handles the auth redirect/session exchange. This
-// page owns only post-confirmation routing and one-time onboarding side effects.
-//
-// IMPORTANT: email confirmation can happen on a different browser/device from
-// signup. Never make the confirmation flow depend exclusively on localStorage.
-// Signup metadata is persisted in auth.users and is therefore the durable
-// fallback for the business setup payload.
+// OAuth uses Supabase Authorization Code + PKCE. The browser client has
+// detectSessionInUrl disabled so this page owns the one-time code exchange.
+// Routing only begins after the exchange has completed and AuthContext has had
+// a chance to resolve the resulting session/membership.
 // ============================================
 
 import { useEffect, useRef, useState } from 'react'
@@ -24,27 +21,67 @@ export default function AuthCallback() {
   const [searchParams] = useSearchParams()
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string>('')
-  const handledRef = useRef(false)
+  const [callbackReady, setCallbackReady] = useState(false)
+  const exchangeStartedRef = useRef(false)
+  const routeStartedRef = useRef(false)
+
+  // Complete the PKCE exchange before AuthContext-driven routing runs.
+  useEffect(() => {
+    if (exchangeStartedRef.current) return
+    exchangeStartedRef.current = true
+
+    const completeCallback = async () => {
+      const errorParam = searchParams.get('error')
+      const errorDescription = searchParams.get('error_description')
+      const code = searchParams.get('code')
+      const flowId = searchParams.get('sb_flow_id')
+
+      if (errorParam) {
+        setError(errorDescription || errorParam)
+        return
+      }
+
+      if (code) {
+        setMessage('Completing secure sign in…')
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(
+          code,
+          flowId ? { flowId } : undefined,
+        )
+
+        if (exchangeError) {
+          setError(
+            exchangeError.message ||
+              'We could not complete sign in. Please return to Avenize and try again.'
+          )
+          return
+        }
+      }
+
+      // Make sure the session is persisted/readable before AuthContext routes.
+      const { error: sessionError } = await supabase.auth.getSession()
+      if (sessionError) {
+        setError(sessionError.message || 'We could not restore your sign-in session.')
+        return
+      }
+
+      setCallbackReady(true)
+    }
+
+    void completeCallback()
+  }, [searchParams])
 
   useEffect(() => {
-    if (handledRef.current) return
+    if (!callbackReady || routeStartedRef.current) return
     if (membership === 'loading') return
-    handledRef.current = true
+    routeStartedRef.current = true
     void routeAfterCallback()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [membership])
+  }, [callbackReady, membership])
 
   const routeAfterCallback = async () => {
-    const errorParam = searchParams.get('error')
-    const errorDescription = searchParams.get('error_description')
     const type = searchParams.get('type')
-    const token = searchParams.get('token')
+    
     const hadCode = !!searchParams.get('code')
-
-    if (errorParam) {
-      setError(errorDescription || errorParam)
-      return
-    }
 
     if (type === 'recovery') {
       if (session) navigate('/update-password', { replace: true })
@@ -161,8 +198,7 @@ export default function AuthCallback() {
           </div>
           <div><h2 className="text-xl font-semibold">Something went wrong</h2><p className="text-sm text-black/60 mt-2">{error}</p></div>
           <div className="flex items-center justify-center gap-3">
-            {membership !== 'anonymous' && <button onClick={() => { handledRef.current = false; setError(null); void refreshStaff() }} className="px-6 py-3 rounded-xl border border-black/10 text-sm font-medium">Try again</button>}
-            <a href="/login" className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium">Back to Sign In</a>
+            <button onClick={() => window.location.assign('/login')} className="inline-block px-6 py-3 rounded-xl avenize-gradient text-white font-medium">Back to Sign In</button>
           </div>
         </div>
       </div>

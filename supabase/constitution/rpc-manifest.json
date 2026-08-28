@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 504
+    "functions": 508
   },
   "functions": [
     {
@@ -1138,6 +1138,13 @@
       "signature": ""
     },
     {
+      "defined_in": "20260826190000_auth_data_contract_self_healing.sql",
+      "frontend_referenced": false,
+      "name": "ensure_business_organization",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "20260821143000_schedule_integrity_auto_repair.sql",
       "frontend_referenced": false,
       "name": "ensure_meeting_analytics_contract",
@@ -2069,9 +2076,23 @@
       "signature": ""
     },
     {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "frontend_referenced": true,
+      "name": "my_context",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "20260822125000_manual_payment_flow.sql",
       "frontend_referenced": false,
       "name": "my_payment_request",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "frontend_referenced": true,
+      "name": "my_workspace_arrangement",
       "security_sensitive": true,
       "signature": ""
     },
@@ -2534,6 +2555,13 @@
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
       "frontend_referenced": false,
       "name": "resolve_canonical",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260826190000_auth_data_contract_self_healing.sql",
+      "frontend_referenced": true,
+      "name": "resolve_current_user_context",
       "security_sensitive": true,
       "signature": ""
     },

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  Megaphone, Plus, Pin, Clock, User, Check, X,
-  AlertTriangle, Info, AlertCircle, RefreshCw,
-  Eye, EyeOff, Trash2, Edit2, ChevronDown
+  Megaphone, Plus, Pin, AlertTriangle, Info, AlertCircle, RefreshCw,
+  Eye, Trash2, Edit2
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'

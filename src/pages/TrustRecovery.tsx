@@ -9,8 +9,8 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
-  ShieldCheck, ShieldAlert, Loader2, CheckCircle2, AlertTriangle, Database,
-  Activity, Clock, FileText,
+  ShieldCheck, Loader2, CheckCircle2, AlertTriangle, Database,
+  Activity, FileText,
 } from 'lucide-react'
 
 interface TrustHealth {

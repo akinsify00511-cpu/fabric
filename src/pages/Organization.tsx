@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   Building2, Users, Plus, Edit2, Trash2, ChevronRight,
-  ChevronDown, User, MoreHorizontal, Search, RefreshCw,
-  UserPlus, Briefcase, Crown, X, Check, Filter, Landmark
+  ChevronDown, User, RefreshCw,
+  Crown, Landmark
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -30,13 +30,6 @@ interface Team {
   lead_id: string
   color: string
   staff?: any[]
-}
-
-interface Position {
-  id: string
-  title: string
-  level: string
-  department_id: string
 }
 
 export default function OrganizationPage() {

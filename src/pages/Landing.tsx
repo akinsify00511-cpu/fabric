@@ -533,21 +533,6 @@ function HeroSection() {
 }
 
 // ============================================
-// COMPONENT: ALERT CARD
-// ============================================
-function AlertCard({ tag, message, action }: { tag: string; message: string; action: string }) {
-  return (
-    <div className="bg-[#222] border border-white/10 rounded-lg p-4">
-      <span className="block text-xs font-mono text-[var(--av-primary)] uppercase tracking-wider mb-2">{tag}</span>
-      <p className="text-sm text-white/80 leading-relaxed mb-3">{message}</p>
-      <span className="inline-block px-3 py-1.5 rounded text-xs font-mono bg-[var(--av-primary)] text-white">
-        {action}
-      </span>
-    </div>
-  )
-}
-
-// ============================================
 // COMPONENT: MARQUEE STRIP
 // ============================================
 function MarqueeStrip() {
@@ -1197,8 +1182,8 @@ function Footer() {
 // ============================================
 export default function Landing() {
   const containerRef = useScrollAnimations()
-  const { translations } = useLocale()
-  const tr = (key: string, fallback: string) => (translations as unknown as Record<string, string>)?.[key] || fallback
+  
+  
 
   return (
     <div ref={containerRef} className="min-h-screen bg-[#F7F7F5]">

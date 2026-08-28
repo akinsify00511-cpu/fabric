@@ -7,10 +7,9 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
-import { useToast } from '../components/Toast'
 import {
   ShieldCheck, AlertTriangle, RefreshCw, Activity, Flag,
-  GitBranch, Loader2, Play, Ban, Zap, Workflow
+  Loader2, Play, Zap, Workflow
 } from 'lucide-react'
 
 type Tab = 'audit' | 'reconciliation' | 'incidents' | 'anomalies' | 'flags' | 'drift'

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import {
-  Calendar, Clock, User, MapPin, Phone, Mail, CheckCircle2,
+  Calendar, CheckCircle2,
   AlertCircle, ChevronLeft, ChevronRight, Loader2
 } from 'lucide-react'
 
@@ -53,7 +53,7 @@ export default function PublicAppointmentsPage() {
 
   const [business, setBusiness] = useState<any>(null)
   const [services, setServices] = useState<Service[]>([])
-  const [staffMembers, setStaffMembers] = useState<Staff[]>([])
+  const [,setStaffMembers] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)
   const [step, setStep] = useState(1)
 

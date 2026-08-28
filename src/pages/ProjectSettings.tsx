@@ -3,8 +3,8 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import {
-  ChevronRight, Plus, Edit2, Trash2, GripVertical,
-  Check, X, Palette, Settings
+  Plus, Edit2, Trash2, GripVertical,
+  Check, X, Palette
 } from 'lucide-react'
 
 type JobType = {

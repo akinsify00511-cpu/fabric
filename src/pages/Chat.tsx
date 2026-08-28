@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import FeatureSuggestions from '../components/FeatureSuggestions'
-import { Send, Hash, Lock, Users, Plus, ArrowLeft, Smile, Trash2 } from 'lucide-react'
+import { Send, Hash, Plus, ArrowLeft, Smile, Trash2 } from 'lucide-react'
 
 type Channel = {
   id: string

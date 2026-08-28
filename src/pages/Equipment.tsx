@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Wrench, Plus, Loader2, AlertCircle, CheckCircle2, Clock, Calendar
+  Wrench, Plus, Loader2, AlertCircle, CheckCircle2, Calendar
 } from 'lucide-react'
 
 export default function Equipment() {

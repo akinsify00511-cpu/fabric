@@ -7,7 +7,7 @@ import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native
 import { useAuth } from '../lib/AuthContext'
 import { observerSnapshot, openExceptions, recentEvents } from '../lib/businessOS'
 import { Card, SectionTitle, Loader, EmptyState, SeverityBadge } from './ui'
-import { colors, spacing, radius, fontSize, shadows } from '../theme'
+import { colors, spacing, fontSize } from '../theme'
 
 export default function ObserverScreen() {
   const { staff } = useAuth()

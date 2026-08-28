@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import { 
   Folder, File, FileText, Image, FileSpreadsheet, Upload,
-  Download, Search, Filter, MoreVertical, Trash2, Edit,
-  Copy, Share2, Eye, FolderPlus, Grid, List, Clock, Star
+  Download, Search, MoreVertical, Eye, FolderPlus, Grid, List, Star
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'

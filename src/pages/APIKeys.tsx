@@ -1,14 +1,13 @@
 // API Keys Management Page
 // Create and manage API keys for developer integrations
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Key, Plus, Copy, Trash2, Eye, EyeOff, RefreshCw,
-  CheckCircle2, XCircle, Clock, Shield, AlertTriangle, Settings
+  Key, Plus, Copy, Trash2, Eye, EyeOff, CheckCircle2, XCircle, AlertTriangle
 } from 'lucide-react'
 
 interface APIKey {

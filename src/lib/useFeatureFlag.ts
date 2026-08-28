@@ -7,7 +7,7 @@
  * - Gradual rollout percentage
  */
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 
@@ -31,7 +31,7 @@ const CACHE_DURATION = 60 * 1000 // 1 minute
 export function useFeatureFlag(key: string): boolean {
   const { staff } = useAuth()
   const [enabled, setEnabled] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
@@ -84,7 +84,7 @@ export function useFeatureFlags(keys: string[]): Record<string, boolean> {
   const [flags, setFlags] = useState<Record<string, boolean>>(
     Object.fromEntries(keys.map((k) => [k, false]))
   )
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import {
-  Zap, Plus, Play, Pause, Trash2, Edit2, Settings,
-  ChevronRight, Clock, CheckCircle, XCircle, AlertTriangle,
+  Zap, Plus, Play, Pause, Trash2, Edit2, Clock, AlertTriangle,
   GitBranch, Database, Mail, Bell, User, FileText,
-  ArrowRight, Copy, MoreHorizontal, RefreshCw
+  RefreshCw
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -57,7 +56,7 @@ const ENTITY_TYPES = [
 
 export default function WorkflowBuilderPage() {
   const { staff } = useAuth()
-  const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
+  
   const [workflows, setWorkflows] = useState<Workflow[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -182,12 +181,7 @@ export default function WorkflowBuilderPage() {
     })
   }
 
-  const stepIcons: Record<string, any> = {
-    action: Zap,
-    condition: GitBranch,
-    delay: Clock,
-    notification: Bell,
-  }
+  
 
   return (
     <div className="max-w-6xl mx-auto pb-20">
@@ -379,7 +373,7 @@ export default function WorkflowBuilderPage() {
                 {/* Existing Steps */}
                 <div className="space-y-3 mb-4">
                   {form.steps.map((step, index) => {
-                    const Icon = stepIcons[step.type] || Zap
+                    
                     return (
                       <div key={step.id} className="p-4 bg-black/[0.02] rounded-xl flex items-start gap-3">
                         <div className="w-8 h-8 rounded-lg bg-[var(--av-primary, #4285F4)]/10 flex items-center justify-center text-[var(--av-primary, #4285F4)]">

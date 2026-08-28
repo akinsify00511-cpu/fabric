@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Receipt, Plus, DollarSign, Clock, CheckCircle, XCircle,
-  Upload, FileText, Image, RefreshCw, Filter, ChevronDown,
-  Eye, Edit2, Trash2, CreditCard
+  FileText, RefreshCw, CreditCard
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -92,7 +91,7 @@ export default function ExpenseClaimsPage() {
 
   async function handleApprove(claimId: string) {
     try {
-      const { error } = await supabase.from('expense_claims').update({
+      await supabase.from('expense_claims').update({
         status: 'approved',
       }).eq('id', claimId)
       loadData()

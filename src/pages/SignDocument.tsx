@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { FileSignature, Pen, Type, Upload, Check, X, Clock, Shield, Download } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { FileSignature, Pen, Type, Upload, Check, Clock, Shield, Download } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 interface SignerInfo {
@@ -47,7 +47,7 @@ type SignatureMode = 'draw' | 'type' | 'upload'
 
 export default function SignDocument() {
   const { token } = useParams<{ token: string }>()
-  const navigate = useNavigate()
+  
 
   const [loading, setLoading] = useState(true)
   const [signer, setSigner] = useState<SignerInfo | null>(null)

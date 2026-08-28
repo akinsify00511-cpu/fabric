@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-  Calendar, MapPin, Users, Clock, Plus, RefreshCw,
-  ChevronLeft, ChevronRight, Search, Filter,
-  CheckCircle, XCircle, Monitor, Car, Building
+  Calendar, Users, RefreshCw,
+  ChevronLeft, ChevronRight, Monitor, Car, Building
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -41,13 +40,12 @@ const typeIcons: Record<string, any> = {
 
 export default function ResourceBookingPage() {
   const { staff } = useAuth()
-  const isAdmin = staff?.role === 'owner' || staff?.role === 'admin'
+  
   const [resources, setResources] = useState<Resource[]>([])
   const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedResource, setSelectedResource] = useState<string | null>(null)
-  const [showModal, setShowModal] = useState(false)
   const [filterType, setFilterType] = useState<string>('all')
 
   useEffect(() => {

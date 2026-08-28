@@ -3,8 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Users, Plus, Trash2, Copy, Mail, ExternalLink, Check, X,
-  Eye, EyeOff, Link, Shield, FileText, MessageSquare, FolderKanban, CheckCircle2
+  Users, Plus, Trash2, Copy, Mail, Check, X,
+  FileText, MessageSquare, FolderKanban, CheckCircle2
 } from 'lucide-react'
 
 type Invitation = {
@@ -36,7 +36,6 @@ export default function CustomerPortal() {
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [contacts, setContacts] = useState<Contact[]>([])
   const [showInviteModal, setShowInviteModal] = useState(false)
-  const [showNewLink, setShowNewLink] = useState(false)
   const [newInvitation, setNewInvitation] = useState<{ token: string; url: string } | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -113,16 +112,7 @@ export default function CustomerPortal() {
     showToast('Invitation link copied! Send it to the client.', 'success')
   }
 
-  const revokeInvitation = async (invitation: Invitation) => {
-    if (!confirm(`Revoke access for ${invitation.email}?`)) return
-
-    await supabase
-      .from('portal_invitations')
-      .update({ status: 'revoked' })
-      .eq('id', invitation.id)
-    showToast('Invitation revoked', 'info')
-    loadData()
-  }
+  
 
   const deleteInvitation = async (invitation: Invitation) => {
     if (!confirm(`Delete invitation for ${invitation.email}?`)) return

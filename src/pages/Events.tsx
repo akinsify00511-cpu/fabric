@@ -4,8 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
   Calendar, Plus, Clock, MapPin, Users, Video, ChevronRight,
-  Search, Filter, Grid3X3, List, ChevronLeft, User, Mail,
-  CheckCircle2, XCircle, AlertCircle, ExternalLink
+  Search, ChevronLeft, User, ExternalLink
 } from 'lucide-react'
 
 type Event = {
@@ -25,28 +24,16 @@ type Event = {
   cover_image_url: string
 }
 
-type Registration = {
-  id: string
-  full_name: string
-  email: string
-  status: string
-  rsvp_status: string
-  checked_in: boolean
-  created_at: string
-}
-
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 export default function Events() {
   const { staff } = useAuth()
   const { showToast } = useToast()
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
   const [events, setEvents] = useState<Event[]>([])
-  const [registrations, setRegistrations] = useState<Registration[]>([])
-  const [view, setView] = useState<'calendar' | 'list'>('calendar')
   const [currentMonth, setCurrentMonth] = useState(new Date())
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [,setSelectedDate] = useState<Date | null>(null)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEventModal, setShowEventModal] = useState(false)

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { 
-  FileSignature, Plus, Search, Filter, Send, Clock,
-  CheckCircle, XCircle, User, Building2, Eye, Download,
-  MoreVertical, Trash2, Edit, Copy, Link, Mail
+  FileSignature, Plus, Search, Send, Clock,
+  CheckCircle, Eye, Download,
+  MoreVertical, Trash2, Edit, Link
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -48,7 +48,6 @@ export default function ElectronicSignatures() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [showModal, setShowModal] = useState(false)
-  const [editingRequest, setEditingRequest] = useState<SignatureRequest | null>(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -171,23 +170,7 @@ export default function ElectronicSignatures() {
     }
   }
 
-  const updateStatus = async (id: string, status: SignatureRequest['status']) => {
-    // Persist the status change so it survives reloads and is visible to
-    // every staff member tracking the request.
-    try {
-      const { error } = await supabase
-        .from('signature_requests')
-        .update({ status })
-        .eq('id', id)
-      if (error) throw error
-      setRequests(prev => prev.map(r =>
-        r.id === id ? { ...r, status } : r
-      ))
-    } catch (error) {
-      console.error('Error updating status:', error)
-      alert('Could not update the request status. Please try again.')
-    }
-  }
+  
 
   const copySigningLink = (signer: Signer) => {
     if (!signer.signing_token) return
@@ -426,7 +409,7 @@ export default function ElectronicSignatures() {
                   <td className="px-4 py-3">
                     {request.signers.length > 0 ? (
                       <div className="flex -space-x-2">
-                        {request.signers.slice(0, 3).map((signer, i) => (
+                        {request.signers.slice(0, 3).map((signer, _i) => (
                           <div
                             key={signer.id}
                             className="w-8 h-8 rounded-full bg-[var(--av-primary)]/10 flex items-center justify-center text-xs font-medium text-[var(--av-primary)] border-2 border-white"

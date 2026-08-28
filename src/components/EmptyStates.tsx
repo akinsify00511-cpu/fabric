@@ -8,8 +8,8 @@ import {
   FileText, Users, Package, ShoppingCart, Calendar, 
   Building2, TrendingUp, Receipt, CheckSquare, 
   FolderKanban, Video, FileStack, Plus, ArrowRight,
-  Search, AlertCircle, Inbox, UserPlus, BarChart3,
-  CreditCard, Clock, MessageSquare
+  Search, AlertCircle, Inbox, BarChart3,
+  MessageSquare
 } from 'lucide-react'
 
 type EmptyStateProps = {

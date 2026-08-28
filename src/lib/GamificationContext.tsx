@@ -60,7 +60,7 @@ const GamificationContext = createContext<GamificationContextType | undefined>(u
 
 // XP Configuration
 const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500]
-const STREAK_BONUS_XP = 10
+
 
 export function calculateLevel(xp: number): number {
   for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  Package, Plus, Wrench, MapPin, User, Calendar,
-  RefreshCw, Search, Filter, ChevronDown, Edit2,
-  Trash2, Eye, AlertTriangle, CheckCircle, Clock
+  Package, Plus, Wrench, MapPin, User, RefreshCw, Search, ChevronDown, CheckCircle, Clock
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -32,17 +30,6 @@ interface Asset {
   maintenance_count: number
   next_maintenance: string
   created_at: string
-}
-
-interface MaintenanceRecord {
-  id: string
-  asset_id: string
-  type: string
-  title: string
-  status: string
-  scheduled_date: string
-  completed_date: string
-  cost: number
 }
 
 export default function AssetManagementPage() {

@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import { 
-  FileText, Plus, Search, Filter, Calendar, DollarSign,
-  User, Building2, ChevronDown, Edit, Trash2, Eye,
-  X, Check, AlertCircle, CheckCircle, Clock, Ban
+  FileText, Plus, Search, DollarSign,
+  AlertCircle, CheckCircle, Clock
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import Modal from '../components/Modal'
@@ -75,7 +73,7 @@ const PAYMENT_STATUS_COLORS: Record<string, string> = {
 }
 
 export default function LeaseManagement() {
-  const navigate = useNavigate()
+  
   const { staff } = useAuth()
   const [leases, setLeases] = useState<Lease[]>([])
   const [payments, setPayments] = useState<Record<string, RentPayment[]>>({})
@@ -83,8 +81,6 @@ export default function LeaseManagement() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [showLeaseModal, setShowLeaseModal] = useState(false)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [selectedLease, setSelectedLease] = useState<Lease | null>(null)
   const [activeTab, setActiveTab] = useState<'leases' | 'payments'>('leases')
 
   const [leaseForm, setLeaseForm] = useState({

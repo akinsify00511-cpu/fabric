@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  FlaskConical, Plus, Loader2, CheckCircle2, AlertCircle, Clock, Beaker
+  FlaskConical, Plus, Loader2, CheckCircle2, Clock, Beaker
 } from 'lucide-react'
 
 export default function LabQC() {

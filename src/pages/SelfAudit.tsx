@@ -12,8 +12,7 @@ import { useDbState, DbStateBanner } from '../lib/useDbState'
 import { useToast } from '../components/Toast'
 import { ClaimTag } from '../components/Evidence'
 import {
-  Stethoscope, RefreshCw, Loader2, AlertTriangle, Wrench,
-  ArrowRight, CheckCircle2, UserCog, Clock,
+  Stethoscope, RefreshCw, Loader2, AlertTriangle, ArrowRight, CheckCircle2, UserCog, Clock,
 } from 'lucide-react'
 
 type Finding = {

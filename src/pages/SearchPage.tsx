@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Search, Clock, FileText, User, DollarSign, Briefcase,
-  Folder, Tag, Bookmark, Filter, X, Plus, Star,
-  TrendingUp, Calendar, ChevronRight, ArrowUp, ArrowDown, CornerDownLeft,
+  Folder, Tag, Bookmark, X, Star,
+  TrendingUp, Calendar, ChevronRight, CornerDownLeft,
   Sparkles
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { search, saveSearch, getSavedSearches, getSearchSuggestions, highlightMatch, type SearchResult, type SavedSearch, type SearchSuggestion } from '../lib/auditLogger'
-import { supabase } from '../lib/supabase'
 
 const ENTITY_COLORS: Record<string, string> = {
   contacts: 'bg-[var(--av-primary-soft)] text-[var(--av-primary)]',

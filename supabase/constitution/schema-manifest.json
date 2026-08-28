@@ -1,6 +1,6 @@
 {
   "counts": {
-    "tables": 468,
+    "tables": 471,
     "views": 6
   },
   "tables": [
@@ -2651,10 +2651,22 @@
       "name": "user_activity_daily"
     },
     {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_ai_memory"
+    },
+    {
       "defined_in": "037_analytics_events_system.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "user_engagement"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_goals"
     },
     {
       "defined_in": "998_create_all_missing_tables.sql",
@@ -2673,6 +2685,12 @@
       "frontend_referenced": true,
       "kind": "table",
       "name": "user_mfa"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "frontend_referenced": true,
+      "kind": "table",
+      "name": "user_pinned_items"
     },
     {
       "defined_in": "zz_live_console_drift_reconciliation.sql",

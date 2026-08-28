@@ -70,7 +70,7 @@ export function Skeleton({
   )
 }
 
-export function SkeletonText({ lines = 3, spacing = 4 }: { lines?: number; spacing?: number }) {
+export function SkeletonText({ lines = 3 }: { lines?: number; spacing?: number }) {
   return (
     <div className="space-y-2">
       {Array.from({ length: lines }).map((_, i) => (

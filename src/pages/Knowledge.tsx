@@ -3,9 +3,8 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
-  Book, Plus, Search, ChevronRight, ChevronDown, FileText, Folder,
-  MoreHorizontal, Trash2, Edit3, Eye, Copy, ArrowLeft, Save, Clock,
-  User, Home
+  Book, Plus, Search, ChevronRight, ChevronDown, FileText, Trash2, Copy, ArrowLeft, Save, Clock,
+  User
 } from 'lucide-react'
 
 type KBSpace = {
@@ -216,7 +215,7 @@ export default function Knowledge() {
   }
 
   const duplicatePage = async (page: KBPage) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('kb_pages')
       .insert({
         space_id: page.space_id,

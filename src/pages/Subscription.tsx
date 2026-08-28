@@ -18,8 +18,6 @@ import {
   Star,
   Zap,
   Users,
-  Shield,
-  ExternalLink,
   Loader2,
   ArrowUpCircle,
   Sparkles,

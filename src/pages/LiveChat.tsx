@@ -7,9 +7,7 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  MessageSquare, Send, Search, Filter, Circle, Phone, Video,
-  MoreHorizontal, X, Minimize2, Maximize2, User, Clock,
-  CheckCircle2, Check, Image, Paperclip, Smile
+  MessageSquare, Send, Search, Circle, X, Minimize2, Maximize2, CheckCircle2, Check
 } from 'lucide-react'
 
 interface ChatConversation {

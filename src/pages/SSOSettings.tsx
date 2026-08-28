@@ -6,7 +6,7 @@ import { BetaBadge } from '../components/BetaTesterGate'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import {
-  Shield, Lock, Clock4, Users, Mail, Building2, Sparkles, Settings,
+  Shield, Lock, Clock4, Users, Building2, Sparkles, Settings,
   Check, Plus, Trash2, Loader2
 } from 'lucide-react'
 

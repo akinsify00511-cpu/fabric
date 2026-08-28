@@ -1,6 +1,6 @@
 {
   "counts": {
-    "triggers": 215
+    "triggers": 218
   },
   "triggers": [
     {
@@ -1019,9 +1019,19 @@
       "trigger": "training_updated_at"
     },
     {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "table": "user_ai_memory",
+      "trigger": "trg_user_ai_memory_updated"
+    },
+    {
       "defined_in": "037_analytics_events_system.sql",
       "table": "user_engagement",
       "trigger": "update_user_engagement_updated_at"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "table": "user_goals",
+      "trigger": "trg_user_goals_updated"
     },
     {
       "defined_in": "037_analytics_events_system.sql",
@@ -1037,6 +1047,11 @@
       "defined_in": "012_custom_branding.sql",
       "table": "user_mfa",
       "trigger": "user_mfa_updated_at"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "table": "user_pinned_items",
+      "trigger": "trg_user_pinned_items_updated"
     },
     {
       "defined_in": "zz_live_console_drift_reconciliation.sql",

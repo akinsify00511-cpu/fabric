@@ -18,6 +18,14 @@ export const supabase: SupabaseClient = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseAnonKey || 'placeholder-anon-key',
   {
+    auth: {
+      // OAuth uses the Authorization Code + PKCE flow. The callback page
+      // explicitly exchanges the returned code for a session.
+      flowType: 'pkce',
+      detectSessionInUrl: false,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
     realtime: {
       params: {
         eventsPerSecond: 10,

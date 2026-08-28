@@ -4,9 +4,9 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import EntitlementGate from '../components/EntitlementGate'
 import {
-  Ticket, Plus, Search, Filter, Clock, User, AlertTriangle, CheckCircle2,
-  MessageCircle, Tag, ChevronRight, ArrowLeft, Send, Lock, Inbox,
-  RefreshCw, X, Eye, EyeOff
+  Ticket, Plus, Search, Clock, AlertTriangle, CheckCircle2,
+  ArrowLeft, Send, Lock, Inbox,
+  RefreshCw, X
 } from 'lucide-react'
 
 type TicketType = {
@@ -61,7 +61,7 @@ export default function Tickets() {
   const { staff, session } = useAuth()
   const { showToast } = useToast()
   const [tickets, setTickets] = useState<TicketType[]>([])
-  const [teamMembers, setTeamMembers] = useState<StaffMember[]>([])
+  const [,setTeamMembers] = useState<StaffMember[]>([])
   const [selectedTicket, setSelectedTicket] = useState<TicketType | null>(null)
   const [replies, setReplies] = useState<Reply[]>([])
   const [newReply, setNewReply] = useState('')
@@ -74,7 +74,6 @@ export default function Tickets() {
   const [newDescription, setNewDescription] = useState('')
   const [newPriority, setNewPriority] = useState<TicketType['priority']>('medium')
   const [newCategory, setNewCategory] = useState('')
-  const [showSidebar, setShowSidebar] = useState(true)
 
   const loadTickets = async () => {
     setLoading(true)
@@ -189,19 +188,7 @@ export default function Tickets() {
     loadTickets()
   }
 
-  const assignTicket = async (ticketId: string, assigneeId: string) => {
-    const { error } = await supabase.from('tickets').update({ assignee_id: assigneeId }).eq('id', ticketId)
-    if (error) {
-      showToast('Failed to assign ticket', 'error')
-      return
-    }
-    showToast('Ticket assigned', 'success')
-    loadTickets()
-    if (selectedTicket?.id === ticketId) {
-      const assignee = teamMembers.find((m) => m.id === assigneeId)
-      setSelectedTicket({ ...selectedTicket, assignee_id: assigneeId, assignee_name: assignee?.full_name ?? assignee?.name })
-    }
-  }
+  
 
   const filteredTickets = tickets.filter((t) => {
     if (statusFilter !== 'all' && t.status !== statusFilter) return false
@@ -279,7 +266,7 @@ export default function Tickets() {
             </div>
           ) : (
             filteredTickets.map((ticket) => {
-              const StatusIcon = STATUS_CONFIG[ticket.status].icon
+              
               return (
                 <button
                   key={ticket.id}

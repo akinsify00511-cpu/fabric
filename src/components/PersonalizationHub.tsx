@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
 import { 
-  Sparkles, TrendingUp, Clock, Target, Award, 
-  Zap, BookOpen, ChevronRight, X, Star, Crown,
-  Flame, Rocket, Lightbulb, Heart, ThumbsUp
+  Sparkles, Clock, Award, 
+  Zap, X, Star, Crown,
+  Flame, Lightbulb
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { useEngagement, useLearningInsights, useAnalytics } from '../lib/eventTracker'
 
 export default function PersonalizationHub() {
   const { staff } = useAuth()
-  const { achievements, progress } = useEngagement(staff?.user_id || '')
+  
   const insights = useLearningInsights(staff?.user_id || '')
   const { engagement } = useAnalytics()
   const [dismissed, setDismissed] = useState(false)
@@ -206,8 +206,8 @@ function InsightRow({ icon, label, value }: any) {
 // ============================================
 
 export function LearningLoopIndicator() {
-  const { staff } = useAuth()
-  const insights = useLearningInsights(staff?.user_id || '')
+  
+  
 
   return (
     <div className="flex items-center gap-2 text-xs text-black">

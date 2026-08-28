@@ -8,7 +8,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
   Shield, Brain, Repeat, Gauge, Database, BookOpen,
-  Loader2, Plus, Check, AlertTriangle, Network
+  Loader2, AlertTriangle, Network
 } from 'lucide-react'
 
 type Tab = 'memory' | 'authority' | 'ai' | 'automation' | 'convenience' | 'continuity'
@@ -115,7 +115,7 @@ function MemoryTab({ bid }: { bid?: string }) {
 }
 
 // ---------- Authority Graph ----------
-function AuthorityTab({ bid, staffId }: { bid?: string; staffId?: string }) {
+function AuthorityTab({ bid }: { bid?: string; staffId?: string }) {
   const [auth, setAuth] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 

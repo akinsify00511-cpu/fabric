@@ -287,7 +287,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
       const fileExt = file.name.split('.').pop()
       const fileName = `${businessIdRef.current}/${type}/${Date.now()}.${fileExt}`
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('brand-assets')
         .upload(fileName, file, {
           cacheControl: '3600',

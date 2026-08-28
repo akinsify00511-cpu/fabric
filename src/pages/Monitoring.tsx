@@ -4,8 +4,7 @@ import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import {
   Activity, Plus, CheckCircle2, XCircle, AlertTriangle, Clock,
-  TrendingUp, TrendingDown, RefreshCw, Settings, Eye,
-  Server, Globe, Database, Lock, Bell, ChevronRight, ExternalLink
+  TrendingDown, RefreshCw, Settings, Server, ChevronRight
 } from 'lucide-react'
 
 type Monitor = {
@@ -56,13 +55,13 @@ const SEVERITY_CONFIG = {
 export default function Monitoring() {
   const { staff } = useAuth()
   const { showToast } = useToast()
-  const [loading, setLoading] = useState(true)
+  const [,setLoading] = useState(true)
   const [monitors, setMonitors] = useState<Monitor[]>([])
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [heartbeats, setHeartbeats] = useState<Heartbeat[]>([])
   const [activeTab, setActiveTab] = useState<'overview' | 'monitors' | 'incidents' | 'heartbeats'>('overview')
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [overallStatus, setOverallStatus] = useState<'operational' | 'degraded' | 'down'>('operational')
+  const [overallStatus] = useState<'operational' | 'degraded' | 'down'>('operational')
   const [newMonitor, setNewMonitor] = useState({
     name: '',
     monitor_type: 'http',
@@ -172,7 +171,7 @@ export default function Monitoring() {
   }
 
   const upCount = monitors.filter((m) => m.status === 'up').length
-  const downCount = monitors.filter((m) => m.status === 'down').length
+  
   const avgUptime = monitors.length > 0
     ? monitors.reduce((sum, m) => sum + m.uptime_percent, 0) / monitors.length
     : 100
@@ -349,7 +348,7 @@ export default function Monitoring() {
         <div className="space-y-4">
           {monitors.map((monitor) => {
             const config = STATUS_CONFIG[monitor.status]
-            const Icon = config.icon
+            
             return (
               <div key={monitor.id} className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] p-5">
                 <div className="flex items-center justify-between">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { FileText, Send, Clock, Check, X, DollarSign, Plus, Edit2, Trash2, Download } from 'lucide-react'
+import { FileText, Send, Check, X, Plus, Trash2, Download } from 'lucide-react'
 import { useToast } from '../components/Toast'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'

@@ -8,11 +8,9 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import {
-  Plus, Search, Filter, MoreVertical, MapPin, Users, Clock,
-  AlertTriangle, CheckCircle2, DollarSign, Package, Wrench,
-  Home, Factory, ArrowRight, Camera, Phone, MessageSquare,
-  ChevronDown, ChevronUp, Edit2, Trash2, FileText, Eye,
-  Settings
+  Plus, Search, MapPin, Clock,
+  Wrench,
+  Phone, Trash2, Settings
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 

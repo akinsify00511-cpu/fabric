@@ -1,6 +1,6 @@
 {
   "counts": {
-    "policies": 247
+    "policies": 250
   },
   "policies": [
     {
@@ -1197,6 +1197,21 @@
       "defined_in": "20260824170000_cost_governor.sql",
       "policy": "usage_meter_monthly_read",
       "table": "usage_meter_monthly"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "policy": "user_ai_memory_self",
+      "table": "user_ai_memory"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "policy": "user_goals_self",
+      "table": "user_goals"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "policy": "user_pinned_items_self",
+      "table": "user_pinned_items"
     },
     {
       "defined_in": "zz_live_console_drift_reconciliation.sql",

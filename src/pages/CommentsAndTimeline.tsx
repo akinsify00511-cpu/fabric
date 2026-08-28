@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  MessageSquare, Clock, User, Send, Reply, MoreHorizontal,
-  Trash2, Edit2, Heart, Smile, Paperclip, AtSign,
-  Calendar, Edit3, CheckCircle, UserPlus, Bell
+  MessageSquare, Clock, User, Send, MoreHorizontal,
+  Trash2, Edit2, Smile, Paperclip, AtSign,
+  CheckCircle, UserPlus, Bell
 } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -45,11 +45,6 @@ interface MentionSuggestion {
 }
 
 // Map full_name to user_name for compatibility
-interface StaffRow {
-  user_id: string
-  full_name: string
-  email: string
-}
 
 interface ActivityTimelineProps {
   entityType: string
@@ -58,7 +53,7 @@ interface ActivityTimelineProps {
 }
 
 export default function ActivityTimeline({ entityType, entityId, title }: ActivityTimelineProps) {
-  const entityIdStr = entityId || ''
+  
   const { staff } = useAuth()
   const [timeline, setTimeline] = useState<TimelineItem[]>([])
   const [comments, setComments] = useState<Comment[]>([])
@@ -245,7 +240,7 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
         mentionedUserIds = mentionedUsers?.map(u => u.user_id) || []
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('comments')
         .insert({
           business_id: staff.business_id,
@@ -309,17 +304,6 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
       loadData()
     } catch (e) {
       console.error('Failed to react:', e)
-    }
-  }
-
-  async function handleDeleteComment(commentId: string) {
-    if (!confirm('Delete this comment?')) return
-
-    try {
-      await supabase.from('comments').delete().eq('id', commentId)
-      loadData()
-    } catch (e) {
-      console.error('Failed to delete comment:', e)
     }
   }
 
@@ -438,13 +422,13 @@ export default function ActivityTimeline({ entityType, entityId, title }: Activi
         </div>
       ) : (
         <div className="space-y-4">
-          {allItems.map((item, index) => {
+          {allItems.map((item, _index) => {
             const isComment = item.type === 'comment'
             const commentItem = item as Comment & { type: 'comment' }
             const timelineItem = item as TimelineItem & { type: 'timeline' }
 
             if (isComment) {
-              const Icon = activityIcons.commented
+              
               return (
                 <div key={item.id} className="flex gap-3">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-sm font-medium shrink-0">

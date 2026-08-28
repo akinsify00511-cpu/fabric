@@ -8,9 +8,8 @@ import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import {
-  Wallet, TrendingUp, TrendingDown, Plus, ChevronDown,
-  ChevronRight, Target, DollarSign, PieChart, Calendar,
-  Edit2, Trash2, AlertTriangle, CheckCircle2
+  Wallet, TrendingUp, Plus, ChevronDown,
+  ChevronRight, Target, PieChart, Edit2, Trash2, AlertTriangle, CheckCircle2
 } from 'lucide-react'
 
 interface Budget {
@@ -238,7 +237,7 @@ export default function Budgets() {
       if (error) throw error
       showToast(`Budget ${newStatus === 'active' ? 'activated' : 'closed'}`, 'success')
       loadData()
-    } catch (error) {
+    } catch  {
       showToast('Failed to update budget status', 'error')
     }
   }
@@ -255,7 +254,7 @@ export default function Budgets() {
       if (error) throw error
       showToast('Budget deleted', 'success')
       loadData()
-    } catch (error) {
+    } catch  {
       showToast('Failed to delete budget', 'error')
     }
   }

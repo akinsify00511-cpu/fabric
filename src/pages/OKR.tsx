@@ -11,7 +11,7 @@ import { useToast } from '../components/Toast'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
   Target, Plus, ChevronDown, ChevronRight, Trash2, Edit2, X, Check,
-  Loader2, TrendingUp, Link2, Unlink, Calendar,
+  Loader2, Link2, Calendar,
 } from 'lucide-react'
 
 interface Objective {
@@ -112,7 +112,7 @@ export default function OKRPage() {
   useEffect(() => { load() }, [load])
 
   const toggle = (id: string) =>
-    setExpanded(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+    setExpanded(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n })
 
   const updateKr = async (id: string, patch: Partial<KeyResult>) => {
     const { error } = await supabase.from('key_results').update(patch).eq('id', id)

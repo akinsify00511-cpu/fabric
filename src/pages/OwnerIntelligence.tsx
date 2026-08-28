@@ -16,7 +16,7 @@ import { fetchOwnerIntelligence, fetchSectorBenchmark, fetchAutomationHealth, fe
 import { marginStatus, marginStatusLabel, usageFraction, formatCents, overageLabel, type LedgerMonth } from '../lib/costGovernor'
 import { ClaimTag, ClaimNote } from '../components/Evidence'
 import {
-  ShieldCheck, ShieldAlert, Loader2, Activity, Zap, Clock, AlertTriangle,
+  ShieldCheck, ShieldAlert, Loader2, Activity, Zap, AlertTriangle,
   BarChart3, TrendingDown, Settings2, Lock, CheckCircle2, XCircle, Globe,
   Inbox, RotateCcw,
 } from 'lucide-react'

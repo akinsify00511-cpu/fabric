@@ -4,7 +4,6 @@
 // ElectronicSignatures + staff_contracts existed.
 
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
@@ -124,7 +123,7 @@ function StatusPill({ status }: { status: string }) {
   return <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded" style={{ color, backgroundColor: 'var(--av-surface-3)' }}>{status}</span>
 }
 
-function ContractList({ items, expiring, expired, onAction, showToast }: any) {
+function ContractList({ items, expiring, _expired }: any) {
   if (items.length === 0) return <Empty label="contracts" />
   return (
     <div className="space-y-2">
@@ -155,7 +154,7 @@ function ContractList({ items, expiring, expired, onAction, showToast }: any) {
   )
 }
 
-function CaseList({ items, onAction, showToast }: any) {
+function CaseList({ items, _onAction }: any) {
   if (items.length === 0) return <Empty label="cases" />
   return (
     <div className="space-y-2">
@@ -178,7 +177,7 @@ function CaseList({ items, onAction, showToast }: any) {
   )
 }
 
-function ObligationList({ items, overdue, onAction, showToast }: any) {
+function ObligationList({ items, overdue, _onAction }: any) {
   if (items.length === 0) return <Empty label="obligations" />
   return (
     <div className="space-y-2">

@@ -4362,3 +4362,295 @@ CI + Schema Drift green on push.
 The Deploy-to-Vercel workflow still fails on the production-contract gate
 because the live DB lags the migration chain (standing blocker, needs
 SUPABASE_DB_URL). The CI workflow itself is green.
+
+## Session 56 (2026-08-26): Contract Integrity as a P0 gate — One Pricing Constitution sentinel
+
+User directive: stop polishing isolated technical issues; Contract Integrity is a
+**P0 readiness gate** for client-payment readiness. The realized goal: a feature is
+complete only when UI→logic→RPC→DB→permissions→external service→state all agree, and
+the repository enforces that agreement automatically. Existing infrastructure
+(Production Contract Reconciliation, verify-production.sh, e2e-production.sh) was
+verified live; the code-side gap was enforcement of the **money contract** and a
+stale committed manifest.
+
+### What shipped (commit 802f996 + this session)
+- **docs/constitution/AVENIZE_CONTRACT_CONSTITUTION.md** — the client-payment
+  readiness doctrine: the single rule, canonical RPC/data/auth/payment/email/
+  frontend contract layers (incl. the canonical auth RPCs
+  create_business_and_owner / resolve_current_user_context / ensure_business_
+  organization / refresh_business_metrics(), the ownership chain
+  auth.users→staff→business→organization, and the one pricing vocabulary), the
+  readiness gate definition of done (Journeys A–E) and the Contract Sentinel.
+- **REAL MANIFEST DEFECT FIXED:** the committed production_contract.json was
+  STALE relative to HEAD's 20260826190000 auth/data migration (missing
+  ensure_business_organization, resolve_current_user_context + the
+  refresh_business_metrics() zero-arg signature). CI's contract-manifest gate
+  would have failed on this push — regenerated + committed deterministically.
+- **scripts/check_pricing_constitution.py (NEW)** — enforces the **One Pricing
+  Constitution**: canonical plan vocabulary + kobo prices IDENTICAL across the
+  pricing_tiers seed (20260818200000), Pricing.tsx fallback, edge
+  subscription-management VALID_PLANS, and paymentsCore PLAN_DISPLAY_NAMES, and
+  that the server prices via plan_price_cents (never the browser). Negative-
+  tested (injects a scale price mismatch → exit 1 → restore → exit 0).
+- **Registered as a P0 blocking governance check** `money.pricing.constitution`
+  in scripts/governance/checks.py + avenize_governance.py (contracts + security
+  subsets) + enforcement-registry.json regenerated. Runs in CI as the new
+  `pricing-constitution` job in schema-drift.yml.
+- **tests/frontend/lib/pricingConstitution.test.ts (NEW, +5)** — frontend money-
+  contract tests: canonical plan set, no competing public tier names,
+  canonical billing cycles, server-not-browser-decides-paid, consistent yearly
+  discount ratio across tiers.
+- **scripts/e2e-production.sh** — added the critical money/auth journeys:
+  returning-user no-re-onboarding (Journey B), resolve_current_user_context
+  identity resolver, no-payment-does-not-grant-entitlement (Journey D), and a
+  structured **CLIENT PAYMENT GATE** PASS/FAIL verdict block.
+
+### Verified
+tsc 0; vite build 0 errors; vitest 801/801 (+5); schema-drift 0; design
+constitution PASS; pricing constitution HOLDS; governance check RELEASE APPROVED
+(money check PASS in check/contracts/security modes); contract manifest
+deterministic (regen → no diff, committed).
+
+### Standing blockers (unchanged, user-credential-gated)
+Live DB apply (SUPABASE_DB_URL), edge deploys, secrets (PAYSTACK_SECRET_KEY,
+RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET, APP_URL, VITE_META_PIXEL_ID).
+Until then verify-production.sh / e2e-production.sh honestly FAIL on those
+objects — the gate working as intended, not an incident.
+
+## Session 56b (2026-08-26): Contract Sentinel goes permanent + live money/auth baseline
+
+User: "do whatever you need to do without the db url." Executed the credential-free
+half of the readiness plan — made the sentinel permanent and captured the honest
+LIVE baseline (no DB creds used; scripts self-calibrate the publishable key).
+
+### LIVE baseline (honest, current — self-calibrated from avenize.riverwayse.com)
+- verify-production.sh: **Auth PASS, Frontend PASS, Payments PASS** (subscription-
+  management + paystack-webhook + paystack-verify **deployed**);
+  **Database/RPC FAIL** 240 ok / 213 missing (live DB lags the migration chain);
+  **Email FAIL** (email-service + resend-webhook not deployed). Big net progress
+  vs the historical 129 ok / 305 missing baseline — the auth/data reconciliation
+  has materially landed on live.
+- e2e-production.sh: **CLIENT PAYMENT GATE FAIL** (signup journey needs email
+  confirmation, email-service missing) but the critical RPCs + payment rails all
+  PASS on live — create_business_and_owner, business_brain, current_metrics,
+  open_recommendations, my_payment_request all answered.
+
+### What shipped (commit c83a0a3)
+- **.github/workflows/contract-sentinel.yml (NEW)** — the permanent Contract
+  Sentinel: nightly (00:30 UTC) + workflow_dispatch, runs verify-production.sh +
+  e2e-production.sh against LIVE with NO secrets (self-calibrates host+key from
+  the deployed bundle; RLS is the boundary). Fails the workflow honestly on
+  contract breakage, uploads the verification_report.json artifact, and has a
+  `verdict` job that prints CONTRACT SENTINEL GREEN/RED. Overridable app via
+  repo variables APP_URL/APP_URL_DEFAULT. This is the "BLOCK RELEASE on contract
+  failure" ideal made machine-checked on a schedule.
+- **tests/frontend/lib/paymentsCore.test.ts +3** — client money-boundary tests:
+  canonical status set is exactly the DB ledger states (no browser
+  confirmed/paid/settled shortcut), success reachable only server-side
+  (pending/processing→success), fresh checkout starts pending (never entitled
+  before settlement). Locks the money contract in the unit suite.
+- Verified paymentsCore already enforces amount-sufficiency, HMAC, idempotency,
+  and sanitizeAttribution ("browser is untrusted") — the browser client only
+  ASKS paystack-verify; it never decides paid.
+
+### Verified
+tsc 0; vitest 804/804 (+3); vite build 0 errors; schema-drift 0; design PASS;
+pricing constitution HOLDS; governance RELEASE APPROVED (money check PASS);
+contract manifest deterministic (regen → no diff). Pushed to origin/main.
+
+### Standing blockers (unchanged — user-credential-gated)
+Live DB apply (SUPABASE_DB_URL) → clears Database/RPC; edge deploys for
+email-service + resend-webhook (EMAIL_FROM key) → clears Email; a real vetted
+signup email for the E2E signup journey. Until then the sentinel honestly FAILs
+— that is the gate working, and now it is on a nightly schedule.
+---
+
+## Session 57 (2026-08-27): Web build unfrozen (tsc restored) + live closure frontier pinned
+
+User directive: itemized mass-marketing closure board (1→11 P0, then P1 12–18,
+mobile P2). Operating rule: RECONCILE→FIX→DEPLOY→TEST→VERIFY→CLOSE; feature
+expansion frozen. Pure coding focus; live DB apply + edge deploys deferred
+(credential-gated: SUPABASE_DB_URL / SUPABASE_ACCESS_TOKEN + secrets).
+
+### Build break fixed (commit 2a05ca9, pushed to origin/main)
+The prior lint dead-code pass renamed unused destructured props to `_`-prefixed
+bindings (e.g. `{ _businessId }`, `{ _leadName }`). TS resolves a destructure
+key literally — `{ _businessId }` reads property `_businessId`, which does not
+exist on the prop type → 17 TS2339 errors across 9 files → `npm run build`
+failed. CORRECT PATTERN (lesson, do not repeat): for a destructured prop that is
+unused, **omit the binding entirely** and leave the optional prop in the type
+(callers untouched). For zero-prop function components use a single
+`_props: {...}` param WITHOUT destructuring. Never rename keys to `_x` inside a
+typed destructure.
+- Files fixed: DemandActionCentre (`_leadName`), GovernanceSection (BoardTab
+  `_committees` — also dropped the unused `committees` prop from caller+type),
+  Skeleton (SkeletonText `_spacing`), useRealtime (`{ _key }` presence
+  callbacks), GovernanceHub (AuthorityTab `_staffId`), HumanResources (6 tabs:
+  Leave/Attendance/Payroll/Benefits keep `staffId`, drop `_businessId`;
+  EmployeesTab drops `_staff`; Performance/Contracts/Training → `_props`),
+  Operations (OverviewTab `_staff`), Recruitment (`.map` `_color`),
+  SalesPerformance (TargetsTab `_staffId`).
+- After fix: `tsc -b` clean, `vite build` 0 errors, vitest 815/815, contract
+  manifest deterministic, governance RELEASE APPROVED (94.1%), remaining
+  oxlint warnings are only pre-existing react-hooks(exhaustive-deps) — left
+  alone (auto-fix risks effect re-run behavior changes).
+
+### Live frontier re-pinned (verify-production.sh, no credentials needed)
+Fresh gate run (HEAD includes build fix): **Auth PASS, Payments PASS** (3 edge
+fns deployed: subscription-management, paystack-webhook 204, paystack-verify),
+**Frontend PASS** (current SPA shell), **Database/RPC FAIL** (240 ok / 218
+missing / 0 drift), **Email FAIL** (email-service + resend-webhook missing).
+The 218 missing objects are ALL defined-in-committed-migrations deployment
+drift: 187 are existing SECURITY DEFINER functions classified
+SECURITY_REPAIR_REQUIRED (present once the chain applies), 22 tables, 2 views,
+7 buckets. ZERO true code gaps — nothing to build; only apply+deploy.
+
+### CI on the push
+`CI` (incl. `npm run build`) green; `Schema Drift Check` green for
+governance / pricing-constitution / design-constitution / schema-drift /
+contract-manifest; `migration-test` hit a transient GitHub-runner apt flake
+(E: packages.microsoft.com 403) — reran, not code-caused. UX Tests + Mobile
+in progress. `Deploy to Vercel` fails on the SAME standing gate (Database/Email)
+— expected, gate working as intended.
+
+### Standing blockers (unchanged — user-credential-gated)
+Live DB apply → clears 218 missing; edge deploys for the 9 missing functions
+(ALL email + ask-avenize + parse-intent + api-gateway + webauthn +
+execute-automation + platform-health-check + dispatch-webhooks) → clears Email.
+Secrets: PAYSTACK_SECRET_KEY, RESEND_API_KEY + EMAIL_FROM, RESEND_WEBHOOK_SECRET,
+APP_URL, VITE_META_PIXEL_ID, SUPABASE_DB_URL, SUPABASE_ACCESS_TOKEN. Until then
+the contract gate honestly FAILs — by design.
+---
+
+## Session 58 (2026-08-27): Production closure freeze + phase-1 GitHub reconnaissance
+
+User directive: freeze P0 development; close live frontier only via apply/deploy/certify;
+do NOT declare completion from local/Postgres results alone. After the gate
+goes green, run the real-money customer journey, then 10–20-customer
+proof, then mass marketing. Parallel track: GitHub repo reconnaissance
+scored for production maturity / compatibility / business value / integration
+cost / risk, only against REAL Avenize weaknesses.
+
+### Reconnaissance deliverable (evidence, no code)
+Avenize ALREADY self-hosts (verified in tree:: analytics (usage_events +
+onboarding_funnel + feature_activation + said_vs_used), observability (platform_ops
++ platform_error_events + Sentry-optional dynamic-import@VITE_SENTRY_DSN),
+notifications ( Resend + email_events + platform_incidents + in-app bell
++ platform paging), payments ( Paystack + payment_transactions ledger +
+subscription-management edge fns), CRM/ERP (130-table core), durable
+execution (pg_cron + automation_runs + event bus + handle_*), PWA/mobile
+(mobile/ Expo + sw.js PWA). So meanwhile MOST external repos are the wrong
+tool (NET-NEW architecture, not a missing capability). The only two
+inventory-listed gaps (non-P0) are: unified cross-tenant business search RPC
+and mobile-app depth. Repo candidates must satolve those or provide PROVEN
+subsystem hardening — everything else is ADAPT/STUDY only.
+
+Category leaders probed (live GitHub API, 2026-08-27):
+- AI/agents: openai/swarm (MIT, 21.9k), langchain-ai/langchain (MIT,
+  145k, heavy dev-pull; Vercel/ai (NOASSERTION, 26.5k, Vercel-aligned);
+  VERDICT: STUDY only (Avenize copilot is deterministic-first via ask-avenize
+  + diagnose_rules — an LLM dependency would conflict with the anti-fabrication/
+  deterministic-SQL §22 core. LangChain/swarm add an agent-runtime dimension
+  not a gap.
+- Analytics: PostHog (NOASSERTION, 39.4k, leading self-driving product
+  analytics platform, NOT a lib; plausible/analytics (AGPL-3.0, 28.8k:
+  license blocks commercial import — STUDY only arch; umami-software/umami
+  (MIT, 38.4k, lighter privacy-first, possible ADAPT for multi-tenant
+  funnels IF Avenize ever adds a public-analytics surface. VERDICT: ADAPT
+  (MIT, analytics pattern gap is minimal since self-hosted events exist).
+- Notifications: novuhq/novu (NOASSERTION license file non-detected — MANUAL
+  check before import, 39.7k, leading in-app/email/push infra; resend/
+  react-email (MIT, 19.7k, React email templates — directly compatible
+  with Avenize's React + Resend stack. VERDICT: react-email ADAPT-degree
+  (Avenize currently stores raw HTML templates in migration seeds; react-email
+  would add typed, testable React components → DX + consistency; zero runtime
+  cost, MIT, no data-model conflict. NOVU: too heavy (NestJS, self-hosted
+  infra — would replace Avenize's in-app bell + trigger wiring; REJECT for
+  now, STUDY for the notification-center pattern.
+
+- Billing: stripe/stripe-node (MIT, 4.5k, Stripe-only, Paystack analog is
+   Avenize's own ledger — STUDY for idempotency/reconciliation patterns;;
+  polarsource/polar (Apache-2.0, 10.2k, open-source subscription/usage
+  billing platform — architectural reference ONLY (STUDY), Avenize's
+  payment_transactions ledger + price-lock + entitlement sync is already the
+  needed pattern;; getlago/lago (AGPL-3.0 — import-blocking, STUDY only
+  for metering/billing-API patterns.
+
+- CRM: twentyhq/twenty(NOASSERTION, 55.8k, leading open CRM; frappe/
+  erpnext(GPL-3.0 — import-blocking, STUDY only. VERDICT: STUDY only
+  — Avenize HAS its own CRM/ERP core (130 tables),; importing an entire
+  CRM would conflict with the architecture. Twenty's Kanban/opportunity UX
+  and GraphQL API are worth studying as reference.
+
+- Observability: getsentry/sentry(NOASSERTION, 44.6k, Avenize ALREADY lazily-
+  integrates @sentry/react via VITE_SENTRY_DSN — DONE, only sourcemaps+auth-
+  token pending (ops decision); grafana/grafana(AGPL-3.0 — STUDY only,
+  76.5k, not a lib;; openstatusHQ/openstatus(AGPL-3.0 — STUDY only
+   for status-page/uptime-as-code, Avenize's platform_ops + contract-
+   sentinel already covers that role operand.
+
+- Supabase patterns: supabase/supabase(Apache-2.0, 108.5k — STUDY the
+   official RLS/multi-tenant/auth patterns; Avenize already uses get_current_staff
+   + two-flag gates + 998-policy closure — the tree IS the reference already.
+- Durable execution: triggerdotdev/trigger.dev(Apache-2.0, 16.1k, fully-
+   managed agent/workflow platform; inngest/inngest(NOASSERTION, 5.8k,
+   workflow orchestration. VERDICT: STUDY only — Avenize already has pg_cron
+   + event bus + automation_runs + retrofit/DLQ; adding an external durable-
+   execution engine would be a NEW runtime + data-model conflict, not a gap.
+
+- E2E/testing: microsoft/playwright(Apache-2.0,95.3k — ALREADY in Avenize
+   (devDependency, tests/ux + a e2e workflows; vitest-dev/vitest (MIT,17k
+   — ALREADY in Avenize (devDependency,815/815 tests. VERDICT: DONE.
+
+- PWA/mobile: vite-pwa/vite-plugin-pwa(MIT,4.3k — Avenize already hand-rolls
+   sw.js (network-first + hashed-asset cache-first + offline fallback;; plugin would
+   add workbox+vite manifest wiring — ADAPT-degree possible ONLY as a DX
+   simplification later, NOT a capability gap. VERDICT: STUDY (current SW
+   verified sound, session-50 cache lifecycle closure; avoid dependency churn)).
+
+### Scoring verdict (ADOPT/ADAPT/STUDY/REJECT)
+1. resend/react-email — ADAPT-degree candidate ONLY (typed React email
+   templates vs raw HTML seeds; MIT; zero runtime; no data-model conflict,
+   low effort, medium DX/reliability value). NOT before production closure.
+
+2. umami-software/umami — ADAPT-degree candidate ONLY for a (future,
+   optional) public/marketing analytics surface (MIT, lighter than PostHog;
+   current marketing attribution already via attribution.ts + said_vs_used; bird
+   gap is tiny. NOT a P0/P1 dependency.)
+3. ALL AGPL/GPL repos (plausible, grafana, lago, frappe/erpnext, openstatus:
+
+   REJECT as vendored code, STUDY only as architectural reference (AGPL
+   copyleft would affect a commercial product).
+4. ALL agent/workflow platforms (swarm, langchain, vercel/ai, trigger.dev,
+   inngest, novu,: REJECT for now, STUDY for patterns; Avenize's
+   deterministic-first + event-bus + pg_cron architecture is the product identity.
+
+5. Sentry — ALREADY integrated (lazy, DSN-gated); only action: set VITE_SENTRY_
+   DSN + optionally SENTRY_AUTH_TOKEN for sourcemaps (ops credential,
+   non-code).
+6. Playwright+Vitest — ALREADY in tree, DONE. PWA plugin — STUDY only.
+
+### PHASE-1 conclusion
+No required dependency is missing from Avenize's current plan. The strongest
+import-safe candidates are react-email (typed templates, MIT) and umami
+(marketing analytics, MIT, optional, later). Everything else is ADAPT/STUDY
+reference material only. PHASE-0 (production closure) remains the sole
+P0 gate; no feature/dependency expansion should precede the green gate.
+### Tooling staged (2026-08-28, before credentials land)
+- `psql` 17.11 installed via apt (`postgresql-client`) — the apply script's
+  `psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f` path works. (Supabase's
+  managed Postgres is PG15-wire-compatible for the client.)
+- `supabase` CLI 2.116.0 installed globally (`sudo npm i -g supabase` —
+  /usr/local/lib/node_modules needs root). Verified: `functions deploy [name]`
+  accepts `<name...>` + `--project-ref` + `--no-verify-jwt` (matches
+  scripts/deploy_edge_functions.sh exactly), and `secrets set` exists.
+
+- The moment credentials land (SUPABASE_DB_URL, SUPABASE_ACCESS_TOKEN,
+  PAYSTACK_SECRET_KEY, RESEND_API_KEY, EMAIL_FROM, RESEND_WEBHOOK_SECRET,
+  E2E_EMAIL, E2E_PASSWORD), run in order WITHOUT further setup:
+  `apply_migrations_live.sh` → `deploy_edge_functions.sh` → `supabase secrets set`
+  → `verify-production.sh` → `e2e-production.sh` → real Paystack test transaction.
+- `docs/operations/CLIENT_PAYMENT_GATE.md` — the single deterministic launch
+  definition (18-row gate checklist, exact evidence per row, final verdict
+  only when ALL rows true against production). No enhancement (P1–P4) begins
+  until that gate is green.

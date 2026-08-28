@@ -1,0 +1,72 @@
+name: Contract Sentinel
+
+# The permanent Contract Integrity gate. Runs the production contract + the
+# critical money/auth E2E journeys against LIVE Avenize on a schedule (and on
+# demand) WITHOUT any secrets — both scripts self-calibrate the Supabase
+# host + publishable key from the deployed frontend bundle (RLS is the
+# boundary; no service-role key is ever used).
+#
+# A failing workflow here is the honest, automated answer to "is Avenize ready
+# to take a paying client?" — the Contract Constitution's definition of done.
+#
+# Override the checked app via a repo variable APP_URL (add at
+# Settings > Secrets and variables > Actions > Variables).
+
+on:
+  schedule:
+    # Nightly contract reconciliation (00:30 UTC).
+    - cron: '30 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sentinel:
+    runs-on: ubuntu-latest
+    env:
+      # The app the sentinel certifies. Set the APP_URL repo variable (or a
+      # secret; env vars on this job win) to change it; defaults to the
+      # production app. No credentials are required — self-calibrated.
+      APP_URL: ${{ vars.APP_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve app URL
+        id: app
+        run: |
+          A="${APP_URL:-${{ vars.APP_URL_DEFAULT }}}"
+          [ -n "$A" ] || A="https://avenize.riverwayse.com"
+          echo "app_url=$A" >> "$GITHUB_OUTPUT"
+          echo "APP_URL=$A" >> "$GITHUB_ENV"
+
+      - name: Production Contract verification (verify-production.sh)
+        id: verify
+        run: bash scripts/verify-production.sh
+
+      - name: Upload verification report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-verification-report
+          path: supabase/contract/verification_report.json
+          if-no-files-found: ignore
+
+      # The critical money/auth journeys: returning-user no-re-onboarding,
+      # identity resolution, no-payment-does-not-grant-entitlement, payment
+      # rails. Runs even when the contract gate fails so the report is full.
+      - name: Critical journeys E2E (e2e-production.sh)
+        if: always()
+        run: bash scripts/e2e-production.sh
+
+  verdict:
+    runs-on: ubuntu-latest
+    needs: [sentinel]
+    if: always()
+    steps:
+      - name: Eval sentinel result
+        run: |
+          if [ "${{ needs.sentinel.result }}" = "success" ]; then
+            echo "::notice::CONTRACT SENTINEL GREEN — Avenize ready for client payment."
+          else
+            echo "::warning::CONTRACT SENTINEL RED — inspect the sentinel job for the honest readiness verdict."
+          fi

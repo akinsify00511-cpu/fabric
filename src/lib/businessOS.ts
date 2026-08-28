@@ -1213,7 +1213,7 @@ export async function isApprovalRequired(
     })
     if (error) throw error
     return (data as ApprovalRequiredResult) ?? { requires_approval: true, reason: 'Default' }
-  } catch (e) {
+  } catch  {
     // Fail SAFE — require approval if the RPC isn't available.
     return { requires_approval: true, reason: 'Approval check unavailable — fail-safe' }
   }

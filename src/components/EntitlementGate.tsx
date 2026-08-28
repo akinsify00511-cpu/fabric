@@ -100,7 +100,7 @@ interface UpgradeBadgeProps {
 }
 
 export function UpgradeBadge({ plan, children }: UpgradeBadgeProps) {
-  const navigate = useNavigate()
+  
   
   return (
     <div className="relative group inline-block">
@@ -121,7 +121,7 @@ interface FeatureBannerProps {
 }
 
 export function FeatureBanner({ feature, requiredPlan }: FeatureBannerProps) {
-  const { hasAccess, plan } = useEntitlement(feature)
+  const { hasAccess, } = useEntitlement(feature)
   const navigate = useNavigate()
   
   if (hasAccess) return null

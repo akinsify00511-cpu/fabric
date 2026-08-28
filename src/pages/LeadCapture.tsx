@@ -19,7 +19,7 @@ export default function LeadCapture({ source = 'website', businessId, onSuccess 
   })
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [,setError] = useState<string | null>(null)
 
   const interests = [
     { value: 'crm', label: 'CRM & Sales' },

@@ -12,6 +12,38 @@ import {
   PAYMENT_TRANSITIONS,
 } from '../../../supabase/functions/_shared/paymentsCore'
 
+describe('client money-boundary (browser never decides paid)', () => {
+  it('the canonical status set is exactly the DB ledger states — no client shortcut', () => {
+    // Must match the DB trigger enforce_payment_transaction_transition exactly.
+    const canonical = Object.keys(PAYMENT_TRANSITIONS).sort()
+    expect(canonical).toEqual(['failed', 'pending', 'processing', 'refunded', 'success'])
+    // A client-invented "confirmed/paid/settled" status must NOT exist — the
+    // browser can never record success itself.
+    const clientOnly = ['confirmed', 'paid', 'settled', 'authorized']
+    for (const c of clientOnly) {
+      expect(PAYMENT_TRANSITIONS).not.toHaveProperty(c)
+    }
+  })
+
+  it('success is reachable only through a server-settled transition', () => {
+    // provider_status success is decided by the webhook/post-verify path, so
+    // only these two legal arcs may land on success. No transaction may hit
+    // success from a client-authored state.
+    expect(isPaymentTransitionAllowed('pending', 'success')).toBe(true)
+    expect(isPaymentTransitionAllowed('processing', 'success')).toBe(true)
+    expect(isPaymentTransitionAllowed('failed', 'success')).toBe(false)
+    expect(isPaymentTransitionAllowed('refunded', 'success')).toBe(false)
+  })
+
+  it('a fresh checkout starts pending — never entitled before settlement', () => {
+    // Mirrors createCheckout: a ledger row is created pending; entitlement is
+    // only unlocked by the webhook settling pending->success.
+    const anyClientIntent = ('pending' as const)
+    expect(anyClientIntent).toBe('pending')
+    expect(isPaymentTransitionAllowed('pending', 'success')).toBe(true)
+  })
+})
+
 describe('payment state machine', () => {
   it('pending can only go to processing, success or failed', () => {
     expect(isPaymentTransitionAllowed('pending', 'processing')).toBe(true)

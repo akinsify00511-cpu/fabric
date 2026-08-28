@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 530
+    "indexes": 534
   },
   "indexes": [
     {
@@ -2514,6 +2514,16 @@
       "table": "user_activity_daily"
     },
     {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "index": "idx_user_ai_memory_signal",
+      "table": "user_ai_memory"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "index": "idx_user_ai_memory_user",
+      "table": "user_ai_memory"
+    },
+    {
       "defined_in": "037_analytics_events_system.sql",
       "index": "idx_engagement_business",
       "table": "user_engagement"
@@ -2529,9 +2539,19 @@
       "table": "user_engagement"
     },
     {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "index": "idx_user_goals_user",
+      "table": "user_goals"
+    },
+    {
       "defined_in": "998_create_all_missing_tables.sql",
       "index": "idx_user_learning_user",
       "table": "user_learning"
+    },
+    {
+      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "index": "idx_user_pinned_items_user",
+      "table": "user_pinned_items"
     },
     {
       "defined_in": "998_create_all_missing_tables.sql",

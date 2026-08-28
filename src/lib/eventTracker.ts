@@ -99,7 +99,7 @@ class SessionManager {
     return this.engagement
   }
 
-  trackPageView(page: string) {
+  trackPageView(_page: string) {
     if (this.engagement) {
       this.engagement.pagesVisited++
     }
@@ -114,7 +114,7 @@ class SessionManager {
     }
   }
 
-  async endSession(userId: string, businessId?: string) {
+  async endSession(userId: string, _businessId?: string) {
     if (!this.engagement || !this.sessionId) return
 
     const duration = Math.floor((Date.now() - this.startTime!.getTime()) / 1000)
@@ -539,7 +539,7 @@ class LearningLoop {
   }
 
   // Feedback mechanisms
-  async recordFeedback(type: 'positive' | 'negative', context: string) {
+  async recordFeedback(type: 'positive' | 'negative', _context: string) {
     if (!this.userId) return
 
     try {
@@ -594,7 +594,7 @@ class EngagementSystem {
     return this.achievements
   }
 
-  async checkAndUnlock(trigger: string, userId: string, metadata?: Record<string, any>) {
+  async checkAndUnlock(trigger: string, userId: string, _metadata?: Record<string, any>) {
     const achievementMap: Record<string, { key: string; target: number; points: number }> = {
       first_login: { key: 'first_login', target: 1, points: 10 },
       tasks_completed: { key: 'first_task', target: 1, points: 25 },
@@ -688,7 +688,7 @@ export async function getAdminAnalytics(businessId: string, days: number = 30) {
     const categoryCounts: Record<string, number> = {}
     const actionCounts: Record<string, number> = {}
     let errorCount = 0
-    const uniqueUserIds = new Set<string>()
+    
 
     allEvents?.forEach(event => {
       // Count categories
@@ -717,7 +717,7 @@ export async function getAdminAnalytics(businessId: string, days: number = 30) {
       .slice(0, 10)
 
     const totalEvents = allEvents?.length || 0
-    const uniqueUsers = allEvents?.length || 0
+    
 
     // Get user activity
     const { data: userActivity } = await supabase
@@ -766,7 +766,7 @@ export async function getRecentEvents(businessId: string, limit: number = 50) {
 import { useState, useEffect } from 'react'
 
 export function useAnalytics() {
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
 
   useEffect(() => {
     // Initialize session

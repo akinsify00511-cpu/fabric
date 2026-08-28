@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowLeft, FileText, AlertTriangle, Scale, Users, Mail } from 'lucide-react'
+import { ArrowLeft, AlertTriangle, Scale, Mail } from 'lucide-react'
 
 export default function Terms() {
   return (

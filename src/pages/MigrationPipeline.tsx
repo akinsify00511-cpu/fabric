@@ -39,7 +39,7 @@ export default function MigrationPipeline() {
       if (error) throw error
       showToast('Migration job created', 'success')
       load()
-    } catch (e) { showToast('Could not create job', 'error') } finally { setCreating(false) }
+    } catch  { showToast('Could not create job', 'error') } finally { setCreating(false) }
   }
 
   async function advance(jobId: string, nextStage: string) {

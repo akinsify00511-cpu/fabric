@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
-import { TOOLS, ToolKey } from '../lib/useToolAccess'
+import { TOOLS } from '../lib/useToolAccess'
 import { fetchBusinessApprovalConfig, saveBusinessApprovalConfig } from '../lib/businessOS'
 import {
-  ChevronRight, Plus, Edit2, Trash2, Check, X,
-  Users, Settings, Shield, UserCog, ShieldCheck
+  ChevronRight, Plus, Trash2, Check, X,
+  Users, Shield, UserCog, ShieldCheck
 } from 'lucide-react'
 
 type FunctionalRole = {
@@ -33,7 +33,6 @@ export default function RoleSettings() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [roles, setRoles] = useState<FunctionalRole[]>([])
-  const [editingRole, setEditingRole] = useState<string | null>(null)
   const [newRoleName, setNewRoleName] = useState('')
   const [showNewForm, setShowNewForm] = useState(false)
   const [expandedRole, setExpandedRole] = useState<string | null>(null)

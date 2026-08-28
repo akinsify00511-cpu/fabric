@@ -1,6 +1,5 @@
 import { Component, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { qcLogger, issueReporter } from '../lib/quality-control'
 import { captureException } from '../lib/sentry'
 

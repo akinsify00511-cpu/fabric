@@ -7,9 +7,7 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Wallet, Plus, Search, Filter, ChevronDown, ChevronRight,
-  Calendar, Users, FileText, CheckCircle2, Clock, AlertCircle,
-  Edit2, Trash2, Eye, Download, Send, X
+  Wallet, Plus, Search, Calendar, FileText, CheckCircle2, Clock, Trash2, Eye, X
 } from 'lucide-react'
 
 interface PayrollRun {
@@ -74,9 +72,8 @@ export default function PayrollPage() {
   const { showToast } = useToast()
 
   const [payrollRuns, setPayrollRuns] = useState<PayrollRun[]>([])
-  const [allStaff, setAllStaff] = useState<Staff[]>([])
+  const [,setAllStaff] = useState<Staff[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'runs' | 'overview'>('runs')
   const [searchQuery, setSearchQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [showDetailModal, setShowDetailModal] = useState(false)

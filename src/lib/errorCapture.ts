@@ -206,7 +206,7 @@ export function formatErrorsForDisplay(): string {
 
   return capturedErrors
     .slice(-5)
-    .map((e, i) => {
+    .map((e, _i) => {
       const time = new Date(e.timestamp).toLocaleTimeString()
       return `[${time}] ${e.type}: ${e.message}`
     })

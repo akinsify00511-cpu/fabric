@@ -1,14 +1,13 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
 import { useFeatureFlag, FEATURE_FLAG_KEYS } from '../lib/useFeatureFlag'
 import { useAnalytics, ANALYTICS_EVENTS } from '../lib/analytics'
-import { BetaBadge, FeatureComingSoon } from '../components/BetaTesterGate'
+import { BetaBadge } from '../components/BetaTesterGate'
 import {
-  Zap, Plus, Play, Pause, Trash2, Settings, ChevronRight, CheckCircle2,
-  XCircle, Clock, ArrowRight, AlertTriangle, Activity, Filter, X, Sparkles,
-  GripVertical, ChevronDown, Info, Eye, EyeOff, Edit3
+  Zap, Plus, Play, Pause, Trash2, Settings, CheckCircle2,
+  XCircle, Clock, ArrowRight, Activity, X, Sparkles
 } from 'lucide-react'
 
 type Automation = {
@@ -179,8 +178,8 @@ const [automations, setAutomations] = useState<Automation[]>([])
     setSelectedAutomation(null)
   }
 
-  const getTriggerIcon = (type: string) => TRIGGERS.find((t) => t.type === type)?.icon ?? '⚡'
-  const getActionIcon = (type: string) => ACTIONS.find((a) => a.type === type)?.icon ?? '⚡'
+  
+  
 
   const getRecentRunsForAutomation = (autoId: string) => {
     return runs.filter((r) => r.automation_id === autoId).slice(0, 5)

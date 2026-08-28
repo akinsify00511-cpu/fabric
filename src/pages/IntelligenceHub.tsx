@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useDbState, DbStateBanner } from '../lib/useDbState'
 import {
-  Brain, Loader2, AlertTriangle, TrendingUp, Activity, Users,
+  Brain, Loader2, AlertTriangle, Users,
   Workflow, ShieldAlert, LineChart, Lightbulb, Target, Globe, Info,
   DollarSign, ArrowRight,
 } from 'lucide-react'

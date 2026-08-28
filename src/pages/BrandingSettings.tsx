@@ -2,8 +2,7 @@ import { useState } from 'react'
 import { useBranding } from '../lib/BrandingContext'
 import { useToast } from '../components/Toast'
 import {
-  Palette, Upload, Image, Globe, Eye, EyeOff, RotateCcw, Check, X,
-  Type, Layout, Moon, Sun, Monitor
+  Palette, Upload, Image, Globe, RotateCcw, Layout, Moon, Sun, Monitor
 } from 'lucide-react'
 
 const PRESET_THEMES = [

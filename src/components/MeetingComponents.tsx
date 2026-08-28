@@ -5,9 +5,7 @@
 
 import React, { useState } from 'react'
 import {
-  Users, Clock, Calendar, MapPin, Link as LinkIcon,
-  Mic, Video, VideoOff, Phone, Plus, X, Check, Loader2,
-  Edit3, Trash2, Send, Bell, UserCheck, FileText
+  Clock, Calendar, MapPin, Mic, Video, VideoOff, Plus, X, Check, Edit3, Trash2, Bell, UserCheck
 } from 'lucide-react'
 import { Avatar } from './ImageComponents'
 

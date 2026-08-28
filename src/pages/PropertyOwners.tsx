@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Edit, Trash2, Mail, Phone, Building, User, ExternalLink } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, Mail, Phone, Building, User } from 'lucide-react'
 import { useAuth } from '../lib/AuthContext'
 import { supabase } from '../lib/supabase'
 import Modal from '../components/Modal'

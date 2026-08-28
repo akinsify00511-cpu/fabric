@@ -67,7 +67,7 @@ export function BusinessProvider({ children }: { children: ReactNode }) {
   const [activeBusinessId, setActiveBusinessId] = useState<string | null>(defaultBid)
   const [loading, setLoading] = useState(true)
 
-  const loadAccessible = async (uid: string): Promise<AccessibleBusiness[]> => {
+  const loadAccessible = async (_uid: string): Promise<AccessibleBusiness[]> => {
     const { data, error } = await supabase.rpc('get_current_accessible_businesses')
     if (error || !data) return []
     const rows = data as Array<Omit<AccessibleBusiness, 'name' | 'entity_type'>>

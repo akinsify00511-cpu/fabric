@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense, type ReactNode, type ComponentType } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/AuthContext'
 import { BusinessProvider } from './lib/BusinessContext'
@@ -12,8 +12,7 @@ import BetaFeedbackButton from './components/BetaFeedbackButton'
 import QCDashboard from './components/QCDashboard'
 import PersonalizationHub from './components/PersonalizationHub'
 import { setupGlobalErrorHandlers } from './lib/quality-control'
-import CommandPalette, { useGlobalCommands, useCommandPalette } from './components/CommandPalette'
-import { useKeyboardShortcuts, GLOBAL_SHORTCUTS } from './hooks/useKeyboardShortcuts'
+import { useGlobalCommands, useCommandPalette } from './components/CommandPalette'
 import { useOnlineStatus } from './hooks/useOnlineStatus'
 import { PageSkeleton } from './components/Skeleton'
 import RequireModule from './components/RequireModule'
@@ -137,7 +136,7 @@ const APIKeys = lazy(() => import('./pages/APIKeys'))
 const Properties = lazy(() => import('./pages/Properties'))
 const PropertyOwners = lazy(() => import('./pages/PropertyOwners'))
 const PropertySales = lazy(() => import('./pages/PropertySales'))
-const InvoicePreview = lazy(() => import('./components/InvoicePreview'))
+
 const Premium = lazy(() => import('./pages/Premium'))
 const StaffProfile = lazy(() => import('./pages/StaffProfile'))
 const BusinessInfrastructure = lazy(() => import('./pages/BusinessInfrastructure'))
@@ -155,7 +154,7 @@ const HelpCenter = lazy(() => import('./pages/HelpCenter'))
 const AuditLog = lazy(() => import('./pages/AuditLog'))
 const DataExport = lazy(() => import('./pages/DataExport'))
 const SearchPage = lazy(() => import('./pages/SearchPage'))
-const CommentsAndTimeline = lazy(() => import('./pages/CommentsAndTimeline'))
+
 const CommentsPage = lazy(() => import('./pages/CommentsAndTimeline').then(m => ({ default: m.CommentsPage })))
 const CurrencyExchange = lazy(() => import('./pages/CurrencyExchange'))
 const WorkflowBuilder = lazy(() => import('./pages/WorkflowBuilder'))
@@ -580,8 +579,8 @@ function AppRoutes() {
 // Wrapper component that uses hooks requiring provider context
 function AppShell() {
   const globalCommands = useGlobalCommands()
-  const { isOpen, openPalette, closePalette, CommandPaletteComponent } = useCommandPalette(globalCommands)
-  const { isOnline, isOffline } = useOnlineStatus()
+  const { CommandPaletteComponent } = useCommandPalette(globalCommands)
+  const { isOffline } = useOnlineStatus()
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   // Global keyboard shortcut to show shortcuts modal

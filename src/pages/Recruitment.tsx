@@ -7,10 +7,9 @@ import { supabase } from '../lib/supabase'
 import { useToast } from '../components/Toast'
 import { hasPermission } from '../lib/permissions'
 import {
-  Briefcase, Users, Plus, Search, Filter, ChevronDown, ChevronUp,
-  Mail, Phone, Calendar, MapPin, DollarSign, Building2,
-  FileText, ExternalLink, CheckCircle2, Clock, XCircle,
-  Edit2, Trash2, Eye, MoreHorizontal, Send, UserPlus
+  Briefcase, Users, Plus, Search, ChevronDown, ChevronUp,
+  Mail, Phone, MapPin, FileText, ExternalLink, CheckCircle2, XCircle,
+  Edit2, Trash2
 } from 'lucide-react'
 
 interface JobPosting {
@@ -81,7 +80,7 @@ export default function RecruitmentPage() {
   const [activeTab, setActiveTab] = useState<'postings' | 'applications'>('postings')
   const [postings, setPostings] = useState<JobPosting[]>([])
   const [applications, setApplications] = useState<JobApplication[]>([])
-  const [stages, setStages] = useState<RecruitmentStage[]>([])
+  const [,setStages] = useState<RecruitmentStage[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -352,7 +351,7 @@ export default function RecruitmentPage() {
             { label: 'Total Applications', value: stats.totalApplications, color: 'gray' },
             { label: 'New Applications', value: stats.newApplications, color: 'amber' },
             { label: 'Hired', value: stats.hired, color: 'green' },
-          ].map(({ label, value, color }) => (
+          ].map(({ label, value }) => (
             <div key={label} className="bg-[var(--av-surface-elevated)] rounded-xl p-4 border border-[var(--av-border)]">
               <p className="text-2xl font-bold text-[var(--av-text)]">{value}</p>
               <p className="text-sm text-[var(--av-text-muted)]">{label}</p>
