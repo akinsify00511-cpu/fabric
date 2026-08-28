@@ -6,6 +6,12 @@ import { clearModuleAccessCache } from './useModuleAccess'
 import { clearExperienceContextCache } from './useExperienceContext'
 import { logPlatformActivity } from './riverwaysActivity'
 import { setSentryUser } from './sentry'
+import { ClockSkewError, isClockSkewError } from './probeVerifier'
+import {
+  installStorageSelfHeal,
+  clearSupabaseLocalStorage,
+  deleteIndexedDatabase,
+} from './sbStorageSelfHeal'
 
 export type UserRole = 'owner' | 'admin' | 'manager' | 'team_lead' | 'staff'
 
@@ -138,6 +144,7 @@ type CurrentStaffIdentity = {
 async function resolveStaffIdentity(_userId: string): Promise<CurrentStaffIdentity | null> {
   const { data, error } = await supabase.rpc('get_current_staff')
   if (error) {
+    if (isClockSkewError(error)) throw new ClockSkewError()
     throw error
   }
   const rows = Array.isArray(data) ? data : []
@@ -288,6 +295,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (myId !== fetchIdRef.current) return null
 
       if (lastError) {
+        // Clock-skew is retryable without scaring the user with "auth broken".
+        // The PostgREST gateway rejected the JWT because the client clock is
+        // ahead; treat it as a soft error the Login/page retry handler can
+        // classify, not as membership-resolution failure.
+        if (lastError instanceof ClockSkewError) {
+          console.warn('Membership resolution deferred: client clock ahead (PGRST303).')
+          setStaffError(true)
+          setStaffChecked(true)
+          return null
+        }
         // A resolver error is NEVER onboarding_required. Preserve the session
         // and expose a retryable auth error instead of sending the user through
         // the onboarding wizard.
@@ -303,6 +320,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [session?.user],
   )
+
+  // IndexedDB/session-store self-heal. The production users hit
+  // "Corruption: block checksum mismatch" when the supabase-auth-js IndexedDB
+  // cache (or the localStorage fallback bridge) is corrupted (frequently a
+  // browser-extension side-effect). On first occurrence we wipe the caches,
+  // drop the IndexedDB auth databases, and force a fresh sign-in.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const detach = installStorageSelfHeal('sb', {
+      clearFallback: () => clearSupabaseLocalStorage('sb-'),
+      deleteDatabases: (names) => { for (const n of names) deleteIndexedDatabase(n) },
+      onHealed: () => {
+        // Null the session locally so the user re-logs in through the UI
+        // instead of reusing the corrupted handle.
+        sessionUserIdRef.current = null
+        authGenerationRef.current += 1
+        setSession(null)
+        setStaff(null)
+        setStaffChecked(true)
+        setLoading(false)
+      },
+    })
+    return detach
+  }, [])
 
   const userId = session?.user?.id
   useEffect(() => {

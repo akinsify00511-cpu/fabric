@@ -141,12 +141,15 @@ export async function fetchCurrentMetrics(businessId: string): Promise<GovernedM
 }
 
 // Trigger a refresh on load (best-effort). Never blocks the UI: failures are
-// swallowed so business operations stay authoritative (§24).
+// swallowed so business operations stay authoritative (§24). Routed through
+// the availability guard so a drifted live DB stops re-firing the RPC behind
+// every page (the signed-in user's console wall).
 export async function refreshBusinessMetrics(businessId: string) {
   try {
-    await supabase.rpc('refresh_business_metrics', { p_business_id: businessId })
-  } catch (e) {
-    console.error('refresh_business_metrics failed (non-blocking):', e)
+    await rpcGuarded<unknown>('refresh_business_metrics', () =>
+      supabase.rpc('refresh_business_metrics', { p_business_id: businessId }))
+  } catch {
+    // silent §24 path — rpcGuarded already swallowed or unavailable
   }
 }
 
