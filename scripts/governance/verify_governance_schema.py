@@ -3,7 +3,7 @@
 Verify the governance migration covers all required governance objects.
 
 Reads the SQL text of supabase/migrations/20260825160000_governance_engine.sql
-(and the step-up suffix 20260825200000_step_up_human_decisions.sql) and
+(and the step-up suffix 20260825201000_step_up_human_decisions.sql) and
 probes it for the expected governance objects:
 - tables: governance_events, governance_incidents, governance_autonomy_queue,
           governance_audit_log, human_decisions, governance_report_publications,
@@ -24,7 +24,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 MIGRATION = ROOT / "supabase" / "migrations" / "20260825160000_governance_engine.sql"
-STEP_UP = ROOT / "supabase" / "migrations" / "20260825200000_step_up_human_decisions.sql"
+STEP_UP = ROOT / "supabase" / "migrations" / "20260825201000_step_up_human_decisions.sql"
 
 EXPECTED = {
     "tables": [

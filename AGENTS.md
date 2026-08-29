@@ -3943,7 +3943,7 @@ business search RPC (the one PARTIAL domain in the §4 inventory).
 
 ### What shipped (local commit, NOT pushed — GITHUB_TOKEN returned 401 Bad
 ### credentials mid-session; push blocked until the credential refreshes)
-- Migration `20260824170000_unified_business_search.sql`: `business_search(
+- Migration `20260824171000_unified_business_search.sql`: `business_search(
   p_query, p_types[], p_limit)` — membership-guarded SECURITY DEFINER over an
   explicit 9-type allowlist (staff/contacts/leads/meetings/objectives/quotes/
   orders/tasks/activities) scoped to the caller's business. Ranking exact(0) >

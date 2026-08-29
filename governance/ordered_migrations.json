@@ -40,11 +40,11 @@
     "20260822135000_brand_assets_bucket.sql",
     "20260824150000_attribution_revenue.sql",
     "20260824160000_payment_investigation.sql",
-    "20260824170000_unified_business_search.sql",
+    "20260824171000_unified_business_search.sql",
     "20260824170000_cost_governor.sql",
     "20260824200000_meeting_lifecycle_compliance.sql",
     "20260825160000_governance_engine.sql",
-    "20260825200000_step_up_human_decisions.sql",
+    "20260825201000_step_up_human_decisions.sql",
     "038_critical_infrastructure.sql",
     "039_operations_backbone.sql",
     "zzzaaa_demand_capture.sql",
@@ -239,7 +239,7 @@
     "20260824160000_payment_investigation.sql": [
       "riverways_payment_investigation"
     ],
-    "20260824170000_unified_business_search.sql": [
+    "20260824171000_unified_business_search.sql": [
       "business_search"
     ],
     "20260824170000_cost_governor.sql": [
@@ -263,7 +263,7 @@
       "create_incident",
       "transition_incident"
     ],
-    "20260825200000_step_up_human_decisions.sql": [
+    "20260825201000_step_up_human_decisions.sql": [
       "decide_human_decision"
     ],
     "038_critical_infrastructure.sql": [

@@ -125,23 +125,32 @@ def check_frontend_contract_backed() -> CheckResult:
 
 def check_migration_naming() -> CheckResult:
     problems = []
+    prefixes = {}
     for path in sorted(MIGRATIONS.glob("*.sql")):
         name = path.name
         if name in BANNED_MIGRATION_NAMES:
             problems.append({"file": name, "reason": "banned name"})
             continue
         stem = name[:-4]
-        # Canonical: YYYYMMDDHHMMSS_purpose (14-digit) or legacy NNN_name.
         valid = (
             (stem[0:14].isdigit() and len(stem) > 15)
             or (stem.split("_", 1)[0].isdigit() and "_" in stem and stem.find("zz") == -1)
         )
         if not valid:
             problems.append({"file": name, "reason": "non-canonical naming (legacy zz_)"})
+        prefix = stem.split("_", 1)[0]
+        if prefix.isdigit():
+            prefixes.setdefault(prefix, []).append(name)
+    for prefix, files in sorted(prefixes.items()):
+        if len(files) > 1:
+            problems.append({"file": "+".join(files), "reason": f"duplicate migration number {prefix}"})
     if problems:
+        kind = [p for p in problems if p["reason"].startswith("duplicate")]
+        if kind:
+            return CheckResult("FAIL", "P1", True, {"problems": problems[:20]})
         # legacy zz_* files are known debt — they do not block, but new
-        # canonical names must be used going forward (tracked in the report).
-        return CheckResult("PASS", detail={"migration_naming_debt": len(problems)})
+        # canonical names must be used going forward (tracked in the report.
+        return CheckResult("PASS", detail={"migration_naming_debt": len(problems), "problems": problems[:20]})
     return CheckResult("PASS")
 
 
