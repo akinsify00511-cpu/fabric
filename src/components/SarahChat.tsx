@@ -11,6 +11,34 @@ type ChatMessage = {
   suggestions?: Array<{ label: string; path: string }>
 }
 
+export type SarahIntent =
+  | 'business_health' | 'next_action' | 'diagnosis' | 'value_ledger'
+  | 'trial' | 'pricing' | 'whats_new' | 'greeting' | 'help'
+  | 'feature_nav' | 'thanks' | 'unknown'
+
+/** Pure compatibility router for Sarah's client-side intent contract. */
+export function classifyIntent(input: string): SarahIntent {
+  const q = input.trim().toLowerCase()
+  if (!q) return 'unknown'
+
+  if (/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(q)) return 'greeting'
+  if (/\b(thanks|thank you|bye|goodbye|see you)\b/.test(q)) return 'thanks'
+  if (/\b(help|what can you do|how do i use|how can i use)\b/.test(q)) return 'help'
+
+  if (/\b(what'?s new|new features?|recent updates?|latest updates?|recent changes?)\b/.test(q)) return 'whats_new'
+  if (/\b(pric(e|ing)|cost|plans?|upgrade|subscription)\b/.test(q)) return 'pricing'
+  if (/\b(trial|days? left|expire|expiration)\b/.test(q)) return 'trial'
+
+  if (/\b(how much value|how much have we saved|how much did we recover|what has avenize achieved|value (has|have) avenize)\b/.test(q)) return 'value_ledger'
+  if (/\b(why|what caused|root cause|cause of|reason (for|why))\b/.test(q)) return 'diagnosis'
+  if (/\b(what should i do|what do i do|what needs my attention|most important|what should i focus|focus on right now|next step|what next)\b/.test(q)) return 'next_action'
+  if (/\b(how is my business|how am i doing|state of my business|business health|health score|my pulse)\b/.test(q)) return 'business_health'
+
+  if (/\b(crm|sales|customer|customers|tasks?|inventory|meetings?|calendar|finance|invoice|invoices|payments?|cash|chat)\b/.test(q)) return 'feature_nav'
+
+  return 'unknown'
+}
+
 const STARTERS = [
   'How is my business doing?',
   'What should I focus on right now?',
@@ -65,8 +93,6 @@ export default function SarahChat() {
     setSending(true)
     setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'user', content: q }])
     try {
-      // Keep Sarah's browser request deliberately minimal: the user JWT is
-      // explicit, while avoiding unnecessary preflight headers from invoke().
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.access_token) throw new Error('Session expired')
       const base = import.meta.env.VITE_SUPABASE_URL as string
