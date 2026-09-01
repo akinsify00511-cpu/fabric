@@ -1,5 +1,6 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
+// Deployment nudge: ensure the latest main commit is picked up by the production deployment.
 const CACHE_VERSION = 'v7'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
@@ -31,7 +32,6 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url)
   if (request.method !== 'GET') return
 
-  // Never cache Supabase/auth/API traffic.
   if (url.origin !== location.origin && !url.hostname.includes('cdn')) return
   const isApiPath = url.pathname.startsWith('/api/')
     || url.pathname.startsWith('/rest/v1/')
@@ -49,16 +49,11 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Content-hashed build assets (/assets/<name>-<hash>.js) are immutable by
-  // construction: a new deploy produces new filenames, so a cached copy can
-  // never go stale. Serve cache-first for instant repeat loads.
   if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
     event.respondWith(cacheFirstForHashedAsset(request))
     return
   }
 
-  // JS/CSS are deployment-sensitive. Network-first prevents an old service
-  // worker from serving a stale auth bundle after a production deployment.
   if (url.pathname.match(/\.(js|css|woff2?|ttf|eot)$/)) {
     event.respondWith(networkFirstForStaticAsset(request))
     return
@@ -188,9 +183,7 @@ function openDB() {
     request.onsuccess = () => resolve(request.result)
     request.onupgradeneeded = (event) => {
       const db = event.target.result
-      if (!db.objectStoreNames.contains('pending-actions')) {
-        db.createObjectStore('pending-actions', { keyPath: 'id', autoIncrement: true })
-      }
+      if (!db.objectStoreNames.contains('pending-actions')) db.createObjectStore('pending-actions', { keyPath: 'id', autoIncrement: true })
     }
   })
 }
@@ -216,28 +209,20 @@ self.addEventListener('push', (event) => {
   if (!event.data) return
   const data = event.data.json()
   event.waitUntil(self.registration.showNotification(data.title || 'Avenize', {
-    body: data.body || 'You have a new notification',
-    icon: '/favicon.svg',
-    badge: '/favicon.svg',
-    vibrate: [100, 50, 100],
-    data: { url: data.url || '/', dateOfArrival: Date.now() },
-    actions: data.actions || [],
+    body: data.body || 'You have a new notification', icon: '/favicon.svg', badge: '/favicon.svg', vibrate: [100, 50, 100],
+    data: { url: data.url || '/', dateOfArrival: Date.now() }, actions: data.actions || [],
   }))
 })
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   event.waitUntil(clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-    for (const client of clientList) {
-      if (client.url === event.notification.data.url && 'focus' in client) return client.focus()
-    }
+    for (const client of clientList) if (client.url === event.notification.data.url && 'focus' in client) return client.focus()
     if (clients.openWindow) return clients.openWindow(event.notification.data.url)
   }))
 })
 
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
-  if (event.data?.type === 'CLEAR_CACHE') {
-    event.waitUntil(caches.keys().then((cacheNames) => Promise.all(cacheNames.map((name) => caches.delete(name)))))
-  }
+  if (event.data?.type === 'CLEAR_CACHE') event.waitUntil(caches.keys().then((cacheNames) => Promise.all(cacheNames.map((name) => caches.delete(name)))))
 })
