@@ -1,7 +1,7 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
 // Deployment nudge: ensure the latest main commit is picked up by the production deployment.
-const CACHE_VERSION = 'v7'
+const CACHE_VERSION = 'v8'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
