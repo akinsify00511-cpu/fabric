@@ -19,26 +19,17 @@ const STARTERS = [
 ]
 
 const ROUTES: Record<string, string> = {
-  crm: '/app/crm',
-  sales: '/app/crm',
-  customer: '/app/crm',
-  invoice: '/app/finance',
-  payment: '/app/finance',
-  cash: '/app/finance',
-  task: '/app/tasks',
-  meeting: '/app/meetings',
-  calendar: '/app/calendar',
-  chat: '/app/chat',
-  finance: '/app/finance',
+  crm: '/app/crm', sales: '/app/crm', customer: '/app/crm',
+  invoice: '/app/finance', payment: '/app/finance', cash: '/app/finance',
+  task: '/app/tasks', meeting: '/app/meetings', calendar: '/app/calendar',
+  chat: '/app/chat', finance: '/app/finance',
 }
 
 function suggestionsFor(question: string) {
   const q = question.toLowerCase()
   const found: Array<{ label: string; path: string }> = []
   for (const [key, path] of Object.entries(ROUTES)) {
-    if (q.includes(key) && !found.some(s => s.path === path)) {
-      found.push({ label: path.split('/').pop()!.replace(/-/g, ' '), path })
-    }
+    if (q.includes(key) && !found.some(s => s.path === path)) found.push({ label: path.split('/').pop()!.replace(/-/g, ' '), path })
   }
   return found.slice(0, 3)
 }
@@ -57,12 +48,7 @@ export default function SarahChat() {
     if (!staff?.user_id) return
     let cancelled = false
     const load = async () => {
-      const { data } = await supabase
-        .from('copilot_messages')
-        .select('id,role,content')
-        .eq('user_id', staff.user_id)
-        .order('created_at', { ascending: false })
-        .limit(20)
+      const { data } = await supabase.from('copilot_messages').select('id,role,content').eq('user_id', staff.user_id).order('created_at', { ascending: false }).limit(20)
       if (!cancelled && data) setMessages(data.reverse().map((m: any) => ({ id: m.id, role: m.role, content: m.content })))
       if (!cancelled) setHistoryLoaded(true)
     }
@@ -70,28 +56,34 @@ export default function SarahChat() {
     return () => { cancelled = true }
   }, [staff?.user_id])
 
-  useEffect(() => {
-    if (open) endRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, sending, open])
+  useEffect(() => { if (open) endRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, sending, open])
 
   const ask = async (question: string) => {
     const q = question.trim()
     if (!q || sending) return
     setInput('')
     setSending(true)
-    const userMessage: ChatMessage = { id: crypto.randomUUID(), role: 'user', content: q }
-    setMessages(prev => [...prev, userMessage])
+    setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'user', content: q }])
     try {
-      const { data, error } = await supabase.functions.invoke('ask-avenize', { body: { question: q } })
-      if (error || data?.error) {
-        throw new Error(data?.error || error?.message || 'Sarah is unavailable')
-      }
-      setMessages(prev => [...prev, {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: data.answer,
-        suggestions: suggestionsFor(q),
-      }])
+      // Use a deliberately minimal browser request. supabase.functions.invoke()
+      // adds x-client-info to the CORS preflight; production ask-avenize must
+      // remain callable even while the Edge Function CORS contract is being
+      // upgraded. The user JWT is still required and sent as Authorization.
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) throw new Error('Session expired')
+      const base = import.meta.env.VITE_SUPABASE_URL as string
+      const response = await fetch(`${base}/functions/v1/ask-avenize`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question: q }),
+      })
+      let data: any = {}
+      try { data = await response.json() } catch { /* handled below */ }
+      if (!response.ok || data?.error) throw new Error(data?.error || `Sarah request failed (${response.status})`)
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.answer, suggestions: suggestionsFor(q) }])
     } catch (error) {
       console.error('[sarah]', error)
       setMessages(prev => [...prev, {
@@ -99,20 +91,18 @@ export default function SarahChat() {
         role: 'assistant',
         content: 'I could not reach the live Avenize intelligence service right now. Your business data is safe. Please try again in a moment.',
       }])
-    } finally {
-      setSending(false)
-    }
+    } finally { setSending(false) }
   }
 
   return <>
     {open && <div className="fixed inset-0 z-[70] bg-black/10 md:bg-transparent" onClick={() => setOpen(false)} />}
     {open && <section className="fixed z-[80] right-4 bottom-20 w-[min(420px,calc(100vw-2rem))] h-[min(680px,calc(100vh-7rem))] rounded-2xl bg-[var(--av-surface-elevated)] border border-[var(--av-border)] shadow-2xl overflow-hidden flex flex-col" role="dialog" aria-label="Sarah assistant">
       <header className="px-4 py-3 border-b border-[var(--av-border)] flex items-center justify-between">
-        <div className="flex items-center gap-2"><div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'var(--av-gradient)' }}><Sparkles size={18} className="text-white" /></div><div><p className="font-semibold text-sm text-[var(--av-text)]">Sarah</p><p className="text-[10px] text-[var(--av-text-muted)]">Native Avenize intelligence · live business data</p></div></div>
+        <div className="flex items-center gap-2"><div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'var(--av-gradient)' }}><Sparkles size={18} className="text-white" /></div><div><p className="font-semibold text-sm text-[var(--av-text)]">Sarah</p><p className="text-[10px] text-[var(--av-text-muted)]">Your Avenize business intelligence assistant</p></div></div>
         <button onClick={() => setOpen(false)} className="p-2 rounded-lg hover:bg-[var(--av-surface-2)] text-[var(--av-text-muted)]" aria-label="Close Sarah"><X size={18} /></button>
       </header>
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.length === 0 && historyLoaded && <div className="h-full flex flex-col justify-center items-center text-center gap-4"><Sparkles size={28} className="text-[var(--av-primary)]" /><div><p className="font-medium text-sm text-[var(--av-text)]">Ask Sarah what is happening in your business.</p><p className="text-xs text-[var(--av-text-muted)] mt-1">Answers are grounded in Avenize's live data. Sarah does not invent missing numbers.</p></div><div className="flex flex-wrap justify-center gap-2">{STARTERS.map(s => <button key={s} onClick={() => void ask(s)} className="text-xs px-3 py-2 rounded-full border border-[var(--av-border)] text-[var(--av-text)] hover:border-[var(--av-primary)]">{s}</button>)}</div></div>}
+        {messages.length === 0 && historyLoaded && <div className="h-full flex flex-col justify-center items-center text-center gap-4"><Sparkles size={28} className="text-[var(--av-primary)]" /><div><p className="font-medium text-sm text-[var(--av-text)]">Ask Sarah what is happening in your business.</p><p className="text-xs text-[var(--av-text-muted)] mt-1">Sarah is the Avenize business assistant, grounded in your live business data.</p></div><div className="flex flex-wrap justify-center gap-2">{STARTERS.map(s => <button key={s} onClick={() => void ask(s)} className="text-xs px-3 py-2 rounded-full border border-[var(--av-border)] text-[var(--av-text)] hover:border-[var(--av-primary)]">{s}</button>)}</div></div>}
         {messages.map(m => <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[88%] rounded-2xl px-3.5 py-3 text-sm ${m.role === 'user' ? 'text-white' : 'text-[var(--av-text)] bg-[var(--av-surface-2)]'}`} style={m.role === 'user' ? { background: 'var(--av-gradient)' } : undefined}><p className="whitespace-pre-wrap">{m.content}</p>{m.suggestions?.length ? <div className="mt-2 pt-2 border-t border-[var(--av-border)] flex flex-wrap gap-1.5">{m.suggestions.map(s => <button key={s.path} onClick={() => { setOpen(false); navigate(s.path) }} className="text-[10px] px-2 py-1 rounded-full border border-[var(--av-border)] hover:border-[var(--av-primary)] capitalize inline-flex items-center gap-1">{s.label}<ArrowRight size={10} /></button>)}</div> : null}</div></div>)}
         {sending && <div className="flex justify-start"><div className="rounded-2xl px-3.5 py-3 bg-[var(--av-surface-2)] flex items-center gap-2 text-xs text-[var(--av-text-muted)]"><Loader2 size={14} className="animate-spin text-[var(--av-primary)]" /> Sarah is analysing your live business data…</div></div>}
         <div ref={endRef} />
