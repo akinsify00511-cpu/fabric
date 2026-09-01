@@ -1,6 +1,6 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-const CACHE_VERSION = 'v6'
+const CACHE_VERSION = 'v7'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
