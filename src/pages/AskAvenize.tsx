@@ -7,7 +7,7 @@ import { useToast } from '../components/Toast'
 interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
-  provider?: 'deterministic'
+  provider?: 'ai' | 'deterministic'
   sources?: string[]
   confidence?: string
 }
@@ -15,12 +15,13 @@ interface ChatMessage {
 const SUGGESTIONS = [
   'How is my business doing?',
   'What should I focus on right now?',
-  'How much revenue have we made?',
-  'Do we have overdue invoices?',
+  'What is putting revenue at risk?',
+  'Which customers or invoices need my attention?',
 ]
 
 const PROVIDER_BADGE: Record<string, { label: string; icon: typeof Database }> = {
-  deterministic: { label: 'Answered from your live data', icon: Database },
+  ai: { label: 'Sarah · Avenize AI business assistant', icon: Sparkles },
+  deterministic: { label: 'Sarah · live-data fallback', icon: Database },
 }
 
 export default function AskAvenize() {
@@ -34,7 +35,6 @@ export default function AskAvenize() {
 
   useEffect(() => {
     if (!staff?.business_id) return
-    // Load recent conversation history (own business, RLS-scoped).
     supabase
       .from('copilot_messages')
       .select('role, content, provider, sources')
@@ -43,22 +43,18 @@ export default function AskAvenize() {
       .limit(20)
       .then(({ data }) => {
         if (data && data.length > 0) {
-          setMessages(
-            data.reverse().map((m: any) => ({
-              role: m.role,
-              content: m.content,
-              provider: m.provider ?? undefined,
-              sources: m.sources ?? undefined,
-            })),
-          )
+          setMessages(data.reverse().map((m: any) => ({
+            role: m.role,
+            content: m.content,
+            provider: m.provider ?? undefined,
+            sources: m.sources ?? undefined,
+          })))
         }
         setHistoryLoaded(true)
       })
   }, [staff?.business_id, staff?.user_id])
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, sending])
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, sending])
 
   const ask = async (question: string) => {
     const q = question.trim()
@@ -67,25 +63,24 @@ export default function AskAvenize() {
     setSending(true)
     setMessages((m) => [...m, { role: 'user', content: q }])
     try {
-      const { data, error } = await supabase.functions.invoke('ask-avenize', {
-        body: { question: q },
-      })
+      const { data, error } = await supabase.functions.invoke('ask-avenize', { body: { question: q } })
       if (error || data?.error) {
-        showToast(data?.error || 'Could not get an answer right now.', 'error')
+        showToast(data?.error || 'Sarah could not answer right now.', 'error')
         setMessages((m) => m.slice(0, -1))
         return
       }
-      setMessages((m) => [
-        ...m,
-        { role: 'assistant', content: data.answer, provider: data.provider, sources: data.sources, confidence: data.confidence },
-      ])
+      setMessages((m) => [...m, {
+        role: 'assistant',
+        content: data.answer,
+        provider: data.provider,
+        sources: data.sources,
+        confidence: data.confidence,
+      }])
     } catch (e) {
       console.error('[ask-avenize]', e)
-      showToast('Could not get an answer right now.', 'error')
+      showToast('Sarah could not answer right now.', 'error')
       setMessages((m) => m.slice(0, -1))
-    } finally {
-      setSending(false)
-    }
+    } finally { setSending(false) }
   }
 
   return (
@@ -93,61 +88,33 @@ export default function AskAvenize() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-xl font-semibold flex items-center gap-2 text-[var(--av-text)]">
-            <Sparkles size={20} className="text-[var(--av-primary)]" /> Ask Avenize
+            <Sparkles size={20} className="text-[var(--av-primary)]" /> Sarah
           </h1>
           <p className="text-sm text-[var(--av-text-muted)] mt-1">
-            Ask about your business — answers come from your real data, never invented numbers.
+            Your Avenize business assistant — Sarah understands your live business context, priorities, risks and next actions.
           </p>
         </div>
-        {messages.length > 0 && (
-          <button
-            onClick={() => setMessages([])}
-            className="p-2 rounded-lg text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)]"
-            title="Clear view"
-          >
-            <RotateCcw size={16} />
-          </button>
-        )}
+        {messages.length > 0 && <button onClick={() => setMessages([])} className="p-2 rounded-lg text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)]" title="Clear view"><RotateCcw size={16} /></button>}
       </div>
 
       <div className="av-card flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && historyLoaded && (
           <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-8">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: 'var(--av-gradient)' }}
-            >
-              <Sparkles size={22} className="text-white" />
-            </div>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'var(--av-gradient)' }}><Sparkles size={22} className="text-white" /></div>
             <div>
-              <p className="text-sm font-medium text-[var(--av-text)]">Your first question</p>
-              <p className="text-xs text-[var(--av-text-muted)] mt-1 max-w-sm">
-                Avenize reads your live business data before answering. Try one of these to start the conversation.
-              </p>
+              <p className="text-sm font-medium text-[var(--av-text)]">Sarah is ready</p>
+              <p className="text-xs text-[var(--av-text-muted)] mt-1 max-w-sm">Ask Sarah what is happening in the business, what matters most, or what action should happen next.</p>
             </div>
             <div className="flex flex-wrap justify-center gap-2 max-w-md">
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => ask(s)}
-                  className="text-xs px-3 py-2 rounded-full border border-[var(--av-border)] text-[var(--av-text)] hover:border-[var(--av-primary)] hover:text-[var(--av-primary)] transition"
-                >
-                  {s}
-                </button>
-              ))}
+              {SUGGESTIONS.map((s) => <button key={s} onClick={() => ask(s)} className="text-xs px-3 py-2 rounded-full border border-[var(--av-border)] text-[var(--av-text)] hover:border-[var(--av-primary)] hover:text-[var(--av-primary)] transition">{s}</button>)}
             </div>
           </div>
         )}
 
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${
-                m.role === 'user'
-                  ? 'bg-[var(--av-primary)] text-white'
-                  : 'bg-[var(--av-surface-2)] text-[var(--av-text)]'
-              }`}
-            >
+            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm ${m.role === 'user' ? 'bg-[var(--av-primary)] text-white' : 'bg-[var(--av-surface-2)] text-[var(--av-text)]'}`}>
+              {m.role === 'assistant' && <div className="flex items-center gap-2 mb-1.5 text-[11px] font-medium text-[var(--av-primary)]"><Sparkles size={12} /> Sarah</div>}
               <p className="whitespace-pre-wrap">{m.content}</p>
               {m.role === 'assistant' && m.provider && PROVIDER_BADGE[m.provider] && (
                 <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-[var(--av-border)]">
@@ -159,39 +126,13 @@ export default function AskAvenize() {
           </div>
         ))}
 
-        {sending && (
-          <div className="flex justify-start">
-            <div className="rounded-2xl px-4 py-3 bg-[var(--av-surface-2)] flex items-center gap-2">
-              <Loader2 size={14} className="animate-spin text-[var(--av-primary)]" />
-              <span className="text-xs text-[var(--av-text-muted)]">Reading your business data…</span>
-            </div>
-          </div>
-        )}
+        {sending && <div className="flex justify-start"><div className="rounded-2xl px-4 py-3 bg-[var(--av-surface-2)] flex items-center gap-2"><Sparkles size={14} className="text-[var(--av-primary)]" /><Loader2 size={14} className="animate-spin text-[var(--av-primary)]" /><span className="text-xs text-[var(--av-text-muted)]">Sarah is thinking about your business…</span></div></div>}
         <div ref={bottomRef} />
       </div>
 
-      <form
-        className="mt-3 flex gap-2"
-        onSubmit={(e) => {
-          e.preventDefault()
-          ask(input)
-        }}
-      >
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about revenue, cash, priorities…"
-          className="flex-1 rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm bg-[var(--av-surface-elevated)] focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]"
-          maxLength={2000}
-        />
-        <button
-          type="submit"
-          disabled={sending || !input.trim()}
-          className="rounded-xl px-4 py-3 text-white disabled:opacity-50"
-          style={{ background: 'var(--av-gradient)' }}
-        >
-          {sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-        </button>
+      <form className="mt-3 flex gap-2" onSubmit={(e) => { e.preventDefault(); ask(input) }}>
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask Sarah about your business…" className="flex-1 rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm bg-[var(--av-surface-elevated)] focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]" maxLength={2000} />
+        <button type="submit" disabled={sending || !input.trim()} className="rounded-xl px-4 py-3 text-white disabled:opacity-50" style={{ background: 'var(--av-gradient)' }}>{sending ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}</button>
       </form>
     </div>
   )
