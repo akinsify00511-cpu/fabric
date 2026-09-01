@@ -1,0 +1,35 @@
+name: Fix meeting recorder
+on:
+  push:
+    branches: [main]
+jobs:
+  fix:
+    if: ${{ !contains(github.event.head_commit.message, 'fix: harden meeting recorder') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch recorder startup
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('src/pages/MeetingCapture.tsx')
+          s=p.read_text()
+          start=s.index(' const startRecording=()=>{')
+          end=s.index(' const stopRecording=()=>', start)
+          new=''' const startRecording=()=>{\n  let stream=localStreamRef.current\n  if(!stream||!stream.getTracks().some(t=>t.readyState==='live')){\n   void startMedia().then(()=>{\n    const next=localStreamRef.current\n    if(next&&next.getTracks().some(t=>t.readyState==='live')) startRecording()\n   })\n   showToast('Camera/microphone is reconnecting. Please retry recording in a moment','error')\n   return\n  }\n  if(typeof MediaRecorder==='undefined'){showToast('Recording is not supported by this browser','error');return}\n  const candidates=['video/webm;codecs=vp8,opus','video/webm','audio/webm;codecs=opus','audio/webm']\n  const liveVideo=stream.getVideoTracks().some(t=>t.readyState==='live')\n  const liveAudio=stream.getAudioTracks().some(t=>t.readyState==='live')\n  const usableStream=liveVideo&&liveAudio?stream:stream\n  const supported=candidates.filter(type=>{try{return MediaRecorder.isTypeSupported(type)}catch{return false}})\n  let r:MediaRecorder|null=null\n  let resolvedMime=''\n  for(const mime of supported){\n   try{r=new MediaRecorder(usableStream,{mimeType:mime});resolvedMime=mime;break}catch(e){console.warn('MediaRecorder format unavailable',mime,e)}\n  }\n  if(!r){\n   try{r=new MediaRecorder(usableStream);resolvedMime=r.mimeType||'video/webm'}\n   catch(e){console.error('Could not create MediaRecorder',e);showToast('This browser cannot start meeting recording on this device','error');return}\n  }\n  recordChunks.current=[]\n  r.ondataavailable=e=>{if(e.data.size)recordChunks.current.push(e.data)}\n  r.onerror=e=>{console.error('Meeting recorder error',e);showToast('Meeting recording failed','error');setRecording(false);if(recordTimerRef.current)clearInterval(recordTimerRef.current);recorderRef.current=null}\n  r.onstop=async()=>{if(!meeting||!staff?.business_id||!staff.id)return;const blob=new Blob(recordChunks.current,{type:resolvedMime||'video/webm'});const path=`${meeting.id}/${crypto.randomUUID()}-meeting-recording.webm`;const {error:up}=await supabase.storage.from('meeting-captures').upload(path,blob,{contentType:resolvedMime||'video/webm'});if(up){showToast('Recording upload failed','error');return}const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:'recording',title:'Meeting recording',storage_path:path,mime_type:resolvedMime||'video/webm',size_bytes:blob.size,duration_seconds:recordingSeconds}).select().single();if(!error)setCaptures(v=>[data,...v]);showToast(error?'Recording saved locally but capture record failed':'Meeting recording captured','success')}\n  try{r.start(1000)}catch(e){console.error('Could not start MediaRecorder',e);try{r.stop()}catch{};recorderRef.current=null;showToast('Meeting recording could not start with the current camera/microphone stream. Please retry.','error');return}\n  recorderRef.current=r;setRecording(true);setRecordingSeconds(0);recordTimerRef.current=setInterval(()=>setRecordingSeconds(v=>v+1),1000)\n }\n'''
+          p.write_text(s[:start]+new+s[end:])
+          PY
+      - name: Build
+        run: |
+          npm ci
+          npm run build
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/MeetingCapture.tsx
+          git diff --cached --quiet || git commit -m "fix: harden meeting recorder startup"
+          git push
