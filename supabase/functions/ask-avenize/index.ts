@@ -57,8 +57,8 @@ function answer(question: string, ctx: Context) {
     return {intent:'business_health',confidence:facts.length ? 'high':'low',sources:['business health','business metrics','decision engine'],answer:facts.length ? `${facts.join(' ')}. ${p ? `My read: ${p.text} The reason is ${p.why || 'it has the strongest current signal'}.` : 'I do not see a stronger priority in the available data.'}` : 'I cannot reliably assess the business yet because the required live health and operating data is not available.'}
   }
   if (asks('revenue','sales','income','made','earned')) {
-    if (!rev?.current_value == null) return {intent:'revenue',confidence:'low',sources:[],answer:'I do not have a reliable revenue figure in the live business data yet.'}
-    return {intent:'revenue',confidence:'high',sources:[`metric:${rev.key ?? 'revenue'}`],answer:`Revenue this period is ${money(rev.current_value as number,ctx.currency)}${trend(rev)}${rev.target_value != null && rev.target_value > 0 ? `. That is ${Math.round((rev.current_value as number / rev.target_value) * 100)}% of the ${money(rev.target_value,ctx.currency)} target.` : '.'}`}
+    if (rev?.current_value == null) return {intent:'revenue',confidence:'low',sources:[],answer:'I do not have a reliable revenue figure in the live business data yet.'}
+    return {intent:'revenue',confidence:'high',sources:[`metric:${rev.key ?? 'revenue'}`],answer:`Revenue this period is ${money(rev.current_value,ctx.currency)}${trend(rev)}${rev.target_value != null && rev.target_value > 0 ? `. That is ${Math.round((rev.current_value / rev.target_value) * 100)}% of the ${money(rev.target_value,ctx.currency)} target.` : '.'}`}
   }
   if (asks('cash','cash flow','cashflow','runway','money in','money out')) {
     if (cash?.current_value == null) return {intent:'cash',confidence:'low',sources:[],answer:'I do not have enough live cash-flow data to give you a reliable cash position.'}
@@ -73,7 +73,7 @@ function answer(question: string, ctx: Context) {
     return {intent:'next_action',confidence:p?'high':'low',sources:p?[p.source]:[],answer:p ? `Your highest-priority move is: ${p.text} ${p.why ? `Why: ${p.why}.` : ''}` : 'I do not have a strong enough live signal to name a priority yet. I would rather tell you that than invent one.'}
   }
   if (asks('risk','danger','problem','wrong','concern','putting revenue at risk')) {
-    const risks=[]
+    const risks:string[]=[]
     if (ctx.overdueInvoices) risks.push(`${ctx.overdueInvoices} overdue invoice${ctx.overdueInvoices===1?'':'s'}`)
     if (rev?.current_value != null && rev.target_value != null && rev.target_value > 0 && rev.current_value < rev.target_value) risks.push(`revenue running at ${Math.round(rev.current_value/rev.target_value*100)}% of target`)
     if (health != null && health < 60) risks.push(`a health score of ${Math.round(health)}/100`)
@@ -81,7 +81,7 @@ function answer(question: string, ctx: Context) {
     return {intent:'risk',confidence:'high',sources:['business metrics','invoices','decision engine'],answer:`The strongest current risk signals are: ${risks.join('; ')}. I would address the highest-impact item first rather than spreading effort across all of them.`}
   }
   const p=recs[0]
-  const snapshot=[]
+  const snapshot:string[]=[]
   if (ctx.state) snapshot.push(`state: ${stateLabel(ctx.state)}`)
   if (health != null) snapshot.push(`health: ${Math.round(health)}/100`)
   if (rev?.current_value != null) snapshot.push(`revenue: ${money(rev.current_value,ctx.currency)}${trend(rev)}`)
