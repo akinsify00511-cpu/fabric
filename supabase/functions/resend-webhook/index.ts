@@ -29,6 +29,10 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
+function preflight(): Response {
+  return new Response(null, { status: 204, headers: corsHeaders })
+}
+
 function mapResendEventType(type: unknown): string | null {
   switch (type) {
     case 'email.sent': return 'sent'
@@ -89,7 +93,7 @@ async function verifySvixSignature(
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return json({ ok: true }, 204)
+  if (req.method === 'OPTIONS') return preflight()
   if (req.method !== 'POST') return json({ error: 'POST only' }, 405)
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
