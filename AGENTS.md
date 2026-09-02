@@ -4654,3 +4654,16 @@ P0 gate; no feature/dependency expansion should precede the green gate.
   definition (18-row gate checklist, exact evidence per row, final verdict
   only when ALL rows true against production). No enhancement (P1–P4) begins
   until that gate is green.
+
+
+## Session 60 (2026-09-02): P0-1 portal token lockdown + P0-2 edge source-integrity gate (commit 4fdcdc6)
+
+User directive: execute remediation (P0-1 portal RLS;P0-2 CI divergence gate) rather than re-document. Both shipped + verified.
+
+- **P0-1 `20260902103000_security_remediation_portal_and_mutable_policies.sql`:** `portal_invitations` INSERT/UPDATE grants revoked from anon/authenticated (RPC owns writes);SELECT/DELETE kept for staff workflows;BOTH policies tenant-scoped (`Invitations manage` owner-gated ALL;`invitations_staff_own_business` membership-gated SELECT). `portal_sessions` zero policies + zero grants → `permission denied` for both roles (verified with SET ROLE). Mutable telemetry tables (emails,email_clicks,whatsapp_optins,alert_history) converted to tenant-scoped RLS via guarded DO blocks. Applies clean + idempotent on fresh postgres:15 full-chain DB (twice, exit 0).
+- **P0-2 `edge.source.integrity` governance check (+ registry + contracts subset):** committed manifest directory must exactly equal `supabase/functions/*`(excluding _shared);every deployed/missing plan entry must have matching source;every frontend edge ref must resolve. Verifies the "deployed-but-not-in-repo" drift class (subscription-checkout etc) never silently grows. RELEASE APPROVED post-commit (only `edge.functions` UNKNOWN locally — deno not installed in dev container;CI has deno so it runs).
+- **Contract generator regression found + fixed:** `parse_frontend` only matched `.functions.invoke(...)` — raw `fetch(`${base}/functions/v1/ask-avenize`)` calls fell through,so `ask-avenize`,`paystack-verify`,`subscription-management` were silently dropped from `frontend_referenced` (committed manifest said frontend refs = {webauthn} only). Added `RE_FE_EDGE_URL = re.compile(r"/functions/v1/([a-zA-Z0-9_-]+)")`. Regenerated deterministic artifacts (contract = 994 objects;edge manifest frontend refs = [ask-avenize,dispatch-webhooks,webauthn]).
+- **Stale committed artifacts refreshed:** contract manifest + integrity seed + edge/rpc/trigger manifests were stale relative to upstream 20260902 hardening migrations (re-pointed `defined_in` to 20260902100000 files;+1 trigger;+1 contract fn enqueue_meeting_capture_media). Now deterministic (reconcile → all unchanged).
+- **Env gotchas:** (1) the dev container words mangled `)` into `]` in heredoc/file_editor content — fix by separating parens with spaces (`sorted( list( set( source_dirs ) ...` pattern) and verifying with py_compile;(2) no node_modules — npx tsc hangs;(3) git needed user.name/email set for commit;(4) docker exec assertion tables shape must be checked via `\d` first (portal_sessions binds invitation_id,not business_id;auth.users has no instance_id;staff uses name/full_name,not first_name).
+- **PENDING (user-prioritized):** P2-6 (dead Clear-filter/doc links in Procurement/APISettings/Automations/APIKeys) + P2-7 (silent catch → setError+Sentry in GovernanceHub/eventTracker/MeetingCapture/SearchPage) remain todo. Live-DB apply still needs SUPABASE_DB_URL(standing).
+
