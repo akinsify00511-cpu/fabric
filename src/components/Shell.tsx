@@ -176,7 +176,6 @@ const NAV_GROUPS: NavGroup[] = [
     icon: FolderKanban,
     defaultOpen: false,
     items: [
-      // Personal work execution first (most-used).
       { to: '/app/tasks', label: 'Tasks', icon: CheckSquare, toolKey: 'tasks' },
       { to: '/app/calendar', label: 'Calendar', icon: CalendarIcon, toolKey: 'calendar' },
       { to: '/app/time', label: 'Time Tracking', icon: Clock, toolKey: 'time-tracking' },
@@ -184,7 +183,6 @@ const NAV_GROUPS: NavGroup[] = [
       { to: '/app/knowledge', label: 'Docs', icon: Book, toolKey: 'knowledge' },
       { to: '/app/memory', label: 'Org Memory', icon: BookOpen, toolKey: 'knowledge' },
       { to: '/app/tickets', label: 'Support', icon: LifeBuoy, toolKey: 'tickets' },
-      // Business operations.
       { to: '/app/projects', label: 'Projects', icon: FolderKanban, toolKey: 'projects' },
       { to: '/app/inventory', label: 'Inventory', icon: Boxes, toolKey: 'inventory' },
       { to: '/app/vendors', label: 'Vendors', icon: Truck, toolKey: 'inventory' },
@@ -198,8 +196,6 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ]
 
-// Secondary links that live in the user card / overflow (Discord-style):
-// Settings, Branding, Reports, Controls, Integrations, API — admin/secondary.
 const SECONDARY_LINKS: NavItem[] = [
   { to: '/app/reports', label: 'Reports', icon: BarChart3, toolKey: 'reports' },
   { to: '/app/review', label: 'Monthly Review', icon: CalendarIcon, toolKey: 'dashboard' },
@@ -225,343 +221,66 @@ const MOBILE_NAV_ITEMS = [
 export default function Shell() {
   const { staff, signOut } = useAuth()
   const { branding } = useBranding()
-  // Single authoritative context for the role + selection gates (the same
-  // source the Dashboard and future screens use). The module gate stays on
-  // useAccessibleModules — it's a business-level entitlement+readiness check,
-  // not a per-user experience signal.
   const { isPrivileged, isToolAuthorized, isToolActive } = useExperienceContext()
   const { modules: accessibleModules, loading: modulesLoading } = useAccessibleModules()
   const { loading: roleSelLoading } = useWorkspaceSelection()
-  useUsageTracking()  // telemetry: which modules actually get opened (builder decisions, not a feature)
+  useUsageTracking()
   const { events: pulseEvents, live: pulseLive } = useBusinessPulse(staff?.business_id)
-  
   const dbState = useDbState()
   const location = useLocation()
   const navigate = useNavigate()
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
-  // Three intersecting gates ANDed (selection can NEVER grant access):
-  //  (a) tool-role access   — does this user's functional role see it?
-  //  (b) module gate        — is the business entitled AND is it ready?
-  //  (c) workspace selection — has the user chosen to keep this tool visible?
-  // A paying customer on a not-ready module still doesn't see it (readiness
-  // is the safety net); a ready module hidden by role stays hidden; a tool the
-  // user deselected is hidden even if entitled+role-allowed. Selection is a
-  // REMOVAL filter only — it can only hide, never reveal.
   const itemVisible = (item: NavItem) => {
-    // Owner-only items (e.g. Owner Intelligence) hidden from non-owners/admins.
-    // Client UX gate only — the RPC re-verifies server-side (defense-in-depth).
     if (item.ownerOnly && !(staff?.role === 'owner' || staff?.role === 'admin')) return false
-    // While any gate is loading, don't hide (prevents flash of empty nav).
     if (roleSelLoading || modulesLoading) return true
-    // Settings/capture/dashboard are always visible (core chrome).
     if (!item.toolKey || item.toolKey === 'settings' || item.toolKey === 'dashboard') return true
-    // Role gate: privileged roles bypass all gates; otherwise tool must be in role set.
     const roleOk = isToolAuthorized(item.toolKey as any)
     if (!roleOk) return false
-    // Workspace selection gate: privileged users bypass (they always see the
-    // full authorized set). For everyone else, respect the user's curation.
     if (!isPrivileged && !isToolActive(item.toolKey as any)) return false
-    // Module gate: if this route maps to a module, the business must be
-    // entitled AND the module must be ready.
     const mod = ROUTE_MODULE[item.to]
     if (!mod) return true
     return isPrivileged || accessibleModules.has(mod)
   }
 
   const groupHasActive = (group: NavGroup) =>
-    group.items.some(i => location.pathname === i.to ||
-      (i.to !== '/app' && location.pathname.startsWith(i.to)))
+    group.items.some(i => location.pathname === i.to || (i.to !== '/app' && location.pathname.startsWith(i.to)))
 
-  // Auto-expand the group containing the active route on first render.
-  const effectiveOpen = (g: NavGroup) =>
-    openGroups[g.id] ?? g.defaultOpen ?? groupHasActive(g)
-
+  const effectiveOpen = (g: NavGroup) => openGroups[g.id] ?? g.defaultOpen ?? groupHasActive(g)
   const companyName = branding.custom_name || staff?.business_name || 'My Company'
 
   const handleSearch = () => {
-    // Cmd+K command palette is globally bound in AppShell; trigger it.
     const isMac = navigator.platform.includes('Mac')
-    document.dispatchEvent(new KeyboardEvent('keydown', {
-      key: 'k', metaKey: isMac, ctrlKey: !isMac, bubbles: true
-    }))
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: isMac, ctrlKey: !isMac, bubbles: true }))
   }
 
   return (
     <div className="min-h-screen av-backdrop">
-      {/* Desktop sidebar — translucent glass over the atmospheric backdrop */}
-      <aside className="hidden md:flex w-60 shrink-0 border-r flex-col fixed inset-y-0 left-0 z-30"
-        style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
-        {/* Workspace header */}
+      <aside className="hidden md:flex w-60 shrink-0 border-r flex-col fixed inset-y-0 left-0 z-30" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
         <div className="px-4 py-3.5 flex items-center gap-2 border-b border-[var(--av-border)]">
-          {branding.logo_url ? (
-            <img src={branding.logo_url} alt="Logo" className="h-7 w-auto object-contain rounded-lg" style={{ maxHeight: '28px' }} />
-          ) : (
-            <AvenizeMark size={24} />
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">{companyName}</p>
-            <p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.role || 'workspace'}</p>
-          </div>
+          {branding.logo_url ? <img src={branding.logo_url} alt="Logo" className="h-7 w-auto object-contain rounded-lg" style={{ maxHeight: '28px' }} /> : <AvenizeMark size={24} />}
+          <div className="min-w-0 flex-1"><p className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">{companyName}</p><p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.role || 'workspace'}</p></div>
         </div>
-
-        {/* Quick Capture button — the hero feature, always one tap away */}
-        <div className="px-3 pt-3">
-          <button
-            onClick={() => navigate('/app/capture')}
-            className="w-full flex items-center justify-center gap-2 rounded-[var(--av-radius-md)] bg-[var(--av-primary)] text-white text-sm font-medium py-2.5 hover:bg-[var(--av-primary-hover)] transition shadow-[var(--av-shadow-sm)]"
-          >
-            <Sparkles size={16} />
-            Quick Capture
-          </button>
-        </div>
-
-        {/* Grouped nav — collapsible sections */}
+        <div className="px-3 pt-3"><button onClick={() => navigate('/app/capture')} className="w-full flex items-center justify-center gap-2 rounded-[var(--av-radius-md)] bg-[var(--av-primary)] text-white text-sm font-medium py-2.5 hover:bg-[var(--av-primary-hover)] transition shadow-[var(--av-shadow-sm)]"><Sparkles size={16} />Quick Capture</button></div>
         <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
-          {NAV_GROUPS.map((group) => {
-            const GIcon = group.icon
-            const open = effectiveOpen(group)
-            const active = groupHasActive(group)
-            const visibleItems = group.items.filter(itemVisible)
-            if (visibleItems.length === 0) return null
-            return (
-              <div key={group.id}>
-                <button
-                  onClick={() => setOpenGroups(s => ({ ...s, [group.id]: !open }))}
-                  className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold uppercase tracking-wide transition ${
-                    active ? 'text-[var(--av-text)]' : 'text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'
-                  }`}
-                >
-                  <GIcon size={15} strokeWidth={2.2} />
-                  <span className="flex-1 text-left">{group.label}</span>
-                  <ChevronDown size={14} className={`transition-transform ${open ? '' : '-rotate-90'}`} />
-                </button>
-                {open && (
-                  <div className="ml-1 mt-0.5 space-y-0.5">
-                    {visibleItems.map((item) => {
-                      const Icon = item.icon
-                      return (
-                        <NavLink
-                          key={item.to}
-                          to={item.to}
-                          end={item.end}
-                          className={({ isActive }) =>
-                            `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
-                              isActive
-                                ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
-                                : 'text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
-                            }`
-                          }
-                        >
-                          <Icon size={16} strokeWidth={2} />
-                          {item.label}
-                        </NavLink>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-
-          {/* Secondary / admin links */}
-          <div className="pt-2 mt-2 border-t border-[var(--av-border)]">
-            {SECONDARY_LINKS.filter(itemVisible).map((item) => {
-              const Icon = item.icon
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
-                      isActive
-                        ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
-                        : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
-                    }`
-                  }
-                >
-                  <Icon size={16} strokeWidth={2} />
-                  {item.label}
-                </NavLink>
-              )
-            })}
-            <NavLink
-              to="/app/more"
-              className={({ isActive }) =>
-                `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
-                  isActive
-                    ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium'
-                    : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'
-                }`
-              }
-            >
-              <LayoutGrid size={16} strokeWidth={2} />
-              More
-            </NavLink>
-          </div>
+          {NAV_GROUPS.map((group) => { const GIcon = group.icon; const open = effectiveOpen(group); const active = groupHasActive(group); const visibleItems = group.items.filter(itemVisible); if (visibleItems.length === 0) return null; return (<div key={group.id}><button onClick={() => setOpenGroups(s => ({ ...s, [group.id]: !open }))} className={`w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-semibold uppercase tracking-wide transition ${active ? 'text-[var(--av-text)]' : 'text-[var(--av-text-muted)] hover:text-[var(--av-text-secondary)]'}`}><GIcon size={15} strokeWidth={2.2} /><span className="flex-1 text-left">{group.label}</span><ChevronDown size={14} className={`transition-transform ${open ? '' : '-rotate-90'}`} /></button>{open && <div className="ml-1 mt-0.5 space-y-0.5">{visibleItems.map((item) => { const Icon = item.icon; return (<NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${isActive ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium' : 'text-[var(--av-text-secondary)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'}`}><Icon size={16} strokeWidth={2} />{item.label}</NavLink>) })}</div>}</div>) })}
+          <div className="pt-2 mt-2 border-t border-[var(--av-border)]">{SECONDARY_LINKS.filter(itemVisible).map((item) => { const Icon = item.icon; return (<NavLink key={item.to} to={item.to} className={({ isActive }) => `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${isActive ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium' : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'}`}><Icon size={16} strokeWidth={2} />{item.label}</NavLink>) })}<NavLink to="/app/more" className={({ isActive }) => `flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm transition ${isActive ? 'bg-[var(--av-primary-soft)] text-[var(--av-primary)] font-medium' : 'text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] hover:text-[var(--av-text)]'}`}><LayoutGrid size={16} strokeWidth={2} />More</NavLink></div>
         </nav>
-
-        {/* Upgrade CTA */}
         <div className="px-3 pb-2">
-          <a
-            href="/upgrade"
-            className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white text-sm font-medium hover:shadow-[var(--av-shadow-md)] transition"
-          >
-            <Crown size={16} />
-            <span>Upgrade to Pro</span>
-          </a>
+          <a href="/pricing" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#4285F4] to-[#8B5CF6] text-white text-sm font-medium hover:shadow-[var(--av-shadow-md)] transition"><Crown size={16} /><span>Upgrade to Pro</span></a>
         </div>
-
-        {/* Discord-style user card — settings live here, not in the nav */}
-        <div className="relative border-t border-[var(--av-border)]">
-          <button
-            onClick={() => setUserMenuOpen(o => !o)}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-[var(--av-surface-2)] transition"
-          >
-            <div className="w-8 h-8 rounded-full bg-[var(--av-primary)] text-white flex items-center justify-center text-sm font-semibold shrink-0">
-              {(staff?.full_name ?? staff?.name ?? '?').charAt(0).toUpperCase()}
-            </div>
-            <div className="min-w-0 flex-1 text-left">
-              <p className="text-sm font-medium truncate text-[var(--av-text)]">{staff?.full_name ?? staff?.name ?? 'User'}</p>
-              <p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.active_role ?? staff?.role ?? ''}</p>
-            </div>
-            <Settings2 size={16} className="text-[var(--av-text-muted)] shrink-0" />
-          </button>
-
-          {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-1 mx-3 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] shadow-[var(--av-shadow-lg)] overflow-hidden">
-              <UserMenuItem to="/app/settings" icon={SettingsIcon} label="Settings" onClick={() => setUserMenuOpen(false)} />
-              <UserMenuItem to="/app/branding" icon={Palette} label="Branding" onClick={() => setUserMenuOpen(false)} />
-              <UserMenuItem to="/app/notifications" icon={Bell} label="Notifications" onClick={() => setUserMenuOpen(false)} />
-              <div className="border-t border-[var(--av-border)]">
-                <RoleSwitcher />
-              </div>
-              <div className="border-t border-[var(--av-border)]">
-                <button
-                  onClick={() => { setUserMenuOpen(false); signOut() }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] transition"
-                >
-                  <LogOut size={16} />
-                  Sign out
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <div className="relative border-t border-[var(--av-border)]"><button onClick={() => setUserMenuOpen(o => !o)} className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-[var(--av-surface-2)] transition"><div className="w-8 h-8 rounded-full bg-[var(--av-primary)] text-white flex items-center justify-center text-sm font-semibold shrink-0">{(staff?.full_name ?? staff?.name ?? '?').charAt(0).toUpperCase()}</div><div className="min-w-0 flex-1 text-left"><p className="text-sm font-medium truncate text-[var(--av-text)]">{staff?.full_name ?? staff?.name ?? 'User'}</p><p className="text-[11px] text-[var(--av-text-muted)] truncate capitalize">{staff?.active_role ?? staff?.role ?? ''}</p></div><Settings2 size={16} className="text-[var(--av-text-muted)] shrink-0" /></button>{userMenuOpen && (<div className="absolute bottom-full left-0 right-0 mb-1 mx-3 rounded-xl border border-[var(--av-border)] bg-[var(--av-surface)] shadow-[var(--av-shadow-lg)] overflow-hidden"><UserMenuItem to="/app/settings" icon={SettingsIcon} label="Settings" onClick={() => setUserMenuOpen(false)} /><UserMenuItem to="/app/branding" icon={Palette} label="Branding" onClick={() => setUserMenuOpen(false)} /><UserMenuItem to="/app/notifications" icon={Bell} label="Notifications" onClick={() => setUserMenuOpen(false)} /><div className="border-t border-[var(--av-border)]"><RoleSwitcher /></div><div className="border-t border-[var(--av-border)]"><button onClick={() => { setUserMenuOpen(false); signOut() }} className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-danger)] hover:bg-[var(--av-danger-soft)] transition"><LogOut size={16} />Sign out</button></div></div>)}</div>
       </aside>
-
-      {/* Desktop top bar — glass over the atmospheric backdrop */}
-      <header className="hidden md:flex items-center gap-3 fixed top-0 right-0 left-60 h-14 px-6 border-b z-20"
-        style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
-        <button
-          onClick={handleSearch}
-          className="flex items-center gap-2 flex-1 max-w-md rounded-lg border border-[var(--av-border)] bg-[var(--av-surface-2)] px-3 py-1.5 text-sm text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)] hover:bg-[var(--av-surface)] transition"
-        >
-          <Search size={16} />
-          <span>Search or jump to…</span>
-          <kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">⌘K</kbd>
-        </button>
-        <div className="ml-auto flex items-center gap-1">
-          {pulseEvents.length > 0 && (
-            <a
-              href="/app/activity"
-              title={pulseLive ? 'Live — business is active' : 'Recent activity'}
-              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] transition"
-            >
-              <span
-                className={`inline-block h-2 w-2 rounded-full ${pulseLive ? 'bg-[var(--av-success)] animate-pulse' : 'bg-[var(--av-text-disabled)]'}`}
-              />
-              {pulseEvents.length}
-            </a>
-          )}
-          <SubsidiarySwitcher />
-          {/* Ask Avenize — the primary intelligence entry point */}
-          <button
-            onClick={() => navigate('/app/ask')}
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium text-white transition hover:shadow-md"
-            style={{ background: 'var(--av-gradient)' }}
-          >
-            <Sparkles size={14} /> Ask Avenize
-          </button>
-          <NotificationBell />
-        </div>
-      </header>
-
-      {/* Mobile top header */}
-      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10"
-        style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
-        <div className="flex items-center gap-2">
-          {!branding.logo_url && <AvenizeMark size={20} />}
-          {branding.logo_url && (
-            <img src={branding.logo_url} alt="Logo" className="h-5 w-auto object-contain" />
-          )}
-          <span className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">
-            {companyName}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <SubsidiarySwitcher />
-          <NotificationBell />
-          <button onClick={() => navigate('/app/ask')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white">
-            <Sparkles size={14} strokeWidth={2} />
-            <span className="text-xs font-medium">Ask</span>
-          </button>
-        </div>
-      </header>
-
-      {/* Content */}
-      <main className="md:ml-60 md:mt-14 p-4 md:p-6 pb-28 md:pb-8">
-        {dbState === 'migrations-missing' && (
-          <div className="rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/40 p-4 text-sm text-amber-800 mb-4">
-            <strong>Database setup incomplete.</strong> Some features may not work because database migrations
-            haven't been applied yet. An administrator needs to run the migrations in the Supabase Dashboard
-            (SQL Editor → paste <code className="bg-amber-100 px-1 rounded">APPLY_ALL_MIGRATIONS.sql</code> → Run).
-          </div>
-        )}
-        <Outlet />
-      </main>
-
-      {/* First-visit onboarding popup for the current tool */}
+      <header className="hidden md:flex items-center gap-3 fixed top-0 right-0 left-60 h-14 px-6 border-b z-20" style={{ background: 'rgba(255,255,255,0.72)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}><button onClick={handleSearch} className="flex items-center gap-2 flex-1 max-w-md rounded-lg border border-[var(--av-border)] bg-[var(--av-surface-2)] px-3 py-1.5 text-sm text-[var(--av-text-muted)] hover:border-[var(--av-border-strong)] hover:bg-[var(--av-surface)] transition"><Search size={16} /><span>Search or jump to…</span><kbd className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-[var(--av-surface-3)] text-[var(--av-text-muted)]">⌘K</kbd></button><div className="ml-auto flex items-center gap-1">{pulseEvents.length > 0 && <a href="/app/activity" title={pulseLive ? 'Live — business is active' : 'Recent activity'} className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-[var(--av-text-muted)] hover:bg-[var(--av-surface-2)] transition"><span className={`inline-block h-2 w-2 rounded-full ${pulseLive ? 'bg-[var(--av-success)] animate-pulse' : 'bg-[var(--av-text-disabled)]'}`} />{pulseEvents.length}</a>}<SubsidiarySwitcher /><button onClick={() => navigate('/app/ask')} className="hidden sm:inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium text-white transition hover:shadow-md" style={{ background: 'var(--av-gradient)' }}><Sparkles size={14} />Ask Avenize</button><NotificationBell /></div></header>
+      <header className="md:hidden flex items-center justify-between px-4 py-3 border-b sticky top-0 z-10" style={{ background: 'rgba(255,255,255,0.80)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}><div className="flex items-center gap-2">{!branding.logo_url && <AvenizeMark size={20} />}{branding.logo_url && <img src={branding.logo_url} alt="Logo" className="h-5 w-auto object-contain" />}<span className="text-sm font-semibold tracking-tight truncate text-[var(--av-text)]">{companyName}</span></div><div className="flex items-center gap-2"><SubsidiarySwitcher /><NotificationBell /><button onClick={() => navigate('/app/ask')} title="Ask Avenize" className="inline-flex items-center gap-1 rounded-full px-3 h-8 bg-[var(--av-gradient)] text-white"><Sparkles size={14} strokeWidth={2} /><span className="text-xs font-medium">Ask</span></button></div></header>
+      <main className="md:ml-60 md:mt-14 p-4 md:p-6 pb-28 md:pb-8">{dbState === 'migrations-missing' && <div className="rounded-xl bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/40 p-4 text-sm text-amber-800 mb-4"><strong>Database setup incomplete.</strong> Some features may not work because database migrations haven't been applied yet. An administrator needs to run the migrations in the Supabase Dashboard (SQL Editor → paste <code className="bg-amber-100 px-1 rounded">APPLY_ALL_MIGRATIONS.sql</code> → Run).</div>}<Outlet /></main>
       <ToolOnboardingPopup toolKey={TOOL_KEY_MAP[location.pathname] || ''} />
-
-      {/* Mobile bottom navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20"
-        style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}>
-        <div className="flex items-center justify-around">
-          {MOBILE_NAV_ITEMS.map((item) => {
-            const Icon = item.icon
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${
-                    isActive ? 'text-[var(--av-primary)]' : 'text-[var(--av-text-muted)]'
-                  }`
-                }
-              >
-                <Icon size={20} strokeWidth={2} />
-                <span className="text-[10px] font-medium">{item.label}</span>
-              </NavLink>
-            )
-          })}
-        </div>
-      </nav>
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t px-2 py-2 z-20" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderColor: 'var(--av-glass-border)' }}><div className="flex items-center justify-around">{MOBILE_NAV_ITEMS.map((item) => { const Icon = item.icon; return (<NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg transition ${isActive ? 'text-[var(--av-primary)]' : 'text-[var(--av-text-muted)]'}`}><Icon size={20} strokeWidth={2} /><span className="text-[10px] font-medium">{item.label}</span></NavLink>) })}</div></nav>
     </div>
   )
 }
 
 function UserMenuItem({ to, icon: Icon, label, onClick }: { to: string; icon: typeof Home; label: string; onClick: () => void }) {
-  return (
-    <NavLink
-      to={to}
-      onClick={onClick}
-      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-text)] hover:bg-[var(--av-surface-2)] transition"
-    >
-      <Icon size={16} className="text-[var(--av-text-muted)]" />
-      {label}
-    </NavLink>
-  )
+  return <NavLink to={to} onClick={onClick} className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-[var(--av-text)] hover:bg-[var(--av-surface-2)] transition"><Icon size={16} className="text-[var(--av-text-muted)]" />{label}</NavLink>
 }
