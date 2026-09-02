@@ -99,6 +99,7 @@ export default function SarahChat() {
       const response = await fetch(`${base}/functions/v1/ask-avenize`, {
         method: 'POST',
         headers: {
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
           Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',
         },
