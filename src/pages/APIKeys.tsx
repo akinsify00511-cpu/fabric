@@ -390,12 +390,9 @@ export default function APIKeysPage() {
           <p className="text-sm text-[var(--av-text-muted)] mb-3">
             Learn how to use the Avenize API to build integrations.
           </p>
-          <a
-            href="#"
-            className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary-hover)] flex items-center gap-1"
-          >
-            View API Documentation
-          </a>
+          <span className="text-sm text-[var(--av-text-muted)]">
+            API documentation ships with the Edge API gateway deployment.
+          </span>
         </div>
       </div>
 

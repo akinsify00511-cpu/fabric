@@ -70,7 +70,7 @@ function MemoryTab({ bid }: { bid?: string }) {
         const { data } = await supabase.from('decisions').select('*')
           .eq('business_id', bid).order('decided_at', { ascending: false }).limit(20)
         if (active) setDecisions(data || [])
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])
@@ -127,7 +127,7 @@ function AuthorityTab({ bid }: { bid?: string; staffId?: string }) {
         const { data } = await supabase.from('authority_graph').select('*')
           .eq('business_id', bid).eq('is_active', true).order('entity_type')
         if (active) setAuth(data || [])
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])
@@ -175,7 +175,7 @@ function AITab({ bid }: { bid?: string }) {
           data = r.data || []
         }
         if (active) setAgents(data || [])
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])
@@ -219,7 +219,7 @@ function AutomationTab({ bid }: { bid?: string }) {
         const { data } = await supabase.from('automation_proposals').select('*')
           .eq('business_id', bid).order('created_at', { ascending: false })
         if (active) setProps(data || [])
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])
@@ -258,7 +258,7 @@ function ConvenienceTab({ bid }: { bid?: string }) {
       try {
         const { data } = await supabase.rpc('convenience_index', { p_business_id: bid })
         if (active) setRows(data || [])
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])
@@ -300,7 +300,7 @@ function ContinuityTab({ bid }: { bid?: string }) {
       try {
         const { data } = await supabase.rpc('continuity_status', { p_business_id: bid })
         if (active) setStatus(data)
-      } catch {} finally { if (active) setLoading(false) }
+      } catch (e) { if (active) console.warn('[GovernanceHub] load failed', e) } finally { if (active) setLoading(false) }
     })()
     return () => { active = false }
   }, [bid])

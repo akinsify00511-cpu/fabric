@@ -92,7 +92,7 @@ export default function Procurement() {
       ) : stage === 'requests' ? (
         <RequestList items={requests} onCompare={(id: string) => { setCompareFor(id); setStage('rfqs') }} onSendRfq={() => setStage('rfqs')} showToast={showToast} />
       ) : (
-        <RfqList rfqs={rfqs} vendors={vendors} compareFor={compareFor} onAction={loadAll} showToast={showToast} bid={bid} staffId={staff?.id} />
+        <RfqList rfqs={rfqs} vendors={vendors} compareFor={compareFor} onAction={loadAll} onClearFilter={() => setCompareFor(null)} showToast={showToast} bid={bid} staffId={staff?.id} />
       )}
 
       {showReq && <NewRequestModal onClose={() => setShowReq(false)} onSaved={() => { setShowReq(false); loadAll() }} bid={bid} staffId={staff?.id} showToast={showToast} />}
@@ -137,7 +137,7 @@ function RequestList({ items, onCompare }: any) {
   )
 }
 
-function RfqList({ rfqs, vendors, compareFor, onAction, showToast, bid, staffId }: any) {
+function RfqList({ rfqs, vendors, compareFor, onAction, onClearFilter, showToast, bid, staffId }: any) {
   const filtered = compareFor ? rfqs.filter((q: any) => q.request_id === compareFor) : rfqs
   if (filtered.length === 0) return <Empty label="RFQs" cta />
   return (
@@ -145,7 +145,7 @@ function RfqList({ rfqs, vendors, compareFor, onAction, showToast, bid, staffId 
       {compareFor && (
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm text-[var(--av-text-secondary)]">Comparing quotes for this request</span>
-          <button onClick={() => {}} className="text-xs text-[var(--av-primary)]">Clear filter</button>
+          <button onClick={onClearFilter} className="text-xs text-[var(--av-primary)]">Clear filter</button>
         </div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

@@ -303,7 +303,6 @@ const [automations, setAutomations] = useState<Automation[]>([])
             <p className="text-sm text-blue-800">
               <strong>Creating and saving automations works.</strong> Execution triggers when events occur 
               (deal won, task completed, etc.) require the Edge Function to be deployed. 
-              <a href="#" className="underline ml-1">View setup guide →</a>
             </p>
           </div>
         </div>

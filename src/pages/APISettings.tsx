@@ -337,7 +337,6 @@ export default function APISettings() {
                 <p className="text-sm text-blue-800">
                   <strong>Creating and saving webhooks works.</strong> Event dispatching requires 
                   the Edge Function to be deployed with pg_net extension enabled in your Supabase project.
-                  <a href="#" className="underline ml-1">View setup guide →</a>
                 </p>
               </div>
             </div>

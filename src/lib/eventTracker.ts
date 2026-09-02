@@ -75,7 +75,7 @@ class SessionManager {
     // Store in sessionStorage for cross-tab sync
     try {
       sessionStorage.setItem('avenize_session_id', this.sessionId)
-    } catch {}
+    } catch (e) { console.warn('[eventTracker]', e) }
     
     return this.sessionId
   }
@@ -89,7 +89,7 @@ class SessionManager {
           this.sessionId = stored
           return this.sessionId
         }
-      } catch {}
+      } catch (e) { console.warn('[eventTracker]', e) }
       return this.startSession()
     }
     return this.sessionId
@@ -439,7 +439,7 @@ class LearningLoop {
           })
         }
       }
-    } catch {}
+    } catch (e) { console.warn('[eventTracker]', e) }
   }
 
   recordInteraction(type: string, value: number = 1) {
@@ -548,7 +548,7 @@ class LearningLoop {
         negative_signals: type === 'negative' ? 1 : 0,
         updated_at: new Date().toISOString(),
       }).eq('user_id', this.userId)
-    } catch {}
+    } catch (e) { console.warn('[eventTracker]', e) }
   }
 
   async recordSuggestionAccepted() {
@@ -559,7 +559,7 @@ class LearningLoop {
         p_user_id: this.userId,
         p_field: 'suggestions_accepted',
       })
-    } catch {}
+    } catch (e) { console.warn('[eventTracker]', e) }
   }
 }
 
@@ -589,7 +589,7 @@ class EngagementSystem {
           unlocked: a.unlocked,
         }))
       }
-    } catch {}
+    } catch (e) { console.warn('[eventTracker]', e) }
 
     return this.achievements
   }

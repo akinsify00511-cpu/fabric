@@ -55,7 +55,7 @@ export default function SearchPage() {
     try {
       const recent = JSON.parse(localStorage.getItem('recent_searches') || '[]')
       setRecentSearches(recent.slice(0, 5))
-    } catch {}
+    } catch (e) { console.warn('[SearchPage] recent_searches', e) }
   }, [])
 
   // Get autocomplete suggestions
