@@ -1,0 +1,34 @@
+name: One-time Upgrade CTA Repair
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: github.event.head_commit.message != 'fix: route app upgrade CTA through pricing selection'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch only the upgrade CTA
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/components/Shell.tsx')
+          s = p.read_text()
+          old = 'href="/upgrade"'
+          new = 'href="/pricing"'
+          if s.count(old) != 1:
+              raise SystemExit(f'Expected exactly one {old!r}, found {s.count(old)}')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          git diff --check
+          git diff -- src/components/Shell.tsx
+      - name: Commit exact one-line fix and remove this workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/repair-upgrade-cta.yml
+          git add src/components/Shell.tsx .github/workflows/repair-upgrade-cta.yml
+          git commit -m "fix: route app upgrade CTA through pricing selection"
+          git push
