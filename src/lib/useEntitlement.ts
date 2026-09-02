@@ -37,14 +37,14 @@ export const PLANS = {
   free: { label: 'Free', tier: 0 },
   starter: { label: 'Starter', tier: 1 },
   professional: { label: 'Professional', tier: 2 },
-  pro: { label: 'Pro', tier: 2 },
-  enterprise: { label: 'Enterprise', tier: 3 },
+  pro: { label: 'Pro', tier: 3 },
+  enterprise: { label: 'Enterprise', tier: 4 },
 } as const
 
 export type PlanKey = keyof typeof PLANS
 
 const PLAN_ALIASES: Record<string, PlanKey> = {
-  pro: 'professional', Pro: 'professional', PRO: 'professional',
+  pro: 'pro', Pro: 'pro', PRO: 'pro',
   starter: 'starter', Starter: 'starter',
   team: 'professional', Team: 'professional',
   growth: 'professional', Growth: 'professional',
@@ -78,9 +78,8 @@ const PAID_FEATURES: Record<PlanKey, Partial<Record<FeatureKey, boolean>>> = {
   starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
   professional: {
     crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-    multi_currency: true, campaigns: true, social_media: true, payments: true,
-    multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true,
-    recognition: true,
+    campaigns: false, social_media: false, payments: true, multi_bank: false,
+    support_tickets: true, live_chat: true, knowledge_base: true, recognition: true,
   },
   pro: {
     crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
