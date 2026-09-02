@@ -25,39 +25,63 @@ export interface PaymentVerdict {
   paidAt: string | null
 }
 
+async function callPaymentFunction<T>(functionName: string, body: Record<string, unknown>): Promise<T> {
+  // Use the same explicit browser -> Edge Function request pattern as Sarah.
+  // supabase.functions.invoke() adds extra client headers and was producing
+  // repeated OPTIONS requests without a following POST in production. The
+  // payment function only needs the user's bearer token for authentication.
+  const { data: { session } } = await supabase.auth.getSession()
+  if (!session?.access_token) throw new Error('Session expired. Please sign in again.')
+
+  const base = import.meta.env.VITE_SUPABASE_URL as string
+  const response = await fetch(`${base}/functions/v1/${functionName}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  let data: any = {}
+  try { data = await response.json() } catch { /* handled below */ }
+
+  if (!response.ok || data?.error) {
+    throw new Error(data?.error || `Payment service failed (${response.status})`)
+  }
+  return data as T
+}
+
 export async function startPlanCheckout(planCode: string, billingCycle: 'monthly' | 'yearly'): Promise<CheckoutStart> {
   // Attach the stored UTM/referrer provenance so the ledger row carries the
   // campaign that produced the payment (attribution -> revenue chain). The
   // server sanitizes it; it is advisory metadata, never price- or access-
   // relevant.
   const attribution = getStoredAttribution()
-  const { data, error } = await supabase.functions.invoke('subscription-management', {
-    body: { action: 'createCheckout', planCode, billingCycle, attribution },
+  const data = await callPaymentFunction<CheckoutStart>('subscription-management', {
+    action: 'createCheckout',
+    planCode,
+    billingCycle,
+    attribution,
   })
-  if (error) throw new Error(error.message || 'Could not start checkout')
-  if (data?.error) throw new Error(data.error)
   if (!data?.authorizationUrl || !data?.reference) throw new Error('Checkout did not return a payment URL')
-  return data as CheckoutStart
+  return data
 }
 
 // On return from Paystack (?reference=...), ask the server what happened.
 export async function verifyPaymentReturn(reference: string): Promise<PaymentVerdict | null> {
   try {
-    const { data, error } = await supabase.functions.invoke('paystack-verify', {
-      body: { reference },
-    })
-    if (error || data?.error) return null
-    return data as PaymentVerdict
+    return await callPaymentFunction<PaymentVerdict>('paystack-verify', { reference })
   } catch {
     return null
   }
 }
 
 export async function cancelSubscriptionAtPeriodEnd(): Promise<{ ok: boolean; message: string }> {
-  const { data, error } = await supabase.functions.invoke('subscription-management', {
-    body: { action: 'cancel' },
-  })
-  if (error) return { ok: false, message: error.message || 'Could not cancel the subscription' }
-  if (data?.error) return { ok: false, message: data.error }
-  return { ok: true, message: data?.message || 'Subscription will cancel at the end of the paid period' }
+  try {
+    const data = await callPaymentFunction<{ message?: string }>('subscription-management', { action: 'cancel' })
+    return { ok: true, message: data?.message || 'Subscription will cancel at the end of the paid period' }
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : 'Could not cancel the subscription' }
+  }
 }
