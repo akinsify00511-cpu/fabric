@@ -1,34 +1,25 @@
 name: One-time Upgrade CTA Repair
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  repair:
-    if: github.event.head_commit.message != 'fix: route app upgrade CTA through pricing selection'
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch only the upgrade CTA
+      - name: Verify exact CTA source
         run: |
           python - <<'PY'
           from pathlib import Path
-          p = Path('src/components/Shell.tsx')
-          s = p.read_text()
-          old = 'href="/upgrade"'
-          new = 'href="/pricing"'
-          if s.count(old) != 1:
-              raise SystemExit(f'Expected exactly one {old!r}, found {s.count(old)}')
-          p.write_text(s.replace(old, new, 1))
+          s = Path('src/components/Shell.tsx').read_text()
+          if 'href="/pricing"' not in s:
+              raise SystemExit('Upgrade CTA does not point to /pricing')
+          if s.count('href="/upgrade"') != 0:
+              raise SystemExit('Unexpected /upgrade href remains in Shell.tsx')
+          print('Upgrade CTA source verified: /pricing')
           PY
-          git diff --check
-          git diff -- src/components/Shell.tsx
-      - name: Commit exact one-line fix and remove this workflow
+      - name: TypeScript and production build
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm -f .github/workflows/repair-upgrade-cta.yml
-          git add src/components/Shell.tsx .github/workflows/repair-upgrade-cta.yml
-          git commit -m "fix: route app upgrade CTA through pricing selection"
-          git push
+          npm ci
+          npm run build
