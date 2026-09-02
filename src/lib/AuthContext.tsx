@@ -6,6 +6,7 @@ import { clearModuleAccessCache } from './useModuleAccess'
 import { clearExperienceContextCache } from './useExperienceContext'
 import { logPlatformActivity } from './riverwaysActivity'
 import { setSentryUser } from './sentry'
+import { useOnlineStatus } from '../hooks/useOnlineStatus'
 import { ClockSkewError, isClockSkewError } from './probeVerifier'
 import {
   installStorageSelfHeal,
@@ -160,6 +161,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [staffError, setStaffError] = useState(false)
   const fetchIdRef = useRef(0)
   const authGenerationRef = useRef(0)
+  const reconnectGenerationRef = useRef(0)
+  const { isOnline } = useOnlineStatus()
   const sessionUserIdRef = useRef<string | null>(null)
 
   const applySession = useCallback((newSession: Session | null) => {
@@ -219,9 +222,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchStaff = useCallback(
     async (userId: string, myId: number): Promise<Staff | null> => {
       let lastError: unknown = null
-      const delays = [0, 200, 500, 1200]
+      const delays = [0, 500, 1500, 3500, 7000]
 
       for (let attempt = 0; attempt < delays.length; attempt++) {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+          lastError = new TypeError('Network offline')
+          break
+        }
         if (delays[attempt] > 0) {
           await new Promise<void>((resolve) => setTimeout(resolve, delays[attempt]))
         }
@@ -289,6 +296,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           // mean onboarding, but only after all retries have completed.
         } catch (err) {
           lastError = err
+          if (typeof navigator !== 'undefined' && !navigator.onLine) break
         }
       }
 
@@ -358,6 +366,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setStaffChecked(true)
     }
   }, [fetchStaff, userId])
+
+  // A temporary network outage must not turn an authenticated member into an
+  // onboarding user or leave the session permanently stuck in an error state.
+  // When connectivity returns, retry membership resolution once for the current
+  // session. fetchIdRef prevents stale in-flight requests from winning.
+  useEffect(() => {
+    if (!isOnline || !session?.user?.id) return
+    const generation = ++reconnectGenerationRef.current
+    const timer = window.setTimeout(() => {
+      if (generation !== reconnectGenerationRef.current) return
+      if (staffError || !staffChecked) {
+        const id = ++fetchIdRef.current
+        setStaffChecked(false)
+        setStaffError(false)
+        void fetchStaff(session.user.id, id)
+      }
+    }, 300)
+    return () => window.clearTimeout(timer)
+  }, [fetchStaff, isOnline, session?.user?.id, staffChecked, staffError])
 
   const signOut = async () => {
     const signingOutUserId = session?.user?.id
