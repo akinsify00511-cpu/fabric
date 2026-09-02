@@ -1,13 +1,12 @@
 /**
  * Entitlement Hook
- * Real plan gating with feature-level access control
+ * Trial-first product access with plan-level gating after expiry.
  */
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 
-// All feature flags
 export const FEATURES = {
   time_tracking: { label: 'Time Tracking', category: 'productivity' },
   invoicing: { label: 'Invoicing & Payments', category: 'finance' },
@@ -34,39 +33,34 @@ export const FEATURES = {
 
 export type FeatureKey = keyof typeof FEATURES
 
-// Plan tiers
 export const PLANS = {
   free: { label: 'Free', tier: 0 },
   starter: { label: 'Starter', tier: 1 },
   professional: { label: 'Professional', tier: 2 },
-  pro: { label: 'Pro', tier: 2 }, // Alias for professional
+  pro: { label: 'Pro', tier: 2 },
   enterprise: { label: 'Enterprise', tier: 3 },
 } as const
 
 export type PlanKey = keyof typeof PLANS
 
-// Map plan aliases to canonical names
 const PLAN_ALIASES: Record<string, PlanKey> = {
-  'pro': 'professional',
-  'Pro': 'professional',
-  'PRO': 'professional',
-  'starter': 'starter',
-  'Starter': 'starter',
+  pro: 'professional', Pro: 'professional', PRO: 'professional',
+  starter: 'starter', Starter: 'starter',
+  team: 'professional', Team: 'professional',
+  growth: 'professional', Growth: 'professional',
+  business: 'professional', Business: 'professional',
+  scale: 'enterprise', Scale: 'enterprise',
 }
 
-// Helper to normalize plan names
-function normalizePlan(plan: string | undefined): PlanKey {
+function normalizePlan(plan?: string): PlanKey {
   if (!plan) return 'free'
-  const normalized = PLAN_ALIASES[plan]
-  if (normalized) return normalized
-  if (plan in PLANS) return plan as PlanKey
-  return 'free'
+  return PLAN_ALIASES[plan] || (plan in PLANS ? plan as PlanKey : 'free')
 }
 
 interface BusinessEntitlement {
   id: string
   business_id: string
-  plan: PlanKey
+  plan: string
   features: Partial<Record<FeatureKey, boolean>>
   team_limit: number
   storage_limit_mb: number
@@ -74,257 +68,133 @@ interface BusinessEntitlement {
   trial_started_at: string | null
 }
 
-interface UseEntitlementResult {
-  hasAccess: boolean
-  loading: boolean
-  plan: PlanKey
-  features: Partial<Record<FeatureKey, boolean>>
-  teamLimit: number
-  currentTeamCount: number
-  canAddTeamMember: boolean
+const FREE_FEATURES: Partial<Record<FeatureKey, boolean>> = {
+  crm: true,
+  projects: true,
 }
 
-interface UseTeamEntitlementResult {
-  canAddMember: boolean
-  currentCount: number
-  limit: number
-  loading: boolean
+const PAID_FEATURES: Record<PlanKey, Partial<Record<FeatureKey, boolean>>> = {
+  free: FREE_FEATURES,
+  starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
+  professional: {
+    crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
+    multi_currency: true, campaigns: true, social_media: true, payments: true,
+    multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true,
+    recognition: true,
+  },
+  pro: {
+    crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
+    multi_currency: true, campaigns: true, social_media: true, payments: true,
+    multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true,
+    recognition: true, api_access: true, custom_branding: true, advanced_analytics: true,
+    automations: true, whatsapp: true, sms: true,
+  },
+  enterprise: Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>,
 }
 
-export function useEntitlement(feature: FeatureKey): UseEntitlementResult {
+const ALL_TRIAL_FEATURES = Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>
+
+function trialIsActive(entitlement: BusinessEntitlement | null): boolean {
+  return entitlement?.plan === 'free' && !!entitlement.trial_ends_at && new Date(entitlement.trial_ends_at).getTime() > Date.now()
+}
+
+function effectiveFeatures(entitlement: BusinessEntitlement | null) {
+  if (!entitlement) return FREE_FEATURES
+  if (trialIsActive(entitlement)) return ALL_TRIAL_FEATURES
+  const plan = normalizePlan(entitlement.plan)
+  if (plan === 'free') return FREE_FEATURES
+  return { ...PAID_FEATURES[plan], ...entitlement.features }
+}
+
+export function useEntitlement(feature: FeatureKey) {
   const { staff } = useAuth()
   const [entitlement, setEntitlement] = useState<BusinessEntitlement | null>(null)
   const [teamCount, setTeamCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!staff?.business_id) {
-      setLoading(false)
-      return
-    }
-
-    const loadEntitlements = async () => {
+    if (!staff?.business_id) { setLoading(false); return }
+    let cancelled = false
+    const load = async () => {
       try {
-        // Load entitlements
-        const { data: entData } = await supabase
-          .from('business_entitlements')
-          .select('*')
-          .eq('business_id', staff.business_id)
-          .maybeSingle()
-
-        if (entData) {
-          setEntitlement(entData as BusinessEntitlement)
-        } else {
-          // Create default free entitlements
-          const { data: newEnt } = await supabase
-            .from('business_entitlements')
-            .insert({ business_id: staff.business_id, plan: 'free' })
-            .select()
-            .single()
-          
-          if (newEnt) {
-            setEntitlement(newEnt as BusinessEntitlement)
-          }
-        }
-
-        // Load team count
-        const { count } = await supabase
-          .from('staff')
-          .select('*', { count: 'exact', head: true })
-          .eq('business_id', staff.business_id)
-        
-        setTeamCount(count || 0)
+        const { data } = await supabase.from('business_entitlements').select('*').eq('business_id', staff.business_id).maybeSingle()
+        const { count } = await supabase.from('staff').select('*', { count: 'exact', head: true }).eq('business_id', staff.business_id)
+        if (!cancelled) { setEntitlement(data as BusinessEntitlement | null); setTeamCount(count || 0) }
       } catch (err) {
         console.warn('Entitlements not available:', (err as any)?.message)
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }
-
-    loadEntitlements()
+    void load()
+    return () => { cancelled = true }
   }, [staff?.business_id])
 
-  // Default plan features (fallback)
-  const defaultFeatures: Partial<Record<FeatureKey, boolean>> = {
-    crm: true,
-    projects: true,
-    inventory: false,
-    time_tracking: false,
-    invoicing: false,
-    api_access: false,
-    custom_branding: false,
-    advanced_analytics: false,
-    unlimited_team: false,
-    multi_currency: false,
-    automations: false,
-    campaigns: false,
-    social_media: false,
-    whatsapp: false,
-    sms: false,
-    payments: false,
-    multi_bank: false,
-    support_tickets: false,
-    live_chat: false,
-    knowledge_base: false,
-    recognition: false,
-  }
-
-  const planFeatures: Record<PlanKey, Partial<Record<FeatureKey, boolean>>> = {
-    free: { crm: true, projects: true },
-    starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
-    professional: { 
-      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, payments: true, 
-      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
-      recognition: true 
-    },
-    pro: { // Alias for professional
-      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, payments: true, 
-      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
-      recognition: true 
-    },
-    enterprise: Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>,
-  }
-
   const plan = normalizePlan(entitlement?.plan)
-  const features = { ...defaultFeatures, ...planFeatures[plan], ...entitlement?.features }
+  const features = effectiveFeatures(entitlement)
   const teamLimit = entitlement?.team_limit || 3
-  const canAddMember = teamCount < teamLimit
 
   return {
-    hasAccess: features[feature] || false,
+    hasAccess: features[feature] === true,
     loading,
     plan,
     features,
     teamLimit,
     currentTeamCount: teamCount,
-    canAddTeamMember: canAddMember,
+    canAddTeamMember: teamCount < teamLimit,
   }
 }
 
-// Hook to check team member limits
-export function useTeamLimit(): UseTeamEntitlementResult {
+export function useTeamLimit() {
   const { staff } = useAuth()
   const [currentCount, setCurrentCount] = useState(0)
   const [limit, setLimit] = useState(3)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!staff?.business_id) {
+    if (!staff?.business_id) { setLoading(false); return }
+    Promise.all([
+      supabase.from('business_entitlements').select('team_limit').eq('business_id', staff.business_id).maybeSingle(),
+      supabase.from('staff').select('*', { count: 'exact', head: true }).eq('business_id', staff.business_id),
+    ]).then(([ent, members]) => {
+      if (ent.data?.team_limit) setLimit(ent.data.team_limit)
+      setCurrentCount(members.count || 0)
       setLoading(false)
-      return
-    }
-
-    const load = async () => {
-      try {
-        const { data: entData } = await supabase
-          .from('business_entitlements')
-          .select('team_limit')
-          .eq('business_id', staff.business_id)
-          .maybeSingle()
-
-        if (entData) {
-          setLimit(entData.team_limit)
-        }
-
-        const { count } = await supabase
-          .from('staff')
-          .select('*', { count: 'exact', head: true })
-          .eq('business_id', staff.business_id)
-        
-        setCurrentCount(count || 0)
-      } catch (err) {
-        console.warn('Team limits not available:', (err as any)?.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    load()
+    }).catch(() => setLoading(false))
   }, [staff?.business_id])
 
-  return {
-    canAddMember: currentCount < limit,
-    currentCount,
-    limit,
-    loading,
-  }
+  return { canAddMember: currentCount < limit, currentCount, limit, loading }
 }
 
-// Hook to get all entitlements
-export function useEntitlements(): {
-  plan: PlanKey
-  features: Partial<Record<FeatureKey, boolean>>
-  teamLimit: number
-  loading: boolean
-  trialEndsAt: string | null
-  trialDaysLeft: number
-  inTrial: boolean
-} {
+export function useEntitlements() {
   const { staff } = useAuth()
   const [entitlement, setEntitlement] = useState<BusinessEntitlement | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!staff?.business_id) {
-      setLoading(false)
-      return
-    }
-
-    supabase
-      .from('business_entitlements')
-      .select('*')
-      .eq('business_id', staff.business_id)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        // maybeSingle returns null data with no error when 0 rows;
-        // only treat genuine errors as failures.
-        if (error) {
-          // Only log real errors, not missing tables
-          console.warn('Entitlements not available:', error.message)
-        }
-        if (data) {
-          setEntitlement(data as BusinessEntitlement)
-        }
+    if (!staff?.business_id) { setLoading(false); return }
+    let cancelled = false
+    supabase.from('business_entitlements').select('*').eq('business_id', staff.business_id).maybeSingle().then(({ data, error }) => {
+      if (!cancelled) {
+        if (error) console.warn('Entitlements not available:', error.message)
+        setEntitlement(data as BusinessEntitlement | null)
         setLoading(false)
-      })
+      }
+    })
+    return () => { cancelled = true }
   }, [staff?.business_id])
 
   const plan = normalizePlan(entitlement?.plan)
-  
-  const defaultFeatures: Partial<Record<FeatureKey, boolean>> = {
-    crm: true,
-    projects: true,
-  }
-  
-  const planFeatures: Record<PlanKey, Partial<Record<FeatureKey, boolean>>> = {
-    free: { crm: true, projects: true },
-    starter: { crm: true, projects: true, inventory: true, support_tickets: true, live_chat: true },
-    professional: { 
-      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, payments: true, 
-      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
-      recognition: true 
-    },
-    pro: { // Alias for professional
-      crm: true, projects: true, inventory: true, time_tracking: true, invoicing: true,
-      multi_currency: true, campaigns: true, social_media: true, payments: true, 
-      multi_bank: true, support_tickets: true, live_chat: true, knowledge_base: true, 
-      recognition: true 
-    },
-    enterprise: Object.keys(FEATURES).reduce((acc, key) => ({ ...acc, [key]: true }), {}) as Partial<Record<FeatureKey, boolean>>,
-  }
-
+  const features = effectiveFeatures(entitlement)
   const trialEndsAt = entitlement?.trial_ends_at ?? null
+  const inTrial = trialIsActive(entitlement)
   const trialDaysLeft = trialEndsAt
-    ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    ? Math.max(0, Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / 86400000))
     : 0
-  const inTrial = plan === 'free' && trialEndsAt !== null && new Date(trialEndsAt) > new Date()
 
   return {
     plan,
-    features: { ...defaultFeatures, ...planFeatures[plan], ...entitlement?.features },
+    features,
     teamLimit: entitlement?.team_limit || 3,
     loading,
     trialEndsAt,
