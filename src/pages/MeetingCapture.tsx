@@ -116,17 +116,27 @@ export default function MeetingCapture(){
   const stream=localStreamRef.current
   if(!stream){showToast('Camera/microphone is not ready','error');return}
   if(typeof MediaRecorder==='undefined'){showToast('Recording is not supported by this browser','error');return}
+  const tracks=stream.getTracks().filter(t=>t.readyState==='live')
+  if(!tracks.length){showToast('Camera/microphone stream is no longer active. Reconnect your media devices and retry.','error');return}
+  const audio=stream.getAudioTracks().filter(t=>t.readyState==='live')
+  const video=stream.getVideoTracks().filter(t=>t.readyState==='live')
+  if(!audio.length&&!video.length){showToast('No recordable media tracks are available','error');return}
+  const recordStream=new MediaStream([...video,...audio])
   const candidates=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
   const mime=candidates.find(type=>MediaRecorder.isTypeSupported(type))
   let r:MediaRecorder
-  try{r=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream)}
+  try{r=mime?new MediaRecorder(recordStream,{mimeType:mime}):new MediaRecorder(recordStream)}
   catch(e){console.error('Could not create MediaRecorder',e);showToast('This browser cannot start a meeting recording with the available media format','error');return}
   const resolvedMime=mime||r.mimeType||'video/webm'
   recordChunks.current=[]
   r.ondataavailable=e=>{if(e.data.size)recordChunks.current.push(e.data)}
   r.onerror=e=>{console.error('Meeting recorder error',e);showToast('Meeting recording failed','error');setRecording(false);if(recordTimerRef.current)clearInterval(recordTimerRef.current)}
   r.onstop=async()=>{if(!meeting||!staff?.business_id||!staff.id)return;const blob=new Blob(recordChunks.current,{type:resolvedMime});const path=`${meeting.id}/${crypto.randomUUID()}-meeting-recording.webm`;const {error:up}=await supabase.storage.from('meeting-captures').upload(path,blob,{contentType:resolvedMime});if(up){showToast('Recording upload failed','error');return}const {data,error}=await supabase.from('meeting_captures').insert({meeting_id:meeting.id,business_id:staff.business_id,staff_id:staff.id,capture_type:'recording',title:'Meeting recording',storage_path:path,mime_type:resolvedMime,size_bytes:blob.size,duration_seconds:recordingSeconds}).select().single();if(!error)setCaptures(v=>[data,...v]);showToast(error?'Recording saved locally but capture record failed':'Meeting recording captured','success')}
-  try{r.start(1000)}catch(e){console.error('Could not start MediaRecorder',e);showToast('Meeting recording could not start. Please retry or use a supported browser/media device.','error');return}
+  try{r.start(1000)}catch(e){
+    console.error('Could not start MediaRecorder',e,{mime:resolvedMime,audioTracks:audio.length,videoTracks:video.length})
+    try{r.stop()}catch{}
+    showToast('Meeting recording could not start with the current camera/microphone stream. Reconnect the device and retry.','error');return
+  }
   recorderRef.current=r;setRecording(true);setRecordingSeconds(0);recordTimerRef.current=setInterval(()=>setRecordingSeconds(v=>v+1),1000)
  }
  const stopRecording=()=>{recorderRef.current?.stop();setRecording(false);if(recordTimerRef.current)clearInterval(recordTimerRef.current)}
