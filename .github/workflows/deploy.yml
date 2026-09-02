@@ -87,10 +87,14 @@ jobs:
       # The production contract check actually calls the live Supabase and
       # fails the deploy job if any frontend-referenced table/RPC is missing
       # or drifted, or the payment/email edge functions are not deployed.
+      # Prefer the service-role key when configured so RPC signatures can be
+      # checked from the authoritative PostgREST OpenAPI surface. Without it,
+      # the verifier falls back to the publishable key and its probe mode.
       - name: Production contract verification
         run: bash scripts/verify-production.sh
         env:
           APP_URL: https://avenize.riverwayse.com
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       # Phase 6: journey-level smoke. verify-production.sh checks that OBJECTS
       # exist; this checks the real journeys behave (signup -> onboarding ->
