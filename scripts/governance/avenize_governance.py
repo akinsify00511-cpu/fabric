@@ -31,8 +31,8 @@ MODE_SUBSETS = {
     "drift": {"supabase.drift", "supabase.contract.deterministic", "supabase.contract.frontend"},
     "contracts": {
         "supabase.contract.deterministic", "supabase.contract.frontend",
-        "edge.functions", "supabase.manifests", "platform.observability",
-        "money.pricing.constitution",
+        "edge.functions", "edge.source.integrity", "supabase.manifests",
+        "platform.observability", "money.pricing.constitution",
     },
     "security": {"security.secrets", "supabase.drift", "money.pricing.constitution"},
     "e2e": {"units.pass", "types.clean"},

@@ -2,9 +2,9 @@
   "counts": {
     "tables": 471,
     "views": 6,
-    "functions": 508,
+    "functions": 509,
     "buckets": 8,
-    "edge_functions": 12
+    "edge_functions": 13
   },
   "objects": [
     {
@@ -4112,7 +4112,7 @@
     {
       "kind": "function",
       "name": "award_xp_with_streak",
-      "defined_in": "077_atomic_xp_award.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -4156,7 +4156,7 @@
     {
       "kind": "function",
       "name": "bootstrap_business",
-      "defined_in": "002_frontend_compat.sql",
+      "defined_in": "20260902100000_harden_bootstrap_and_notification_rpc_identity.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4300,7 +4300,7 @@
     {
       "kind": "function",
       "name": "cancel_registration",
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4366,7 +4366,7 @@
     {
       "kind": "function",
       "name": "check_achievements",
-      "defined_in": "011_gamification.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4421,7 +4421,7 @@
     {
       "kind": "function",
       "name": "check_in_attendee",
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4861,7 +4861,7 @@
     {
       "kind": "function",
       "name": "create_default_notification_preferences",
-      "defined_in": "036_notifications_system.sql",
+      "defined_in": "20260902100000_harden_bootstrap_and_notification_rpc_identity.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -5599,6 +5599,17 @@
     },
     {
       "kind": "function",
+      "name": "enqueue_meeting_capture_media",
+      "defined_in": "20260902093000_meeting_capture_media_handoff.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "ensure_business_approval_config",
       "defined_in": "20260818170000_business_approval_config.sql",
       "repairable": false,
@@ -6230,7 +6241,7 @@
     {
       "kind": "function",
       "name": "get_space_pages",
-      "defined_in": "006_knowledge_base.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -6307,7 +6318,7 @@
     {
       "kind": "function",
       "name": "get_ticket_with_replies",
-      "defined_in": "008_support_tickets.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -6340,7 +6351,7 @@
     {
       "kind": "function",
       "name": "get_unread_notification_count",
-      "defined_in": "036_notifications_system.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -7622,7 +7633,7 @@
     {
       "kind": "function",
       "name": "record_decision_learning",
-      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -8173,7 +8184,7 @@
     {
       "kind": "function",
       "name": "rsvp_event",
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -8437,7 +8448,7 @@
     {
       "kind": "function",
       "name": "save_transcript",
-      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -8613,7 +8624,7 @@
     {
       "kind": "function",
       "name": "send_follow_up",
-      "defined_in": "017_requisitions_approvals.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -9295,12 +9306,13 @@
     {
       "kind": "function",
       "name": "update_user_engagement",
-      "defined_in": "037_analytics_events_system.sql",
+      "defined_in": "20260902084834_fix_update_user_engagement_rpc_call.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
       "signatures": [
-        "p_user_id uuid, p_session_id text, p_event_type text, p_feature_name text, p_duration_seconds int4"
+        "p_user_id uuid, p_session_id text, p_event_type text, p_feature_name text, p_duration_seconds int4",
+        "p_user_id uuid, p_session_id text, p_event_type text, p_duration_seconds int4"
       ]
     },
     {
@@ -9974,6 +9986,9 @@
       ""
     ],
     "enforce_staff_role_immutability": [
+      ""
+    ],
+    "enqueue_meeting_capture_media": [
       ""
     ],
     "ensure_business_approval_config": [
@@ -10992,7 +11007,8 @@
       ""
     ],
     "update_user_engagement": [
-      "p_user_id uuid, p_session_id text, p_event_type text, p_feature_name text, p_duration_seconds int4"
+      "p_user_id uuid, p_session_id text, p_event_type text, p_feature_name text, p_duration_seconds int4",
+      "p_user_id uuid, p_session_id text, p_event_type text, p_duration_seconds int4"
     ],
     "update_user_streak": [
       "p_user_id uuid"
@@ -11031,6 +11047,7 @@
   "edge_functions": [
     "api-gateway",
     "ask-avenize",
+    "capture-process",
     "dispatch-webhooks",
     "email-service",
     "execute-automation",
@@ -11509,8 +11526,7 @@
     ],
     "edge_functions": [
       "ask-avenize",
-      "paystack-verify",
-      "subscription-management",
+      "dispatch-webhooks",
       "webauthn"
     ]
   }

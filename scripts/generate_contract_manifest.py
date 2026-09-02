@@ -99,6 +99,7 @@ RE_FE_FROM = re.compile(r"\.from\(\s*['\"]([a-zA-Z_][a-zA-Z0-9_]*)['\"]")
 RE_FE_RPC = re.compile(r"\.rpc\(\s*['\"]([a-zA-Z_][a-zA-Z0-9_]*)['\"]")
 RE_FE_BUCKET = re.compile(r"\.storage\s*\.\s*from\(\s*['\"]([a-zA-Z0-9_-]+)['\"]")
 RE_FE_INVOKE = re.compile(r"\.functions\.invoke\(\s*['\"]([a-zA-Z0-9_-]+)['\"]")
+RE_FE_EDGE_URL = re.compile(r"/functions/v1/([a-zA-Z0-9_-]+)\b")
 
 # Objects whose absence/mutation is a SECURITY event, never a silent repair.
 SECURITY_NAME_PATTERNS = re.compile(
@@ -212,6 +213,7 @@ def parse_frontend():
         refs["rpcs"].update(RE_FE_RPC.findall(text))
         refs["buckets"].update(RE_FE_BUCKET.findall(text))
         refs["edge_functions"].update(RE_FE_INVOKE.findall(text))
+        refs["edge_functions"].update(RE_FE_EDGE_URL.findall(text))
     # .storage.from('bucket') is not a table query
     refs["tables"] -= refs["buckets"]
     return {k: sorted(v) for k, v in refs.items()}

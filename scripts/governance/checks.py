@@ -216,6 +216,47 @@ def check_edge_functions() -> CheckResult:
     return CheckResult("PASS")
 
 
+def check_edge_source_integrity() -> CheckResult:
+    manifest = _load_json(ROOT / "supabase" / "constitution" / "edge-function-manifest.json")
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("directory"), list):
+        return CheckResult("FAIL", "P1", True, {"invalid": "edge-function-manifest.json"})
+    source_dirs = []
+    for p in (ROOT / "supabase" / "functions" ).iterdir():
+        if p.is_dir() and not p.name.startswith("_"):
+            source_dirs.append( p.name )
+    source_dirs.sort()
+    manifest_dirs = sorted( manifest["directory"] )
+    if manifest_dirs != source_dirs:
+        missing_src = sorted( list( set( source_dirs ) - set( manifest_dirs ) ) )
+        not_src = sorted( list( set( manifest_dirs ) - set( source_dirs ) ) )
+        return CheckResult(
+            "FAIL", "P1", True,
+            {"manifest_is_stale": "run python3 scripts/generate_supabase_manifests.py",
+             "source_dirs_without_manifest": missing_src,
+             "manifest_entries_without_source": not_src},
+        )
+    frontend = sorted( manifest.get("frontend_referenced", []) )
+    bad_frontend = [ f for f in frontend if f not in manifest_dirs ]
+    if bad_frontend:
+        return CheckResult("FAIL", "P1", True, {"frontend_referenced_without_source": bad_frontend})
+    plan = _load_json( ROOT / "governance" / "edge_deployment_plan.json" )
+    if isinstance( plan, dict ):
+        for key in ("deployed", "missing"):
+            entries = plan.get( key , [] )
+            names = []
+            if isinstance( entries, list ):
+                for e in entries:
+                    nm = str( e.get( "name" ) )
+                    if nm:
+                        names.append( nm )
+            orphaned = []
+            for nm in names:
+                if nm not in source_dirs:
+                    orphaned.append( nm )
+            orphaned.sort()
+            if orphaned:
+                return CheckResult("FAIL", "P1", True, {key + "_without_source": orphaned})
+    return CheckResult("PASS", detail={"edge_functions": len( source_dirs ) } )
 def check_supabase_manifests() -> CheckResult:
     targets = [
         "schema-manifest.json",
@@ -417,6 +458,13 @@ CHECKS = {
         "blocking": True,
         "fn": check_supabase_manifests,
         "summary": "Supabase source-of-truth manifests present and valid",
+    },
+    "edge.source.integrity": {
+        "layer": "supabase",
+        "severity": "P1",
+        "blocking": True,
+        "fn": check_edge_source_integrity,
+        "summary": "Every deployable edge function has reviewable source in-repo (no untracked live functions)",
     },
     "design.constitution": {
         "layer": "design",

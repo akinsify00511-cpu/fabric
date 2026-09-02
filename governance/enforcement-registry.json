@@ -52,6 +52,16 @@
       "verification": "avenize_governance.py:edge.functions"
     },
     {
+      "blocking": true,
+      "escalation": "human_decision",
+      "layer": "supabase",
+      "requirement": "Every deployable edge function has reviewable source in-repo (no untracked live functions)",
+      "rule_id": "edge.source.integrity",
+      "severity": "P1",
+      "validator": "scripts/governance/checks.py::check_edge_source_integrity",
+      "verification": "avenize_governance.py:edge.source.integrity"
+    },
+    {
       "blocking": false,
       "escalation": "incident",
       "layer": "product",

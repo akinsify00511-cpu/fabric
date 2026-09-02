@@ -2,6 +2,7 @@
   "directory": [
     "api-gateway",
     "ask-avenize",
+    "capture-process",
     "dispatch-webhooks",
     "email-service",
     "execute-automation",
@@ -15,8 +16,7 @@
   ],
   "frontend_referenced": [
     "ask-avenize",
-    "paystack-verify",
-    "subscription-management",
+    "dispatch-webhooks",
     "webauthn"
   ]
 }

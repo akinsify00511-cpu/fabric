@@ -1,6 +1,6 @@
 {
   "counts": {
-    "triggers": 218
+    "triggers": 219
   },
   "triggers": [
     {
@@ -547,6 +547,11 @@
       "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
       "table": "meeting_actions",
       "trigger": "trg_meeting_actions_updated_at"
+    },
+    {
+      "defined_in": "20260902093000_meeting_capture_media_handoff.sql",
+      "table": "meeting_captures",
+      "trigger": "trg_meeting_capture_media_handoff"
     },
     {
       "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",

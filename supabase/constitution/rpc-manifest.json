@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 508
+    "functions": 509
   },
   "functions": [
     {
@@ -186,7 +186,7 @@
       "signature": ""
     },
     {
-      "defined_in": "077_atomic_xp_award.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": true,
       "name": "award_xp_with_streak",
       "security_sensitive": true,
@@ -214,7 +214,7 @@
       "signature": ""
     },
     {
-      "defined_in": "002_frontend_compat.sql",
+      "defined_in": "20260902100000_harden_bootstrap_and_notification_rpc_identity.sql",
       "frontend_referenced": false,
       "name": "bootstrap_business",
       "security_sensitive": true,
@@ -305,7 +305,7 @@
       "signature": ""
     },
     {
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "cancel_registration",
       "security_sensitive": true,
@@ -347,7 +347,7 @@
       "signature": ""
     },
     {
-      "defined_in": "011_gamification.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "check_achievements",
       "security_sensitive": true,
@@ -382,7 +382,7 @@
       "signature": ""
     },
     {
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "check_in_attendee",
       "security_sensitive": true,
@@ -662,7 +662,7 @@
       "signature": ""
     },
     {
-      "defined_in": "036_notifications_system.sql",
+      "defined_in": "20260902100000_harden_bootstrap_and_notification_rpc_identity.sql",
       "frontend_referenced": false,
       "name": "create_default_notification_preferences",
       "security_sensitive": true,
@@ -1131,6 +1131,13 @@
       "signature": ""
     },
     {
+      "defined_in": "20260902093000_meeting_capture_media_handoff.sql",
+      "frontend_referenced": false,
+      "name": "enqueue_meeting_capture_media",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "20260818170000_business_approval_config.sql",
       "frontend_referenced": false,
       "name": "ensure_business_approval_config",
@@ -1530,7 +1537,7 @@
       "signature": ""
     },
     {
-      "defined_in": "006_knowledge_base.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "frontend_referenced": false,
       "name": "get_space_pages",
       "security_sensitive": true,
@@ -1579,7 +1586,7 @@
       "signature": ""
     },
     {
-      "defined_in": "008_support_tickets.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "get_ticket_with_replies",
       "security_sensitive": true,
@@ -1600,7 +1607,7 @@
       "signature": ""
     },
     {
-      "defined_in": "036_notifications_system.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "get_unread_notification_count",
       "security_sensitive": true,
@@ -2412,7 +2419,7 @@
       "signature": ""
     },
     {
-      "defined_in": "064_org_memory_authority_multicompany.sql",
+      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "record_decision_learning",
       "security_sensitive": true,
@@ -2762,7 +2769,7 @@
       "signature": ""
     },
     {
-      "defined_in": "020_events.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "frontend_referenced": false,
       "name": "rsvp_event",
       "security_sensitive": true,
@@ -2930,7 +2937,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818600000_meeting_transcript_decisions_phase_c.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "frontend_referenced": false,
       "name": "save_transcript",
       "security_sensitive": true,
@@ -3042,7 +3049,7 @@
       "signature": ""
     },
     {
-      "defined_in": "017_requisitions_approvals.sql",
+      "defined_in": "20260902095000_restrict_event_and_transcript_rpc_access.sql",
       "frontend_referenced": true,
       "name": "send_follow_up",
       "security_sensitive": true,
@@ -3476,7 +3483,7 @@
       "signature": ""
     },
     {
-      "defined_in": "037_analytics_events_system.sql",
+      "defined_in": "20260902084834_fix_update_user_engagement_rpc_call.sql",
       "frontend_referenced": true,
       "name": "update_user_engagement",
       "security_sensitive": true,
