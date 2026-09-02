@@ -9,11 +9,12 @@
 #   SUPABASE_URL   e.g. https://<ref>.supabase.co
 #   SUPABASE_KEY   publishable key (service role key gives deeper checks)
 # Optional env:
+#   SUPABASE_SERVICE_ROLE_KEY  service role key for authoritative OpenAPI/RPC checks
 #   APP_URL        e.g. https://avenize.riverwayse.com (frontend smoke check)
 set -u
 
 BASE="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"; BASE="${BASE%/}"
-KEY="${SUPABASE_KEY:-${SUPABASE_ANON_KEY:-${VITE_SUPABASE_ANON_KEY:-}}}"
+KEY="${SUPABASE_SERVICE_ROLE_KEY:-${SUPABASE_KEY:-${SUPABASE_ANON_KEY:-${VITE_SUPABASE_ANON_KEY:-}}}}"
 APP_URL="${APP_URL:-}"
 PASS=0
 FAIL=0
@@ -45,8 +46,10 @@ if [ -z "$BASE" ] || [ -z "$KEY" ]; then
   exit 2
 fi
 
-# Hand the self-calibrated values to every child process (the python verifier
-# reads SUPABASE_URL/SUPABASE_KEY from its own environment).
+# Hand the selected values to every child process (the python verifier reads
+# SUPABASE_URL/SUPABASE_KEY from its own environment). If a service-role key
+# was supplied, the verifier can read authoritative OpenAPI signatures instead
+# of falsely treating required-argument RPCs as missing under the publishable key.
 export SUPABASE_URL="$BASE"
 export SUPABASE_KEY="$KEY"
 
