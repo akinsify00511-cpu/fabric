@@ -64,4 +64,4 @@ begin
   return jsonb_build_object('transcript_id',v_transcript_id,'summary_id',v_summary_id);
 end; $$;
 
-revoke execute on function public.reset_auth_rate_limit(text,text) from authenticated;
+-- reset_auth_rate_limit is owned by zzz_auth_protocol_repair (defined + granted there);revoking here would be a forward reference the owning file already grants anon+authenticated intentionally.
