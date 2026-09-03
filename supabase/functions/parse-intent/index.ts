@@ -1,11 +1,7 @@
 // AI INTENT & DATA GATEWAY (Architecture §5)
-//
-// Natural-language capture: "We just closed the ABC Properties deal for ₦45m.
-// John handled it and the client will pay 40% upfront."
-//
-// Turns free text into structured intent: detected event, extracted
-// entities, proposed canonical destinations, and a confidence score.
-// The client shows a "What I Understood" confirmation before committing.
+// Natural-language capture only parses and proposes actions. It never performs
+// business mutations. Any downstream commit must independently authorize the
+// authenticated actor and tenant.
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -18,7 +14,6 @@ const corsHeaders = {
 
 interface EntityMatch { field: string; value: string; raw: string }
 interface ProposedDestination { entity_type: string; action: string; reason: string }
-
 interface ParsedIntent {
   event_type: string
   summary: string
@@ -39,12 +34,10 @@ function extractMoney(text: string): string | null {
   else if (unit.startsWith('k') || unit === 'thousand') n *= 1_000
   return n.toString()
 }
-
 function extractPercent(text: string): string | null {
   const m = text.match(/(\d{1,3})\s?%/)
   return m ? m[1] : null
 }
-
 function extractName(text: string, after: string[]): string | null {
   for (const a of after) {
     const re = new RegExp(a + '\\s+([A-Z][a-z]+(?:\\s+[A-Z][a-z]+)?)', 'i')
@@ -53,7 +46,6 @@ function extractName(text: string, after: string[]): string | null {
   }
   return null
 }
-
 function detectEventType(text: string): { event_type: string; confidence: number } {
   const t = text.toLowerCase()
   if (/(closed|won|signed the deal|signed up|deal closed)/.test(t)) return { event_type: 'DealWon', confidence: 0.85 }
@@ -66,20 +58,15 @@ function detectEventType(text: string): { event_type: string; confidence: number
   if (/(payroll|salary|run payroll|pay salaries)/.test(t)) return { event_type: 'PayrollDue', confidence: 0.7 }
   return { event_type: 'Note', confidence: 0.4 }
 }
-
 function parse(text: string): ParsedIntent {
   const { event_type, confidence } = detectEventType(text)
   const entities: EntityMatch[] = []
-
   const money = extractMoney(text)
   if (money) entities.push({ field: 'amount', value: money, raw: text.match(/(₦|NGN|\$|USD)\s?[\d.,]+\s?(m|million|k|thousand|bn|billion)?/i)?.[0] || money })
-
   const pct = extractPercent(text)
   if (pct) entities.push({ field: 'upfront_percent', value: pct, raw: `${pct}%` })
-
   const owner = extractName(text, ['handled by', 'owner', 'rep', 'managed by', 'by'])
   if (owner) entities.push({ field: 'sales_owner', value: owner, raw: owner })
-
   const q = text.match(/(?:deal|contract|account)\s+(?:for|with|at)\s+([A-Z][A-Za-z0-9 &]+)/)
   if (q) entities.push({ field: 'customer', value: q[1].trim(), raw: q[0] })
 
@@ -106,123 +93,57 @@ function parse(text: string): ParsedIntent {
   } else {
     destinations.push({ entity_type: 'note', action: 'create', reason: 'Capture as a business note' })
   }
-
   const needs_confirmation = ['DealWon', 'PaymentReceived', 'EmployeeJoined', 'EmployeeExited', 'PayrollDue'].includes(event_type)
-
-  return {
-    event_type,
-    summary: `${event_type}: ${entities.map(e => `${e.field}=${e.value}`).join(', ') || 'no structured fields detected'}`,
-    entities,
-    destinations,
-    confidence,
-    evidence: { source: 'user_input', method: 'deterministic_nlp_parser' },
-    needs_confirmation,
-  }
+  return { event_type, summary: `${event_type}: ${entities.map(e => `${e.field}=${e.value}`).join(', ') || 'no structured fields detected'}`, entities, destinations, confidence, evidence: { source: 'user_input', method: 'deterministic_nlp_parser' }, needs_confirmation }
 }
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   try {
     const body = await req.json()
-    const text = body.text
-    const actorId = body.actor_id || body.staff_id
-    if (!text) {
-      return new Response(JSON.stringify({ error: 'text required' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-    }
+    const text = typeof body.text === 'string' ? body.text.trim() : ''
+    if (!text) return new Response(JSON.stringify({ error: 'text required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
-    // SECURITY: Verify the caller and derive business_id from their staff
-    // record. This also ensures the guardrail check below actually runs
-    // (previously business_id was never sent by the client, so the guardrail
-    // was silently skipped for every capture).
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+    if (!supabaseUrl || !serviceKey) return new Response(JSON.stringify({ error: 'AI gateway unavailable' }), { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+
     const authHeader = req.headers.get('Authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-    }
-    const token = authHeader.substring(7)
+    if (!authHeader?.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'Missing authorization header' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    const token = authHeader.slice(7)
+    const supabase = createClient(supabaseUrl, serviceKey)
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-    }
-    const { data: staffData } = await supabase
-      .from('staff')
-      .select('business_id, id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    const businessId = staffData?.business_id || body.business_id
-    const resolvedActorId = actorId || staffData?.id
-    const result = parse(String(text))
+    if (authError || !user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
-    // §34/§37 AI Action Authority + Guardrails: if this capture implies an
-    // autonomous write (destinations with action verbs), classify the
-    // requested rung and consult the guardrail. Low-risk read/observe is
-    // always allowed; writes require execute_with_approval unless the
-    // capability is explicitly authorised higher.
-    const writeActions = ['mark_won', 'upsert', 'create', 'mark_paid', 'reduce', 'increase', 'draft', 'calculate']
-    const impliesWrite = result.destinations.some(d => writeActions.includes(d.action))
-    let guardrail: { checked: boolean; rung?: string; allowed?: boolean; reason?: string } = {
-      checked: false,
-    }
-    if (impliesWrite && businessId) {
-      const rung = result.needs_confirmation ? 'execute_with_approval' : 'low_risk_execute'
-      guardrail = { checked: true, rung, allowed: true, reason: 'within authority (client confirms)' }
-      // If an agent_id was passed, consult the DB-side guardrail too.
-      if (body.agent_id) {
-        try {
-          const supabaseUrl = Deno.env.get('SUPABASE_URL') || Deno.env.get('VITE_SUPABASE_URL')
-          const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-          if (supabaseUrl && serviceKey) {
-            const grRes = await fetch(`${supabaseUrl}/rest/v1/rpc/run_agent_guardrail`, {
-              method: 'POST',
-              headers: {
-                'apikey': serviceKey,
-                'Authorization': `Bearer ${serviceKey}`,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                p_business_id: businessId,
-                p_agent_id: body.agent_id,
-                p_capability: result.event_type,
-                p_rung: rung,
-                p_requires_simulation: false,
-              }),
-            })
-            if (grRes.ok) {
-              const gr = await grRes.json()
-              guardrail = { checked: true, rung, allowed: gr.passed, reason: gr.blocked_reason || 'guardrail passed' }
-              // §38 Circuit breaker: if the guardrail blocked, trip it.
-              if (!gr.passed) {
-                await fetch(`${supabaseUrl}/rest/v1/rpc/trip_circuit_breaker`, {
-                  method: 'POST',
-                  headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    p_business_id: businessId,
-                    p_agent_id: body.agent_id,
-                    p_anomaly: `Guardrail blocked ${result.event_type} at rung ${rung}: ${gr.blocked_reason}`,
-                  }),
-                })
-              }
-            }
-          }
-        } catch (e) {
-          guardrail.reason = `guardrail check skipped: ${String(e)}`
-        }
-      }
+    // Never trust tenant/actor identifiers supplied by the client. Resolve both
+    // exclusively from the authenticated identity.
+    const { data: staffRows, error: staffError } = await supabase.from('staff').select('business_id,id,is_active,active').eq('user_id', user.id)
+    if (staffError || !staffRows?.length) return new Response(JSON.stringify({ error: 'Staff membership required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    const staffData = staffRows.find((s: { is_active?: boolean; active?: boolean }) => (s.is_active ?? s.active ?? true) === true)
+    if (!staffData) return new Response(JSON.stringify({ error: 'Active staff membership required' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+
+    const result = parse(text)
+    const writeActions = new Set(['mark_won', 'upsert', 'create', 'mark_paid', 'reduce', 'increase', 'draft', 'calculate', 'update', 'add'])
+    const impliesWrite = result.destinations.some(d => writeActions.has(d.action))
+    const guardrail = {
+      checked: true,
+      rung: impliesWrite ? 'execute_with_approval' : 'observe',
+      allowed: !impliesWrite,
+      reason: impliesWrite
+        ? 'Proposal only. A separate authenticated commit path must require explicit user approval and re-authorize tenant/actor.'
+        : 'Read/parse only; no mutation capability exposed by this gateway.',
     }
 
-    return new Response(JSON.stringify({
-      intent: result,
-      guardrail,
-      actor_id: resolvedActorId,
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    // Fail closed: if an agent asks this parser to authorize a write, do not
+    // let the presence of agent_id bypass approval. This endpoint returns a
+    // proposal, never an execution token or mutation authorization.
+    if (body.agent_id && impliesWrite) {
+      guardrail.allowed = false
+      guardrail.reason = 'Agent-originated writes are denied at the intent gateway; explicit human approval and a separate authorized commit path are required.'
+    }
+
+    return new Response(JSON.stringify({ intent: result, guardrail, actor_id: staffData.id, business_id: staffData.business_id }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 })
