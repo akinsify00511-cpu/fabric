@@ -186,7 +186,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": true,
       "name": "award_xp_with_streak",
       "security_sensitive": true,
@@ -305,7 +305,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "cancel_registration",
       "security_sensitive": true,
@@ -347,7 +347,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "check_achievements",
       "security_sensitive": true,
@@ -382,7 +382,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "check_in_attendee",
       "security_sensitive": true,
@@ -1586,7 +1586,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "get_ticket_with_replies",
       "security_sensitive": true,
@@ -1607,7 +1607,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "get_unread_notification_count",
       "security_sensitive": true,
@@ -2419,7 +2419,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "frontend_referenced": false,
       "name": "record_decision_learning",
       "security_sensitive": true,

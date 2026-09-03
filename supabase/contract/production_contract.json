@@ -4112,7 +4112,7 @@
     {
       "kind": "function",
       "name": "award_xp_with_streak",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -4300,7 +4300,7 @@
     {
       "kind": "function",
       "name": "cancel_registration",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4366,7 +4366,7 @@
     {
       "kind": "function",
       "name": "check_achievements",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4421,7 +4421,7 @@
     {
       "kind": "function",
       "name": "check_in_attendee",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -6318,7 +6318,7 @@
     {
       "kind": "function",
       "name": "get_ticket_with_replies",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -6351,7 +6351,7 @@
     {
       "kind": "function",
       "name": "get_unread_notification_count",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -7633,7 +7633,7 @@
     {
       "kind": "function",
       "name": "record_decision_learning",
-      "defined_in": "20260902100000_harden_remaining_cross_tenant_rpcs.sql",
+      "defined_in": "20260902100050_harden_remaining_cross_tenant_rpcs.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
