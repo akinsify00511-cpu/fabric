@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 509
+    "functions": 510
   },
   "functions": [
     {
@@ -1684,7 +1684,7 @@
       "signature": ""
     },
     {
-      "defined_in": "028_business_entitlements.sql",
+      "defined_in": "20260902140000_enforce_individual_seven_day_trials_and_feature_gate.sql",
       "frontend_referenced": false,
       "name": "has_feature",
       "security_sensitive": true,
@@ -3171,6 +3171,13 @@
       "defined_in": "018_time_tracking.sql",
       "frontend_referenced": true,
       "name": "start_time_tracking",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260902102000_restore_7_day_trial.sql",
+      "frontend_referenced": false,
+      "name": "start_trial_on_new_entitlement",
       "security_sensitive": true,
       "signature": ""
     },

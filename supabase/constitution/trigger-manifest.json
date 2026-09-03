@@ -119,7 +119,7 @@
       "trigger": "business_email_domains_updated_at"
     },
     {
-      "defined_in": "049_server_side_trial.sql",
+      "defined_in": "20260902102000_restore_7_day_trial.sql",
       "table": "business_entitlements",
       "trigger": "trg_start_trial"
     },

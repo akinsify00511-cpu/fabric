@@ -2,7 +2,7 @@
   "counts": {
     "tables": 471,
     "views": 6,
-    "functions": 509,
+    "functions": 510,
     "buckets": 8,
     "edge_functions": 13
   },
@@ -6473,7 +6473,7 @@
     {
       "kind": "function",
       "name": "has_feature",
-      "defined_in": "028_business_entitlements.sql",
+      "defined_in": "20260902140000_enforce_individual_seven_day_trials_and_feature_gate.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -8821,6 +8821,17 @@
     },
     {
       "kind": "function",
+      "name": "start_trial_on_new_entitlement",
+      "defined_in": "20260902102000_restore_7_day_trial.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "stop_time_tracking",
       "defined_in": "018_time_tracking.sql",
       "repairable": false,
@@ -10873,6 +10884,9 @@
     ],
     "start_time_tracking": [
       "p_description text, p_task_id uuid, p_project_id uuid, p_tags text[]"
+    ],
+    "start_trial_on_new_entitlement": [
+      ""
     ],
     "stop_time_tracking": [
       ""
