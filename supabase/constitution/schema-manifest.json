@@ -1487,13 +1487,13 @@
       "name": "meeting_actions"
     },
     {
-      "defined_in": "20260820210000_native_meetings.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "kind": "table",
       "name": "meeting_captures"
     },
     {
-      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "kind": "table",
       "name": "meeting_chat_messages"
@@ -1523,7 +1523,7 @@
       "name": "meeting_participants"
     },
     {
-      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "meeting_reports"
@@ -1775,7 +1775,7 @@
       "name": "platform_activity_events"
     },
     {
-      "defined_in": "20260101000012_builder_dashboard.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "platform_admins"
@@ -2833,13 +2833,13 @@
   ],
   "views": [
     {
-      "defined_in": "080_fix_cross_tenant_rls_subquery.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "kind": "view",
       "name": "approval_requests"
     },
     {
-      "defined_in": "20260825180000_live_gaps_repair.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "kind": "view",
       "name": "entity_freshness_status"

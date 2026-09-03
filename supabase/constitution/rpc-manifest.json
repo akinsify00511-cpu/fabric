@@ -235,7 +235,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260101000012_builder_dashboard.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "builder_dashboard",
       "security_sensitive": true,
@@ -256,7 +256,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260824171000_unified_business_search.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "business_search",
       "security_sensitive": true,
@@ -571,7 +571,7 @@
       "signature": ""
     },
     {
-      "defined_in": "038_critical_infrastructure.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "convert_currency",
       "security_sensitive": true,
@@ -634,7 +634,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "create_capture",
       "security_sensitive": true,
@@ -1222,7 +1222,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "finalize_recording",
       "security_sensitive": true,
@@ -1250,7 +1250,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "generate_meeting_report",
       "security_sensitive": true,
@@ -1292,7 +1292,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "generate_recording_signed_url",
       "security_sensitive": true,
@@ -1425,7 +1425,7 @@
       "signature": ""
     },
     {
-      "defined_in": "038_critical_infrastructure.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "get_exchange_rate",
       "security_sensitive": true,
@@ -1453,7 +1453,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818700000_meeting_report_notifications_phase_d.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "get_meeting_reports",
       "security_sensitive": true,
@@ -1733,7 +1733,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818500000_meeting_recording_capture_phase_b.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "increment_capture_view",
       "security_sensitive": true,
@@ -1754,14 +1754,14 @@
       "signature": ""
     },
     {
-      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "increment_saved_search_use",
       "security_sensitive": true,
       "signature": ""
     },
     {
-      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "increment_user_learning",
       "security_sensitive": true,
@@ -1852,7 +1852,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260101000012_builder_dashboard.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": false,
       "name": "is_platform_admin",
       "security_sensitive": true,
@@ -1929,7 +1929,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "defined_in": "20260903130824_brutal_competitor_security_closure.sql",
       "frontend_referenced": true,
       "name": "link_meeting_to_crm",
       "security_sensitive": true,
@@ -2097,7 +2097,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260827000000_personal_experience_layer.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "my_workspace_arrangement",
       "security_sensitive": true,
@@ -2454,7 +2454,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260818140000_server_derived_invoice_totals.sql",
+      "defined_in": "20260903130824_brutal_competitor_security_closure.sql",
       "frontend_referenced": true,
       "name": "record_invoice_payment",
       "security_sensitive": true,
@@ -3056,14 +3056,14 @@
       "signature": ""
     },
     {
-      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "send_meeting_chat",
       "security_sensitive": true,
       "signature": ""
     },
     {
-      "defined_in": "20260824200000_meeting_lifecycle_compliance.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "send_meeting_chat_guest",
       "security_sensitive": true,
@@ -3413,7 +3413,7 @@
       "signature": ""
     },
     {
-      "defined_in": "071_capture_propagation_and_missing_rpc.sql",
+      "defined_in": "20260903150000_production_contract_reconciliation.sql",
       "frontend_referenced": true,
       "name": "update_leave_balance",
       "security_sensitive": true,

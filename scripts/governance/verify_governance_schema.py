@@ -56,7 +56,9 @@ def main() -> int:
     failures = []
 
     for name in EXPECTED["tables"]:
-        ok = re.search(rf"create table[^.]*\b{name}\b", sql) is not None
+        ok = re.search(
+            rf"create\s+table(?:\s+if\s+not\s+exists)?\s+(?:public\.)?\b{name}\b", sql
+        ) is not None
         failures.append((f"table {name}", ok))
     for name in EXPECTED["rpcs"]:
         ok = re.search(rf"create or replace function[^.]*\b{name}\b(?!\s*\()", sql) is not None or \
