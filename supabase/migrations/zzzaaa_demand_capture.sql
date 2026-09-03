@@ -545,21 +545,21 @@ $$ LANGUAGE plpgsql;
 REVOKE ALL ON FUNCTION create_lead_request FROM PUBLIC;
 REVOKE ALL ON FUNCTION create_quote FROM PUBLIC;
 REVOKE ALL ON FUNCTION create_sales_order FROM PUBLIC;
-REVOKE ALL ON FUNCTION transition_demand FROM PUBLIC;
+REVOKE ALL ON FUNCTION transition_demand(TEXT, UUID, TEXT, TEXT) FROM PUBLIC;
 REVOKE ALL ON FUNCTION demand_funnel FROM PUBLIC;
 REVOKE ALL ON FUNCTION demand_revenue FROM PUBLIC;
 REVOKE ALL ON FUNCTION demand_pipeline FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION create_lead_request TO authenticated;
 GRANT EXECUTE ON FUNCTION create_quote TO authenticated;
 GRANT EXECUTE ON FUNCTION create_sales_order TO authenticated;
-GRANT EXECUTE ON FUNCTION transition_demand TO authenticated;
+GRANT EXECUTE ON FUNCTION transition_demand(TEXT, UUID, TEXT, TEXT) TO authenticated;
 GRANT EXECUTE ON FUNCTION demand_funnel TO authenticated;
 GRANT EXECUTE ON FUNCTION demand_revenue TO authenticated;
 GRANT EXECUTE ON FUNCTION demand_pipeline TO authenticated;
-REVOKE ALL ON FUNCTION get_quote_by_token FROM PUBLIC;
-REVOKE ALL ON FUNCTION respond_to_quote FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION get_quote_by_token TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION respond_to_quote TO anon, authenticated;
+REVOKE ALL ON FUNCTION get_quote_by_token(TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION respond_to_quote(TEXT, BOOLEAN) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION get_quote_by_token(TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION respond_to_quote(TEXT, BOOLEAN) TO anon, authenticated;
 
 -- Table privileges for the direct PostgREST reads/writes (RLS remains the
 -- tenant boundary). Supabase grants these by default on new tables; bare
