@@ -33,9 +33,7 @@ def request(url, key, method="GET", body=None, timeout=20):
 
 
 def rpc_exists(base, name, key):
-    code, body = request(
-        f"{base}/rest/v1/rpc/{name}", key, "POST", b"{}"
-    )
+    code, body = request(f"{base}/rest/v1/rpc/{name}", key, "POST", b"{}")
     if code == 0:
         return None
     if '"PGRST202"' in body or ("no matches" in body.lower() and "schema cache" in body.lower()):
@@ -49,7 +47,7 @@ def rpc_exists(base, name, key):
 
 
 def table_exists(base, name, key):
-    code, body = request(f"{base}/rest/v1/{name}?limit=0", key, "HEAD")
+    code, _ = request(f"{base}/rest/v1/{name}?limit=0", key, "HEAD")
     if code == 0:
         return None
     if code == 404:
@@ -69,8 +67,8 @@ def main():
     args = parser.parse_args()
 
     base = (os.environ.get("SUPABASE_URL") or os.environ.get("VITE_SUPABASE_URL") or "").rstrip("/")
-    key = (os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY") or
-           os.environ.get("SUPABASE_ANON_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY") or "")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_KEY")
+    key = service_key or os.environ.get("SUPABASE_ANON_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY") or ""
     if not base or not key:
         print("ERROR: set SUPABASE_URL and SUPABASE_KEY (or SUPABASE_SERVICE_ROLE_KEY)", file=sys.stderr)
         return 2
@@ -90,18 +88,22 @@ def main():
         elif kind == "function":
             exists = rpc_exists(base, name, key)
         elif kind == "bucket":
-            # Bucket listing is intentionally not inferred from a public key.
-            code, body = request(f"{base}/storage/v1/bucket", key)
-            if code == 0 or code in (401, 403):
+            # A publishable/anon key can receive a filtered bucket list that omits
+            # private buckets. Never turn that incomplete list into a false MISSING.
+            if not os.environ.get("SUPABASE_SERVICE_ROLE_KEY"):
                 exists = None
-            elif code == 200:
-                try:
-                    names = {b.get("name") or b.get("id") for b in json.loads(body)}
-                    exists = name in names
-                except Exception:
-                    exists = None
             else:
-                exists = None
+                code, body = request(f"{base}/storage/v1/bucket", key)
+                if code == 0 or code in (401, 403):
+                    exists = None
+                elif code == 200:
+                    try:
+                        names = {b.get("name") or b.get("id") for b in json.loads(body)}
+                        exists = name in names
+                    except Exception:
+                        exists = None
+                else:
+                    exists = None
         else:
             exists = None
 
