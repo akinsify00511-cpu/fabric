@@ -10,10 +10,34 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping integration health checker
+      - name: Validate health-check configuration
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          CRON_SECRET: ${{ secrets.PLATFORM_HEALTH_CRON_SECRET }}
         run: |
-          curl -sS -X POST \
-            -H "x-cron-secret: ${{ secrets.PLATFORM_HEALTH_CRON_SECRET }}" \
+          set -euo pipefail
+          test -n "$SUPABASE_URL" || { echo "VITE_SUPABASE_URL secret is missing"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "PLATFORM_HEALTH_CRON_SECRET secret is missing"; exit 1; }
+          case "$SUPABASE_URL" in
+            https://*) ;;
+            *) echo "VITE_SUPABASE_URL must be an https:// URL"; exit 1 ;;
+          esac
+
+      - name: Ping integration health checker
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          CRON_SECRET: ${{ secrets.PLATFORM_HEALTH_CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          http_code="$(curl -sS -o "$response_file" -w '%{http_code}' \
+            -X POST \
+            -H "x-cron-secret: $CRON_SECRET" \
             -H "Content-Type: application/json" \
-            "${{ secrets.VITE_SUPABASE_URL }}/functions/v1/platform-health-check" \
-            || echo "health-check failed (non-fatal)"
+            "$SUPABASE_URL/functions/v1/platform-health-check")"
+          cat "$response_file"
+          echo
+          case "$http_code" in
+            2[0-9][0-9]) ;;
+            *) echo "platform-health-check returned HTTP $http_code"; exit 1 ;;
+          esac
