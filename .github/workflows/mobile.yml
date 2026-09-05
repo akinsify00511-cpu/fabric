@@ -12,9 +12,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ============================================================
-  # JOB: Type check the mobile app
-  # ============================================================
   typecheck:
     name: Mobile Type Check
     runs-on: ubuntu-latest
@@ -23,20 +20,16 @@ jobs:
         working-directory: mobile
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
       - name: Install dependencies
-        run: npm install
-
+        run: npm ci
       - name: TypeScript type check
         run: npx tsc --noEmit
 
-  # ============================================================
-  # JOB: Build Android APK (hosted as a GitHub artifact)
-  # ============================================================
   android:
     name: Android APK
     runs-on: ubuntu-latest
@@ -49,49 +42,39 @@ jobs:
       FIREBASE_APP_ID_ANDROID: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
       - uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
+          expo-version: 51.0.28
           packager: npm
-
       - name: Install dependencies
-        run: npm install
-
+        run: npm ci
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '17'
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-
       - name: EAS prebuild (Android)
-        run: npx expo prebuild --platform android
+        run: npx expo prebuild --platform android --non-interactive
         env:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
-
       - name: Build APK
         run: cd android && ./gradlew assembleRelease
-        env:
-          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
-
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: avenize-android
           path: mobile/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
-
       - name: Distribute APK to Firebase App Distribution
-        if: env.FIREBASE_TOKEN != ''
+        if: env.FIREBASE_TOKEN != '' && env.FIREBASE_APP_ID_ANDROID != ''
         continue-on-error: true
         run: |
           npx firebase-tools@latest appdistribution:distribute \
@@ -100,11 +83,8 @@ jobs:
             --token "$FIREBASE_TOKEN" \
             --release-notes "Avenize Android build ${{ github.run_number }} (${{ github.sha }})"
 
-  # ============================================================
-  # JOB: Build iOS (hosted as a GitHub artifact — requires macOS)
-  # ============================================================
   ios:
-    name: iOS App
+    name: iOS Simulator Build
     runs-on: macos-14
     needs: typecheck
     defaults:
@@ -112,42 +92,30 @@ jobs:
         working-directory: mobile
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
       - uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
+          expo-version: 51.0.28
           packager: npm
-
       - name: Install dependencies
-        run: npm install
-
+        run: npm ci
       - name: EAS prebuild (iOS)
-        run: npx expo prebuild --platform ios
+        run: npx expo prebuild --platform ios --non-interactive
         env:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
-
-      - name: Build iOS app (no code signing — simulator build for hosting)
+      - name: Build iOS simulator app
         run: |
-          cd ios && pod install
+          cd ios
+          pod install
           xcodebuild -workspace Avenize.xcworkspace -scheme Avenize -configuration Release -sdk iphonesimulator -derivedDataPath build CODE_SIGNING_ALLOWED=NO
-        env:
-          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
-          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
-
-      - name: Upload iOS build artifact
+      - name: Upload iOS simulator artifact
         uses: actions/upload-artifact@v4
         with:
           name: avenize-ios
           path: mobile/ios/build/Build/Products/*.app
           retention-days: 30
-      # NOTE: Firebase App Distribution for iOS is NOT wired here because the
-      # CI produces a simulator .app (CODE_SIGNING_ALLOWED=NO), not a signed
-      # .ipa. Firebase App Distribution for iOS accepts only signed IPAs for
-      # real-device installs. To enable iOS Firebase distribution, add Apple
-      # Developer signing (cert + provisioning profile) as GitHub secrets and
-      # switch to a signed `xcodebuild archive` + export IPA flow.
