@@ -1,0 +1,90 @@
+/* Avenize premium motion system: restrained, tactile, performance-first. */
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* React Bits-inspired spotlight surface. Add data-premium-spotlight to any
+   card/surface where the cursor should create a restrained light response. */
+[data-premium-spotlight] {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+[data-premium-spotlight]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    rgba(66, 133, 244, 0.11),
+    transparent 62%
+  );
+  transition: opacity 320ms ease;
+}
+
+[data-premium-spotlight]:hover::after {
+  opacity: 1;
+}
+
+[data-premium-spotlight] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Premium tactile controls. Only opt-in elements receive the deeper motion. */
+.premium-interactive {
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 240ms ease;
+  will-change: transform;
+}
+
+.premium-interactive:hover {
+  transform: translateY(-2px);
+}
+
+.premium-interactive:active {
+  transform: translateY(0) scale(0.985);
+}
+
+/* Route-level visual polish for existing Avenize surfaces. */
+.card,
+.card-stat,
+.tile-launcher {
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-premium-spotlight]::after {
+    display: none;
+  }
+}
