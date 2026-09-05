@@ -129,8 +129,8 @@ export default function WebhooksPage() {
     try {
       // Get deliveries for this business's webhooks
       const { data, error } = await supabase
-        .from('webhook_deliveries')
-        .select('*')
+        .from('webhook_logs')
+        .select('*, webhooks!inner(business_id)')
         .eq('webhooks.business_id', staff.business_id)
         .order('created_at', { ascending: false })
         .limit(100)
@@ -203,6 +203,7 @@ export default function WebhooksPage() {
         auth_header: formData.auth_type !== 'none' ? formData.auth_header : null,
         auth_value: formData.auth_type !== 'none' ? formData.auth_value : null,
         retry_count: formData.retry_count,
+        secret: formData.auth_type === 'signature' ? (formData.auth_value || generateSecret()) : generateSecret(),
       }
 
       if (editingWebhook) {
