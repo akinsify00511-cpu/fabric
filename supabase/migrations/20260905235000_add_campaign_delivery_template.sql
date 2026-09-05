@@ -1,0 +1,1 @@
+INSERT INTO transactional_email_templates (key, subject, body_html, body_text, active) VALUES ('campaign_delivery', '{{subject}}', '{{content_html}}', '{{content_text}}', true) ON CONFLICT (key) DO UPDATE SET subject=EXCLUDED.subject, body_html=EXCLUDED.body_html, body_text=EXCLUDED.body_text, active=true;
