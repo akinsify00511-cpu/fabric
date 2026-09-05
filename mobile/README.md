@@ -1,91 +1,105 @@
 # Avenize Mobile (Android + iOS)
 
-A React Native + Expo app that shares the Avenize brand system, auth, and
-Business OS core with the web app. Build artifacts (APK + iOS app) are
-hosted as GitHub Actions artifacts on every push to `main`.
+A real React Native + Expo companion for Avenize. It shares the production Supabase backend, tenant/RLS model, authentication and Business OS event layer with the web product while using a mobile-first interaction model.
+
+## Mobile product surface
+
+- **Capture** — natural-language business updates with confirmation before record changes.
+- **Snapshot** — live business health, attention exceptions, money, operations, inventory and activity.
+- **Tasks** — focused priority queue backed by the same business attention layer.
+- **Sarah** — conversational mobile assistant that understands business updates and can safely emit high-confidence events.
+- **More** — profile, quick navigation and secure sign-out.
+- **Secure auth** — Supabase sessions persisted through device SecureStore.
+- **Deep-link foundation** — `avenize://` scheme is configured for auth and future notification/deep-link flows.
+- **Camera/media foundation** — native permission declarations are configured for future receipt/document workflows.
 
 ## Structure
 
-```
+```text
 mobile/
-├── App.tsx                  # Root: SafeArea + Auth + Navigation
-├── index.ts                 # Entry point (registerRootComponent)
-├── app.json                 # Expo config (Android + iOS, GitHub hosting)
+├── App.tsx
+├── index.ts
+├── app.json
+├── eas.json
 ├── package.json
-├── tsconfig.json
+├── package-lock.json
+├── .env.example
 └── src/
-    ├── theme/index.ts       # Brand tokens (mirrors web avenize-brand.css)
+    ├── theme/
     ├── lib/
-    │   ├── supabase.ts      # Hardened client: SecureStore, visible-miss config
-    │   ├── AuthContext.tsx   # Session + staff, mirrors web AuthContext
-    │   └── businessOS.ts     # Typed bus/freshness/intelligence client
+    │   ├── supabase.ts
+    │   ├── AuthContext.tsx
+    │   └── businessOS.ts
     └── components/
-        ├── ui.tsx           # Card, Loader, FreshnessDot, badges
+        ├── ui.tsx
         ├── LoginScreen.tsx
-        ├── CaptureScreen.tsx   # "Tell Avenize what happened" + What I Understood
-        ├── ObserverScreen.tsx  # Living org snapshot, pull-to-refresh
-        └── MoreScreen.tsx      # Links to Intelligence/Simulate/Governance/etc
+        ├── CaptureScreen.tsx
+        ├── ObserverScreen.tsx
+        ├── TasksScreen.tsx
+        ├── SarahScreen.tsx
+        └── MoreScreen.tsx
 ```
 
 ## Run locally
 
 ```bash
 cd mobile
-npm install
+npm ci
 
-# Set your Supabase config (reuse the web env values)
+# PowerShell
+$env:EXPO_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+$env:EXPO_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+
+# macOS/Linux
 export EXPO_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
 export EXPO_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 
 npx expo start
-# Press a for Android emulator, i for iOS simulator, w for web
 ```
 
-## Build for device
+Then press `a` for Android or `i` for an iOS simulator on macOS.
 
-### Android APK (local)
+## Device builds
+
+### Android
+
 ```bash
 npx expo prebuild --platform android
-cd android && ./gradlew assembleRelease
-# APK: android/app/build/outputs/apk/release/app-release.apk
+cd android
+./gradlew assembleRelease
 ```
 
-### iOS (local, requires macOS + Xcode)
+### iOS
+
 ```bash
 npx expo prebuild --platform ios
 cd ios && pod install
-open Avenize.xcworkspace   # then Archive in Xcode for a signed build
+open Avenize.xcworkspace
 ```
 
-## GitHub-hosted builds
+For signed TestFlight/App Store builds, use the EAS production profile:
 
-The workflow at `.github/workflows/mobile.yml` builds both platforms on
-every push to `mobile/**` and uploads the artifacts:
+```bash
+npx eas build --platform ios --profile production
+npx eas build --platform android --profile production
+```
 
-| Artifact | Runner | Output |
-|----------|--------|--------|
-| `avenize-android` | ubuntu-latest | `app-release.apk` |
-| `avenize-ios` | macos-14 | `.app` (simulator build) |
+Apple Developer and Google Play/EAS credentials are required for store distribution. They are deliberately not committed to the repository.
 
-Download from **Actions → Build Mobile App → latest run → Artifacts**.
+## CI
 
-> The iOS artifact is a simulator build (no code signing). For an App
-> Store / TestFlight build, set the `EXPO_PUBLIC_*` secrets and run
-> `eas build --platform ios` with an Apple Developer account.
+`.github/workflows/mobile.yml` runs mobile TypeScript validation and the existing Android/iOS build pipeline for changes under `mobile/**`.
 
-## Configuration
+Required repository secrets for device builds:
 
-Add these as GitHub repository secrets (they fall back to the web names):
+- `EXPO_PUBLIC_SUPABASE_URL` (or `VITE_SUPABASE_URL`)
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY` (or `VITE_SUPABASE_ANON_KEY`)
+- Optional Android Firebase App Distribution values already referenced by CI.
 
-- `EXPO_PUBLIC_SUPABASE_URL` (or reuse `VITE_SUPABASE_URL`)
-- `EXPO_PUBLIC_SUPABASE_ANON_KEY` (or reuse `VITE_SUPABASE_ANON_KEY`)
+## Safety and product rules
 
-## What's implemented (mobile)
-
-- ✅ Auth (sign in / sign up) with SecureStore session persistence
-- ✅ AI Capture — natural language → "What I Understood" → raise business event
-- ✅ Observer — living org snapshot (attention, money, operations, inventory, live activity), pull-to-refresh
-- ✅ Bottom-tab navigation (Capture / Snapshot / Tasks / Chat / More)
-- ✅ Brand tokens identical to the web (Google Standard)
-- ✅ Hardened Supabase client (visible failure on missing config, never silent)
-- ⏳ Tasks, Chat, and the remaining hubs are placeholders on mobile — the web app is the full surface; mobile focuses on capture + snapshot + the most-used flows
+- Never put Supabase service-role keys or payment secrets in the mobile bundle.
+- All business mutations go through the authenticated user's tenant/RLS boundary and existing Business OS contracts.
+- Sarah does not silently mutate records when confidence is low or the underlying intent requires confirmation.
+- Mobile is not a web wrapper: navigation is optimized for fast capture, attention and decision-making.
+- Web premium motion libraries remain web-only; native motion should use native-safe animation primitives rather than shipping browser scroll dependencies into the mobile bundle.
