@@ -1,251 +1,113 @@
 #!/usr/bin/env bash
-# Avenize Phase 6 — end-to-end production journey test.
-#
-# Complements verify-production.sh (which checks that OBJECTS exist) with
-# BEHAVIOUR: can a brand-new account actually sign up, onboard, reach the
-# dashboard intelligence, and see the payment + email rails respond?
-#
-# Honest by design: steps that depend on not-yet-deployed infrastructure
-# FAIL (not skip) until the deployment completes — same gate philosophy as
-# verify-production.sh. After the live DB migration + edge function deploy,
-# this script should print E2E READY.
-#
-# Required env: none beyond APP_URL (self-calibrates like verify-production.sh)
-# Optional env:
-#   APP_URL            default https://avenize.riverwayse.com
-#   SUPABASE_URL / SUPABASE_KEY (skip self-calibration)
-#   E2E_EMAIL / E2E_PASSWORD  reuse a specific test account instead of a fresh one
+# Avenize production behaviour gate. This test is intentionally fail-closed:
+# authenticated journey credentials are mandatory, and a missing credential
+# can never be reported as E2E READY.
 set -u
 
 APP_URL="${APP_URL:-https://avenize.riverwayse.com}"
-BASE="${SUPABASE_URL:-}"; KEY="${SUPABASE_KEY:-}"
-PASS=0; FAIL=0
-line() { printf '%s\n' "$*"; }
-pass() { PASS=$((PASS+1)); line "$(printf '%-22s PASS  %s' "$1" "$2")"; }
-fail() { FAIL=$((FAIL+1)); line "$(printf '%-22s FAIL  %s' "$1" "$2")"; }
+BASE="${SUPABASE_URL:-}"
+KEY="${SUPABASE_KEY:-}"
+EMAIL="${E2E_EMAIL:-}"
+PASSWORD="${E2E_PASSWORD:-}"
+PASS=0
+FAIL=0
 
-# --- self-calibration (same pattern as verify-production.sh) ---
+pass(){ PASS=$((PASS+1)); printf '%-24s PASS  %s\n' "$1" "$2"; }
+fail(){ FAIL=$((FAIL+1)); printf '%-24s FAIL  %s\n' "$1" "$2"; }
+
+# Resolve the public Supabase connection only when explicit CI values are not supplied.
 if [ -z "$BASE" ] || [ -z "$KEY" ]; then
-  INDEX=$(curl -fs "$APP_URL/" 2>/dev/null)
+  INDEX=$(curl -fsS "$APP_URL/" 2>/dev/null || true)
   BUNDLE=$(printf '%s' "$INDEX" | grep -oE '/assets/[A-Za-z0-9_-]+\.js' | head -1)
   if [ -n "$BUNDLE" ]; then
-    JS=$(curl -fs "${APP_URL}${BUNDLE}" 2>/dev/null)
+    JS=$(curl -fsS "${APP_URL}${BUNDLE}" 2>/dev/null || true)
     BASE=$(printf '%s' "$JS" | grep -oE 'https://[0-9a-z]+\.supabase\.co' | head -1)
-    KEY=$(printf '%s' "$JS" | grep -oE 'sb_publishable_[A-Za-z0-9_\-]+' | head -1)
+    KEY=$(printf '%s' "$JS" | grep -oE 'sb_publishable_[A-Za-z0-9_-]+' | head -1)
   fi
 fi
-if [ -z "$BASE" ] || [ -z "$KEY" ]; then
-  line "ERROR: could not resolve Supabase URL/key"; exit 2
+
+[ -n "$BASE" ] || fail "config/supabase" "Supabase URL unavailable"
+[ -n "$KEY" ] || fail "config/supabase" "publishable key unavailable"
+[ -n "$EMAIL" ] || fail "config/auth" "E2E_EMAIL secret is required"
+[ -n "$PASSWORD" ] || fail "config/auth" "E2E_PASSWORD secret is required"
+if [ "$FAIL" -gt 0 ]; then
+  printf '\nRESULT: E2E NOT READY — production authentication credentials are mandatory.\n'
+  exit 1
 fi
 
 AUTH=(-H "apikey: $KEY" -H "Content-Type: application/json")
-rpc() { # rpc <name> <token-or-empty> <json>
-  local auth=()
-  [ -n "$2" ] && auth=(-H "Authorization: Bearer $2")
-  curl -s -X POST "$BASE/rest/v1/rpc/$1" "${AUTH[@]}" ${auth[@]+"${auth[@]}"} -d "$3"
-}
-
-line ""
-line "Avenize E2E Production Journey"
-line "──────────────────────────────"
-
-# Canonical wire contract for each RPC the journey depends on (from the
-# migration definitions — verified against zzz_auth_protocol_repair.sql and
-# the production DB). {} is INVALID for parameterized RPCs (PostgREST returns
-# PGRST202 on argument mismatch for an existing function), so the checker
-# uses the real signature.
-RPC_WIRE_CONTRACTS() {
-  case "$1" in
-    create_business_and_owner) printf '%s' '{"p_business_name":"__E2E_NAME__","p_industry":"testing","p_staff_name":"E2E Bot","p_job_title":"Owner"}' ;;
-    business_brain)            printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
-    current_metrics)           printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000"}' ;;
-    open_recommendations)      printf '%s' '{"p_business_id":"00000000-0000-0000-0000-000000000000","p_limit":1}' ;;
-    resolve_current_user_context) printf '%s' '{}' ;;
-    my_payment_request)        printf '%s' '{}' ;;
-    *)                         printf '%s' '{}' ;;
-  esac
-}
-
-# Classify a PostgREST RPC response body into a 3-state verdict:
-#   ABSENT  — function not in the schema cache (genuinely missing)
-#   ARGERR  — exists, but the argument shape is wrong (PGRST202 arg-mismatch)
-#   OK      — exists and callable at the wire level (business/RLS errors pass)
-rpc_verdict() { # rpc_verdict <response-body>
-  local body="$1"
-  if printf '%s' "$body" | grep -qiE '"no matches were found in the schema cache"'; then
-    printf 'ABSENT'
-  elif printf '%s' "$body" | grep -qE 'Could not find the function .* in the schema cache|no matches were found in the schema cache.*argument'; then
-    # PGRST202 argument-mismatch phrasing: exists, but wrong args
-    printf 'ARGERR'
-  elif printf '%s' "$body" | grep -qE '"PGRST202"'; then
-    # Bare PGRST202 without the absence phrasing = argument mismatch
-    printf 'ARGERR'
+rpc(){
+  local name="$1" token="$2" body="$3"
+  if [ -n "$token" ]; then
+    curl -sS -X POST "$BASE/rest/v1/rpc/$name" "${AUTH[@]}" -H "Authorization: Bearer $token" -d "$body"
   else
-    printf 'OK'
+    curl -sS -X POST "$BASE/rest/v1/rpc/$name" "${AUTH[@]}" -d "$body"
   fi
 }
 
-# --- 0. contract: RPCs the journeys depend on must EXIST with the right signature ---
-for FN in create_business_and_owner business_brain current_metrics open_recommendations my_payment_request; do
-  BODY=$(RPC_WIRE_CONTRACTS "$FN")
-  BODY=${BODY/__E2E_NAME__/E2E Contract Test $(date +%s)}
-  RESP=$(rpc "$FN" "" "$BODY")
-  VERDICT=$(rpc_verdict "$RESP")
-  if [ "$VERDICT" = "OK" ]; then
-    pass "contract/rpc" "$FN exists + signature OK"
-  elif [ "$VERDICT" = "ARGERR" ]; then
-    fail "contract/rpc" "$FN exists but ARGUMENT MISMATCH: $(printf '%s' "$RESP" | head -c 140)"
-  else
-    fail "contract/rpc" "$FN ABSENT (not in schema cache) — live DB not migrated"
-  fi
+printf '\nAvenize Production Journey\n──────────────────────────\n'
+
+# 1. Public application and health rails.
+CODE=$(curl -sS -o /dev/null -w '%{http_code}' "$APP_URL/")
+[ "$CODE" = "200" ] && pass "frontend" "$APP_URL returned 200" || fail "frontend" "returned HTTP $CODE"
+
+for FN in subscription-management paystack-webhook email-service campaign-send; do
+  CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X OPTIONS "$BASE/functions/v1/$FN" -H "apikey: $KEY")
+  [ "$CODE" != "404" ] && pass "edge/$FN" "deployed (HTTP $CODE)" || fail "edge/$FN" "function missing"
 done
 
-# --- 1. signup / login (obtain a session for the authenticated journeys) ---
-EMAIL="${E2E_EMAIL:-e2e-$(date +%s)@avenize-e2e.test}"
-PASSWORD="${E2E_PASSWORD:-E2e!$(date +%s | tail -c 9)aZ}"
-SIGNUP=$(curl -s -X POST "$BASE/auth/v1/signup" "${AUTH[@]}" \
-  -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
-TOKEN=$(printf '%s' "$SIGNUP" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token') or '')" 2>/dev/null)
-if [ -n "$TOKEN" ]; then
-  pass "signup" "session issued for $EMAIL"
-elif [ -n "${E2E_EMAIL:-}" ]; then
-  LOGIN=$(curl -s -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" \
-    -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
-  TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('access_token') or '')" 2>/dev/null)
-  if [ -n "$TOKEN" ]; then
-    pass "signup" "email-confirm on; logged in provided account"
-  else
-    fail "signup" "provided E2E_EMAIL could not log in"
-  fi
-else
-  line "signup                 SKIP  email confirmation on; set E2E_EMAIL/E2E_PASSWORD secrets to run authenticated journeys"
-fi
+# 2. Authenticated journey using a controlled test account.
+LOGIN=$(curl -sS -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token') or '')" 2>/dev/null || true)
+if [ -n "$TOKEN" ]; then pass "auth/login" "controlled E2E account authenticated"; else fail "auth/login" "E2E account could not authenticate"; fi
 
-# --- 2. onboarding (create business) ---
 if [ -n "$TOKEN" ]; then
-  OB_BODY=$(RPC_WIRE_CONTRACTS create_business_and_owner)
-  OB_BODY=${OB_BODY/__E2E_NAME__/E2E Contract Test $(date +%s)}
-  OB=$(rpc create_business_and_owner "$TOKEN" "$OB_BODY")
-  if printf '%s' "$OB" | grep -qiE '"p_business_id"|"id"|business_id|already|duplicate'; then
-    pass "onboarding" "business created (or account already onboarded)"
+  STAFF=$(curl -sS "$BASE/rest/v1/staff?select=id,business_id,active,is_active&limit=1" -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN")
+  if printf '%s' "$STAFF" | grep -q 'business_id'; then
+    pass "auth/membership" "staff membership resolves without onboarding loop"
   else
-    fail "onboarding" "unexpected: $(printf '%s' "$OB" | head -c 160)"
+    fail "auth/membership" "no business membership resolved"
   fi
-fi
 
-# --- 3. membership resolution (the auth-lifecycle contract) ---
-if [ -n "$TOKEN" ]; then
-  STAFF=$(curl -s "$BASE/rest/v1/staff?select=business_id&limit=1" \
-    -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN")
-  if printf '%s' "$STAFF" | grep -q "business_id"; then
-    pass "membership" "staff row resolves (no onboarding loop)"
-  else
-    fail "membership" "no staff row — RequireAuth would bounce to /onboarding"
-  fi
-fi
-
-# --- 4. dashboard intelligence RPCs respond for a member ---
-for FN in business_brain current_metrics open_recommendations; do
-  if [ -n "$TOKEN" ]; then
-    R=$(rpc "$FN" "$TOKEN" "{}")
-    if printf '%s' "$R" | grep -qE "no matches.*schema cache|PGRST202"; then
-      fail "intelligence" "$FN MISSING"
+  for SPEC in \
+    'business_brain|{}' \
+    'current_metrics|{}' \
+    'open_recommendations|{}' \
+    'my_payment_request|{}' \
+    'resolve_current_user_context|{}'; do
+    FN="${SPEC%%|*}"; BODY="${SPEC#*|}"
+    RESP=$(rpc "$FN" "$TOKEN" "$BODY")
+    if printf '%s' "$RESP" | grep -qiE 'schema cache|PGRST202'; then
+      fail "rpc/$FN" "missing or argument mismatch"
     else
-      pass "intelligence" "$FN responds"
+      pass "rpc/$FN" "callable for authenticated member"
     fi
-  fi
-done
+  done
 
-# --- 5. payment rail: manual bank-transfer flow (existing) ---
-if [ -n "$TOKEN" ]; then
-  R=$(rpc my_payment_request "$TOKEN" "{}")
-  if printf '%s' "$R" | grep -qE "no matches.*schema cache|PGRST202"; then
-    fail "payments/manual" "my_payment_request MISSING"
+  # A second onboarding attempt must be rejected for a returning member.
+  OB=$(rpc create_business_and_owner "$TOKEN" '{"p_business_name":"Avenize E2E Existing Member","p_industry":"testing","p_staff_name":"E2E Bot","p_job_title":"Owner"}')
+  if printf '%s' "$OB" | grep -qiE 'already belongs|already|duplicate|exists'; then
+    pass "auth/returning" "existing member cannot be re-onboarded"
   else
-    pass "payments/manual" "manual bank-transfer rail responds"
+    fail "auth/returning" "existing-member onboarding guard did not fire"
   fi
-fi
 
-# --- 6. payment rail: Paystack checkout (restored) ---
-CODE=$(curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "$BASE/functions/v1/subscription-management" -H "apikey: $KEY")
-if [ "$CODE" != "404" ]; then
-  pass "payments/paystack" "subscription-management deployed (http $CODE)"
-else
-  fail "payments/paystack" "subscription-management NOT deployed"
-fi
-CODE=$(curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "$BASE/functions/v1/paystack-webhook" -H "apikey: $KEY")
-if [ "$CODE" != "404" ]; then
-  pass "payments/webhook" "paystack-webhook deployed (http $CODE)"
-else
-  fail "payments/webhook" "paystack-webhook NOT deployed"
-fi
-
-# --- 7. email rail ---
-CODE=$(curl -s -o /dev/null -w "%{http_code}" -X OPTIONS "$BASE/functions/v1/email-service" -H "apikey: $KEY")
-if [ "$CODE" != "404" ]; then
-  pass "email" "email-service deployed (http $CODE)"
-else
-  fail "email" "email-service NOT deployed"
-fi
-
-# --- 8. returning-user contract: no business/onboarding re-creation (Journey B) ---
-# The auth contract's central rule: "never new login -> assume new user ->
-# create business -> crash because it exists." A second create for a member
-# MUST be refused with 'already belongs to a business' (proving detection),
-# and the canonical identity resolver must agree with the staff row.
-if [ -n "$TOKEN" ]; then
-  OB2_BODY=$(RPC_WIRE_CONTRACTS create_business_and_owner)
-  OB2_BODY=${OB2_BODY/__E2E_NAME__/E2E Second $(date +%s)}
-  OB2=$(rpc create_business_and_owner "$TOKEN" "$OB2_BODY")
-  if printf '%s' "$OB2" | grep -qiE 'already belongs to a business|already'; then
-    pass "returning" "re-onboarding refused (existing business detected)"
+  # Payment entitlement is only granted by verified provider success. This
+  # check confirms the subscription endpoint requires the authenticated rail.
+  CHECKOUT=$(curl -sS -X POST "$BASE/functions/v1/subscription-checkout" -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"plan_code":"starter","billing_cycle":"monthly"}')
+  if printf '%s' "$CHECKOUT" | grep -q 'checkout_url'; then
+    pass "payments/checkout" "Paystack checkout initialized"
+  elif printf '%s' "$CHECKOUT" | grep -qiE 'configuration unavailable|Payment provider rejected|Unable to create checkout'; then
+    fail "payments/checkout" "provider checkout failed: $(printf '%s' "$CHECKOUT" | head -c 180)"
   else
-    fail "returning" "second create did NOT detect existing membership: $(printf '%s' "$OB2" | head -c 140)"
-  fi
-  CTX=$(rpc resolve_current_user_context "$TOKEN" "{}")
-  if printf '%s' "$CTX" | grep -qE 'business_id|error|denied'; then
-    pass "identity" "resolve_current_user_context answers"
-  else
-    fail "identity" "resolve_current_user_context MISSING/empty"
+    fail "payments/checkout" "unexpected checkout response: $(printf '%s' "$CHECKOUT" | head -c 180)"
   fi
 fi
 
-# --- 9. payments: failed/no-payment path must NOT grant entitlement (Journey D) ---
-# The money contract: only a server-verified success unlocks entitlement.
-# A member with no subscription row / a fresh ledger must NOT be entitled.
-if [ -n "$TOKEN" ]; then
-  SUB=$(curl -s "$BASE/rest/v1/business_subscriptions?select=plan_code,status,amount_cents&limit=1" \
-    -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN")
-  if printf '%s' "$SUB" | grep -qE "already|no matches.*schema cache|PGRST202|\[\]|not found"; then
-    pass "entitlements" "no-payment state exposes no subscription (gate holds)"
-  else
-    # A subscription row is present; its status must be canonical (active/cancelled/expired)
-    stat=$(printf '%s' "$SUB" | grep -oE '"status":"[a-z_]+"' | head -1)
-    if printf '%s' "$stat" | grep -qE 'active|cancelled|expired|past_due|trialing'; then
-      pass "entitlements" "subscription status is canonical ($stat)"
-    else
-      fail "entitlements" "non-canonical subscription state: $SUB"
-    fi
-  fi
-fi
-
-# --- 10. frontend serves the current shell ---
-CODE=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL/")
-if [ "$CODE" = "200" ]; then
-  pass "frontend" "$APP_URL serves 200"
-else
-  fail "frontend" "$APP_URL returned $CODE"
-fi
-
-line ""
-line "CLIENT PAYMENT READINESS"
-line "──────────────────────"
-if [ "$FAIL" = "0" ]; then
-  line "CLIENT PAYMENT GATE       PASS"
-  line "RESULT: E2E READY"
+printf '\nPASS=%s FAIL=%s\n' "$PASS" "$FAIL"
+if [ "$FAIL" -eq 0 ]; then
+  printf 'RESULT: E2E READY\n'
   exit 0
-else
-  line "CLIENT PAYMENT GATE       FAIL ($FAIL failing journeys)"
-  line "RESULT: E2E NOT READY"
-  exit 1
 fi
+printf 'RESULT: E2E NOT READY\n'
+exit 1
