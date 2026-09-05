@@ -17,16 +17,13 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -35,7 +32,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GIT_SHA: ${{ github.sha }}
-
       - name: Deploy to Vercel Preview
         run: |
           npm i -g vercel
@@ -56,16 +52,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -74,7 +67,6 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GIT_SHA: ${{ github.event.workflow_run.head_sha }}
-
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
@@ -82,33 +74,21 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      # A frontend deployment is NOT "successful" because Vercel built it.
-      # The production contract check actually calls the live Supabase and
-      # fails the deploy job if any frontend-referenced table/RPC is missing
-      # or drifted, or the payment/email edge functions are not deployed.
-      # Prefer the service-role key when configured so RPC signatures can be
-      # checked from the authoritative PostgREST OpenAPI surface. Without it,
-      # the verifier falls back to the publishable key and its probe mode.
       - name: Production contract verification
         run: bash scripts/verify-production.sh
         env:
           APP_URL: https://avenize.riverwayse.com
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-
-      # Phase 6: journey-level smoke. verify-production.sh checks that OBJECTS
-      # exist; this checks the real journeys behave (signup -> onboarding ->
-      # membership -> intelligence -> payment rails -> email rail -> frontend).
-      # Runs even when the contract gate failed so both reports are visible in
-      # the same run; its own exit code also fails the job.
       - name: Production E2E journey test
         if: always()
         run: bash scripts/e2e-production.sh
         env:
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
           APP_URL: https://avenize.riverwayse.com
-
       - name: Upload verification report
         if: always()
         uses: actions/upload-artifact@v4
@@ -116,14 +96,6 @@ jobs:
           name: production-contract-report
           path: supabase/contract/verification_report.json
           if-no-files-found: warn
-
-      # Automated post-deploy rollback (opt-in). When a gate above FAILED after
-      # the Vercel deploy, roll production back to the previous deployment
-      # instead of leaving a contract-violating build live. Disabled by
-      # default — enable by setting the repo variable VERCEL_AUTO_ROLLBACK=true.
-      # It is deliberately opt-in: while the live DB is behind the migration
-      # chain the contract gate fails for database reasons, and unconditional
-      # auto-rollback would roll back good frontend deploys in a loop.
       - name: Rollback Vercel on gate failure (opt-in)
         if: failure() && vars.VERCEL_AUTO_ROLLBACK == 'true'
         run: |
