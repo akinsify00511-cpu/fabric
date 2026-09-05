@@ -25,7 +25,7 @@ import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-automation-secret',
 }
 
 interface AutomationPayload {
@@ -60,14 +60,27 @@ serve(async (req) => {
     // via pg_net headers (set in app.settings.automation_secret).
     const automationSecret = Deno.env.get('AUTOMATION_SECRET')
     const providedSecret = req.headers.get('X-Automation-Secret')
-    if (!automationSecret || providedSecret !== automationSecret) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
+    const authorization = req.headers.get('Authorization') || ''
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Trusted backend callers use the automation secret. Authenticated users may
+    // manually run only an automation belonging to their own business.
+    let callerBusinessId: string | null = null
+    if (!automationSecret || providedSecret !== automationSecret) {
+      if (!authorization.startsWith('Bearer ')) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      const userClient = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authorization } } })
+      const { data: { user }, error: userError } = await userClient.auth.getUser()
+      if (userError || !user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      const { data: membership } = await supabase.from('staff').select('business_id').eq('user_id', user.id).eq('is_active', true).limit(1)
+      callerBusinessId = membership?.[0]?.business_id || null
+      if (!callerBusinessId) {
+        return new Response(JSON.stringify({ error: 'No active business membership' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+    }
     
     const { trigger, payload, automation_id }: AutomationPayload = await req.json()
     
@@ -87,6 +100,9 @@ serve(async (req) => {
 
     if (automation_id) {
       query = query.eq('id', automation_id)
+    }
+    if (callerBusinessId) {
+      query = query.eq('business_id', callerBusinessId)
     }
 
     const { data: automations, error: autoError } = await query
