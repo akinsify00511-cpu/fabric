@@ -65,10 +65,12 @@ export default function Campaigns() {
       const { data: campaignsData } = await supabase
         .from('email_campaigns')
         .select('*')
+        .eq('business_id', business?.id)
         .order('created_at', { ascending: false })
       const { data: contactsData } = await supabase
         .from('email_contacts')
         .select('*')
+        .eq('business_id', business?.id)
         .order('created_at', { ascending: false })
       
       if (campaignsData && campaignsData.length > 0) {
@@ -185,22 +187,6 @@ export default function Campaigns() {
 
   return (
     <div className="pb-20">
-      {/* Delivery note: no external email provider in this deployment */}
-      <div className="mb-6 p-4 bg-[var(--av-warning-soft)] border border-[var(--av-warning)]/30 rounded-xl">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-amber-100 rounded-lg">
-            <Mail size={20} className="text-[var(--av-warning)]" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-amber-900">Delivery is not connected</h3>
-            <p className="text-sm text-[var(--av-warning)] mt-1">
-              You can draft campaigns and manage your contact lists here. This deployment has no
-              external email service, so delivery happens by copying the content into your own
-              channel.
-            </p>
-          </div>
-        </div>
-      </div>
 
       <div className="flex items-center justify-between mb-6">
         <div>
