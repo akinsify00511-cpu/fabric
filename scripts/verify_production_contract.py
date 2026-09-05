@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """Verify the live Supabase project against the generated production contract.
 
-PostgREST returns PGRST202 for both genuinely missing RPCs and calls whose
-argument shape cannot be resolved. A zero-argument probe is therefore not a
-valid existence test for parameterized functions. When a service-role key is
-available we confirm the RPC path through PostgREST's authoritative OpenAPI
-surface; with a publishable key, an argument-resolution error is classified as
-UNREACHABLE rather than falsely reported as missing.
+A zero-argument PostgREST probe is not a valid existence test for parameterized
+RPCs. The generated contract contains function signatures, so this verifier
+constructs a null-valued request with the correct argument names. That lets
+PostgREST resolve the function without executing business logic successfully.
 """
 import argparse
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -45,24 +44,49 @@ def openapi_has_rpc(base, name, key):
             _OPENAPI_CACHE = json.loads(body)
         except Exception:
             return None
-    paths = (_OPENAPI_CACHE or {}).get("paths", {})
-    return f"/rpc/{name}" in paths
+    return f"/rpc/{name}" in ((_OPENAPI_CACHE or {}).get("paths", {}))
 
 
-def rpc_exists(base, name, key):
-    code, body = request(f"{base}/rest/v1/rpc/{name}", key, "POST", b"{}")
-    if code == 0:
-        return None
-    lower = body.lower()
-    if code == 404 and "not found" in lower:
+def signature_body(signature):
+    """Turn 'p_id uuid, p_limit integer' into {'p_id': None, 'p_limit': None}."""
+    if not signature or not signature.strip():
+        return {}
+    body = {}
+    # Parameter names in generated Supabase signatures are unquoted identifiers.
+    for part in signature.split(","):
+        match = re.match(r"\s*([A-Za-z_][A-Za-z0-9_]*)", part)
+        if match:
+            body[match.group(1)] = None
+    return body
+
+
+def rpc_exists(base, name, key, signatures):
+    candidates = signatures or [""]
+    saw_unreachable = False
+    for signature in candidates:
+        payload = json.dumps(signature_body(signature)).encode("utf-8")
+        code, body = request(f"{base}/rest/v1/rpc/{name}", key, "POST", payload)
+        if code == 0:
+            saw_unreachable = True
+            continue
+        lower = body.lower()
+        if code == 404 and "not found" in lower:
+            return False
+        # A non-schema error (400/401/403/409/500) means PostgREST resolved the
+        # function and began processing it. Business/RLS validation is not a
+        # schema-missing condition and must not be reported as missing.
+        if '"pgrst202"' not in lower and not ("no matches" in lower and "schema cache" in lower):
+            return True
+
+    # If argument resolution still failed, the authoritative OpenAPI surface
+    # can confirm the RPC when a service-role key is available. Otherwise the
+    # correct result is UNKNOWN, never a false MISSING.
+    confirmed = openapi_has_rpc(base, name, key)
+    if confirmed is True:
+        return True
+    if confirmed is False:
         return False
-    # PGRST202 is normally an argument-shape mismatch for parameterized RPCs.
-    # Use the service-role OpenAPI surface when available; never turn an
-    # unresolved publishable-key probe into a false MISSING result.
-    if '"pgrst202"' in lower or ("no matches" in lower and "schema cache" in lower):
-        confirmed = openapi_has_rpc(base, name, key)
-        return confirmed
-    return True
+    return None if saw_unreachable or True else False
 
 
 def table_exists(base, name, key):
@@ -104,7 +128,7 @@ def main():
         if kind in ("table", "view"):
             exists = table_exists(base, name, key)
         elif kind == "function":
-            exists = rpc_exists(base, name, key)
+            exists = rpc_exists(base, name, key, obj.get("signatures"))
         elif kind == "bucket":
             if not service_key:
                 exists = None
