@@ -136,6 +136,7 @@ const [automations, setAutomations] = useState<Automation[]>([])
       trigger_config: triggerConfig,
       action_type: actionType,
       action_config: actionConfig,
+      business_id: staff?.business_id,
       created_by: staff?.id,
     })
 
@@ -158,6 +159,18 @@ const [automations, setAutomations] = useState<Automation[]>([])
       showToast(automation.enabled ? 'Automation paused' : 'Automation enabled', 'success')
       load()
     }
+  }
+
+  const runAutomation = async (automation: Automation) => {
+    const { data, error } = await supabase.functions.invoke('execute-automation', {
+      body: { trigger: automation.trigger_type, payload: { user_id: staff?.user_id || staff?.id }, automation_id: automation.id },
+    })
+    if (error || data?.error) {
+      showToast(data?.error || error?.message || 'Automation could not run', 'error')
+      return
+    }
+    showToast(`Automation run completed: ${data.successful || 0} successful`, 'success')
+    load()
   }
 
   const deleteAutomation = async (id: string) => {
