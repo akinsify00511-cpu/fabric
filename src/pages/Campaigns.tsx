@@ -42,7 +42,7 @@ const STATUS_CONFIG = {
 }
 
 export default function Campaigns() {
-  const { staff } = useAuth()
+  const { staff, business } = useAuth()
   const { showToast } = useToast()
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
@@ -103,7 +103,8 @@ export default function Campaigns() {
       subject,
       preheader,
       content_html: content || `<p>Hello,</p><p>${content || 'Your message here.'}</p>`,
-      contact_count: selectedContacts.length,
+      contact_count: contacts.filter((contact) => contact.status === 'active').length,
+      business_id: business?.id,
       created_by: staff?.id,
     })
 
@@ -116,10 +117,12 @@ export default function Campaigns() {
     }
   }
 
-  const sendCampaign = async (_campaignId: string) => {
-    // External email delivery was removed (no external dependencies). Campaign
-    // content can be copied and shared through your own channel.
-    showToast('Delivery is not available — copy the campaign content and share it through your own channel.', 'info')
+  const sendCampaign = async (campaignId: string) => {
+    showToast('Sending campaign...', 'info')
+    const { data, error } = await supabase.functions.invoke('campaign-send', { body: { campaignId } })
+    if (error || data?.error) { showToast(data?.error || error?.message || 'Failed to send campaign', 'error'); return }
+    showToast(`Campaign sent to ${data.sent || 0} recipient${data.sent === 1 ? '' : 's'}`, 'success')
+    await load()
   }
 
   const addContact = async () => {
@@ -129,6 +132,7 @@ export default function Campaigns() {
     const lastName = prompt('Last name (optional):') || ''
 
     const { error } = await supabase.from('email_contacts').insert({
+      business_id: business?.id,
       email,
       first_name: firstName || null,
       last_name: lastName || null,
