@@ -26,16 +26,19 @@ const FALLBACK: PricingTier[] = [
 ]
 
 const money = (cents: number) => '₦' + Math.round(cents / 100).toLocaleString()
+const withVat = (cents: number) => Math.round(cents * 1.075)
 
 function Card({ tier, yearly }: { tier: PricingTier; yearly: boolean }) {
   const navigate = useNavigate()
   const monthly = yearly ? Math.round(tier.yearly_cents / 12) : tier.monthly_cents
+  const monthlyGross = withVat(monthly)
   const go = () => navigate(`/upgrade?plan=${encodeURIComponent(tier.plan_code)}&billing=${yearly ? 'yearly' : 'monthly'}`)
   return <div className="rounded-2xl p-6 relative bg-white border transition" style={{ borderColor: tier.is_popular ? 'var(--av-primary)' : '#E8EAED', borderWidth: tier.is_popular ? 2 : 1 }}>
     {tier.is_popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-medium text-white bg-[var(--av-primary)]">Most popular</span>}
     <h3 className="font-bold text-lg text-black">{tier.display_name}</h3><p className="text-xs text-black/50 mb-4">{tier.tagline}</p>
     <div className="mb-1"><span className="text-3xl font-bold text-black">{money(monthly)}</span><span className="text-sm text-black/55">/month</span></div>
-    {yearly && <p className="text-xs text-[var(--av-success)] mb-3">Billed yearly · {money(tier.yearly_cents)}/yr</p>}
+    <p className="text-xs text-black/55 mb-3">+ 7.5% VAT · checkout total {money(monthlyGross)}/month equivalent</p>
+    {yearly && <p className="text-xs text-[var(--av-success)] mb-3">Billed yearly · {money(tier.yearly_cents)} + VAT</p>}
     {tier.is_founding_price && tier.founding_label && <div className="flex gap-1.5 items-center mb-4 text-xs text-[var(--av-primary)]"><Lock size={11}/> {tier.founding_label} — price locked while subscribed</div>}
     <ul className="space-y-2 mb-6">{tier.features.map((f, i) => <li key={i} className="flex gap-2 text-sm text-black/65"><Check size={14} className="mt-0.5 text-[var(--av-success)] shrink-0"/>{f}</li>)}</ul>
     <button onClick={go} className={`w-full py-2.5 rounded-lg text-sm font-medium ${tier.is_popular ? 'bg-[var(--av-primary)] text-white' : 'bg-[#F8F9FA] text-black border border-black/10'}`}>Continue to checkout <ArrowRight size={15} className="inline ml-1"/></button>
@@ -49,6 +52,7 @@ export default function Pricing() {
   useEffect(() => { captureAttribution(); trackPageView(); trackViewContent('pricing'); let active = true; supabase.rpc('get_pricing_tiers').then(({ data, error }) => { if (active && !error && Array.isArray(data) && data.length) setTiers(data as PricingTier[]) }); return () => { active = false } }, [])
   const faqs = [
     ['How do I pay?', 'All published Avenize plans use the same secure Paystack checkout. You can pay by the payment methods presented by Paystack at checkout.'],
+    ['Is VAT included?', 'Published plan prices are before VAT. Avenize adds 7.5% VAT at checkout and shows the gross amount before you are redirected to Paystack.'],
     ['When does my subscription become active?', 'Your subscription activates after Avenize verifies the successful Paystack transaction server-side.'],
     ['Can I change plans later?', 'Yes. You can upgrade or downgrade according to the subscription rules shown in your account.'],
     ['Is there a free trial?', 'No. Avenize is paid from the first subscription payment.'],
