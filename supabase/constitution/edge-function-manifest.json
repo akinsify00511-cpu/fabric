@@ -2,6 +2,7 @@
   "directory": [
     "api-gateway",
     "ask-avenize",
+    "campaign-send",
     "capture-process",
     "dispatch-webhooks",
     "email-service",
@@ -11,12 +12,15 @@
     "paystack-webhook",
     "platform-health-check",
     "resend-webhook",
+    "subscription-checkout",
     "subscription-management",
     "webauthn"
   ],
   "frontend_referenced": [
     "ask-avenize",
+    "campaign-send",
     "dispatch-webhooks",
+    "execute-automation",
     "webauthn"
   ]
 }

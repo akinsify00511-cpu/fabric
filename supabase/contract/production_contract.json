@@ -4,7 +4,7 @@
     "views": 6,
     "functions": 510,
     "buckets": 8,
-    "edge_functions": 13
+    "edge_functions": 15
   },
   "objects": [
     {
@@ -3669,7 +3669,7 @@
       "defined_in": "038_critical_infrastructure.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": true
+      "frontend_referenced": false
     },
     {
       "kind": "table",
@@ -3677,7 +3677,7 @@
       "defined_in": "20240101000001_automation_webhook_tables.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": false
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -11061,6 +11061,7 @@
   "edge_functions": [
     "api-gateway",
     "ask-avenize",
+    "campaign-send",
     "capture-process",
     "dispatch-webhooks",
     "email-service",
@@ -11070,6 +11071,7 @@
     "paystack-webhook",
     "platform-health-check",
     "resend-webhook",
+    "subscription-checkout",
     "subscription-management",
     "webauthn"
   ],
@@ -11300,7 +11302,7 @@
       "vat_records",
       "vendors",
       "webauthn_credentials",
-      "webhook_deliveries",
+      "webhook_logs",
       "webhooks",
       "wht_records",
       "workflows"
@@ -11540,7 +11542,9 @@
     ],
     "edge_functions": [
       "ask-avenize",
+      "campaign-send",
       "dispatch-webhooks",
+      "execute-automation",
       "webauthn"
     ]
   }

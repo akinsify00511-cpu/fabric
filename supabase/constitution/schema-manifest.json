@@ -2748,13 +2748,13 @@
     },
     {
       "defined_in": "038_critical_infrastructure.sql",
-      "frontend_referenced": true,
+      "frontend_referenced": false,
       "kind": "table",
       "name": "webhook_deliveries"
     },
     {
       "defined_in": "20240101000001_automation_webhook_tables.sql",
-      "frontend_referenced": false,
+      "frontend_referenced": true,
       "kind": "table",
       "name": "webhook_logs"
     },
