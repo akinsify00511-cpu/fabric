@@ -5,6 +5,7 @@
  */
 
 import { captureException } from './sentry'
+import { classifyError } from './errorClassification'
 
 // Maximum number of errors to keep in buffer
 const MAX_ERRORS = 10
@@ -39,9 +40,16 @@ function logToPlatformOps(params: {
   message: string
   stack?: string
   severity?: string
+  category?: string
+  expected?: boolean
 }): void {
   if (!shouldLogPlatform(params.message)) return
   // Dynamic import: keeps this module dependency-free at load time.
+
+  // Expected app states (validation messages, auth prompts, "no data" etc.)
+  // aren't engineering incidents — skip the ops feed (they surface in the product UI.
+
+  if (params.expected) return
   import('./businessOS')
     .then(({ logPlatformError }) => {
       logPlatformError({
@@ -49,6 +57,7 @@ function logToPlatformOps(params: {
         severity: params.severity ?? 'error',
         message: params.message?.slice(0, 1000),
         stack: params.stack?.slice(0, 4000),
+        sourceDetail: params.category ? `category:${params.category}` : undefined,
       })
     })
     .catch(() => {
@@ -61,6 +70,8 @@ interface CapturedError {
   stack?: string
   timestamp: number
   type: 'error' | 'unhandled'
+  category?: ReturnType<typeof classifyError>
+  expected?: boolean
 }
 
 // Global error buffer
@@ -76,11 +87,14 @@ export function initErrorCapture(): void {
 
   // Capture unhandled errors
   window.onerror = (message, source, lineno, colno, error) => {
+    const classification = classifyError(error ?? message)
     const errorObj: CapturedError = {
       message: message as string,
       stack: error?.stack,
       timestamp: Date.now(),
       type: 'unhandled',
+      category: classification,
+      expected: classification.expected,
     }
 
     capturedErrors.push(errorObj)
@@ -95,6 +109,8 @@ export function initErrorCapture(): void {
       message: message as string,
       stack: error?.stack,
       severity: 'error',
+      category: classification.category,
+      expected: classification.expected,
     })
 
     // Sentry (no-op unless VITE_SENTRY_DSN is configured).
@@ -111,11 +127,14 @@ export function initErrorCapture(): void {
   // Capture unhandled promise rejections
   window.onunhandledrejection = (event) => {
     const error = event.reason
+    const classification = classifyError(error ?? event)
     const errorObj: CapturedError = {
       message: error?.message || String(error),
       stack: error?.stack,
       timestamp: Date.now(),
       type: 'unhandled',
+      category: classification,
+      expected: classification.expected,
     }
 
     capturedErrors.push(errorObj)
@@ -130,6 +149,8 @@ export function initErrorCapture(): void {
       message: error?.message || String(error),
       stack: error?.stack,
       severity: 'error',
+      category: classification.category,
+      expected: classification.expected,
     })
 
     // Sentry (no-op unless VITE_SENTRY_DSN is configured).
@@ -157,10 +178,13 @@ export function initErrorCapture(): void {
       })
       .join(' ')
 
+    const classification = classifyError(message)
     const errorObj: CapturedError = {
       message,
       timestamp: Date.now(),
       type: 'error',
+      category: classification,
+      expected: classification.expected,
     }
 
     capturedErrors.push(errorObj)
