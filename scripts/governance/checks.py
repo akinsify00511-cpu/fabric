@@ -346,6 +346,28 @@ def check_no_hardcoded_secrets() -> CheckResult:
     return CheckResult("PASS")
 
 
+def check_production_dependency_vulnerabilities() -> CheckResult:
+    """npm audit for the runtime-shipped (production) dependency surface.
+
+    Dev-toolchain findings (vercel CLI, playwright, vitest…) are intentionally
+    excluded: they never reach the client bundle (prod audit =  today; the
+    full audit's 31 findings are all devDeps). npm audit can fail offline —
+    that is UNKNOWN (never counts as healthy, never blocks on registry flake).
+    """
+    rc, out = _run(["npm", "audit", "--omit=dev", "--json"], timeout=120)
+    if rc not in (0, 1) or not out.strip():
+        return CheckResult("UNKNOWN", "P2", False, {"detail": "npm audit unavailable"})
+    import json as _json
+    try:
+        data = _json.loads(out)
+    except ValueError:
+        return CheckResult("UNKNOWN", "P2", False, {"detail": "npm audit returned non-JSON output"})
+    vulns = (data or {}).get("vulnerabilities") or {}
+    if vulns:
+        return CheckResult(
+            "FAIL", "P2", False,
+            {"production_vulnerabilities": list(vulns.keys())[:10], "count": len(vulns) } )
+    return CheckResult("PASS", detail={"production_vulnerabilities": 0})
 def check_platform_self_observability() -> CheckResult:
     # Governance can only claim its platform visibility if the platform ops
     # objects are part of the desired contract.
@@ -507,6 +529,13 @@ CHECKS = {
         "blocking": True,
         "fn": check_no_hardcoded_secrets,
         "summary": "No hardcoded service-role/provider secrets in client code",
+    },
+    "security.dependency": {
+        "layer": "security",
+        "severity": "P2",
+        "blocking": False,
+        "fn": check_production_dependency_vulnerabilities,
+        "summary": "Zero npm-audit vulnerabilities in the runtime-shipped (production) dependency surface",
     },
     "platform.observability": {
         "layer": "observability",

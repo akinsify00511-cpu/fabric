@@ -102,6 +102,16 @@
       "verification": "avenize_governance.py:routes.integrity"
     },
     {
+      "blocking": false,
+      "escalation": "incident",
+      "layer": "security",
+      "requirement": "Zero npm-audit vulnerabilities in the runtime-shipped (production) dependency surface",
+      "rule_id": "security.dependency",
+      "severity": "P2",
+      "validator": "scripts/governance/checks.py::check_production_dependency_vulnerabilities",
+      "verification": "avenize_governance.py:security.dependency"
+    },
+    {
       "blocking": true,
       "escalation": "human_decision",
       "layer": "security",
