@@ -155,6 +155,9 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+      - name: Bundle analysis (performance regression signal)
+        run: node scripts/bundle_analysis.mjs
+        continue-on-error: true
 
   e2e-tests:
     name: E2E Tests (Playwright)
