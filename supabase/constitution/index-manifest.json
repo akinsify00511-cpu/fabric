@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 534
+    "indexes": 538
   },
   "indexes": [
     {
@@ -292,6 +292,26 @@
       "defined_in": "20260825160000_governance_engine.sql",
       "index": "autonomy_actions_due_idx",
       "table": "autonomy_actions"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "index": "idx_avenize_integration_events_pending",
+      "table": "avenize_integration_events"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "index": "idx_avenize_inventory_ledger_business_product",
+      "table": "avenize_inventory_ledger"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "index": "idx_avenize_inventory_ledger_location",
+      "table": "avenize_inventory_ledger"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "index": "idx_avenize_workflow_executions_status",
+      "table": "avenize_workflow_executions"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",

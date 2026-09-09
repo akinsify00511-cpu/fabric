@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 515
+    "functions": 516
   },
   "functions": [
     {
@@ -1586,6 +1586,13 @@
       "signature": ""
     },
     {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "name": "get_stock_balance",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
       "frontend_referenced": false,
       "name": "get_subscription_invoices",
@@ -1628,7 +1635,7 @@
       "signature": ""
     },
     {
-      "defined_in": "010_accounting.sql",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "name": "get_trial_balance",
       "security_sensitive": true,

@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 471,
+    "tables": 481,
     "views": 6,
-    "functions": 515,
+    "functions": 516,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -395,6 +395,86 @@
       "kind": "table",
       "name": "autonomy_actions",
       "defined_in": "20260825160000_governance_engine.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_cost_centers",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_country_rules",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_fiscal_periods",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_goods_receipts",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_integration_events",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_inventory_ledger",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_payment_allocations",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_stock_locations",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_suppliers",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_workflow_executions",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -6317,6 +6397,17 @@
     },
     {
       "kind": "function",
+      "name": "get_stock_balance",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_product_id uuid, p_location_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "get_subscription_invoices",
       "defined_in": "zz_rpc_tenant_guards_closure.sql",
       "repairable": false,
@@ -6384,12 +6475,13 @@
     {
       "kind": "function",
       "name": "get_trial_balance",
-      "defined_in": "010_accounting.sql",
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
       "signatures": [
-        "p_year int4, p_month int4"
+        "p_year int4, p_month int4",
+        "p_business_id uuid"
       ]
     },
     {
@@ -10252,6 +10344,9 @@
     "get_staff_roles": [
       "p_staff_id uuid"
     ],
+    "get_stock_balance": [
+      "p_business_id uuid, p_product_id uuid, p_location_id uuid"
+    ],
     "get_subscription_invoices": [
       "p_business_id uuid"
     ],
@@ -10271,7 +10366,8 @@
       "p_start_date date, p_end_date date"
     ],
     "get_trial_balance": [
-      "p_year int4, p_month int4"
+      "p_year int4, p_month int4",
+      "p_business_id uuid"
     ],
     "get_unread_notification_count": [
       "",

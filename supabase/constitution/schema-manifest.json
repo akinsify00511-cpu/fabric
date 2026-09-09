@@ -1,6 +1,6 @@
 {
   "counts": {
-    "tables": 471,
+    "tables": 481,
     "views": 6
   },
   "tables": [
@@ -297,6 +297,66 @@
       "frontend_referenced": false,
       "kind": "table",
       "name": "autonomy_actions"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_cost_centers"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_country_rules"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_fiscal_periods"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_goods_receipts"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_integration_events"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_inventory_ledger"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_payment_allocations"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_stock_locations"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_suppliers"
+    },
+    {
+      "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_workflow_executions"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
