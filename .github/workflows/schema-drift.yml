@@ -23,7 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Run schema drift check
         run: bash scripts/schema-drift-check.sh
 
@@ -31,10 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Verify production contract coverage
         run: python3 scripts/generate_contract_manifest.py
-
       - name: Verify generated contract artifacts are committed
         run: |
           if ! git diff --exit-code -- supabase/contract/production_contract.json supabase/migrations/20260822160000_contract_integrity_seed.sql; then
@@ -117,3 +114,13 @@ jobs:
             fi
           done
           exit $FAIL
+      - name: Assert schema is queryable
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -c "SELECT count(*) AS businesses FROM businesses; SELECT count(*) AS staff FROM staff; SELECT count(*) AS migrations FROM supabase_migrations.schema_migrations;"
+      - name: RLS attack suite (cross-tenant isolation)
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/04_rls_attack_suite.sql
