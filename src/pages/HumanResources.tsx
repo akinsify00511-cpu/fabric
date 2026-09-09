@@ -91,9 +91,9 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     try {
       const [staffRes, leaveRes, recruitmentRes, contractRes] = await Promise.all([
         supabase.from('staff').select('id', { count: 'exact' }).eq('business_id', businessId),
-        supabase.from('leave_requests').select('id', { count: 'exact' }).eq('status', 'pending'),
+        supabase.from('leave_requests').select('id', { count: 'exact' }).eq('business_id', businessId).eq('status', 'pending'),
         supabase.from('job_postings').select('id', { count: 'exact' }).eq('status', 'open').eq('business_id', businessId),
-        supabase.from('staff_contracts').select('id', { count: 'exact' }).eq('status', 'active'),
+        supabase.from('staff_contracts').select('id', { count: 'exact' }).eq('business_id', businessId).eq('status', 'active'),
       ])
       setStats({
         totalStaff: staffRes.count || 0,

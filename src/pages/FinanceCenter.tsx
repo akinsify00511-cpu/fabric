@@ -71,13 +71,15 @@ function OverviewTab({ businessId }: { businessId?: string }) {
     bankBalance: 0,
   })
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadStats()
-  }, [])
+    if (businessId) void loadStats()
+  }, [businessId])
 
   async function loadStats() {
     setLoading(true)
+    setLoadError(null)
     try {
       const [debtorsRes, creditorsRes, vatRes, bankRes] = await Promise.all([
         supabase.from('debtors').select('outstanding_amount', { count: 'exact' }).eq('business_id', businessId),
@@ -85,6 +87,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
         supabase.from('vat_records').select('vat_amount', { count: 'exact' }).eq('business_id', businessId).eq('status', 'pending'),
         supabase.from('bank_accounts').select('balance').eq('business_id', businessId),
       ])
+      if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)
       setStats({
         totalDebtors: debtorsRes.data?.reduce((sum, d) => sum + (d.outstanding_amount || 0), 0) || 0,
         totalCreditors: creditorsRes.data?.reduce((sum, c) => sum + (c.outstanding_amount || 0), 0) || 0,
@@ -93,11 +96,13 @@ function OverviewTab({ businessId }: { businessId?: string }) {
       })
     } catch (err) {
       console.error(err)
+      setLoadError('Finance data could not be loaded. Figures are unavailable until the source is reachable.')
     }
     setLoading(false)
   }
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
+  if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
 
   return (
     <div>

@@ -101,6 +101,7 @@ export default function Dashboard() {
   const [tasks, setTasks] = useState<any[]>([])
   const [activities, setActivities] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [digest, setDigest] = useState<BusinessDigest | null>(null)
   const [discovery, setDiscovery] = useState<FeatureDiscoveryResult | null>(null)
 
@@ -207,7 +208,7 @@ export default function Dashboard() {
       setActivities(dealActs.length > 0 ? dealActs : invActs)
       setLoading(false)
     }
-    load().catch(() => setLoading(false))
+    load().catch(() => { setLoadError('Dashboard data could not be loaded. Metrics are unavailable until the source is reachable.'); setLoading(false) })
     return () => { cancelled = true }
   }, [staff?.business_id, hasFinance, hasCRM, hasInventory, hasProjects])
 
@@ -359,6 +360,8 @@ export default function Dashboard() {
       </div>
     )
   }
+
+  if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 pb-20">
@@ -513,10 +516,7 @@ export default function Dashboard() {
               ) : recommended === 'number' ? (
                 <div className="text-5xl font-semibold">{money(primaryMetric.value)}</div>
               ) : recommended === 'progress' ? (
-                <div className="w-full">
-                  <div className="flex justify-between text-sm"><span>Monthly goal</span><span>{money(primaryMetric.value)}</span></div>
-                  <div className="mt-3 h-4 overflow-hidden rounded-full bg-[var(--av-surface-3)]"><div className="h-full rounded-full bg-[var(--av-primary)]" style={{ width: '70%' }} /></div>
-                </div>
+                <div className="w-full py-8 text-center"><p className="text-sm font-medium">Goal progress unavailable</p><p className="mt-1 text-xs text-[var(--av-text-muted)]">No authoritative goal denominator is connected to this metric.</p></div>
               ) : recommended === 'breakdown' ? (
                 <div className="w-full space-y-3">
                   <div className="flex justify-between text-sm"><span>{primaryMetric.label}</span><b>{money(primaryMetric.value)}</b></div>
@@ -530,14 +530,7 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               ) : (
-                <div className="w-full">
-                  <div className="flex h-28 items-end gap-2">
-                    {[42, 55, 48, 68, 60, 82, Math.max(18, Math.min(100, 60 + primaryMetric.change))].map((h, i) => (
-                      <div key={i} className="flex-1 rounded-t-md bg-[var(--av-primary)]" style={{ height: `${h}%` }} />
-                    ))}
-                  </div>
-                  <div className="mt-2 flex justify-between text-[10px] text-[var(--av-text-muted)]"><span>7 months ago</span><span>Now</span></div>
-                </div>
+                <div className="w-full py-8 text-center"><div className="text-4xl font-semibold">{money(primaryMetric.value)}</div><p className="mt-2 text-xs text-[var(--av-text-muted)]">Current period value. Historical trend is unavailable because no authoritative time-series is connected to this card.</p></div>
               )}
             </div>
             <p className="mt-3 text-xs text-[var(--av-text-muted)]">Recommended view is based on the information and can be changed anytime.</p>
@@ -554,7 +547,7 @@ export default function Dashboard() {
             <div className="mt-4 space-y-2">
               {attentionItems.slice(0, 5).map(a => (
                 <Link to={a.to} key={a.id} className="flex items-center gap-3 rounded-xl p-3 hover:bg-[var(--av-surface-2)]">
-                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-[var(--av-warning-soft)]0'}`} />
+                  <span className={`h-2 w-2 rounded-full ${a.tone === 'red' ? 'bg-[var(--av-danger)]' : 'bg-[var(--av-warning)]'}`} />
                   <span className="min-w-0 flex-1 truncate text-sm">{a.label}</span>
                   <ArrowRight size={15} className="text-[var(--av-text-muted)]" />
                 </Link>
