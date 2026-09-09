@@ -1,4 +1,4 @@
-// Two-flag module access gate (client half). The server is the single authority.
+// Two-flag module access gate. The server is the single authority.
 // can_access_module(business_id, module_key) returns can_access = entitled AND ready.
 // Client failures must never grant access.
 
