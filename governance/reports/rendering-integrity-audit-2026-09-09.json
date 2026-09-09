@@ -42,6 +42,11 @@
     "Tenant boundaries are preserved in displayed data.",
     "Unavailable capabilities do not render as operational.",
     "Empty/error/loading/not-configured states are semantically distinct.",
-    "Mobile rendering preserves business meaning and critical actions."
+    "Mobile rendering preserves business meaning and critical actions.",
+    "No illustrative data is presented as live business data.",
+    "No fixed progress, trend or health score is presented without an authoritative source.",
+    "Visible counts agree with the underlying filtered dataset.",
+    "Visible labels describe the actual entity, status and time period being shown.",
+    "Filters and tabs change the evidence shown, not just the visual chrome."
   ]
 }
