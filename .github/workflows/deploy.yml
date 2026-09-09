@@ -77,7 +77,7 @@ jobs:
       - name: Production contract verification
         run: bash scripts/verify-production.sh
         env:
-          APP_URL: https://avenize.riverwayse.com
+          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       - name: Production E2E journey test
         if: always()
@@ -88,13 +88,24 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-          APP_URL: https://avenize.riverwayse.com
+          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
+      - name: Unified live certification
+        if: always()
+        run: python3 scripts/governance/production_certification.py
+        env:
+          REQUIRE_LIVE: '1'
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
       - name: Upload verification report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: production-contract-report
-          path: supabase/contract/verification_report.json
+          path: |
+            supabase/contract/verification_report.json
+            governance/reports/production-certification.json
           if-no-files-found: warn
       - name: Rollback Vercel on gate failure (opt-in)
         if: failure() && vars.VERCEL_AUTO_ROLLBACK == 'true'
