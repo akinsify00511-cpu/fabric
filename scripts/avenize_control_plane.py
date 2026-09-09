@@ -20,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORT = ROOT / "governance" / "reports" / "control-plane.json"
+DEFAULT_APP_URL = "https://avenize.com"
 
 
 def run(name: str, command: list[str], *, required: bool = True, env: dict[str, str] | None = None) -> dict:
@@ -59,42 +60,19 @@ def main() -> int:
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     checks: list[dict] = []
 
-    # Static contract checks are always required. These are the controls that
-    # prevent a frontend reference from silently drifting from its backend.
-    checks.append(run(
-        "contract-manifest",
-        [sys.executable, "scripts/generate_contract_manifest.py"],
-    ))
-    checks.append(run(
-        "schema-drift",
-        [sys.executable, "scripts/check_schema_drift.py"],
-    ))
-    checks.append(run(
-        "rpc-signatures",
-        [sys.executable, "scripts/audit_rpc_signatures.py"],
-    ))
-    checks.append(run(
-        "edge-functions",
-        ["bash", "scripts/check_edge_functions.sh"],
-    ))
-    checks.append(run(
-        "governance-schema",
-        [sys.executable, "scripts/verify_governance_schema.py"],
-    ))
+    checks.append(run("contract-manifest", [sys.executable, "scripts/generate_contract_manifest.py"]))
+    checks.append(run("schema-drift", [sys.executable, "scripts/check_schema_drift.py"]))
+    checks.append(run("rpc-signatures", [sys.executable, "scripts/audit_rpc_signatures.py"]))
+    checks.append(run("edge-functions", ["bash", "scripts/check_edge_functions.sh"]))
+    checks.append(run("governance-schema", [sys.executable, "scripts/verify_governance_schema.py"]))
 
-    # Application correctness checks are also required in CI.
     checks.append(run("typecheck", ["npm", "run", "typecheck"]))
     checks.append(run("lint", ["npm", "run", "lint"]))
     checks.append(run("unit-tests", ["npm", "run", "test:unit"]))
     checks.append(run("build", ["npm", "run", "build"]))
 
-    # Live checks are credential-gated by design. Missing credentials are not
-    # a false PASS; they are surfaced as NOT_CONFIGURED in the final report.
     if configured("SUPABASE_URL", "SUPABASE_KEY"):
-        checks.append(run(
-            "production-certification",
-            [sys.executable, "scripts/governance/production_certification.py"],
-        ))
+        checks.append(run("production-certification", [sys.executable, "scripts/governance/production_certification.py"]))
     else:
         checks.append({
             "name": "production-certification",
@@ -103,18 +81,16 @@ def main() -> int:
             "output_tail": "SUPABASE_URL and SUPABASE_KEY are required for live certification.",
         })
 
-    if configured("APP_URL", "E2E_EMAIL", "E2E_PASSWORD"):
-        checks.append(run(
-            "production-e2e",
-            ["bash", "scripts/e2e-production.sh"],
-            env={"APP_URL": os.environ["APP_URL"]},
-        ))
+    app_url = os.environ.get("APP_URL", DEFAULT_APP_URL)
+    e2e_ready = configured("SUPABASE_URL", "SUPABASE_KEY", "SUPABASE_SERVICE_ROLE_KEY") or configured("APP_URL", "E2E_EMAIL", "E2E_PASSWORD")
+    if e2e_ready:
+        checks.append(run("production-e2e", ["bash", "scripts/e2e-production.sh"], env={"APP_URL": app_url}))
     else:
         checks.append({
             "name": "production-e2e",
             "status": "NOT_CONFIGURED",
             "required": False,
-            "output_tail": "APP_URL, E2E_EMAIL and E2E_PASSWORD are required for live journey verification.",
+            "output_tail": "Live E2E needs Supabase URL/key + service role for disposable-account mode, or APP_URL + dedicated E2E credentials.",
         })
 
     blocking = [c for c in checks if c["status"] == "FAIL"]
