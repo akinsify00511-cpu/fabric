@@ -387,6 +387,8 @@ export default function Dashboard() {
 
   if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
 
+  if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
+
   return (
     <div className="mx-auto max-w-7xl space-y-5 pb-20">
       <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
