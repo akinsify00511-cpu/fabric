@@ -1,104 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import FeatureSuggestions from '../components/FeatureSuggestions'
 
-export default function Reports() {
-  const { staff } = useAuth()
-  const [stats, setStats] = useState({
-    dealsWon: 0,
-    revenueClosed: 0,
-    invoicesPaid: 0,
-    invoicesOutstanding: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-  })
-  const [loading, setLoading] = useState(true)
+const iso=(d:Date)=>d.toISOString().slice(0,10)
+const money=(n:number)=>new Intl.NumberFormat('en-NG',{style:'currency',currency:'NGN',maximumFractionDigits:0}).format(n)
 
-  useEffect(() => {
-    const load = async () => {
-      if (!staff?.business_id) {
-        setLoading(false)
-        return
-      }
-
-      setLoading(true)
-      try {
-        const [{ data: wonDeals }, { data: paidInvoices }, { data: unpaidInvoices }, { data: allTasks }, { data: completedTasks }] = await Promise.all([
-          supabase.from('deals').select('value').eq('business_id', staff.business_id).eq('stage', 'won'),
-          supabase.from('invoices').select('total').eq('business_id', staff.business_id).eq('status', 'paid'),
-          supabase.from('invoices').select('total').eq('business_id', staff.business_id).in('status', ['sent', 'overdue']),
-          supabase.from('tasks').select('id').eq('business_id', staff.business_id),
-          supabase.from('tasks').select('id').eq('business_id', staff.business_id).eq('status', 'done'),
-        ])
-        setStats({
-          dealsWon: wonDeals?.length ?? 0,
-          revenueClosed: (wonDeals ?? []).reduce((sum, d) => sum + (d.value ?? 0), 0),
-          invoicesPaid: (paidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
-          invoicesOutstanding: (unpaidInvoices ?? []).reduce((sum, i) => sum + (i.total ?? 0), 0),
-          totalTasks: allTasks?.length ?? 0,
-          completedTasks: completedTasks?.length ?? 0,
-        })
-      } catch (error) {
-        console.error('Failed to load reports:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [staff?.business_id])
-
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) return `\u20a6${(value / 1000000).toFixed(1)}M`
-    if (value >= 1000) return `\u20a6${(value / 1000).toFixed(1)}K`
-    return `\u20a6${value.toLocaleString()}`
-  }
-
-  if (loading) {
-    return (
-      <div>
-        <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Reports</h1>
-        <div className="animate-pulse space-y-4">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-16 bg-[var(--av-surface-elevated)] rounded-xl"></div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  const rows = [
-    { label: 'Deals won', value: stats.dealsWon, icon: '🎯' },
-    { label: 'Revenue closed', value: formatCurrency(stats.revenueClosed), icon: '💰' },
-    { label: 'Invoices paid', value: formatCurrency(stats.invoicesPaid), icon: '✅' },
-    { label: 'Invoices outstanding', value: formatCurrency(stats.invoicesOutstanding), icon: '⏳' },
-    { label: 'Tasks completed', value: `${stats.completedTasks}/${stats.totalTasks}`, icon: '📋' },
-  ]
-
-  return (
-    <div>
-      <h1 className="text-xl font-medium text-[var(--av-text)] mb-6">Reports</h1>
-      <div className="bg-[var(--av-surface-elevated)] rounded-2xl border border-[var(--av-border-strong)]/[0.06] divide-y divide-black/[0.06]">
-        {rows.map((r) => (
-          <div key={r.label} className="px-4 py-3 flex items-center justify-between text-sm">
-            <div className="flex items-center gap-3">
-              <span className="text-lg">{r.icon}</span>
-              <span className="text-[var(--av-text)]/60">{r.label}</span>
-            </div>
-            <span className="text-[var(--av-text)] font-medium">{r.value}</span>
-          </div>
-        ))}
-      </div>
-      <p className="text-xs text-[var(--av-text)] mt-4">
-        Deterministic, non-AI view — the natural-language reporting layer comes in a later build phase.
-      </p>
-
-      {/* Contextual Feature Suggestions */}
-      <FeatureSuggestions suggestions={[
-        { label: 'Finance', path: '/app/finance', description: 'Financial reports' },
-        { label: 'Projects', path: '/app/projects', description: 'Project analytics' },
-        { label: 'CRM', path: '/app/crm', description: 'Sales reports' },
-      ]} />
-    </div>
-  )
+export default function Reports(){
+ const {staff}=useAuth();const [from,setFrom]=useState(()=>iso(new Date(new Date().getFullYear(),new Date().getMonth(),1)));const [to,setTo]=useState(()=>iso(new Date()));const [loading,setLoading]=useState(true);const [error,setError]=useState<string|null>(null);const [stats,setStats]=useState({dealsWon:0,revenueClosed:0,invoicesPaid:0,invoicesOutstanding:0,totalTasks:0,completedTasks:0})
+ const load=useCallback(async()=>{if(!staff?.business_id){setLoading(false);return}setLoading(true);setError(null);const bid=staff.business_id;const start=`${from}T00:00:00`;const end=`${to}T23:59:59.999`;const [d,paid,unpaid,t,done]=await Promise.all([supabase.from('deals').select('value').eq('business_id',bid).eq('stage','won').gte('stage_entered_at',start).lte('stage_entered_at',end),supabase.from('invoices').select('total').eq('business_id',bid).eq('status','paid').gte('updated_at',start).lte('updated_at',end),supabase.from('invoices').select('total').eq('business_id',bid).in('status',['sent','overdue']).lte('updated_at',end),supabase.from('tasks').select('id').eq('business_id',bid).gte('created_at',start).lte('created_at',end),supabase.from('tasks').select('id').eq('business_id',bid).eq('status','done').gte('completed_at',start).lte('completed_at',end)]);const first=d.error||paid.error||unpaid.error||t.error||done.error;if(first){setError('Report data could not be loaded. Metrics are unavailable rather than zero.');setStats({dealsWon:0,revenueClosed:0,invoicesPaid:0,invoicesOutstanding:0,totalTasks:0,completedTasks:0})}else setStats({dealsWon:d.data?.length??0,revenueClosed:(d.data??[]).reduce((s,x)=>s+Number(x.value||0),0),invoicesPaid:(paid.data??[]).reduce((s,x)=>s+Number(x.total||0),0),invoicesOutstanding:(unpaid.data??[]).reduce((s,x)=>s+Number(x.total||0),0),totalTasks:t.data?.length??0,completedTasks:done.data?.length??0});setLoading(false)},[staff?.business_id,from,to])
+ useEffect(()=>{void load()},[load])
+ if(loading)return <div><h1 className="text-xl font-medium mb-6">Reports</h1><div className="p-8 text-center opacity-60">Loading report data…</div></div>
+ return <div><div className="flex flex-wrap justify-between gap-3 mb-5"><div><h1 className="text-xl font-medium">Reports</h1><p className="text-sm opacity-70 mt-1">Deterministic metrics for the selected period</p></div><div className="flex gap-2"><input type="date" className="border rounded-lg p-2" value={from} onChange={e=>setFrom(e.target.value)}/><input type="date" className="border rounded-lg p-2" value={to} onChange={e=>setTo(e.target.value)}/></div></div>{error?<div className="p-4 rounded-xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm mb-5">{error}</div>:<><div className="rounded-2xl border divide-y">{[{label:'Deals won (entered Won in period)',value:String(stats.dealsWon)},{label:'Revenue value of those deals',value:money(stats.revenueClosed)},{label:'Invoices marked paid in period',value:money(stats.invoicesPaid)},{label:'Outstanding invoices at period end',value:money(stats.invoicesOutstanding)},{label:'Tasks created in period',value:String(stats.totalTasks)},{label:'Tasks completed in period',value:`${stats.completedTasks}/${stats.totalTasks}`}].map(r=><div key={r.label} className="px-4 py-3 flex justify-between gap-4 text-sm"><span className="opacity-60">{r.label}</span><span className="font-medium">{r.value}</span></div>)}</div><p className="text-xs opacity-50 mt-4">Invoice paid timing uses invoice updated_at because the invoice schema does not expose a dedicated paid_at timestamp. Outstanding is a point-in-time status as of the selected end date.</p></>}<FeatureSuggestions suggestions={[{label:'Finance',path:'/app/finance',description:'Financial reports'},{label:'Projects',path:'/app/projects',description:'Project analytics'},{label:'CRM',path:'/app/crm',description:'Sales reports'}]}/></div>
 }
