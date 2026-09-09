@@ -6,6 +6,16 @@
   "git": {
     "deploymentEnabled": true
   },
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "avenize.riverwayse.com" }
+      ],
+      "destination": "https://avenize.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
