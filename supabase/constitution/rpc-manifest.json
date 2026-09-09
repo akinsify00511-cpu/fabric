@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 528
+    "functions": 529
   },
   "functions": [
     {
@@ -231,6 +231,13 @@
       "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
       "frontend_referenced": false,
       "name": "avenize_post_inventory_movement",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910003000_thick_core_invoice_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_post_invoice_to_ledger",
       "security_sensitive": true,
       "signature": ""
     },
