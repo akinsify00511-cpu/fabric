@@ -1,589 +1,70 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { BarChart3, FileText, Plus, Wallet, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/AuthContext'
 import { useToast } from '../components/Toast'
-import {
-  Plus, FileText, Wallet, CreditCard,
-  TrendingUp, Receipt, X, Trash2, Building2,
-  BarChart3, PieChart
-} from 'lucide-react'
 
-type Account = {
-  id: string
-  code: string
-  name: string
-  type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense'
-  parent_id: string | null
-  description: string | null
-  opening_balance: number
-  balance?: number
-}
+type Account = { id: string; code: string; name: string; type: 'asset'|'liability'|'equity'|'revenue'|'expense'; opening_balance: number | null }
+type Entry = { id: string; entry_number: string; date: string; description: string | null; status: string }
+type Line = { journal_entry_id: string; account_id: string; debit: number | null; credit: number | null }
+type DraftLine = { account_id: string; debit: string; credit: string; description: string }
 
-type JournalEntry = {
-  id: string
-  entry_number: string
-  date: string
-  description: string | null
-  status: 'draft' | 'posted' | 'void'
-  total: number
-}
-
-type JournalLineInput = {
-  account_id: string
-  debit: string
-  credit: string
-  description: string
-}
-
-const ACCOUNT_TYPES = [
-  { id: 'asset', label: 'Assets', icon: Wallet, color: 'text-[var(--av-primary)]', bg: 'bg-[var(--av-primary-soft)]' },
-  { id: 'liability', label: 'Liabilities', icon: CreditCard, color: 'text-[var(--av-danger)]', bg: 'bg-[var(--av-danger-soft)]' },
-  { id: 'equity', label: 'Equity', icon: Building2, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { id: 'revenue', label: 'Revenue', icon: TrendingUp, color: 'text-[var(--av-success)]', bg: 'bg-[var(--av-success-soft)]' },
-  { id: 'expense', label: 'Expenses', icon: Receipt, color: 'text-orange-600', bg: 'bg-orange-50' },
-]
+const types = ['asset','liability','equity','revenue','expense'] as const
+const money = (n: number) => n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
 export default function Accounting() {
-  
-  const { showToast } = useToast()
-  const [accounts, setAccounts] = useState<Account[]>([])
-  const [entries, setEntries] = useState<JournalEntry[]>([])
-  const [,setSelectedEntry] = useState<JournalEntry | null>(null)
-  const [,setLoading] = useState(true)
-  const [creating, setCreating] = useState(false)
-  const [activeTab, setActiveTab] = useState<'chart' | 'journal' | 'reports'>('chart')
-  const [reportType, setReportType] = useState<'balance' | 'income'>('balance')
-  const [showNewEntry, setShowNewEntry] = useState(false)
-  const [showNewAccount, setShowNewAccount] = useState(false)
+  const { staff } = useAuth(); const { showToast } = useToast(); const businessId = staff?.business_id
+  const [accounts,setAccounts]=useState<Account[]>([]); const [entries,setEntries]=useState<Entry[]>([]); const [lines,setLines]=useState<Line[]>([])
+  const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null); const [tab,setTab]=useState<'chart'|'journal'|'reports'>('chart'); const [report,setReport]=useState<'balance'|'income'>('balance')
+  const [showAccount,setShowAccount]=useState(false); const [showEntry,setShowEntry]=useState(false); const [saving,setSaving]=useState(false)
+  const [code,setCode]=useState(''); const [name,setName]=useState(''); const [type,setType]=useState<Account['type']>('asset'); const [opening,setOpening]=useState('0')
+  const [date,setDate]=useState(new Date().toISOString().slice(0,10)); const [description,setDescription]=useState(''); const [draft,setDraft]=useState<DraftLine[]>([{account_id:'',debit:'',credit:'',description:''},{account_id:'',debit:'',credit:'',description:''}])
 
-  // New Account state
-  const [newCode, setNewCode] = useState('')
-  const [newName, setNewName] = useState('')
-  const [newType, setNewType] = useState<Account['type']>('asset')
-  const [newOpening, setNewOpening] = useState('0')
-
-  // New Entry state
-  const [entryDate, setEntryDate] = useState(new Date().toISOString().split('T')[0])
-  const [entryDesc, setEntryDesc] = useState('')
-  const [newEntryLines, setNewEntryLines] = useState<JournalLineInput[]>([
-    { account_id: '', debit: '', credit: '', description: '' },
-    { account_id: '', debit: '', credit: '', description: '' },
-  ])
-
-  const load = async () => {
-    setLoading(true)
-    const [{ data: accountsData }, { data: entriesData }] = await Promise.all([
-      supabase.from('accounts').select('*').order('code'),
-      supabase.from('journal_entries').select('*').order('date', { ascending: false }).limit(50),
+  const load = useCallback(async()=>{
+    if(!businessId){setLoading(false);return} setLoading(true);setError(null)
+    const [a,e,l]=await Promise.all([
+      supabase.from('accounts').select('id,code,name,type,opening_balance').eq('business_id',businessId).order('code'),
+      supabase.from('journal_entries').select('id,entry_number,date,description,status').eq('business_id',businessId).order('date',{ascending:false}).limit(200),
+      supabase.from('journal_lines').select('journal_entry_id,account_id,debit,credit').eq('business_id',businessId).limit(5000),
     ])
-    setAccounts((accountsData as Account[]) ?? [])
-    setEntries((entriesData as JournalEntry[]) ?? [])
-    setLoading(false)
+    if(a.error||e.error||l.error){setError('Accounting data could not be loaded. Financial figures are not shown as zero when the ledger is unavailable.');setAccounts([]);setEntries([]);setLines([]);setLoading(false);return}
+    setAccounts((a.data??[]) as Account[]);setEntries((e.data??[]) as Entry[]);setLines((l.data??[]) as Line[]);setLoading(false)
+  },[businessId])
+  useEffect(()=>{void load()},[load])
+
+  const totals = useMemo(()=>{
+    const map = new Map<string,{debit:number;credit:number}>(); lines.forEach(l=>{const x=map.get(l.account_id)||{debit:0,credit:0};x.debit+=Number(l.debit||0);x.credit+=Number(l.credit||0);map.set(l.account_id,x)})
+    return new Map(accounts.map(a=>{const x=map.get(a.id)||{debit:0,credit:0};const opening=Number(a.opening_balance||0);const balance=['asset','expense'].includes(a.type)?opening+x.debit-x.credit:opening+x.credit-x.debit;return [a.id,{...x,balance}] as const}))
+  },[accounts,lines])
+  const revenue=accounts.filter(a=>a.type==='revenue').reduce((s,a)=>s+(totals.get(a.id)?.credit||0)-(totals.get(a.id)?.debit||0),0)
+  const expenses=accounts.filter(a=>a.type==='expense').reduce((s,a)=>s+(totals.get(a.id)?.debit||0)-(totals.get(a.id)?.credit||0),0)
+  const netIncome=revenue-expenses
+  const assets=accounts.filter(a=>a.type==='asset').reduce((s,a)=>s+(totals.get(a.id)?.balance||0),0)
+  const liabilities=accounts.filter(a=>a.type==='liability').reduce((s,a)=>s+(totals.get(a.id)?.balance||0),0)
+  const equity=accounts.filter(a=>a.type==='equity').reduce((s,a)=>s+(totals.get(a.id)?.balance||0),0)+netIncome
+  const debits=draft.reduce((s,l)=>s+(Number(l.debit)||0),0); const credits=draft.reduce((s,l)=>s+(Number(l.credit)||0),0)
+
+  async function createAccount(){
+    if(!businessId||!code.trim()||!name.trim()){showToast('Enter an account code and name.','error');return} setSaving(true)
+    const {error:e}=await supabase.from('accounts').insert({business_id:businessId,code:code.trim(),name:name.trim(),type,opening_balance:Number(opening)||0})
+    if(e)showToast('Account was not saved.','error');else{showToast('Account created.','success');setCode('');setName('');setOpening('0');setShowAccount(false);void load()}setSaving(false)
   }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  
-
-  const createAccount = async () => {
-    if (creating) return
-    setCreating(true)
-    if (!newCode.trim() || !newName.trim()) {
-      showToast('Enter code and name', 'error')
-      setCreating(false)
-      return
-    }
-    try {
-      const { error } = await supabase.from('accounts').insert({
-        code: newCode,
-        name: newName,
-        type: newType,
-        opening_balance: Number(newOpening) || 0,
-      })
-      if (error) throw error
-      showToast('Account created!', 'success')
-      setNewCode('')
-      setNewName('')
-      setNewOpening('0')
-      setShowNewAccount(false)
-      load()
-    } catch  {
-      showToast('Failed to create account', 'error')
-    } finally {
-      setCreating(false)
-    }
+  async function createEntry(){
+    if(!businessId){showToast('Business context is unavailable.','error');return}
+    const usable=draft.filter(l=>l.account_id&&(Number(l.debit)||0)>0||(l.account_id&&(Number(l.credit)||0)>0))
+    if(usable.length<2||Math.abs(debits-credits)>0.01||debits<=0){showToast('A posted entry needs at least two valid, balanced lines.','error');return}
+    setSaving(true)
+    const {error:e}=await supabase.rpc('create_journal_entry_with_lines',{p_business_id:businessId,p_date:date,p_reference:null,p_description:description.trim()||null,p_currency:'NGN',p_lines:usable.map(l=>({account_id:l.account_id,debit:Number(l.debit)||0,credit:Number(l.credit)||0,description:l.description.trim()||null,currency:'NGN'}))})
+    if(e)showToast(e.message||'Journal entry was not saved.','error');else{showToast('Journal entry posted with ledger lines.','success');setShowEntry(false);setDescription('');setDraft([{account_id:'',debit:'',credit:'',description:''},{account_id:'',debit:'',credit:'',description:''}]);void load()}setSaving(false)
   }
+  const addLine=()=>setDraft(v=>[...v,{account_id:'',debit:'',credit:'',description:''}]); const removeLine=(i:number)=>setDraft(v=>v.length>2?v.filter((_,x)=>x!==i):v)
 
-  const createEntry = async () => {
-    const totalDebit = newEntryLines.reduce((sum, l) => sum + (Number(l.debit) || 0), 0)
-    const totalCredit = newEntryLines.reduce((sum, l) => sum + (Number(l.credit) || 0), 0)
+  return <div className="pb-20"><div className="flex flex-wrap justify-between gap-3 mb-6"><div><h1 className="text-xl font-medium">Accounting</h1><p className="text-sm opacity-70 mt-1">Ledger-derived double-entry accounting</p></div><div className="flex gap-2"><button onClick={()=>setShowAccount(true)} className="px-3 py-2 rounded-lg border flex items-center gap-1"><Plus size={14}/>Account</button><button onClick={()=>setShowEntry(true)} className="px-4 py-2 rounded-lg avenize-gradient text-white flex items-center gap-1"><Plus size={14}/>New Entry</button></div></div>
+    {error&&<div className="mb-5 p-4 rounded-xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{error}</div>}
+    <div className="flex gap-2 mb-5">{(['chart','journal','reports'] as const).map(k=><button key={k} onClick={()=>setTab(k)} className={`px-4 py-2 rounded-lg text-sm ${tab===k?'avenize-gradient text-white':'border'}`}>{k==='chart'?'Chart of Accounts':k==='journal'?'Journal':'Reports'}</button>)}</div>
+    {loading?<div className="p-8 text-center opacity-60">Loading ledger…</div>:tab==='chart'?<div className="space-y-4">{types.map(t=>{const rows=accounts.filter(a=>a.type===t);return <section key={t} className="rounded-2xl border overflow-hidden"><div className="px-4 py-3 border-b font-medium capitalize">{t}s <span className="opacity-50 text-xs">{rows.length}</span></div>{rows.length===0?<div className="p-4 text-sm opacity-60">No accounts configured.</div>:rows.map(a=><div key={a.id} className="px-4 py-3 flex justify-between text-sm"><span><span className="font-mono opacity-50 mr-3">{a.code}</span>{a.name}</span><span className="font-mono">{money(totals.get(a.id)?.balance||0)}</span></div>)}</section>})}</div>:tab==='journal'?<div className="rounded-2xl border divide-y">{entries.map(e=><div key={e.id} className="p-4 flex justify-between gap-3"><div><p className="font-medium">{e.entry_number}</p><p className="text-sm opacity-60">{e.description||'No description'}</p></div><div className="text-right text-sm"><p>{new Date(e.date).toLocaleDateString()}</p><p className="opacity-60">{e.status}</p></div></div>)}{entries.length===0&&<div className="p-8 text-center opacity-60"><FileText className="mx-auto mb-2"/>No journal entries yet.</div>}</div>:<div className="space-y-5"><div className="flex gap-2"><button onClick={()=>setReport('balance')} className={`px-3 py-2 rounded-lg text-sm ${report==='balance'?'avenize-gradient text-white':'border'}`}>Balance Sheet</button><button onClick={()=>setReport('income')} className={`px-3 py-2 rounded-lg text-sm ${report==='income'?'avenize-gradient text-white':'border'}`}>Income Statement</button></div>{report==='income'?<section className="rounded-2xl border p-5"><h2 className="font-semibold mb-4">Income Statement</h2><div className="flex justify-between py-2"><span>Revenue</span><b>{money(revenue)}</b></div><div className="flex justify-between py-2"><span>Expenses</span><b>{money(expenses)}</b></div><div className="flex justify-between py-3 border-t font-semibold"><span>Net income</span><b>{money(netIncome)}</b></div><p className="text-xs opacity-50 mt-3">Derived from posted journal lines plus account opening balances where applicable.</p></section>:<section className="rounded-2xl border p-5"><h2 className="font-semibold mb-4">Balance Sheet</h2><div className="flex justify-between py-2"><span>Total assets</span><b>{money(assets)}</b></div><div className="flex justify-between py-2"><span>Total liabilities</span><b>{money(liabilities)}</b></div><div className="flex justify-between py-2"><span>Equity incl. current net income</span><b>{money(equity)}</b></div><div className="flex justify-between py-3 border-t font-semibold"><span>Liabilities + equity</span><b>{money(liabilities+equity)}</b></div><p className="text-xs opacity-50 mt-3">Derived from the ledger. Opening balances remain opening balances; posted activity comes from journal lines.</p></section>}</div>}
 
-    if (Math.abs(totalDebit - totalCredit) > 0.01) {
-      showToast('Debits must equal credits', 'error')
-      return
-    }
-
-    const { error } = await supabase.from('journal_entries').insert({
-      date: entryDate,
-      description: entryDesc,
-    })
-
-    if (error) {
-      showToast('Failed to create entry', 'error')
-    } else {
-      showToast('Journal entry created!', 'success')
-      resetEntryForm()
-      load()
-    }
-  }
-
-  const resetEntryForm = () => {
-    setShowNewEntry(false)
-    setEntryDate(new Date().toISOString().split('T')[0])
-    setEntryDesc('')
-    setNewEntryLines([
-      { account_id: '', debit: '', credit: '', description: '' },
-      { account_id: '', debit: '', credit: '', description: '' },
-    ])
-  }
-
-  const addLine = () => {
-    setNewEntryLines([...newEntryLines, { account_id: '', debit: '', credit: '', description: '' }])
-  }
-
-  const updateLine = (index: number, field: string, value: string) => {
-    const updated = [...newEntryLines]
-    ;(updated[index] as any)[field] = value
-    setNewEntryLines(updated)
-  }
-
-  const removeLine = (index: number) => {
-    if (newEntryLines.length > 2) {
-      setNewEntryLines(newEntryLines.filter((_, i) => i !== index))
-    }
-  }
-
-  const accountsByType = ACCOUNT_TYPES.map((type) => ({
-    ...type,
-    accounts: accounts.filter((a) => a.type === type.id),
-  }))
-
-  const totalDebit = newEntryLines.reduce((sum, l) => sum + (Number(l.debit) || 0), 0)
-  const totalCredit = newEntryLines.reduce((sum, l) => sum + (Number(l.credit) || 0), 0)
-
-  // Calculate financial summary
-  const assets = accounts.filter((a) => a.type === 'asset').reduce((sum, a) => sum + (a.opening_balance || 0), 0)
-  const liabilities = accounts.filter((a) => a.type === 'liability').reduce((sum, a) => sum + (a.opening_balance || 0), 0)
-  const equity = accounts.filter((a) => a.type === 'equity').reduce((sum, a) => sum + (a.opening_balance || 0), 0)
-  const revenue = accounts.filter((a) => a.type === 'revenue').reduce((sum, a) => sum + (a.opening_balance || 0), 0)
-  const expenses = accounts.filter((a) => a.type === 'expense').reduce((sum, a) => sum + (a.opening_balance || 0), 0)
-
-  return (
-    <div className="pb-20">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-xl font-medium text-black">Accounting</h1>
-          <p className="text-sm text-black mt-0.5">Double-entry bookkeeping</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowNewAccount(true)}
-            className="flex items-center gap-1 px-3 py-2 rounded-lg border border-black/10 text-sm hover:bg-black/10"
-          >
-            <Plus size={14} />
-            Account
-          </button>
-          <button
-            onClick={() => setShowNewEntry(true)}
-            className="flex items-center gap-1 px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white text-sm font-medium"
-          >
-            <Plus size={14} />
-            New Entry
-          </button>
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-1 bg-white rounded-xl p-1 border border-black/[0.06] mb-6 w-fit">
-        {[
-          { id: 'chart', label: 'Chart of Accounts', icon: PieChart },
-          { id: 'journal', label: 'Journal', icon: FileText },
-          { id: 'reports', label: 'Reports', icon: BarChart3 },
-        ].map((tab) => {
-          const Icon = tab.icon
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                activeTab === tab.id
-                  ? 'bg-[var(--av-primary)] text-white'
-                  : 'text-black hover:text-black'
-              }`}
-            >
-              <Icon size={14} />
-              {tab.label}
-            </button>
-          )
-        })}
-      </div>
-
-      {/* CHART OF ACCOUNTS */}
-      {activeTab === 'chart' && (
-        <div className="space-y-4">
-          {accountsByType.map((type) => (
-            <div key={type.id} className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-              <div className={`px-4 py-3 ${type.bg} flex items-center gap-2`}>
-                <type.icon size={16} className={type.color} />
-                <span className={`text-sm font-medium ${type.color}`}>{type.label}</span>
-                <span className="text-xs text-black ml-auto">{type.accounts.length} accounts</span>
-              </div>
-              {type.accounts.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-black">No accounts</p>
-              ) : (
-                <div className="divide-y divide-black/[0.04]">
-                  {type.accounts.map((account) => (
-                    <div key={account.id} className="px-4 py-2 flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-black w-12">{account.code}</span>
-                        <span className="text-black">{account.name}</span>
-                      </div>
-                      <span className="text-black/60 font-mono">
-                        {account.opening_balance?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* JOURNAL */}
-      {activeTab === 'journal' && (
-        <div className="bg-white rounded-2xl border border-black/[0.06]">
-          <div className="px-4 py-3 border-b border-black/[0.06]">
-            <h2 className="text-sm font-medium">Journal Entries</h2>
-          </div>
-          <div className="divide-y divide-black/[0.04]">
-            {entries.map((entry) => (
-              <button
-                key={entry.id}
-                onClick={() => setSelectedEntry(entry)}
-                className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-black/10 transition"
-              >
-                <div>
-                  <p className="text-sm font-medium text-black">{entry.entry_number}</p>
-                  <p className="text-xs text-black">{entry.description || 'No description'}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs text-black">{new Date(entry.date).toLocaleDateString()}</span>
-                </div>
-              </button>
-            ))}
-            {entries.length === 0 && (
-              <div className="px-4 py-8 text-center text-black">
-                <FileText size={32} className="mx-auto mb-2 opacity-30" />
-                <p className="text-sm">No journal entries yet</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* REPORTS */}
-      {activeTab === 'reports' && (
-        <div className="space-y-6">
-          {/* Report Type Toggle */}
-          <div className="flex gap-1 bg-white rounded-xl p-1 border border-black/[0.06] w-fit">
-            <button
-              onClick={() => setReportType('balance')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'balance' ? 'bg-[var(--av-primary)] text-white' : 'text-black'
-              }`}
-            >
-              Balance Sheet
-            </button>
-            <button
-              onClick={() => setReportType('income')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                reportType === 'income' ? 'bg-[var(--av-primary)] text-white' : 'text-black'
-              }`}
-            >
-              Income Statement
-            </button>
-          </div>
-
-          {/* Balance Sheet */}
-          {reportType === 'balance' && (
-            <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <h2 className="text-lg font-semibold">Balance Sheet</h2>
-                <p className="text-xs text-black">As of {new Date().toLocaleDateString()}</p>
-              </div>
-
-              {/* Assets */}
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-[var(--av-primary)] mb-3">ASSETS</p>
-                {accountsByType.find((t) => t.id === 'asset')?.accounts.map((a) => (
-                  <div key={a.id} className="flex justify-between py-1.5 text-sm">
-                    <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono">{a.opening_balance?.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium">
-                  <span>Total Assets</span>
-                  <span className="font-mono">{assets.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Liabilities */}
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-[var(--av-danger)] mb-3">LIABILITIES</p>
-                {accountsByType.find((t) => t.id === 'liability')?.accounts.map((a) => (
-                  <div key={a.id} className="flex justify-between py-1.5 text-sm">
-                    <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono">{a.opening_balance?.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium">
-                  <span>Total Liabilities</span>
-                  <span className="font-mono">{liabilities.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Equity */}
-              <div className="px-6 py-4">
-                <p className="text-sm font-medium text-purple-600 mb-3">EQUITY</p>
-                {accountsByType.find((t) => t.id === 'equity')?.accounts.map((a) => (
-                  <div key={a.id} className="flex justify-between py-1.5 text-sm">
-                    <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono">{a.opening_balance?.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium">
-                  <span>Total Equity</span>
-                  <span className="font-mono">{equity.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Income Statement */}
-          {reportType === 'income' && (
-            <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <h2 className="text-lg font-semibold">Income Statement</h2>
-                <p className="text-xs text-black">For the period ending {new Date().toLocaleDateString()}</p>
-              </div>
-
-              {/* Revenue */}
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-[var(--av-success)] mb-3">REVENUE</p>
-                {accountsByType.find((t) => t.id === 'revenue')?.accounts.map((a) => (
-                  <div key={a.id} className="flex justify-between py-1.5 text-sm">
-                    <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono text-[var(--av-success)]">{a.opening_balance?.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-[var(--av-success)]">
-                  <span>Total Revenue</span>
-                  <span className="font-mono">{revenue.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Expenses */}
-              <div className="px-6 py-4 border-b border-black/[0.06]">
-                <p className="text-sm font-medium text-[var(--av-danger)] mb-3">EXPENSES</p>
-                {accountsByType.find((t) => t.id === 'expense')?.accounts.map((a) => (
-                  <div key={a.id} className="flex justify-between py-1.5 text-sm">
-                    <span className="text-black/70">{a.name}</span>
-                    <span className="font-mono text-[var(--av-danger)]">{a.opening_balance?.toLocaleString()}</span>
-                  </div>
-                ))}
-                <div className="flex justify-between py-2 mt-2 border-t border-black/10 font-medium text-[var(--av-danger)]">
-                  <span>Total Expenses</span>
-                  <span className="font-mono">{expenses.toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Net Income */}
-              <div className="px-6 py-4 bg-[var(--av-success-soft)]">
-                <div className="flex justify-between font-bold text-lg">
-                  <span>NET INCOME</span>
-                  <span className="font-mono text-[var(--av-success)]">{(revenue - expenses).toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* New Account Modal */}
-      {showNewAccount && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md shadow-xl">
-            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
-              <h2 className="font-semibold">New Account</h2>
-              <button onClick={() => setShowNewAccount(false)} className="p-2 hover:bg-black/[0.05] rounded-lg">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="text-sm font-medium block mb-1">Account Code</label>
-                <input
-                  value={newCode}
-                  onChange={(e) => setNewCode(e.target.value)}
-                  placeholder="e.g., 1100"
-                  className="w-full px-4 py-2 rounded-xl border border-black/10"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium block mb-1">Account Name</label>
-                <input
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  placeholder="e.g., Cash"
-                  className="w-full px-4 py-2 rounded-xl border border-black/10"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium block mb-1">Type</label>
-                <select
-                  value={newType}
-                  onChange={(e) => setNewType(e.target.value as Account['type'])}
-                  className="w-full px-4 py-2 rounded-xl border border-black/10"
-                >
-                  {ACCOUNT_TYPES.map((t) => (
-                    <option key={t.id} value={t.id}>{t.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium block mb-1">Opening Balance</label>
-                <input
-                  value={newOpening}
-                  onChange={(e) => setNewOpening(e.target.value)}
-                  type="number"
-                  className="w-full px-4 py-2 rounded-xl border border-black/10"
-                />
-              </div>
-            </div>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
-              <button onClick={() => setShowNewAccount(false)} className="px-4 py-2 rounded-lg border border-black/10">Cancel</button>
-              <button onClick={createAccount} disabled={creating} className="px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white font-medium disabled:opacity-50">{creating ? 'Creating...' : 'Create'}</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* New Journal Entry Modal */}
-      {showNewEntry && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-2xl shadow-xl my-8">
-            <div className="px-6 py-4 border-b border-black/[0.06] flex items-center justify-between">
-              <h2 className="font-semibold">New Journal Entry</h2>
-              <button onClick={resetEntryForm} className="p-2 hover:bg-black/[0.05] rounded-lg">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="text-sm font-medium block mb-1">Date</label>
-                  <input
-                    type="date"
-                    value={entryDate}
-                    onChange={(e) => setEntryDate(e.target.value)}
-                    className="w-full px-4 py-2 rounded-xl border border-black/10"
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="text-sm font-medium block mb-1">Description</label>
-                  <input
-                    value={entryDesc}
-                    onChange={(e) => setEntryDesc(e.target.value)}
-                    placeholder="Entry description"
-                    className="w-full px-4 py-2 rounded-xl border border-black/10"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Journal Lines</label>
-                  <button onClick={addLine} className="text-xs text-[var(--av-accent)]">+ Add Line</button>
-                </div>
-                <div className="space-y-2">
-                  <div className="grid grid-cols-12 gap-2 text-xs text-black font-medium px-1">
-                    <span className="col-span-5">Account</span>
-                    <span className="col-span-3 text-right">Debit</span>
-                    <span className="col-span-3 text-right">Credit</span>
-                    <span className="col-span-1"></span>
-                  </div>
-                  {newEntryLines.map((line, i) => (
-                    <div key={i} className="grid grid-cols-12 gap-2 items-center">
-                      <select
-                        value={line.account_id}
-                        onChange={(e) => updateLine(i, 'account_id', e.target.value)}
-                        className="col-span-5 px-3 py-2 rounded-lg border border-black/10 text-sm"
-                      >
-                        <option value="">Select account...</option>
-                        {accounts.map((a) => (
-                          <option key={a.id} value={a.id}>{a.code} - {a.name}</option>
-                        ))}
-                      </select>
-                      <input
-                        value={line.debit}
-                        onChange={(e) => updateLine(i, 'debit', e.target.value)}
-                        placeholder="0.00"
-                        type="number"
-                        className="col-span-3 px-3 py-2 rounded-lg border border-black/10 text-sm text-right"
-                      />
-                      <input
-                        value={line.credit}
-                        onChange={(e) => updateLine(i, 'credit', e.target.value)}
-                        placeholder="0.00"
-                        type="number"
-                        className="col-span-3 px-3 py-2 rounded-lg border border-black/10 text-sm text-right"
-                      />
-                      <button
-                        onClick={() => removeLine(i)}
-                        className="col-span-1 p-2 text-red-400 hover:bg-[var(--av-danger-soft)] rounded"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-4 pt-4 border-t border-black/[0.06]">
-                <div className="text-right">
-                  <div className="text-sm text-black">Debit: <span className="font-mono">{totalDebit.toFixed(2)}</span></div>
-                  <div className="text-sm text-black">Credit: <span className="font-mono">{totalCredit.toFixed(2)}</span></div>
-                  {Math.abs(totalDebit - totalCredit) > 0.01 && (
-                    <div className="text-xs text-[var(--av-danger)] mt-1">⚠️ Debits must equal credits</div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="px-6 py-4 border-t border-black/[0.06] flex justify-end gap-3">
-              <button onClick={resetEntryForm} className="px-4 py-2 rounded-lg border border-black/10">Cancel</button>
-              <button
-                onClick={createEntry}
-                disabled={Math.abs(totalDebit - totalCredit) > 0.01}
-                className="px-4 py-2 rounded-lg bg-[var(--av-primary)] text-white font-medium disabled:opacity-50"
-              >
-                Create Entry
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
+    {showAccount&&<div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"><div className="w-full max-w-md rounded-2xl bg-[var(--av-surface-elevated)] border p-6"><div className="flex justify-between mb-4"><h2 className="font-semibold">New account</h2><button onClick={()=>setShowAccount(false)}><X size={18}/></button></div><div className="space-y-3"><input className="w-full border rounded-lg p-2" placeholder="Code" value={code} onChange={e=>setCode(e.target.value)}/><input className="w-full border rounded-lg p-2" placeholder="Name" value={name} onChange={e=>setName(e.target.value)}/><select className="w-full border rounded-lg p-2" value={type} onChange={e=>setType(e.target.value as Account['type'])}>{types.map(t=><option key={t} value={t}>{t}</option>)}</select><input className="w-full border rounded-lg p-2" type="number" placeholder="Opening balance" value={opening} onChange={e=>setOpening(e.target.value)}/><button disabled={saving} onClick={()=>void createAccount()} className="w-full py-2 rounded-lg avenize-gradient text-white">{saving?'Saving…':'Create account'}</button></div></div></div>}
+    {showEntry&&<div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"><div className="w-full max-w-3xl max-h-[90vh] overflow-auto rounded-2xl bg-[var(--av-surface-elevated)] border p-6"><div className="flex justify-between mb-4"><h2 className="font-semibold">Post journal entry</h2><button onClick={()=>setShowEntry(false)}><X size={18}/></button></div><div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4"><input className="border rounded-lg p-2" type="date" value={date} onChange={e=>setDate(e.target.value)}/><input className="border rounded-lg p-2" placeholder="Description" value={description} onChange={e=>setDescription(e.target.value)}/></div><div className="space-y-2">{draft.map((l,i)=><div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_130px_130px_1fr_auto] gap-2 items-center"><select className="border rounded-lg p-2" value={l.account_id} onChange={e=>setDraft(v=>v.map((x,n)=>n===i?{...x,account_id:e.target.value}:x))}><option value="">Account</option>{accounts.map(a=><option key={a.id} value={a.id}>{a.code} · {a.name}</option>)}</select><input className="border rounded-lg p-2" type="number" min="0" placeholder="Debit" value={l.debit} onChange={e=>setDraft(v=>v.map((x,n)=>n===i?{...x,debit:e.target.value,credit:''}:x))}/><input className="border rounded-lg p-2" type="number" min="0" placeholder="Credit" value={l.credit} onChange={e=>setDraft(v=>v.map((x,n)=>n===i?{...x,credit:e.target.value,debit:''}:x))}/><input className="border rounded-lg p-2" placeholder="Line description" value={l.description} onChange={e=>setDraft(v=>v.map((x,n)=>n===i?{...x,description:e.target.value}:x))}/><button onClick={()=>removeLine(i)} className="p-2 opacity-60"><X size={16}/></button></div>)}</div><button onClick={addLine} className="mt-3 px-3 py-2 rounded-lg border">Add line</button><div className={`mt-4 p-3 rounded-lg text-sm ${Math.abs(debits-credits)<=0.01&&debits>0?'bg-[var(--av-success-soft)]':'bg-[var(--av-warning-soft)]'}`}>Debit {money(debits)} · Credit {money(credits)} · {Math.abs(debits-credits)<=0.01&&debits>0?'Balanced':'Not balanced'}</div><button disabled={saving} onClick={()=>void createEntry()} className="w-full mt-4 py-2 rounded-lg avenize-gradient text-white">{saving?'Posting…':'Post entry'}</button></div></div>}
+  </div>
 }
