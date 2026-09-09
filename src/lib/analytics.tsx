@@ -195,7 +195,7 @@ export function withPageTracking<P extends object>(
       return () => {
         void flushPending()
       }
-    }, [pageName, staff])
+    }, [staff])
 
     return <WrappedComponent {...props} />
   }

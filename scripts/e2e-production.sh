@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Production gate: fail closed, provision a disposable confirmed account when no dedicated E2E account exists, and clean it up on exit.
 set -u
-APP_URL="${APP_URL:-https://avenize.riverwayse.com}"
+APP_URL="${APP_URL:-https://avenize.com}"
 BASE="${SUPABASE_URL:-}"; KEY="${SUPABASE_KEY:-}"; SERVICE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
 EMAIL="${E2E_EMAIL:-}"; PASSWORD="${E2E_PASSWORD:-}"; DISPOSABLE_USER=""; PASS=0; FAIL=0
 pass(){ PASS=$((PASS+1)); printf '%-24s PASS  %s\n' "$1" "$2"; }

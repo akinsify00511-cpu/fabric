@@ -8,9 +8,11 @@
     "email-service",
     "execute-automation",
     "parse-intent",
+    "paystack-initialize",
     "paystack-verify",
     "paystack-webhook",
     "platform-health-check",
+    "portal-invitation-send",
     "resend-webhook",
     "subscription-checkout",
     "subscription-management",
@@ -21,6 +23,7 @@
     "campaign-send",
     "dispatch-webhooks",
     "execute-automation",
+    "portal-invitation-send",
     "webauthn"
   ]
 }

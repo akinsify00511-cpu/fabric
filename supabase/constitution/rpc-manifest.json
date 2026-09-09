@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 510
+    "functions": 514
   },
   "functions": [
     {
@@ -67,6 +67,13 @@
       "signature": ""
     },
     {
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
+      "frontend_referenced": true,
+      "name": "adjust_inventory_stock",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "066_control_plane_work_routing_action_protocol.sql",
       "frontend_referenced": false,
       "name": "advance_action_step",
@@ -112,6 +119,13 @@
       "defined_in": "018_time_tracking.sql",
       "frontend_referenced": false,
       "name": "approve_time_off",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
+      "frontend_referenced": false,
+      "name": "assert_posted_journal_entry_balanced",
       "security_sensitive": true,
       "signature": ""
     },
@@ -707,6 +721,13 @@
       "defined_in": "010_accounting.sql",
       "frontend_referenced": false,
       "name": "create_journal_entry",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
+      "frontend_referenced": true,
+      "name": "create_journal_entry_with_lines",
       "security_sensitive": true,
       "signature": ""
     },
@@ -1463,6 +1484,13 @@
       "defined_in": "013_notifications_calendar.sql",
       "frontend_referenced": false,
       "name": "get_mime_category",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
+      "frontend_referenced": true,
+      "name": "get_monitoring_summary",
       "security_sensitive": true,
       "signature": ""
     },

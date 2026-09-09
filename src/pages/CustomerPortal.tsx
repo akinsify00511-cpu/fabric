@@ -90,12 +90,12 @@ export default function CustomerPortal() {
     if (error || !data) {
       showToast('Failed to create invitation', 'error')
     } else {
-      setNewInvitation({
-        token: data[0].token,
-        url: `${window.location.origin}/portal/invite/${data[0].token}`,
-      })
-      showToast('Invitation link created!', 'success')
-      loadData()
+      const invitation = data[0]
+      const { error: emailError } = await supabase.functions.invoke('portal-invitation-send', { body: { invitation_id: invitation.id, base_url: window.location.origin } })
+      setNewInvitation({ token: invitation.token, url: `${window.location.origin}/portal/invite/${invitation.token}` })
+      if (emailError) showToast('Invitation created, but email delivery failed. Copy the link and send it manually.', 'error')
+      else showToast('Invitation created and email sent.', 'success')
+      await loadData()
     }
     setSaving(false)
   }
@@ -106,10 +106,9 @@ export default function CustomerPortal() {
   }
 
   const resendInvitation = async (invitation: Invitation) => {
-    // In production, this would send an email
-    const url = `${window.location.origin}/portal/invite/${invitation.token}`
-    navigator.clipboard.writeText(url)
-    showToast('Invitation link copied! Send it to the client.', 'success')
+    const { error } = await supabase.functions.invoke('portal-invitation-send', { body: { invitation_id: invitation.id, base_url: window.location.origin } })
+    if (error) { showToast('Email delivery failed. Copy the invitation link and send it manually.', 'error'); return }
+    showToast('Invitation email sent.', 'success')
   }
 
   
@@ -117,9 +116,10 @@ export default function CustomerPortal() {
   const deleteInvitation = async (invitation: Invitation) => {
     if (!confirm(`Delete invitation for ${invitation.email}?`)) return
 
-    await supabase.from('portal_invitations').delete().eq('id', invitation.id)
+    const { error } = await supabase.from('portal_invitations').delete().eq('id', invitation.id).eq('business_id', staff?.business_id)
+    if (error) { showToast('Invitation was not deleted.', 'error'); return }
     showToast('Invitation deleted', 'info')
-    loadData()
+    await loadData()
   }
 
   const copyLink = (token: string) => {

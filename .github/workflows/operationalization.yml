@@ -1,0 +1,63 @@
+name: Avenize Operationalization
+
+on:
+  push:
+    branches: [main, 'fix/continuous-operationalization-*']
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: avenize-operationalization-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore generated assets before source-only hardening
+        if: github.actor != 'github-actions[bot]'
+        run: |
+          git fetch origin main --depth=1
+          git checkout origin/main -- public/tesseract || true
+      - name: Apply operational hardening codemods
+        if: github.actor != 'github-actions[bot]'
+        run: node scripts/operational-hardening-codemod.mjs
+      - name: Regenerate committed contract and governance artifacts
+        run: |
+          python3 scripts/generate_contract_manifest.py
+          python3 scripts/governance/emit_enforcement_registry.py
+          python3 scripts/generate_supabase_manifests.py
+      - name: Apply safe source lint fixes
+        if: github.actor != 'github-actions[bot]'
+        run: npx oxlint --fix src supabase mobile scripts tests
+      - name: Persist automated fixes
+        if: github.actor != 'github-actions[bot]'
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "fix: apply automated operational hardening"
+            branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+            git fetch origin "$branch"
+            git rebase "origin/$branch"
+            git push origin "HEAD:$branch"
+          fi
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run test:unit
