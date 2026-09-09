@@ -3,6 +3,7 @@
 
 create table if not exists public.avenize_workflow_steps (
   id uuid primary key default gen_random_uuid(),
+  business_id uuid not null,
   workflow_execution_id uuid not null references public.avenize_workflow_executions(id) on delete cascade,
   step_key text not null,
   step_order integer not null,
@@ -81,7 +82,7 @@ do $$ declare t text; begin
   end loop;
 end $$;
 
-create index if not exists idx_avenize_workflow_steps_execution on public.avenize_workflow_steps(workflow_execution_id,step_order);
+create index if not exists idx_avenize_workflow_steps_business_execution on public.avenize_workflow_steps(business_id,workflow_execution_id,step_order);
 create index if not exists idx_avenize_event_subscriptions on public.avenize_event_subscriptions(business_id,event_type,is_active);
 create index if not exists idx_avenize_fulfillments_order on public.avenize_order_fulfillments(business_id,order_id,status);
 create index if not exists idx_avenize_reservations_stock on public.avenize_stock_reservations(business_id,product_id,location_id,status);
