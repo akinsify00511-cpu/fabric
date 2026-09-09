@@ -20,12 +20,17 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Restore generated assets before source-only hardening
+        if: github.actor != 'github-actions[bot]'
+        run: |
+          git fetch origin main --depth=1
+          git checkout origin/main -- public/tesseract || true
       - name: Apply operational hardening codemods
         if: github.actor != 'github-actions[bot]'
         run: node scripts/operational-hardening-codemod.mjs
-      - name: Apply safe lint fixes
+      - name: Apply safe source lint fixes
         if: github.actor != 'github-actions[bot]'
-        run: npx oxlint --fix .
+        run: npx oxlint --fix src supabase mobile scripts tests
       - name: Persist automated fixes
         if: github.actor != 'github-actions[bot]'
         run: |
