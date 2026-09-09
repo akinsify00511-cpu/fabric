@@ -74,30 +74,55 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Hydrate production verification environment from Vercel
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm i -g vercel
+          vercel env pull .env.production.local --environment=production --yes --token="${VERCEL_TOKEN}"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path('.env.production.local')
+          wanted = {
+              'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'SUPABASE_URL',
+              'SUPABASE_KEY', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
+              'E2E_EMAIL', 'E2E_PASSWORD', 'APP_URL',
+          }
+          values = {}
+          for raw in path.read_text(encoding='utf-8').splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#') or '=' not in line:
+                  continue
+              key, value = line.split('=', 1)
+              key = key.strip()
+              if key not in wanted:
+                  continue
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+                  value = value[1:-1]
+              values[key] = value
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
+              for key, value in values.items():
+                  if value:
+                      print(f'::add-mask::{value}')
+                      out.write(f'{key}={value}\n')
+          print('Production verification environment hydrated from Vercel configuration.')
+          PY
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Production contract verification
         run: bash scripts/verify-production.sh
-        env:
-          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       - name: Production E2E journey test
         if: always()
         run: bash scripts/e2e-production.sh
-        env:
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
       - name: Unified live certification
         if: always()
         run: python3 scripts/governance/production_certification.py
         env:
           REQUIRE_LIVE: '1'
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          APP_URL: ${{ secrets.APP_URL || 'https://avenize.riverwayse.com' }}
       - name: Upload verification report
         if: always()
         uses: actions/upload-artifact@v4
