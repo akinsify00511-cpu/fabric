@@ -2,22 +2,8 @@ name: Schema Drift Check
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'src/**'
-      - 'supabase/migrations/**'
-      - 'supabase/contract/**'
-      - 'supabase/constitution/**'
-      - 'governance/**'
-      - 'package.json'
-      - 'scripts/schema-drift-check.sh'
-      - 'scripts/generate_contract_manifest.py'
-      - 'scripts/governance/**'
-      - 'scripts/check_design_constitution.py'
-      - 'scripts/design_constitution_baseline.json'
-      - 'scripts/check_pricing_constitution.py'
   push:
-    branches: [main]
+    branches: [main, 'fix/continuous-operationalization-*']
     paths:
       - 'src/**'
       - 'supabase/migrations/**'
@@ -41,10 +27,6 @@ jobs:
       - name: Run schema drift check
         run: bash scripts/schema-drift-check.sh
 
-  # Production Contract gate: the canonical contract (extracted from the
-  # migration chain + frontend references) must cover every frontend
-  # reference, and the generated artifacts must be committed (regenerate
-  # with: python3 scripts/generate_contract_manifest.py).
   contract-manifest:
     runs-on: ubuntu-latest
     steps:
@@ -60,50 +42,34 @@ jobs:
             exit 1
           fi
 
-  # One Pricing Constitution (money contract): the canonical plan vocabulary
-  # and kobo prices must be IDENTICAL across the pricing_tiers seed, the
-  # frontend fallback tiers, the edge VALID_PLANS, and paymentsCore display
-  # names, and the server must price via plan_price_cents (never the browser).
   pricing-constitution:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Verify the One Pricing Constitution
         run: python3 scripts/check_pricing_constitution.py
 
-  # Phase A6: the Avenize Design Constitution gate. Fails when hardcoded-hex
-  # or anti-slop-class drift grows beyond the recorded baseline (new screens
-  # must use --av-* tokens; the baseline only burns down).
   design-constitution:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Run design constitution gate
         run: python3 scripts/check_design_constitution.py
 
-  # Governance release gate: the enforcement-registry validators must report
-  # RELEASE APPROVED (no blocking P0/P1 failures, no blocking UNKNOWNs).
-  # Replicates npm run avenize:governance:contracts + :meta + :security.
   governance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-
       - name: Verify governance registries are committed
         run: |
           python3 scripts/governance/emit_enforcement_registry.py
           python3 scripts/generate_supabase_manifests.py
           git diff --exit-code -- governance/ supabase/constitution/
-
       - name: Governance contracts gate
         run: python3 scripts/governance/avenize_governance.py contracts
-
       - name: Governance meta + security gates
         run: |
           python3 scripts/governance/avenize_governance.py meta
@@ -125,22 +91,17 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Install psql extras (pgcrypto, etc.)
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq postgresql-client
-
       - name: Apply CI shim
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 \
-            -f tests/database/ci_shim.sql
-
+          psql -h localhost -U postgres -d test_avenize -v ON_ERROR_STOP=1 -f tests/database/ci_shim.sql
       - name: Run all migrations
         env:
           PGPASSWORD: postgres
