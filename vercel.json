@@ -4,7 +4,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "git": {
-    "deploymentEnabled": false
+    "deploymentEnabled": true
   },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
