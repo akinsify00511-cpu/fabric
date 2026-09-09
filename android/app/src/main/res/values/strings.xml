@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Avenize</string>
+    <string name="title_activity_main">Avenize</string>
+    <string name="package_name">com.avenize.app</string>
+    <string name="custom_url_scheme">com.avenize.app</string>
+</resources>
