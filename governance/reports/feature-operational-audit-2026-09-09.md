@@ -85,7 +85,7 @@ The repository has strong backend structure and a growing production control pla
 
 ### P0/P1 — Rendering / user-relevance audit
 
-The visual audit has now been added to the operational audit rather than treating rendering as a separate cosmetic review.
+The visual audit has now been added to the operational audit rather than treating it as a cosmetic review.
 
 1. **Dashboard trend view contains fabricated chart history.** The trend rendering uses a hard-coded seven-bar series rather than historical revenue/pipeline/project data. It is visually plausible but is not a truthful representation of the user's business trend.
 2. **Dashboard progress view contains a hard-coded 70% progress bar.** No verified goal/target denominator is used. This can communicate a false sense of progress and must not be presented as a business KPI until backed by an actual goal and current value.
