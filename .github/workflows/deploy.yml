@@ -35,7 +35,7 @@ jobs:
       - name: Deploy to Vercel Preview
         run: |
           npm i -g vercel
-          vercel --yes --token=${{ secrets.VERCEL_TOKEN }}
+          vercel --yes --token=${{ secrets.VERCEL_TOKEN }} --archive=tgz
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -70,7 +70,7 @@ jobs:
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
-          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --archive=tgz
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
