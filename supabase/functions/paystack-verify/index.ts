@@ -73,7 +73,9 @@ Deno.serve(async (req) => {
       if (error) return json({ error: 'Could not finalize payment ledger' }, 500)
     }
 
-    if (ledger.kind === 'subscription') {
+    // subscription-checkout records `subscription_checkout`; legacy checkout uses `subscription`.
+    // Both represent a paid plan activation and must settle the subscription ledger path.
+    if (ledger.kind === 'subscription' || ledger.kind === 'subscription_checkout') {
       const planName = String((ledger.metadata as Record<string, unknown> | null)?.plan_name || ledger.plan_code || 'Subscription')
       const days = ledger.billing_cycle === 'yearly' ? 365 : 30
       const next = new Date(Date.now() + days * 86400000).toISOString()
