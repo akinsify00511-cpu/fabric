@@ -1,0 +1,68 @@
+name: Avenize Mobile Native Bootstrap
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'capacitor.config.ts'
+      - '.github/workflows/mobile-native-bootstrap.yml'
+      - 'android/**'
+      - 'ios/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: avenize-mobile-native
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies and refresh lockfile
+        run: npm install --no-audit --no-fund
+
+      - name: Build web application
+        run: npm run build
+
+      - name: Bootstrap Android and iOS projects
+        run: |
+          if [ ! -d android ]; then npx cap add android; fi
+          if [ ! -d ios ]; then npx cap add ios; fi
+          npx cap sync
+
+      - name: Validate native project structure
+        run: |
+          test -f android/settings.gradle
+          test -f android/app/src/main/AndroidManifest.xml
+          test -f ios/App/App.xcodeproj/project.pbxproj
+          test -f ios/App/App/Info.plist
+          grep -q "com.avenize.app" android/app/src/main/AndroidManifest.xml || true
+
+      - name: Commit generated native projects and lockfile
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package-lock.json android ios
+          if git diff --cached --quiet; then
+            echo 'No generated mobile changes to commit.'
+          else
+            git commit -m 'build(mobile): bootstrap Android and iOS projects'
+            git push
+          fi
