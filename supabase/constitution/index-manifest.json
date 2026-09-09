@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 538
+    "indexes": 551
   },
   "indexes": [
     {
@@ -294,6 +294,46 @@
       "table": "autonomy_actions"
     },
     {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "index": "idx_avenize_approval_requests",
+      "table": "avenize_approval_requests"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "index": "idx_avenize_audit_events_business_time",
+      "table": "avenize_audit_events"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "index": "idx_avenize_bank_reconciliations",
+      "table": "avenize_bank_reconciliations"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "index": "idx_avenize_budget_lines",
+      "table": "avenize_budget_lines"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "index": "idx_avenize_budgets",
+      "table": "avenize_budgets"
+    },
+    {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "index": "idx_avenize_compliance_controls",
+      "table": "avenize_compliance_controls"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "index": "idx_avenize_event_subscriptions",
+      "table": "avenize_event_subscriptions"
+    },
+    {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "index": "idx_avenize_import_jobs",
+      "table": "avenize_import_jobs"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "index": "idx_avenize_integration_events_pending",
       "table": "avenize_integration_events"
@@ -309,9 +349,34 @@
       "table": "avenize_inventory_ledger"
     },
     {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "index": "idx_avenize_fulfillments_order",
+      "table": "avenize_order_fulfillments"
+    },
+    {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "index": "idx_avenize_payroll_lines",
+      "table": "avenize_payroll_lines"
+    },
+    {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "index": "idx_avenize_payroll_runs",
+      "table": "avenize_payroll_runs"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "index": "idx_avenize_reservations_stock",
+      "table": "avenize_stock_reservations"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "index": "idx_avenize_workflow_executions_status",
       "table": "avenize_workflow_executions"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "index": "idx_avenize_workflow_steps_execution",
+      "table": "avenize_workflow_steps"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",

@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 516
+    "functions": 518
   },
   "functions": [
     {
@@ -189,6 +189,13 @@
       "defined_in": "20260825160000_governance_engine.sql",
       "frontend_referenced": true,
       "name": "autonomy_feed",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "name": "avenize_assert_journal_balanced",
       "security_sensitive": true,
       "signature": ""
     },
@@ -1148,6 +1155,13 @@
       "defined_in": "20260819060000_staff_role_immutability.sql",
       "frontend_referenced": false,
       "name": "enforce_staff_role_immutability",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "name": "enqueue_avenize_workflow",
       "security_sensitive": true,
       "signature": ""
     },

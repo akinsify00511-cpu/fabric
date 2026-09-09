@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 481,
+    "tables": 496,
     "views": 6,
-    "functions": 516,
+    "functions": 518,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -401,6 +401,62 @@
     },
     {
       "kind": "table",
+      "name": "avenize_approval_requests",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_audit_events",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_bank_accounts",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_bank_reconciliations",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_budget_lines",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_budgets",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_compliance_controls",
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_cost_centers",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "repairable": true,
@@ -409,8 +465,24 @@
     },
     {
       "kind": "table",
+      "name": "avenize_country_localizations",
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_country_rules",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_event_subscriptions",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -433,6 +505,14 @@
     },
     {
       "kind": "table",
+      "name": "avenize_import_jobs",
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_integration_events",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "repairable": true,
@@ -449,6 +529,14 @@
     },
     {
       "kind": "table",
+      "name": "avenize_order_fulfillments",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_payment_allocations",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "repairable": true,
@@ -457,8 +545,32 @@
     },
     {
       "kind": "table",
+      "name": "avenize_payroll_lines",
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_payroll_runs",
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_stock_locations",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_stock_reservations",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -475,6 +587,14 @@
       "kind": "table",
       "name": "avenize_workflow_executions",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_workflow_steps",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -4202,6 +4322,17 @@
     },
     {
       "kind": "function",
+      "name": "avenize_assert_journal_balanced",
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_journal_entry_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "award_xp",
       "defined_in": "011_gamification.sql",
       "repairable": false,
@@ -5708,6 +5839,17 @@
       "frontend_referenced": false,
       "signatures": [
         ""
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "enqueue_avenize_workflow",
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_workflow_key text, p_reference_type text, p_reference_id uuid, p_input jsonb, p_idempotency_key text"
       ]
     },
     {
@@ -9741,6 +9883,9 @@
     "autonomy_feed": [
       "p_limit int4"
     ],
+    "avenize_assert_journal_balanced": [
+      "p_journal_entry_id uuid"
+    ],
     "award_xp": [
       "p_user_id uuid, p_xp_amount int4, p_action_type text, p_description text"
     ],
@@ -10154,6 +10299,9 @@
     ],
     "enforce_staff_role_immutability": [
       ""
+    ],
+    "enqueue_avenize_workflow": [
+      "p_business_id uuid, p_workflow_key text, p_reference_type text, p_reference_id uuid, p_input jsonb, p_idempotency_key text"
     ],
     "enqueue_meeting_capture_media": [
       ""

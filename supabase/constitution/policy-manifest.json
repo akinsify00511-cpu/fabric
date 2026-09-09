@@ -1,6 +1,6 @@
 {
   "counts": {
-    "policies": 250
+    "policies": 253
   },
   "policies": [
     {
@@ -132,6 +132,21 @@
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
       "policy": "automation_proposals_viewable",
       "table": "automation_proposals"
+    },
+    {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "policy": "avenize_import_jobs_insert",
+      "table": "avenize_import_jobs"
+    },
+    {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "policy": "avenize_import_jobs_select",
+      "table": "avenize_import_jobs"
+    },
+    {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "policy": "avenize_import_jobs_update",
+      "table": "avenize_import_jobs"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",

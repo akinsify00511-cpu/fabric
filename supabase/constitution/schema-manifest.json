@@ -1,6 +1,6 @@
 {
   "counts": {
-    "tables": 481,
+    "tables": 496,
     "views": 6
   },
   "tables": [
@@ -299,16 +299,70 @@
       "name": "autonomy_actions"
     },
     {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_approval_requests"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_audit_events"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_bank_accounts"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_bank_reconciliations"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_budget_lines"
+    },
+    {
+      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_budgets"
+    },
+    {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_compliance_controls"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_cost_centers"
     },
     {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_country_localizations"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_country_rules"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_event_subscriptions"
     },
     {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
@@ -323,6 +377,12 @@
       "name": "avenize_goods_receipts"
     },
     {
+      "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_import_jobs"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
@@ -335,16 +395,40 @@
       "name": "avenize_inventory_ledger"
     },
     {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_order_fulfillments"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_payment_allocations"
     },
     {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_payroll_lines"
+    },
+    {
+      "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_payroll_runs"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_stock_locations"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_stock_reservations"
     },
     {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
@@ -357,6 +441,12 @@
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_workflow_executions"
+    },
+    {
+      "defined_in": "20260909234000_thick_core_workflows.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_workflow_steps"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
