@@ -8,6 +8,8 @@ UI → interaction → business logic → API/RPC/Edge Function → database →
 
 Absence of evidence is not PASS.
 
+Rendering has an additional truth standard: **what is shown must be relevant to the current user, current context, current data and current capability state.** A visually polished component that displays fabricated, stale, generic, unreachable, or contextually irrelevant information is a feature defect, not a cosmetic issue.
+
 Statuses: PASS, PARTIAL, FAIL, NOT_CONNECTED, NOT_CONFIGURED, NOT_PROVABLE.
 
 ## Baseline conclusion
@@ -16,188 +18,114 @@ The repository has strong backend structure and a growing production control pla
 
 ## Confirmed findings
 
-### P0 — systemic readiness/control
+### P0 — systemic
 
 1. **No authoritative feature operationality registry.** Module/readiness metadata does not currently describe the complete Avenize product surface or prove end-to-end outcomes.
-2. **Feature E2E coverage is insufficient.** `tests/e2e/example.spec.ts` contains skipped tests for 2FA, dashboard truth, CRM persistence, webhook dispatch, automation execution and campaign sending. The comments explicitly describe expected failures. These skips must not count as operational certification.
-3. **Module access is not actually using the intended readiness model.** Live `can_access_module()` and `list_accessible_modules()` return `ready=true` unconditionally and default entitlement to `true` when a feature key is absent. Live `business_entitlements` has 7 rows whose `features` values are `{}`. This means the intended entitled + ready gate is not authoritative in production.
-4. **Client module access also fails open when the RPC is missing.** `useModuleAccess.ts` deliberately returns `entitled=true, ready=true` on a missing module RPC. This is incompatible with a production fail-closed readiness gate.
-
-### P0 — Payments
-
-1. **Invoice Paystack initialization is broken against the live schema.** Live `paystack-initialize` inserts pending state into `payments_paystack`, but that table does not exist in the live public schema. The live payment ledger is `payment_transactions`, which is what `paystack-verify` and `paystack-webhook` read.
-2. **Invoice Paystack initialization has an authorization flaw.** The JWT-protected `paystack-initialize` function does not resolve the authenticated user's business before accepting `invoice_id`, and direct mode accepts caller-supplied `business_id`, `amount_kobo` and `email`. Authentication is present; tenant authorization is not.
-3. **Subscription checkout is a separate, better-structured path.** Live `subscription-checkout` resolves active staff membership, reads the sellable pricing tier, adds the configured 7.5% VAT, initializes Paystack and writes `payment_transactions` plus `subscription_provider_attempts`. The Paystack webhook then verifies signature/provider amount/currency and settles the subscription. This path is structurally strong but still requires a real-money production journey before PASS.
+2. **Feature E2E coverage is insufficient.** `tests/e2e/example.spec.ts` contains multiple skipped tests for 2FA, dashboard truth, CRM persistence, webhook dispatch, automation execution and campaign sending. The comments explicitly describe expected failures. These skips must not count as operational certification.
+3. **Module access fails open.** `src/lib/useModuleAccess.ts` contains a fallback that marks a module entitled/ready when the readiness RPC is unavailable. This conflicts with fail-closed production semantics.
+4. **Rendering integrity is not yet a release gate.** Current UI auditing shows that some components can render information that looks real but is not derived from the underlying business data or current state. This must be treated as product correctness.
 
 ### P0/P1 — Meetings
 
 1. Recording currently captures the local media stream rather than proving a composed/full-room meeting recording.
 2. `generate_recording_signed_url` returns the supplied storage path rather than generating a real temporary Storage signed URL.
 3. `capture-process` authenticates and converts a capture into `meeting_media` with `processing_status=pending`; it does not itself complete transcription/processing.
-4. Live Edge Functions include rich meeting capture infrastructure, but `transcribe-audio` is **absent from the live function list** even though repository history/docs reference it.
-5. No verified production worker/cron chain currently proves capture → transcription → transcript → timestamps → intelligence → decisions/actions → tasks.
-6. Meeting analytics and intelligence tables/RPCs exist, but actual event population and customer-visible evidence are not certified.
-
-**Status: PARTIAL / NOT_CERTIFIED.**
+4. Live cron jobs include due automations and integrity scanning, but no dedicated meeting capture/transcription processing job was found.
+5. The complete recording → transcript → timestamps → intelligence → decisions → actions → tasks chain is not certified.
 
 ### P1 — Commercial workflows
 
-1. **CRM/Deals:** contacts are persisted, but the inspected CRM implementation keeps deals in local React state; deal create/update/delete/persistence are not durable.
-2. **Quotes:** quote records are persisted and can change status, but customer delivery, acceptance and downstream order conversion are not proven as one journey.
-3. **Sales orders:** backend structures exist, but the complete quote → order → fulfilment/invoice/payment lifecycle is not certified.
-4. **Invoices/finance:** invoice creation and manual payment recording are materially improved by server-side RPCs that recompute totals, lock invoice rows and prevent overpayment. This is not the same as a fully proven customer payment lifecycle.
-5. **Payments:** the general ledger UI is not proof of gateway settlement. The broken `paystack-initialize` path is a P0 blocker for invoice payment; subscription checkout is a separate path.
-6. **Subscriptions:** live checkout/management/verification/webhook infrastructure exists, but real-money production proof remains required.
-
-### P1 — Accounting
-
-1. `Accounting.tsx` labels itself “Double-entry bookkeeping” and validates balanced debit/credit totals in browser state.
-2. `createEntry()` inserts only a `journal_entries` header; the collected journal lines are not persisted by the inspected code.
-3. Reports calculate balances from account `opening_balance` values rather than a verified posted debit/credit ledger.
-4. Live `accounts` and `journal_entries` are empty.
-
-**Status: FAIL for accounting-grade value.**
+1. **CRM/Deals:** UI CRUD is not sufficient evidence of a complete lead → deal → quote → order → invoice → payment workflow.
+2. **Quotes:** the UI can mark/send quote state, but the inspected flow does not prove actual customer delivery, response persistence and downstream order creation as one journey.
+3. **Payments:** the Payments surface is primarily a payment-record/ledger view; actual gateway checkout is implemented elsewhere through Edge Functions. The two must be tested as one payment lifecycle.
+4. **Subscriptions:** live checkout/management/verification functions exist, but the real-money production journey remains credential-gated and therefore not certified.
+5. **Invoices/finance:** accounting UI is not enough to certify a complete accounting system; journal-entry integrity, posting, reconciliation and reporting must be demonstrated.
 
 ### P1 — Automation
 
 1. `execute-automation` is active and has explicit backend authentication/secret handling.
-2. A production cron job runs the due-automation path every minute.
-3. Live `automations` and `automation_runs` contain 0 rows.
-4. The engine is structurally present but there is no production evidence of a configured rule executing.
-
-**Status: NOT_PROVABLE.**
+2. A production cron job runs `execute_due_automations()` every minute.
+3. Live `automations` and `automation_runs` currently contain **0 rows**, so the automation capability is not operationally demonstrated with a real production rule/run.
+4. Therefore Automation = **NOT_PROVABLE**, not PASS.
 
 ### P1 — Marketing / email
 
-1. `campaign-send`, `email-service`, `resend-webhook` and welcome-email infrastructure are active.
-2. `campaign-send` resolves active business email contacts and queues `email_sends`/`email_events`, then invokes `email-service`.
-3. `email-service` can call Resend when configured, but it marks individual events failed when templates/provider configuration fail.
-4. `campaign-send` currently decides the campaign is `sent` based on the internal HTTP response being successful, not on all/any provider deliveries actually succeeding. This can produce a false campaign-level “sent” status while individual sends failed.
-5. Recipient selection is not proven to be campaign-specific: the live function loads all active `email_contacts` for the business.
-6. Existing campaign E2E coverage remains skipped and stale.
-
-**Status: PARTIAL / NOT_CERTIFIED.**
-
-### P1 — Webhooks / integrations
-
-1. Live `dispatch-webhooks` is active and now requires `business_id + secret`, blocks private/internal URLs and applies configured outbound auth headers.
-2. Webhook configuration and delivery-log UI exists.
-3. The UI displays `${window.location.origin}/functions/v1/dispatch-webhooks`; no verified Vercel proxy route was established during this audit, so the displayed endpoint cannot be assumed to be the real callable Supabase function URL.
-4. Existing webhook dispatch E2E coverage is skipped.
-
-**Status: PARTIAL / NOT_CERTIFIED.**
-
-### P1 — AI / Sarah / Business Brain
-
-1. Live `ask-avenize` is JWT-protected, resolves staff/business membership, reads business health/metrics/recommendations/next-best-action/invoice context, persists copilot messages and emits platform activity.
-2. The implementation is deterministic/rule-based (`provider: native`), not evidence of a general-purpose generative model.
-3. `parse-intent` is deterministic NLP; it proposes actions but deliberately exposes no mutation capability.
-4. The AI response/action loop is not certified end-to-end, especially for grounded mutations, approval, audit evidence and downstream business state.
-
-**Status: PARTIAL.**
-
-### P1 — Search
-
-1. Search UI calls `search_indexes` directly and supports fuzzy sorting, autocomplete, saved searches and keyboard navigation.
-2. Result routing is incomplete: contacts, tasks, staff, invoices, projects and documents are mapped; quotes, payments and inventory are displayed as searchable entity types but have no explicit destination mapping in the inspected route map.
-3. `indexEntity()` does not visibly supply `business_id` while declaring a `business_id,entity_type,entity_id` conflict target; this requires live verification.
-4. Search therefore cannot be certified as a complete tenant-scoped universal search experience.
-
-**Status: PARTIAL / NOT_PROVABLE.**
+1. `campaign-send`, `email-service`, `resend-webhook` and welcome-email infrastructure are active in Supabase.
+2. The campaign UI contains incomplete interaction paths and the existing campaign E2E is skipped.
+3. Campaign delivery, bounce/failure handling, recipient persistence and attribution must be demonstrated end-to-end.
 
 ### P1 — Procurement / inventory / operations
 
-1. Procurement contains UI for RFQs and purchase orders, but inspected interactions do not prove actual RFQ delivery and purchase-order lifecycle execution.
-2. Inventory quantity mutation and movement recording are separate client operations; atomicity/reconciliation is not proven.
-3. Nigerian Jobs/Projects core CRUD is real, including persisted job stage changes, but materials, labor, milestones, communications and variations are not certified as a complete persisted execution workflow.
-4. Tasks have real Supabase CRUD and activity logging; assignment/review/time tracking/comments/automation notification chains remain to be certified.
+1. Procurement contains UI for RFQs/POs but inspected interactions do not yet prove actual RFQ delivery and purchase-order lifecycle execution.
+2. Inventory quantity mutation is split across client operations rather than being proven as an atomic stock-movement transaction.
+3. Projects/tasks have substantial CRUD structure but execution-to-outcome chains require certification.
 
 ### P1 — Documents / portal / signatures
 
-1. Documents have database/storage structures, but upload, folder, version, permissions and retrieval need an end-to-end journey.
-2. Customer Portal exposes customer-facing data structures but does not prove reliable invitation/delivery and customer action completion.
-3. Electronic signatures have request/signing structures but invite → signer authentication → signature → immutable evidence → downstream state is not certified.
+1. Documents have database/storage structure, but upload, folder, version, permissions, retrieval and workflow use must be tested as one chain.
+2. Customer Portal contains customer-facing structures but does not yet prove reliable invitation/delivery and customer action completion.
+3. Electronic signatures have signing infrastructure but must prove invite → signer authentication → signature → immutable evidence → downstream state.
 
-### P2 — Calendar / communications
+### P1 — AI / Sarah / Business Brain
 
-1. Calendar has real event range loading plus create/update/delete persistence.
-2. Attendee handling is not proven as a durable invitation/acceptance/notification workflow.
-3. Chat has real-time messaging structures, but attachments, reactions, unread state, notification integration and cross-module activity require certification.
-4. Notifications persist and have ownership RLS, but event correctness and deep navigation require testing.
+1. `ask-avenize` is deployed and authenticated.
+2. The inspected implementation is deterministic/rule-based rather than evidence of a general-purpose reasoning model.
+3. AI readiness therefore depends on the intended product contract: advisory answers, correct tenant context, grounded data, safe actions, persistence and audit evidence must each be tested.
+4. A text response alone must not certify AI as operational.
+
+### P2 — Communications
+
+1. Chat has real-time messaging structure and persistence, but reactions, unread state, notifications, attachments and cross-module activity should be certified together.
+2. Notifications have persistence and RLS, but link/deep-navigation behavior and event correctness need feature-level tests.
 
 ### P2 — PWA/mobile
 
 1. PWA manifest and icon configuration exist.
-2. Installability is not equivalent to mobile workflow readiness; critical workflows must be exercised at mobile viewport/device conditions, including meetings, forms, search, payments and offline/reconnect behavior where promised.
+2. Installability is not equivalent to mobile workflow readiness; critical journeys must be exercised on mobile viewport/browser conditions.
 
-## Live production evidence captured during this audit
+### P0/P1 — Rendering / user-relevance audit
 
-- Live Edge Function inventory currently contains 20 active functions spanning payments, subscriptions, email, CRM activity, AI, automation, webhooks, capture processing and campaign sending.
-- `transcribe-audio` is not among the live functions.
-- Live `automations` = 0 and `automation_runs` = 0.
-- Live `business_subscriptions` = 0.
-- Live `payments_paystack` table is absent; `payment_transactions` exists.
-- Live core business data is sparse: businesses 7, staff 7, meetings 1, events 1, payment_transactions 2, analytics_events 154, audit_logs 28, business_events 2, business_health_scores 5, channels 2; most inspected CRM/finance/operations tables currently have 0 rows.
-- Sparse production data is not itself a product defect, but it prevents passive observation from proving most journeys. Controlled isolated E2E journeys are required.
+The visual audit has now been added to the operational audit rather than treating rendering as a separate cosmetic review.
 
-## Security/control observations
+1. **Dashboard trend view contains fabricated chart history.** The trend rendering uses a hard-coded seven-bar series rather than historical revenue/pipeline/project data. It is visually plausible but is not a truthful representation of the user's business trend.
+2. **Dashboard progress view contains a hard-coded 70% progress bar.** No verified goal/target denominator is used. This can communicate a false sense of progress and must not be presented as a business KPI until backed by an actual goal and current value.
+3. **Dashboard view switching can change representation without changing evidence.** Number/table/breakdown/trend/progress views are presentation modes, but some modes are currently capable of implying historical or goal-based information that the underlying query does not provide.
+4. **Dashboard empty state is comparatively strong in intent** because it explicitly avoids fabricating a sparkline when the primary metric is zero; this truthfulness standard must be applied to every chart, KPI, badge, percentage, status, activity feed, recommendation and health indicator across the product.
+5. **Rendering relevance must include role, entitlement, selected tools, data freshness and workflow state.** A component should not merely render because its route exists. It should render only when its underlying capability is available and the displayed fact is applicable to the current user.
+6. **Static/demo-looking content is a release defect when presented as current business state.** Examples include hard-coded metrics, decorative trend histories, fixed percentages, stale labels, unreachable tabs, placeholder actions and status labels that do not reflect persisted state.
+7. **Empty/zero/unknown/loading/error states need semantic distinction.** `0`, “no data yet”, “not configured”, “not connected”, “not authorized”, “failed to load”, and “healthy” are different states and must not collapse into one visual outcome.
+8. **User relevance must be tested at the rendered-output level.** Backend correctness alone cannot certify a screen if the final UI shows the wrong entity, wrong metric, wrong time range, wrong tenant, wrong status or an invented visualization.
 
-- RLS is enabled broadly and many business-facing policies scope through `get_current_staff()` or `auth.uid()`.
-- Some `public` role policies are actually authenticated-user scoped by `auth.uid()` or business membership and are not automatically vulnerabilities merely because the role name is `public`.
-- Service/system insert policies exist for audit logs and notifications and should remain tightly controlled at the function boundary.
-- The strongest current security concern discovered in this pass is the tenant-authorization gap in `paystack-initialize`, not the mere presence of public-role policy rows.
+### Rendering audit contract
 
-## Existing test-suite integrity finding
+For every page/component, the audit must answer:
 
-The E2E suite contains multiple `test.skip()` cases for exactly the product areas where operational readiness is most uncertain: 2FA, dashboard real data, CRM deals, webhooks, automations and campaign email. Several comments are stale and still describe old Edge Function deployment blockers even though corresponding functions are now live. Green CI therefore cannot be treated as product readiness.
+- Is every displayed number derived from current persisted data?
+- Is every chart backed by real data points rather than illustrative values?
+- Is every percentage backed by a defined numerator and denominator?
+- Is every date/time label derived from the actual record or an explicit reporting period?
+- Are labels and actions appropriate to the user's role and permissions?
+- Does the component disappear, downgrade, or explain itself when its capability is unavailable?
+- Does zero mean zero, or is zero being used to hide unknown/unloaded state?
+- Are loading, error, empty, not-configured and unauthorized states distinguishable?
+- Do buttons actually perform the action their rendered label promises?
+- Are cards, tabs, filters and charts showing data relevant to the selected context rather than generic product content?
+- Does mobile rendering preserve the same semantic truth without hiding critical information or actions?
 
-## Readiness matrix — current evidence
+## Live production evidence captured during audit
 
-| Capability | Current status | Primary evidence/gap |
-|---|---|---|
-| Auth/onboarding | PARTIAL | Auth baseline exists; full first-run business journey needs production proof |
-| Dashboard/command center | NOT_CERTIFIED | real-data truth still not proven |
-| CRM contacts | PARTIAL | durable CRUD, broader lifecycle not certified |
-| CRM deals | FAIL | local state implementation |
-| Leads/capture | PARTIAL | live capture/intent infrastructure, full journey not proven |
-| Quotes | PARTIAL | persistence exists; delivery/acceptance/order chain not proven |
-| Sales orders | NOT_PROVABLE | lifecycle not certified |
-| Finance/invoicing | PARTIAL | server-side invoice/payment recording is real |
-| Invoice Paystack | FAIL | missing `payments_paystack` table + authorization gap |
-| Subscription checkout | PARTIAL | strong structural chain; real-money E2E pending |
-| Accounting | FAIL | journal lines not persisted; reports not ledger-derived |
-| Meetings | PARTIAL | rich backend; recording/transcription chain incomplete |
-| Tasks | PARTIAL | real CRUD; execution integrations unproven |
-| Calendar | PARTIAL | durable CRUD; collaboration workflow incomplete |
-| Automations | NOT_PROVABLE | engine live; zero configured/run evidence |
-| Email campaigns | PARTIAL | queue/provider path live; campaign-level success semantics weak |
-| Webhooks | PARTIAL | secure dispatch engine live; callable endpoint/delivery E2E unproven |
-| Search | PARTIAL | rich UI; route/indexing/tenant E2E incomplete |
-| AI/Sarah | PARTIAL | grounded deterministic reasoning; general agent action loop unproven |
-| Documents | PARTIAL | structure exists; full file workflow not certified |
-| Signatures | PARTIAL | structures exist; full signer evidence chain not certified |
-| Customer portal | PARTIAL | data views exist; invitation/action journey incomplete |
-| Procurement | FAIL/PARTIAL | RFQ/PO lifecycle incomplete |
-| Inventory | PARTIAL | stock operations exist; atomic/reconciliation workflow unproven |
-| Projects/jobs | PARTIAL | job CRUD/stage real; execution sub-resources unproven |
-| Chat | PARTIAL | real-time core; collaboration depth not certified |
-| Notifications | PARTIAL | persistence/ownership exists; event/deep-link correctness unproven |
-| PWA/mobile | STRUCTURAL PASS / NOT_CERTIFIED | manifest/installability only |
-| Module entitlement/readiness | FAIL | live readiness RPCs hard-code ready=true/default entitlement true |
+- Supabase currently exposes a broad active Edge Function surface, including payments, subscriptions, email, CRM activity, deal risk/follow-through, AI, automation, webhooks, capture processing and campaign sending.
+- Live `automations` = 0 rows and `automation_runs` = 0 rows.
+- Live core business tables inspected (leads, deals, quotes, sales orders, invoices, tasks, notifications, campaigns) currently have no production records; meetings has one record. This means many business journeys cannot be proven from existing production data alone.
+- Meeting backend contains substantial RPC/table structure, but structural presence is not being treated as operational PASS.
+- Live module entitlement records currently have empty feature JSON objects, while readiness RPCs default missing feature keys to entitled/ready. This reinforces the need for fail-closed readiness and contextual rendering.
 
 ## Certification rule
 
-A feature may only become READY after a feature-specific operational contract proves the intended outcome in a controlled test journey against the production-like stack. Skipped tests, placeholder UI, local-only state, static counts, existence of RPCs, deployed Edge Functions, or populated schemas do not independently constitute readiness.
+A feature may only become READY after a feature-specific operational contract proves the intended outcome in a controlled test journey against the production-like stack. Skipped tests, placeholder UI, local-only state, static counts, hard-coded visualizations, existence of RPCs, deployed Edge Functions, or populated schemas do not independently constitute readiness.
 
-## Audit-only boundary
-
-No product repair is included in this report. Repair work must be performed in separate implementation changes, then each affected capability must be re-audited against the same operational contract before being promoted to PASS.
+A rendered component may only be marked visually/semantically READY when the information it presents is traceable to the current user context and an authoritative source of truth. **Polish cannot compensate for incorrect information.**
 
 ## Next audit layer
 
-1. Complete the authoritative feature inventory across every route/tool, including secondary/admin/portal surfaces.
-2. Map each feature to its actual client calls, RPCs, tables, storage buckets, Edge Functions, triggers, cron jobs, notifications and audit events.
-3. Convert every high-value capability into executable operational E2E contracts.
-4. Remove/replace stale skipped readiness tests with fail-closed operational assertions.
-5. Feed the registry into the production control plane.
-6. Only after the audit registry is complete, begin separate P0/P1 repairs and re-audit continuously.
+Build the authoritative feature operational contract registry and audit every product domain against it before implementing repairs. The registry must become an input to the Avenize control plane so release certification fails closed when a claimed-ready feature is only structural, partial, disconnected, visually misleading, or unprovable.
