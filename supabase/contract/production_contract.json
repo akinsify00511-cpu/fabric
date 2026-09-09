@@ -4429,7 +4429,7 @@
     {
       "kind": "function",
       "name": "avenize_post_journal_entry",
-      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "defined_in": "20260910003000_thick_core_transactional_idempotency_guards.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,

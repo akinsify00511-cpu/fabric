@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 557
+    "indexes": 558
   },
   "indexes": [
     {
@@ -1211,6 +1211,11 @@
     {
       "defined_in": "057_multi_currency_and_payment_rails.sql",
       "index": "idx_journal_entries_currency",
+      "table": "journal_entries"
+    },
+    {
+      "defined_in": "20260910003000_thick_core_transactional_idempotency_guards.sql",
+      "index": "uq_avenize_journal_entry_idempotency",
       "table": "journal_entries"
     },
     {
