@@ -1,0 +1,47 @@
+{
+  "audit_date": "2026-09-09",
+  "standard": "Rendered information must be relevant to the current user, context, data, capability state and reporting period.",
+  "release_rule": "Fabricated, stale, generic, unreachable or contextually misleading rendering is a product correctness defect.",
+  "confirmed_findings": [
+    {
+      "severity": "P0",
+      "surface": "Dashboard",
+      "component": "Business pulse / Trend",
+      "status": "FAIL",
+      "finding": "Seven-bar trend is hard-coded and does not represent persisted historical business data."
+    },
+    {
+      "severity": "P0",
+      "surface": "Dashboard",
+      "component": "Business pulse / Progress",
+      "status": "FAIL",
+      "finding": "Progress bar is hard-coded to 70% without a verified goal denominator."
+    },
+    {
+      "severity": "P1",
+      "surface": "Dashboard",
+      "component": "Business pulse / Breakdown and Table",
+      "status": "PARTIAL",
+      "finding": "Rendered representations can imply analytical context that is not fully backed by corresponding historical/goal datasets."
+    },
+    {
+      "severity": "P1",
+      "surface": "All product surfaces",
+      "component": "Rendering state semantics",
+      "status": "NOT_CERTIFIED",
+      "finding": "The product needs explicit distinctions between zero, empty, unknown, loading, error, unauthorized, not configured and not connected."
+    }
+  ],
+  "required_checks": [
+    "Every displayed number traces to authoritative current data.",
+    "Every chart traces to real data points.",
+    "Every percentage has a defined numerator and denominator.",
+    "Every date/time label matches its actual reporting period.",
+    "Every rendered action performs the promised operation.",
+    "Role, entitlement and selected-tool context control what is rendered.",
+    "Tenant boundaries are preserved in displayed data.",
+    "Unavailable capabilities do not render as operational.",
+    "Empty/error/loading/not-configured states are semantically distinct.",
+    "Mobile rendering preserves business meaning and critical actions."
+  ]
+}
