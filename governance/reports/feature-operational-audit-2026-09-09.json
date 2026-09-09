@@ -1,0 +1,41 @@
+{
+  "audit_date": "2026-09-09",
+  "standard": "No evidence = no PASS",
+  "status_model": ["PASS", "PARTIAL", "FAIL", "NOT_CONNECTED", "NOT_CONFIGURED", "NOT_PROVABLE"],
+  "audit_only": true,
+  "findings": [
+    {"id":"P0-MODULE-001","capability":"module_entitlement_readiness","status":"FAIL","evidence":"Live can_access_module/list_accessible_modules return ready=true and default entitlement=true; business_entitlements.features is empty for 7 live businesses."},
+    {"id":"P0-PAY-001","capability":"invoice_paystack_checkout","status":"FAIL","evidence":"Live paystack-initialize writes to absent payments_paystack table while live verification/webhook use payment_transactions."},
+    {"id":"P0-PAY-002","capability":"invoice_paystack_authorization","status":"FAIL","evidence":"paystack-initialize does not authorize invoice_id against caller membership and accepts caller-supplied business_id in direct mode."},
+    {"id":"P1-MEET-001","capability":"meetings","status":"PARTIAL","evidence":"Rich meeting backend exists, but recording is local-stream based, capture processing remains pending, signed URL semantics are defective, and transcribe-audio is absent live."},
+    {"id":"P1-CRM-001","capability":"crm_deals","status":"FAIL","evidence":"CRM deals are local React state; durable persistence is not implemented."},
+    {"id":"P1-ACCT-001","capability":"accounting","status":"FAIL","evidence":"createEntry persists only journal header; journal lines are not persisted and reports use opening balances."},
+    {"id":"P1-AUTO-001","capability":"automations","status":"NOT_PROVABLE","evidence":"execute-automation and due cron exist, but live automations and automation_runs are both zero."},
+    {"id":"P1-EMAIL-001","capability":"email_campaigns","status":"PARTIAL","evidence":"campaign-send and email-service are live, but campaign status can become sent from HTTP success even when individual sends fail; recipient selection is not campaign-specific."},
+    {"id":"P1-WEBHOOK-001","capability":"webhooks","status":"PARTIAL","evidence":"Secure dispatch function is live, but displayed callable endpoint and end-to-end delivery are not certified."},
+    {"id":"P1-AI-001","capability":"sarah_business_reasoning","status":"PARTIAL","evidence":"ask-avenize is live, authenticated and grounded in business context, but implementation is deterministic native reasoning and action execution is not fully certified."},
+    {"id":"P1-SEARCH-001","capability":"universal_search","status":"PARTIAL","evidence":"Search UI exists, but result routing is incomplete and indexing/tenant-scoping is not fully certified."},
+    {"id":"P1-PROC-001","capability":"procurement","status":"FAIL","evidence":"RFQ/PO UI exists without a proven supplier-to-PO lifecycle."},
+    {"id":"P2-TASK-001","capability":"tasks","status":"PARTIAL","evidence":"Supabase CRUD and activity logging are real; broader assignment/review/time/automation loop remains unproven."},
+    {"id":"P2-CAL-001","capability":"calendar","status":"PARTIAL","evidence":"Event CRUD is real; attendee/invitation/reminder collaboration chain is not certified."},
+    {"id":"P2-MOBILE-001","capability":"pwa_mobile","status":"NOT_PROVABLE","evidence":"Manifest/icons prove installability configuration only, not mobile business workflows."}
+  ],
+  "live_snapshot": {
+    "edge_functions_active": 20,
+    "transcribe_audio_live": false,
+    "automations": 0,
+    "automation_runs": 0,
+    "business_subscriptions": 0,
+    "businesses": 7,
+    "staff": 7,
+    "meetings": 1,
+    "events": 1,
+    "payment_transactions": 2,
+    "analytics_events": 154,
+    "audit_logs": 28,
+    "business_events": 2,
+    "business_health_scores": 5,
+    "channels": 2
+  },
+  "next_gate": "Complete route/tool inventory and convert every high-value capability into executable operational E2E contracts before repair certification."
+}
