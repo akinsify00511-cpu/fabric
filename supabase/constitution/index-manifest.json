@@ -405,7 +405,7 @@
     },
     {
       "defined_in": "20260909234000_thick_core_workflows.sql",
-      "index": "idx_avenize_workflow_steps_execution",
+      "index": "idx_avenize_workflow_steps_business_execution",
       "table": "avenize_workflow_steps"
     },
     {
