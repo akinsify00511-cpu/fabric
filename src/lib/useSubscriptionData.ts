@@ -29,5 +29,5 @@ export function useSubscriptionData():ReturnTypeData{
  useEffect(()=>{void refresh()},[refresh])
  const cancelSubscription=useCallback(async(cancelAtPeriodEnd=true)=>{if(!staff?.business_id)return{success:false,message:'Not authenticated'};const{error:e}=await supabase.rpc('cancel_subscription',{p_business_id:staff.business_id,p_cancel_at_period_end:cancelAtPeriodEnd});if(e)return{success:false,message:e.message};await refresh();return{success:true,message:cancelAtPeriodEnd?'Subscription will be cancelled at the end of the billing period':'Subscription cancelled immediately'}},[staff?.business_id,refresh])
  const requestPlanPayment=useCallback(async(planCode:string,billingCycle:'monthly'|'yearly')=>{if(!staff?.business_id)return null;try{const{data,error:e}=await supabase.rpc('request_plan_payment',{p_plan_code:planCode,p_billing_cycle:billingCycle});if(e||!data?.ok)return null;return data as PaymentRequestInfo}catch{return null}},[staff?.business_id])
- return{subcription:subscription,subscription,payments,invoices,availablePlans,loading,error,refresh,cancelSubscription,requestPlanPayment}
+ return{subscription,payments,invoices,availablePlans,loading,error,refresh,cancelSubscription,requestPlanPayment}
 }
