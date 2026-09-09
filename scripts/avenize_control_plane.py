@@ -3,11 +3,12 @@
 
 One deterministic command for the engineering contract. It composes the
 existing contract, schema, edge-function, governance and production checks
-and turns silent/partial verification into an explicit PASS/FAIL report.
+and turns silent/partial verification into an explicit PASS/BLOCKED/FAIL
+report.
 
 The control plane never invents production state. Live checks run only when
-explicit credentials are present; otherwise the report records NOT_CONFIGURED
-instead of pretending production is healthy.
+explicit credentials are present; otherwise the report records BLOCKED and
+returns a non-zero exit code instead of pretending production is healthy.
 """
 from __future__ import annotations
 
@@ -76,9 +77,9 @@ def main() -> int:
     else:
         checks.append({
             "name": "production-certification",
-            "status": "NOT_CONFIGURED",
-            "required": False,
-            "output_tail": "SUPABASE_URL and SUPABASE_KEY are required for live certification.",
+            "status": "BLOCKED",
+            "required": True,
+            "output_tail": "Live certification is not configured. SUPABASE_URL and SUPABASE_KEY are required; production state must not be inferred.",
         })
 
     app_url = os.environ.get("APP_URL", DEFAULT_APP_URL)
@@ -88,23 +89,34 @@ def main() -> int:
     else:
         checks.append({
             "name": "production-e2e",
-            "status": "NOT_CONFIGURED",
-            "required": False,
-            "output_tail": "Live E2E needs Supabase URL/key + service role for disposable-account mode, or APP_URL + dedicated E2E credentials.",
+            "status": "BLOCKED",
+            "required": True,
+            "output_tail": "Live E2E is not configured. Provide disposable-account credentials or dedicated E2E credentials; do not treat missing credentials as a passing journey.",
         })
 
-    blocking = [c for c in checks if c["status"] == "FAIL"]
+    blocking = [c for c in checks if c["status"] in {"FAIL", "BLOCKED"}]
+    failed = [c for c in checks if c["status"] == "FAIL"]
+    blocked = [c for c in checks if c["status"] == "BLOCKED"]
+    if failed:
+        verdict = "FAIL"
+    elif blocked:
+        verdict = "BLOCKED"
+    else:
+        verdict = "PASS"
+
     report = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at_epoch": int(time.time()),
-        "verdict": "FAIL" if blocking else "PASS",
+        "verdict": verdict,
         "live_verification": "CONFIGURED" if configured("SUPABASE_URL", "SUPABASE_KEY") else "NOT_CONFIGURED",
         "blocking_checks": [c["name"] for c in blocking],
+        "failed_checks": [c["name"] for c in failed],
+        "blocked_checks": [c["name"] for c in blocked],
         "checks": checks,
     }
     REPORT.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2))
-    return 1 if blocking else 0
+    return 1 if failed else (2 if blocked else 0)
 
 
 if __name__ == "__main__":
