@@ -1,0 +1,74 @@
+name: Avenize Native Mobile Gate
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  native-mobile:
+    name: Bootstrap and verify Capacitor Android/iOS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install dependencies and reconcile lockfile
+        run: npm install --ignore-scripts
+
+      - name: Build web production artifact
+        run: npm run build
+
+      - name: Generate Android native project
+        run: |
+          if [ ! -d android ]; then npx cap add android; fi
+
+      - name: Generate iOS native project
+        run: |
+          if [ ! -d ios ]; then npx cap add ios; fi
+
+      - name: Sync Capacitor platforms
+        run: npx cap sync
+
+      - name: Validate Capacitor configuration
+        run: npx cap doctor
+
+      - name: Build Android debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Verify native projects are tracked
+        run: |
+          test -f android/gradlew
+          test -f android/app/src/main/AndroidManifest.xml
+          test -f ios/App/App.xcodeproj/project.pbxproj
+          git status --short
+
+      - name: Commit generated native projects and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json android ios
+          if git diff --cached --quiet; then
+            echo "Native projects and lockfile already current."
+          else
+            git commit -m "build(mobile): materialize Capacitor native projects"
+            git push origin main
+          fi
