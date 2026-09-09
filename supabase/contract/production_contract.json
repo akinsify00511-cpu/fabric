@@ -2,7 +2,7 @@
   "counts": {
     "tables": 471,
     "views": 6,
-    "functions": 514,
+    "functions": 515,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -6472,6 +6472,17 @@
     },
     {
       "kind": "function",
+      "name": "handle_new_business_defaults",
+      "defined_in": "20260909232000_seed_default_nigeria_vat_configuration.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
+      ]
+    },
+    {
+      "kind": "function",
       "name": "handler_derive_relationships",
       "defined_in": "087_context_graph_wiring.sql",
       "repairable": false,
@@ -10283,6 +10294,9 @@
     ],
     "graph_overview": [
       "p_business_id uuid"
+    ],
+    "handle_new_business_defaults": [
+      ""
     ],
     "handler_derive_relationships": [
       "p_event_id uuid"

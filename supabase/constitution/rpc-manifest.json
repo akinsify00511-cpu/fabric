@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 514
+    "functions": 515
   },
   "functions": [
     {
@@ -1680,6 +1680,13 @@
       "defined_in": "zz_live_console_drift_reconciliation.sql",
       "frontend_referenced": true,
       "name": "graph_overview",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909232000_seed_default_nigeria_vat_configuration.sql",
+      "frontend_referenced": false,
+      "name": "handle_new_business_defaults",
       "security_sensitive": true,
       "signature": ""
     },
