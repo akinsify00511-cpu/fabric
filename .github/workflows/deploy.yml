@@ -79,6 +79,8 @@ jobs:
         run: |
           set -euo pipefail
           npm i -g vercel
+          rm -rf .vercel
+          vercel link --yes --project="${VERCEL_PROJECT_ID}" --scope="${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"
           vercel env pull .env.production.local --environment=production --yes --token="${VERCEL_TOKEN}"
           python3 - <<'PY'
           import os
