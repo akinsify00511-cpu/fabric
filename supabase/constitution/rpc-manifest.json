@@ -242,7 +242,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260910003000_thick_core_transactional_idempotency_guards.sql",
+      "defined_in": "20260910004000_thick_core_fix_transaction_idempotency_scope.sql",
       "frontend_referenced": false,
       "name": "avenize_post_journal_entry",
       "security_sensitive": true,
