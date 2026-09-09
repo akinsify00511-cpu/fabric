@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 import path from 'node:path'
-
 const root = process.cwd()
 const replacements = [
   ['src/pages/HumanResources.tsx', [
@@ -9,6 +8,11 @@ const replacements = [
   ]],
   ['src/pages/FinanceCenter.tsx', [
     ['useEffect(() => {\n    loadStats()\n  }, [])', 'useEffect(() => {\n    if (businessId) void loadStats()\n  }, [businessId])'],
+    ['  const [loading, setLoading] = useState(true)', '  const [loading, setLoading] = useState(true)\n  const [loadError, setLoadError] = useState<string | null>(null)'],
+    ['    setLoading(true)\n    try {', '    setLoading(true)\n    setLoadError(null)\n    try {'],
+    ["      setStats({\n        totalDebtors: debtorsRes.data?.reduce((sum, d) => sum + (d.outstanding_amount || 0), 0) || 0,", "      if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)\n      setStats({\n        totalDebtors: debtorsRes.data?.reduce((sum, d) => sum + (d.outstanding_amount || 0), 0) || 0,"],
+    ['    } catch (err) {\n      console.error(err)\n    }', '    } catch (err) {\n      console.error(err)\n      setLoadError(\'Finance data could not be loaded. Figures are unavailable until the source is reachable.\')\n    }'],
+    ["  if (loading) return <div className=\"flex justify-center py-12\"><Loader2 className=\"animate-spin text-black\" /></div>", "  if (loading) return <div className=\"flex justify-center py-12\"><Loader2 className=\"animate-spin text-black\" /></div>\n  if (loadError) return <div className=\"p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm\">{loadError}</div>"],
   ]],
   ['src/pages/Approvals.tsx', [
     ["const [historyFilter, setHistoryFilter] = useState('pending')", "const [historyFilter, setHistoryFilter] = useState('all')"],
@@ -20,14 +24,6 @@ const replacements = [
     ["    await supabase.from('portal_invitations').delete().eq('id', invitation.id)\n    showToast('Invitation deleted', 'info')\n    loadData()", "    const { error } = await supabase.from('portal_invitations').delete().eq('id', invitation.id).eq('business_id', staff?.business_id)\n    if (error) { showToast('Invitation was not deleted.', 'error'); return }\n    showToast('Invitation deleted', 'info')\n    await loadData()"],
   ]],
 ]
-
 let changed = 0
-for (const [file, rules] of replacements) {
-  const full = path.join(root, file)
-  if (!fs.existsSync(full)) continue
-  let text = fs.readFileSync(full, 'utf8')
-  const before = text
-  for (const [from, to] of rules) if (text.includes(from)) text = text.replaceAll(from, to)
-  if (text !== before) { fs.writeFileSync(full, text); changed++ }
-}
+for (const [file, rules] of replacements) { const full = path.join(root,file); if (!fs.existsSync(full)) continue; let text=fs.readFileSync(full,'utf8'); const before=text; for(const [from,to] of rules) if(text.includes(from)) text=text.replaceAll(from,to); if(text!==before){fs.writeFileSync(full,text);changed++} }
 console.log(`operational-hardening-codemod: ${changed} files changed`)
