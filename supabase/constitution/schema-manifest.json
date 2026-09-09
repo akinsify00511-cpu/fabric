@@ -1,6 +1,6 @@
 {
   "counts": {
-    "tables": 496,
+    "tables": 501,
     "views": 6
   },
   "tables": [
@@ -305,7 +305,7 @@
       "name": "avenize_approval_requests"
     },
     {
-      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_audit_events"
@@ -359,10 +359,28 @@
       "name": "avenize_country_rules"
     },
     {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_document_links"
+    },
+    {
       "defined_in": "20260909234000_thick_core_workflows.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_event_subscriptions"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_runtime_contract.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_feature_contracts"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_financial_controls"
     },
     {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
@@ -419,10 +437,22 @@
       "name": "avenize_payroll_runs"
     },
     {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_reconciliation_runs"
+    },
+    {
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
       "frontend_referenced": false,
       "kind": "table",
       "name": "avenize_stock_locations"
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "frontend_referenced": false,
+      "kind": "table",
+      "name": "avenize_stock_reconciliations"
     },
     {
       "defined_in": "20260909234000_thick_core_workflows.sql",

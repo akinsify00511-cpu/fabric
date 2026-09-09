@@ -1,8 +1,8 @@
 {
   "counts": {
-    "tables": 496,
+    "tables": 501,
     "views": 6,
-    "functions": 518,
+    "functions": 522,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -410,7 +410,7 @@
     {
       "kind": "table",
       "name": "avenize_audit_events",
-      "defined_in": "20260909234500_thick_core_finance_governance.sql",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false
@@ -481,8 +481,32 @@
     },
     {
       "kind": "table",
+      "name": "avenize_document_links",
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_event_subscriptions",
       "defined_in": "20260909234000_thick_core_workflows.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_feature_contracts",
+      "defined_in": "20260910000500_thick_core_runtime_contract.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_financial_controls",
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -561,8 +585,24 @@
     },
     {
       "kind": "table",
+      "name": "avenize_reconciliation_runs",
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
       "name": "avenize_stock_locations",
       "defined_in": "20260909230000_avenize_thick_erp_commerce_workflow_core.sql",
+      "repairable": true,
+      "security_sensitive": false,
+      "frontend_referenced": false
+    },
+    {
+      "kind": "table",
+      "name": "avenize_stock_reconciliations",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
       "repairable": true,
       "security_sensitive": false,
       "frontend_referenced": false
@@ -4329,6 +4369,50 @@
       "frontend_referenced": false,
       "signatures": [
         "p_journal_entry_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_create_audit_event",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_entity_type text, p_entity_id uuid, p_action text, p_before jsonb, p_after jsonb"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_link_business_documents",
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_source_type text, p_source_id uuid, p_target_type text, p_target_id uuid, p_relation text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_post_inventory_movement",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_movement_type text, p_quantity numeric, p_unit_cost numeric, p_reference_type text, p_reference_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_post_stock_reconciliation",
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_reconciliation_id uuid"
       ]
     },
     {
@@ -9885,6 +9969,18 @@
     ],
     "avenize_assert_journal_balanced": [
       "p_journal_entry_id uuid"
+    ],
+    "avenize_create_audit_event": [
+      "p_business_id uuid, p_entity_type text, p_entity_id uuid, p_action text, p_before jsonb, p_after jsonb"
+    ],
+    "avenize_link_business_documents": [
+      "p_business_id uuid, p_source_type text, p_source_id uuid, p_target_type text, p_target_id uuid, p_relation text"
+    ],
+    "avenize_post_inventory_movement": [
+      "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_movement_type text, p_quantity numeric, p_unit_cost numeric, p_reference_type text, p_reference_id uuid"
+    ],
+    "avenize_post_stock_reconciliation": [
+      "p_reconciliation_id uuid"
     ],
     "award_xp": [
       "p_user_id uuid, p_xp_amount int4, p_action_type text, p_description text"

@@ -1,6 +1,6 @@
 {
   "counts": {
-    "indexes": 551
+    "indexes": 557
   },
   "indexes": [
     {
@@ -299,6 +299,11 @@
       "table": "avenize_approval_requests"
     },
     {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "index": "idx_avenize_audit_events_business",
+      "table": "avenize_audit_events"
+    },
+    {
       "defined_in": "20260909234500_thick_core_finance_governance.sql",
       "index": "idx_avenize_audit_events_business_time",
       "table": "avenize_audit_events"
@@ -324,9 +329,24 @@
       "table": "avenize_compliance_controls"
     },
     {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "index": "idx_avenize_document_links_source",
+      "table": "avenize_document_links"
+    },
+    {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "index": "idx_avenize_document_links_target",
+      "table": "avenize_document_links"
+    },
+    {
       "defined_in": "20260909234000_thick_core_workflows.sql",
       "index": "idx_avenize_event_subscriptions",
       "table": "avenize_event_subscriptions"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "index": "idx_avenize_financial_controls_business",
+      "table": "avenize_financial_controls"
     },
     {
       "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
@@ -362,6 +382,16 @@
       "defined_in": "20260909235500_thick_core_hr_payroll_compliance.sql",
       "index": "idx_avenize_payroll_runs",
       "table": "avenize_payroll_runs"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "index": "idx_avenize_reconciliation_runs_business",
+      "table": "avenize_reconciliation_runs"
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "index": "idx_avenize_stock_reconciliation_business",
+      "table": "avenize_stock_reconciliations"
     },
     {
       "defined_in": "20260909234000_thick_core_workflows.sql",

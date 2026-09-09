@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 518
+    "functions": 522
   },
   "functions": [
     {
@@ -196,6 +196,34 @@
       "defined_in": "20260909234500_thick_core_finance_governance.sql",
       "frontend_referenced": false,
       "name": "avenize_assert_journal_balanced",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "frontend_referenced": false,
+      "name": "avenize_create_audit_event",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "frontend_referenced": false,
+      "name": "avenize_link_business_documents",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "frontend_referenced": false,
+      "name": "avenize_post_inventory_movement",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "frontend_referenced": false,
+      "name": "avenize_post_stock_reconciliation",
       "security_sensitive": true,
       "signature": ""
     },

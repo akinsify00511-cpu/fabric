@@ -1,6 +1,6 @@
 {
   "counts": {
-    "policies": 253
+    "policies": 265
   },
   "policies": [
     {
@@ -134,6 +134,36 @@
       "table": "automation_proposals"
     },
     {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "policy": "avenize_audit_events_select",
+      "table": "avenize_audit_events"
+    },
+    {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "policy": "avenize_document_links_insert",
+      "table": "avenize_document_links"
+    },
+    {
+      "defined_in": "20260910001500_thick_core_procurement_sales_contracts.sql",
+      "policy": "avenize_document_links_select",
+      "table": "avenize_document_links"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_financial_controls_insert",
+      "table": "avenize_financial_controls"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_financial_controls_select",
+      "table": "avenize_financial_controls"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_financial_controls_update",
+      "table": "avenize_financial_controls"
+    },
+    {
       "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
       "policy": "avenize_import_jobs_insert",
       "table": "avenize_import_jobs"
@@ -147,6 +177,36 @@
       "defined_in": "20260909235000_thick_core_migration_and_localization.sql",
       "policy": "avenize_import_jobs_update",
       "table": "avenize_import_jobs"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_reconciliation_runs_insert",
+      "table": "avenize_reconciliation_runs"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_reconciliation_runs_select",
+      "table": "avenize_reconciliation_runs"
+    },
+    {
+      "defined_in": "20260910000500_thick_core_financial_controls.sql",
+      "policy": "avenize_reconciliation_runs_update",
+      "table": "avenize_reconciliation_runs"
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "policy": "avenize_stock_reconciliations_insert",
+      "table": "avenize_stock_reconciliations"
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "policy": "avenize_stock_reconciliations_select",
+      "table": "avenize_stock_reconciliations"
+    },
+    {
+      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "policy": "avenize_stock_reconciliations_update",
+      "table": "avenize_stock_reconciliations"
     },
     {
       "defined_in": "065_ai_roles_automation_convenience_veneer_continuity.sql",
