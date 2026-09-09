@@ -97,6 +97,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
       if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)
       if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)
       if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)
+      if (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error) throw (debtorsRes.error || creditorsRes.error || vatRes.error || bankRes.error)
       setStats({
         totalDebtors: debtorsRes.data?.reduce((sum, d) => sum + (d.outstanding_amount || 0), 0) || 0,
         totalCreditors: creditorsRes.data?.reduce((sum, c) => sum + (c.outstanding_amount || 0), 0) || 0,
@@ -111,6 +112,7 @@ function OverviewTab({ businessId }: { businessId?: string }) {
   }
 
   if (loading) return <div className="flex justify-center py-12"><Loader2 className="animate-spin text-black" /></div>
+  if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
   if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
   if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
   if (loadError) return <div className="p-6 rounded-2xl border border-[var(--av-danger)]/20 bg-[var(--av-danger-soft)] text-sm">{loadError}</div>
