@@ -2,9 +2,9 @@
   "counts": {
     "tables": 471,
     "views": 6,
-    "functions": 510,
+    "functions": 515,
     "buckets": 8,
-    "edge_functions": 15
+    "edge_functions": 17
   },
   "objects": [
     {
@@ -1653,7 +1653,7 @@
       "defined_in": "998_create_all_missing_tables.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": true
+      "frontend_referenced": false
     },
     {
       "kind": "table",
@@ -1749,7 +1749,7 @@
       "defined_in": "010_accounting.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": false
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -2357,7 +2357,7 @@
       "defined_in": "032_fix_plan_pricing.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": false
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -3924,6 +3924,17 @@
     },
     {
       "kind": "function",
+      "name": "adjust_inventory_stock",
+      "defined_in": "20260909120000_operational_hardening.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_id uuid, p_product_id uuid, p_change int4, p_reason text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "advance_action_step",
       "defined_in": "066_control_plane_work_routing_action_protocol.sql",
       "repairable": false,
@@ -3997,6 +4008,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_request_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "assert_posted_journal_entry_balanced",
+      "defined_in": "20260909120000_operational_hardening.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        ""
       ]
     },
     {
@@ -4934,6 +4956,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_date date, p_description text, p_lines jsonb"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "create_journal_entry_with_lines",
+      "defined_in": "20260909120000_operational_hardening.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_id uuid, p_date date, p_reference text, p_description text, p_currency text, p_lines jsonb"
       ]
     },
     {
@@ -6124,6 +6157,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_mime_type text"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "get_monitoring_summary",
+      "defined_in": "20260909120000_operational_hardening.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": true,
+      "signatures": [
+        "p_business_id uuid"
       ]
     },
     {
@@ -7482,6 +7526,17 @@
       "frontend_referenced": false,
       "signatures": [
         ""
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "queue_portal_invitation_email",
+      "defined_in": "20260909121500_portal_invitation_email.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_invitation_id uuid, p_base_url text"
       ]
     },
     {
@@ -9540,6 +9595,9 @@
     "add_manual_time_entry": [
       "p_description text, p_start_time timestamptz, p_end_time timestamptz, p_billable boolean, p_tags text[]"
     ],
+    "adjust_inventory_stock": [
+      "p_business_id uuid, p_product_id uuid, p_change int4, p_reason text"
+    ],
     "advance_action_step": [
       "p_run_id uuid, p_step text, p_note text, p_result jsonb"
     ],
@@ -9560,6 +9618,9 @@
     ],
     "approve_time_off": [
       "p_request_id uuid"
+    ],
+    "assert_posted_journal_entry_balanced": [
+      ""
     ],
     "assess_four_reality_discrepancy": [
       "p_assessment_id uuid"
@@ -9817,6 +9878,9 @@
     ],
     "create_journal_entry": [
       "p_date date, p_description text, p_lines jsonb"
+    ],
+    "create_journal_entry_with_lines": [
+      "p_business_id uuid, p_date date, p_reference text, p_description text, p_currency text, p_lines jsonb"
     ],
     "create_lead_request": [
       "p_lead_id uuid, p_request_type text, p_title text, p_description text, p_product_id uuid, p_quantity numeric, p_location text, p_budget numeric, p_urgency text, p_attachments jsonb"
@@ -10143,6 +10207,9 @@
     ],
     "get_mime_category": [
       "p_mime_type text"
+    ],
+    "get_monitoring_summary": [
+      "p_business_id uuid"
     ],
     "get_my_channels": [
       "p_user_id uuid",
@@ -10517,6 +10584,9 @@
     ],
     "queue_payment_lifecycle_email": [
       ""
+    ],
+    "queue_portal_invitation_email": [
+      "p_invitation_id uuid, p_base_url text"
     ],
     "queue_subscription_lifecycle_email": [
       ""
@@ -11067,9 +11137,11 @@
     "email-service",
     "execute-automation",
     "parse-intent",
+    "paystack-initialize",
     "paystack-verify",
     "paystack-webhook",
     "platform-health-check",
+    "portal-invitation-send",
     "resend-webhook",
     "subscription-checkout",
     "subscription-management",
@@ -11169,7 +11241,6 @@
       "goods_receipts",
       "heartbeats",
       "incidents",
-      "inventory",
       "invites",
       "invoice_items",
       "invoices",
@@ -11179,6 +11250,7 @@
       "job_types",
       "jobs",
       "journal_entries",
+      "journal_lines",
       "kb_page_versions",
       "kb_pages",
       "kb_spaces",
@@ -11223,6 +11295,7 @@
       "persona_journeys",
       "persona_need_signals",
       "persona_profiles",
+      "plan_pricing",
       "platform_incident_investigations",
       "poll_votes",
       "polls",
@@ -11311,6 +11384,7 @@
       "accept_invite",
       "acknowledge_recommendation",
       "add_manual_time_entry",
+      "adjust_inventory_stock",
       "advance_incident",
       "advance_migration",
       "approve_requisition",
@@ -11353,6 +11427,7 @@
       "create_incident",
       "create_invite",
       "create_invoice",
+      "create_journal_entry_with_lines",
       "create_lead_request",
       "create_meeting",
       "create_quote",
@@ -11402,6 +11477,7 @@
       "get_invite_info",
       "get_meeting_intelligence",
       "get_meeting_reports",
+      "get_monitoring_summary",
       "get_my_channels",
       "get_org_chart",
       "get_pricing_tiers",
@@ -11545,6 +11621,7 @@
       "campaign-send",
       "dispatch-webhooks",
       "execute-automation",
+      "portal-invitation-send",
       "webauthn"
     ]
   }

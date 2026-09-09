@@ -1236,7 +1236,7 @@
     },
     {
       "defined_in": "998_create_all_missing_tables.sql",
-      "frontend_referenced": true,
+      "frontend_referenced": false,
       "kind": "table",
       "name": "inventory"
     },
@@ -1308,7 +1308,7 @@
     },
     {
       "defined_in": "010_accounting.sql",
-      "frontend_referenced": false,
+      "frontend_referenced": true,
       "kind": "table",
       "name": "journal_lines"
     },
@@ -1764,7 +1764,7 @@
     },
     {
       "defined_in": "032_fix_plan_pricing.sql",
-      "frontend_referenced": false,
+      "frontend_referenced": true,
       "kind": "table",
       "name": "plan_pricing"
     },
