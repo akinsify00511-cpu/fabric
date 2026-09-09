@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  native-mobile:
-    name: Bootstrap and verify Capacitor Android/iOS
+  materialize-native:
+    name: Materialize and verify Capacitor Android
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,18 +37,21 @@ jobs:
         run: npm run build
 
       - name: Generate Android native project
-        run: |
-          if [ ! -d android ]; then npx cap add android; fi
+        run: if [ ! -d android ]; then npx cap add android; fi
 
       - name: Generate iOS native project
-        run: |
-          if [ ! -d ios ]; then npx cap add ios; fi
+        run: if [ ! -d ios ]; then npx cap add ios; fi
 
       - name: Sync Capacitor platforms
         run: npx cap sync
 
       - name: Validate Capacitor configuration
-        run: npx cap doctor
+        run: |
+          npx cap ls
+          test -f capacitor.config.ts
+          test -f android/app/src/main/AndroidManifest.xml
+          test -f ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'com.avenize.app' capacitor.config.ts
 
       - name: Build Android debug APK
         working-directory: android
@@ -57,7 +60,7 @@ jobs:
       - name: Verify native projects are tracked
         run: |
           test -f android/gradlew
-          test -f android/app/src/main/AndroidManifest.xml
+          test -f android/app/build.gradle
           test -f ios/App/App.xcodeproj/project.pbxproj
           git status --short
 
@@ -72,3 +75,38 @@ jobs:
             git commit -m "build(mobile): materialize Capacitor native projects"
             git push origin main
           fi
+
+  verify-ios:
+    name: Verify Capacitor iOS project
+    needs: materialize-native
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build web production artifact
+        run: npm run build
+
+      - name: Sync Capacitor iOS
+        run: npx cap sync ios
+
+      - name: Verify Xcode project
+        run: |
+          test -f ios/App/App.xcodeproj/project.pbxproj
+          xcodebuild -version
+
+      - name: Build iOS simulator target
+        working-directory: ios/App
+        run: xcodebuild -project App.xcodeproj -scheme App -sdk iphonesimulator -configuration Debug -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
