@@ -15,7 +15,7 @@ function replaceOnce(text, from, to) {
 }
 function collapse(text, line) {
   const escaped = line.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  return text.replace(new RegExp(`(?:${escaped}\\n){2,}`, 'g'), `${line}\\n`)
+  return text.replace(new RegExp(`(?:${escaped}\\n){2,}`, 'g'), `${line}\n`)
 }
 function update(file, transform) {
   if (!fs.existsSync(file)) return false
