@@ -1,6 +1,6 @@
 // Two-flag module access gate (client half). The server is the single
-// authority — can_access_module(business_id, module_key) returns
-// can_access = entitled AND ready. Client failures must never grant access.
+authority — can_access_module(business_id, module_key) returns
+can_access = entitled AND ready. Client failures must never grant access.
 
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'
@@ -46,9 +46,7 @@ export function useModuleAccess(module: ModuleKey) {
     supabase.rpc('can_access_module', { p_business_id: bid, p_module_key: module })
       .then(({ data, error }) => {
         if (!active) return
-        if (error || (isRpcMissing(error))) {
-          // Missing/unavailable authorization infrastructure is a deployment
-          // failure, never a reason to grant access.
+        if (error || isRpcMissing(error)) {
           cache.set(cacheKey, CLOSED)
           setAccess(CLOSED)
           setLoading(false)
@@ -63,8 +61,7 @@ export function useModuleAccess(module: ModuleKey) {
         cache.set(cacheKey, next)
         setAccess(next)
         setLoading(false)
-      })
-      .catch(() => {
+      }, () => {
         if (!active) return
         cache.set(cacheKey, CLOSED)
         setAccess(CLOSED)
@@ -90,7 +87,6 @@ export function useAccessibleModules() {
       .then(({ data, error }) => {
         if (!active) return
         if (error || isRpcMissing(error)) {
-          // Authorization infrastructure unavailable: fail closed.
           setModules(new Set())
           setLoading(false)
           return
@@ -101,8 +97,7 @@ export function useAccessibleModules() {
         })
         setModules(next)
         setLoading(false)
-      })
-      .catch(() => {
+      }, () => {
         if (!active) return
         setModules(new Set())
         setLoading(false)
