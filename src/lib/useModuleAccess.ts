@@ -1,6 +1,6 @@
-// Two-flag module access gate (client half). The server is the single
-authority — can_access_module(business_id, module_key) returns
-can_access = entitled AND ready. Client failures must never grant access.
+// Two-flag module access gate (client half). The server is the single authority.
+// can_access_module(business_id, module_key) returns can_access = entitled AND ready.
+// Client failures must never grant access.
 
 import { useEffect, useState } from 'react'
 import { supabase } from './supabase'

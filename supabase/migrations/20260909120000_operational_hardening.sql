@@ -3,7 +3,7 @@
 create or replace function public.create_journal_entry_with_lines(p_business_id uuid,p_date date,p_reference text,p_description text,p_currency text,p_lines jsonb) returns uuid language plpgsql security definer set search_path=public as $$
 declare v_entry_id uuid;v_entry_number text;v_debit numeric:=0;v_credit numeric:=0;v_line jsonb;v_account_id uuid;
 begin
- if not exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,s.is_active,true)=true) then raise exception 'not authorized for business';end if;
+ if not exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,true)=true) then raise exception 'not authorized for business';end if;
  if p_lines is null or jsonb_typeof(p_lines)<>'array' or jsonb_array_length(p_lines)<2 then raise exception 'journal entry requires at least two lines';end if;
  for v_line in select value from jsonb_array_elements(p_lines) loop
   v_account_id:=(v_line->>'account_id')::uuid;
@@ -21,20 +21,20 @@ begin
 end;$$;
 revoke all on function public.create_journal_entry_with_lines(uuid,date,text,text,text,jsonb) from public;grant execute on function public.create_journal_entry_with_lines(uuid,date,text,text,text,jsonb) to authenticated;
 
--- Kept as an explicit validation primitive for future posting paths; deliberately not installed as a trigger so legacy seed migrations with incomplete rows remain migratable.
+-- Explicit validation primitive; not installed as a trigger so legacy seed rows remain migratable.
 create or replace function public.assert_posted_journal_entry_balanced() returns trigger language plpgsql security definer set search_path=public as $$ declare v_debit numeric;v_credit numeric;begin if new.status='posted' then select coalesce(sum(debit),0),coalesce(sum(credit),0) into v_debit,v_credit from public.journal_lines where journal_entry_id=new.id;if v_debit=0 or round(v_debit,2)<>round(v_credit,2) then raise exception 'posted journal entry % is not balanced',new.id;end if;end if;return new;end;$$;
 drop trigger if exists trg_assert_posted_journal_entry_balanced on public.journal_entries;
 
-create or replace function public.get_monitoring_summary(p_business_id uuid) returns table(monitor_count bigint,up_count bigint,degraded_count bigint,down_count bigint,unknown_count bigint,active_incidents bigint) language sql security definer set search_path=public as $$ select count(*) filter(where m.is_active=true),count(*) filter(where m.is_active=true and m.status='up'),count(*) filter(where m.is_active=true and m.status='degraded'),count(*) filter(where m.is_active=true and m.status='down'),count(*) filter(where m.is_active=true and coalesce(m.status,'unknown')='unknown'),(select count(*) from public.incidents i where i.business_id=p_business_id and i.status<>'resolved') from public.monitors m where m.business_id=p_business_id and exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,s.is_active,true)=true);$$;
+create or replace function public.get_monitoring_summary(p_business_id uuid) returns table(monitor_count bigint,up_count bigint,degraded_count bigint,down_count bigint,unknown_count bigint,active_incidents bigint) language sql security definer set search_path=public as $$ select count(*) filter(where m.is_active=true),count(*) filter(where m.is_active=true and m.status='up'),count(*) filter(where m.is_active=true and m.status='degraded'),count(*) filter(where m.is_active=true and m.status='down'),count(*) filter(where m.is_active=true and coalesce(m.status,'unknown')='unknown'),(select count(*) from public.incidents i where i.business_id=p_business_id and i.status<>'resolved') from public.monitors m where m.business_id=p_business_id and exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,true)=true);$$;
 revoke all on function public.get_monitoring_summary(uuid) from public;grant execute on function public.get_monitoring_summary(uuid) to authenticated;
 
 create or replace function public.adjust_inventory_stock(p_business_id uuid,p_product_id uuid,p_change integer,p_reason text) returns integer language plpgsql security definer set search_path=public as $$
 declare v_stock integer;v_new integer;v_staff_id uuid;
 begin
- if not exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,s.is_active,true)=true) then raise exception 'not authorized for business';end if;
+ if not exists(select 1 from public.staff s where s.business_id=p_business_id and s.user_id=auth.uid() and coalesce(s.active,true)=true) then raise exception 'not authorized for business';end if;
  select coalesce(stock,0) into v_stock from public.products where id=p_product_id and business_id=p_business_id for update;if not found then raise exception 'product not found';end if;
  v_new:=v_stock+coalesce(p_change,0);if v_new<0 then raise exception 'insufficient stock';end if;
- select id into v_staff_id from public.staff where business_id=p_business_id and user_id=auth.uid() and coalesce(active,is_active,true)=true limit 1;
+ select id into v_staff_id from public.staff where business_id=p_business_id and user_id=auth.uid() and coalesce(active,true)=true limit 1;
  update public.products set stock=v_new,updated_at=now() where id=p_product_id and business_id=p_business_id;
  insert into public.stock_movements(business_id,product_id,change,reason,staff_id,created_at) values(p_business_id,p_product_id,p_change,p_reason,v_staff_id,now());return v_new;
 end;$$;
