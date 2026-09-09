@@ -2,7 +2,7 @@
   "counts": {
     "tables": 471,
     "views": 6,
-    "functions": 515,
+    "functions": 514,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -3925,7 +3925,7 @@
     {
       "kind": "function",
       "name": "adjust_inventory_stock",
-      "defined_in": "20260909120000_operational_hardening.sql",
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -4013,7 +4013,7 @@
     {
       "kind": "function",
       "name": "assert_posted_journal_entry_balanced",
-      "defined_in": "20260909120000_operational_hardening.sql",
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
@@ -4961,7 +4961,7 @@
     {
       "kind": "function",
       "name": "create_journal_entry_with_lines",
-      "defined_in": "20260909120000_operational_hardening.sql",
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -6162,7 +6162,7 @@
     {
       "kind": "function",
       "name": "get_monitoring_summary",
-      "defined_in": "20260909120000_operational_hardening.sql",
+      "defined_in": "20260909115925_operational_hardening_20260909120000.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,
@@ -7526,17 +7526,6 @@
       "frontend_referenced": false,
       "signatures": [
         ""
-      ]
-    },
-    {
-      "kind": "function",
-      "name": "queue_portal_invitation_email",
-      "defined_in": "20260909121500_portal_invitation_email.sql",
-      "repairable": false,
-      "security_sensitive": true,
-      "frontend_referenced": false,
-      "signatures": [
-        "p_invitation_id uuid, p_base_url text"
       ]
     },
     {
@@ -10584,9 +10573,6 @@
     ],
     "queue_payment_lifecycle_email": [
       ""
-    ],
-    "queue_portal_invitation_email": [
-      "p_invitation_id uuid, p_base_url text"
     ],
     "queue_subscription_lifecycle_email": [
       ""
