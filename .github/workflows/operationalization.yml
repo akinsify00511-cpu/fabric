@@ -28,6 +28,11 @@ jobs:
       - name: Apply operational hardening codemods
         if: github.actor != 'github-actions[bot]'
         run: node scripts/operational-hardening-codemod.mjs
+      - name: Regenerate committed contract and governance artifacts
+        run: |
+          python3 scripts/generate_contract_manifest.py
+          python3 scripts/governance/emit_enforcement_registry.py
+          python3 scripts/generate_supabase_manifests.py
       - name: Apply safe source lint fixes
         if: github.actor != 'github-actions[bot]'
         run: npx oxlint --fix src supabase mobile scripts tests
