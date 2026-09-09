@@ -1,6 +1,6 @@
 {
   "counts": {
-    "functions": 522
+    "functions": 528
   },
   "functions": [
     {
@@ -193,9 +193,23 @@
       "signature": ""
     },
     {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_allocate_payment",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
       "defined_in": "20260909234500_thick_core_finance_governance.sql",
       "frontend_referenced": false,
       "name": "avenize_assert_journal_balanced",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_close_fiscal_period",
       "security_sensitive": true,
       "signature": ""
     },
@@ -214,9 +228,16 @@
       "signature": ""
     },
     {
-      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
       "frontend_referenced": false,
       "name": "avenize_post_inventory_movement",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_post_journal_entry",
       "security_sensitive": true,
       "signature": ""
     },
@@ -224,6 +245,27 @@
       "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
       "frontend_referenced": false,
       "name": "avenize_post_stock_reconciliation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_reconcile_bank_account",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_release_stock_reservation",
+      "security_sensitive": true,
+      "signature": ""
+    },
+    {
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "frontend_referenced": false,
+      "name": "avenize_reserve_stock",
       "security_sensitive": true,
       "signature": ""
     },

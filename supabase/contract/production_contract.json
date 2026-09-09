@@ -2,7 +2,7 @@
   "counts": {
     "tables": 501,
     "views": 6,
-    "functions": 522,
+    "functions": 528,
     "buckets": 8,
     "edge_functions": 17
   },
@@ -4362,6 +4362,17 @@
     },
     {
       "kind": "function",
+      "name": "avenize_allocate_payment",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_payment_reference text, p_invoice_id uuid, p_amount numeric, p_currency text"
+      ]
+    },
+    {
+      "kind": "function",
       "name": "avenize_assert_journal_balanced",
       "defined_in": "20260909234500_thick_core_finance_governance.sql",
       "repairable": false,
@@ -4369,6 +4380,17 @@
       "frontend_referenced": false,
       "signatures": [
         "p_journal_entry_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_close_fiscal_period",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_period_id uuid"
       ]
     },
     {
@@ -4396,12 +4418,23 @@
     {
       "kind": "function",
       "name": "avenize_post_inventory_movement",
-      "defined_in": "20260909235900_thick_core_transaction_integrity.sql",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": false,
       "signatures": [
         "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_movement_type text, p_quantity numeric, p_unit_cost numeric, p_reference_type text, p_reference_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_post_journal_entry",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_entry_date date, p_description text, p_lines jsonb, p_reference text, p_source_type text, p_source_id uuid, p_currency text, p_idempotency_key text"
       ]
     },
     {
@@ -4413,6 +4446,39 @@
       "frontend_referenced": false,
       "signatures": [
         "p_reconciliation_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_reconcile_bank_account",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_reconciliation_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_release_stock_reservation",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_reservation_id uuid"
+      ]
+    },
+    {
+      "kind": "function",
+      "name": "avenize_reserve_stock",
+      "defined_in": "20260910002000_thick_core_transactional_posting_v1.sql",
+      "repairable": false,
+      "security_sensitive": true,
+      "frontend_referenced": false,
+      "signatures": [
+        "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_quantity numeric, p_reference_type text, p_reference_id uuid, p_expires_at timestamptz"
       ]
     },
     {
@@ -9967,8 +10033,14 @@
     "autonomy_feed": [
       "p_limit int4"
     ],
+    "avenize_allocate_payment": [
+      "p_business_id uuid, p_payment_reference text, p_invoice_id uuid, p_amount numeric, p_currency text"
+    ],
     "avenize_assert_journal_balanced": [
       "p_journal_entry_id uuid"
+    ],
+    "avenize_close_fiscal_period": [
+      "p_business_id uuid, p_period_id uuid"
     ],
     "avenize_create_audit_event": [
       "p_business_id uuid, p_entity_type text, p_entity_id uuid, p_action text, p_before jsonb, p_after jsonb"
@@ -9979,8 +10051,20 @@
     "avenize_post_inventory_movement": [
       "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_movement_type text, p_quantity numeric, p_unit_cost numeric, p_reference_type text, p_reference_id uuid"
     ],
+    "avenize_post_journal_entry": [
+      "p_business_id uuid, p_entry_date date, p_description text, p_lines jsonb, p_reference text, p_source_type text, p_source_id uuid, p_currency text, p_idempotency_key text"
+    ],
     "avenize_post_stock_reconciliation": [
       "p_reconciliation_id uuid"
+    ],
+    "avenize_reconcile_bank_account": [
+      "p_business_id uuid, p_reconciliation_id uuid"
+    ],
+    "avenize_release_stock_reservation": [
+      "p_business_id uuid, p_reservation_id uuid"
+    ],
+    "avenize_reserve_stock": [
+      "p_business_id uuid, p_product_id uuid, p_location_id uuid, p_quantity numeric, p_reference_type text, p_reference_id uuid, p_expires_at timestamptz"
     ],
     "award_xp": [
       "p_user_id uuid, p_xp_amount int4, p_action_type text, p_description text"
