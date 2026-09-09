@@ -1,10 +1,8 @@
 name: Avenize Control Plane
 
 on:
-  pull_request:
-    branches: [main, develop]
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'fix/continuous-operationalization-*']
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
