@@ -25,6 +25,83 @@
       "finding": "Rendered representations can imply analytical context that is not fully backed by corresponding historical/goal datasets."
     },
     {
+      "severity": "P0",
+      "surface": "Executive Cockpit",
+      "component": "Core signal queries",
+      "status": "FAIL",
+      "finding": "Transactions, deals and staff queries rely on RLS rather than explicitly scoping the rendered dataset by business_id, while failures are converted to null and then rendered as absence. This makes tenant relevance and load-failure semantics dependent on hidden policy behavior."
+    },
+    {
+      "severity": "P1",
+      "surface": "Business Home",
+      "component": "Cash & Receivables card",
+      "status": "PARTIAL",
+      "finding": "The card is titled Cash & Receivables but prefers an overdue/receivable metric and labels the dominant value Outstanding receivables. It can therefore communicate cash position when the underlying fact is only receivables."
+    },
+    {
+      "severity": "P1",
+      "surface": "Business Home",
+      "component": "Capability degradation",
+      "status": "PARTIAL",
+      "finding": "Intelligence loads are intentionally best-effort and failures are swallowed. Cards can render their generic degraded/empty presentation without exposing which capability failed, which can make an unavailable intelligence source look like a legitimate absence of business signal."
+    },
+    {
+      "severity": "P0",
+      "surface": "Reports",
+      "component": "Error and reporting period semantics",
+      "status": "FAIL",
+      "finding": "Report queries have no reporting-period selector, and query failures are caught without an error state; the initial zero-valued stats can therefore be rendered as real zero business results. The page also presents aggregate counts without an explicit period."
+    },
+    {
+      "severity": "P1",
+      "surface": "Cash Flow",
+      "component": "Summary metrics",
+      "status": "PARTIAL",
+      "finding": "Income, expenses and net flow are calculated over every loaded cashflow record with no explicit period/filter, while the surface is presented as current Cash Flow. Query failures are logged but not represented to the user."
+    },
+    {
+      "severity": "P0",
+      "surface": "Sales Performance",
+      "component": "Targets / Commissions loading",
+      "status": "FAIL",
+      "finding": "TargetsTab and CommissionsTab load in useEffect with empty dependency arrays even though businessId/staffId arrive from auth context. If the component mounts before auth resolves, it can permanently render an empty state for the wrong/no context."
+    },
+    {
+      "severity": "P1",
+      "surface": "Sales Performance",
+      "component": "Target progress",
+      "status": "PARTIAL",
+      "finding": "Progress is calculated directly from actual_revenue/revenue_target without guarding a missing or zero denominator, so NaN/Infinity can reach the UI and the target progress is not explicitly tied to the selected reporting date beyond the stored target status."
+    },
+    {
+      "severity": "P1",
+      "surface": "Monthly Performance Review",
+      "component": "Month range generation",
+      "status": "FAIL",
+      "finding": "MONTHS builds local dates and converts them through toISOString().slice(0,10). In positive-offset locales this can shift period_start/period_end to the previous UTC date, so the displayed month can query the wrong boundaries."
+    },
+    {
+      "severity": "P1",
+      "surface": "Monthly Performance Review",
+      "component": "FACT narrative synthesis",
+      "status": "PARTIAL",
+      "finding": "The page labels the narrative as FACT-level while composeBusinessReview is loaded independently and best-effort after the monthly_review payload. The narrative can therefore have different availability/timing semantics from the authoritative review payload and should not be presented as equally certified without shared evidence metadata."
+    },
+    {
+      "severity": "P1",
+      "surface": "Intelligence Hub",
+      "component": "Market Benchmarks",
+      "status": "PARTIAL",
+      "finding": "The hub always renders a Market Benchmarks panel with a default metric of salary_software_engineer_ng, regardless of the current user's role, industry, selected tools or stated need. This is generic content rather than demonstrated user-relevant intelligence."
+    },
+    {
+      "severity": "P1",
+      "surface": "Intelligence Hub",
+      "component": "Panel failure semantics",
+      "status": "PARTIAL",
+      "finding": "All intelligence RPC failures become data=null and render 'No data available.' That conflates an RPC failure/unavailable capability with a legitimate zero/empty intelligence result."
+    },
+    {
       "severity": "P1",
       "surface": "All product surfaces",
       "component": "Rendering state semantics",
@@ -47,6 +124,10 @@
     "No fixed progress, trend or health score is presented without an authoritative source.",
     "Visible counts agree with the underlying filtered dataset.",
     "Visible labels describe the actual entity, status and time period being shown.",
-    "Filters and tabs change the evidence shown, not just the visual chrome."
+    "Filters and tabs change the evidence shown, not just the visual chrome.",
+    "Auth-dependent queries re-run when the authenticated business/user context becomes available.",
+    "Best-effort intelligence failures are visible as unavailable/error rather than indistinguishable from empty data.",
+    "Composite cards name the exact fact being shown rather than a broader business concept.",
+    "Default benchmark/insight panels are contextually relevant or explicitly user-selected."
   ]
 }
