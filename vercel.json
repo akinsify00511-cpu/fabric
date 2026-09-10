@@ -40,11 +40,39 @@
       "permanent": false
     },
     {
-      "source": "/(login|signup|forgot-password|update-password|onboarding|auth/callback|join/:path*)",
-      "has": [
-        { "type": "host", "value": "avenize.com" }
-      ],
-      "destination": "https://app.avenize.com/$1",
+      "source": "/login",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/login",
+      "permanent": false
+    },
+    {
+      "source": "/signup",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/signup",
+      "permanent": false
+    },
+    {
+      "source": "/forgot-password",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/forgot-password",
+      "permanent": false
+    },
+    {
+      "source": "/update-password",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/update-password",
+      "permanent": false
+    },
+    {
+      "source": "/onboarding",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/onboarding",
+      "permanent": false
+    },
+    {
+      "source": "/auth/callback",
+      "has": [{ "type": "host", "value": "avenize.com" }],
+      "destination": "https://app.avenize.com/auth/callback",
       "permanent": false
     }
   ],
