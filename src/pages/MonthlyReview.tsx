@@ -27,6 +27,12 @@ interface MPR {
   summary: { open_risks: number; high_risks: number; open_recommendations: number; critical_recommendations: number; objective_count: number; metric_count: number }
 }
 
+const EMPTY_REVIEW: Pick<MPR, 'objectives' | 'risks' | 'recommendations' | 'metrics' | 'data_quality' | 'summary'> = {
+  objectives: [], risks: [], recommendations: [], metrics: [],
+  data_quality: { open_critical: 0, open_warning: 0, resolved_total: 0 },
+  summary: { open_risks: 0, high_risks: 0, open_recommendations: 0, critical_recommendations: 0, objective_count: 0, metric_count: 0 },
+}
+
 const MONTHS = (() => {
   const arr: { label: string; start: string; end: string }[] = []
   const now = new Date()
@@ -52,6 +58,30 @@ function moverTone(p: number | null) {
   return p > 0 ? 'var(--av-success)' : p < 0 ? 'var(--av-danger)' : 'var(--av-text-muted)'
 }
 
+function normalizeReview(value: unknown): MPR | null {
+  if (!value || typeof value !== 'object') return null
+  const raw = value as Partial<MPR>
+  const base = EMPTY_REVIEW
+  const summary = raw.summary || base.summary
+  return {
+    ...(raw as MPR),
+    health: raw.health ?? null,
+    objectives: Array.isArray(raw.objectives) ? raw.objectives : base.objectives,
+    risks: Array.isArray(raw.risks) ? raw.risks : base.risks,
+    recommendations: Array.isArray(raw.recommendations) ? raw.recommendations : base.recommendations,
+    metrics: Array.isArray(raw.metrics) ? raw.metrics : base.metrics,
+    data_quality: raw.data_quality || base.data_quality,
+    summary: {
+      open_risks: Number(summary.open_risks) || 0,
+      high_risks: Number(summary.high_risks) || 0,
+      open_recommendations: Number(summary.open_recommendations) || 0,
+      critical_recommendations: Number(summary.critical_recommendations) || 0,
+      objective_count: Number(summary.objective_count) || 0,
+      metric_count: Number(summary.metric_count) || 0,
+    },
+  }
+}
+
 export default function MPRPage() {
   const { staff } = useAuth()
   const bid = staff?.business_id
@@ -62,8 +92,10 @@ export default function MPRPage() {
   const [expandedRec, setExpandedRec] = useState<string | null>(null)
 
   const load = useCallback(async () => {
-    if (!bid) return
+    if (!bid) { setLoading(false); return }
     setLoading(true)
+    setReview(null)
+    setNarrative(null)
     try {
       const m = MONTHS[monthIdx]
       const { data, error } = await supabase.rpc('monthly_review', {
@@ -72,9 +104,12 @@ export default function MPRPage() {
         p_period_end: m.end,
       })
       if (error) throw error
-      setReview(data as MPR)
-      // §AA evolved review — the narrative synthesis (best-effort, non-blocking).
-      composeBusinessReview(bid, m.start, m.end).then(n => setNarrative(n))
+      const normalized = normalizeReview(data)
+      if (!normalized) throw new Error('Monthly review returned an empty response')
+      setReview(normalized)
+      composeBusinessReview(bid, m.start, m.end)
+        .then(n => setNarrative(n))
+        .catch(() => undefined)
     } catch (e) {
       console.error('monthly_review failed (non-blocking):', e)
     } finally {
@@ -92,9 +127,7 @@ export default function MPRPage() {
       <div className="p-6 max-w-4xl mx-auto">
         <div className="rounded-2xl bg-white p-10 text-center shadow-[var(--av-shadow-sm)]">
           <Calendar size={32} className="mx-auto text-[var(--av-text-muted)] mb-3" />
-          <p className="text-sm text-[var(--av-text-secondary)]">
-            Monthly review unavailable — the MPR migration may not be applied to your database yet.
-          </p>
+          <p className="text-sm text-[var(--av-text-secondary)]">Monthly review is temporarily unavailable. Please refresh and try again.</p>
         </div>
       </div>
     )
@@ -107,280 +140,74 @@ export default function MPRPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto print:p-0">
-      {/* Header */}
       <div className="flex items-start justify-between mb-6 print:hidden">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2">
-            <Calendar size={24} className="text-[var(--av-primary)]" /> Monthly Performance Review
-          </h1>
-          <p className="text-sm text-[var(--av-text-secondary)] mt-1">
-            {MONTHS[monthIdx].label} — a board-ready snapshot of your business. <ClaimTag type="FACT" />
-          </p>
+          <h1 className="text-2xl font-bold text-[var(--av-text)] flex items-center gap-2"><Calendar size={24} className="text-[var(--av-primary)]" /> Monthly Performance Review</h1>
+          <p className="text-sm text-[var(--av-text-secondary)] mt-1">{MONTHS[monthIdx].label} — a board-ready snapshot of your business. <ClaimTag type="FACT" /></p>
         </div>
         <div className="flex items-center gap-2">
-          <select value={monthIdx} onChange={e => setMonthIdx(+e.target.value)}
-            className="px-3 py-2 rounded-xl border border-[var(--av-border)] text-sm bg-white outline-none focus:border-[var(--av-primary)]">
-            {MONTHS.map((m, i) => <option key={i} value={i}>{m.label}</option>)}
-          </select>
-          <button onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--av-surface-3)] text-sm hover:bg-[var(--av-border)]">
-            <Printer size={16} /> Print
-          </button>
+          <select value={monthIdx} onChange={e => setMonthIdx(+e.target.value)} className="px-3 py-2 rounded-xl border border-[var(--av-border)] text-sm bg-white outline-none focus:border-[var(--av-primary)]">{MONTHS.map((m, i) => <option key={i} value={i}>{m.label}</option>)}</select>
+          <button onClick={() => window.print()} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[var(--av-surface-3)] text-sm hover:bg-[var(--av-border)]"><Printer size={16} /> Print</button>
         </div>
       </div>
 
-      {/* Print-only header */}
-      <div className="hidden print:block mb-6">
-        <h1 className="text-xl font-bold">Monthly Performance Review — {MONTHS[monthIdx].label}</h1>
-        <p className="text-sm text-gray-500">Generated {new Date(review.generated_at).toLocaleString()}</p>
-      </div>
+      <div className="hidden print:block mb-6"><h1 className="text-xl font-bold">Monthly Performance Review — {MONTHS[monthIdx].label}</h1><p className="text-sm text-gray-500">Generated {new Date(review.generated_at).toLocaleString()}</p></div>
 
-      {/* §AA — the evolved narrative review. The directive's 9 questions answered
-          in plain language, synthesized from the same facts below. Best-effort —
-          stays empty if the compose_business_review migration isn't deployed. */}
       {narrative && narrative.authorized && (
         <Section title="Business Review — the story" icon={BookOpen} collapsible>
-          <p className="text-xs text-[var(--av-text-muted)] mb-3">
-            What happened this month, in plain language. <ClaimTag type="FACT" /> — every number below is traceable to live business data.
-          </p>
+          <p className="text-xs text-[var(--av-text-muted)] mb-3">What happened this month, in plain language. <ClaimTag type="FACT" /> — every number below is traceable to live business data.</p>
           <div className="space-y-3 text-sm">
-            {narrative.what_improved.length > 0 && (
-              <div>
-                <p className="font-medium text-[var(--av-success)] flex items-center gap-1.5 mb-1"><CheckCircle2 size={14} /> What improved</p>
-                <ul className="ml-5 list-disc space-y-0.5">
-                  {narrative.what_improved.map((m, i) => (
-                    <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-success)] font-medium">+{m.change_pct.toFixed(1)}%</span></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {narrative.what_deteriorated.length > 0 && (
-              <div>
-                <p className="font-medium text-[var(--av-danger)] flex items-center gap-1.5 mb-1"><AlertTriangle size={14} /> What deteriorated</p>
-                <ul className="ml-5 list-disc space-y-0.5">
-                  {narrative.what_deteriorated.map((m, i) => (
-                    <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-danger)] font-medium">{m.change_pct.toFixed(1)}%</span></li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {narrative.what_we_learned.length > 0 && (
-              <div>
-                <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><BookOpen size={14} /> What we learned</p>
-                <ul className="ml-5 list-disc space-y-0.5">
-                  {narrative.what_we_learned.map((l, i) => (
-                    <li key={i} className="text-[var(--av-text-secondary)]"><strong>{l.topic}:</strong> {l.lesson}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {(() => {
-              const rd = narrative.recommended_vs_done
-              if (rd.recommended === 0) return null
-              return (
-                <div>
-                  <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Sparkles size={14} /> What Avenize recommended vs what you did</p>
-                  <p className="text-[var(--av-text-secondary)]">
-                    {rd.recommended} recommendations · {rd.accepted} accepted · {rd.acted} acted on · {rd.outcomes_recorded} outcomes recorded ({rd.successful_outcomes} successful).
-                    {rd.recommended - rd.acted > 0 && <span className="text-[var(--av-warning)]"> {rd.recommended - rd.acted} still open.</span>}
-                  </p>
-                </div>
-              )
-            })()}
-            {narrative.next_month_priorities.length > 0 && (
-              <div>
-                <p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Target size={14} /> What to focus on next month</p>
-                <ul className="ml-5 list-disc space-y-0.5">
-                  {narrative.next_month_priorities.slice(0, 5).map((p, i) => (
-                    <li key={i} className="text-[var(--av-text-secondary)]">{p.statement}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {narrative.what_improved?.length > 0 && <div><p className="font-medium text-[var(--av-success)] flex items-center gap-1.5 mb-1"><CheckCircle2 size={14} /> What improved</p><ul className="ml-5 list-disc space-y-0.5">{narrative.what_improved.map((m, i) => <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-success)] font-medium">+{m.change_pct.toFixed(1)}%</span></li>)}</ul></div>}
+            {narrative.what_deteriorated?.length > 0 && <div><p className="font-medium text-[var(--av-danger)] flex items-center gap-1.5 mb-1"><AlertTriangle size={14} /> What deteriorated</p><ul className="ml-5 list-disc space-y-0.5">{narrative.what_deteriorated.map((m, i) => <li key={i} className="text-[var(--av-text-secondary)]">{m.metric}: <span className="text-[var(--av-danger)] font-medium">{m.change_pct.toFixed(1)}%</span></li>)}</ul></div>}
+            {narrative.what_we_learned?.length > 0 && <div><p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><BookOpen size={14} /> What we learned</p><ul className="ml-5 list-disc space-y-0.5">{narrative.what_we_learned.map((l, i) => <li key={i} className="text-[var(--av-text-secondary)]"><strong>{l.topic}:</strong> {l.lesson}</li>)}</ul></div>}
+            {(() => { const rd = narrative.recommended_vs_done; if (!rd || rd.recommended === 0) return null; return <div><p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Sparkles size={14} /> What Avenize recommended vs what you did</p><p className="text-[var(--av-text-secondary)]">{rd.recommended} recommendations · {rd.accepted} accepted · {rd.acted} acted on · {rd.outcomes_recorded} outcomes recorded ({rd.successful_outcomes} successful).{rd.recommended - rd.acted > 0 && <span className="text-[var(--av-warning)]"> {rd.recommended - rd.acted} still open.</span>}</p></div> })()}
+            {narrative.next_month_priorities?.length > 0 && <div><p className="font-medium text-[var(--av-text)] flex items-center gap-1.5 mb-1"><Target size={14} /> What to focus on next month</p><ul className="ml-5 list-disc space-y-0.5">{narrative.next_month_priorities.slice(0, 5).map((p, i) => <li key={i} className="text-[var(--av-text-secondary)]">{p.statement}</li>)}</ul></div>}
             {narrative.note && <p className="text-xs text-[var(--av-text-muted)] italic">{narrative.note}</p>}
           </div>
         </Section>
       )}
 
-      {/* Summary header */}
-      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <SummaryStat label="Business Health" value={hasHealth ? `${health!.overall_score}/100` : '—'}
-            tone={hasHealth ? scoreTone(health!.overall_score!) : 'var(--av-text-muted)'} icon={HeartPulse} />
-          <SummaryStat label="Objectives" value={s.objective_count} tone="var(--av-text)" icon={Target} />
-          <SummaryStat label="Open Risks" value={s.open_risks} sub={`${s.high_risks} high`} tone={s.open_risks > 0 ? 'var(--av-warning)' : 'var(--av-success)'} icon={ShieldAlert} />
-          <SummaryStat label="Recommendations" value={s.open_recommendations} sub={`${s.critical_recommendations} critical`} tone={s.critical_recommendations > 0 ? 'var(--av-danger)' : 'var(--av-text)'} icon={Lightbulb} />
-          <SummaryStat label="Metrics Tracked" value={s.metric_count} tone="var(--av-text)" icon={BarChart3} />
-        </div>
-      </div>
+      <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4"><div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <SummaryStat label="Business Health" value={hasHealth ? `${health!.overall_score}/100` : '—'} tone={hasHealth ? scoreTone(health!.overall_score!) : 'var(--av-text-muted)'} icon={HeartPulse} />
+        <SummaryStat label="Objectives" value={s.objective_count} tone="var(--av-text)" icon={Target} />
+        <SummaryStat label="Open Risks" value={s.open_risks} sub={`${s.high_risks} high`} tone={s.open_risks > 0 ? 'var(--av-warning)' : 'var(--av-success)'} icon={ShieldAlert} />
+        <SummaryStat label="Recommendations" value={s.open_recommendations} sub={`${s.critical_recommendations} critical`} tone={s.critical_recommendations > 0 ? 'var(--av-danger)' : 'var(--av-text)'} icon={Lightbulb} />
+        <SummaryStat label="Metrics Tracked" value={s.metric_count} tone="var(--av-text)" icon={BarChart3} />
+      </div></div>
 
-      {/* Business Health breakdown */}
       <Section title="Business Health" icon={HeartPulse} collapsible>
-        {!hasHealth ? (
-          <ClaimNote tone="warn">No Business Health score computed for this period. Set targets on your key metrics to enable the score.</ClaimNote>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-            {dims.map(([key, dim]: [string, any]) => (
-              <div key={key} className="rounded-xl bg-[var(--av-surface-3)] p-2.5">
-                <div className="text-[10px] text-[var(--av-text-muted)] uppercase">{key}</div>
-                <div className="text-lg font-semibold" style={{ color: dim.score == null ? 'var(--av-text-muted)' : scoreTone(dim.score) }}>
-                  {dim.score ?? '—'}
-                </div>
-                <div className="text-[9px] text-[var(--av-text-muted)]">{dim.status === 'insufficient_data' ? 'no targets' : `${dim.metrics?.length || 0} metric(s)`}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {!hasHealth ? <ClaimNote tone="warn">No Business Health score computed for this period. Set targets on your key metrics to enable the score.</ClaimNote> : <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">{dims.map(([key, dim]: [string, any]) => <div key={key} className="rounded-xl bg-[var(--av-surface-3)] p-2.5"><div className="text-[10px] text-[var(--av-text-muted)] uppercase">{key}</div><div className="text-lg font-semibold" style={{ color: dim.score == null ? 'var(--av-text-muted)' : scoreTone(dim.score) }}>{dim.score ?? '—'}</div><div className="text-[9px] text-[var(--av-text-muted)]">{dim.status === 'insufficient_data' ? 'no targets' : `${dim.metrics?.length || 0} metric(s)`}</div></div>)}</div>}
       </Section>
 
-      {/* Objectives */}
       <Section title="Objectives & Key Results" icon={Target} collapsible>
-        {review.objectives.length === 0 ? (
-          <Empty msg="No objectives tracked in this period." />
-        ) : (
-          <div className="space-y-2">
-            {review.objectives.map(o => (
-              <div key={o.id} className="flex items-center gap-3 py-2 border-b border-[var(--av-border)] last:border-0">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-[var(--av-text)]">{o.title}</p>
-                  <p className="text-[10px] text-[var(--av-text-muted)] capitalize">{o.scope} · {o.key_result_count} key result(s) · {o.status}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-semibold" style={{ color: o.progress == null ? 'var(--av-text-muted)' : scoreTone(o.progress) }}>
-                    {o.progress != null ? `${Math.round(o.progress)}%` : '—'}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {review.objectives.length === 0 ? <Empty msg="No objectives tracked in this period." /> : <div className="space-y-2">{review.objectives.map(o => <div key={o.id} className="flex items-center gap-3 py-2 border-b border-[var(--av-border)] last:border-0"><div className="flex-1 min-w-0"><p className="text-sm text-[var(--av-text)]">{o.title}</p><p className="text-[10px] text-[var(--av-text-muted)] capitalize">{o.scope} · {o.key_result_count} key result(s) · {o.status}</p></div><div className="text-right"><span className="text-sm font-semibold" style={{ color: o.progress == null ? 'var(--av-text-muted)' : scoreTone(o.progress) }}>{o.progress != null ? `${Math.round(o.progress)}%` : '—'}</span></div></div>)}</div>}
       </Section>
 
-      {/* Risks */}
       <Section title="Open Risks" icon={ShieldAlert} collapsible>
-        {review.risks.length === 0 ? (
-          <Empty msg="No open risks recorded." />
-        ) : (
-          <div className="space-y-2">
-            {review.risks.slice(0, 8).map(r => (
-              <div key={r.id} className="flex items-center gap-3 py-2 border-b border-[var(--av-border)] last:border-0">
-                <span className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold"
-                  style={{ background: `${scoreTone(r.risk_score)}15`, color: scoreTone(r.risk_score) }}>
-                  {r.risk_score}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-[var(--av-text)]">{r.title}</p>
-                  <p className="text-[10px] text-[var(--av-text-muted)] capitalize">{r.category} · {r.mitigation_status.replace('_', ' ')}{r.due_date && ` · due ${r.due_date}`}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {review.risks.length === 0 ? <Empty msg="No open risks recorded." /> : <div className="space-y-2">{review.risks.slice(0, 8).map(r => <div key={r.id} className="flex items-center gap-3 py-2 border-b border-[var(--av-border)] last:border-0"><span className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold" style={{ background: `${scoreTone(r.risk_score)}15`, color: scoreTone(r.risk_score) }}>{r.risk_score}</span><div className="flex-1 min-w-0"><p className="text-sm text-[var(--av-text)]">{r.title}</p><p className="text-[10px] text-[var(--av-text-muted)] capitalize">{r.category} · {(r.mitigation_status || '').replace('_', ' ')}{r.due_date && ` · due ${r.due_date}`}</p></div></div>)}</div>}
       </Section>
 
-      {/* Recommendations */}
       <Section title="Open Recommendations" icon={Lightbulb} collapsible>
-        {review.recommendations.length === 0 ? (
-          <Empty msg="No open recommendations for this period." />
-        ) : (
-          <div className="space-y-2">
-            {review.recommendations.slice(0, 8).map(r => (
-              <div key={r.id} className="py-2 border-b border-[var(--av-border)] last:border-0">
-                <div className="flex items-start gap-2">
-                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded uppercase shrink-0"
-                    style={{ background: `${sevTone(r.severity)}15`, color: sevTone(r.severity) }}>
-                    {r.severity}
-                  </span>
-                  <div className="flex-1">
-                    <p className="text-sm text-[var(--av-text)]">{r.statement}</p>
-                    <button
-                      onClick={() => setExpandedRec(expandedRec === r.id ? null : r.id)}
-                      className="text-[11px] text-[var(--av-primary)] hover:underline mt-1 flex items-center gap-1"
-                    >
-                      <HelpCircle size={11} />
-                      {expandedRec === r.id ? 'Hide evidence' : 'Why?'}
-                    </button>
-                    {expandedRec === r.id && (
-                      <EvidencePanel evidence={r.evidence} ruleId={r.rule_id} />
-                    )}
-                  </div>
-                </div>
-                <p className="text-[10px] text-[var(--av-text-muted)] mt-0.5 ml-[38px]">{r.rule_id}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        {review.recommendations.length === 0 ? <Empty msg="No open recommendations for this period." /> : <div className="space-y-2">{review.recommendations.slice(0, 8).map(r => <div key={r.id} className="py-2 border-b border-[var(--av-border)] last:border-0"><div className="flex items-start gap-2"><span className="text-[10px] font-medium px-1.5 py-0.5 rounded uppercase shrink-0" style={{ background: `${sevTone(r.severity)}15`, color: sevTone(r.severity) }}>{r.severity}</span><div className="flex-1"><p className="text-sm text-[var(--av-text)]">{r.statement}</p><button onClick={() => setExpandedRec(expandedRec === r.id ? null : r.id)} className="text-[11px] text-[var(--av-primary)] hover:underline mt-1 flex items-center gap-1"><HelpCircle size={11} />{expandedRec === r.id ? 'Hide evidence' : 'Why?'}</button>{expandedRec === r.id && <EvidencePanel evidence={r.evidence} ruleId={r.rule_id} />}</div></div><p className="text-[10px] text-[var(--av-text-muted)] mt-0.5 ml-[38px]">{r.rule_id}</p></div>)}</div>}
       </Section>
 
-      {/* Metric movers */}
       <Section title="Metric Movers" icon={BarChart3} collapsible>
-        {review.metrics.length === 0 ? (
-          <Empty msg="No governed metrics recorded in this period." />
-        ) : (
-          <div className="space-y-1.5">
-            {review.metrics.slice(0, 10).map((m, i) => {
-              const Mover = m.change_percent > 0 ? TrendingUp : m.change_percent < 0 ? TrendingDown : Minus
-              return (
-                <div key={i} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-[var(--av-surface-2)]">
-                  <Mover size={14} style={{ color: moverTone(m.change_percent) }} />
-                  <span className="text-sm text-[var(--av-text)] flex-1">{m.name || m.metric_key}</span>
-                  <span className="text-xs text-[var(--av-text-muted)]">
-                    {m.previous_value != null && `${m.previous_value} → `}{m.current_value}
-                  </span>
-                  <span className="text-xs font-medium w-16 text-right" style={{ color: moverTone(m.change_percent) }}>
-                    {m.change_percent != null ? `${m.change_percent > 0 ? '+' : ''}${m.change_percent.toFixed(1)}%` : '—'}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        )}
+        {review.metrics.length === 0 ? <Empty msg="No governed metrics recorded in this period." /> : <div className="space-y-1.5">{review.metrics.slice(0, 10).map((m, i) => { const Mover = (m.change_percent || 0) > 0 ? TrendingUp : (m.change_percent || 0) < 0 ? TrendingDown : Minus; return <div key={i} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-[var(--av-surface-2)]"><Mover size={14} style={{ color: moverTone(m.change_percent) }} /><span className="text-sm text-[var(--av-text)] flex-1">{m.name || m.metric_key}</span><span className="text-xs text-[var(--av-text-muted)]">{m.previous_value != null && `${m.previous_value} → `}{m.current_value}</span><span className="text-xs font-medium w-16 text-right" style={{ color: moverTone(m.change_percent) }}>{m.change_percent != null ? `${m.change_percent > 0 ? '+' : ''}${m.change_percent.toFixed(1)}%` : '—'}</span></div> })}</div>}
       </Section>
 
-      {/* Data quality */}
-      <Section title="Data Quality" icon={ShieldCheck}>
-        <div className="flex items-center gap-4 text-sm">
-          <span className="text-[var(--av-danger)]"><strong>{review.data_quality.open_critical}</strong> critical</span>
-          <span className="text-[var(--av-warning)]"><strong>{review.data_quality.open_warning}</strong> warning</span>
-          <span className="text-[var(--av-success)]"><strong>{review.data_quality.resolved_total}</strong> resolved</span>
-        </div>
-      </Section>
-
-      <p className="text-[10px] text-[var(--av-text-muted)] text-center mt-4 print:text-[9px]">
-        Generated {new Date(review.generated_at).toLocaleString()} · Every number is traceable to live business data (§9/§19). This review interprets; it does not modify your data.
-      </p>
+      <Section title="Data Quality" icon={ShieldCheck}><div className="flex items-center gap-4 text-sm"><span className="text-[var(--av-danger)]"><strong>{review.data_quality.open_critical}</strong> critical</span><span className="text-[var(--av-warning)]"><strong>{review.data_quality.open_warning}</strong> warning</span><span className="text-[var(--av-success)]"><strong>{review.data_quality.resolved_total}</strong> resolved</span></div></Section>
+      <p className="text-[10px] text-[var(--av-text-muted)] text-center mt-4 print:text-[9px]">Generated {new Date(review.generated_at).toLocaleString()} · Every number is traceable to live business data (§9/§19). This review interprets; it does not modify your data.</p>
     </div>
   )
 }
 
-function Section({ title, icon: Icon, collapsible, children }: {
-  title: string; icon: any; collapsible?: boolean; children: React.ReactNode
-}) {
+function Section({ title, icon: Icon, collapsible, children }: { title: string; icon: any; collapsible?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(true)
-  return (
-    <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4 print:shadow-none print:border print:border-gray-200">
-      <button onClick={() => collapsible && setOpen(!open)} className="w-full flex items-center gap-1.5 mb-3 print:pointer-events-none">
-        <Icon size={16} className="text-[var(--av-primary)]" />
-        <h3 className="text-sm font-semibold text-[var(--av-text)] flex-1 text-left">{title}</h3>
-      </button>
-      {open && children}
-    </div>
-  )
+  return <div className="rounded-2xl bg-white p-5 shadow-[var(--av-shadow-sm)] mb-4 print:shadow-none print:border print:border-gray-200"><button onClick={() => collapsible && setOpen(!open)} className="w-full flex items-center gap-1.5 mb-3 print:pointer-events-none"><Icon size={16} className="text-[var(--av-primary)]" /><h3 className="text-sm font-semibold text-[var(--av-text)] flex-1 text-left">{title}</h3></button>{open && children}</div>
 }
 
-function SummaryStat({ label, value, sub, tone, icon: Icon }: {
-  label: string; value: any; sub?: string; tone: string; icon: any
-}) {
-  return (
-    <div className="text-center">
-      <Icon size={16} className="mx-auto mb-1" style={{ color: tone }} />
-      <div className="text-xl font-bold" style={{ color: tone }}>{value}</div>
-      <div className="text-[10px] text-[var(--av-text-muted)] uppercase">{label}</div>
-      {sub && <div className="text-[10px]" style={{ color: tone }}>{sub}</div>}
-    </div>
-  )
+function SummaryStat({ label, value, sub, tone, icon: Icon }: { label: string; value: any; sub?: string; tone: string; icon: any }) {
+  return <div className="text-center"><Icon size={16} className="mx-auto mb-1" style={{ color: tone }} /><div className="text-xl font-bold" style={{ color: tone }}>{value}</div><div className="text-[10px] text-[var(--av-text-muted)] uppercase">{label}</div>{sub && <div className="text-[10px]" style={{ color: tone }}>{sub}</div>}</div>
 }
 
-function Empty({ msg }: { msg: string }) {
-  return <p className="text-xs text-[var(--av-text-muted)] py-2">{msg}</p>
-}
+function Empty({ msg }: { msg: string }) { return <p className="text-xs text-[var(--av-text-muted)] py-2">{msg}</p> }
