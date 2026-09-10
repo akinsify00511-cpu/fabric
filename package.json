@@ -70,7 +70,7 @@
     "@vitejs/plugin-react": "^6.0.4",
     "@vitest/coverage-v8": "^4.1.10",
     "jsdom": "^29.1.1",
-    "lhci": "^4.1.0",
+    "lhci": "^4.1.2",
     "msw": "^2.15.0",
     "oxlint": "^1.75.0",
     "tailwindcss": "^4.3.3",
