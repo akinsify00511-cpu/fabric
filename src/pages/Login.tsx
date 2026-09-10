@@ -34,6 +34,8 @@ const BRAND = {
   dangerSoft: 'rgba(234, 67, 53, 0.08)',
 }
 
+const MOBILE_TAP_TARGET = '44px'
+
 export default function Login() {
   const navigate = useNavigate()
   const { session: ctxSession, membership } = useAuth()
@@ -181,9 +183,9 @@ export default function Login() {
               <input type="text" value={mfaCode} onChange={(e) => setMfaCode(e.target.value.trim().slice(0, useBackupCode ? 20 : 6))} placeholder={useBackupCode ? 'XXXX-XXXX' : '000000'} className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none" style={{ border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.surfaceElevated, color: BRAND.text, minHeight: '48px', textAlign: 'center', letterSpacing: useBackupCode ? '0.1em' : '0.4em', fontSize: useBackupCode ? '0.875rem' : '1.5rem' }} autoFocus autoComplete="one-time-code" inputMode={useBackupCode ? 'text' : 'numeric'} />
               <p className="text-xs mt-2 text-center" style={{ color: BRAND.textSecondary }}>{useBackupCode ? 'Enter one of your saved backup codes' : 'Enter the 6-digit code from your authenticator app'}</p>
             </div>
-            <button type="submit" disabled={mfaVerifying || !mfaCode} className="w-full rounded-lg text-white py-2 text-sm font-medium transition disabled:opacity-50" style={{ backgroundColor: BRAND.primary, border: 'none' }}>{mfaVerifying ? 'Verifying…' : 'Verify'}</button>
-            <button type="button" onClick={() => { setUseBackupCode(v => !v); setMfaCode(''); setError(null) }} className="w-full text-center text-xs transition" style={{ color: BRAND.primary }}>{useBackupCode ? 'Use authentication code instead' : 'Use a backup code instead'}</button>
-            <button type="button" onClick={async () => { await supabase.auth.signOut(); setMfaChallenge(null); setMfaCode(''); setError(null) }} className="w-full text-center text-xs transition" style={{ color: BRAND.textSecondary }}>Back to sign in</button>
+            <button type="submit" disabled={mfaVerifying || !mfaCode} className="w-full rounded-lg text-white py-2 text-sm font-medium transition disabled:opacity-50" style={{ backgroundColor: BRAND.primary, border: 'none', minHeight: MOBILE_TAP_TARGET }}>{mfaVerifying ? 'Verifying…' : 'Verify'}</button>
+            <button type="button" onClick={() => { setUseBackupCode(v => !v); setMfaCode(''); setError(null) }} className="w-full text-center text-xs transition" style={{ color: BRAND.primary, minHeight: MOBILE_TAP_TARGET }}>{useBackupCode ? 'Use authentication code instead' : 'Use a backup code instead'}</button>
+            <button type="button" onClick={async () => { await supabase.auth.signOut(); setMfaChallenge(null); setMfaCode(''); setError(null) }} className="w-full text-center text-xs transition" style={{ color: BRAND.textSecondary, minHeight: MOBILE_TAP_TARGET }}>Back to sign in</button>
           </form>
         ) : (
           <>
@@ -201,11 +203,11 @@ export default function Login() {
             <form onSubmit={handleSubmit} className="space-y-3 mb-4">
               <input type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none" style={{ border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.surfaceElevated, color: BRAND.text, minHeight: '48px' }} />
               <input type="password" required placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-lg px-3 py-3 text-sm focus:outline-none" style={{ border: `1px solid ${BRAND.border}`, backgroundColor: BRAND.surfaceElevated, color: BRAND.text, minHeight: '48px' }} />
+              <button type="submit" disabled={loading} className="w-full rounded-lg text-white py-2 text-sm font-medium transition" style={{ backgroundColor: BRAND.primary, border: 'none', minHeight: MOBILE_TAP_TARGET }}>{loading ? 'Signing in…' : 'Sign in'}</button>
             </form>
-            <div className="flex items-center justify-between mb-4"><Link to="/forgot-password" className="text-xs transition" style={{ color: BRAND.primary }}>Forgot password?</Link></div>
-            <button type="submit" onClick={handleSubmit} disabled={loading} className="w-full rounded-lg text-white py-2 text-sm font-medium transition" style={{ backgroundColor: BRAND.primary, border: 'none' }}>{loading ? 'Signing in…' : 'Sign in'}</button>
-            {passkeysSupported && !mfaChallenge && <button type="button" onClick={handlePasskeyLogin} disabled={loading} className="w-full rounded-lg py-2 text-sm font-medium transition mt-2 flex items-center justify-center gap-2" style={{ backgroundColor: 'transparent', border: `1px solid ${BRAND.border}`, color: BRAND.textSecondary }}>Sign in with a passkey</button>}
-            <p className="text-xs text-center mt-4" style={{ color: BRAND.textSecondary }}>New here?{' '}<Link to="/signup" className="transition" style={{ color: BRAND.primary }}>Set up your business</Link></p>
+            <div className="flex items-center justify-between mb-4"><Link to="/forgot-password" className="text-xs transition inline-flex items-center justify-center" style={{ color: BRAND.primary, minHeight: MOBILE_TAP_TARGET }}>Forgot password?</Link></div>
+            {passkeysSupported && !mfaChallenge && <button type="button" onClick={handlePasskeyLogin} disabled={loading} className="w-full rounded-lg py-2 text-sm font-medium transition mt-2 flex items-center justify-center gap-2" style={{ backgroundColor: 'transparent', border: `1px solid ${BRAND.border}`, color: BRAND.textSecondary, minHeight: MOBILE_TAP_TARGET }}>Sign in with a passkey</button>}
+            <p className="text-xs text-center mt-4" style={{ color: BRAND.textSecondary }}>New here?{' '}<Link to="/signup" className="transition inline-flex items-center justify-center align-middle" style={{ color: BRAND.primary, minHeight: MOBILE_TAP_TARGET }}>Set up your business</Link></p>
           </>
         )}
       </div>
