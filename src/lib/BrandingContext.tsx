@@ -3,46 +3,33 @@ import { supabase } from './supabase'
 import { useAuth } from './AuthContext'
 
 export type Branding = {
-  // Identity
   brand_name: string | null
   tagline: string | null
   custom_name: string | null
   custom_tagline: string | null
-  // Logos
   logo_url: string | null
   logo_dark_url: string | null
   favicon_url: string | null
   og_image_url: string | null
-  // Colors - Light
   primary_color: string
   accent_color: string
   background_color: string
   surface_color: string
   text_color: string
-  // Colors - Dark
   dark_primary_color: string
   dark_accent_color: string
   dark_background_color: string
   dark_surface_color: string
   dark_text_color: string
-  // Theme
   theme_mode: 'light' | 'dark' | 'system'
   border_radius: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
   font_family: string
   button_style: string
-  // Contact
   website: string | null
   phone: string | null
   email: string | null
   address: string | null
-  // Social
-  social_links: {
-    linkedin?: string
-    twitter?: string
-    facebook?: string
-    instagram?: string
-    youtube?: string
-  }
+  social_links: { linkedin?: string; twitter?: string; facebook?: string; instagram?: string; youtube?: string }
 }
 
 const DEFAULT_BRANDING: Branding = {
@@ -54,7 +41,7 @@ const DEFAULT_BRANDING: Branding = {
   logo_dark_url: null,
   favicon_url: null,
   og_image_url: null,
-  primary_color: 'var(--av-primary, #0891B2)',
+  primary_color: '#0891B2',
   accent_color: '#FF7A59',
   background_color: '#FAFAFA',
   surface_color: '#FFFFFF',
@@ -87,8 +74,53 @@ type BrandingContextType = {
 }
 
 type Timeout = ReturnType<typeof setTimeout>
-
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
+
+function setThemeVariables(branding: Branding) {
+  const root = document.documentElement
+  const dark = branding.theme_mode === 'dark' || (branding.theme_mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  const primary = dark ? branding.dark_primary_color : branding.primary_color
+  const accent = dark ? branding.dark_accent_color : branding.accent_color
+  const bg = dark ? branding.dark_background_color : branding.background_color
+  const surface = dark ? branding.dark_surface_color : branding.surface_color
+  const text = dark ? branding.dark_text_color : branding.text_color
+
+  // Canonical Avenize tokens used throughout the application.
+  root.style.setProperty('--av-primary', primary)
+  root.style.setProperty('--av-primary-hover', primary)
+  root.style.setProperty('--av-primary-soft', `${primary}18`)
+  root.style.setProperty('--av-accent', accent)
+  root.style.setProperty('--av-bg', bg)
+  root.style.setProperty('--av-background', bg)
+  root.style.setProperty('--av-surface', surface)
+  root.style.setProperty('--av-surface-2', surface)
+  root.style.setProperty('--av-surface-3', bg)
+  root.style.setProperty('--av-text', text)
+  root.style.setProperty('--av-text-primary', text)
+
+  // Backwards-compatible aliases used by older marketing/theme surfaces.
+  root.style.setProperty('--avenize-primary', primary)
+  root.style.setProperty('--avenize-accent', accent)
+  root.style.setProperty('--avenize-bg', bg)
+  root.style.setProperty('--avenize-background', bg)
+  root.style.setProperty('--avenize-offwhite', bg)
+  root.style.setProperty('--avenize-accent-start', primary)
+  root.style.setProperty('--avenize-accent-end', accent)
+  root.style.setProperty('--avenize-text', text)
+
+  if (branding.border_radius) {
+    const radius = { none: '0px', sm: '0.375rem', md: '0.5rem', lg: '0.75rem', xl: '1rem', '2xl': '1.25rem' }[branding.border_radius]
+    root.style.setProperty('--av-radius-md', radius)
+  }
+  if (branding.font_family && branding.font_family !== 'default') {
+    root.style.setProperty('--av-font-family', branding.font_family)
+  } else {
+    root.style.removeProperty('--av-font-family')
+  }
+
+  root.dataset.brandTheme = branding.theme_mode
+  root.classList.toggle('dark', dark)
+}
 
 export function BrandingProvider({ children }: { children: ReactNode }) {
   const { staff } = useAuth()
@@ -99,48 +131,30 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   const saveTimeoutRef = useRef<Timeout | null>(null)
   const businessIdRef = useRef<string | null>(null)
 
-  // Load branding from database on mount
   useEffect(() => {
+    let mounted = true
     const loadBranding = async () => {
       if (!staff?.business_id) {
-        setLoading(false)
+        if (mounted) setLoading(false)
         return
       }
-
       businessIdRef.current = staff.business_id
-
+      setLoading(true)
       try {
-        const { data, error } = await supabase
-          .from('business_branding')
-          .select('*')
-          .eq('business_id', staff.business_id)
-          .single()
-
-        // Silently handle table not found (404) or RLS issues (406)
+        const { data, error } = await supabase.from('business_branding').select('*').eq('business_id', staff.business_id).maybeSingle()
         if (error && !['PGRST116', '404', '406'].includes(error.code || '')) {
           console.warn('Branding not available:', error.message)
         }
-
+        if (!mounted) return
         if (data) {
-          // Parse social_links if it's a string
           let socialLinks = data.social_links
           if (typeof socialLinks === 'string') {
-            try {
-              socialLinks = JSON.parse(socialLinks)
-            } catch {
-              socialLinks = {}
-            }
+            try { socialLinks = JSON.parse(socialLinks) } catch { socialLinks = {} }
           }
-
           setBranding({
-            brand_name: data.brand_name,
-            tagline: data.tagline,
-            custom_name: data.custom_name,
-            custom_tagline: data.custom_tagline,
-            logo_url: data.logo_url,
-            logo_dark_url: data.logo_dark_url,
-            favicon_url: data.favicon_url,
-            og_image_url: data.og_image_url,
+            ...DEFAULT_BRANDING,
+            ...data,
+            social_links: socialLinks || {},
             primary_color: data.primary_color || DEFAULT_BRANDING.primary_color,
             accent_color: data.accent_color || DEFAULT_BRANDING.accent_color,
             background_color: data.background_color || DEFAULT_BRANDING.background_color,
@@ -155,98 +169,45 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
             border_radius: data.border_radius || DEFAULT_BRANDING.border_radius,
             font_family: data.font_family || DEFAULT_BRANDING.font_family,
             button_style: data.button_style || DEFAULT_BRANDING.button_style,
-            website: data.website,
-            phone: data.phone,
-            email: data.email,
-            address: data.address,
-            social_links: socialLinks || {},
           })
+        } else {
+          setBranding(DEFAULT_BRANDING)
         }
       } catch (err) {
+        if (mounted) setError('Failed to load branding')
         console.error('Error loading branding:', err)
-        setError('Failed to load branding')
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
-
-    loadBranding()
+    void loadBranding()
+    return () => { mounted = false }
   }, [staff?.business_id])
 
-  // Apply branding to CSS variables
   useEffect(() => {
-    if (loading) return
-
-    const root = document.documentElement
-
-    // Check for locally stored theme colors first
-    const localBg = localStorage.getItem('avenize_theme_bg')
-    const localText = localStorage.getItem('avenize_theme_text')
-
-    // Apply background color (from localStorage or branding)
-    const bgColor = localBg || branding.background_color
-    const textColor = localText || branding.text_color
-
-    root.style.setProperty('--avenize-primary', branding.primary_color)
-    root.style.setProperty('--avenize-accent', branding.accent_color)
-    root.style.setProperty('--avenize-bg', bgColor)
-    root.style.setProperty('--avenize-accent-start', branding.primary_color)
-    root.style.setProperty('--avenize-accent-end', branding.accent_color)
-    root.style.setProperty('--avenize-offwhite', bgColor)
-    root.style.setProperty('--avenize-background', bgColor)
-    root.style.setProperty('--avenize-text', textColor)
-
-    // Update favicon if custom
+    if (loading || typeof window === 'undefined') return
+    setThemeVariables(branding)
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = () => { if (branding.theme_mode === 'system') setThemeVariables(branding) }
+    media.addEventListener?.('change', onChange)
     if (branding.favicon_url) {
-      const existingFavicon = document.querySelector("link[rel='icon']") as HTMLLinkElement
-      if (existingFavicon) {
-        existingFavicon.href = branding.favicon_url
+      let favicon = document.querySelector<HTMLLinkElement>("link[rel='icon']")
+      if (!favicon) {
+        favicon = document.createElement('link')
+        favicon.rel = 'icon'
+        document.head.appendChild(favicon)
       }
+      favicon.href = branding.favicon_url
     }
+    return () => media.removeEventListener?.('change', onChange)
   }, [branding, loading])
 
-  // Save branding to database
   const saveBranding = useCallback(async () => {
     if (!businessIdRef.current) return
-
     setSaving(true)
     setError(null)
-
     try {
-      const { error } = await supabase
-        .from('business_branding')
-        .upsert({
-          business_id: businessIdRef.current,
-          brand_name: branding.brand_name,
-          tagline: branding.tagline,
-          custom_name: branding.custom_name,
-          custom_tagline: branding.custom_tagline,
-          logo_url: branding.logo_url,
-          logo_dark_url: branding.logo_dark_url,
-          favicon_url: branding.favicon_url,
-          og_image_url: branding.og_image_url,
-          primary_color: branding.primary_color,
-          accent_color: branding.accent_color,
-          background_color: branding.background_color,
-          surface_color: branding.surface_color,
-          text_color: branding.text_color,
-          dark_primary_color: branding.dark_primary_color,
-          dark_accent_color: branding.dark_accent_color,
-          dark_background_color: branding.dark_background_color,
-          dark_surface_color: branding.dark_surface_color,
-          dark_text_color: branding.dark_text_color,
-          theme_mode: branding.theme_mode,
-          border_radius: branding.border_radius,
-          font_family: branding.font_family,
-          button_style: branding.button_style,
-          website: branding.website,
-          phone: branding.phone,
-          email: branding.email,
-          address: branding.address,
-          social_links: branding.social_links,
-          updated_at: new Date().toISOString(),
-        })
-
+      const { error } = await supabase.from('business_branding').upsert({ business_id: businessIdRef.current, ...branding, updated_at: new Date().toISOString() })
       if (error) {
         console.error('Error saving branding:', error)
         setError('Failed to save branding')
@@ -259,59 +220,25 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
   }, [branding])
 
-  // Debounced update
   const updateBranding = useCallback(async (updates: Partial<Branding>) => {
     setBranding(prev => ({ ...prev, ...updates }))
-
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
-    }
-
-    // Debounce save by 500ms
-    saveTimeoutRef.current = setTimeout(() => {
-      saveBranding()
-    }, 500)
+    if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
+    saveTimeoutRef.current = setTimeout(() => { void saveBranding() }, 500)
   }, [saveBranding])
 
-  // Upload logo to Supabase Storage
-  const uploadLogo = useCallback(async (
-    file: File,
-    type: 'logo' | 'logo_dark' | 'favicon'
-  ): Promise<string | null> => {
-    if (!businessIdRef.current) {
-      return null
-    }
-
+  const uploadLogo = useCallback(async (file: File, type: 'logo' | 'logo_dark' | 'favicon'): Promise<string | null> => {
+    if (!businessIdRef.current) return null
     try {
-      const fileExt = file.name.split('.').pop()
+      const fileExt = file.name.split('.').pop() || 'png'
       const fileName = `${businessIdRef.current}/${type}/${Date.now()}.${fileExt}`
-
-      const { error } = await supabase.storage
-        .from('brand-assets')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: true,
-        })
-
+      const { error } = await supabase.storage.from('brand-assets').upload(fileName, file, { cacheControl: '3600', upsert: true })
       if (error) {
         console.error('Error uploading logo:', error)
         return null
       }
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('brand-assets')
-        .getPublicUrl(fileName)
-
-      // Update branding with new URL
-      const fieldMap = {
-        logo: 'logo_url',
-        logo_dark: 'logo_dark_url',
-        favicon: 'favicon_url',
-      } as const
-
-      updateBranding({ [fieldMap[type]]: urlData.publicUrl })
+      const { data: urlData } = supabase.storage.from('brand-assets').getPublicUrl(fileName)
+      const fieldMap = { logo: 'logo_url', logo_dark: 'logo_dark_url', favicon: 'favicon_url' } as const
+      await updateBranding({ [fieldMap[type]]: urlData.publicUrl })
       return urlData.publicUrl
     } catch (err) {
       console.error('Error uploading logo:', err)
@@ -319,38 +246,15 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     }
   }, [updateBranding])
 
-  // Reset to defaults
   const resetBranding = useCallback(async () => {
     setBranding(DEFAULT_BRANDING)
-
     if (businessIdRef.current) {
-      try {
-        await supabase
-          .from('business_branding')
-          .delete()
-          .eq('business_id', businessIdRef.current)
-      } catch (err) {
-        console.error('Error resetting branding:', err)
-      }
+      try { await supabase.from('business_branding').delete().eq('business_id', businessIdRef.current) }
+      catch (err) { console.error('Error resetting branding:', err) }
     }
   }, [])
 
-  return (
-    <BrandingContext.Provider
-      value={{
-        branding,
-        loading,
-        saving,
-        error,
-        updateBranding,
-        uploadLogo,
-        resetBranding,
-        saveBranding
-      }}
-    >
-      {children}
-    </BrandingContext.Provider>
-  )
+  return <BrandingContext.Provider value={{ branding, loading, saving, error, updateBranding, uploadLogo, resetBranding, saveBranding }}>{children}</BrandingContext.Provider>
 }
 
 export function useBranding() {
