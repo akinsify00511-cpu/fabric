@@ -5134,7 +5134,7 @@
     {
       "kind": "function",
       "name": "cost_governor",
-      "defined_in": "20260824170000_cost_governor.sql",
+      "defined_in": "20260910230000_harden_legacy_governance_rpc_contracts.sql",
       "repairable": false,
       "security_sensitive": true,
       "frontend_referenced": true,

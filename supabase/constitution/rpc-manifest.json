@@ -683,7 +683,7 @@
       "signature": ""
     },
     {
-      "defined_in": "20260824170000_cost_governor.sql",
+      "defined_in": "20260910230000_harden_legacy_governance_rpc_contracts.sql",
       "frontend_referenced": true,
       "name": "cost_governor",
       "security_sensitive": true,
