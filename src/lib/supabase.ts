@@ -73,11 +73,15 @@ supabase.auth.signUp = (credentials) =>
   })
 
 const originalResend = supabase.auth.resend.bind(supabase.auth)
-supabase.auth.resend = (credentials) =>
-  originalResend({
+supabase.auth.resend = (credentials) => {
+  if (credentials.type === 'sms' || credentials.type === 'phone_change') {
+    return originalResend(credentials)
+  }
+  return originalResend({
     ...credentials,
     options: {
       ...credentials.options,
       emailRedirectTo: getAvenizeAuthRedirect(),
     },
   })
+}
