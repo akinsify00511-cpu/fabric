@@ -93,9 +93,21 @@ export default function TrustRecovery() {
         )}
       </Section>
 
-      <Section title="Disaster Recovery Posture" icon={Database}>
+      <section className="rounded-2xl bg-[var(--av-surface)] p-5 shadow-[var(--av-shadow-sm)] mb-4" aria-labelledby="disaster-recovery-posture">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="h-9 w-9 rounded-xl bg-[var(--av-primary-soft)] flex items-center justify-center shrink-0" aria-hidden="true">
+            <Database size={18} className="text-[var(--av-primary)]" />
+          </div>
+          <div className="min-w-0">
+            <h3 id="disaster-recovery-posture" className="text-sm font-semibold">Disaster Recovery Posture</h3>
+            <p className="text-xs text-[var(--av-text-muted)] mt-0.5">What Avenize can verify about data resilience from the application layer.</p>
+          </div>
+        </div>
         <div className="space-y-3">
-          <ClaimNote tone="info">Your data is hosted on Supabase (managed PostgreSQL). This page reports what the application can verify directly.</ClaimNote>
+          <div className="rounded-xl p-3 text-sm flex items-start gap-2 border border-[var(--av-border)] bg-[var(--av-surface-2)]">
+            <span className="h-2 w-2 rounded-full bg-[var(--av-info)] mt-1.5 shrink-0" aria-hidden="true" />
+            <p className="text-[var(--av-text-secondary)]">Your business data is hosted on Supabase managed PostgreSQL. This section reports only what Avenize can verify directly; provider-level backup schedules and restoration operations remain managed by Supabase.</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <PostureItem ok label="Database backups" detail="Managed by Supabase at the platform level." />
             <PostureItem ok={!!h?.latest_audit_at} label="Audit trail active" detail={h?.latest_audit_at ? `Last entry ${timeAgo(h.latest_audit_at)}` : 'No audit entries recorded yet'} />
@@ -104,7 +116,7 @@ export default function TrustRecovery() {
           </div>
           <p className="text-[10px] text-[var(--av-text-muted)] mt-2">Checked {h ? new Date(h.checked_at).toLocaleString() : '—'}.</p>
         </div>
-      </Section>
+      </section>
 
       <Section title="What Gets Audited" icon={ShieldCheck}>
         <p className="text-xs text-[var(--av-text-secondary)] mb-3">Database triggers capture INSERT/UPDATE/DELETE activity on monitored business records, forming the decision-trail foundation.</p>
