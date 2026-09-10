@@ -40,7 +40,7 @@
   "homepage": "https://avenize.com",
   "dependencies": {
     "@capacitor/android": "^8.5.1",
-    "@capacitor/app": "^8.0.0",
+    "@capacitor/app": "^8.1.1",
     "@capacitor/core": "^8.5.1",
     "@capacitor/ios": "^8.5.1",
     "@sentry/react": "^10.70.0",
@@ -60,7 +60,7 @@
   "devDependencies": {
     "@capacitor/cli": "^8.5.1",
     "@axe-core/playwright": "^4.12.1",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^6.0.4",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.3",
