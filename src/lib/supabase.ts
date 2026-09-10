@@ -1,4 +1,6 @@
+import { Capacitor } from '@capacitor/core'
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { getCanonicalAuthRedirect } from './productionDomain'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
@@ -38,3 +40,24 @@ export const supabase: SupabaseClient = createClient(
     },
   }
 )
+
+// Centralise OAuth callback selection so authentication never derives a
+// production redirect from whichever legacy/preview hostname opened the app.
+// Native builds use the registered Capacitor deep-link scheme; the web build
+// always uses the canonical production callback.
+export function getAvenizeAuthRedirect(): string {
+  if (Capacitor.isNativePlatform()) {
+    return 'com.avenize.app://auth/callback'
+  }
+  return getCanonicalAuthRedirect('/auth/callback')
+}
+
+const originalSignInWithOAuth = supabase.auth.signInWithOAuth.bind(supabase.auth)
+supabase.auth.signInWithOAuth = (credentials) =>
+  originalSignInWithOAuth({
+    ...credentials,
+    options: {
+      ...credentials.options,
+      redirectTo: getAvenizeAuthRedirect(),
+    },
+  })
