@@ -3,7 +3,7 @@
 
 Live certification is fail-closed. In addition to schema/release checks it
 must prove that the configured production E2E identity can authenticate and
-is authorized to read the Riverways governance control plane.
+is authorized to read the Avenize governance control plane.
 """
 from __future__ import annotations
 
@@ -18,8 +18,8 @@ ENV_KEY = os.environ.get("SUPABASE_KEY", "") or os.environ.get("SUPABASE_ANON_KE
 SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 E2E_EMAIL = os.environ.get("E2E_EMAIL", "")
 E2E_PASSWORD = os.environ.get("E2E_PASSWORD", "")
-APP_URL = os.environ.get("APP_URL", "https://avenize.com").rstrip("/")
-REQUIRE_LIVE = os.environ.get("REQUIRE_LIVE", "0").lower() in {"1", "true", "yes"}
+APP_URL = os.environ.get("APP_URL", "https://app.avenize.com").rstrip("/")
+REQUIRE_LIVE = os.environ.get("REQUIRE_LIVE", "1").lower() in {"1", "true", "yes"}
 REPORT_PATH = ROOT / "governance" / "reports" / "production-certification.json"
 
 
