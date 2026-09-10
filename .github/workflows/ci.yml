@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - run: npm run typecheck
         name: TypeScript type check
@@ -33,6 +34,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - run: npm run lint
         name: Oxlint
@@ -68,6 +70,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - name: Run Vitest
         run: npm run test:unit -- --coverage
@@ -151,6 +154,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit
@@ -183,6 +187,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - run: npm run build
       - name: Bundle analysis (performance regression signal)
@@ -199,6 +204,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium webkit
@@ -223,6 +229,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
+      - run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
