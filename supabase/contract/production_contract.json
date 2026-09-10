@@ -1349,7 +1349,7 @@
       "defined_in": "20260819090000_discovery_intelligence.sql",
       "repairable": true,
       "security_sensitive": false,
-      "frontend_referenced": false
+      "frontend_referenced": true
     },
     {
       "kind": "table",
@@ -11659,6 +11659,7 @@
       "departments",
       "discovery_brand_checks",
       "discovery_observations",
+      "discovery_referrals",
       "discovery_targets",
       "document_folders",
       "email_campaigns",

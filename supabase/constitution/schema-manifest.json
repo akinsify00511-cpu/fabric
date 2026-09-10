@@ -1008,7 +1008,7 @@
     },
     {
       "defined_in": "20260819090000_discovery_intelligence.sql",
-      "frontend_referenced": false,
+      "frontend_referenced": true,
       "kind": "table",
       "name": "discovery_referrals"
     },
