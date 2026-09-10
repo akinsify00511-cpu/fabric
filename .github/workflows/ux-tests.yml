@@ -18,28 +18,26 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - name: Install Playwright test runner
-        run: npm install --no-save --no-package-lock @playwright/test@1.63.0
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium webkit
+      - name: Install Playwright browsers
+        run: npx --yes -p @playwright/test@1.63.0 playwright install --with-deps chromium webkit
       - name: Run accessibility tests
-        run: npx playwright test tests/ux/accessibility.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/accessibility.spec.ts
       - name: Run keyboard navigation tests
-        run: npx playwright test tests/ux/keyboard-navigation.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/keyboard-navigation.spec.ts
       - name: Run error message tests
-        run: npx playwright test tests/ux/error-messages.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/error-messages.spec.ts
       - name: Run tap target tests
-        run: npx playwright test tests/ux/tap-targets.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/tap-targets.spec.ts
       - name: Run empty state tests
-        run: npx playwright test tests/ux/empty-states.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/empty-states.spec.ts
       - name: Run visual regression tests
-        run: npx playwright test tests/ux/visual-regression.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/visual-regression.spec.ts
       - name: Run gap-fill module tests
-        run: npx playwright test tests/ux/gap-fill-modules.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/gap-fill-modules.spec.ts
       - name: Run module gate tests
-        run: npx playwright test tests/ux/module-gate.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/module-gate.spec.ts
       - name: Run auth launch matrix tests
-        run: npx playwright test tests/ux/auth-matrix.spec.ts
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/auth-matrix.spec.ts
 
   mobile-ux-tests:
     name: UX Tests (Mobile)
@@ -54,12 +52,10 @@ jobs:
           node-version: '22'
           cache: 'npm'
       - run: npm ci
-      - name: Install Playwright test runner
-        run: npm install --no-save --no-package-lock @playwright/test@1.63.0
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium webkit
+      - name: Install Playwright browsers
+        run: npx --yes -p @playwright/test@1.63.0 playwright install --with-deps chromium webkit
       - name: Run mobile tap target tests
-        run: npx playwright test tests/ux/tap-targets.spec.ts --project=Mobile\ Safari
+        run: npx --yes -p @playwright/test@1.63.0 playwright test tests/ux/tap-targets.spec.ts --project=Mobile\ Safari
 
   lighthouse:
     name: Lighthouse Performance
