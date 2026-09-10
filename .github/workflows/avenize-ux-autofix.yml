@@ -1,0 +1,46 @@
+name: Avenize UX Autofix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/avenize-ux-autofix.yml'
+  workflow_dispatch:
+
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'fix(ux): close accessibility blockers'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply accessibility fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          login = Path('src/pages/Login.tsx')
+          text = login.read_text()
+          text = text.replace("textMuted: '#9AA0A6',", "textMuted: '#5F6368',")
+          login.write_text(text)
+
+          signup = Path('src/pages/Signup.tsx')
+          text = signup.read_text()
+          old = '<select value={industry} onChange={e => setIndustry(e.target.value)} className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition bg-white">'
+          new = '<select aria-label={tr(\'industry\', \'Industry\')} value={industry} onChange={e => setIndustry(e.target.value)} className="w-full rounded-xl border border-[var(--av-border)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--av-primary)]/20 focus:border-[var(--av-primary)] transition bg-white">'
+          if old not in text:
+              raise SystemExit('Signup industry select target not found')
+          signup.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Avenize Engineering'
+          git config user.email 'engineering@avenize.com'
+          git add src/pages/Login.tsx src/pages/Signup.tsx
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix(ux): close accessibility blockers'
+          git push origin main
