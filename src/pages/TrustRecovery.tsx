@@ -106,12 +106,12 @@ export default function TrustRecovery() {
         <div className="space-y-3">
           <div className="rounded-xl p-3 text-sm flex items-start gap-2 border border-[var(--av-border)] bg-[var(--av-surface-2)]">
             <span className="h-2 w-2 rounded-full bg-[var(--av-info)] mt-1.5 shrink-0" aria-hidden="true" />
-            <p className="text-[var(--av-text-secondary)]">Your business data is hosted on Supabase managed PostgreSQL. This section reports only what Avenize can verify directly; provider-level backup schedules and restoration operations remain managed by Supabase.</p>
+            <p className="text-[var(--av-text-secondary)]">Your business data is securely managed within Avenize. This section reports the resilience and recovery signals that Avenize can verify directly.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <PostureItem ok label="Database backups" detail="Managed by Supabase at the platform level." />
+            <PostureItem ok label="Data backups" detail="Recovery protection is managed as part of the Avenize platform." />
             <PostureItem ok={!!h?.latest_audit_at} label="Audit trail active" detail={h?.latest_audit_at ? `Last entry ${timeAgo(h.latest_audit_at)}` : 'No audit entries recorded yet'} />
-            <PostureItem ok label="Row-level security" detail="Business data is protected by tenant-isolation policies." />
+            <PostureItem ok label="Tenant isolation" detail="Business data is protected by tenant-isolation policies." />
             <PostureItem ok={h?.audit_healthy ?? false} label="Audit trigger integrity" detail={h?.audit_healthy ? 'No gaps detected in monitored tables.' : 'Gaps detected or health check unavailable.'} />
           </div>
           <p className="text-[10px] text-[var(--av-text-muted)] mt-2">Checked {h ? new Date(h.checked_at).toLocaleString() : '—'}.</p>
