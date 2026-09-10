@@ -1,6 +1,7 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-const CACHE_VERSION = 'v9'
+// v10: invalidate potentially corrupted/stale hashed JavaScript bundles.
+const CACHE_VERSION = 'v10'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
@@ -47,8 +48,12 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirstForImages(request))
     return
   }
+  // Hashed application assets must never be served from an old service-worker
+  // cache. A stale HTML shell can reference a hash that no longer exists in the
+  // current deployment, causing a missing JS request to receive index.html and
+  // fail strict module MIME checking. Revalidate against the network first.
   if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
-    event.respondWith(cacheFirstForHashedAsset(request))
+    event.respondWith(networkFirstForStaticAsset(request))
     return
   }
   if (url.pathname.match(/\.(js|css|woff2?|ttf|eot)$/)) {
@@ -64,7 +69,7 @@ self.addEventListener('fetch', (event) => {
 
 async function networkFirstWithOfflineFallback(request) {
   try {
-    const networkResponse = await fetch(request)
+    const networkResponse = await fetch(request, { cache: 'no-cache' })
     if (networkResponse.ok) {
       const cache = await caches.open(DYNAMIC_CACHE)
       await cache.put(request, networkResponse.clone())
@@ -90,42 +95,8 @@ async function networkFirstForStaticAsset(request) {
   } catch {
     const cached = await caches.match(request)
     if (cached) return cached
-    return fetch(request)
+    return fetch(request, { cache: 'no-cache' })
   }
-}
-
-async function cacheFirstForHashedAsset(request) {
-  const cached = await caches.match(request)
-  if (cached) return cached
-  const response = await fetch(request)
-  if (response.ok) {
-    const cache = await caches.open(STATIC_CACHE)
-    await cache.put(request, response.clone())
-  }
-  return response
-}
-
-async function networkFirstWithOfflineIndicator(request) {
-  try {
-    return await fetch(request)
-  } catch {
-    return new Response(
-      JSON.stringify({ error: 'You are offline', offline: true, message: 'Please check your connection and try again.' }),
-      { status: 503, headers: { 'Content-Type': 'application/json' } },
-    )
-  }
-}
-
-async function staleWhileRevalidate(request, cacheName) {
-  const cache = await caches.open(cacheName)
-  const cachedResponse = await cache.match(request)
-  fetch(request).then(async (networkResponse) => {
-    if (networkResponse.ok) {
-      await cache.put(request, networkResponse.clone())
-      await trimCache(cache, MAX_CACHE_ITEMS)
-    }
-  }).catch(() => null)
-  return cachedResponse || fetch(request).catch(() => caches.match('/index.html'))
 }
 
 async function cacheFirstForImages(request) {
@@ -145,6 +116,29 @@ async function cacheFirstForImages(request) {
       { headers: { 'Content-Type': 'image/svg+xml' } },
     )
   }
+}
+
+async function networkFirstWithOfflineIndicator(request) {
+  try {
+    return await fetch(request, { cache: 'no-cache' })
+  } catch {
+    return new Response(
+      JSON.stringify({ error: 'You are offline', offline: true, message: 'Please check your connection and try again.' }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } },
+    )
+  }
+}
+
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName)
+  const cachedResponse = await cache.match(request)
+  fetch(request, { cache: 'no-cache' }).then(async (networkResponse) => {
+    if (networkResponse.ok) {
+      await cache.put(request, networkResponse.clone())
+      await trimCache(cache, MAX_CACHE_ITEMS)
+    }
+  }).catch(() => null)
+  return cachedResponse || fetch(request, { cache: 'no-cache' }).catch(() => caches.match('/index.html'))
 }
 
 async function trimCache(cache, maxItems) {
