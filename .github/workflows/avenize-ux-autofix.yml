@@ -44,3 +44,5 @@ jobs:
           git diff --cached --quiet && exit 0
           git commit -m 'fix(ux): close accessibility blockers'
           git push origin main
+
+# Triggered once to apply the current accessibility corrections.
