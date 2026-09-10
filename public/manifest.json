@@ -1,8 +1,10 @@
 {
   "name": "Avenize - The Business Operating System",
   "short_name": "Avenize",
+  "id": "/app",
   "description": "Everything. Together. The Business Operating System for modern teams.",
-  "start_url": "/",
+  "start_url": "/app",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#F7F7F5",
   "theme_color": "#4285F4",
@@ -62,7 +64,7 @@
     {
       "name": "Dashboard",
       "short_name": "Home",
-      "url": "/"
+      "url": "/app"
     },
     {
       "name": "Tasks",
