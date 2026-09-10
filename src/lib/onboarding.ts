@@ -10,6 +10,7 @@
 // ============================================
 
 import { supabase } from './supabase'
+import { getStoredAttribution, clearStoredAttribution } from './attribution'
 
 export type BusinessCreationResult =
   | { ok: true; businessId: string }
@@ -57,6 +58,35 @@ async function resolveExistingMembership(): Promise<string | null> {
   return row?.business_id || null
 }
 
+/** Persist the public discovery provenance captured before signup.
+ * Best-effort: attribution must never block account/business creation.
+ */
+async function persistSignupAttribution(businessId: string): Promise<void> {
+  const attribution = getStoredAttribution()
+  if (!attribution) return
+
+  try {
+    const { error } = await supabase.from('discovery_referrals').insert({
+      business_id: businessId,
+      source: attribution.source,
+      medium: attribution.medium,
+      campaign: attribution.campaign,
+      content_url: typeof window !== 'undefined' ? window.location.origin + (attribution.landingPath || '/') : attribution.landingPath,
+      referrer: attribution.referrer,
+      landing_path: attribution.landingPath,
+      entity_type: 'business',
+      entity_id: businessId,
+    })
+    if (error) {
+      console.warn('Could not persist signup attribution:', error)
+      return
+    }
+    clearStoredAttribution()
+  } catch (error) {
+    console.warn('Could not persist signup attribution:', error)
+  }
+}
+
 export async function createBusinessAndOwner(input: BusinessCreationInput): Promise<BusinessCreationResult> {
   const existingBusinessId = await resolveExistingMembership()
   if (existingBusinessId) {
@@ -88,5 +118,7 @@ export async function createBusinessAndOwner(input: BusinessCreationInput): Prom
     console.error('create_business_and_owner returned an unexpected shape:', data)
     return { ok: false, reason: 'error', message: 'Business was created but its id could not be read. Please sign in again.' }
   }
+
+  await persistSignupAttribution(businessId)
   return { ok: true, businessId }
 }
