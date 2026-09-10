@@ -73,11 +73,14 @@ jobs:
             echo "Native projects and lockfile already current."
           else
             git commit -m "build(mobile): materialize Capacitor native projects"
-            git push origin main
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
 
   verify-ios:
     name: Verify Capacitor iOS project
+    if: ${{ always() }}
     needs: materialize-native
     runs-on: macos-latest
     steps:
@@ -99,6 +102,9 @@ jobs:
       - name: Build web production artifact
         run: npm run build
 
+      - name: Generate iOS native project if missing
+        run: if [ ! -d ios ]; then npx cap add ios; fi
+
       - name: Sync Capacitor iOS
         run: npx cap sync ios
 
@@ -106,6 +112,11 @@ jobs:
         run: |
           test -f ios/App/App.xcodeproj/project.pbxproj
           xcodebuild -version
+
+      - name: Verify Avenize deep-link scheme
+        run: |
+          grep -q 'com.avenize.app' ios/App/App/Info.plist
+          grep -q 'com.avenize.app' capacitor.config.ts
 
       - name: Build iOS simulator target
         working-directory: ios/App
