@@ -1,7 +1,6 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-// Deployment nudge: ensure the latest main commit is picked up by the production deployment.
-const CACHE_VERSION = 'v8'
+const CACHE_VERSION = 'v9'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
@@ -31,8 +30,8 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
   if (request.method !== 'GET') return
-
   if (url.origin !== location.origin && !url.hostname.includes('cdn')) return
+
   const isApiPath = url.pathname.startsWith('/api/')
     || url.pathname.startsWith('/rest/v1/')
     || url.pathname.startsWith('/auth/v1/')
@@ -48,22 +47,18 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirstForImages(request))
     return
   }
-
   if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
     event.respondWith(cacheFirstForHashedAsset(request))
     return
   }
-
   if (url.pathname.match(/\.(js|css|woff2?|ttf|eot)$/)) {
     event.respondWith(networkFirstForStaticAsset(request))
     return
   }
-
   if (request.mode === 'navigate') {
     event.respondWith(networkFirstWithOfflineFallback(request))
     return
   }
-
   event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE))
 })
 
