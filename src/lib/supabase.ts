@@ -41,10 +41,10 @@ export const supabase: SupabaseClient = createClient(
   }
 )
 
-// Centralise OAuth callback selection so authentication never derives a
-// production redirect from whichever legacy/preview hostname opened the app.
-// Native builds use the registered Capacitor deep-link scheme; the web build
-// always uses the canonical production callback.
+// Centralise every authentication callback so production auth never derives
+// a redirect from whichever preview/legacy hostname opened the app.
+// Native builds use the registered Capacitor deep-link scheme; web always uses
+// the canonical production callback.
 export function getAvenizeAuthRedirect(): string {
   if (Capacitor.isNativePlatform()) {
     return 'com.avenize.app://auth/callback'
@@ -59,5 +59,25 @@ supabase.auth.signInWithOAuth = (credentials) =>
     options: {
       ...credentials.options,
       redirectTo: getAvenizeAuthRedirect(),
+    },
+  })
+
+const originalSignUp = supabase.auth.signUp.bind(supabase.auth)
+supabase.auth.signUp = (credentials) =>
+  originalSignUp({
+    ...credentials,
+    options: {
+      ...credentials.options,
+      emailRedirectTo: getAvenizeAuthRedirect(),
+    },
+  })
+
+const originalResend = supabase.auth.resend.bind(supabase.auth)
+supabase.auth.resend = (credentials) =>
+  originalResend({
+    ...credentials,
+    options: {
+      ...credentials.options,
+      emailRedirectTo: getAvenizeAuthRedirect(),
     },
   })
