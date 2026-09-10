@@ -14,6 +14,38 @@
       ],
       "destination": "https://avenize.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "www.avenize.com" }
+      ],
+      "destination": "https://avenize.com/$1",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        { "type": "host", "value": "app.avenize.com" }
+      ],
+      "destination": "/app",
+      "permanent": false
+    },
+    {
+      "source": "/app/:path*",
+      "has": [
+        { "type": "host", "value": "avenize.com" }
+      ],
+      "destination": "https://app.avenize.com/app/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/(login|signup|forgot-password|update-password|onboarding|auth/callback|join/:path*)",
+      "has": [
+        { "type": "host", "value": "avenize.com" }
+      ],
+      "destination": "https://app.avenize.com/$1",
+      "permanent": false
     }
   ],
   "rewrites": [
