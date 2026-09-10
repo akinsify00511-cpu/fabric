@@ -7,9 +7,8 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Keyboard Navigation', () => {
   test.beforeEach(async ({ page }) => {
-    // Enable demo mode by setting localStorage
-    await page.goto('/login')
-    await page.evaluate(() => {
+    // Seed demo mode before the application loads so AuthContext can consume it.
+    await page.addInitScript(() => {
       localStorage.setItem('avenize_demo', 'true')
       localStorage.setItem('avenize_demo_user', JSON.stringify({
         id: 'test-user-1',
