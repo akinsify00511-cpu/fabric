@@ -7,6 +7,7 @@
 
 import { supabase } from './supabase'
 import { getStoredAttribution } from './attribution'
+import { trackPurchase } from './metaPixel'
 
 export interface CheckoutStart {
   reference: string
@@ -69,9 +70,15 @@ export async function startPlanCheckout(planCode: string, billingCycle: 'monthly
 }
 
 // On return from Paystack (?reference=...), ask the server what happened.
+// A Purchase event is emitted only from the server-verified success verdict;
+// redirect/click/pending states can never fabricate a conversion.
 export async function verifyPaymentReturn(reference: string): Promise<PaymentVerdict | null> {
   try {
-    return await callPaymentFunction<PaymentVerdict>('paystack-verify', { reference })
+    const verdict = await callPaymentFunction<PaymentVerdict>('paystack-verify', { reference })
+    if (verdict.status === 'success' && verdict.amountCents != null && verdict.currency) {
+      trackPurchase(verdict.amountCents / 100, verdict.currency, verdict.reference)
+    }
+    return verdict
   } catch {
     return null
   }
