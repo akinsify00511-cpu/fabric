@@ -1,0 +1,56 @@
+/* Avenize application visual correction layer. Scoped to the authenticated app. */
+[data-avenize-surface="app"] {
+  --av-primary: #0B57A4;
+  --av-primary-hover: #084A8C;
+  --av-primary-active: #063B70;
+  --av-primary-soft: rgba(11, 87, 164, 0.10);
+  --av-primary-subtle: rgba(11, 87, 164, 0.055);
+  --av-text: #111827;
+  --av-text-secondary: #344054;
+  --av-text-muted: #667085;
+  --av-text-disabled: #98A2B3;
+  --av-border: #D0D5DD;
+  --av-border-strong: #B8C0CC;
+  --av-surface-2: #F7F9FC;
+  --av-surface-3: #EEF2F7;
+  --av-home-bg: #F5F8FC;
+  --av-gradient: linear-gradient(135deg, #0B57A4 0%, #155BB4 52%, #168A55 100%);
+  --av-shadow-float: 0 8px 28px rgba(16, 24, 40, 0.08), 0 2px 7px rgba(16, 24, 40, 0.05);
+}
+[data-avenize-surface="app"] body,
+[data-avenize-surface="app"] #root { color: var(--av-text); }
+[data-avenize-surface="app"] .text-gray-300,
+[data-avenize-surface="app"] .text-gray-400,
+[data-avenize-surface="app"] .text-slate-300,
+[data-avenize-surface="app"] .text-slate-400,
+[data-avenize-surface="app"] .text-zinc-300,
+[data-avenize-surface="app"] .text-zinc-400 { color: #667085 !important; }
+[data-avenize-surface="app"] .text-gray-500,
+[data-avenize-surface="app"] .text-slate-500,
+[data-avenize-surface="app"] .text-zinc-500 { color: #475467 !important; }
+[data-avenize-surface="app"] .text-gray-600,
+[data-avenize-surface="app"] .text-slate-600,
+[data-avenize-surface="app"] .text-zinc-600 { color: #344054 !important; }
+[data-avenize-surface="app"] .text-gray-700,
+[data-avenize-surface="app"] .text-slate-700,
+[data-avenize-surface="app"] .text-zinc-700 { color: #1D2939 !important; }
+[data-avenize-surface="app"] .border-gray-100,
+[data-avenize-surface="app"] .border-gray-200,
+[data-avenize-surface="app"] .border-slate-100,
+[data-avenize-surface="app"] .border-slate-200,
+[data-avenize-surface="app"] .border-zinc-100,
+[data-avenize-surface="app"] .border-zinc-200 { border-color: #D0D5DD !important; }
+[data-avenize-surface="app"] h1,
+[data-avenize-surface="app"] h2,
+[data-avenize-surface="app"] h3,
+[data-avenize-surface="app"] h4 { color: #101828; letter-spacing: -0.018em; }
+[data-avenize-surface="app"] .avenize-brand-mark { color: #0B57A4; filter: drop-shadow(0 2px 5px rgba(11, 87, 164, 0.16)); }
+[data-avenize-surface="app"] .btn-filled,
+[data-avenize-surface="app"] .btn-primary,
+[data-avenize-surface="app"] button.bg-blue-600,
+[data-avenize-surface="app"] a.bg-blue-600 { background-color: #0B57A4; }
+[data-avenize-surface="app"] .btn-filled:hover,
+[data-avenize-surface="app"] .btn-primary:hover,
+[data-avenize-surface="app"] button.bg-blue-600:hover,
+[data-avenize-surface="app"] a.bg-blue-600:hover { background-color: #084A8C; }
+[data-avenize-surface="app"] ::selection { background: rgba(11, 87, 164, 0.18); color: #101828; }
