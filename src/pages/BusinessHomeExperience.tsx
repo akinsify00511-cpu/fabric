@@ -28,10 +28,7 @@ export default function BusinessHomeExperience() {
   const [ledger, setLedger] = useState<ValueLedger | null>(null)
   const [actions, setActions] = useState<ActionItem[]>([])
 
-  const fn = useMemo(
-    () => deriveFunction(staff?.job_title, staff?.department, ctx.activeTools ?? []),
-    [staff?.job_title, staff?.department, ctx.activeTools],
-  )
+  const fn = useMemo(() => deriveFunction(staff?.job_title, staff?.department, ctx.activeTools ?? []), [staff?.job_title, staff?.department, ctx.activeTools])
   const sen = useMemo(() => deriveSeniority(staff?.active_role ?? staff?.role ?? null), [staff?.active_role, staff?.role])
   const homeConfig = useMemo(() => getFunctionHome(fn, sen), [fn, sen])
 
@@ -57,22 +54,10 @@ export default function BusinessHomeExperience() {
 
       const [approvals, tasks] = attentionResult
       const next: ActionItem[] = []
-      ;(approvals?.data ?? []).forEach((item: any) => next.push({
-        id: item.id,
-        title: item.description || 'Approval needed',
-        to: '/app/approvals',
-        tone: 'red',
-        detail: 'Needs approval',
-      }))
+      ;(approvals?.data ?? []).forEach((item: any) => next.push({ id: item.id, title: item.description || 'Approval needed', to: '/app/approvals', tone: 'red', detail: 'Needs approval' }))
       ;(tasks?.data ?? []).forEach((item: any) => {
         const overdue = item.due_date && new Date(item.due_date).getTime() < Date.now()
-        next.push({
-          id: item.id,
-          title: item.title,
-          to: '/app/tasks',
-          tone: overdue ? 'red' : 'amber',
-          detail: overdue ? 'Overdue' : 'Open task',
-        })
+        next.push({ id: item.id, title: item.title, to: '/app/tasks', tone: overdue ? 'red' : 'amber', detail: overdue ? 'Overdue' : 'Open task' })
       })
       setActions(next)
     }
@@ -93,7 +78,6 @@ export default function BusinessHomeExperience() {
             functionLabel={functionLabel(fn)}
             seniorityLabel={seniorityLabel(sen)}
             businessFunction={fn}
-            seniority={sen}
             homeConfig={homeConfig}
           />
         </div>
