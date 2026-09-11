@@ -1,22 +1,49 @@
 #!/usr/bin/env bash
-# Production gate: fail closed, provision a disposable confirmed account when no dedicated E2E account exists, and clean it up on exit.
+# Production gate: fail closed, provision a disposable confirmed account only
+# when admin credentials are available, and clean it up on exit.
 set -u
-APP_URL="${APP_URL:-https://avenize.com}"
+APP_URL="${APP_URL:-https://app.avenize.com}"
 BASE="${SUPABASE_URL:-}"; KEY="${SUPABASE_KEY:-}"; SERVICE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
 EMAIL="${E2E_EMAIL:-}"; PASSWORD="${E2E_PASSWORD:-}"; DISPOSABLE_USER=""; PASS=0; FAIL=0
 pass(){ PASS=$((PASS+1)); printf '%-24s PASS  %s\n' "$1" "$2"; }
 fail(){ FAIL=$((FAIL+1)); printf '%-24s FAIL  %s\n' "$1" "$2"; }
 cleanup(){ if [ -n "$DISPOSABLE_USER" ] && [ -n "$SERVICE_KEY" ]; then curl -sS -X DELETE "$BASE/auth/v1/admin/users/$DISPOSABLE_USER" -H "apikey: $SERVICE_KEY" -H "Authorization: Bearer $SERVICE_KEY" >/dev/null || true; fi; }
 trap cleanup EXIT
-if [ -z "$BASE" ] || [ -z "$KEY" ]; then INDEX=$(curl -fsS "$APP_URL/" 2>/dev/null || true); BUNDLE=$(printf '%s' "$INDEX" | grep -oE '/assets/[A-Za-z0-9_-]+\.js' | head -1); if [ -n "$BUNDLE" ]; then JS=$(curl -fsS "${APP_URL}${BUNDLE}" 2>/dev/null || true); BASE=$(printf '%s' "$JS" | grep -oE 'https://[0-9a-z]+\.supabase\.co' | head -1); KEY=$(printf '%s' "$JS" | grep -oE 'sb_publishable_[A-Za-z0-9_-]+' | head -1); fi; fi
-[ -n "$BASE" ] || fail "config/supabase" "Supabase URL unavailable"; [ -n "$KEY" ] || fail "config/supabase" "publishable key unavailable"; [ -n "$SERVICE_KEY" ] || fail "config/admin" "service role required for disposable E2E"; [ "$FAIL" -eq 0 ] || { printf '\nRESULT: E2E NOT READY\n'; exit 1; }
+
+# Recover only the public Supabase URL/publishable key from the deployed app when
+# they were not injected by the runner. Never attempt to discover a service key.
+if [ -z "$BASE" ] || [ -z "$KEY" ]; then
+  INDEX=$(curl -fsS "$APP_URL/" 2>/dev/null || true)
+  BUNDLE=$(printf '%s' "$INDEX" | grep -oE '/assets/[A-Za-z0-9_-]+\.js' | head -1)
+  if [ -n "$BUNDLE" ]; then
+    JS=$(curl -fsS "${APP_URL}${BUNDLE}" 2>/dev/null || true)
+    [ -n "$BASE" ] || BASE=$(printf '%s' "$JS" | grep -oE 'https://[0-9a-z]+\.supabase\.co' | head -1)
+    [ -n "$KEY" ] || KEY=$(printf '%s' "$JS" | grep -oE 'sb_(publishable|anon)_[A-Za-z0-9_-]+' | head -1)
+  fi
+fi
+
+[ -n "$BASE" ] || fail "config/supabase" "Supabase URL unavailable"; [ -n "$KEY" ] || fail "config/supabase" "publishable key unavailable"
+# A dedicated E2E account needs only its login credentials. A disposable account
+# requires the service role so it can be created and deleted safely.
+if [ -z "$EMAIL" ] || [ -z "$PASSWORD" ]; then
+  [ -n "$SERVICE_KEY" ] || fail "config/admin" "service role required when no dedicated E2E account is configured"
+fi
+[ "$FAIL" -eq 0 ] || { printf '\nRESULT: E2E NOT READY\n'; exit 1; }
+
 AUTH=(-H "apikey: $KEY" -H "Content-Type: application/json")
 rpc(){ curl -sS -X POST "$BASE/rest/v1/rpc/$1" "${AUTH[@]}" -H "Authorization: Bearer $2" -d "$3"; }
 printf '\nAvenize Production Journey\n──────────────────────────\n'
 CODE=$(curl -sS -o /dev/null -w '%{http_code}' "$APP_URL/"); [ "$CODE" = "200" ] && pass "frontend" "$APP_URL returned 200" || fail "frontend" "returned HTTP $CODE"
 for FN in subscription-management paystack-webhook email-service campaign-send; do CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X OPTIONS "$BASE/functions/v1/$FN" -H "apikey: $KEY"); [ "$CODE" != "404" ] && pass "edge/$FN" "deployed (HTTP $CODE)" || fail "edge/$FN" "function missing"; done
-if [ -z "$EMAIL" ] || [ -z "$PASSWORD" ]; then STAMP=$(date +%s); EMAIL="e2e-${STAMP}@example.com"; PASSWORD="E2e!${STAMP}aZ#x"; CREATED=$(curl -sS -X POST "$BASE/auth/v1/admin/users" -H "apikey: $SERVICE_KEY" -H "Authorization: Bearer $SERVICE_KEY" -H "Content-Type: application/json" -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"email_confirm\":true,\"user_metadata\":{\"source\":\"production_e2e\"}}"); DISPOSABLE_USER=$(printf '%s' "$CREATED" | python3 -c "import sys,json; print(json.load(sys.stdin).get('id') or '')" 2>/dev/null || true); [ -n "$DISPOSABLE_USER" ] && pass "auth/provision" "disposable confirmed E2E user created" || fail "auth/provision" "Admin API could not create disposable user"; fi
-LOGIN=$(curl -sS -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}"); TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token') or '')" 2>/dev/null || true); [ -n "$TOKEN" ] && pass "auth/login" "E2E account authenticated" || fail "auth/login" "E2E account could not authenticate"
+if [ -z "$EMAIL" ] || [ -z "$PASSWORD" ]; then
+  STAMP=$(date +%s); EMAIL="e2e-${STAMP}@example.com"; PASSWORD="E2e!${STAMP}aZ#x"
+  CREATED=$(curl -sS -X POST "$BASE/auth/v1/admin/users" -H "apikey: $SERVICE_KEY" -H "Authorization: Bearer $SERVICE_KEY" -H "Content-Type: application/json" -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\",\"email_confirm\":true,\"user_metadata\":{\"source\":\"production_e2e\"}}")
+  DISPOSABLE_USER=$(printf '%s' "$CREATED" | python3 -c "import sys,json; print(json.load(sys.stdin).get('id') or '')" 2>/dev/null || true)
+  [ -n "$DISPOSABLE_USER" ] && pass "auth/provision" "disposable confirmed E2E user created" || fail "auth/provision" "Admin API could not create disposable user"
+fi
+LOGIN=$(curl -sS -X POST "$BASE/auth/v1/token?grant_type=password" "${AUTH[@]}" -d "{\"email\":\"$EMAIL\",\"password\":\"$PASSWORD\"}")
+TOKEN=$(printf '%s' "$LOGIN" | python3 -c "import sys,json; print(json.load(sys.stdin).get('access_token') or '')" 2>/dev/null || true)
+[ -n "$TOKEN" ] && pass "auth/login" "E2E account authenticated" || fail "auth/login" "E2E account could not authenticate"
 if [ -n "$TOKEN" ]; then
   if [ -n "$DISPOSABLE_USER" ]; then NAME="Avenize E2E ${STAMP}"; ONBOARD=$(rpc create_business_and_owner "$TOKEN" "{\"p_business_name\":\"$NAME\",\"p_industry\":\"testing\",\"p_staff_name\":\"E2E Bot\",\"p_job_title\":\"Owner\"}"); if printf '%s' "$ONBOARD" | grep -qiE 'business_id|success|created'; then pass "auth/onboarding" "new account can complete onboarding"; else fail "auth/onboarding" "onboarding failed: $(printf '%s' "$ONBOARD" | head -c 180)"; fi; fi
   STAFF=$(curl -sS "$BASE/rest/v1/staff?select=id,business_id,active,is_active&limit=1" -H "apikey: $KEY" -H "Authorization: Bearer $TOKEN"); if printf '%s' "$STAFF" | grep -q 'business_id'; then pass "auth/membership" "staff membership resolves"; else fail "auth/membership" "no business membership resolved"; fi
