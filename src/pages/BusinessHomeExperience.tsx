@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import BusinessHome from './BusinessHome'
+import BusinessHomeLegacy from './BusinessHomeLegacy'
 import BusinessCommandCenter from '../components/BusinessCommandCenter'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -94,7 +94,7 @@ export default function BusinessHomeExperience() {
           />
         </div>
       </div>
-      <BusinessHome />
+      <BusinessHomeLegacy />
     </>
   )
 }
