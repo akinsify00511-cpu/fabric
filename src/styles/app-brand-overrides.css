@@ -92,11 +92,3 @@
 [data-avenize-surface="app"] .border-primary,
 [data-avenize-surface="app"] .border-brand,
 [data-avenize-surface="app"] .border-avenize-primary { border-color: var(--av-primary) !important; }
-
-/* Inline legal links remain distinguishable without relying on color alone. */
-[data-avenize-surface="app"] a[href$="/terms"],
-[data-avenize-surface="app"] a[href$="/privacy"] {
-  color: var(--av-primary);
-  text-decoration-line: underline;
-  text-underline-offset: 2px;
-}
