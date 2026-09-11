@@ -6,12 +6,10 @@ interface AvenizeMarkProps extends SVGProps<SVGSVGElement> {
 
 /**
  * Avenize brand mark — abstract triangular ribbon/loop.
- * Monochrome by design: inherits color via `currentColor`, so wrap in a
- * text-color class (e.g. text-graphite-900 / text-white) to theme it.
- * Do not apply the brand gradient here — gradient is reserved for the
- * app icon, splash screen, and marketing hero sections only.
+ * Monochrome by design: inherits color via currentColor so it can follow
+ * the active business/person brand rather than forcing Avenize blue.
  */
-export function AvenizeMark({ size = 24, ...props }: AvenizeMarkProps) {
+export function AvenizeMark({ size = 24, className = "", ...props }: AvenizeMarkProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,6 +17,8 @@ export function AvenizeMark({ size = 24, ...props }: AvenizeMarkProps) {
       width={size}
       height={size}
       fill="currentColor"
+      aria-hidden={props['aria-label'] ? undefined : true}
+      className={`avenize-brand-mark ${className}`.trim()}
       {...props}
     >
       <path d="M613.7 269.1c-36.4 3.9-70.6 23.9-91.9 53.6-3 4.3-31.8 55.5-63.9 113.8-32 58.3-62.3 113.2-67.1 122-39.2 71.1-34.9 137 11.5 177.3 11.2 9.7 36.3 23 38.7 20.5 1.1-1 97.6-176.1 121-219.3 3.1-5.8 12.1-22.2 20-36.5s18.1-32.9 22.7-41.4c10.9-20.1 15.7-27.3 23.2-35.4 30.8-32.9 80.2-40.8 124.9-20.1 8.8 4 25.4 14.9 29.6 19.3 1.7 1.7 3.4 3.1 3.9 3.1 1.1 0-42.1-85-48.5-95.3-26.3-42.8-74.8-66.8-124.1-61.6" />
