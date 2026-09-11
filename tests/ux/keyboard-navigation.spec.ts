@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 
 /**
  * Keyboard navigation tests
  * These tests ensure core user flows can be completed without a mouse.
  */
 
-const seedDemoMode = async (page: Parameters<Parameters<typeof test>[2]>[0]) => {
+const seedDemoMode = async (page: Page) => {
   await page.addInitScript(() => {
     localStorage.setItem('avenize_demo', 'true')
     localStorage.setItem('avenize_demo_user', JSON.stringify({
