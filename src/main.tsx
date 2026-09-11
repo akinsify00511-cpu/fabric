@@ -1,14 +1,24 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { App as CapacitorApp } from '@capacitor/app'
+import { CapacitorApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import './index.css'
+import './styles/app-brand-overrides.css'
 import App from './App.tsx'
 import { initErrorCapture } from './lib/errorCapture'
 import { initSentry } from './lib/sentry'
 import GlobalOrganismRuntime from './components/GlobalOrganismRuntime'
 import PremiumMotion from './components/PremiumMotion'
+
+// Mark the authenticated browser surface so the app-only visual system never
+// changes the public Avenize marketing site.
+if (typeof document !== 'undefined') {
+  const host = window.location.hostname
+  if (host === 'app.avenize.com' || host === 'localhost' || host === '127.0.0.1') {
+    document.documentElement.dataset.avenizeSurface = 'app'
+  }
+}
 
 // Error capture (console buffer + platform-ops feed) always runs.
 initErrorCapture()
