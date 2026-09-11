@@ -1,8 +1,8 @@
 # AVENIZE
-## Brand Guidelines v2.0
+## Brand Guidelines v3.0
 ### The Business Operating System
 
-*Inspired by Google's clean UI/UX principles*
+**Brand identity update:** The approved Avenize mark is the monochrome abstract loop/ribbon symbol supplied as the current brand reference. This document is the implementation source of truth for the platform brand.
 
 ---
 
@@ -19,8 +19,6 @@ Business should feel effortless.
 
 Avenize exists to eliminate fragmentation in business. Instead of switching between dozens of disconnected applications, businesses operate from one intelligent platform.
 
-Avenize isn't another CRM. It isn't another ERP. It is the operating system of modern business.
-
 ### Mission
 To unify every business process into one beautifully designed intelligent platform.
 
@@ -35,11 +33,11 @@ Everything works together.
 ## 02. Positioning
 
 ### We are NOT
-- ❌ ERP
-- ❌ CRM
-- ❌ Project Management
-- ❌ HR Software
-- ❌ AI Assistant
+- ERP
+- CRM
+- Project Management
+- HR Software
+- AI Assistant
 
 ### We ARE
 **The Business Operating System**
@@ -50,33 +48,9 @@ One platform. Every team. Every workflow. Every decision.
 
 ## 03. Brand Personality
 
-### Imagine if these brands had a child
-- Apple
-- Notion
-- Linear
-- Stripe
-- Arc Browser
+**Always:** Calm, intelligent, confident, elegant, thoughtful, premium, invisible, fast.
 
-### Human Traits
-**Always:**
-- Calm
-- Intelligent
-- Confident
-- Elegant
-- Thoughtful
-- Premium
-- Invisible
-- Fast
-
-**Never:**
-- Corporate
-- Busy
-- Complex
-- Aggressive
-- Playful
-- Cheap
-- Colorful
-- Salesy
+**Never:** Corporate, busy, complex, aggressive, playful, cheap, noisy, salesy.
 
 ---
 
@@ -85,8 +59,6 @@ One platform. Every team. Every workflow. Every decision.
 Business software became complicated because every problem created another app.
 
 Avenize removes the apps. Everything belongs together.
-
-Like the nervous system in the human body. Like the operating system in a computer.
 
 **Invisible. Powerful. Connected.**
 
@@ -102,136 +74,120 @@ The symbol represents:
 - Unity
 - Continuous movement
 
-The logo is intentionally abstract. It is not the letter A. It becomes recognizable because of repeated exposure.
-
-Exactly like Apple, Nike, Stripe, Notion.
+The mark is intentionally abstract and should become recognizable through consistent, disciplined use.
 
 ---
 
-## 06. Logo Rules
+## 06. Approved Avenize Mark
 
-### Primary
-Solid Black — `#111111`
+### Primary mark
+The supplied **solid black Avenize mark** is the default platform identity.
 
-### Reverse
-White — `#FFFFFF`
+- Primary: `#111111`
+- Reverse: `#FFFFFF`
+- Background preference: clean white or neutral surfaces
+- No gradients inside the mark
+- No shadows, outlines, bevels, distortion, or recoloring for the core Avenize identity
 
-### Signature Version
-**Only used for:**
-- App icon
-- Splash screen
-- Marketing
-- Hero sections
+### Approved contexts
+- App shell
+- Login and authentication
+- Browser favicon
+- PWA/app icon
+- Splash/launch identity
+- Marketing and product surfaces
+- Structured metadata / organization logo
 
-**Never for official documents.**
+### Reverse use
+On dark Avenize surfaces, use the same geometry in white. The geometry must not change.
 
----
-
-## 07. Color System
-
-### Primary Colors (Google-Inspired)
-| Color | Hex |
-|-------|-----|
-| Google Blue | `#4285F4` |
-| Primary Hover | `#3367D6` |
-| Primary Soft | `rgba(66, 133, 244, 0.08)` |
-
-### Surface System (Google Style)
-| Surface | Hex | Usage |
-|---------|-----|-------|
-| Surface | `#FFFFFF` | Cards, inputs |
-| Surface 2 | `#F8F9FA` | Page background |
-| Surface 3 | `#F1F3F4` | Tertiary surfaces |
-
-### Text Hierarchy (Google Standard)
-| Text | Hex |
-|------|-----|
-| Primary | `#202124` |
-| Secondary | `#5F6368` |
-| Muted | `#9AA0A6` |
-| Disabled | `#DADCE0` |
-
-### Avenize Signature Gradient
-Google Blue to Violet — representing intelligence flowing through business.
-
-```
-#4285F4 → #6366F1 → #8B5CF6
-Google Blue → Indigo → Violet
-```
-
-### Workspace Colors
-| Workspace | Hex |
-|-----------|-----|
-| Sales | `#4285F4` |
-| Finance | `#34A853` |
-| Projects | `#FBBC05` |
-| HR | `#8B5CF6` |
-| Communication | `#EC4899` |
-| AI | `#06B6D4` |
-| Automation | `#F97316` |
-| Analytics | `#6366F1` |
-
-Each workspace has its own accent while preserving a unified experience.
-
-### Semantic Colors (Google Style)
-| State | Hex |
-|-------|-----|
-| Success | `#34A853` |
-| Warning | `#FBBC05` |
-| Error | `#EA4335` |
-| Info | `#4285F4` |
+### Clear space
+Keep at least the visual height of the mark clear around it. Never crowd the symbol with text, controls, or container edges.
 
 ---
 
-## 08. Typography
+## 07. Customer / Personal Branding
+
+Avenize's platform mark and a customer's brand are separate systems.
+
+Customers may choose their own:
+- Company name
+- Logo
+- Dark-logo variant
+- Favicon
+- Primary color
+- Accent color
+- Light/dark surfaces
+- Typography
+- Corner radius
+- Button style
+- Website and contact details
+
+Customer branding may replace the Avenize mark inside that customer's workspace where the product supports white-label/company identity.
+
+**Rule:** Customer branding must never corrupt the underlying Avenize platform identity, app metadata, authentication identity, or public Avenize brand assets.
+
+---
+
+## 08. Core Color System
+
+### Avenize platform identity
+| Color | Hex | Usage |
+|---|---|---|
+| Avenize Black | `#111111` | Primary mark, primary actions, core identity |
+| Avenize White | `#FFFFFF` | Reverse mark, dark-surface identity |
+| Surface | `#FFFFFF` | Main surfaces |
+| Surface 2 | `#F8F8F8` | Secondary surfaces |
+| Text | `#111111` | Primary text |
+| Secondary Text | `#5F6368` | Supporting text |
+| Border | `#E5E5E5` | Dividers and controls |
+
+No Google-blue-to-violet gradient is part of the core Avenize logo or platform identity.
+
+### Customer workspace colors
+Customer-selected primary/accent colors remain supported through Brand Studio and are applied through the workspace theme variables.
+
+---
+
+## 09. Typography
 
 ### Primary Font
 **Geist**
 
-### Alternative
+### Alternatives
 - Inter
 - SF Pro
 
-**Never mix font families.**
+Never mix font families within a single branded surface.
 
 ### Scale
-| Element | Size |
-|---------|------|
-| Large Headlines | 72, 64, 56, 48 |
-| Body | 18, 16, 14 |
-| Buttons | 16 Medium |
+- Large headlines: 72, 64, 56, 48
+- Body: 18, 16, 14
+- Buttons: 16 Medium
 
 ---
 
-## 09. Spacing
+## 10. Spacing
 
-Everything breathes. Use generous whitespace. Never overcrowd interfaces.
+Everything breathes.
 
-- Large margins
-- Large cards
-- Rounded corners
+- Generous whitespace
+- Clear hierarchy
+- Consistent spacing
+- No overcrowding
 
 ---
 
-## 10. Corner Radius
+## 11. Corner Radius
 
 | Element | Radius |
-|---------|--------|
+|---|---|
 | Small | 8px |
 | Medium | 16px |
 | Cards | 24px |
 | Hero | 32px |
 
----
-
-## 11. Shadows
-
-**Very subtle.**
-```
-0 10px 30px 5%
-```
-
-**Never heavy. Never obvious.**
+Customer workspace branding may override radius through Brand Studio.
 
 ---
 
@@ -240,9 +196,9 @@ Everything breathes. Use generous whitespace. Never overcrowd interfaces.
 - Outlined
 - Rounded
 - Simple
-- No illustration
+- Consistent
 
-**Prefer Lucide icons for consistency.**
+Prefer Lucide icons for product UI consistency. The Avenize mark is not an interchangeable UI icon.
 
 ---
 
@@ -275,27 +231,27 @@ Everything breathes. Use generous whitespace. Never overcrowd interfaces.
 
 ## 15. Motion
 
-Everything should feel alive.
+Everything should feel alive without feeling theatrical.
 
-- **Animation duration:** 250–300 ms
-- **Ease:** in-out
-- **Never:** bounce or flashy effects
+- Animation duration: 200–300 ms
+- Ease: in-out / ease-out
+- Never bounce or use flashy effects for core product interactions
 
 ---
 
 ## 16. Voice
 
-- **Confident** — Not arrogant
-- **Intelligent** — Not technical
-- **Human** — Not robotic
-- **Simple** — Not simplistic
+- Confident — not arrogant
+- Intelligent — not technical
+- Human — not robotic
+- Simple — not simplistic
 
 ---
 
 ## 17. Writing Style
 
 | Instead of | Say |
-|------------|-----|
+|---|---|
 | Enterprise Resource Planning Platform | Your business. One platform. |
 | AI Powered Workflow Automation | Let work happen. |
 | Business Intelligence Dashboard | See everything. |
@@ -314,7 +270,7 @@ Every feature must reduce complexity.
 
 ## 19. UX Principles
 
-Users should never wonder "What do I do next?"
+Users should never wonder **"What do I do next?"**
 
 Every screen has:
 - One primary action
@@ -326,17 +282,10 @@ Every screen has:
 ## 20. Design Language
 
 ### Inspired by
-Apple, Google, Linear, Notion, Arc Browser, Raycast
+Apple, Google, Linear, Notion, Arc Browser, Raycast.
 
-### Google Material Design 3 Principles
-- **Elevation over borders** — Cards use shadows, not borders
-- **8dp grid system** — Consistent spacing throughout
-- **Clean surfaces** — White/light backgrounds with subtle shadows
-- **Purposeful motion** — 200ms transitions with ease-out curves
-- **Minimalist approach** — Less is more everywhere
-
-### Not inspired by
-Salesforce, SAP, Oracle, Zoho
+### Avenize rule
+Use inspiration from these systems for usability and restraint, but do not copy another company's visual identity. The Avenize mark and monochrome platform identity remain the source of truth.
 
 ---
 
@@ -360,29 +309,19 @@ Businesses weren't meant to live across dozens of disconnected tools.
 Sales shouldn't feel separate from projects. Finance shouldn't feel separate from people. AI shouldn't live in another tab.
 
 **Everything belongs together.**
-- Every workflow
-- Every conversation
-- Every document
-- Every decision
+
+Every workflow. Every conversation. Every document. Every decision.
 
 Connected by one intelligent operating system. Beautifully designed. Effortlessly simple. Built for the future of business.
 
 ---
 
-## Creative Director's Recommendation
+## 23. Implementation Rules
 
-If your ambition is to build a company that sits alongside Notion, Linear, Figma, and Stripe, the brand should be treated as a long-term asset, not just a logo.
-
-I recommend expanding this into a 100+ page brand system similar to those used by Apple, Airbnb, and Stripe. It should include:
-- Logo construction grids
-- Optical corrections
-- Iconography
-- Illustration rules
-- UI components
-- Motion principles
-- Photography direction
-- Marketing layouts
-- Social media templates
-- Complete design system
-
-That document would become the single source of truth for everyone who designs, markets, or builds Avenize.
+1. The supplied monochrome Avenize mark is the canonical platform logo.
+2. All favicon, PWA, app-shell, authentication, and structured organization-logo references must resolve to the canonical mark or an approved reverse variant.
+3. Do not introduce a second Avenize logo geometry.
+4. Do not reintroduce the former blue/violet logo gradient.
+5. Customer logos and colors remain selectable through Brand Studio and must override only customer/workspace surfaces where intended.
+6. Public `www.avenize.com` and product `app.avenize.com` may have different layouts, but the same canonical Avenize mark identity.
+7. Any future brand asset must be checked against this document before release.
