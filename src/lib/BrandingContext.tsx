@@ -32,6 +32,8 @@ export type Branding = {
   social_links: { linkedin?: string; twitter?: string; facebook?: string; instagram?: string; youtube?: string }
 }
 
+// Avenize is the fallback identity. Businesses can replace these values with
+// their own branding without changing the application's accessibility rules.
 const DEFAULT_BRANDING: Branding = {
   brand_name: null,
   tagline: null,
@@ -41,16 +43,16 @@ const DEFAULT_BRANDING: Branding = {
   logo_dark_url: null,
   favicon_url: null,
   og_image_url: null,
-  primary_color: '#0891B2',
-  accent_color: '#FF7A59',
-  background_color: '#FAFAFA',
+  primary_color: '#0B57A4',
+  accent_color: '#168A55',
+  background_color: '#F7F9FC',
   surface_color: '#FFFFFF',
-  text_color: '#111111',
-  dark_primary_color: '#818CF8',
-  dark_accent_color: '#FB923C',
-  dark_background_color: '#111111',
-  dark_surface_color: '#1F1F1F',
-  dark_text_color: '#F5F5F5',
+  text_color: '#111827',
+  dark_primary_color: '#60A5FA',
+  dark_accent_color: '#4ADE80',
+  dark_background_color: '#0B1220',
+  dark_surface_color: '#111827',
+  dark_text_color: '#F8FAFC',
   theme_mode: 'system',
   border_radius: 'lg',
   font_family: 'default',
@@ -85,7 +87,6 @@ function setThemeVariables(branding: Branding) {
   const surface = dark ? branding.dark_surface_color : branding.surface_color
   const text = dark ? branding.dark_text_color : branding.text_color
 
-  // Canonical Avenize tokens used throughout the application.
   root.style.setProperty('--av-primary', primary)
   root.style.setProperty('--av-primary-hover', primary)
   root.style.setProperty('--av-primary-soft', `${primary}18`)
@@ -97,8 +98,10 @@ function setThemeVariables(branding: Branding) {
   root.style.setProperty('--av-surface-3', bg)
   root.style.setProperty('--av-text', text)
   root.style.setProperty('--av-text-primary', text)
+  root.style.setProperty('--av-text-secondary', dark ? '#CBD5E1' : '#344054')
+  root.style.setProperty('--av-text-muted', dark ? '#94A3B8' : '#667085')
+  root.style.setProperty('--av-border', dark ? '#334155' : '#D0D5DD')
 
-  // Backwards-compatible aliases used by older marketing/theme surfaces.
   root.style.setProperty('--avenize-primary', primary)
   root.style.setProperty('--avenize-accent', accent)
   root.style.setProperty('--avenize-bg', bg)
@@ -112,11 +115,8 @@ function setThemeVariables(branding: Branding) {
     const radius = { none: '0px', sm: '0.375rem', md: '0.5rem', lg: '0.75rem', xl: '1rem', '2xl': '1.25rem' }[branding.border_radius]
     root.style.setProperty('--av-radius-md', radius)
   }
-  if (branding.font_family && branding.font_family !== 'default') {
-    root.style.setProperty('--av-font-family', branding.font_family)
-  } else {
-    root.style.removeProperty('--av-font-family')
-  }
+  if (branding.font_family && branding.font_family !== 'default') root.style.setProperty('--av-font-family', branding.font_family)
+  else root.style.removeProperty('--av-font-family')
 
   root.dataset.brandTheme = branding.theme_mode
   root.classList.toggle('dark', dark)
@@ -134,51 +134,20 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true
     const loadBranding = async () => {
-      if (!staff?.business_id) {
-        if (mounted) setLoading(false)
-        return
-      }
+      if (!staff?.business_id) { if (mounted) setLoading(false); return }
       businessIdRef.current = staff.business_id
       setLoading(true)
       try {
         const { data, error } = await supabase.from('business_branding').select('*').eq('business_id', staff.business_id).maybeSingle()
-        if (error && !['PGRST116', '404', '406'].includes(error.code || '')) {
-          console.warn('Branding not available:', error.message)
-        }
+        if (error && !['PGRST116', '404', '406'].includes(error.code || '')) console.warn('Branding not available:', error.message)
         if (!mounted) return
         if (data) {
           let socialLinks = data.social_links
-          if (typeof socialLinks === 'string') {
-            try { socialLinks = JSON.parse(socialLinks) } catch { socialLinks = {} }
-          }
-          setBranding({
-            ...DEFAULT_BRANDING,
-            ...data,
-            social_links: socialLinks || {},
-            primary_color: data.primary_color || DEFAULT_BRANDING.primary_color,
-            accent_color: data.accent_color || DEFAULT_BRANDING.accent_color,
-            background_color: data.background_color || DEFAULT_BRANDING.background_color,
-            surface_color: data.surface_color || DEFAULT_BRANDING.surface_color,
-            text_color: data.text_color || DEFAULT_BRANDING.text_color,
-            dark_primary_color: data.dark_primary_color || DEFAULT_BRANDING.dark_primary_color,
-            dark_accent_color: data.dark_accent_color || DEFAULT_BRANDING.dark_accent_color,
-            dark_background_color: data.dark_background_color || DEFAULT_BRANDING.dark_background_color,
-            dark_surface_color: data.dark_surface_color || DEFAULT_BRANDING.dark_surface_color,
-            dark_text_color: data.dark_text_color || DEFAULT_BRANDING.dark_text_color,
-            theme_mode: data.theme_mode || DEFAULT_BRANDING.theme_mode,
-            border_radius: data.border_radius || DEFAULT_BRANDING.border_radius,
-            font_family: data.font_family || DEFAULT_BRANDING.font_family,
-            button_style: data.button_style || DEFAULT_BRANDING.button_style,
-          })
-        } else {
-          setBranding(DEFAULT_BRANDING)
-        }
-      } catch (err) {
-        if (mounted) setError('Failed to load branding')
-        console.error('Error loading branding:', err)
-      } finally {
-        if (mounted) setLoading(false)
-      }
+          if (typeof socialLinks === 'string') { try { socialLinks = JSON.parse(socialLinks) } catch { socialLinks = {} } }
+          setBranding({ ...DEFAULT_BRANDING, ...data, social_links: socialLinks || {} })
+        } else setBranding(DEFAULT_BRANDING)
+      } catch (err) { if (mounted) setError('Failed to load branding'); console.error('Error loading branding:', err) }
+      finally { if (mounted) setLoading(false) }
     }
     void loadBranding()
     return () => { mounted = false }
@@ -192,11 +161,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     media.addEventListener?.('change', onChange)
     if (branding.favicon_url) {
       let favicon = document.querySelector<HTMLLinkElement>("link[rel='icon']")
-      if (!favicon) {
-        favicon = document.createElement('link')
-        favicon.rel = 'icon'
-        document.head.appendChild(favicon)
-      }
+      if (!favicon) { favicon = document.createElement('link'); favicon.rel = 'icon'; document.head.appendChild(favicon) }
       favicon.href = branding.favicon_url
     }
     return () => media.removeEventListener?.('change', onChange)
@@ -204,20 +169,12 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
 
   const saveBranding = useCallback(async () => {
     if (!businessIdRef.current) return
-    setSaving(true)
-    setError(null)
+    setSaving(true); setError(null)
     try {
       const { error } = await supabase.from('business_branding').upsert({ business_id: businessIdRef.current, ...branding, updated_at: new Date().toISOString() })
-      if (error) {
-        console.error('Error saving branding:', error)
-        setError('Failed to save branding')
-      }
-    } catch (err) {
-      console.error('Error saving branding:', err)
-      setError('Failed to save branding')
-    } finally {
-      setSaving(false)
-    }
+      if (error) { console.error('Error saving branding:', error); setError('Failed to save branding') }
+    } catch (err) { console.error('Error saving branding:', err); setError('Failed to save branding') }
+    finally { setSaving(false) }
   }, [branding])
 
   const updateBranding = useCallback(async (updates: Partial<Branding>) => {
@@ -232,18 +189,12 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
       const fileExt = file.name.split('.').pop() || 'png'
       const fileName = `${businessIdRef.current}/${type}/${Date.now()}.${fileExt}`
       const { error } = await supabase.storage.from('brand-assets').upload(fileName, file, { cacheControl: '3600', upsert: true })
-      if (error) {
-        console.error('Error uploading logo:', error)
-        return null
-      }
+      if (error) { console.error('Error uploading logo:', error); return null }
       const { data: urlData } = supabase.storage.from('brand-assets').getPublicUrl(fileName)
       const fieldMap = { logo: 'logo_url', logo_dark: 'logo_dark_url', favicon: 'favicon_url' } as const
       await updateBranding({ [fieldMap[type]]: urlData.publicUrl })
       return urlData.publicUrl
-    } catch (err) {
-      console.error('Error uploading logo:', err)
-      return null
-    }
+    } catch (err) { console.error('Error uploading logo:', err); return null }
   }, [updateBranding])
 
   const resetBranding = useCallback(async () => {
