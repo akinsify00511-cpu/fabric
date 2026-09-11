@@ -17,6 +17,9 @@ jobs:
     env:
       REQUIRE_LIVE: '1'
       APP_URL: https://app.avenize.com
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
 
@@ -35,50 +38,45 @@ jobs:
 
       - run: npm ci
 
-      - name: Hydrate production verification environment from Vercel
+      - name: Hydrate public production verification environment
         shell: bash
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           set -euo pipefail
-          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN secret is missing"; exit 1; }
-          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID secret is missing"; exit 1; }
-          npm i -g vercel
-          rm -rf .vercel
-          # Project ID is globally unique; let the authenticated Vercel token
-          # determine its owning account instead of relying on a stale/invalid
-          # VERCEL_ORG_ID secret. This removes the "User not found" failure mode.
-          vercel link --yes --project="$VERCEL_PROJECT_ID" --token="$VERCEL_TOKEN"
-          vercel env pull .env.production.local --environment=production --yes --token="$VERCEL_TOKEN"
           python3 - <<'PY'
           import os
+          import re
+          import urllib.request
           from pathlib import Path
-          path = Path('.env.production.local')
-          wanted = {
-              'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'SUPABASE_URL',
-              'SUPABASE_KEY', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
-              'SUPABASE_SECRET_KEY', 'E2E_EMAIL', 'E2E_PASSWORD', 'APP_URL',
+
+          app = os.environ['APP_URL'].rstrip('/')
+          html = urllib.request.urlopen(app + '/', timeout=20).read().decode('utf-8', 'replace')
+          bundles = re.findall(r'/assets/[A-Za-z0-9_-]+\.js', html)
+          if not bundles:
+              raise SystemExit('No production JavaScript bundle found at APP_URL')
+          js = ''
+          for bundle in bundles:
+              try:
+                  candidate = urllib.request.urlopen(app + bundle, timeout=20).read().decode('utf-8', 'replace')
+                  if 'supabase.co' in candidate or 'sb_publishable_' in candidate or 'sb_anon_' in candidate:
+                      js = candidate
+                      break
+              except Exception:
+                  continue
+          if not js:
+              raise SystemExit('Production bundle did not expose public Supabase configuration')
+          url_match = re.search(r'https://[0-9a-z]+\.supabase\.co', js)
+          key_match = re.search(r'sb_(?:publishable|anon)_[A-Za-z0-9_-]+', js)
+          if not url_match or not key_match:
+              raise SystemExit('Public Supabase URL/publishable key could not be calibrated from production')
+          values = {
+              'SUPABASE_URL': url_match.group(0),
+              'SUPABASE_KEY': key_match.group(0),
           }
-          values = {}
-          for raw in path.read_text(encoding='utf-8').splitlines():
-              line = raw.strip()
-              if not line or line.startswith('#') or '=' not in line:
-                  continue
-              key, value = line.split('=', 1)
-              key = key.strip()
-              if key not in wanted:
-                  continue
-              value = value.strip()
-              if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
-                  value = value[1:-1]
-              values[key] = value
           with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
               for key, value in values.items():
-                  if value:
-                      print(f'::add-mask::{value}')
-                      out.write(f'{key}={value}\n')
-          print('Production verification environment hydrated from Vercel configuration.')
+                  print(f'::add-mask::{value}')
+                  out.write(f'{key}={value}\n')
+          print('Public production Supabase configuration calibrated from app.avenize.com.')
           PY
 
       - name: Run Avenize Control Plane
