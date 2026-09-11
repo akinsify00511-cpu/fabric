@@ -162,8 +162,8 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="Avenize" />
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <!-- PWA manifest is attached at runtime only on the app host so the
+         marketing site does not advertise/install the authenticated product. -->
     
     <!-- iOS Icons -->
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
@@ -182,7 +182,6 @@
       #root {
         min-height: 100vh;
       }
-      /* Loading spinner */
       .loading-screen {
         position: fixed;
         inset: 0;
@@ -217,49 +216,60 @@
         var el = document.querySelector('.loading-screen');
         if (el) el.style.display = 'none';
       };
-      // Fallback: remove after 8 seconds if React hasn't removed it
       setTimeout(window._removeLoadingScreen, 8000);
-      // Remove immediately if DOM is already ready
       if (document.readyState !== 'loading') {
         window._removeLoadingScreen();
       }
     </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Register Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((reg) => {
-              console.log('SW registered:', reg.scope)
-              // Detect an updated service worker and activate it immediately.
-              // sw.js already calls skipWaiting()+clients.claim(), so once the
-              // new SW installs, this reload swaps it in without leaving the
-              // old bundle active across navigations.
-              reg.addEventListener('updatefound', () => {
-                const installing = reg.installing
-                if (!installing) return
-                installing.addEventListener('statechange', () => {
-                  if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.addEventListener('controllerchange', () => {
-                      window.location.reload()
-                    }, { once: true })
-                  }
-                })
+      // Keep the public website and authenticated app as separate browser
+      // surfaces. PWA, service worker and notification capabilities belong to
+      // app.avenize.com only; marketing pages remain ordinary web pages.
+      (function () {
+        var host = window.location.hostname;
+        var isAppHost = host === 'app.avenize.com' || host === 'localhost' || host === '127.0.0.1';
+        if (!isAppHost) return;
+
+        var manifest = document.createElement('link');
+        manifest.rel = 'manifest';
+        manifest.href = '/manifest.json';
+        document.head.appendChild(manifest);
+
+        var robots = document.querySelector('meta[name="robots"]');
+        if (robots) robots.setAttribute('content', 'noindex, nofollow');
+        var googlebot = document.querySelector('meta[name="googlebot"]');
+        if (googlebot) googlebot.setAttribute('content', 'noindex, nofollow');
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) canonical.setAttribute('href', 'https://app.avenize.com/app');
+
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js')
+              .then(function (reg) {
+                console.log('Avenize app service worker registered:', reg.scope);
+                reg.addEventListener('updatefound', function () {
+                  var installing = reg.installing;
+                  if (!installing) return;
+                  installing.addEventListener('statechange', function () {
+                    if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                      navigator.serviceWorker.addEventListener('controllerchange', function () {
+                        window.location.reload();
+                      }, { once: true });
+                    }
+                  });
+                });
               })
-            })
-            .catch((err) => console.log('SW registration failed:', err))
-        })
-      }
-      
-      // Request notification permission
-      if ('Notification' in window && Notification.permission === 'default') {
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') {
-            Notification.requestPermission()
-          }
-        })
-      }
+              .catch(function (err) { console.log('SW registration failed:', err); });
+          });
+        }
+
+        if ('Notification' in window && Notification.permission === 'default') {
+          document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') Notification.requestPermission();
+          });
+        }
+      })();
     </script>
   </body>
 </html>
