@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ArrowRight, Brain, CheckCircle2, CircleDot, Clock3, Compass, Sparkles } from 'lucide-react'
 import type { BusinessBrain, BusinessHealth, Recommendation, ValueLedger } from '../lib/businessOS'
-import type { BusinessFunction, FunctionHomeConfig, Seniority } from '../lib/functionHome'
+import type { BusinessFunction, FunctionHomeConfig } from '../lib/functionHome'
 
 interface ActionItem { id: string; title: string; to: string; tone: 'red' | 'amber' | 'blue'; detail?: string }
 interface Props {
@@ -15,7 +15,6 @@ interface Props {
   functionLabel: string
   seniorityLabel: string
   businessFunction: BusinessFunction
-  seniority: Seniority
   homeConfig: FunctionHomeConfig
 }
 
@@ -40,7 +39,7 @@ const CONTEXTS: Record<BusinessFunction, Context[]> = {
     { label: 'Pipeline', summary: 'Deals, stages and conversion', to: '/app/crm' },
     { label: 'Revenue', summary: 'Revenue performance and velocity', to: '/app/crm' },
     { label: 'Customers', summary: 'Customer relationships and follow-up', to: '/app/crm' },
-    { label: 'Quotes', summary: 'Quotes, acceptance and order flow', to: '/app/quotes' },
+    { label: 'Quotes', summary: 'Quotes, acceptance and order flow', to: '/app/crm' },
   ],
   finance: [
     { label: 'Cash', summary: 'Cash position and movement', to: '/app/finance' },
@@ -68,7 +67,7 @@ const CONTEXTS: Record<BusinessFunction, Context[]> = {
   ],
 }
 
-export default function BusinessCommandCenter({ brain, health, recommendations, ledger, actions, functionLabel, seniorityLabel, businessFunction, seniority, homeConfig }: Props) {
+export default function BusinessCommandCenter({ brain, health, recommendations, ledger, actions, functionLabel, seniorityLabel, businessFunction, homeConfig }: Props) {
   const contexts = CONTEXTS[businessFunction] ?? CONTEXTS.general
   const [context, setContext] = useState(contexts[0])
   const root = useRef<HTMLDivElement>(null)
