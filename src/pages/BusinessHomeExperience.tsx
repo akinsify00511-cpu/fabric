@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import BusinessHomeLegacy from './BusinessHomeLegacy'
 import BusinessCommandCenter from '../components/BusinessCommandCenter'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
@@ -54,10 +53,10 @@ export default function BusinessHomeExperience() {
 
       const [approvals, tasks] = attentionResult
       const next: ActionItem[] = []
-      ;(approvals?.data ?? []).forEach((item: any) => next.push({ id: item.id, title: item.description || 'Approval needed', to: '/app/approvals', tone: 'red', detail: 'Needs approval' }))
+      ;(approvals?.data ?? []).forEach((item: any) => next.push({ id: item.id, title: item.description || 'Approval needed', to: '/app/approvals', tone: 'red', detail: 'Needs your approval' }))
       ;(tasks?.data ?? []).forEach((item: any) => {
         const overdue = item.due_date && new Date(item.due_date).getTime() < Date.now()
-        next.push({ id: item.id, title: item.title, to: '/app/tasks', tone: overdue ? 'red' : 'amber', detail: overdue ? 'Overdue' : 'Open task' })
+        next.push({ id: item.id, title: item.title, to: '/app/tasks', tone: overdue ? 'red' : 'amber', detail: overdue ? 'Overdue — act now' : 'Assigned to you' })
       })
       setActions(next)
     }
@@ -66,23 +65,20 @@ export default function BusinessHomeExperience() {
   }, [bid])
 
   return (
-    <>
-      <div style={{ background: 'var(--av-home-bg)' }}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-          <BusinessCommandCenter
-            brain={brain}
-            health={health}
-            recommendations={recommendations}
-            ledger={ledger}
-            actions={actions}
-            functionLabel={functionLabel(fn)}
-            seniorityLabel={seniorityLabel(sen)}
-            businessFunction={fn}
-            homeConfig={homeConfig}
-          />
-        </div>
+    <main aria-label={`${functionLabel(fn)} home`} style={{ background: 'var(--av-home-bg)', minHeight: '100%' }}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10">
+        <BusinessCommandCenter
+          brain={brain}
+          health={health}
+          recommendations={recommendations}
+          ledger={ledger}
+          actions={actions}
+          functionLabel={functionLabel(fn)}
+          seniorityLabel={seniorityLabel(sen)}
+          businessFunction={fn}
+          homeConfig={homeConfig}
+        />
       </div>
-      <BusinessHomeLegacy />
-    </>
+    </main>
   )
 }
