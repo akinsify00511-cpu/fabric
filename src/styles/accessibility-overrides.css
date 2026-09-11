@@ -1,0 +1,16 @@
+/* WCAG text-link treatment for legal/authentication copy. Keep legal links
+   independently accessible even when a customer brand primary is too close to
+   surrounding text for the 3:1 link-distinction threshold. */
+a[href="/terms"],
+a[href="/privacy"] {
+  color: #005fcc;
+  font-weight: 600;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 2px;
+}
+
+a[href="/terms"]:hover,
+a[href="/privacy"]:hover {
+  color: #004a9f;
+}
