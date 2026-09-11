@@ -4,23 +4,29 @@
 Live certification is fail-closed. It proves the deployed governance surface,
 authenticated production identity, release gate and security track. Public
 Supabase URL/publishable key may be self-calibrated from the deployed app;
-private credentials are never discovered from the frontend.
+private credentials are never discovered from the frontend. When no dedicated
+E2E identity is configured, a disposable confirmed identity is provisioned
+only with a server-side service key and deleted before exit.
 """
 from __future__ import annotations
 
 import json
 import os
 import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 ENV_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 ENV_KEY = os.environ.get("SUPABASE_KEY", "") or os.environ.get("SUPABASE_ANON_KEY", "")
+SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 E2E_EMAIL = os.environ.get("E2E_EMAIL", "")
 E2E_PASSWORD = os.environ.get("E2E_PASSWORD", "")
 APP_URL = os.environ.get("APP_URL", "https://app.avenize.com").rstrip("/")
 REQUIRE_LIVE = os.environ.get("REQUIRE_LIVE", "1").lower() in {"1", "true", "yes"}
 REPORT_PATH = ROOT / "governance" / "reports" / "production-certification.json"
+TEMP_USER_ID = ""
+TEMP_EMAIL = ""
 
 
 def http_probe(base: str, key: str, endpoint: str, method: str = "GET", body: bytes | None = None, bearer: str | None = None):
@@ -39,10 +45,40 @@ def http_probe(base: str, key: str, endpoint: str, method: str = "GET", body: by
         return None, str(e)
 
 
+def ensure_e2e_identity(base: str) -> tuple[str, str, str]:
+    global TEMP_USER_ID, TEMP_EMAIL
+    if E2E_EMAIL and E2E_PASSWORD:
+        return E2E_EMAIL, E2E_PASSWORD, "dedicated"
+    if not SERVICE_KEY:
+        return "", "", "E2E credentials unavailable and no service key is configured"
+    stamp = str(int(time.time()))
+    email = f"avenize-cert-{stamp}@example.com"
+    password = f"Cert!{stamp}aZ#x"
+    payload = json.dumps({"email": email, "password": password, "email_confirm": True, "user_metadata": {"source": "production_certification"}}).encode()
+    code, body = http_probe(base, SERVICE_KEY, "/auth/v1/admin/users", "POST", payload, SERVICE_KEY)
+    if code not in (200, 201):
+        return "", "", f"disposable E2E provisioning failed (HTTP {code})"
+    try:
+        TEMP_USER_ID = json.loads(body).get("id", "")
+    except json.JSONDecodeError:
+        TEMP_USER_ID = ""
+    if not TEMP_USER_ID:
+        return "", "", "disposable E2E provisioning returned no user id"
+    TEMP_EMAIL = email
+    return email, password, "disposable"
+
+
+def cleanup_e2e_identity(base: str) -> None:
+    if TEMP_USER_ID and SERVICE_KEY:
+        http_probe(base, SERVICE_KEY, f"/auth/v1/admin/users/{TEMP_USER_ID}", "DELETE", None, SERVICE_KEY)
+
+
 def authenticate_admin(base: str, key: str) -> tuple[str, str]:
-    if not E2E_EMAIL or not E2E_PASSWORD:
-        return "", "E2E_EMAIL/E2E_PASSWORD unavailable"
-    payload = json.dumps({"email": E2E_EMAIL, "password": E2E_PASSWORD}).encode()
+    global E2E_EMAIL, E2E_PASSWORD
+    email, password, source = ensure_e2e_identity(base)
+    if not email or not password:
+        return "", source
+    payload = json.dumps({"email": email, "password": password}).encode()
     code, body = http_probe(base, key, "/auth/v1/token?grant_type=password", "POST", payload)
     if code != 200:
         return "", f"authentication failed (HTTP {code})"
@@ -50,7 +86,7 @@ def authenticate_admin(base: str, key: str) -> tuple[str, str]:
         token = json.loads(body).get("access_token", "")
     except json.JSONDecodeError:
         token = ""
-    return token, "authenticated" if token else "authentication returned no access token"
+    return token, "authenticated (" + source + ")" if token else "authentication returned no access token"
 
 
 def self_calibrate() -> tuple[str, str]:
@@ -155,6 +191,7 @@ def main() -> int:
     }
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    cleanup_e2e_identity(base)
     print(f"Governance probes: {ok_total}/{expected}")
     print(f"Authenticated governance: {'PASS' if governance_auth_pass else 'FAIL'}")
     print(f"Release gate: {'PASS' if release_pass else 'FAIL'}")
