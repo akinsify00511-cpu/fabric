@@ -99,6 +99,7 @@ function setThemeVariables(branding: Branding) {
   root.style.setProperty('--av-text-secondary', `color-mix(in srgb, ${text} 72%, transparent)`)
   root.style.setProperty('--av-text-muted', `color-mix(in srgb, ${text} 52%, transparent)`)
   root.style.setProperty('--av-border', `color-mix(in srgb, ${text} 20%, transparent)`)
+  root.style.setProperty('--avenize-mark-color', dark ? '#FFFFFF' : '#111111')
 
   root.style.setProperty('--avenize-primary', primary)
   root.style.setProperty('--avenize-accent', accent)
