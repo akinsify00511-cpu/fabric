@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Production governance certification.
 
-Live certification is fail-closed. In addition to schema/release checks it
-must prove that the configured production E2E identity can authenticate and
-is authorized to read the Avenize governance control plane.
+Live certification is fail-closed. It proves the deployed governance surface,
+authenticated production identity, release gate and security track. Public
+Supabase URL/publishable key may be self-calibrated from the deployed app;
+private credentials are never discovered from the frontend.
 """
 from __future__ import annotations
 
@@ -15,7 +16,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 ENV_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 ENV_KEY = os.environ.get("SUPABASE_KEY", "") or os.environ.get("SUPABASE_ANON_KEY", "")
-SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 E2E_EMAIL = os.environ.get("E2E_EMAIL", "")
 E2E_PASSWORD = os.environ.get("E2E_PASSWORD", "")
 APP_URL = os.environ.get("APP_URL", "https://app.avenize.com").rstrip("/")
@@ -56,17 +56,16 @@ def authenticate_admin(base: str, key: str) -> tuple[str, str]:
 def self_calibrate() -> tuple[str, str]:
     if ENV_URL and ENV_KEY:
         return ENV_URL, ENV_KEY
-    if REQUIRE_LIVE:
-        return "", ""
     try:
-        idx = subprocess.run(["curl", "-fs", APP_URL + "/"], capture_output=True, text=True).stdout
+        idx = subprocess.run(["curl", "-fs", APP_URL + "/"], capture_output=True, text=True, timeout=20).stdout
         import re
         bundle = re.search(r"/assets/[A-Za-z0-9_\-]+\.js", idx)
         if bundle:
-            js = subprocess.run(["curl", "-fs", APP_URL + bundle.group(0)], capture_output=True, text=True).stdout
+            js = subprocess.run(["curl", "-fs", APP_URL + bundle.group(0)], capture_output=True, text=True, timeout=20).stdout
             url_target = (re.search(r"https://[0-9a-z]+\.supabase\.co", js) or [""])[0]
             key_target = (re.search(r"sb_(?:publishable|anon)_[A-Za-z0-9_\-]+", js) or [""])[0]
-            return url_target, key_target
+            if url_target and key_target:
+                return url_target.rstrip("/"), key_target
     except Exception:
         pass
     return "", ""
@@ -122,11 +121,11 @@ def main() -> int:
     )
 
     if not base or not key:
-        release_pass = False if REQUIRE_LIVE else True
-        release_out = "Live credentials unavailable."
+        release_pass = False
+        release_out = "Live Supabase URL/publishable key unavailable."
     else:
         try:
-            proc = subprocess.run(["bash", str(ROOT / "scripts/verify-production.sh")], capture_output=True, text=True, env={**os.environ, "APP_URL": APP_URL}, timeout=900)
+            proc = subprocess.run(["bash", str(ROOT / "scripts/verify-production.sh")], capture_output=True, text=True, env={**os.environ, "APP_URL": APP_URL, "SUPABASE_URL": base, "SUPABASE_KEY": key}, timeout=900)
             release_pass = proc.returncode == 0
             release_out = proc.stdout + proc.stderr
         except Exception as e:
@@ -145,8 +144,6 @@ def main() -> int:
     migration_pass = governance_schema_pass and release_pass
     security_pass = not rls_track["blocking"]
     verdict = "PASS" if migration_pass and security_pass and governance_auth_pass else "BLOCKED"
-    if not base and not REQUIRE_LIVE:
-        verdict = "NOT_CONFIGURED"
 
     report = {
         "verdict": verdict,
@@ -165,7 +162,7 @@ def main() -> int:
     print(f"VERDICT: {verdict}")
     if REQUIRE_LIVE and verdict != "PASS":
         return 1
-    return 0 if verdict in {"PASS", "NOT_CONFIGURED"} else 1
+    return 0 if verdict == "PASS" else 1
 
 
 if __name__ == "__main__":
