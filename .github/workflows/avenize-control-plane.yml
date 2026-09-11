@@ -46,7 +46,6 @@ jobs:
           import os
           import re
           import urllib.request
-          from pathlib import Path
 
           app = os.environ['APP_URL'].rstrip('/')
           html = urllib.request.urlopen(app + '/', timeout=20).read().decode('utf-8', 'replace')
@@ -68,12 +67,8 @@ jobs:
           key_match = re.search(r'sb_(?:publishable|anon)_[A-Za-z0-9_-]+', js)
           if not url_match or not key_match:
               raise SystemExit('Public Supabase URL/publishable key could not be calibrated from production')
-          values = {
-              'SUPABASE_URL': url_match.group(0),
-              'SUPABASE_KEY': key_match.group(0),
-          }
           with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
-              for key, value in values.items():
+              for key, value in {'SUPABASE_URL': url_match.group(0), 'SUPABASE_KEY': key_match.group(0)}.items():
                   print(f'::add-mask::{value}')
                   out.write(f'{key}={value}\n')
           print('Public production Supabase configuration calibrated from app.avenize.com.')
