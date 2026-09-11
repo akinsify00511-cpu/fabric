@@ -55,9 +55,7 @@ jobs:
           PY
 
       - name: Validate health-check configuration
-        env:
-          SUPABASE_URL: ${{ env.SUPABASE_URL }}
-          CRON_SECRET: ${{ env.CRON_SECRET }}
+        shell: bash
         run: |
           set -euo pipefail
           test -n "$SUPABASE_URL" || { echo "SUPABASE_URL is missing"; exit 1; }
@@ -68,9 +66,7 @@ jobs:
           esac
 
       - name: Ping integration health checker
-        env:
-          SUPABASE_URL: ${{ env.SUPABASE_URL }}
-          CRON_SECRET: ${{ env.CRON_SECRET }}
+        shell: bash
         run: |
           set -euo pipefail
           response_file="$(mktemp)"
