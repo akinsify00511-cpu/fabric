@@ -10,23 +10,67 @@ jobs:
   health-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate health-check configuration
+      - name: Hydrate production health-check environment from Vercel
+        shell: bash
         env:
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          CRON_SECRET: ${{ secrets.PLATFORM_HEALTH_CRON_SECRET }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           set -euo pipefail
-          test -n "$SUPABASE_URL" || { echo "VITE_SUPABASE_URL secret is missing"; exit 1; }
-          test -n "$CRON_SECRET" || { echo "PLATFORM_HEALTH_CRON_SECRET secret is missing"; exit 1; }
+          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN secret is missing"; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "VERCEL_ORG_ID secret is missing"; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID secret is missing"; exit 1; }
+          npm i -g vercel
+          rm -rf .vercel
+          vercel link --yes --project="$VERCEL_PROJECT_ID" --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
+          vercel env pull .env.production.local --environment=production --yes --token="$VERCEL_TOKEN"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path('.env.production.local')
+          wanted = {'SUPABASE_URL', 'VITE_SUPABASE_URL', 'PLATFORM_HEALTH_CRON_SECRET'}
+          values = {}
+          for raw in path.read_text(encoding='utf-8').splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#') or '=' not in line:
+                  continue
+              key, value = line.split('=', 1)
+              key = key.strip()
+              if key not in wanted:
+                  continue
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+                  value = value[1:-1]
+              values[key] = value
+          supabase_url = values.get('SUPABASE_URL') or values.get('VITE_SUPABASE_URL') or ''
+          cron_secret = values.get('PLATFORM_HEALTH_CRON_SECRET') or ''
+          test -n "$supabase_url" || { echo "Supabase URL is missing from Vercel production environment"; exit 1; }
+          test -n "$cron_secret" || { echo "PLATFORM_HEALTH_CRON_SECRET is missing from Vercel production environment"; exit 1; }
+          print(f'::add-mask::{cron_secret}')
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
+              out.write(f'SUPABASE_URL={supabase_url}\n')
+              out.write(f'CRON_SECRET={cron_secret}\n')
+          print('Production health-check environment hydrated from Vercel configuration.')
+          PY
+
+      - name: Validate health-check configuration
+        env:
+          SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          CRON_SECRET: ${{ env.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          test -n "$SUPABASE_URL" || { echo "SUPABASE_URL is missing"; exit 1; }
+          test -n "$CRON_SECRET" || { echo "PLATFORM_HEALTH_CRON_SECRET is missing"; exit 1; }
           case "$SUPABASE_URL" in
             https://*) ;;
-            *) echo "VITE_SUPABASE_URL must be an https:// URL"; exit 1 ;;
+            *) echo "SUPABASE_URL must be an https:// URL"; exit 1 ;;
           esac
 
       - name: Ping integration health checker
         env:
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          CRON_SECRET: ${{ secrets.PLATFORM_HEALTH_CRON_SECRET }}
+          SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          CRON_SECRET: ${{ env.CRON_SECRET }}
         run: |
           set -euo pipefail
           response_file="$(mktemp)"
