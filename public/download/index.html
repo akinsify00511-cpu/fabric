@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#155BB4">
+  <meta name="robots" content="index,follow">
+  <title>Get the Avenize app</title>
+  <meta name="description" content="Install Avenize on your phone or open your Avenize workspace on the web.">
+  <style>
+    :root { color-scheme: light; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: #f7f9fc; color: #122033; }
+    main { width: min(720px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0 48px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 20px; margin-bottom: 56px; }
+    .mark { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: #155BB4; color: #fff; font-weight: 800; }
+    h1 { font-size: clamp(36px, 7vw, 58px); line-height: 1.02; letter-spacing: -0.045em; margin: 0 0 18px; }
+    .lead { font-size: 19px; line-height: 1.55; color: #536174; max-width: 600px; margin: 0 0 34px; }
+    .panel { background: #fff; border: 1px solid #e4e9f0; border-radius: 24px; padding: 26px; box-shadow: 0 14px 40px rgba(18,32,51,.06); }
+    .option { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 0; border-bottom: 1px solid #edf0f4; }
+    .option:last-child { border-bottom: 0; }
+    .option h2 { font-size: 18px; margin: 0 0 5px; }
+    .option p { margin: 0; color: #667386; font-size: 14px; line-height: 1.45; }
+    a.button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 17px; border-radius: 11px; background: #155BB4; color: #fff; text-decoration: none; font-weight: 650; white-space: nowrap; }
+    a.secondary { background: #eef4fb; color: #155BB4; }
+    .note { margin-top: 22px; font-size: 13px; color: #718096; line-height: 1.55; }
+    @media (max-width: 560px) { main { padding-top: 32px; } .brand { margin-bottom: 38px; } .panel { padding: 18px; border-radius: 18px; } .option { align-items: flex-start; flex-direction: column; } a.button { width: 100%; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand"><span class="mark">A</span><span>Avenize</span></div>
+    <h1>Run your business wherever you are.</h1>
+    <p class="lead">Use Avenize on the web today. Native mobile builds are being prepared through the same Avenize workspace, account and business data.</p>
+
+    <section class="panel" aria-label="Avenize access options">
+      <div class="option">
+        <div><h2>Open Avenize</h2><p>Continue in the full Avenize web app.</p></div>
+        <a class="button" href="https://app.avenize.com/app">Open app</a>
+      </div>
+      <div class="option" id="install">
+        <div><h2>Install on your phone</h2><p>On supported mobile browsers, use the browser's Add to Home Screen / Install option for an app-like Avenize experience.</p></div>
+        <a class="button secondary" href="https://app.avenize.com/app">Install Avenize</a>
+      </div>
+    </section>
+
+    <p class="note">Native Android and iPhone distribution will be enabled here once the release builds pass the production mobile gates. We will never point customers at an unverified or temporary build.</p>
+  </main>
+</body>
+</html>
