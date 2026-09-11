@@ -4,7 +4,7 @@ import BusinessCommandCenter from '../components/BusinessCommandCenter'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/AuthContext'
 import { useExperienceContext } from '../lib/useExperienceContext'
-import { deriveFunction, deriveSeniority, functionLabel, seniorityLabel } from '../lib/functionHome'
+import { deriveFunction, deriveSeniority, functionLabel, getFunctionHome, seniorityLabel } from '../lib/functionHome'
 import {
   fetchBusinessBrain,
   fetchBusinessHealth,
@@ -33,6 +33,7 @@ export default function BusinessHomeExperience() {
     [staff?.job_title, staff?.department, ctx.activeTools],
   )
   const sen = useMemo(() => deriveSeniority(staff?.active_role ?? staff?.role ?? null), [staff?.active_role, staff?.role])
+  const homeConfig = useMemo(() => getFunctionHome(fn, sen), [fn, sen])
 
   useEffect(() => {
     if (!bid) return
@@ -91,6 +92,9 @@ export default function BusinessHomeExperience() {
             actions={actions}
             functionLabel={functionLabel(fn)}
             seniorityLabel={seniorityLabel(sen)}
+            businessFunction={fn}
+            seniority={sen}
+            homeConfig={homeConfig}
           />
         </div>
       </div>
