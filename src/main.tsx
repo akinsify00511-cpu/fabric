@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { CapacitorApp } from '@capacitor/app'
+import { App as CapacitorApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import './index.css'
 import './styles/app-brand-overrides.css'
@@ -73,7 +73,7 @@ window.addEventListener('unhandledrejection', (event) => {
 // PKCE code back onto the web callback route so the existing Supabase callback
 // exchange remains the single source of truth on iOS and Android.
 if (Capacitor.isNativePlatform()) {
-  void CapacitorApp.addListener('appUrlOpen', ({ url }) => {
+  void CapacitorApp.addListener('appUrlOpen', ({ url }: { url: string }) => {
     try {
       const parsed = new URL(url)
       if (parsed.protocol !== 'com.avenize.app:' || parsed.host !== 'auth' || parsed.pathname !== '/callback') {
