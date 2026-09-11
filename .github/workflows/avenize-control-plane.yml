@@ -15,13 +15,8 @@ jobs:
     name: Unified contract and engineering gate
     runs-on: ubuntu-latest
     env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
-      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       REQUIRE_LIVE: '1'
-      APP_URL: https://avenize.com
+      APP_URL: https://app.avenize.com
     steps:
       - uses: actions/checkout@v4
 
@@ -39,6 +34,51 @@ jobs:
           deno-version: v2.x
 
       - run: npm ci
+
+      - name: Hydrate production verification environment from Vercel
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$VERCEL_TOKEN" || { echo "VERCEL_TOKEN secret is missing"; exit 1; }
+          test -n "$VERCEL_ORG_ID" || { echo "VERCEL_ORG_ID secret is missing"; exit 1; }
+          test -n "$VERCEL_PROJECT_ID" || { echo "VERCEL_PROJECT_ID secret is missing"; exit 1; }
+          npm i -g vercel
+          rm -rf .vercel
+          vercel link --yes --project="$VERCEL_PROJECT_ID" --scope="$VERCEL_ORG_ID" --token="$VERCEL_TOKEN"
+          vercel env pull .env.production.local --environment=production --yes --token="$VERCEL_TOKEN"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path('.env.production.local')
+          wanted = {
+              'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'SUPABASE_URL',
+              'SUPABASE_KEY', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY',
+              'SUPABASE_SECRET_KEY', 'E2E_EMAIL', 'E2E_PASSWORD', 'APP_URL',
+          }
+          values = {}
+          for raw in path.read_text(encoding='utf-8').splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#') or '=' not in line:
+                  continue
+              key, value = line.split('=', 1)
+              key = key.strip()
+              if key not in wanted:
+                  continue
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+                  value = value[1:-1]
+              values[key] = value
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
+              for key, value in values.items():
+                  if value:
+                      print(f'::add-mask::{value}')
+                      out.write(f'{key}={value}\n')
+          print('Production verification environment hydrated from Vercel configuration.')
+          PY
 
       - name: Run Avenize Control Plane
         run: npm run avenize:control-plane
