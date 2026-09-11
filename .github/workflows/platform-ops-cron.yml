@@ -1,6 +1,10 @@
 name: Platform Ops Cron
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/platform-ops-cron.yml'
   schedule:
     # Health check: every 5 minutes (Supabase-only — no third-party providers).
     - cron: '*/5 * * * *'
