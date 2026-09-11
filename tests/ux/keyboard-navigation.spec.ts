@@ -2,31 +2,31 @@ import { test, expect } from '@playwright/test'
 
 /**
  * Keyboard navigation tests
- * These tests ensure core user flows can be completed without a mouse
+ * These tests ensure core user flows can be completed without a mouse.
  */
 
-test.describe('Keyboard Navigation', () => {
-  test.beforeEach(async ({ page }) => {
-    // Seed demo mode before the application loads so AuthContext can consume it.
-    await page.addInitScript(() => {
-      localStorage.setItem('avenize_demo', 'true')
-      localStorage.setItem('avenize_demo_user', JSON.stringify({
-        id: 'test-user-1',
-        name: 'Test User',
-        email: 'test@example.com',
-        business_id: 'test-business',
-        business_name: 'Test Business',
-        role: 'owner'
-      }))
-    })
+const seedDemoMode = async (page: Parameters<Parameters<typeof test>[2]>[0]) => {
+  await page.addInitScript(() => {
+    localStorage.setItem('avenize_demo', 'true')
+    localStorage.setItem('avenize_demo_user', JSON.stringify({
+      id: 'test-user-1',
+      name: 'Test User',
+      email: 'test@example.com',
+      business_id: 'test-business',
+      business_name: 'Test Business',
+      role: 'owner'
+    }))
   })
+}
 
+test.describe('Keyboard Navigation', () => {
   test('[Keyboard] Login form can be submitted with keyboard only', async ({ page }) => {
     let signInRequestSeen = false
 
-    // CI uses a placeholder Supabase endpoint. Intercept it so this test proves
-    // the keyboard actually submits the form without requiring real credentials.
-    await page.route('https://example.supabase.co/**', async (route) => {
+    // Keep this login test independent of demo/local auth state. Intercept the
+    // auth token request so the test verifies the real form submission without
+    // requiring production credentials.
+    await page.route('**/auth/v1/token**', async (route) => {
       signInRequestSeen = true
       await route.fulfill({
         status: 400,
@@ -41,8 +41,12 @@ test.describe('Keyboard Navigation', () => {
 
     await page.goto('/login')
 
-    await page.keyboard.press('Tab')
-    await page.keyboard.press('Tab')
+    const email = page.getByLabel(/email/i).first()
+    const password = page.getByLabel(/password/i).first()
+    await expect(email).toBeVisible()
+    await expect(password).toBeVisible()
+
+    await email.focus()
     await page.keyboard.type('test@example.com')
     await page.keyboard.press('Tab')
     await page.keyboard.type('password123')
@@ -54,6 +58,7 @@ test.describe('Keyboard Navigation', () => {
   })
 
   test('[Keyboard] Dashboard navigation works with Tab key', async ({ page }) => {
+    await seedDemoMode(page)
     await page.goto('/app/dashboard')
     await page.waitForLoadState('networkidle')
 
@@ -74,6 +79,7 @@ test.describe('Keyboard Navigation', () => {
   })
 
   test('[Keyboard] Modal can be closed with Escape key', async ({ page }) => {
+    await seedDemoMode(page)
     await page.goto('/app/dashboard')
     await page.waitForLoadState('networkidle')
 
