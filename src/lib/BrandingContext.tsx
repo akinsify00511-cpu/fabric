@@ -32,8 +32,6 @@ export type Branding = {
   social_links: { linkedin?: string; twitter?: string; facebook?: string; instagram?: string; youtube?: string }
 }
 
-// Avenize is the fallback identity. Businesses can replace these values with
-// their own branding without changing the application's accessibility rules.
 const DEFAULT_BRANDING: Branding = {
   brand_name: null,
   tagline: null,
@@ -98,9 +96,9 @@ function setThemeVariables(branding: Branding) {
   root.style.setProperty('--av-surface-3', bg)
   root.style.setProperty('--av-text', text)
   root.style.setProperty('--av-text-primary', text)
-  root.style.setProperty('--av-text-secondary', dark ? '#CBD5E1' : '#344054')
-  root.style.setProperty('--av-text-muted', dark ? '#94A3B8' : '#667085')
-  root.style.setProperty('--av-border', dark ? '#334155' : '#D0D5DD')
+  root.style.setProperty('--av-text-secondary', `color-mix(in srgb, ${text} 72%, transparent)`)
+  root.style.setProperty('--av-text-muted', `color-mix(in srgb, ${text} 52%, transparent)`)
+  root.style.setProperty('--av-border', `color-mix(in srgb, ${text} 20%, transparent)`)
 
   root.style.setProperty('--avenize-primary', primary)
   root.style.setProperty('--avenize-accent', accent)
