@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { App as CapacitorApp } from '@capacitor/app'
+import { App } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
 import './index.css'
 import './styles/app-brand-overrides.css'
-import App from './App.tsx'
+import AppRoot from './App.tsx'
 import { initErrorCapture } from './lib/errorCapture'
 import { initSentry } from './lib/sentry'
 import GlobalOrganismRuntime from './components/GlobalOrganismRuntime'
@@ -20,15 +20,9 @@ if (typeof document !== 'undefined') {
   }
 }
 
-// Error capture (console buffer + platform-ops feed) always runs.
 initErrorCapture()
-// Sentry loads lazily during idle and only when VITE_SENTRY_DSN is set.
 initSentry()
 
-// Browser/runtime recovery: a stale service-worker cache can leave an older
-// application shell referencing a hashed chunk that no longer exists. That
-// manifests as a dynamic-import MIME error or a corrupted browser cache.
-// Recover automatically once instead of leaving the user on a broken route.
 const recoverableRuntimeError = (value: unknown) => {
   const message = value instanceof Error ? value.message : String(value ?? '')
   return /Failed to fetch dynamically imported module|Importing a module script failed|block checksum mismatch|Loading chunk/i.test(message)
@@ -73,7 +67,7 @@ window.addEventListener('unhandledrejection', (event) => {
 // PKCE code back onto the web callback route so the existing Supabase callback
 // exchange remains the single source of truth on iOS and Android.
 if (Capacitor.isNativePlatform()) {
-  void CapacitorApp.addListener('appUrlOpen', ({ url }: { url: string }) => {
+  void App.addListener('appUrlOpen', ({ url }: { url: string }) => {
     try {
       const parsed = new URL(url)
       if (parsed.protocol !== 'com.avenize.app:' || parsed.host !== 'auth' || parsed.pathname !== '/callback') {
@@ -91,7 +85,7 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <GlobalOrganismRuntime />
       <PremiumMotion />
-      <App />
+      <AppRoot />
     </BrowserRouter>
   </StrictMode>,
 )
