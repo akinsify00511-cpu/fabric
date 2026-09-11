@@ -3,110 +3,104 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "git": {
-    "deploymentEnabled": true
-  },
+  "git": {"deploymentEnabled": true},
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [
-        { "type": "host", "value": "avenize.riverwayse.com" }
-      ],
+      "has": [{"type": "host", "value": "avenize.riverwayse.com"}],
       "destination": "https://avenize.com/$1",
       "permanent": true
     },
     {
       "source": "/(.*)",
-      "has": [
-        { "type": "host", "value": "www.avenize.com" }
-      ],
+      "has": [{"type": "host", "value": "www.avenize.com"}],
       "destination": "https://avenize.com/$1",
       "permanent": true
     },
     {
       "source": "/",
-      "has": [
-        { "type": "host", "value": "app.avenize.com" }
-      ],
+      "has": [{"type": "host", "value": "app.avenize.com"}],
       "destination": "/app",
       "permanent": false
     },
     {
       "source": "/app/:path*",
-      "has": [
-        { "type": "host", "value": "avenize.com" }
-      ],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/app/:path*",
       "permanent": false
     },
     {
       "source": "/login",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/login",
       "permanent": false
     },
     {
       "source": "/signup",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/signup",
       "permanent": false
     },
     {
       "source": "/forgot-password",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/forgot-password",
       "permanent": false
     },
     {
       "source": "/update-password",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/update-password",
       "permanent": false
     },
     {
       "source": "/onboarding",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/onboarding",
       "permanent": false
     },
     {
       "source": "/auth/callback",
-      "has": [{ "type": "host", "value": "avenize.com" }],
+      "has": [{"type": "host", "value": "avenize.com"}],
       "destination": "https://app.avenize.com/auth/callback",
       "permanent": false
     }
   ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
+  "rewrites": [{"source": "/(.*)", "destination": "/index.html"}],
   "headers": [
     {
-      "source": "/assets/(.*)",
+      "source": "/(.*)",
+      "has": [{"type": "host", "value": "app.avenize.com"}],
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {"key": "X-Robots-Tag", "value": "noindex, nofollow"},
+        {"key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate"}
       ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [{"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}]
     },
     {
       "source": "/sw.js",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" },
-        { "key": "Service-Worker-Allowed", "value": "/" }
+        {"key": "Cache-Control", "value": "public, max-age=0, must-revalidate"},
+        {"key": "Service-Worker-Allowed", "value": "/"}
       ]
     },
     {
       "source": "/manifest.json",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=86400" },
-        { "key": "Content-Type", "value": "application/manifest+json" }
+        {"key": "Cache-Control", "value": "public, max-age=86400"},
+        {"key": "Content-Type", "value": "application/manifest+json"}
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+        {"key": "X-Content-Type-Options", "value": "nosniff"},
+        {"key": "X-Frame-Options", "value": "DENY"},
+        {"key": "X-XSS-Protection", "value": "1; mode=block"},
+        {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}
       ]
     }
   ]
