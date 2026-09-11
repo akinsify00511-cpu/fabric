@@ -41,8 +41,11 @@ test.describe('Keyboard Navigation', () => {
 
     await page.goto('/login')
 
-    const email = page.getByLabel(/email/i).first()
-    const password = page.getByLabel(/password/i).first()
+    // Prefer native input semantics over accessible-label text. This keeps the
+    // keyboard contract tied to the actual form controls even if presentation
+    // copy or label markup changes.
+    const email = page.locator('input[type="email"]').first()
+    const password = page.locator('input[type="password"]').first()
     await expect(email).toBeVisible()
     await expect(password).toBeVisible()
 
