@@ -1,27 +1,37 @@
 /* ============================================
-   AVENIZE DESIGN SYSTEM v7 - Near-black standard
-   Avenize owns the neutral interface. Customer branding
-   is reserved for the Sarah/assistant action and branded
-   moments; it must never reduce readability.
+   AVENIZE DESIGN SYSTEM v8 - Company themeable
+   Default: near-black, white, ash.
+   Company owners may recolor the complete interface
+   through the brand token layer. Accessibility remains
+   protected by semantic text and contrast fallbacks.
    ============================================ */
 
 :root {
-  /* Standard Avenize UI: near-black, white, ash. */
-  --av-primary: #171717;
-  --av-primary-hover: #000000;
-  --av-primary-active: #000000;
-  --av-primary-soft: rgba(17, 17, 17, 0.06);
-  --av-primary-subtle: rgba(17, 17, 17, 0.035);
+  /* Owner/company theme inputs. BrandingContext may override these at runtime. */
+  --av-brand-primary: #171717;
+  --av-brand-primary-hover: #000000;
+  --av-brand-primary-active: #000000;
+  --av-brand-secondary: #F2F2F3;
+  --av-brand-surface: #FFFFFF;
+  --av-brand-surface-soft: #F7F7F8;
+  --av-brand-on-primary: #FFFFFF;
 
-  --av-home-bg: #F7F7F8;
-  --av-surface: #FFFFFF;
-  --av-surface-2: #F2F2F3;
+  /* Standard Avenize UI resolves through the company theme layer. */
+  --av-primary: var(--av-brand-primary);
+  --av-primary-hover: var(--av-brand-primary-hover);
+  --av-primary-active: var(--av-brand-primary-active);
+  --av-primary-soft: color-mix(in srgb, var(--av-brand-primary) 8%, transparent);
+  --av-primary-subtle: color-mix(in srgb, var(--av-brand-primary) 4%, transparent);
+
+  --av-home-bg: var(--av-brand-surface-soft);
+  --av-surface: var(--av-brand-surface);
+  --av-surface-2: var(--av-brand-secondary);
   --av-surface-3: #E9E9EB;
-  --av-surface-elevated: #FFFFFF;
-  --av-surface-card: #F2F2F3;
-  --av-surface-card-hover: #EAEAED;
-  --av-surface-info: #F2F2F3;
-  --av-surface-info-strong: #E9E9EB;
+  --av-surface-elevated: var(--av-brand-surface);
+  --av-surface-card: var(--av-brand-secondary);
+  --av-surface-card-hover: color-mix(in srgb, var(--av-brand-secondary) 88%, #000000);
+  --av-surface-info: color-mix(in srgb, var(--av-brand-primary) 5%, var(--av-brand-surface));
+  --av-surface-info-strong: color-mix(in srgb, var(--av-brand-primary) 9%, var(--av-brand-surface));
 
   --av-text: #171717;
   --av-text-secondary: #374151;
@@ -38,15 +48,15 @@
   --av-danger: #B91C1C;
   --av-danger-soft: rgba(185, 28, 28, 0.08);
   --av-info: #374151;
-  --av-info-soft: rgba(17, 17, 17, 0.06);
+  --av-info-soft: color-mix(in srgb, var(--av-brand-primary) 6%, transparent);
 
-  /* Only Sarah may use the owner's/customer accent. */
-  --av-owner-accent: #171717;
-  --av-owner-accent-soft: rgba(17, 17, 17, 0.08);
+  /* All brandable accents, including Sarah, use the same owner theme. */
+  --av-owner-accent: var(--av-brand-primary);
+  --av-owner-accent-soft: color-mix(in srgb, var(--av-brand-primary) 8%, transparent);
   --av-accent: var(--av-owner-accent);
   --av-accent-soft: var(--av-owner-accent-soft);
 
-  --av-gradient: linear-gradient(135deg, #171717 0%, #2B2B2B 100%);
+  --av-gradient: linear-gradient(135deg, var(--av-brand-primary) 0%, var(--av-brand-primary-hover) 100%);
   --av-shadow-sm: 0 1px 2px rgba(15, 23, 42, .05);
   --av-shadow-md: 0 2px 6px rgba(15, 23, 42, .07), 0 8px 20px rgba(15, 23, 42, .05);
   --av-shadow-lg: 0 8px 20px rgba(15, 23, 42, .08), 0 16px 32px rgba(15, 23, 42, .05);
@@ -64,24 +74,33 @@
   --av-radius-full: 9999px;
   --av-radius-pill: 9999px;
 
-  --av-glass-bg: rgba(255, 255, 255, 0.94);
-  --av-glass-bg-strong: rgba(255, 255, 255, 0.98);
+  --av-glass-bg: color-mix(in srgb, var(--av-brand-surface) 94%, transparent);
+  --av-glass-bg-strong: color-mix(in srgb, var(--av-brand-surface) 98%, transparent);
   --av-glass-border: rgba(217, 217, 222, 0.9);
   --av-glass-blur: 16px;
   --av-atmosphere: none;
 
-  /* Neutral category surfaces. No blue category cards. */
-  --av-grad-health: #F2F2F3;
-  --av-grad-revenue: #F2F2F3;
-  --av-grad-cash: #F2F2F3;
-  --av-grad-risk: #F7F7F8;
-  --av-grad-opportunity: #F2F2F3;
-  --av-grad-operations: #F2F2F3;
-  --av-grad-people: #F2F2F3;
-  --av-grad-intelligence: #F2F2F3;
+  /* Category surfaces inherit the owner's branded system subtly. */
+  --av-grad-health: var(--av-surface-card);
+  --av-grad-revenue: var(--av-surface-card);
+  --av-grad-cash: var(--av-surface-card);
+  --av-grad-risk: var(--av-home-bg);
+  --av-grad-opportunity: var(--av-surface-card);
+  --av-grad-operations: var(--av-surface-card);
+  --av-grad-people: var(--av-surface-card);
+  --av-grad-intelligence: var(--av-surface-card);
 
   --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* A company theme can be applied to the complete authenticated surface. */
+[data-avenize-surface="app"] {
+  --av-primary: var(--av-brand-primary, #171717);
+  --av-primary-hover: var(--av-brand-primary-hover, #000000);
+  --av-primary-active: var(--av-brand-primary-active, #000000);
+  --av-owner-accent: var(--av-brand-primary, #171717);
+  --av-accent: var(--av-owner-accent);
 }
 
 .av-surface { background-color: var(--av-surface) !important; color: var(--av-text) !important; }
@@ -94,12 +113,11 @@
 .av-text-muted { color: var(--av-text-muted) !important; }
 .av-border { border-color: var(--av-border) !important; }
 .av-primary { color: var(--av-primary) !important; }
-.av-primary-bg { background-color: var(--av-primary) !important; color: #FFFFFF !important; }
+.av-primary-bg { background-color: var(--av-primary) !important; color: var(--av-brand-on-primary) !important; }
 .av-success { color: var(--av-success) !important; }
 .av-warning { color: var(--av-warning) !important; }
 .av-danger { color: var(--av-danger) !important; }
 
-/* Canonical card language: ash by default, no blue cards. */
 .av-card,
 .card,
 .card-stat,
@@ -125,10 +143,7 @@
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-md) !important;
 }
-.card-hero::before {
-  background: none !important;
-  opacity: 0 !important;
-}
+.card-hero::before { background: none !important; opacity: 0 !important; }
 
 .av-glass-card {
   background: var(--av-glass-bg) !important;
@@ -145,10 +160,8 @@
   color: var(--av-text) !important;
 }
 
-.bg-white, .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 {
-  color: var(--av-text) !important;
-}
-.bg-white { background-color: #FFFFFF !important; }
+.bg-white, .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 { color: var(--av-text) !important; }
+.bg-white { background-color: var(--av-surface) !important; }
 .bg-gray-50, .bg-slate-50 { background-color: var(--av-surface-2) !important; }
 .bg-gray-100, .bg-slate-100 { background-color: var(--av-surface-3) !important; }
 
@@ -164,40 +177,44 @@
 .bg-gray-50 .text-white,
 .bg-gray-100 .text-white,
 .bg-slate-50 .text-white,
-.bg-slate-100 .text-white {
-  color: var(--av-text) !important;
-}
+.bg-slate-100 .text-white { color: var(--av-text) !important; }
 
 .card-flat {
   background-color: var(--av-surface-2) !important;
   color: var(--av-text) !important;
   border-color: var(--av-border) !important;
 }
-
-.pill {
-  color: var(--av-text-secondary) !important;
-  background: var(--av-surface-3) !important;
-}
+.pill { color: var(--av-text-secondary) !important; background: var(--av-surface-3) !important; }
 .pill:hover { background: var(--av-surface-2) !important; color: var(--av-text) !important; }
 
-/* Standard controls are near-black. Customer branding is not global UI chrome. */
+/* All standard interactive chrome is company-brandable. */
 .btn-filled,
 .btn-gradient,
 .av-primary-bg,
+.btn-primary,
 button[class*="bg-"][class*="blue"],
 a[class*="bg-"][class*="blue"] {
   background: var(--av-primary) !important;
   background-color: var(--av-primary) !important;
   border-color: var(--av-primary) !important;
-  color: #FFFFFF !important;
+  color: var(--av-brand-on-primary) !important;
+}
+.btn-filled:hover,
+.btn-gradient:hover,
+.av-primary-bg:hover,
+.btn-primary:hover,
+button[class*="bg-"][class*="blue"]:hover,
+a[class*="bg-"][class*="blue"]:hover {
+  background: var(--av-primary-hover) !important;
+  background-color: var(--av-primary-hover) !important;
 }
 
-/* Sarah is the single owner-brandable accent surface. Components may opt in. */
+/* Sarah follows the same owner/company brand; it is not a separate palette. */
 .sarah-brand,
 [data-brand-sarah="true"],
 .sarah-button {
   --sarah-accent: var(--av-owner-accent);
-  color: #FFFFFF !important;
+  color: var(--av-brand-on-primary) !important;
   background: var(--sarah-accent) !important;
   border-color: var(--sarah-accent) !important;
 }
@@ -208,10 +225,11 @@ a[class*="bg-"][class*="blue"] {
   background: transparent !important;
 }
 
-/* Customer branding must never override Avenize readability tokens. */
-[data-brand-color],
-[data-custom-brand],
-.customer-brand { color: inherit; }
+/* Brand token hooks for components that opt into the company theme. */
+[data-brand-primary] { color: var(--av-primary) !important; }
+[data-brand-primary-bg] { background-color: var(--av-primary) !important; color: var(--av-brand-on-primary) !important; }
+[data-brand-secondary-bg] { background-color: var(--av-surface-card) !important; color: var(--av-text) !important; }
+[data-brand-border] { border-color: var(--av-primary) !important; }
 
 @media (max-width: 767px) {
   html, body, #root {
@@ -220,43 +238,13 @@ a[class*="bg-"][class*="blue"] {
   }
   body { min-height: 100dvh; }
   main, section, article, nav, header, footer { color: var(--av-text); }
-
-  .bg-white { background-color: #FFFFFF !important; color: var(--av-text) !important; }
+  .bg-white { background-color: var(--av-surface) !important; color: var(--av-text) !important; }
   .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 { color: var(--av-text) !important; }
-
-  .av-card, .card, .card-stat, .tile-launcher {
-    background: var(--av-surface-card) !important;
-    background-color: var(--av-surface-card) !important;
-    color: var(--av-text) !important;
-    border-color: var(--av-border) !important;
-  }
+  .av-card, .card, .card-stat, .tile-launcher { background: var(--av-surface-card) !important; background-color: var(--av-surface-card) !important; color: var(--av-text) !important; border-color: var(--av-border) !important; }
   .card-flat { background: var(--av-surface-2) !important; color: var(--av-text) !important; }
   .card-hero, .av-card-info { background: var(--av-surface-info) !important; color: var(--av-text) !important; }
-
-  .av-card .text-white,
-  .av-card-info .text-white,
-  .av-glass-card .text-white,
-  .card .text-white,
-  .card-stat .text-white,
-  .card-flat .text-white,
-  .tile-launcher .text-white,
-  .card-hero .text-white {
-    color: var(--av-text) !important;
-  }
-
-  .btn-filled .text-white,
-  .btn-gradient .text-white,
-  .av-primary-bg .text-white,
-  button.btn-filled,
-  button.btn-gradient,
-  button[class*="bg-"][class*="blue"] {
-    color: #FFFFFF !important;
-  }
-
-  .av-backdrop {
-    background-color: var(--av-home-bg) !important;
-    background-image: none !important;
-  }
-
+  .av-card .text-white, .av-card-info .text-white, .av-glass-card .text-white, .card .text-white, .card-stat .text-white, .card-flat .text-white, .tile-launcher .text-white, .card-hero .text-white { color: var(--av-text) !important; }
+  .btn-filled .text-white, .btn-gradient .text-white, .av-primary-bg .text-white, button.btn-filled, button.btn-gradient, button[class*="bg-"][class*="blue"] { color: var(--av-brand-on-primary) !important; }
+  .av-backdrop { background-color: var(--av-home-bg) !important; background-image: none !important; }
   button, [role="button"], a { -webkit-tap-highlight-color: transparent; }
 }
