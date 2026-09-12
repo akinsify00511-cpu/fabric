@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "git": {"deploymentEnabled": {"*": false, "main": true}},
+  "git": {"deploymentEnabled": false},
   "redirects": [
     {"source":"/(.*)","has":[{"type":"host","value":"avenize.riverwayse.com"}],"destination":"https://avenize.com/$1","permanent":true},
     {"source":"/(.*)","has":[{"type":"host","value":"www.avenize.com"}],"destination":"https://avenize.com/$1","permanent":true},
