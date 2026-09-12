@@ -18,6 +18,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:ux": "playwright test tests/ux",
+    "security:invariants": "node scripts/security/check-invariants.mjs",
     "mobile:sync": "npx cap sync",
     "mobile:android": "npx cap open android",
     "mobile:ios": "npx cap open ios",
