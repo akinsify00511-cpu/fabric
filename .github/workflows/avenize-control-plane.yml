@@ -38,6 +38,48 @@ jobs:
 
       - run: npm ci
 
+      - name: Hydrate production verification credentials from Vercel
+        shell: bash
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${VERCEL_TOKEN:-}" || -z "${VERCEL_ORG_ID:-}" || -z "${VERCEL_PROJECT_ID:-}" ]]; then
+            echo "Vercel deployment credentials are unavailable; relying on dedicated GitHub production credentials."
+            exit 0
+          fi
+          npm i -g vercel
+          rm -rf .vercel
+          vercel link --yes --project="${VERCEL_PROJECT_ID}" --scope="${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"
+          vercel env pull .env.production.local --environment=production --yes --token="${VERCEL_TOKEN}"
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          path = Path('.env.production.local')
+          wanted = {'SUPABASE_SERVICE_ROLE_KEY', 'E2E_EMAIL', 'E2E_PASSWORD', 'SUPABASE_URL', 'SUPABASE_KEY', 'SUPABASE_ANON_KEY'}
+          values = {}
+          for raw in path.read_text(encoding='utf-8').splitlines():
+              line = raw.strip()
+              if not line or line.startswith('#') or '=' not in line:
+                  continue
+              key, value = line.split('=', 1)
+              key = key.strip()
+              if key not in wanted:
+                  continue
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in "'\"":
+                  value = value[1:-1]
+              if value:
+                  values[key] = value
+          with open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8') as out:
+              for key, value in values.items():
+                  print(f'::add-mask::{value}')
+                  out.write(f'{key}={value}\n')
+          print('Production control-plane credentials hydrated from Vercel where configured.')
+          PY
+
       - name: Hydrate public production verification environment
         shell: bash
         run: |
