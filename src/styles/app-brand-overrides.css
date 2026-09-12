@@ -1,29 +1,37 @@
-/* Avenize application visual correction layer. Scoped to the authenticated app. */
+/* Avenize application theme layer. Scoped to the authenticated app. */
 [data-avenize-surface="app"] {
-  /* Strong accessible fallbacks. BrandingContext overrides these at runtime. */
-  --av-primary: #0B57A4;
-  --av-primary-hover: #084A8C;
-  --av-primary-active: #063B70;
-  --av-primary-soft: rgba(11, 87, 164, 0.10);
-  --av-primary-subtle: rgba(11, 87, 164, 0.055);
-  --av-text: #111827;
-  --av-text-secondary: #344054;
-  --av-text-muted: #667085;
-  --av-text-disabled: #98A2B3;
-  --av-border: #D0D5DD;
-  --av-border-strong: #B8C0CC;
-  --av-surface-2: #F7F9FC;
-  --av-surface-3: #EEF2F7;
-  --av-home-bg: #F5F8FC;
-  --av-gradient: linear-gradient(135deg, var(--av-primary) 0%, var(--av-accent, #155BB4) 100%);
+  /* Default is near-black; BrandingContext may replace these tokens per owner. */
+  --av-brand-primary: #171717;
+  --av-brand-primary-hover: #000000;
+  --av-brand-primary-active: #000000;
+  --av-brand-secondary: #F2F2F3;
+  --av-brand-surface: #FFFFFF;
+  --av-brand-surface-soft: #F7F7F8;
+  --av-brand-on-primary: #FFFFFF;
+
+  --av-primary: var(--av-brand-primary);
+  --av-primary-hover: var(--av-brand-primary-hover);
+  --av-primary-active: var(--av-brand-primary-active);
+  --av-owner-accent: var(--av-brand-primary);
+  --av-accent: var(--av-owner-accent);
+  --av-text: #171717;
+  --av-text-secondary: #374151;
+  --av-text-muted: #4B5563;
+  --av-text-disabled: #9CA3AF;
+  --av-border: #D9D9DE;
+  --av-border-strong: #B8BAC2;
+  --av-surface: var(--av-brand-surface);
+  --av-surface-2: var(--av-brand-secondary);
+  --av-surface-3: #E9E9EB;
+  --av-home-bg: var(--av-brand-surface-soft);
+  --av-gradient: linear-gradient(135deg, var(--av-brand-primary) 0%, var(--av-brand-primary-hover) 100%);
   --av-shadow-float: 0 8px 28px rgba(16, 24, 40, 0.08), 0 2px 7px rgba(16, 24, 40, 0.05);
 }
 
 [data-avenize-surface="app"] body,
 [data-avenize-surface="app"] #root { color: var(--av-text); }
 
-/* Remove the washed-out Tailwind gray hierarchy inside the product while
-   retaining customer-selected brand colors for interactive accents. */
+/* Tailwind neutrals remain readable while brand tokens control branded UI. */
 [data-avenize-surface="app"] .text-gray-300,
 [data-avenize-surface="app"] .text-gray-400,
 [data-avenize-surface="app"] .text-slate-300,
@@ -32,7 +40,7 @@
 [data-avenize-surface="app"] .text-zinc-400 { color: var(--av-text-muted) !important; }
 [data-avenize-surface="app"] .text-gray-500,
 [data-avenize-surface="app"] .text-slate-500,
-[data-avenize-surface="app"] .text-zinc-500 { color: var(--av-text-secondary) !important; }
+[data-avenize-surface="app"] .text-zinc-500,
 [data-avenize-surface="app"] .text-gray-600,
 [data-avenize-surface="app"] .text-slate-600,
 [data-avenize-surface="app"] .text-zinc-600 { color: var(--av-text-secondary) !important; }
@@ -52,43 +60,50 @@
 [data-avenize-surface="app"] h3,
 [data-avenize-surface="app"] h4 { color: var(--av-text); letter-spacing: -0.018em; }
 
-[data-avenize-surface="app"] .avenize-brand-mark {
-  color: var(--av-primary);
-  filter: drop-shadow(0 2px 5px color-mix(in srgb, var(--av-primary) 16%, transparent));
-}
+/* Complete company-brandable interaction layer. */
+[data-avenize-surface="app"] .avenize-brand-mark,
+[data-avenize-surface="app"] .text-primary,
+[data-avenize-surface="app"] .text-brand,
+[data-avenize-surface="app"] .text-avenize-primary,
+[data-avenize-surface="app"] [data-brand-primary] { color: var(--av-primary) !important; }
+
+[data-avenize-surface="app"] .bg-primary,
+[data-avenize-surface="app"] .bg-brand,
+[data-avenize-surface="app"] .bg-avenize-primary,
+[data-avenize-surface="app"] [data-brand-primary-bg] { background-color: var(--av-primary) !important; color: var(--av-brand-on-primary) !important; }
+
+[data-avenize-surface="app"] .border-primary,
+[data-avenize-surface="app"] .border-brand,
+[data-avenize-surface="app"] .border-avenize-primary,
+[data-avenize-surface="app"] [data-brand-border] { border-color: var(--av-primary) !important; }
 
 [data-avenize-surface="app"] .btn-filled,
 [data-avenize-surface="app"] .btn-primary,
 [data-avenize-surface="app"] button.bg-blue-600,
 [data-avenize-surface="app"] a.bg-blue-600 {
-  background-color: var(--av-primary);
+  background-color: var(--av-primary) !important;
+  border-color: var(--av-primary) !important;
+  color: var(--av-brand-on-primary) !important;
 }
 [data-avenize-surface="app"] .btn-filled:hover,
 [data-avenize-surface="app"] .btn-primary:hover,
 [data-avenize-surface="app"] button.bg-blue-600:hover,
 [data-avenize-surface="app"] a.bg-blue-600:hover {
-  background-color: var(--av-primary-hover, var(--av-primary));
+  background-color: var(--av-primary-hover) !important;
 }
 
-[data-avenize-surface="app"] ::selection {
-  background: var(--av-primary-soft);
-  color: var(--av-text);
+/* Branded selection, focus and Sarah all inherit the owner brand. */
+[data-avenize-surface="app"] ::selection { background: var(--av-primary-soft); color: var(--av-text); }
+[data-avenize-surface="app"] :is(button, a, input, select, textarea):focus-visible { outline: 2px solid var(--av-primary); outline-offset: 2px; }
+[data-avenize-surface="app"] .sarah-brand,
+[data-avenize-surface="app"] [data-brand-sarah="true"],
+[data-avenize-surface="app"] .sarah-button {
+  background: var(--av-primary) !important;
+  border-color: var(--av-primary) !important;
+  color: var(--av-brand-on-primary) !important;
 }
 
-/* Consistent focus treatment for keyboard and touch accessibility. */
-[data-avenize-surface="app"] :is(button, a, input, select, textarea):focus-visible {
-  outline: 2px solid var(--av-primary);
-  outline-offset: 2px;
-}
-
-/* Customer branding controls the product accent, but never compromises text
-   contrast. Keep body copy on semantic text tokens rather than brand colors. */
-[data-avenize-surface="app"] .text-primary,
-[data-avenize-surface="app"] .text-brand,
-[data-avenize-surface="app"] .text-avenize-primary { color: var(--av-primary) !important; }
-[data-avenize-surface="app"] .bg-primary,
-[data-avenize-surface="app"] .bg-brand,
-[data-avenize-surface="app"] .bg-avenize-primary { background-color: var(--av-primary) !important; }
-[data-avenize-surface="app"] .border-primary,
-[data-avenize-surface="app"] .border-brand,
-[data-avenize-surface="app"] .border-avenize-primary { border-color: var(--av-primary) !important; }
+/* Owner branding is allowed across the whole UI, but text remains semantic so
+   an arbitrary brand color cannot create white-on-white or low-contrast copy. */
+[data-avenize-surface="app"] [data-custom-brand],
+[data-avenize-surface="app"] .customer-brand { --brand-primary: var(--av-primary); }
