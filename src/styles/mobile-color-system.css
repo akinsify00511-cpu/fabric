@@ -1,0 +1,87 @@
+/* Avenize mobile visual system
+   Mobile uses the same semantic palette as desktop. Customer branding may
+   change accents, but readability surfaces remain protected. */
+@media (max-width: 767px) {
+  [data-avenize-surface="app"] body,
+  [data-avenize-surface="app"] #root {
+    background: var(--av-surface) !important;
+    color: var(--av-text) !important;
+  }
+
+  /* Standard mobile cards: visible ash surface, dark text. */
+  [data-avenize-surface="app"] .card,
+  [data-avenize-surface="app"] .card-stat,
+  [data-avenize-surface="app"] .card-flat,
+  [data-avenize-surface="app"] .tile-launcher,
+  [data-avenize-surface="app"] .av-card {
+    background: var(--av-surface-card) !important;
+    color: var(--av-text) !important;
+    border-color: var(--av-border) !important;
+  }
+
+  /* Information/intelligence cards: restrained light blue only. */
+  [data-avenize-surface="app"] .card-hero,
+  [data-avenize-surface="app"] .av-card-info {
+    background: var(--av-surface-info) !important;
+    color: var(--av-text) !important;
+    border-color: #BFDBFE !important;
+  }
+
+  /* Neutralize legacy dark/black card treatments on mobile. */
+  [data-avenize-surface="app"] .card-hero[style*="background"],
+  [data-avenize-surface="app"] .card[style*="background"],
+  [data-avenize-surface="app"] .card-stat[style*="background"],
+  [data-avenize-surface="app"] .tile-launcher[style*="background"] {
+    background: var(--av-surface-card) !important;
+    color: var(--av-text) !important;
+  }
+
+  /* Tailwind legacy colour utilities used on card-like divs must stay light.
+     Buttons and links are intentionally excluded so primary actions remain blue. */
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-black"].rounded-lg,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-black"].rounded-xl,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-black"].rounded-2xl,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-blue-500"].rounded-lg,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-blue-600"].rounded-lg,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-blue-700"].rounded-lg,
+  [data-avenize-surface="app"] div:not(button):not(a)[class*="bg-cyan-"].rounded-lg {
+    background: var(--av-surface-card) !important;
+    color: var(--av-text) !important;
+    border-color: var(--av-border) !important;
+  }
+
+  /* Never allow white text to disappear inside protected light card surfaces. */
+  [data-avenize-surface="app"] .card .text-white,
+  [data-avenize-surface="app"] .card-stat .text-white,
+  [data-avenize-surface="app"] .card-flat .text-white,
+  [data-avenize-surface="app"] .tile-launcher .text-white,
+  [data-avenize-surface="app"] .av-card .text-white,
+  [data-avenize-surface="app"] .card-hero .text-white,
+  [data-avenize-surface="app"] .av-card-info .text-white {
+    color: var(--av-text) !important;
+  }
+
+  /* Keep actual action controls branded blue with readable white labels. */
+  [data-avenize-surface="app"] button.bg-blue-500,
+  [data-avenize-surface="app"] button.bg-blue-600,
+  [data-avenize-surface="app"] button.bg-blue-700,
+  [data-avenize-surface="app"] a.bg-blue-500,
+  [data-avenize-surface="app"] a.bg-blue-600,
+  [data-avenize-surface="app"] a.bg-blue-700 {
+    background: var(--av-primary) !important;
+    color: #fff !important;
+  }
+
+  /* Reduce visual noise from multi-colour domain fills on small screens. */
+  [data-avenize-surface="app"] .bg-accent-sales,
+  [data-avenize-surface="app"] .bg-accent-finance,
+  [data-avenize-surface="app"] .bg-accent-projects,
+  [data-avenize-surface="app"] .bg-accent-hr,
+  [data-avenize-surface="app"] .bg-accent-communication,
+  [data-avenize-surface="app"] .bg-accent-ai,
+  [data-avenize-surface="app"] .bg-accent-automation,
+  [data-avenize-surface="app"] .bg-accent-analytics {
+    background: var(--av-surface-2) !important;
+    color: var(--av-text) !important;
+  }
+}
