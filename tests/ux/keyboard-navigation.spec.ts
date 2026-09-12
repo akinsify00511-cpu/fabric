@@ -49,9 +49,6 @@ test.describe('Keyboard Navigation', () => {
 
     await page.goto('/login')
 
-    // Prefer native input semantics over accessible-label text. This keeps the
-    // keyboard contract tied to the actual form controls even if presentation
-    // copy or label markup changes.
     const email = page.locator('input[type="email"]').first()
     const password = page.locator('input[type="password"]').first()
     await expect(email).toBeVisible()
@@ -61,8 +58,11 @@ test.describe('Keyboard Navigation', () => {
     await page.keyboard.type('test@example.com')
     await page.keyboard.press('Tab')
     await page.keyboard.type('password123')
-    await page.keyboard.press('Tab')
-    await page.keyboard.press('Enter')
+
+    // Submit from the password control itself. This is the native form
+    // keyboard contract and works consistently on desktop browsers and mobile
+    // WebKit, where Tab-to-button is not a reliable keyboard interaction.
+    await password.press('Enter')
 
     await expect.poll(() => signInRequestSeen, { timeout: 5000 }).toBe(true)
     await expect(page).toHaveURL(/\/login/)
