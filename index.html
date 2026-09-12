@@ -59,6 +59,25 @@
       window._removeLoadingScreen = function() { var el = document.querySelector('.loading-screen'); if (el) el.style.display = 'none'; };
       setTimeout(window._removeLoadingScreen, 8000);
       if (document.readyState !== 'loading') window._removeLoadingScreen();
+
+      // Recover automatically from a stale SPA shell. A previous deployment can
+      // leave an old HTML shell pointing at hashed bundles that no longer exist.
+      // Clear the service-worker/cache layer once, then reload the current shell.
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event && event.reason;
+        var message = reason && reason.message ? String(reason.message) : String(reason || '');
+        if (!/Failed to fetch dynamically imported module|Importing a module script failed|module script/i.test(message)) return;
+        if (sessionStorage.getItem('avenize-stale-shell-recovered') === '1') return;
+        sessionStorage.setItem('avenize-stale-shell-recovered', '1');
+        var clear = [];
+        if ('serviceWorker' in navigator) clear.push(navigator.serviceWorker.getRegistrations().then(function (registrations) {
+          return Promise.all(registrations.map(function (registration) { return registration.unregister(); }));
+        }));
+        if ('caches' in window) clear.push(caches.keys().then(function (names) {
+          return Promise.all(names.filter(function (name) { return name.indexOf('avenize-') === 0; }).map(function (name) { return caches.delete(name); }));
+        }));
+        Promise.all(clear).finally(function () { window.location.reload(); });
+      });
     </script>
     <script type="module" src="/src/main.tsx"></script>
     <script>
