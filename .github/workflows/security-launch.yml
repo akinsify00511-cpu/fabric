@@ -1,0 +1,41 @@
+name: Avenize Launch Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    name: 20-point launch security gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Static 20-point audit
+        run: npm run avenize:security-audit
+      - name: Dependency vulnerability audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Secret-pattern scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -nE '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|sk_live_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|VITE_SUPABASE_SERVICE_ROLE_KEY|VITE_PAYSTACK_SECRET_KEY|VITE_RESEND_API_KEY' -- ':!package-lock.json' ':!docs/SECURITY_AUDIT.md'; then
+            echo 'Potential secret material found in tracked source.'
+            exit 1
+          fi
