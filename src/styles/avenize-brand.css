@@ -4,119 +4,83 @@
    ============================================ */
 
 :root {
-  /* ========== PRIMARY - Avenize Blue (WCAG-AA, unified web+mobile) ==========
-     Unified to #155BB4 across web chrome, Landing, and Onboarding (Session 18
-     darkened the landing from #4285F4 to #155BB4 for WCAG-AA 4.5:1; the app
-     chrome + mobile now match so all surfaces share one primary). */
-  --av-primary: #155BB4;           /* Primary actions (WCAG-AA on white, 6.3:1) */
-  --av-primary-hover: #1247A0;     /* Primary Hover */
-  --av-primary-active: #0F3B86;     /* Primary Active */
-  --av-primary-soft: rgba(21, 91, 180, 0.08);
-  --av-primary-subtle: rgba(21, 91, 180, 0.04);
-  
-  /* ========== SURFACE - Google Workspace Surface ========== */
-  --av-surface: #FFFFFF;            /* Surface Primary - Page bg */
-  --av-surface-2: #F8F9FA;          /* Surface Secondary - Cards */
-  --av-surface-3: #F1F3F4;          /* Surface Tertiary - Borders */
-  --av-surface-elevated: #FFFFFF;   /* Elevated cards */
-  
-  /* ========== TEXT - Google Text Tokens ========== */
-  --av-text: #202124;               /* Text Primary */
-  --av-text-secondary: #5F6368;     /* Text Secondary */
-  --av-text-muted: #9AA0A6;        /* Text Tertiary */
-  --av-text-disabled: #DADCE0;      /* Text Disabled */
-  
-  /* ========== BORDER ========== */
-  --av-border: #E8EAED;             /* Border Light */
-  --av-border-strong: #DADCE0;      /* Border Medium */
-  
-  /* ========== SEMANTIC - Google Semantic ========== */
-  --av-success: #34A853;           /* Google Green - Success */
-  --av-success-soft: rgba(52, 168, 83, 0.08);
-  
-  --av-warning: #FBBC05;            /* Google Yellow - Warning */
-  --av-warning-soft: rgba(251, 188, 5, 0.08);
-  
-  --av-danger: #EA4335;             /* Google Red - Danger */
-  --av-danger-soft: rgba(234, 67, 53, 0.08);
-  
-  --av-info: #4285F4;               /* Google Blue - Info */
-  --av-info-soft: rgba(66, 133, 244, 0.08);
-  
-  /* ========== ACCENT - Workspace Accents ========== */
-  --av-accent: #8B5CF6;            /* Violet - Accent */
-  --av-accent-soft: rgba(139, 92, 246, 0.08);
-  
-  /* ========== GRADIENT - Google Standard ========== */
-  --av-gradient: linear-gradient(135deg, #155BB4 0%, #4285F4 52%, #34A853 100%);  /* unified w/ Landing + Onboarding BRAND.gradient */
-  
-  /* ========== SHADOWS - Material Elevation ========== */
-  --av-shadow-sm: 0 1px 2px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06);
-  --av-shadow-md: 0 2px 4px rgba(0,0,0,.1), 0 4px 8px rgba(0,0,0,.06);
-  --av-shadow-lg: 0 4px 8px rgba(0,0,0,.1), 0 8px 16px rgba(0,0,0,.06);
-  
-  /* ========== TYPOGRAPHY ========== */
-  /* Google Sans Flex - Google's official variable font */
-  --av-font-sans: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --av-primary: #111111;
+  --av-primary-hover: #000000;
+  --av-primary-active: #000000;
+  --av-primary-soft: rgba(17, 17, 17, 0.08);
+  --av-primary-subtle: rgba(17, 17, 17, 0.04);
 
-  /* Letter-spacing: negative tracking at display sizes gives the premium
-     "tight headline" feel (Apple SF Pro Display uses -0.28 to -0.374px). */
+  --av-surface: #FFFFFF;
+  --av-surface-2: #F5F5F5;
+  --av-surface-3: #EAEAEA;
+  --av-surface-elevated: #FFFFFF;
+
+  --av-text: #111111;
+  --av-text-secondary: #3F3F46;
+  --av-text-muted: #71717A;
+  --av-text-disabled: #A1A1AA;
+
+  --av-border: #E4E4E7;
+  --av-border-strong: #D4D4D8;
+
+  --av-success: #157342;
+  --av-success-soft: rgba(21, 115, 66, 0.08);
+  --av-warning: #845400;
+  --av-warning-soft: rgba(132, 84, 0, 0.08);
+  --av-danger: #B3261E;
+  --av-danger-soft: rgba(179, 38, 30, 0.08);
+  --av-info: #3F3F46;
+  --av-info-soft: rgba(63, 63, 70, 0.08);
+
+  --av-accent: #52525B;
+  --av-accent-soft: rgba(82, 82, 91, 0.08);
+  --av-gradient: linear-gradient(135deg, #111111 0%, #27272A 100%);
+
+  --av-shadow-sm: 0 1px 2px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.04);
+  --av-shadow-md: 0 2px 4px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.05);
+  --av-shadow-lg: 0 4px 8px rgba(0,0,0,.08), 0 8px 16px rgba(0,0,0,.05);
+
+  --av-font-sans: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --av-tracking-display: -0.02em;
   --av-tracking-tight: -0.015em;
   --av-tracking-body: 0;
-  
-  /* ========== RADII - Google Radius Scale ========== */
+
   --av-radius-sm: 8px;
   --av-radius-md: 12px;
   --av-radius-lg: 16px;
   --av-radius-xl: 24px;
   --av-radius-full: 9999px;
 
-  /* ── Premium Business-Home visual language (Session 27) ──────────────
-     Glass surfaces + atmospheric gradients + soft depth. Used by the
-     role-aware BusinessHome and its card primitives. All derive from the
-     existing brand palette so the rest of the app stays consistent. */
-  --av-glass-bg: rgba(255, 255, 255, 0.72);
-  --av-glass-bg-strong: rgba(255, 255, 255, 0.86);
-  --av-glass-border: rgba(255, 255, 255, 0.6);
+  --av-glass-bg: rgba(255, 255, 255, 0.92);
+  --av-glass-bg-strong: rgba(255, 255, 255, 0.97);
+  --av-glass-border: rgba(17, 17, 17, 0.10);
   --av-glass-blur: 16px;
-  --av-atmosphere: radial-gradient(1200px 600px at 12% -8%, rgba(21, 91, 180, 0.10), transparent 60%), radial-gradient(900px 500px at 96% 4%, rgba(124, 58, 237, 0.08), transparent 55%), radial-gradient(800px 500px at 70% 110%, rgba(52, 168, 83, 0.07), transparent 60%);
-  --av-home-bg: #F4F7FC;
-  --av-shadow-float: 0 8px 30px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --av-atmosphere: none;
+  --av-home-bg: #F5F5F5;
+  --av-shadow-float: 0 8px 30px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0, 0, 0, 0.04);
 
-  /* Semantic atmospheric card gradients — one design system, mood by domain. */
-  --av-grad-health: linear-gradient(135deg, rgba(21, 91, 180, 0.10), rgba(52, 168, 83, 0.10));
-  --av-grad-revenue: linear-gradient(135deg, rgba(21, 91, 180, 0.12), rgba(66, 133, 244, 0.06));
-  --av-grad-cash: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(66, 133, 244, 0.06));
-  --av-grad-risk: linear-gradient(135deg, rgba(234, 67, 53, 0.12), rgba(251, 188, 5, 0.06));
-  --av-grad-opportunity: linear-gradient(135deg, rgba(251, 188, 5, 0.12), rgba(52, 168, 83, 0.08));
-  --av-grad-operations: linear-gradient(135deg, rgba(52, 168, 83, 0.12), rgba(66, 133, 244, 0.06));
-  --av-grad-people: linear-gradient(135deg, rgba(124, 58, 237, 0.10), rgba(190, 24, 93, 0.08));
-  --av-grad-intelligence: linear-gradient(135deg, rgba(21, 91, 180, 0.10), rgba(124, 58, 237, 0.08));
-  
-  /* ========== TRANSITIONS ========== */
+  --av-grad-health: linear-gradient(135deg, rgba(17,17,17,.06), rgba(82,82,91,.05));
+  --av-grad-revenue: linear-gradient(135deg, rgba(17,17,17,.07), rgba(82,82,91,.04));
+  --av-grad-cash: linear-gradient(135deg, rgba(39,39,42,.07), rgba(82,82,91,.04));
+  --av-grad-risk: linear-gradient(135deg, rgba(179,38,30,.08), rgba(132,84,0,.04));
+  --av-grad-opportunity: linear-gradient(135deg, rgba(132,84,0,.07), rgba(21,115,66,.05));
+  --av-grad-operations: linear-gradient(135deg, rgba(21,115,66,.07), rgba(63,63,70,.04));
+  --av-grad-people: linear-gradient(135deg, rgba(82,82,91,.07), rgba(63,63,70,.04));
+  --av-grad-intelligence: linear-gradient(135deg, rgba(17,17,17,.07), rgba(82,82,91,.05));
+
   --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Utility classes */
 .av-surface { background-color: var(--av-surface); }
 .av-surface-2 { background-color: var(--av-surface-2); }
 .av-surface-elevated { background-color: var(--av-surface-elevated); }
 
-/* ── Premium card utilities (Session 28) ──────────────────────────────
-   Two card styles so every page shares ONE visual language:
-   .av-card       — solid elevated surface + float shadow + large radius.
-                    For data tables, lists, forms — anywhere opacity would
-                    hurt readability. Premium but legible.
-   .av-glass-card — translucent glass + blur + soft border + float shadow.
-                    For intelligence/hero surfaces (BusinessHome, Cockpit).
-   Use these instead of ad-hoc `bg-white rounded-2xl shadow-sm`. */
 .av-card {
   background-color: var(--av-surface-elevated);
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-float);
-  border: 1px solid rgba(232, 234, 237, 0.7);
+  border: 1px solid rgba(228, 228, 231, 0.8);
 }
 .av-glass-card {
   background: var(--av-glass-bg);
@@ -126,8 +90,6 @@
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-float);
 }
-/* The atmospheric app backdrop — applied to the Shell content wrapper so
-   EVERY page sits on the same premium gradient as the home (one organism). */
 .av-backdrop {
   background-color: var(--av-home-bg);
   background-image: var(--av-atmosphere);
@@ -142,3 +104,18 @@
 .av-success { color: var(--av-success); }
 .av-warning { color: var(--av-warning); }
 .av-danger { color: var(--av-danger); }
+
+/* Black-first application chrome. Company branding may override the token
+   layer, but the Avenize default never falls back to blue or white-on-white. */
+:root {
+  --av-chrome-bg: #0B0B0B;
+  --av-chrome-surface: #141414;
+  --av-chrome-surface-hover: #1D1D1D;
+  --av-chrome-text: #FFFFFF;
+  --av-chrome-text-secondary: #C7C7C7;
+  --av-chrome-border: rgba(255,255,255,.10);
+}
+
+/* Defensive contrast for legacy utility classes still present in older pages. */
+.text-blue-500, .text-blue-600, .text-indigo-500, .text-violet-500 { color: var(--av-text) !important; }
+.bg-blue-50, .bg-indigo-50, .bg-violet-50 { background-color: var(--av-surface-2) !important; }
