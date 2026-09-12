@@ -1,17 +1,36 @@
-/* Avenize desktop sidebar taskbar: compact, draggable, collapsible and dockable. */
+/* Avenize desktop navigation shell — compact, stable, and light-first. */
 :root {
   --av-sidebar-width: 15rem;
+  color-scheme: light;
 }
 
 html[data-avenize-sidebar="collapsed"] {
-  --av-sidebar-width: 4.25rem;
+  --av-sidebar-width: 4.5rem;
+}
+
+/* Reset dynamic controls before the desktop media rules apply so refresh never
+   exposes native dark/default button chrome for a frame. */
+#avenize-sidebar-taskbar,
+#avenize-sidebar-taskbar button {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: none;
+}
+
+#avenize-sidebar-taskbar button {
+  font: inherit;
+  border: 0;
+  outline: 0;
 }
 
 @media (min-width: 768px) {
   html[data-avenize-surface="app"] aside[class~="md:flex"] {
     width: var(--av-sidebar-width) !important;
-    transition: width 180ms ease, left 180ms ease, right 180ms ease;
-    overflow: hidden;
+    min-width: var(--av-sidebar-width) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    transition: width 180ms cubic-bezier(.2,.8,.2,1), min-width 180ms cubic-bezier(.2,.8,.2,1), left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1);
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] aside[class~="md:flex"] {
@@ -31,7 +50,7 @@ html[data-avenize-sidebar="collapsed"] {
   html[data-avenize-surface="app"] header[class~="md:flex"] {
     left: var(--av-sidebar-width) !important;
     right: 0 !important;
-    transition: left 180ms ease, right 180ms ease;
+    transition: left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1);
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] header[class~="md:flex"] {
@@ -39,136 +58,177 @@ html[data-avenize-sidebar="collapsed"] {
     right: var(--av-sidebar-width) !important;
   }
 
+  html[data-avenize-surface="app"] [class~="md:ml-60"] {
+    margin-left: var(--av-sidebar-width) !important;
+    margin-right: 0 !important;
+    min-width: 0 !important;
+    transition: margin-left 180ms cubic-bezier(.2,.8,.2,1), margin-right 180ms cubic-bezier(.2,.8,.2,1);
+  }
+
   html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] [class~="md:ml-60"] {
     margin-left: 0 !important;
     margin-right: var(--av-sidebar-width) !important;
-    transition: margin 180ms ease;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] [class~="md:ml-60"] {
-    margin-left: var(--av-sidebar-width) !important;
-    margin-right: 0 !important;
-    transition: margin 180ms ease;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button {
-    justify-content: center;
-    gap: 0;
-    padding-left: 0.55rem;
-    padding-right: 0.55rem;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a > :not(svg),
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button > :not(svg),
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button svg:last-child {
-    display: none;
+  /* ---------- Collapsed rail ---------- */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child {
+    height: 4.25rem;
     justify-content: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child img,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child svg {
+    flex: 0 0 auto;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child > div {
-    display: none;
+    display: none !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) {
+    padding: .65rem .55rem 0 !important;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) button {
-    padding-left: 0;
-    padding-right: 0;
+    width: 3.35rem !important;
+    height: 3.35rem !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border-radius: 1rem !important;
+    font-size: 0 !important;
+    box-shadow: none !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) button > :not(svg) {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav {
+    padding: .7rem .55rem !important;
+    scrollbar-width: none;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav::-webkit-scrollbar {
     display: none;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > button > div:not(:first-child) {
-    display: none;
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button span {
+    font-size: 0 !important;
   }
 
-  /* Dock control is attached to the sidebar edge, not floating over page content. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button {
+    min-height: 2.75rem;
+    justify-content: center;
+    padding: .45rem !important;
+    gap: 0 !important;
+    border-radius: .85rem;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button svg:last-child {
+    display: none !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div {
+    margin-left: 0 !important;
+    margin-top: .15rem !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div a,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div:last-child a {
+    width: 3.35rem !important;
+    min-height: 2.65rem;
+    margin: .12rem auto !important;
+    padding: .55rem !important;
+    justify-content: center !important;
+    gap: 0 !important;
+    border-radius: .85rem !important;
+    font-size: 0 !important;
+    white-space: nowrap;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a svg {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child {
+    padding: .55rem !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > a {
+    width: 3.35rem !important;
+    height: 2.75rem;
+    margin: 0 auto;
+    padding: 0 !important;
+    justify-content: center;
+    font-size: 0 !important;
+    border-radius: .9rem;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button {
+    justify-content: center;
+    padding: .65rem 0 !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button > div:nth-child(2),
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button > svg {
+    display: none !important;
+  }
+
+  /* ---------- Dock controls ---------- */
   #avenize-sidebar-taskbar {
     position: fixed;
     z-index: 60;
     top: 4.5rem;
     display: flex;
     align-items: center;
-    gap: 0.15rem;
-    padding: 0.2rem;
+    gap: 2px;
+    padding: 3px;
     border: 1px solid var(--av-border);
-    border-radius: 0.75rem;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: var(--av-shadow-md);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: left 180ms ease, right 180ms ease, box-shadow 150ms ease, transform 150ms ease;
+    border-radius: 10px;
+    background: rgba(255,255,255,.98);
+    box-shadow: 0 4px 18px rgba(17,24,39,.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1), box-shadow 150ms ease, transform 150ms ease;
     user-select: none;
   }
 
-  html[data-avenize-sidebar-dock="left"] #avenize-sidebar-taskbar {
-    left: calc(var(--av-sidebar-width) - 0.55rem);
-  }
-
-  html[data-avenize-sidebar-dock="right"] #avenize-sidebar-taskbar {
-    right: calc(var(--av-sidebar-width) - 0.55rem);
-  }
+  html[data-avenize-sidebar-dock="left"] #avenize-sidebar-taskbar { left: calc(var(--av-sidebar-width) - 12px); }
+  html[data-avenize-sidebar-dock="right"] #avenize-sidebar-taskbar { right: calc(var(--av-sidebar-width) - 12px); }
 
   #avenize-sidebar-taskbar.is-dragging {
     cursor: grabbing;
-    box-shadow: var(--av-shadow-lg);
-    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(17,24,39,.12);
+    transform: scale(1.015);
   }
 
   #avenize-sidebar-taskbar button {
-    width: 2rem;
-    height: 2rem;
+    width: 30px;
+    height: 30px;
     display: grid;
     place-items: center;
     padding: 0;
-    border: 0;
-    border-radius: 0.55rem;
+    border-radius: 7px;
     background: transparent;
     color: var(--av-text-secondary);
     cursor: pointer;
-    transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+    transition: background 120ms ease, color 120ms ease;
   }
 
-  #avenize-sidebar-taskbar button:hover {
-    background: var(--av-surface-2);
-    color: var(--av-primary);
-  }
-
-  #avenize-sidebar-taskbar button:focus-visible {
-    outline: 2px solid var(--av-primary);
-    outline-offset: 1px;
-  }
-
-  #avenize-sidebar-taskbar .avenize-sidebar-drag {
-    cursor: grab;
-    color: var(--av-text-muted);
-  }
-
-  #avenize-sidebar-taskbar.is-dragging .avenize-sidebar-drag {
-    cursor: grabbing;
-  }
-
-  #avenize-sidebar-taskbar .avenize-sidebar-drag:hover {
-    color: var(--av-primary);
-    background: var(--av-primary-soft);
-  }
-
-  .avenize-sidebar-taskbar-divider {
-    width: 1px;
-    height: 1.25rem;
-    background: var(--av-border);
-    margin: 0 0.1rem;
-  }
+  #avenize-sidebar-taskbar button:hover { background: var(--av-surface-2); color: var(--av-primary); }
+  #avenize-sidebar-taskbar button:focus-visible { outline: 2px solid var(--av-primary); outline-offset: 1px; }
+  #avenize-sidebar-taskbar .avenize-sidebar-drag { cursor: grab; color: var(--av-text-muted); }
+  #avenize-sidebar-taskbar.is-dragging .avenize-sidebar-drag { cursor: grabbing; }
+  #avenize-sidebar-taskbar .avenize-sidebar-drag:hover { color: var(--av-primary); background: var(--av-primary-soft); }
+  .avenize-sidebar-taskbar-divider { width: 1px; height: 18px; background: var(--av-border); margin: 0 2px; }
 }
 
 @media (max-width: 767px) {
-  #avenize-sidebar-taskbar {
-    display: none !important;
-  }
+  #avenize-sidebar-taskbar { display: none !important; }
 }
