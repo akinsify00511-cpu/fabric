@@ -12,8 +12,6 @@
   --av-primary-subtle: rgba(21, 91, 180, 0.04);
 
   /* ========== SURFACES - LIGHT APP SYSTEM ========== */
-  /* White is reserved for the application canvas and true elevated surfaces.
-     Standard cards use ash so they never disappear into a white page. */
   --av-surface: #FFFFFF;
   --av-surface-2: #F3F4F6;
   --av-surface-3: #E5E7EB;
@@ -48,7 +46,8 @@
   --av-accent-soft: rgba(124, 58, 237, 0.08);
 
   /* ========== GRADIENT ========== */
-  --av-gradient: linear-gradient(135deg, #155BB4 0%, #4285F4 52%, #34A853 100%);
+  /* Kept for intentional brand actions only; never use as a standard card fill. */
+  --av-gradient: linear-gradient(135deg, #155BB4 0%, #2B6CB0 100%);
 
   /* ========== SHADOWS ========== */
   --av-shadow-sm: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .04);
@@ -67,25 +66,26 @@
   --av-radius-lg: 16px;
   --av-radius-xl: 24px;
   --av-radius-full: 9999px;
+  --av-radius-pill: 9999px;
 
   /* ========== GLASS / HOME ========== */
-  --av-glass-bg: rgba(255, 255, 255, 0.82);
-  --av-glass-bg-strong: rgba(255, 255, 255, 0.94);
+  --av-glass-bg: rgba(255, 255, 255, 0.92);
+  --av-glass-bg-strong: rgba(255, 255, 255, 0.97);
   --av-glass-border: rgba(209, 213, 219, 0.82);
   --av-glass-blur: 16px;
-  --av-atmosphere: radial-gradient(1200px 600px at 12% -8%, rgba(21, 91, 180, 0.08), transparent 60%), radial-gradient(900px 500px at 96% 4%, rgba(124, 58, 237, 0.05), transparent 55%), radial-gradient(800px 500px at 70% 110%, rgba(52, 168, 83, 0.05), transparent 60%);
+  --av-atmosphere: radial-gradient(1200px 600px at 12% -8%, rgba(21, 91, 180, 0.05), transparent 60%), radial-gradient(900px 500px at 96% 4%, rgba(124, 58, 237, 0.025), transparent 55%);
   --av-home-bg: #F7F9FC;
   --av-shadow-float: 0 8px 30px rgba(15, 23, 42, 0.07), 0 2px 8px rgba(15, 23, 42, 0.04);
 
-  /* ========== DOMAIN CARD GRADIENTS ========== */
-  --av-grad-health: linear-gradient(135deg, rgba(21, 91, 180, 0.10), rgba(52, 168, 83, 0.10));
-  --av-grad-revenue: linear-gradient(135deg, rgba(21, 91, 180, 0.12), rgba(66, 133, 244, 0.06));
-  --av-grad-cash: linear-gradient(135deg, rgba(124, 58, 237, 0.10), rgba(66, 133, 244, 0.06));
-  --av-grad-risk: linear-gradient(135deg, rgba(234, 67, 53, 0.10), rgba(251, 188, 5, 0.05));
-  --av-grad-opportunity: linear-gradient(135deg, rgba(251, 188, 5, 0.10), rgba(52, 168, 83, 0.07));
-  --av-grad-operations: linear-gradient(135deg, rgba(52, 168, 83, 0.10), rgba(66, 133, 244, 0.06));
-  --av-grad-people: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(190, 24, 93, 0.06));
-  --av-grad-intelligence: linear-gradient(135deg, rgba(21, 91, 180, 0.10), rgba(124, 58, 237, 0.07));
+  /* ========== DOMAIN CARD BACKDROPS ========== */
+  --av-grad-health: #F3F4F6;
+  --av-grad-revenue: #EFF6FF;
+  --av-grad-cash: #F5F3FF;
+  --av-grad-risk: #FEF2F2;
+  --av-grad-opportunity: #FFFBEB;
+  --av-grad-operations: #F0FDF4;
+  --av-grad-people: #FDF4FF;
+  --av-grad-intelligence: #EFF6FF;
 
   /* ========== TRANSITIONS ========== */
   --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
@@ -108,8 +108,8 @@
 .av-warning { color: var(--av-warning); }
 .av-danger { color: var(--av-danger); }
 
-/* Premium card primitives: ash is the default card surface; blue is reserved
-   for information/intelligence. This prevents white-on-white card collisions. */
+/* Premium card primitives: ash is the default card surface; light blue is
+   reserved for information/intelligence. */
 .av-card {
   background-color: var(--av-surface-card);
   color: var(--av-text);
@@ -140,22 +140,83 @@
   background-attachment: fixed;
 }
 
-/* Global card primitives are defined in index.css after this file. These
-   explicit overrides keep the same semantic system without changing every page. */
+/* Global card primitives are also defined later in index.css. !important is
+   deliberate here so legacy page styles cannot reintroduce white-on-white,
+   neon-blue, or black standard cards. */
 .card,
 .card-stat,
 .tile-launcher {
   background-color: var(--av-surface-card) !important;
-  color: var(--av-text);
-  border-color: var(--av-border);
+  color: var(--av-text) !important;
+  border: 1px solid var(--av-border) !important;
 }
-.card-flat { background-color: var(--av-surface-2) !important; color: var(--av-text); }
-.pill { color: var(--av-text-secondary); background: var(--av-surface-3); }
+.card-flat {
+  background-color: var(--av-surface-2) !important;
+  color: var(--av-text) !important;
+  border-color: var(--av-border) !important;
+}
+.card:hover,
+.card-stat:hover,
+.tile-launcher:hover {
+  background-color: var(--av-surface-card-hover) !important;
+}
 
-/* Prevent accidental low-contrast combinations inside light surfaces. */
-.bg-white { color: var(--av-text); }
-.bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 { color: var(--av-text); }
+/* Hero/stat panels stay light; brand blue is communicated through accents,
+   icons, labels and actions rather than giant saturated surfaces. */
+.card-hero {
+  background: var(--av-surface-info) !important;
+  color: var(--av-text) !important;
+  border: 1px solid #BFDBFE !important;
+  box-shadow: var(--av-shadow-md) !important;
+}
+.card-hero::before {
+  background: radial-gradient(circle, rgba(21, 91, 180, 0.12) 0%, rgba(21, 91, 180, 0.04) 45%, transparent 72%) !important;
+  opacity: 1 !important;
+}
 
-/* White text remains intentional only for dark/brand action surfaces. */
+/* Common Tailwind card/surface combinations. These selectors intentionally
+   target card primitives, not global dark buttons or navigation. */
+[class*="card"] .text-white,
+.card .text-white,
+.card-stat .text-white,
+.tile-launcher .text-white,
+.card-hero .text-white {
+  color: var(--av-text) !important;
+}
+
+/* Light surface utilities must keep readable text. */
+.bg-white,
+.bg-gray-50,
+.bg-gray-100,
+.bg-slate-50,
+.bg-slate-100 {
+  color: var(--av-text);
+}
+
+.pill {
+  color: var(--av-text-secondary);
+  background: var(--av-surface-3);
+}
+.pill:hover {
+  background: var(--av-surface-2);
+  color: var(--av-text);
+}
+
+/* Keep workspace colour identity as small accents, not full-page/card fills. */
+.bg-accent-sales,
+.bg-accent-finance,
+.bg-accent-projects,
+.bg-accent-hr,
+.bg-accent-communication,
+.bg-accent-ai,
+.bg-accent-automation,
+.bg-accent-analytics {
+  border-radius: var(--av-radius-md);
+}
+
+/* White text remains intentional for filled actions. */
 .btn-filled,
-.btn-gradient { color: #FFFFFF; }
+.btn-gradient,
+.av-primary-bg {
+  color: #FFFFFF !important;
+}
