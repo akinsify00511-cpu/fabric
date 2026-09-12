@@ -34,32 +34,51 @@ export default function BusinessHomeExperience() {
   useEffect(() => {
     if (!bid) return
     let active = true
+
     const load = async () => {
-      const [brainResult, healthResult, recommendationsResult, ledgerResult, attentionResult] = await Promise.all([
+      // Do not let one optional intelligence source take down the whole home surface.
+      // Each loader already owns its domain-specific error handling; the home surface
+      // treats unavailable signals as unavailable, not as an empty successful dataset.
+      const [brainResult, healthResult, recommendationsResult, ledgerResult, approvalsResult, tasksResult] = await Promise.all([
         fetchBusinessBrain(bid).catch(() => null),
         fetchBusinessHealth(bid).catch(() => null),
         fetchOpenRecommendations(bid, 20).catch(() => []),
         fetchValueLedger(bid).catch(() => null),
-        Promise.all([
-          supabase.from('approvals').select('id, description, status').eq('business_id', bid).eq('status', 'pending').limit(5),
-          supabase.from('tasks').select('id, title, due_date').eq('business_id', bid).neq('status', 'done').limit(8),
-        ]).catch(() => [{ data: [] }, { data: [] }]),
+        supabase.from('approvals').select('id, description, status').eq('business_id', bid).eq('status', 'pending').limit(5),
+        supabase.from('tasks').select('id, title, due_date').eq('business_id', bid).neq('status', 'done').limit(8),
       ])
+
       if (!active) return
       setBrain(brainResult)
       setHealth(healthResult)
       setRecommendations(recommendationsResult ?? [])
       setLedger(ledgerResult)
 
-      const [approvals, tasks] = attentionResult
       const next: ActionItem[] = []
-      ;(approvals?.data ?? []).forEach((item: any) => next.push({ id: item.id, title: item.description || 'Approval needed', to: '/app/approvals', tone: 'red', detail: 'Needs your approval' }))
-      ;(tasks?.data ?? []).forEach((item: any) => {
-        const overdue = item.due_date && new Date(item.due_date).getTime() < Date.now()
-        next.push({ id: item.id, title: item.title, to: '/app/tasks', tone: overdue ? 'red' : 'amber', detail: overdue ? 'Overdue — act now' : 'Assigned to you' })
-      })
+      if (!approvalsResult.error) {
+        ;(approvalsResult.data ?? []).forEach((item: any) => next.push({
+          id: item.id,
+          title: item.description || 'Approval needed',
+          to: '/app/approvals',
+          tone: 'red',
+          detail: 'Needs your approval',
+        }))
+      }
+      if (!tasksResult.error) {
+        ;(tasksResult.data ?? []).forEach((item: any) => {
+          const overdue = item.due_date && new Date(item.due_date).getTime() < Date.now()
+          next.push({
+            id: item.id,
+            title: item.title,
+            to: '/app/tasks',
+            tone: overdue ? 'red' : 'amber',
+            detail: overdue ? 'Overdue — act now' : 'Assigned to you',
+          })
+        })
+      }
       setActions(next)
     }
+
     void load()
     return () => { active = false }
   }, [bid])
