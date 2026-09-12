@@ -15,7 +15,12 @@ jobs:
   deploy-preview:
     name: Deploy Preview
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    # Previews are opt-in now. Add the `preview` label to a PR when a
+    # deployable preview is actually needed. This prevents every PR push from
+    # creating another retained Vercel deployment.
+    if: >-
+      github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'preview')
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
