@@ -23,6 +23,7 @@
     "mobile:ios": "npx cap open ios",
     "mobile:doctor": "npx cap doctor",
     "avenize:control-plane": "python3 scripts/avenize_control_plane.py",
+    "avenize:security-audit": "python3 scripts/security_launch_audit.py",
     "avenize:governance": "python3 scripts/governance/avenize_governance.py",
     "avenize:governance:check": "python3 scripts/governance/avenize_governance.py check",
     "avenize:governance:drift": "python3 scripts/governance/avenize_governance.py drift",
