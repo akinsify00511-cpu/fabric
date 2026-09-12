@@ -4,11 +4,12 @@ on:
   pull_request:
     branches: [main]
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI", "Avenize Control Plane"]
     types: [completed]
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   deploy-preview:
@@ -48,17 +49,45 @@ jobs:
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
     steps:
-      - name: Checkout the exact CI-approved commit
+      - name: Require CI and Control Plane success for exact SHA
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const sha = context.payload.workflow_run.head_sha;
+            const required = ['CI', 'Avenize Control Plane'];
+            const runs = await github.paginate(github.rest.actions.listWorkflowRunsForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head_sha: sha,
+              per_page: 100,
+            });
+            const status = Object.fromEntries(required.map(name => [name, null]));
+            for (const run of runs) {
+              if (required.includes(run.name) && status[run.name] === null) {
+                status[run.name] = run.conclusion;
+              }
+            }
+            const missing = required.filter(name => status[name] !== 'success');
+            core.info(`Gate SHA: ${sha}`);
+            core.info(`Gate results: ${JSON.stringify(status)}`);
+            if (missing.length) {
+              core.setFailed(`Production deployment blocked for ${sha}: ${missing.join(', ')} did not pass.`);
+            }
+
+      - name: Checkout the exact approved commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build
         run: |
           echo "Build: $(date -u +%Y%m%d%H%M%S) $GITHUB_SHA" > src/build-info.txt
@@ -67,6 +96,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_GIT_SHA: ${{ github.event.workflow_run.head_sha }}
+
       - name: Deploy to Vercel
         run: |
           npm i -g vercel
@@ -74,6 +104,7 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       - name: Hydrate production verification environment from Vercel
         shell: bash
         run: |
@@ -115,16 +146,20 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
       - name: Production contract verification
         run: bash scripts/verify-production.sh
+
       - name: Production E2E journey test
         if: always()
         run: bash scripts/e2e-production.sh
+
       - name: Unified live certification
         if: always()
         run: python3 scripts/governance/production_certification.py
         env:
           REQUIRE_LIVE: '1'
+
       - name: Upload verification report
         if: always()
         uses: actions/upload-artifact@v4
@@ -134,6 +169,7 @@ jobs:
             supabase/contract/verification_report.json
             governance/reports/production-certification.json
           if-no-files-found: warn
+
       - name: Rollback Vercel on gate failure (opt-in)
         if: failure() && vars.VERCEL_AUTO_ROLLBACK == 'true'
         run: |
