@@ -26,10 +26,7 @@ export function EmptyState({ text }: { text: string }) {
 }
 
 export function FreshnessDot({ tier }: { tier: string }) {
-  const c =
-    tier === 'fresh' ? colors.success :
-    tier === 'today' ? colors.success :
-    tier === 'stale' ? colors.warning : colors.danger
+  const c = tier === 'fresh' || tier === 'today' ? colors.success : tier === 'stale' ? colors.warning : colors.danger
   return <View style={[styles.dot, { backgroundColor: c }]} />
 }
 
@@ -44,9 +41,11 @@ export function SeverityBadge({ severity }: { severity: string }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: colors.surfaceCard,
+    borderRadius: radius.lg,
     padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
     ...shadows.elevation1,
   },
   sectionTitle: {
@@ -55,10 +54,10 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.sm,
   },
-  loaderWrap: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xxl },
+  loaderWrap: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.xxl, backgroundColor: colors.background },
   empty: { alignItems: 'center', padding: spacing.xl },
-  emptyText: { color: colors.textTertiary, fontSize: fontSize.sm, textAlign: 'center' },
+  emptyText: { color: colors.textSecondary, fontSize: fontSize.sm, textAlign: 'center' },
   dot: { width: 8, height: 8, borderRadius: 4 },
-  badge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: radius.pill },
+  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: radius.pill },
   badgeText: { fontSize: fontSize.xs, fontWeight: '700', textTransform: 'uppercase' },
 })
