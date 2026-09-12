@@ -7,11 +7,13 @@ import './index.css'
 import './styles/app-brand-overrides.css'
 import './styles/accessibility-overrides.css'
 import './styles/mobile-color-system.css'
+import './styles/sidebar-taskbar.css'
 import AppRoot from './App.tsx'
 import { initErrorCapture } from './lib/errorCapture'
 import { initSentry } from './lib/sentry'
 import GlobalOrganismRuntime from './components/GlobalOrganismRuntime'
 import PremiumMotion from './components/PremiumMotion'
+import { initSidebarTaskbar } from './lib/sidebarTaskbar'
 
 // Mark the authenticated browser surface so the app-only visual system never
 // changes the public Avenize marketing site.
@@ -22,6 +24,7 @@ if (typeof document !== 'undefined') {
   }
 }
 
+initSidebarTaskbar()
 initErrorCapture()
 initSentry()
 
