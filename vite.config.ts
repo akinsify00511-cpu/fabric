@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
+    // Production deployments do not ship source maps. This keeps deployment
+    // artifacts lean; error tracking can use separately uploaded maps if needed.
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
