@@ -7,6 +7,15 @@ const failOpenPattern = /\bFAIL_OPEN\b|return\s+FAIL_OPEN\b/i
 
 const failures = []
 
+// Inspect SQL structure rather than comments or quoted dynamic SQL. The
+// closure migration necessarily contains the legacy predicate as data in its
+// repair expression; that is not itself a live policy definition.
+function stripSqlCommentsAndStrings(sql) {
+  return sql
+    .replace(/--[^\n]*|\/\*[\s\S]*?\*\//g, ' ')
+    .replace(/'(?:''|[^'])*'/g, "''")
+}
+
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true })
   for (const entry of entries) {
@@ -14,7 +23,9 @@ async function walk(dir) {
     if (entry.isDirectory()) await walk(path)
     else if (entry.isFile() && entry.name.endsWith('.sql')) {
       const text = await readFile(path, 'utf8')
-      if (forbiddenTenantPredicate.test(text)) failures.push(`${path}: forbidden cross-tenant business predicate`)
+      if (forbiddenTenantPredicate.test(stripSqlCommentsAndStrings(text))) {
+        failures.push(`${path}: forbidden cross-tenant business predicate`)
+      }
     }
   }
 }
