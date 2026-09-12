@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   workflow_run:
-    workflows: ["CI", "Avenize Control Plane"]
+    workflows: ["Avenize Control Plane"]
     types: [completed]
 
 permissions:
@@ -49,8 +49,13 @@ jobs:
   deploy-production:
     name: Deploy Production
     runs-on: ubuntu-latest
+    # Only a successful Control Plane run caused by a push to main may deploy.
+    # Scheduled/hourly control-plane health checks must never create a new
+    # production deployment for the same SHA.
     if: >-
       github.event_name == 'workflow_run' &&
+      github.event.workflow_run.name == 'Avenize Control Plane' &&
+      github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.conclusion == 'success' &&
       github.event.workflow_run.head_branch == 'main'
     steps:
