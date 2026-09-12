@@ -1,13 +1,13 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
 // Release version is intentionally bumped when auth/runtime contracts change.
-// v10: invalidate potentially corrupted/stale hashed JavaScript bundles.
-const CACHE_VERSION = 'v10'
+// v11: never retain a stale HTML shell that can reference removed hashed bundles.
+const CACHE_VERSION = 'v11'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
 const IMAGE_CACHE = `${CACHE_PREFIX}-images`
 
-const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.svg']
+const STATIC_ASSETS = ['/index.html', '/manifest.json', '/favicon.svg']
 const MAX_CACHE_ITEMS = 100
 const MAX_IMAGE_CACHE_ITEMS = 50
 
@@ -48,10 +48,9 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirstForImages(request))
     return
   }
-  // Hashed application assets must never be served from an old service-worker
-  // cache. A stale HTML shell can reference a hash that no longer exists in the
-  // current deployment, causing a missing JS request to receive index.html and
-  // fail strict module MIME checking. Revalidate against the network first.
+
+  // Hashed application assets must always be network-first. If a bundle was
+  // removed by a later deployment, never substitute index.html for it.
   if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
     event.respondWith(networkFirstForStaticAsset(request))
     return
@@ -60,26 +59,28 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(networkFirstForStaticAsset(request))
     return
   }
+
+  // HTML is the version manifest for the whole SPA. Do not keep a dynamic
+  // navigation cache: an old HTML shell can reference hashed files that no
+  // longer exist in the active deployment and trigger strict MIME failures.
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirstWithOfflineFallback(request))
+    event.respondWith(networkFirstNavigation(request))
     return
   }
   event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE))
 })
 
-async function networkFirstWithOfflineFallback(request) {
+async function networkFirstNavigation(request) {
   try {
-    const networkResponse = await fetch(request, { cache: 'no-cache' })
-    if (networkResponse.ok) {
-      const cache = await caches.open(DYNAMIC_CACHE)
-      await cache.put(request, networkResponse.clone())
-      await trimCache(cache, MAX_CACHE_ITEMS)
-    }
-    return networkResponse
+    return await fetch(request, { cache: 'no-cache' })
   } catch {
-    const cachedResponse = await caches.match(request)
-    if (cachedResponse) return cachedResponse
-    return caches.match('/index.html')
+    // Offline fallback is intentionally limited to the current versioned
+    // static shell; old dynamic navigation entries are never used.
+    const cached = await caches.match('/index.html')
+    return cached || new Response('Avenize is offline. Please reconnect and retry.', {
+      status: 503,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    })
   }
 }
 
@@ -95,7 +96,7 @@ async function networkFirstForStaticAsset(request) {
   } catch {
     const cached = await caches.match(request)
     if (cached) return cached
-    return fetch(request, { cache: 'no-cache' })
+    return new Response('', { status: 404 })
   }
 }
 
