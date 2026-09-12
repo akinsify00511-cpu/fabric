@@ -1,37 +1,38 @@
 /* ============================================
-   AVENIZE DESIGN SYSTEM v5 - Google Standard Edition
-   Brand guide compliant: https://avenize.com/brand
+   AVENIZE DESIGN SYSTEM v6 - High Contrast Light
+   ChatGPT-inspired hierarchy, Avenize identity retained.
    ============================================ */
 
 :root {
-  /* ========== PRIMARY - Avenize Blue ========== */
+  /* Identity / accent */
   --av-primary: #155BB4;
   --av-primary-hover: #1247A0;
   --av-primary-active: #0F3B86;
   --av-primary-soft: rgba(21, 91, 180, 0.08);
   --av-primary-subtle: rgba(21, 91, 180, 0.04);
 
-  /* ========== SURFACES - LIGHT APP SYSTEM ========== */
+  /* Light hierarchy: canvas -> surface -> card -> contextual panel */
+  --av-home-bg: #F7F7F8;
   --av-surface: #FFFFFF;
-  --av-surface-2: #F3F4F6;
-  --av-surface-3: #E5E7EB;
+  --av-surface-2: #F2F2F3;
+  --av-surface-3: #E9E9EB;
   --av-surface-elevated: #FFFFFF;
-  --av-surface-card: #F3F4F6;
-  --av-surface-card-hover: #EEF0F3;
+  --av-surface-card: #F2F2F3;
+  --av-surface-card-hover: #EAEAED;
   --av-surface-info: #EFF6FF;
   --av-surface-info-strong: #E0EEFF;
 
-  /* ========== TEXT - HIGH CONTRAST ========== */
-  --av-text: #111827;
-  --av-text-secondary: #374151;
+  /* Strong readable text */
+  --av-text: #171717;
+  --av-text-secondary: #4B5563;
   --av-text-muted: #6B7280;
   --av-text-disabled: #9CA3AF;
 
-  /* ========== BORDER ========== */
-  --av-border: #D1D5DB;
-  --av-border-strong: #9CA3AF;
+  /* Visible but restrained borders */
+  --av-border: #D9D9DE;
+  --av-border-strong: #B8BAC2;
 
-  /* ========== SEMANTIC ========== */
+  /* Semantic */
   --av-success: #15803D;
   --av-success-soft: rgba(21, 128, 61, 0.08);
   --av-warning: #A16207;
@@ -41,43 +42,35 @@
   --av-info: #155BB4;
   --av-info-soft: rgba(21, 91, 180, 0.08);
 
-  /* ========== ACCENT ========== */
-  --av-accent: #7C3AED;
-  --av-accent-soft: rgba(124, 58, 237, 0.08);
+  /* Customer accent is decorative/interactive only; readability tokens stay ours. */
+  --av-accent: #155BB4;
+  --av-accent-soft: rgba(21, 91, 180, 0.08);
 
-  /* ========== GRADIENT ========== */
   --av-gradient: linear-gradient(135deg, #155BB4 0%, #2B6CB0 100%);
+  --av-shadow-sm: 0 1px 2px rgba(15, 23, 42, .05);
+  --av-shadow-md: 0 2px 6px rgba(15, 23, 42, .07), 0 8px 20px rgba(15, 23, 42, .05);
+  --av-shadow-lg: 0 8px 20px rgba(15, 23, 42, .08), 0 16px 32px rgba(15, 23, 42, .05);
+  --av-shadow-float: 0 2px 8px rgba(15, 23, 42, .05), 0 8px 24px rgba(15, 23, 42, .04);
 
-  /* ========== SHADOWS ========== */
-  --av-shadow-sm: 0 1px 2px rgba(15, 23, 42, .06), 0 1px 3px rgba(15, 23, 42, .04);
-  --av-shadow-md: 0 2px 4px rgba(15, 23, 42, .08), 0 6px 12px rgba(15, 23, 42, .06);
-  --av-shadow-lg: 0 6px 12px rgba(15, 23, 42, .08), 0 12px 24px rgba(15, 23, 42, .06);
-
-  /* ========== TYPOGRAPHY ========== */
   --av-font-sans: 'Google Sans Flex', 'Google Sans Text', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --av-tracking-display: -0.02em;
   --av-tracking-tight: -0.015em;
   --av-tracking-body: 0;
 
-  /* ========== RADII ========== */
   --av-radius-sm: 8px;
   --av-radius-md: 12px;
   --av-radius-lg: 16px;
-  --av-radius-xl: 24px;
+  --av-radius-xl: 20px;
   --av-radius-full: 9999px;
   --av-radius-pill: 9999px;
 
-  /* ========== GLASS / HOME ========== */
-  --av-glass-bg: rgba(255, 255, 255, 0.92);
-  --av-glass-bg-strong: rgba(255, 255, 255, 0.97);
-  --av-glass-border: rgba(209, 213, 219, 0.82);
+  --av-glass-bg: rgba(255, 255, 255, 0.94);
+  --av-glass-bg-strong: rgba(255, 255, 255, 0.98);
+  --av-glass-border: rgba(217, 217, 222, 0.9);
   --av-glass-blur: 16px;
-  --av-atmosphere: radial-gradient(1200px 600px at 12% -8%, rgba(21, 91, 180, 0.05), transparent 60%), radial-gradient(900px 500px at 96% 4%, rgba(124, 58, 237, 0.025), transparent 55%);
-  --av-home-bg: #F7F9FC;
-  --av-shadow-float: 0 8px 30px rgba(15, 23, 42, 0.07), 0 2px 8px rgba(15, 23, 42, 0.04);
+  --av-atmosphere: radial-gradient(1000px 500px at 8% -10%, rgba(21, 91, 180, 0.045), transparent 62%), radial-gradient(800px 420px at 100% 0%, rgba(21, 91, 180, 0.025), transparent 60%);
 
-  /* ========== DOMAIN CARD BACKDROPS ========== */
-  --av-grad-health: #F3F4F6;
+  --av-grad-health: #F2F2F3;
   --av-grad-revenue: #EFF6FF;
   --av-grad-cash: #F5F3FF;
   --av-grad-risk: #FEF2F2;
@@ -86,162 +79,149 @@
   --av-grad-people: #FDF4FF;
   --av-grad-intelligence: #EFF6FF;
 
-  /* ========== TRANSITIONS ========== */
   --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.av-surface { background-color: var(--av-surface); }
-.av-surface-2 { background-color: var(--av-surface-2); }
-.av-surface-elevated { background-color: var(--av-surface-elevated); }
-.av-surface-card { background-color: var(--av-surface-card); }
-.av-surface-info { background-color: var(--av-surface-info); }
-.av-text { color: var(--av-text); }
-.av-text-secondary { color: var(--av-text-secondary); }
-.av-text-muted { color: var(--av-text-muted); }
-.av-border { border-color: var(--av-border); }
-.av-primary { color: var(--av-primary); }
-.av-primary-bg { background-color: var(--av-primary); }
-.av-success { color: var(--av-success); }
-.av-warning { color: var(--av-warning); }
-.av-danger { color: var(--av-danger); }
+.av-surface { background-color: var(--av-surface) !important; color: var(--av-text) !important; }
+.av-surface-2 { background-color: var(--av-surface-2) !important; color: var(--av-text) !important; }
+.av-surface-elevated { background-color: var(--av-surface-elevated) !important; color: var(--av-text) !important; }
+.av-surface-card { background-color: var(--av-surface-card) !important; color: var(--av-text) !important; }
+.av-surface-info { background-color: var(--av-surface-info) !important; color: var(--av-text) !important; }
+.av-text { color: var(--av-text) !important; }
+.av-text-secondary { color: var(--av-text-secondary) !important; }
+.av-text-muted { color: var(--av-text-muted) !important; }
+.av-border { border-color: var(--av-border) !important; }
+.av-primary { color: var(--av-primary) !important; }
+.av-primary-bg { background-color: var(--av-primary) !important; color: #FFFFFF !important; }
+.av-success { color: var(--av-success) !important; }
+.av-warning { color: var(--av-warning) !important; }
+.av-danger { color: var(--av-danger) !important; }
 
-.av-card {
-  background-color: var(--av-surface-card);
-  color: var(--av-text);
+/* Canonical card language */
+.av-card,
+.card,
+.card-stat,
+.tile-launcher {
+  background: var(--av-surface-card) !important;
+  background-color: var(--av-surface-card) !important;
+  color: var(--av-text) !important;
+  border: 1px solid var(--av-border) !important;
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-float);
-  border: 1px solid var(--av-border);
 }
-.av-card:hover { background-color: var(--av-surface-card-hover); }
-.av-card-info {
-  background-color: var(--av-surface-info);
-  color: var(--av-text);
-  border: 1px solid #BFDBFE;
+.av-card:hover,
+.card:hover,
+.card-stat:hover,
+.tile-launcher:hover { background: var(--av-surface-card-hover) !important; }
+
+.av-card-info,
+.card-hero {
+  background: var(--av-surface-info) !important;
+  background-color: var(--av-surface-info) !important;
+  color: var(--av-text) !important;
+  border: 1px solid #BFDBFE !important;
   border-radius: var(--av-radius-xl);
-  box-shadow: var(--av-shadow-sm);
+  box-shadow: var(--av-shadow-md) !important;
 }
+.card-hero::before {
+  background: radial-gradient(circle, rgba(21, 91, 180, 0.10) 0%, rgba(21, 91, 180, 0.03) 45%, transparent 72%) !important;
+  opacity: 1 !important;
+}
+
 .av-glass-card {
-  background: var(--av-glass-bg);
-  color: var(--av-text);
+  background: var(--av-glass-bg) !important;
+  color: var(--av-text) !important;
   backdrop-filter: blur(var(--av-glass-blur));
   -webkit-backdrop-filter: blur(var(--av-glass-blur));
-  border: 1px solid var(--av-glass-border);
+  border: 1px solid var(--av-glass-border) !important;
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-float);
 }
 .av-backdrop {
-  background-color: var(--av-home-bg);
-  background-image: var(--av-atmosphere);
+  background-color: var(--av-home-bg) !important;
+  background-image: var(--av-atmosphere) !important;
   background-attachment: fixed;
+  color: var(--av-text) !important;
 }
 
-.card,
-.card-stat,
-.tile-launcher {
-  background-color: var(--av-surface-card) !important;
+/* Legacy light utility surfaces: preserve light backgrounds and readable text. */
+.bg-white, .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 {
   color: var(--av-text) !important;
-  border: 1px solid var(--av-border) !important;
 }
+.bg-white { background-color: #FFFFFF !important; }
+.bg-gray-50, .bg-slate-50 { background-color: var(--av-surface-2) !important; }
+.bg-gray-100, .bg-slate-100 { background-color: var(--av-surface-3) !important; }
+
+/* White text is reserved for genuinely filled controls/brand surfaces. */
+.av-card .text-white,
+.av-card-info .text-white,
+.av-glass-card .text-white,
+.card .text-white,
+.card-stat .text-white,
+.card-flat .text-white,
+.tile-launcher .text-white,
+.card-hero .text-white,
+.bg-white .text-white,
+.bg-gray-50 .text-white,
+.bg-gray-100 .text-white,
+.bg-slate-50 .text-white,
+.bg-slate-100 .text-white {
+  color: var(--av-text) !important;
+}
+
 .card-flat {
   background-color: var(--av-surface-2) !important;
   color: var(--av-text) !important;
   border-color: var(--av-border) !important;
 }
-.card:hover,
-.card-stat:hover,
-.tile-launcher:hover {
-  background-color: var(--av-surface-card-hover) !important;
-}
-
-.card-hero {
-  background: var(--av-surface-info) !important;
-  color: var(--av-text) !important;
-  border: 1px solid #BFDBFE !important;
-  box-shadow: var(--av-shadow-md) !important;
-}
-.card-hero::before {
-  background: radial-gradient(circle, rgba(21, 91, 180, 0.12) 0%, rgba(21, 91, 180, 0.04) 45%, transparent 72%) !important;
-  opacity: 1 !important;
-}
-
-[class*="card"] .text-white,
-.card .text-white,
-.card-stat .text-white,
-.tile-launcher .text-white,
-.card-hero .text-white {
-  color: var(--av-text) !important;
-}
-
-.bg-white,
-.bg-gray-50,
-.bg-gray-100,
-.bg-slate-50,
-.bg-slate-100 {
-  color: var(--av-text);
-}
 
 .pill {
-  color: var(--av-text-secondary);
-  background: var(--av-surface-3);
+  color: var(--av-text-secondary) !important;
+  background: var(--av-surface-3) !important;
 }
-.pill:hover {
-  background: var(--av-surface-2);
-  color: var(--av-text);
-}
-
-.bg-accent-sales,
-.bg-accent-finance,
-.bg-accent-projects,
-.bg-accent-hr,
-.bg-accent-communication,
-.bg-accent-ai,
-.bg-accent-automation,
-.bg-accent-analytics {
-  border-radius: var(--av-radius-md);
-}
+.pill:hover { background: var(--av-surface-2) !important; color: var(--av-text) !important; }
 
 .btn-filled,
 .btn-gradient,
-.av-primary-bg {
+.av-primary-bg,
+button[class*="bg-"][class*="blue"],
+a[class*="bg-"][class*="blue"] {
   color: #FFFFFF !important;
+}
+
+/* Do not allow customer branding to create unreadable text/surfaces. */
+[data-brand-color],
+[data-custom-brand],
+.customer-brand {
+  color: inherit;
 }
 
 /* ============================================
    MOBILE READABILITY CONTRACT
-   The mobile app must never render an unstyled white canvas with
-   white/invisible content. Core surfaces are explicit and all normal
-   content inherits the semantic Avenize text colour.
    ============================================ */
 @media (max-width: 767px) {
   html, body, #root {
     background: var(--av-home-bg) !important;
     color: var(--av-text) !important;
   }
+  body { min-height: 100dvh; }
+  main, section, article, nav, header, footer { color: var(--av-text); }
 
-  body {
-    min-height: 100dvh;
-  }
-
-  main, section, article {
-    color: var(--av-text);
-  }
-
-  /* Any normal light-surface container gets an explicit readable foreground. */
-  .bg-white,
-  .bg-gray-50,
-  .bg-gray-100,
-  .bg-slate-50,
-  .bg-slate-100 {
+  .bg-white { background-color: #FFFFFF !important; color: var(--av-text) !important; }
+  .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 {
     color: var(--av-text) !important;
   }
 
-  /* Prevent legacy white text from disappearing on light cards/surfaces. */
-  .bg-white .text-white,
-  .bg-gray-50 .text-white,
-  .bg-gray-100 .text-white,
-  .bg-slate-50 .text-white,
-  .bg-slate-100 .text-white,
+  .av-card, .card, .card-stat, .tile-launcher {
+    background: var(--av-surface-card) !important;
+    background-color: var(--av-surface-card) !important;
+    color: var(--av-text) !important;
+    border-color: var(--av-border) !important;
+  }
+  .card-flat { background: var(--av-surface-2) !important; color: var(--av-text) !important; }
+  .card-hero, .av-card-info { background: var(--av-surface-info) !important; color: var(--av-text) !important; }
+
   .av-card .text-white,
   .av-card-info .text-white,
   .av-glass-card .text-white,
@@ -253,45 +233,19 @@
     color: var(--av-text) !important;
   }
 
-  /* Filled controls are the intentional exception. */
   .btn-filled .text-white,
   .btn-gradient .text-white,
   .av-primary-bg .text-white,
   button.btn-filled,
-  button.btn-gradient {
+  button.btn-gradient,
+  button[class*="bg-"][class*="blue"] {
     color: #FFFFFF !important;
   }
 
-  /* Give unstyled mobile panels visible structure. */
   .av-backdrop {
     background-color: var(--av-home-bg) !important;
     background-image: var(--av-atmosphere) !important;
   }
 
-  .av-card,
-  .card,
-  .card-stat,
-  .tile-launcher {
-    background-color: var(--av-surface-card) !important;
-    color: var(--av-text) !important;
-    border-color: var(--av-border) !important;
-  }
-
-  .card-flat {
-    background-color: var(--av-surface-2) !important;
-    color: var(--av-text) !important;
-  }
-
-  .card-hero,
-  .av-card-info {
-    background-color: var(--av-surface-info) !important;
-    color: var(--av-text) !important;
-  }
-
-  /* Keep controls finger-friendly without making the interface oversized. */
-  button,
-  [role="button"],
-  a {
-    -webkit-tap-highlight-color: transparent;
-  }
+  button, [role="button"], a { -webkit-tap-highlight-color: transparent; }
 }
