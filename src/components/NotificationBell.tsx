@@ -60,8 +60,6 @@ function getColor(type: string) {
   return NOTIFICATION_COLORS[type] || 'text-gray-500 bg-gray-50'
 }
 
-// §Z intelligent notification priority. Higher weight = surfaced first.
-// Critical (money/blocking) > warning (time-sensitive) > info > social/celebration.
 const NOTIFICATION_PRIORITY: Record<string, number> = {
   invoice_overdue: 100,
   task_due: 90,
@@ -84,8 +82,6 @@ const PRIORITY_DEFAULT = 30
 
 function prioritise(list: Notification[]): Notification[] {
   return [...list].sort((a, b) => {
-    // Unread always beats read (regardless of type) — a read critical is less
-    // urgent than an unread info. Within the same read-state, priority wins.
     if (a.is_read !== b.is_read) return a.is_read ? 1 : -1
     const pa = NOTIFICATION_PRIORITY[a.type] ?? PRIORITY_DEFAULT
     const pb = NOTIFICATION_PRIORITY[b.type] ?? PRIORITY_DEFAULT
@@ -117,9 +113,6 @@ export default function NotificationBell() {
         console.error('Failed to load notifications:', error)
         setNotifications([])
       } else {
-        // §Z: intelligent priority ordering. Not just recency — a critical
-        // invoice_overdue / task_due should not be buried under newer low-value
-        // achievements. Unread first (within priority), then by created_at.
         setNotifications(prioritise(data as Notification[]))
       }
     } catch (err) {
@@ -129,30 +122,14 @@ export default function NotificationBell() {
     setLoading(false)
   }, [staff?.id, staff?.business_id])
 
-  // Keep ref in sync so the realtime callback always calls the latest version
-  // without forcing the realtime effect to re-subscribe.
   loadNotificationsRef.current = loadNotifications
 
   useEffect(() => {
     loadNotifications()
   }, [loadNotifications])
 
-  // Realtime: listen for new notifications.
-  // loadNotifications is intentionally excluded from the dep array — including
-  // it causes the effect to tear down + re-create the channel on every identity
-  // change, and since removeChannel() is async, the new .channel(sameName) can
-  // return the still-subscribed channel object from Supabase's cache, causing
-  // .on() to throw "cannot add callbacks after subscribe()" (crashes the page).
   useEffect(() => {
     if (!staff?.id && !staff?.business_id) return
-
-    // Unique channel name per mount: Shell renders this component in BOTH the
-    // desktop header and the mobile header simultaneously (CSS-hidden, not
-    // unmounted), so two instances always subscribe. A shared static channel
-    // name returns the same cached Supabase client channel object, and calling
-    // .on().subscribe() on an already-subscribing channel throws
-    // "cannot add callbacks after subscribe()", crashing the page. A per-mount
-    // suffix keeps each instance on its own channel.
     const channel = supabase
       .channel(`notifications:realtime:${Math.random().toString(36).slice(2)}`)
       .on('postgres_changes', {
@@ -169,38 +146,26 @@ export default function NotificationBell() {
     }
   }, [staff?.id, staff?.business_id])
 
-  // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) setIsOpen(false)
     }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
+    if (isOpen) document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen])
 
-  // Close on escape
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false)
     }
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-    }
+    if (isOpen) document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen])
 
   const markAsRead = useCallback(async (id: string) => {
     setNotifications((prev) => prioritise(prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))))
     try {
-      await supabase
-        .from('notifications')
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq('id', id)
+      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).eq('id', id)
     } catch (err) {
       console.error('Failed to mark notification as read:', err)
     }
@@ -211,10 +176,7 @@ export default function NotificationBell() {
     if (unreadIds.length === 0) return
     setNotifications((prev) => prioritise(prev.map((n) => ({ ...n, is_read: true }))))
     try {
-      await supabase
-        .from('notifications')
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .in('id', unreadIds)
+      await supabase.from('notifications').update({ is_read: true, read_at: new Date().toISOString() }).in('id', unreadIds)
     } catch (err) {
       console.error('Failed to mark all as read:', err)
     }
@@ -238,7 +200,6 @@ export default function NotificationBell() {
     const minutes = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
-
     if (minutes < 1) return 'Just now'
     if (minutes < 60) return `${minutes}m ago`
     if (hours < 24) return `${hours}h ago`
@@ -254,7 +215,7 @@ export default function NotificationBell() {
       >
         <Bell size={20} className="text-black/60" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-[var(--av-danger-soft)]0 text-white text-xs font-medium rounded-full flex items-center justify-center">
+          <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-[var(--av-danger)] text-white text-[10px] leading-none font-semibold rounded-full flex items-center justify-center ring-2 ring-white">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -266,27 +227,15 @@ export default function NotificationBell() {
             <h3 className="font-semibold text-black">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium"
-                >
-                  Mark all read
-                </button>
+                <button onClick={markAllAsRead} className="text-xs text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium">Mark all read</button>
               )}
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 rounded-lg hover:bg-black/5"
-              >
-                <X size={16} className="text-black/40" />
-              </button>
+              <button onClick={() => setIsOpen(false)} className="p-1 rounded-lg hover:bg-black/5"><X size={16} className="text-black/40" /></button>
             </div>
           </div>
 
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="p-8 text-center">
-                <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" />
-              </div>
+              <div className="p-8 text-center"><div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto" /></div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
                 <BellOff size={32} className="text-black/20 mx-auto mb-2" />
@@ -299,53 +248,22 @@ export default function NotificationBell() {
                 const colorClass = getColor(notification.type)
                 const notifContent = (
                   <>
-                    <div className={`p-2 rounded-xl ${colorClass}`}>
-                      <Icon size={16} />
-                    </div>
+                    <div className={`p-2 rounded-xl ${colorClass}`}><Icon size={16} /></div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-sm font-medium text-black truncate">{notification.title}</p>
-                        {!notification.is_read && (
-                          <span className="w-2 h-2 bg-[var(--av-primary-soft)]0 rounded-full flex-shrink-0 mt-1.5" />
-                        )}
+                        {!notification.is_read && <span className="w-2 h-2 bg-[var(--av-primary)] rounded-full flex-shrink-0 mt-1.5" />}
                       </div>
-                      {notification.message && (
-                        <p className="text-xs text-black/50 line-clamp-2 mt-0.5">{notification.message}</p>
-                      )}
+                      {notification.message && <p className="text-xs text-black/50 line-clamp-2 mt-0.5">{notification.message}</p>}
                       <p className="text-xs text-black/30 mt-1">{formatTime(notification.created_at)}</p>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        dismissNotification(notification.id)
-                      }}
-                      className="p-1 rounded hover:bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X size={14} className="text-black/30" />
-                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); dismissNotification(notification.id) }} className="p-1 rounded hover:bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"><X size={14} className="text-black/30" /></button>
                   </>
                 )
                 return notification.link ? (
-                  <Link
-                    key={notification.id}
-                    to={notification.link}
-                    className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
-                      !notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''
-                    }`}
-                    onClick={() => markAsRead(notification.id)}
-                  >
-                    {notifContent}
-                  </Link>
+                  <Link key={notification.id} to={notification.link} className={`group flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${!notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''}`} onClick={() => markAsRead(notification.id)}>{notifContent}</Link>
                 ) : (
-                  <div
-                    key={notification.id}
-                    className={`flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${
-                      !notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''
-                    }`}
-                    onClick={() => markAsRead(notification.id)}
-                  >
-                    {notifContent}
-                  </div>
+                  <div key={notification.id} className={`group flex gap-3 p-4 hover:bg-black/5 transition-colors cursor-pointer ${!notification.is_read ? 'bg-[var(--av-primary-soft)]/50' : ''}`} onClick={() => markAsRead(notification.id)}>{notifContent}</div>
                 )
               })
             )}
@@ -353,21 +271,13 @@ export default function NotificationBell() {
 
           {notifications.length > 0 && (
             <div className="px-4 py-3 border-t border-black/5 text-center">
-              <Link to="/app/notifications" className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium">
-                View all notifications
-              </Link>
+              <Link to="/app/notifications" className="text-sm text-[var(--av-primary)] hover:text-[var(--av-primary)] font-medium">View all notifications</Link>
             </div>
           )}
         </div>
       )}
 
-      <style>{`
-        @keyframes scale-in {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-scale-in { animation: scale-in 0.15s cubic-bezier(0.2, 0, 0, 1); }
-      `}</style>
+      <style>{`@keyframes scale-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } } .animate-scale-in { animation: scale-in 0.15s cubic-bezier(0.2, 0, 0, 1); }`}</style>
     </div>
   )
 }
