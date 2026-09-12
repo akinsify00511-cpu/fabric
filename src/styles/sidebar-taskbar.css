@@ -1,4 +1,4 @@
-/* Avenize desktop navigation shell — compact, stable, and light-first. */
+/* Avenize desktop navigation shell — a real navigation rail, not a squeezed sidebar. */
 :root {
   --av-sidebar-width: 15rem;
   color-scheme: light;
@@ -8,14 +8,21 @@ html[data-avenize-sidebar="collapsed"] {
   --av-sidebar-width: 4.5rem;
 }
 
-/* Reset dynamic controls before the desktop media rules apply so refresh never
-   exposes native dark/default button chrome for a frame. */
+/* Prevent browser/native chrome from flashing while the shell hydrates. */
 #avenize-sidebar-taskbar,
 #avenize-sidebar-taskbar button {
   -webkit-appearance: none;
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   box-shadow: none;
+}
+
+#avenize-sidebar-taskbar {
+  visibility: hidden;
+}
+
+html[data-avenize-surface="app"] #avenize-sidebar-taskbar {
+  visibility: visible;
 }
 
 #avenize-sidebar-taskbar button {
@@ -28,9 +35,10 @@ html[data-avenize-sidebar="collapsed"] {
   html[data-avenize-surface="app"] aside[class~="md:flex"] {
     width: var(--av-sidebar-width) !important;
     min-width: var(--av-sidebar-width) !important;
+    max-width: var(--av-sidebar-width) !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
-    transition: width 180ms cubic-bezier(.2,.8,.2,1), min-width 180ms cubic-bezier(.2,.8,.2,1), left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1);
+    transition: width 180ms cubic-bezier(.2,.8,.2,1), min-width 180ms cubic-bezier(.2,.8,.2,1), max-width 180ms cubic-bezier(.2,.8,.2,1);
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] aside[class~="md:flex"] {
@@ -70,117 +78,135 @@ html[data-avenize-sidebar="collapsed"] {
     margin-right: var(--av-sidebar-width) !important;
   }
 
-  /* ---------- Collapsed rail ---------- */
+  /* ==================== COLLAPSED NAVIGATION ====================
+     Every navigational item follows the same rule: icon-only in the rail.
+     No clipped labels, no half-collapsed secondary navigation. */
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 0 !important;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child {
     height: 4.25rem;
+    min-height: 4.25rem;
     justify-content: center;
     padding: 0 !important;
     gap: 0 !important;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child img,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child svg {
-    flex: 0 0 auto;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child > div {
     display: none !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) {
-    padding: .65rem .55rem 0 !important;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) button {
+  /* Quick Capture becomes an icon action. Its text is never rendered in the rail. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button {
+    min-width: 0 !important;
+    max-width: 3.35rem !important;
     width: 3.35rem !important;
-    height: 3.35rem !important;
-    margin: 0 auto !important;
+    height: 2.85rem !important;
+    min-height: 2.85rem !important;
+    margin: .15rem auto !important;
     padding: 0 !important;
-    border-radius: 1rem !important;
-    font-size: 0 !important;
-    box-shadow: none !important;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav {
-    padding: .7rem .55rem !important;
-    scrollbar-width: none;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav::-webkit-scrollbar {
-    display: none;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button span {
-    font-size: 0 !important;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button {
-    min-height: 2.75rem;
-    justify-content: center;
-    padding: .45rem !important;
+    justify-content: center !important;
     gap: 0 !important;
-    border-radius: .85rem;
+    border-radius: .9rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button svg:last-child {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > span,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > div:not(:has(svg)) {
     display: none !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div {
-    margin-left: 0 !important;
-    margin-top: .15rem !important;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div a,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div:last-child a {
+  /* All anchors, including secondary links such as Reports / Controls / Risks,
+     use the exact same icon-rail treatment. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] a {
+    position: relative;
     width: 3.35rem !important;
-    min-height: 2.65rem;
+    min-width: 3.35rem !important;
+    max-width: 3.35rem !important;
+    min-height: 2.7rem !important;
+    height: 2.7rem !important;
     margin: .12rem auto !important;
-    padding: .55rem !important;
+    padding: 0 !important;
     justify-content: center !important;
     gap: 0 !important;
     border-radius: .85rem !important;
     font-size: 0 !important;
-    white-space: nowrap;
+    line-height: 0 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a svg {
-    width: 17px;
-    height: 17px;
-    flex: 0 0 auto;
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] a svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex: 0 0 auto !important;
   }
 
+  /* Hide all group labels, chevrons and textual metadata; preserve the icon. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button svg:last-child,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button span,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div > div,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div p {
+    display: none !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Group buttons themselves become subtle section markers rather than
+     squeezed text headers. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav > div > button {
+    width: 3.35rem !important;
+    height: 2.2rem !important;
+    min-height: 2.2rem !important;
+    margin: .25rem auto .1rem !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: var(--av-text-muted) !important;
+  }
+
+  /* Remove the old unexplained mid-rail carousel/slider affordance. */
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] [aria-label*="scroll" i],
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] [aria-label*="carousel" i] {
+    display: none !important;
+  }
+
+  /* Bottom area: account stays identifiable; upgrade is a restrained secondary
+     action rather than another competing blue circle. */
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child {
     padding: .55rem !important;
   }
 
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > a {
     width: 3.35rem !important;
-    height: 2.75rem;
-    margin: 0 auto;
+    min-width: 3.35rem !important;
+    height: 2.7rem !important;
+    margin: .12rem auto !important;
     padding: 0 !important;
-    justify-content: center;
+    justify-content: center !important;
     font-size: 0 !important;
-    border-radius: .9rem;
+    border-radius: .85rem !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button {
-    justify-content: center;
-    padding: .65rem 0 !important;
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child button {
+    width: 3.35rem !important;
+    min-width: 3.35rem !important;
+    min-height: 2.7rem !important;
+    margin: .12rem auto !important;
+    padding: 0 !important;
+    justify-content: center !important;
+    border-radius: .85rem !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button > div:nth-child(2),
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > div button > svg {
-    display: none !important;
-  }
-
-  /* ---------- Dock controls ---------- */
+  /* ==================== TOOLBAR ====================
+     Keep only a compact, neutral dock control. It is not a second navigation
+     system and never occupies content space. */
   #avenize-sidebar-taskbar {
     position: fixed;
     z-index: 60;
@@ -195,18 +221,12 @@ html[data-avenize-sidebar="collapsed"] {
     box-shadow: 0 4px 18px rgba(17,24,39,.08);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    transition: left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1), box-shadow 150ms ease, transform 150ms ease;
+    transition: left 180ms cubic-bezier(.2,.8,.2,1), right 180ms cubic-bezier(.2,.8,.2,1);
     user-select: none;
   }
 
   html[data-avenize-sidebar-dock="left"] #avenize-sidebar-taskbar { left: calc(var(--av-sidebar-width) - 12px); }
   html[data-avenize-sidebar-dock="right"] #avenize-sidebar-taskbar { right: calc(var(--av-sidebar-width) - 12px); }
-
-  #avenize-sidebar-taskbar.is-dragging {
-    cursor: grabbing;
-    box-shadow: 0 8px 24px rgba(17,24,39,.12);
-    transform: scale(1.015);
-  }
 
   #avenize-sidebar-taskbar button {
     width: 30px;
@@ -224,7 +244,6 @@ html[data-avenize-sidebar="collapsed"] {
   #avenize-sidebar-taskbar button:hover { background: var(--av-surface-2); color: var(--av-primary); }
   #avenize-sidebar-taskbar button:focus-visible { outline: 2px solid var(--av-primary); outline-offset: 1px; }
   #avenize-sidebar-taskbar .avenize-sidebar-drag { cursor: grab; color: var(--av-text-muted); }
-  #avenize-sidebar-taskbar.is-dragging .avenize-sidebar-drag { cursor: grabbing; }
   #avenize-sidebar-taskbar .avenize-sidebar-drag:hover { color: var(--av-primary); background: var(--av-primary-soft); }
   .avenize-sidebar-taskbar-divider { width: 1px; height: 18px; background: var(--av-border); margin: 0 2px; }
 }
