@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -20,16 +20,44 @@ import MoreScreen from './src/components/MoreScreen'
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
+const navigationTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.primary,
+    background: colors.background,
+    card: colors.surface,
+    text: colors.text,
+    border: colors.border,
+    notification: colors.danger,
+  },
+}
+
 function MainTabs() {
   return (
     <Tab.Navigator
+      sceneStyle={{ backgroundColor: colors.background }}
       screenOptions={{
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: { fontWeight: '700', fontSize: fontSize.lg },
+        headerShadowVisible: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textTertiary,
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border, height: 64, paddingBottom: 8, paddingTop: 6 },
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          height: 72,
+          paddingBottom: 10,
+          paddingTop: 8,
+          elevation: 8,
+          shadowColor: '#0F172A',
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: -2 },
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
       <Tab.Screen name="Capture" component={CaptureScreen} options={{ tabBarIcon: ({ color, size }) => <Ionicons name="sparkles" color={color} size={size} /> }} />
@@ -45,11 +73,11 @@ function RootNavigator() {
   const { session, loading } = useAuth()
 
   if (loading) {
-    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.surface2 }}><ActivityIndicator size="large" color={colors.primary} /></View>
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}><ActivityIndicator size="large" color={colors.primary} /></View>
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
       {session ? <Stack.Screen name="Main" component={MainTabs} /> : <Stack.Screen name="Login" component={LoginScreen} />}
     </Stack.Navigator>
   )
@@ -59,13 +87,13 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <NavigationContainer>
+        <NavigationContainer theme={navigationTheme}>
           {!isConfigured && (
-            <View style={{ backgroundColor: colors.warning, padding: spacing.sm }}>
-              <Text style={{ color: colors.text, fontSize: fontSize.xs, textAlign: 'center' }}>Avenize is waiting for its secure environment configuration.</Text>
+            <View style={{ backgroundColor: colors.warningSoft, padding: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.warning }}>
+              <Text style={{ color: colors.warning, fontSize: fontSize.xs, textAlign: 'center', fontWeight: '600' }}>Avenize is waiting for its secure environment configuration.</Text>
             </View>
           )}
-          <StatusBar style="dark" />
+          <StatusBar style="dark" backgroundColor={colors.surface} />
           <RootNavigator />
         </NavigationContainer>
       </AuthProvider>
