@@ -95,7 +95,7 @@ html[data-avenize-surface="app"] #avenize-sidebar-taskbar {
     display: none !important;
   }
 
-  /* Buttons such as Quick Capture: icon only, never a clipped word. */
+  /* All sidebar action buttons, including Quick Capture, become icon-only when folded. */
   html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button {
     min-width: 0 !important;
     max-width: 3.35rem !important;
@@ -110,10 +110,22 @@ html[data-avenize-surface="app"] #avenize-sidebar-taskbar {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: clip !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    color: var(--av-text-secondary) !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > span {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > span,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > p,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button > label {
     display: none !important;
+  }
+
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] button svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex: 0 0 auto !important;
+    color: currentColor !important;
   }
 
   /* Every anchor keeps its icon and exposes its label through the browser tooltip. */
