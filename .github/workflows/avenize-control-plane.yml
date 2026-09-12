@@ -45,15 +45,21 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           if [[ -z "${VERCEL_TOKEN:-}" || -z "${VERCEL_ORG_ID:-}" || -z "${VERCEL_PROJECT_ID:-}" ]]; then
             echo "Vercel deployment credentials are unavailable; relying on dedicated GitHub production credentials."
             exit 0
           fi
           npm i -g vercel
           rm -rf .vercel
-          vercel link --yes --project="${VERCEL_PROJECT_ID}" --scope="${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"
-          vercel env pull .env.production.local --environment=production --yes --token="${VERCEL_TOKEN}"
+          if ! vercel link --yes --project="${VERCEL_PROJECT_ID}" --scope="${VERCEL_ORG_ID}" --token="${VERCEL_TOKEN}"; then
+            echo "::warning::Vercel credentials are configured but could not authenticate. Continuing with GitHub/Supabase production credentials."
+            exit 0
+          fi
+          if ! vercel env pull .env.production.local --environment=production --yes --token="${VERCEL_TOKEN}"; then
+            echo "::warning::Vercel environment pull failed. Continuing with GitHub/Supabase production credentials."
+            exit 0
+          fi
           python3 - <<'PY'
           import os
           from pathlib import Path
