@@ -23,9 +23,17 @@ test.describe('Keyboard Navigation', () => {
   test('[Keyboard] Login form can be submitted with keyboard only', async ({ page }) => {
     let signInRequestSeen = false
 
-    // Keep this login test independent of demo/local auth state. Intercept the
-    // auth token request so the test verifies the real form submission without
-    // requiring production credentials.
+    // Keep this login test independent of production credentials and the
+    // separate rate-limit contract. The form should reach Supabase sign-in;
+    // rate-limit availability is tested by the security suite.
+    await page.route('**/rest/v1/rpc/check_auth_rate_limit**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([{ allowed: true, attempts: 0, retry_after: 0 }]),
+      })
+    })
+
     await page.route('**/auth/v1/token**', async (route) => {
       signInRequestSeen = true
       await route.fulfill({
