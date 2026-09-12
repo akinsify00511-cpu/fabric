@@ -24,7 +24,7 @@ if [ -z "$EMAIL" ] || [ -z "$PASSWORD" ]; then [ -n "$SERVICE_KEY" ] || fail "co
 AUTH=(-H "apikey: $KEY" -H "Content-Type: application/json")
 rpc(){ curl -sS -X POST "$BASE/rest/v1/rpc/$1" "${AUTH[@]}" -H "Authorization: Bearer $2" -d "$3"; }
 printf '\nAvenize Production Journey\n──────────────────────────\n'
-CODE=$(curl -sS -L -o /dev/null -w '%{http_code}' "$APP_URL/"); [ "$CODE" = "200" ] && pass "frontend" "$APP_URL returned 200" || fail "frontend" "returned final HTTP $CODE"
+CODE=$(curl -sS -L -o /dev/null -w '%{http_code}' "$APP_URL/app"); [ "$CODE" = "200" ] && pass "frontend" "$APP_URL/app returned 200" || fail "frontend" "returned final HTTP $CODE"
 for FN in subscription-management paystack-webhook email-service campaign-send; do CODE=$(curl -sS -o /dev/null -w '%{http_code}' -X OPTIONS "$BASE/functions/v1/$FN" -H "apikey: $KEY"); [ "$CODE" != "404" ] && pass "edge/$FN" "deployed (HTTP $CODE)" || fail "edge/$FN" "function missing"; done
 if [ -z "$EMAIL" ] || [ -z "$PASSWORD" ]; then
   STAMP=$(date +%s); EMAIL="e2e-${STAMP}@example.com"; PASSWORD="E2e!${STAMP}aZ#x"
