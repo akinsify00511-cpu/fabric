@@ -59,10 +59,10 @@ test.describe('Keyboard Navigation', () => {
     await page.keyboard.press('Tab')
     await page.keyboard.type('password123')
 
-    // Submit from the password control itself. This is the native form
-    // keyboard contract and works consistently on desktop browsers and mobile
-    // WebKit, where Tab-to-button is not a reliable keyboard interaction.
-    await password.press('Enter')
+    // Submit from the focused password control using the page keyboard API.
+    // This mirrors the real Enter key while avoiding WebKit's intermittent
+    // element-level Enter dispatch issue on password inputs.
+    await page.keyboard.press('Enter')
 
     await expect.poll(() => signInRequestSeen, { timeout: 5000 }).toBe(true)
     await expect(page).toHaveURL(/\/login/)
