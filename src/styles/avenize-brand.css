@@ -1,17 +1,18 @@
 /* ============================================
-   AVENIZE DESIGN SYSTEM v6 - High Contrast Light
-   ChatGPT-inspired hierarchy, Avenize identity retained.
+   AVENIZE DESIGN SYSTEM v7 - Near-black standard
+   Avenize owns the neutral interface. Customer branding
+   is reserved for the Sarah/assistant action and branded
+   moments; it must never reduce readability.
    ============================================ */
 
 :root {
-  /* Identity / accent */
-  --av-primary: #155BB4;
-  --av-primary-hover: #1247A0;
-  --av-primary-active: #0F3B86;
-  --av-primary-soft: rgba(21, 91, 180, 0.08);
-  --av-primary-subtle: rgba(21, 91, 180, 0.04);
+  /* Standard Avenize UI: near-black, white, ash. */
+  --av-primary: #171717;
+  --av-primary-hover: #000000;
+  --av-primary-active: #000000;
+  --av-primary-soft: rgba(17, 17, 17, 0.06);
+  --av-primary-subtle: rgba(17, 17, 17, 0.035);
 
-  /* Light hierarchy: canvas -> surface -> card -> contextual panel */
   --av-home-bg: #F7F7F8;
   --av-surface: #FFFFFF;
   --av-surface-2: #F2F2F3;
@@ -19,34 +20,33 @@
   --av-surface-elevated: #FFFFFF;
   --av-surface-card: #F2F2F3;
   --av-surface-card-hover: #EAEAED;
-  --av-surface-info: #EFF6FF;
-  --av-surface-info-strong: #E0EEFF;
+  --av-surface-info: #F2F2F3;
+  --av-surface-info-strong: #E9E9EB;
 
-  /* Strong readable text */
   --av-text: #171717;
-  --av-text-secondary: #4B5563;
-  --av-text-muted: #6B7280;
+  --av-text-secondary: #374151;
+  --av-text-muted: #4B5563;
   --av-text-disabled: #9CA3AF;
 
-  /* Visible but restrained borders */
   --av-border: #D9D9DE;
   --av-border-strong: #B8BAC2;
 
-  /* Semantic */
   --av-success: #15803D;
   --av-success-soft: rgba(21, 128, 61, 0.08);
   --av-warning: #A16207;
   --av-warning-soft: rgba(161, 98, 7, 0.10);
   --av-danger: #B91C1C;
   --av-danger-soft: rgba(185, 28, 28, 0.08);
-  --av-info: #155BB4;
-  --av-info-soft: rgba(21, 91, 180, 0.08);
+  --av-info: #374151;
+  --av-info-soft: rgba(17, 17, 17, 0.06);
 
-  /* Customer accent is decorative/interactive only; readability tokens stay ours. */
-  --av-accent: #155BB4;
-  --av-accent-soft: rgba(21, 91, 180, 0.08);
+  /* Only Sarah may use the owner's/customer accent. */
+  --av-owner-accent: #171717;
+  --av-owner-accent-soft: rgba(17, 17, 17, 0.08);
+  --av-accent: var(--av-owner-accent);
+  --av-accent-soft: var(--av-owner-accent-soft);
 
-  --av-gradient: linear-gradient(135deg, #155BB4 0%, #2B6CB0 100%);
+  --av-gradient: linear-gradient(135deg, #171717 0%, #2B2B2B 100%);
   --av-shadow-sm: 0 1px 2px rgba(15, 23, 42, .05);
   --av-shadow-md: 0 2px 6px rgba(15, 23, 42, .07), 0 8px 20px rgba(15, 23, 42, .05);
   --av-shadow-lg: 0 8px 20px rgba(15, 23, 42, .08), 0 16px 32px rgba(15, 23, 42, .05);
@@ -68,16 +68,17 @@
   --av-glass-bg-strong: rgba(255, 255, 255, 0.98);
   --av-glass-border: rgba(217, 217, 222, 0.9);
   --av-glass-blur: 16px;
-  --av-atmosphere: radial-gradient(1000px 500px at 8% -10%, rgba(21, 91, 180, 0.045), transparent 62%), radial-gradient(800px 420px at 100% 0%, rgba(21, 91, 180, 0.025), transparent 60%);
+  --av-atmosphere: none;
 
+  /* Neutral category surfaces. No blue category cards. */
   --av-grad-health: #F2F2F3;
-  --av-grad-revenue: #EFF6FF;
-  --av-grad-cash: #F5F3FF;
-  --av-grad-risk: #FEF2F2;
-  --av-grad-opportunity: #FFFBEB;
-  --av-grad-operations: #F0FDF4;
-  --av-grad-people: #FDF4FF;
-  --av-grad-intelligence: #EFF6FF;
+  --av-grad-revenue: #F2F2F3;
+  --av-grad-cash: #F2F2F3;
+  --av-grad-risk: #F7F7F8;
+  --av-grad-opportunity: #F2F2F3;
+  --av-grad-operations: #F2F2F3;
+  --av-grad-people: #F2F2F3;
+  --av-grad-intelligence: #F2F2F3;
 
   --av-transition-fast: 100ms cubic-bezier(0.2, 0, 0, 1);
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
@@ -98,7 +99,7 @@
 .av-warning { color: var(--av-warning) !important; }
 .av-danger { color: var(--av-danger) !important; }
 
-/* Canonical card language */
+/* Canonical card language: ash by default, no blue cards. */
 .av-card,
 .card,
 .card-stat,
@@ -120,13 +121,13 @@
   background: var(--av-surface-info) !important;
   background-color: var(--av-surface-info) !important;
   color: var(--av-text) !important;
-  border: 1px solid #BFDBFE !important;
+  border: 1px solid var(--av-border) !important;
   border-radius: var(--av-radius-xl);
   box-shadow: var(--av-shadow-md) !important;
 }
 .card-hero::before {
-  background: radial-gradient(circle, rgba(21, 91, 180, 0.10) 0%, rgba(21, 91, 180, 0.03) 45%, transparent 72%) !important;
-  opacity: 1 !important;
+  background: none !important;
+  opacity: 0 !important;
 }
 
 .av-glass-card {
@@ -140,12 +141,10 @@
 }
 .av-backdrop {
   background-color: var(--av-home-bg) !important;
-  background-image: var(--av-atmosphere) !important;
-  background-attachment: fixed;
+  background-image: none !important;
   color: var(--av-text) !important;
 }
 
-/* Legacy light utility surfaces: preserve light backgrounds and readable text. */
 .bg-white, .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 {
   color: var(--av-text) !important;
 }
@@ -153,7 +152,6 @@
 .bg-gray-50, .bg-slate-50 { background-color: var(--av-surface-2) !important; }
 .bg-gray-100, .bg-slate-100 { background-color: var(--av-surface-3) !important; }
 
-/* White text is reserved for genuinely filled controls/brand surfaces. */
 .av-card .text-white,
 .av-card-info .text-white,
 .av-glass-card .text-white,
@@ -182,24 +180,39 @@
 }
 .pill:hover { background: var(--av-surface-2) !important; color: var(--av-text) !important; }
 
+/* Standard controls are near-black. Customer branding is not global UI chrome. */
 .btn-filled,
 .btn-gradient,
 .av-primary-bg,
 button[class*="bg-"][class*="blue"],
 a[class*="bg-"][class*="blue"] {
+  background: var(--av-primary) !important;
+  background-color: var(--av-primary) !important;
+  border-color: var(--av-primary) !important;
   color: #FFFFFF !important;
 }
 
-/* Do not allow customer branding to create unreadable text/surfaces. */
-[data-brand-color],
-[data-custom-brand],
-.customer-brand {
-  color: inherit;
+/* Sarah is the single owner-brandable accent surface. Components may opt in. */
+.sarah-brand,
+[data-brand-sarah="true"],
+.sarah-button {
+  --sarah-accent: var(--av-owner-accent);
+  color: #FFFFFF !important;
+  background: var(--sarah-accent) !important;
+  border-color: var(--sarah-accent) !important;
+}
+.sarah-brand-outline,
+[data-brand-sarah="outline"] {
+  color: var(--av-owner-accent) !important;
+  border-color: var(--av-owner-accent) !important;
+  background: transparent !important;
 }
 
-/* ============================================
-   MOBILE READABILITY CONTRACT
-   ============================================ */
+/* Customer branding must never override Avenize readability tokens. */
+[data-brand-color],
+[data-custom-brand],
+.customer-brand { color: inherit; }
+
 @media (max-width: 767px) {
   html, body, #root {
     background: var(--av-home-bg) !important;
@@ -209,9 +222,7 @@ a[class*="bg-"][class*="blue"] {
   main, section, article, nav, header, footer { color: var(--av-text); }
 
   .bg-white { background-color: #FFFFFF !important; color: var(--av-text) !important; }
-  .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 {
-    color: var(--av-text) !important;
-  }
+  .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100 { color: var(--av-text) !important; }
 
   .av-card, .card, .card-stat, .tile-launcher {
     background: var(--av-surface-card) !important;
@@ -244,7 +255,7 @@ a[class*="bg-"][class*="blue"] {
 
   .av-backdrop {
     background-color: var(--av-home-bg) !important;
-    background-image: var(--av-atmosphere) !important;
+    background-image: none !important;
   }
 
   button, [role="button"], a { -webkit-tap-highlight-color: transparent; }
