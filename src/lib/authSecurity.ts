@@ -11,10 +11,10 @@
 //   3. After a SUCCESS:         resetAuthRateLimit   (clears past failures)
 //   4. Always:                  logSecurityEvent     (best-effort audit)
 //
-// Availability: these RPCs may be absent on deployments that have not applied
-// the migration. Every function FAILS OPEN for the check/reset paths (auth
-// must never be blocked because security telemetry is missing) and fails
-// silently for logging.
+// Availability: rate limiting is a security control, not optional telemetry.
+// If the RPC is unavailable or malformed, authentication MUST fail closed so
+// a missing migration or broken security path cannot silently disable brute-
+// force protection.
 // ============================================
 
 import { supabase } from './supabase'
@@ -31,7 +31,14 @@ export interface RateLimitOptions {
   lockoutSeconds: number
 }
 
-const FAIL_OPEN: RateLimitVerdict = { allowed: true, attempts: 0, retryAfterSeconds: 0 }
+// A security-control outage is deliberately fail-closed. Callers can surface
+// this as a temporary auth-service-unavailable message rather than proceeding
+// without brute-force protection.
+const SECURITY_CONTROL_UNAVAILABLE: RateLimitVerdict = {
+  allowed: false,
+  attempts: 0,
+  retryAfterSeconds: 60,
+}
 
 // PostgREST returns set-returning (TABLE) RPCs as an ARRAY of rows. Reading
 // `.allowed` off the array itself yields undefined — which a naive
@@ -50,7 +57,7 @@ export function normalizeRateLimitRows(data: unknown): RateLimitVerdict | null {
 }
 
 function warnUnavailable(name: string, error: unknown) {
-  console.warn(`[authSecurity] ${name} unavailable (migration may not be applied):`, error)
+  console.error(`[authSecurity] SECURITY CONTROL UNAVAILABLE: ${name}:`, error)
 }
 
 export async function checkAuthRateLimit(
@@ -68,12 +75,12 @@ export async function checkAuthRateLimit(
     })
     if (error) {
       warnUnavailable('check_auth_rate_limit', error.message)
-      return FAIL_OPEN
+      return SECURITY_CONTROL_UNAVAILABLE
     }
-    return normalizeRateLimitRows(data) ?? FAIL_OPEN
+    return normalizeRateLimitRows(data) ?? SECURITY_CONTROL_UNAVAILABLE
   } catch (err) {
     warnUnavailable('check_auth_rate_limit', err)
-    return FAIL_OPEN
+    return SECURITY_CONTROL_UNAVAILABLE
   }
 }
 
@@ -92,12 +99,12 @@ export async function recordAuthFailure(
     })
     if (error) {
       warnUnavailable('record_auth_failure', error.message)
-      return FAIL_OPEN
+      return SECURITY_CONTROL_UNAVAILABLE
     }
-    return normalizeRateLimitRows(data) ?? FAIL_OPEN
+    return normalizeRateLimitRows(data) ?? SECURITY_CONTROL_UNAVAILABLE
   } catch (err) {
     warnUnavailable('record_auth_failure', err)
-    return FAIL_OPEN
+    return SECURITY_CONTROL_UNAVAILABLE
   }
 }
 
@@ -106,9 +113,10 @@ export async function resetAuthRateLimit(
   action: 'login' | 'signup' | 'password_reset',
 ): Promise<void> {
   try {
-    await supabase.rpc('reset_auth_rate_limit', { p_identifier: identifier, p_action: action })
-  } catch {
-    // best-effort
+    const { error } = await supabase.rpc('reset_auth_rate_limit', { p_identifier: identifier, p_action: action })
+    if (error) warnUnavailable('reset_auth_rate_limit', error.message)
+  } catch (err) {
+    warnUnavailable('reset_auth_rate_limit', err)
   }
 }
 
@@ -125,7 +133,7 @@ export function logSecurityEvent(
       p_metadata: metadata,
       p_success: success,
     })
-    .then(() => {}, () => {})
+    .then(() => {}, (err) => warnUnavailable('log_security_event', err))
 }
 
 export function rateLimitMessage(verdict: RateLimitVerdict, noun: string): string {
