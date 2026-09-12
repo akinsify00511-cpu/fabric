@@ -7,51 +7,41 @@ html[data-avenize-sidebar="collapsed"] {
   --av-sidebar-width: 4.25rem;
 }
 
-html[data-avenize-sidebar-dock="right"] {
-  --av-sidebar-side: right;
-}
-
-html[data-avenize-sidebar-dock="left"] {
-  --av-sidebar-side: left;
-}
-
 @media (min-width: 768px) {
-  /* Shell sidebar */
-  html[data-avenize-surface="app"] aside.hidden.md\\:flex {
+  html[data-avenize-surface="app"] aside[class~="md:flex"] {
     width: var(--av-sidebar-width) !important;
     transition: width 180ms ease, left 180ms ease, right 180ms ease;
     overflow: hidden;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] aside.hidden.md\\:flex {
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] aside[class~="md:flex"] {
     left: auto !important;
     right: 0 !important;
     border-right: 0 !important;
     border-left: 1px solid var(--av-border) !important;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] aside.hidden.md\\:flex {
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] aside[class~="md:flex"] {
     left: 0 !important;
     right: auto !important;
     border-left: 0 !important;
     border-right: 1px solid var(--av-border) !important;
   }
 
-  /* Header tracks the dock and collapsed width. */
-  html[data-avenize-surface="app"] header.hidden.md\\:flex {
+  html[data-avenize-surface="app"] header[class~="md:flex"] {
     left: var(--av-sidebar-width) !important;
     right: 0 !important;
     transition: left 180ms ease, right 180ms ease;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] header.hidden.md\\:flex {
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] header[class~="md:flex"] {
     left: 0 !important;
     right: var(--av-sidebar-width) !important;
   }
 
   /* Common Shell content spacing utilities. */
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] .md\\:ml-60,
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] .md\\:pl-60 {
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] [class~="md:ml-60"],
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="right"] [class~="md:pl-60"] {
     margin-left: 0 !important;
     padding-left: 0 !important;
     margin-right: var(--av-sidebar-width) !important;
@@ -59,8 +49,8 @@ html[data-avenize-sidebar-dock="left"] {
     transition: margin 180ms ease, padding 180ms ease;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] .md\\:ml-60,
-  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] .md\\:pl-60 {
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] [class~="md:ml-60"],
+  html[data-avenize-surface="app"][data-avenize-sidebar-dock="left"] [class~="md:pl-60"] {
     margin-left: var(--av-sidebar-width) !important;
     padding-left: var(--av-sidebar-width) !important;
     margin-right: 0 !important;
@@ -68,49 +58,43 @@ html[data-avenize-sidebar-dock="left"] {
     transition: margin 180ms ease, padding 180ms ease;
   }
 
-  /* In collapsed mode, keep the navigation usable as an icon rail. */
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex .flex-1,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav {
-    overflow-x: hidden;
-  }
-
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav a,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav button {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button {
     justify-content: center;
     gap: 0;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav a > :not(svg),
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav button > :not(svg),
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex nav button svg:last-child {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav a > :not(svg),
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button > :not(svg),
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] nav button svg:last-child {
     display: none;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:first-child {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child {
     justify-content: center;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:first-child > div {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:first-child > div {
     display: none;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:nth-child(2) button {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) button {
     padding-left: 0;
     padding-right: 0;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:nth-child(2) button > :not(svg) {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-child(2) button > :not(svg) {
     display: none;
   }
 
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:nth-last-child(2) span,
-  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside.hidden.md\\:flex > div:last-child > button > div:not(:first-child) {
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:nth-last-child(2) span,
+  html[data-avenize-surface="app"][data-avenize-sidebar="collapsed"] aside[class~="md:flex"] > div:last-child > button > div:not(:first-child) {
     display: none;
   }
 
-  /* Compact floating taskbar controls. */
+  /* Floating taskbar controls. */
   #avenize-sidebar-taskbar {
     position: fixed;
     z-index: 60;
@@ -119,7 +103,7 @@ html[data-avenize-sidebar-dock="left"] {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    transition: left 180ms ease, right 180ms ease, transform 180ms ease;
+    transition: left 180ms ease, right 180ms ease;
   }
 
   html[data-avenize-sidebar-dock="right"] #avenize-sidebar-taskbar {
