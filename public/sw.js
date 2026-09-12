@@ -1,13 +1,12 @@
 // Avenize Service Worker - Advanced Offline Support & Caching
-// Release version is intentionally bumped when auth/runtime contracts change.
-// v10: invalidate potentially corrupted/stale hashed JavaScript bundles.
-const CACHE_VERSION = 'v10'
+// v11: invalidate legacy branding/PWA icon caches after the Avenize brand correction.
+const CACHE_VERSION = 'v11'
 const CACHE_PREFIX = `avenize-${CACHE_VERSION}`
 const STATIC_CACHE = `${CACHE_PREFIX}-static`
 const DYNAMIC_CACHE = `${CACHE_PREFIX}-dynamic`
 const IMAGE_CACHE = `${CACHE_PREFIX}-images`
 
-const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.svg']
+const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.svg', '/icons/icon-192x192.svg', '/icons/icon-512x512.svg', '/logo.png']
 const MAX_CACHE_ITEMS = 100
 const MAX_IMAGE_CACHE_ITEMS = 50
 
@@ -48,10 +47,6 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(cacheFirstForImages(request))
     return
   }
-  // Hashed application assets must never be served from an old service-worker
-  // cache. A stale HTML shell can reference a hash that no longer exists in the
-  // current deployment, causing a missing JS request to receive index.html and
-  // fail strict module MIME checking. Revalidate against the network first.
   if (url.origin === location.origin && url.pathname.startsWith('/assets/')) {
     event.respondWith(networkFirstForStaticAsset(request))
     return
@@ -198,7 +193,7 @@ self.addEventListener('push', (event) => {
   if (!event.data) return
   const data = event.data.json()
   event.waitUntil(self.registration.showNotification(data.title || 'Avenize', {
-    body: data.body || 'You have a new notification', icon: '/favicon.svg', badge: '/favicon.svg', vibrate: [100, 50, 100],
+    body: data.body || 'You have a new notification', icon: '/favicon.svg?v=avenize-brand-1', badge: '/favicon.svg?v=avenize-brand-1', vibrate: [100, 50, 100],
     data: { url: data.url || '/', dateOfArrival: Date.now() }, actions: data.actions || [],
   }))
 })
