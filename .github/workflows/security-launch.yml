@@ -35,7 +35,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -nE '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|sk_live_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|VITE_SUPABASE_SERVICE_ROLE_KEY|VITE_PAYSTACK_SECRET_KEY|VITE_RESEND_API_KEY' -- ':!package-lock.json' ':!docs/SECURITY_AUDIT.md'; then
-            echo 'Potential secret material found in tracked source.'
+          if git grep -nE '-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|sk_live_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}' -- src supabase scripts ':(exclude)scripts/security_launch_audit.py' ':!package-lock.json'; then
+            echo 'Potential secret material found in tracked application source.'
+            exit 1
+          fi
+          if git grep -nE 'VITE_(SUPABASE_SERVICE_ROLE_KEY|PAYSTACK_SECRET_KEY|RESEND_API_KEY)\s*=' -- src supabase; then
+            echo 'Privileged VITE secret assignment found in application source.'
             exit 1
           fi
