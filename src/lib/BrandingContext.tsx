@@ -76,6 +76,30 @@ type BrandingContextType = {
 type Timeout = ReturnType<typeof setTimeout>
 const BrandingContext = createContext<BrandingContextType | undefined>(undefined)
 
+function rgbParts(value: string): [number, number, number] | null {
+  const hex = value.trim().match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i)
+  if (hex) {
+    const raw = hex[1].length === 3 ? hex[1].split('').map((c) => c + c).join('') : hex[1]
+    return [parseInt(raw.slice(0, 2), 16), parseInt(raw.slice(2, 4), 16), parseInt(raw.slice(4, 6), 16)]
+  }
+  const rgb = value.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i)
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : null
+}
+
+function isLightColor(value: string) {
+  const parts = rgbParts(value)
+  if (!parts) return false
+  const [r, g, b] = parts.map((channel) => {
+    const c = channel / 255
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.62
+}
+
+function readableText(text: string, background: string, darkFallback = '#111827') {
+  return isLightColor(background) && isLightColor(text) ? darkFallback : text
+}
+
 function setThemeVariables(branding: Branding) {
   const root = document.documentElement
   const dark = branding.theme_mode === 'dark' || (branding.theme_mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -83,7 +107,11 @@ function setThemeVariables(branding: Branding) {
   const accent = dark ? branding.dark_accent_color : branding.accent_color
   const bg = dark ? branding.dark_background_color : branding.background_color
   const surface = dark ? branding.dark_surface_color : branding.surface_color
-  const text = dark ? branding.dark_text_color : branding.text_color
+  const text = dark ? branding.dark_text_color : readableText(branding.text_color, bg)
+  const card = dark ? surface : (isLightColor(bg) && isLightColor(surface) ? '#F3F4F6' : surface)
+  const secondary = dark ? 'rgba(255,255,255,0.72)' : 'rgba(17,24,39,0.72)'
+  const muted = dark ? 'rgba(255,255,255,0.52)' : 'rgba(17,24,39,0.56)'
+  const border = dark ? 'rgba(255,255,255,0.18)' : 'rgba(17,24,39,0.18)'
 
   root.style.setProperty('--av-primary', primary)
   root.style.setProperty('--av-primary-hover', primary)
@@ -92,13 +120,18 @@ function setThemeVariables(branding: Branding) {
   root.style.setProperty('--av-bg', bg)
   root.style.setProperty('--av-background', bg)
   root.style.setProperty('--av-surface', surface)
-  root.style.setProperty('--av-surface-2', surface)
-  root.style.setProperty('--av-surface-3', bg)
+  root.style.setProperty('--av-surface-2', card)
+  root.style.setProperty('--av-surface-3', dark ? surface : '#E5E7EB')
+  root.style.setProperty('--av-surface-card', card)
+  root.style.setProperty('--av-surface-card-hover', dark ? '#252525' : '#EEF0F3')
+  root.style.setProperty('--av-surface-info', dark ? '#17263A' : '#EFF6FF')
+  root.style.setProperty('--av-surface-info-strong', dark ? '#203A5C' : '#E0EEFF')
   root.style.setProperty('--av-text', text)
   root.style.setProperty('--av-text-primary', text)
-  root.style.setProperty('--av-text-secondary', `color-mix(in srgb, ${text} 72%, transparent)`)
-  root.style.setProperty('--av-text-muted', `color-mix(in srgb, ${text} 52%, transparent)`)
-  root.style.setProperty('--av-border', `color-mix(in srgb, ${text} 20%, transparent)`)
+  root.style.setProperty('--av-text-secondary', secondary)
+  root.style.setProperty('--av-text-muted', muted)
+  root.style.setProperty('--av-border', border)
+  root.style.setProperty('--av-border-strong', dark ? 'rgba(255,255,255,0.28)' : 'rgba(17,24,39,0.30)')
   root.style.setProperty('--avenize-mark-color', dark ? '#FFFFFF' : '#111111')
 
   root.style.setProperty('--avenize-primary', primary)
