@@ -14,3 +14,13 @@ a[href="/terms"]:hover,
 a[href="/privacy"]:hover {
   color: #004a9f !important;
 }
+
+/* Mobile interactive controls must remain comfortably tappable even when an
+   icon-only control has intentionally compact visual chrome. This is scoped to
+   touch-sized viewports so desktop density is unchanged. */
+@media (max-width: 768px) {
+  button:not([disabled]) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
