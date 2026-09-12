@@ -18,7 +18,7 @@ import {
 interface ActionItem { id: string; title: string; to: string; tone: 'red' | 'amber' | 'blue'; detail?: string }
 
 export default function BusinessHomeExperience() {
-  const { staff } = useAuth()
+  const { session, staff, membership } = useAuth()
   const ctx = useExperienceContext()
   const bid = staff?.business_id ?? null
   const [brain, setBrain] = useState<BusinessBrain | null>(null)
@@ -32,7 +32,19 @@ export default function BusinessHomeExperience() {
   const homeConfig = useMemo(() => getFunctionHome(fn, sen), [fn, sen])
 
   useEffect(() => {
-    if (!bid) return
+    // Membership resolution is authoritative. Do not start tenant-scoped
+    // queries while auth is still hydrating or before staff membership exists.
+    // This closes the intermittent first-load window where PostgREST can see
+    // an incomplete auth state and return a transient 4xx for tenant queries.
+    if (membership !== 'member' || !session?.user?.id || !bid) {
+      setBrain(null)
+      setHealth(null)
+      setRecommendations([])
+      setLedger(null)
+      setActions([])
+      return
+    }
+
     let active = true
 
     const load = async () => {
@@ -81,7 +93,7 @@ export default function BusinessHomeExperience() {
 
     void load()
     return () => { active = false }
-  }, [bid])
+  }, [bid, membership, session?.user?.id])
 
   return (
     <main aria-label={`${functionLabel(fn)} home`} style={{ background: 'var(--av-home-bg)', minHeight: '100%' }}>
