@@ -1,41 +1,46 @@
-// Avenize mobile theme — mirrors the web brand tokens (unified primary #155BB4).
-// Single source of truth for colors so mobile and web stay in sync. The web
-// darkened its primary from #4285F4 to #155BB4 for WCAG-AA (Session 18); mobile
-// matches so all surfaces share one primary.
+// Avenize mobile theme — high-contrast light system shared with the web product.
+// White is the canvas/elevated surface; standard cards use ash so content never
+// disappears into the page. Customer branding can still customize the brand
+// accent, but core readability is protected by these defaults.
 
 export const colors = {
   primary: '#155BB4',
   primaryHover: '#1247A0',
   primaryActive: '#0F3B86',
-  primarySoft: 'rgba(21, 91, 180, 0.08)',
+  primarySoft: 'rgba(21, 91, 180, 0.10)',
 
+  background: '#F7F9FC',
   surface: '#FFFFFF',
-  surface2: '#F8F9FA',
-  surface3: '#F1F3F4',
-  surfaceInverse: '#202124',
+  surface2: '#F3F4F6',
+  surface3: '#E5E7EB',
+  surfaceCard: '#F3F4F6',
+  surfaceCardHover: '#EEF0F3',
+  surfaceInfo: '#EFF6FF',
+  surfaceInverse: '#111827',
 
-  text: '#202124',
-  textSecondary: '#5F6368',
-  textTertiary: '#9AA0A6',
-  textDisabled: '#DADCE0',
+  text: '#111827',
+  textSecondary: '#374151',
+  textTertiary: '#6B7280',
+  textDisabled: '#9CA3AF',
+  textOnPrimary: '#FFFFFF',
 
-  border: '#E8EAED',
-  borderStrong: '#DADCE0',
+  border: '#D1D5DB',
+  borderStrong: '#9CA3AF',
 
-  success: '#34A853',
-  successSoft: 'rgba(52, 168, 83, 0.08)',
-  warning: '#FBBC05',
-  warningSoft: 'rgba(251, 188, 5, 0.08)',
-  danger: '#EA4335',
-  dangerSoft: 'rgba(234, 67, 53, 0.08)',
-  info: '#4285F4',
+  success: '#15803D',
+  successSoft: 'rgba(21, 128, 61, 0.10)',
+  warning: '#A16207',
+  warningSoft: 'rgba(161, 98, 7, 0.12)',
+  danger: '#B91C1C',
+  dangerSoft: 'rgba(185, 28, 28, 0.10)',
+  info: '#155BB4',
 
-  accent: '#8B5CF6',
-  accentHr: '#8B5CF6',
-  accentSales: '#4285F4',
-  accentFinance: '#34A853',
-  accentProjects: '#FBBC05',
-  accentComms: '#EC4899',
+  accent: '#7C3AED',
+  accentHr: '#7C3AED',
+  accentSales: '#155BB4',
+  accentFinance: '#15803D',
+  accentProjects: '#A16207',
+  accentComms: '#BE185D',
 } as const
 
 export const spacing = {
@@ -59,24 +64,24 @@ export const fontWeight = {
 
 export const shadows = {
   elevation1: {
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 3,
     elevation: 1,
   },
   elevation2: {
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.10,
+    shadowRadius: 6,
     elevation: 2,
   },
   elevation3: {
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
     elevation: 4,
   },
 }
