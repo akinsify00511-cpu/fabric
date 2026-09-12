@@ -46,7 +46,6 @@
   --av-accent-soft: rgba(124, 58, 237, 0.08);
 
   /* ========== GRADIENT ========== */
-  /* Kept for intentional brand actions only; never use as a standard card fill. */
   --av-gradient: linear-gradient(135deg, #155BB4 0%, #2B6CB0 100%);
 
   /* ========== SHADOWS ========== */
@@ -92,7 +91,6 @@
   --av-transition-normal: 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Base semantic utilities */
 .av-surface { background-color: var(--av-surface); }
 .av-surface-2 { background-color: var(--av-surface-2); }
 .av-surface-elevated { background-color: var(--av-surface-elevated); }
@@ -108,8 +106,6 @@
 .av-warning { color: var(--av-warning); }
 .av-danger { color: var(--av-danger); }
 
-/* Premium card primitives: ash is the default card surface; light blue is
-   reserved for information/intelligence. */
 .av-card {
   background-color: var(--av-surface-card);
   color: var(--av-text);
@@ -140,9 +136,6 @@
   background-attachment: fixed;
 }
 
-/* Global card primitives are also defined later in index.css. !important is
-   deliberate here so legacy page styles cannot reintroduce white-on-white,
-   neon-blue, or black standard cards. */
 .card,
 .card-stat,
 .tile-launcher {
@@ -161,8 +154,6 @@
   background-color: var(--av-surface-card-hover) !important;
 }
 
-/* Hero/stat panels stay light; brand blue is communicated through accents,
-   icons, labels and actions rather than giant saturated surfaces. */
 .card-hero {
   background: var(--av-surface-info) !important;
   color: var(--av-text) !important;
@@ -174,8 +165,6 @@
   opacity: 1 !important;
 }
 
-/* Common Tailwind card/surface combinations. These selectors intentionally
-   target card primitives, not global dark buttons or navigation. */
 [class*="card"] .text-white,
 .card .text-white,
 .card-stat .text-white,
@@ -184,7 +173,6 @@
   color: var(--av-text) !important;
 }
 
-/* Light surface utilities must keep readable text. */
 .bg-white,
 .bg-gray-50,
 .bg-gray-100,
@@ -202,7 +190,6 @@
   color: var(--av-text);
 }
 
-/* Keep workspace colour identity as small accents, not full-page/card fills. */
 .bg-accent-sales,
 .bg-accent-finance,
 .bg-accent-projects,
@@ -214,9 +201,97 @@
   border-radius: var(--av-radius-md);
 }
 
-/* White text remains intentional for filled actions. */
 .btn-filled,
 .btn-gradient,
 .av-primary-bg {
   color: #FFFFFF !important;
+}
+
+/* ============================================
+   MOBILE READABILITY CONTRACT
+   The mobile app must never render an unstyled white canvas with
+   white/invisible content. Core surfaces are explicit and all normal
+   content inherits the semantic Avenize text colour.
+   ============================================ */
+@media (max-width: 767px) {
+  html, body, #root {
+    background: var(--av-home-bg) !important;
+    color: var(--av-text) !important;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  main, section, article {
+    color: var(--av-text);
+  }
+
+  /* Any normal light-surface container gets an explicit readable foreground. */
+  .bg-white,
+  .bg-gray-50,
+  .bg-gray-100,
+  .bg-slate-50,
+  .bg-slate-100 {
+    color: var(--av-text) !important;
+  }
+
+  /* Prevent legacy white text from disappearing on light cards/surfaces. */
+  .bg-white .text-white,
+  .bg-gray-50 .text-white,
+  .bg-gray-100 .text-white,
+  .bg-slate-50 .text-white,
+  .bg-slate-100 .text-white,
+  .av-card .text-white,
+  .av-card-info .text-white,
+  .av-glass-card .text-white,
+  .card .text-white,
+  .card-stat .text-white,
+  .card-flat .text-white,
+  .tile-launcher .text-white,
+  .card-hero .text-white {
+    color: var(--av-text) !important;
+  }
+
+  /* Filled controls are the intentional exception. */
+  .btn-filled .text-white,
+  .btn-gradient .text-white,
+  .av-primary-bg .text-white,
+  button.btn-filled,
+  button.btn-gradient {
+    color: #FFFFFF !important;
+  }
+
+  /* Give unstyled mobile panels visible structure. */
+  .av-backdrop {
+    background-color: var(--av-home-bg) !important;
+    background-image: var(--av-atmosphere) !important;
+  }
+
+  .av-card,
+  .card,
+  .card-stat,
+  .tile-launcher {
+    background-color: var(--av-surface-card) !important;
+    color: var(--av-text) !important;
+    border-color: var(--av-border) !important;
+  }
+
+  .card-flat {
+    background-color: var(--av-surface-2) !important;
+    color: var(--av-text) !important;
+  }
+
+  .card-hero,
+  .av-card-info {
+    background-color: var(--av-surface-info) !important;
+    color: var(--av-text) !important;
+  }
+
+  /* Keep controls finger-friendly without making the interface oversized. */
+  button,
+  [role="button"],
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
